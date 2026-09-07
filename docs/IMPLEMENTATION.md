@@ -64,9 +64,8 @@ Contradictory, redirected, non-200 or unpersisted completion evidence cannot
 authorize the dependent bot grant. The independent
 [Drive receipt review](reference/reviews/p3-drive-import-receipt-review.json)
 closed all three findings. Full affected suites recorded 1,748 Drive and 1,903
-Sheets pass events; seven Sheets live blockers remain. A fresh combined gate is
-running against immutable `8d92e52`; earlier full-suite results do not cover these
-new changes automatically.
+Sheets pass events; seven Sheets live blockers remain. The fresh combined gate
+at immutable `8d92e52` now covers these changes, with the results below.
 
 The [Contact comparison](../evaluation/evidence/contact/REPORT.md) records nine
 successful trials and complete usage accounting, but a regression: Next used
@@ -104,18 +103,20 @@ exposed cross-batch duplicate IDs being accepted by the importer; `f080e43` and
 evidence. This is separate from Base's earlier import-only test and does not
 establish live conversion behavior.
 
-The [complete isolated race gate](sections/p3-unit-evidence.json) at `72fc5e4`
-passes 18,604 tests with no failures or races and 12 explained skips, including
-the root package. Earlier failed checkpoints remain in the report. Later fixes
-have their own focused unit/process checks. Vet, formatting, dependency/license
-checks, quality gate, source guards and pinned Go lint have passed at their
-recorded development boundaries; final release verification still needs an
-immutable candidate after remaining changes settle.
+The [complete isolated race gate](sections/p3-unit-evidence.json) at `8d92e52`
+passes 18,656 tests with no failures or races and 12 explained skips, including
+the root package. Earlier failed checkpoints remain in the report. The
+[static gate](sections/p3-static-evidence.json) passed nine checks and initially
+failed pinned Go lint on four intentionally suppressed proof-assembly errors.
+The comment-only clarification in `8ce0688` has focused regression coverage,
+independent review and a passing full pinned-lint follow-up. The original failed
+run remains visible; no runtime statements changed.
 
-The [complete offline E2E checkpoint](sections/p3-e2e-evidence.json) at `94e4afc`
-passes 3,296 test events with zero failures and 45 explicit skips. All 23 section
-suites ran. Later Mail and integration changes have affected-suite evidence;
-this historical run does not automatically cover later fixes.
+The [complete offline E2E checkpoint](sections/p3-e2e-evidence.json) at `8d92e52`
+passes 3,525 test events with zero failures and 55 explicit skips. All 23 section
+suites, the 18-event transfer suite, scripts and controlled evaluator ran.
+Optional native evaluator checks have their own separately recorded execution;
+the default harness skips are not counted as passes.
 
 [Packaging evidence](sections/packaging-evidence.json) covers all 14 cross-built
 platform/variant archives, local installation/update/removal, and actual Node 16
@@ -125,10 +126,12 @@ not establish public release readiness.
 
 ## Outstanding release evidence
 
-P2 domain acceptance, verified private live fixtures, final source reconciliation,
+P2 domain acceptance, verified private live fixtures,
 remaining development comparisons and provider-token scaling measurements,
 native platform and remote lifecycle checks, full release checks and held-out
-evaluation remain open. The concrete cross-section workflow audit and 18-event
+evaluation remain open. The [source review aggregate](reference/p3-effective-review-final.json)
+records exact-hash offline approvals for all runtime/build paths; it grants no
+live or release acceptance. The concrete cross-section workflow audit and 18-event
 transfer/binding follow-up close the previously identified offline composition
 gap; they do not establish live guarantees. Completed offline transfer and local
 packaging checks remain milestones. Blocked or unverified checks remain
