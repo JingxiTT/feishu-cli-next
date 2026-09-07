@@ -129,12 +129,17 @@ mark an individual domain-known read with
 `common.WithReadOnlyRequest(ctx, method, apiPath)` or
 `runtime.CallReadOnlyAPITyped(method, apiPath, params, data)`. The marker matches
 only the exact method and URL path; other requests retain normal journaling.
-Generated Attendance `user_tasks query` and Approval `approvals search` declare
-their exact POST reads this way: their scopes and endpoint schemas establish
+Generated Attendance `user_tasks query`, Approval `approvals search`, and Mail
+`user_mailbox.messages batch_get`, `multi_entity search`, and `user_mailboxes search`
+declare their exact POST reads this way: their scopes and endpoint schemas establish
 query-only semantics despite the frozen catalog's write risk. In agent mode,
 their command risk annotations are read, enabling the verified read-artifact
-pipeline. The catalog and legacy command annotations stay unchanged; partial
-Attendance employee coverage fields remain native read data.
+pipeline. Recognition requires the exact service, method ID, HTTP method and
+catalog path; the request marker binds the concrete decoded path after validated
+path-parameter substitution. Neighboring mutations and arbitrary raw API calls
+retain their own effect classification. The catalog and legacy command
+annotations stay unchanged; partial Attendance employee coverage fields remain
+native read data.
 It preserves cancellation and command risk, and must never be derived from
 arbitrary raw API input or request content. Conversely,
 `common.WithMutationRequest(ctx, method, apiPath)` identifies an exact known

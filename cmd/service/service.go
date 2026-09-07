@@ -438,8 +438,10 @@ func serviceMethodRun(opts *ServiceMethodOptions) error {
 	// These frozen POST methods carry write risk, but their domain contracts
 	// only query records. Keep the catalog intact and declare
 	// only the exact generated request, never arbitrary raw API input.
-	if f.EnableAgentAttempts && knownGeneratedRead(opts.ServicePath, opts.Method) && request.Method == opts.Method.HTTPMethod && request.URL == opts.ServicePath+"/"+opts.Method.Path {
-		callCtx = cmdutil.WithReadOnlyRequest(callCtx, request.Method, request.URL)
+	if f.EnableAgentAttempts {
+		if path, known := knownGeneratedReadPath(opts.ServicePath, opts.Method, request); known {
+			callCtx = cmdutil.WithReadOnlyRequest(callCtx, request.Method, path)
+		}
 	}
 
 	if opts.PageAll {
