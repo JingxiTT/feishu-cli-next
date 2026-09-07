@@ -180,5 +180,118 @@
     "Repository-wide unit-test/vet/fmt-check, license/module checks and committed diff quality gate are coordinator-owned; this evidence records only the scoped checks actually run.",
     "Export completeness compares separately observed source total with counted rows; it is not an atomic database snapshot.",
     "Raw reports are local scratch evidence; compact check counts and test sources are committed here."
-  ]
+  ],
+  "follow_up": {
+    "reason": "Preserve baseline write-only app metadata PATCH; make read/no-op comparison explicit through --skip-unchanged.",
+    "checks": [
+      {
+        "command": [
+          "go",
+          "test",
+          "-json",
+          "-count=1",
+          "-timeout=10m",
+          "./shortcuts/apps/..."
+        ],
+        "exit_code": 0,
+        "test_events": {
+          "pass": 1542
+        },
+        "skipped_tests": [],
+        "raw_local_report": ".tmp/apps-update-optin.json",
+        "raw_report_sha256": "4b53c296a553ae89750dd333cd21e1565ec3ee48d57d46bfdc25f3b6e104b201"
+      },
+      {
+        "command": [
+          "go",
+          "test",
+          "-json",
+          "-count=1",
+          "-timeout=10m",
+          "./tests/cli_e2e/apps",
+          "-run",
+          "DryRun|Regression"
+        ],
+        "exit_code": 0,
+        "test_events": {
+          "pass": 123
+        },
+        "skipped_tests": [],
+        "raw_local_report": ".tmp/apps-update-optin.json",
+        "raw_report_sha256": "4b53c296a553ae89750dd333cd21e1565ec3ee48d57d46bfdc25f3b6e104b201"
+      },
+      {
+        "command": [
+          "go",
+          "test",
+          "-json",
+          "-count=1",
+          "-timeout=10m",
+          "./tests/next_sections/apps"
+        ],
+        "exit_code": 0,
+        "test_events": {
+          "pass": 241,
+          "skip": 1
+        },
+        "skipped_tests": [
+          "TestAppsLivePrivateLifecycle"
+        ],
+        "raw_local_report": ".tmp/apps-update-optin.json",
+        "raw_report_sha256": "4b53c296a553ae89750dd333cd21e1565ec3ee48d57d46bfdc25f3b6e104b201"
+      },
+      {
+        "command": [
+          "go",
+          "test",
+          "-json",
+          "-count=1",
+          "./internal/affordance",
+          "./cmd/service",
+          "./internal/schema"
+        ],
+        "exit_code": 0,
+        "test_events": {
+          "pass": 294
+        },
+        "skipped_tests": [],
+        "raw_local_report": ".tmp/apps-update-optin-checks.json",
+        "raw_report_sha256": "04846efde02175f0e35966f963a11f8c75a8135de74aab6f0e3191549defc31e"
+      },
+      {
+        "command": [
+          "go",
+          "vet",
+          "./shortcuts/apps/...",
+          "./tests/next_sections/apps"
+        ],
+        "exit_code": 0,
+        "test_events": {},
+        "skipped_tests": [],
+        "raw_local_report": ".tmp/apps-update-optin-checks.json",
+        "raw_report_sha256": "04846efde02175f0e35966f963a11f8c75a8135de74aab6f0e3191549defc31e"
+      },
+      {
+        "command": [
+          "go",
+          "run",
+          "github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.1.6",
+          "run",
+          "--new-from-rev=6bac249",
+          "./shortcuts/apps/...",
+          "./tests/next_sections/apps",
+          "./internal/affordance"
+        ],
+        "exit_code": 0,
+        "test_events": {},
+        "skipped_tests": [],
+        "raw_local_report": ".tmp/apps-update-optin-checks.json",
+        "raw_report_sha256": "04846efde02175f0e35966f963a11f8c75a8135de74aab6f0e3191549defc31e"
+      }
+    ],
+    "request_evidence": {
+      "default": "TestAppsMetadataWriteOnlyPathAndOptionalReadPreview observes zero app GETs and one PATCH while GET would be denied; both dry-runs add zero requests.",
+      "opt_in": "TestAppsMetadataReplacementAndUnknown covers same/change/missing/wrong-target/denied/lost using --skip-unchanged, preserving exact app-ID checks and no replay."
+    }
+  }
 }

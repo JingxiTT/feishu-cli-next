@@ -160,7 +160,7 @@ func TestAppsMetadataReplacementAndUnknown(t *testing.T) {
 			if mode == "same" {
 				name = "old"
 			}
-			result := run(f, "+update", "--app-id", "app_fixture", "--name", name)
+			result := run(f, "+update", "--app-id", "app_fixture", "--name", name, "--skip-unchanged")
 			switch mode {
 			case "same":
 				expect(t, result, 0, "data.app.description", "preserve 😀")
@@ -321,8 +321,7 @@ func TestAppsEveryAPIShortcutRejectionPath(t *testing.T) {
 				path = strings.ReplaceAll(path, ":app_id", "app_fixture")
 				if tc.Name == "+html-publish" && r.Method == "GET" && r.URL.Path == "/open-apis/spark/v1/apps/app_fixture" {
 					// Publishing verifies the app type before obtaining upload credentials.
-				} else if tc.Name == "+update" && r.Method == "GET" && r.URL.Path == path {
-					// Agent replacement compares the existing app before patching.
+
 				} else if tc.Name == "+db-data-export" && strings.HasSuffix(r.URL.Path, "/records") { // read-only optional extent probe
 					if r.Method != "GET" {
 						t.Errorf("export extent probe writes")
@@ -405,4 +404,52 @@ func TestAppsListPreservesFullAppMetadata(t *testing.T) {
 	expect(t, result, 0, "data.items.0.created_at", "001")
 	expect(t, result, 0, "data.items.0.icon_url", "https://example.invalid/icon.png")
 	expect(t, result, 0, "data.items.0.owner", "self")
+}
+
+func TestAppsMetadataWriteOnlyPathAndOptionalReadPreview(t *testing.T) {
+	var reads, writes atomic.Int32
+	f := nextfixture.NewFixture(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/open-apis/spark/v1/apps/app_fixture" {
+			t.Errorf("wrong app path %s", r.URL.Path)
+		}
+		if r.Method == "GET" {
+			reads.Add(1)
+			w.WriteHeader(403)
+			_, _ = io.WriteString(w, `{"code":99991679,"msg":"spark:app:read unavailable"}`)
+			return
+		}
+		if r.Method != "PATCH" {
+			t.Errorf("unexpected %s", r.Method)
+		}
+		writes.Add(1)
+		var body map[string]interface{}
+		_ = json.NewDecoder(r.Body).Decode(&body)
+		if len(body) != 1 || body["name"] != "new" {
+			t.Errorf("patch %#v", body)
+		}
+		reply(w, map[string]interface{}{"app": map[string]interface{}{"app_id": "app_fixture", "name": "new"}})
+	}))
+	expect(t, run(f, "+update", "--app-id", "app_fixture", "--name", "new"), 0, "data.app.name", "new")
+	if reads.Load() != 0 || writes.Load() != 1 {
+		t.Fatalf("write-only path read=%d write=%d", reads.Load(), writes.Load())
+	}
+	for _, optIn := range []bool{false, true} {
+		args := []string{"+update", "--app-id", "app_fixture", "--name", "new", "--dry-run"}
+		if optIn {
+			args = append(args, "--skip-unchanged")
+		}
+		result := run(f, args...)
+		expect(t, result, 0, "dry_run", "true")
+		apis := gjson.Get(result.Stdout, "data.api").Array()
+		if optIn {
+			if len(apis) != 2 || apis[0].Get("method").String() != "GET" || apis[1].Get("method").String() != "PATCH" {
+				t.Fatalf("opt-in preview %s", result.Stdout)
+			}
+		} else if len(apis) != 1 || apis[0].Get("method").String() != "PATCH" {
+			t.Fatalf("write-only preview %s", result.Stdout)
+		}
+	}
+	if reads.Load() != 0 || writes.Load() != 1 {
+		t.Fatal("dry-run performed requests")
+	}
 }

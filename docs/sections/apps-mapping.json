@@ -2074,7 +2074,20 @@
       "process_request_case": "+update",
       "live": "blocked",
       "comparison": "pending coordinator scheduling",
-      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +update"
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +update",
+      "intentional_additions": [
+        {
+          "flag": "--skip-unchanged",
+          "type": "bool",
+          "default": false,
+          "conditional_scope": "spark:app:read",
+          "behavior": "Opt-in GET of exact app, then PATCH only when requested fields differ. Default keeps original PATCH-only/write-only behavior. Dry-run reflects selected workflow.",
+          "process_tests": [
+            "TestAppsMetadataReplacementAndUnknown",
+            "TestAppsMetadataWriteOnlyPathAndOptionalReadPreview"
+          ]
+        }
+      ]
     },
     {
       "command": "apps +user-id-convert",

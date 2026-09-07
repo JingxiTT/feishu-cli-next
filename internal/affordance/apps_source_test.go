@@ -16,7 +16,7 @@ func TestAppsWorkflowGuidance(t *testing.T) {
 	t.Cleanup(func() { SetSource(prev) })
 	SetSource(os.DirFS("../../affordance"))
 	cases := []struct{ command, guidance, example string }{
-		{"+update", "unchanged replacement", `feishu-cli-next apps +update --app-id app_fixture --name "Journal"`},
+		{"+update", "--skip-unchanged", `feishu-cli-next apps +update --app-id app_fixture --name "Journal"`},
 		{"+db-data-export", "not an atomic snapshot", "feishu-cli-next apps +db-data-export --app-id app_fixture --table orders --output orders.json --limit 100"},
 		{"+db-data-import", "Generic result artifacts cannot be imported", "feishu-cli-next apps +db-data-import --app-id app_fixture --file orders.json --table orders --dry-run"},
 		{"+env-list", "can contain credentials", "feishu-cli-next apps +env-list --app-id app_fixture"},

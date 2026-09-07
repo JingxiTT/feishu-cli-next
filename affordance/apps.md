@@ -4,7 +4,7 @@
 Use a metadata edit when the target app already exists.
 
 ### Tips
-- Only provided nonempty fields are patched; omitted fields remain unchanged. An unchanged replacement is returned after reading the app, without a write. The read and patch are separate requests, so this does not prevent concurrent edits.
+- Only provided nonempty fields are patched; omitted fields remain unchanged. The default path needs only write scope. Opt into --skip-unchanged to read the app and avoid an identical replacement; this additionally needs read scope. The read and patch are separate requests, so this does not prevent concurrent edits.
 
 ### Examples
 **Change an app's name**

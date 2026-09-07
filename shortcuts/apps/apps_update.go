@@ -26,13 +26,14 @@ var AppsUpdate = common.Shortcut{
 		`Example: lark-cli apps +update --app-id <app_id> --description "..."`,
 	},
 	Scopes:            []string{"spark:app:write"},
-	ConditionalScopes: []string{"spark:app:read"},
+	ConditionalScopes: []string{"spark:app:read"}, // --skip-unchanged reads the current app.
 	AuthTypes:         []string{"user"},
 	HasFormat:         true,
 	Flags: []common.Flag{
 		{Name: "app-id", Desc: "app ID", Required: true},
 		{Name: "name", Desc: "new app display name"},
 		{Name: "description", Desc: "new app description"},
+		{Name: "skip-unchanged", Type: "bool", Desc: "read current app and skip an unchanged patch (requires spark:app:read)"},
 	},
 	Validate: func(ctx context.Context, rctx *common.RuntimeContext) error {
 		if strings.TrimSpace(rctx.Str("app-id")) == "" {
@@ -50,16 +51,20 @@ var AppsUpdate = common.Shortcut{
 	},
 	DryRun: func(ctx context.Context, rctx *common.RuntimeContext) *common.DryRunAPI {
 		appID := strings.TrimSpace(rctx.Str("app-id"))
-		return common.NewDryRunAPI().
-			PATCH(fmt.Sprintf("%s/apps/%s", apiBasePath, validate.EncodePathSegment(appID))).
-			Desc("Update an app").
-			Body(buildAppsUpdateBody(rctx))
+		path := fmt.Sprintf("%s/apps/%s", apiBasePath, validate.EncodePathSegment(appID))
+		preview := common.NewDryRunAPI()
+		description := "Update an app"
+		if rctx.Bool("skip-unchanged") {
+			preview.GET(path).Desc("Read requested app metadata for --skip-unchanged")
+			description = "Patch only when requested fields differ from the observed app"
+		}
+		return preview.PATCH(path).Desc(description).Body(buildAppsUpdateBody(rctx))
 	},
 	Execute: func(ctx context.Context, rctx *common.RuntimeContext) error {
 		appID := strings.TrimSpace(rctx.Str("app-id"))
 		path := fmt.Sprintf("%s/apps/%s", apiBasePath, validate.EncodePathSegment(appID))
 		body := buildAppsUpdateBody(rctx)
-		if rctx.Factory.EnableAgentAttempts {
+		if rctx.Bool("skip-unchanged") {
 			current, err := rctx.CallAPITyped("GET", path, nil, nil)
 			if err != nil {
 				return withAppsHint(err, appIDListHint)
