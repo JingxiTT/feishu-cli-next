@@ -1,0 +1,361 @@
+{
+  "schema_version": 1,
+  "reviewer": "/root/p3_domain_review",
+  "review_type": "narrow hash-bound native Mail POST read correction",
+  "verdict": "approved_offline",
+  "issue": "Generated Mail POST reads returned data with false unknown mutation exit22; save-result was rejected under frozen write annotation.",
+  "fix_revision": "10588248080a91412b0718eb0aa921cff6a90f10",
+  "test_revision": "0a17534930ef4033999932e0342a2bbe9110fc4e",
+  "native_read_tuples": [
+    {
+      "service_path": "/open-apis/mail/v1",
+      "method": "POST",
+      "method_id": "user_mailbox.message.batch_get",
+      "catalog_path": "user_mailboxes/{user_mailbox_id}/messages/batch_get"
+    },
+    {
+      "service_path": "/open-apis/mail/v1",
+      "method": "POST",
+      "method_id": "multi_entity.search",
+      "catalog_path": "multi_entity/search"
+    },
+    {
+      "service_path": "/open-apis/mail/v1",
+      "method": "POST",
+      "method_id": "user_mailbox.search",
+      "catalog_path": "user_mailboxes/{user_mailbox_id}/search"
+    }
+  ],
+  "paths": [
+    {
+      "path": "cmd/service/request_effect.go",
+      "review_revision": "10588248080a91412b0718eb0aa921cff6a90f10",
+      "review_sha256": "275f6220c5691c6d00ba54a98bff34b19f4199e68d72f461d16f3aeb6c9ed5c3",
+      "verdict": "approved_offline",
+      "findings": [],
+      "semantic_assessment": "Exact native allowlist adds only mail/v1 + POST + each of three method-ID/path pairs. Existing Attendance and Approval entries remain. Concrete marker matcher first requires recognized metadata and matching HTTP method, rejects absolute/host/query/fragment URLs, compares decoded path segment count and literals, requires nonempty substituted segments, and returns the exact decoded path. No raw API caller invokes this helper."
+    },
+    {
+      "path": "cmd/service/request_effect_test.go",
+      "review_revision": "10588248080a91412b0718eb0aa921cff6a90f10",
+      "review_sha256": "f728c186ceafeaccac14a03f4f24e2a527b7b566c47b41cdd882879674200e5d",
+      "verdict": "approved_offline",
+      "findings": [],
+      "semantic_assessment": "Exact-tuple tests cover all three Mail reads, batch_modify, copied read ID on a write path, method/service/path/absolute mismatches, and agent-disabled legacy risk. Tests assert input metadata risk/scopes remain unchanged. Concrete-path table covers escaped mailbox address, me alias, empty ID, neighbor write, wrong method, absolute URL, suffix, query and encoded extra segment."
+    },
+    {
+      "path": "cmd/service/service.go",
+      "review_revision": "10588248080a91412b0718eb0aa921cff6a90f10",
+      "review_sha256": "c9ffbba7ad6391f0765eabccea59f06946690c8fc26e7ebe6317744969e96c9e",
+      "verdict": "approved_offline",
+      "findings": [],
+      "semantic_assessment": "Agent-only request marking now calls the recognized concrete-path helper after buildServiceRequest validates/escapes substitutions and separates query parameters. Request body, scopes, identity checks, dry-run, dispatch and pagination are unchanged. Existing agent-only registered risk override consumes exact allowlist; legacy metadata/risk remains write."
+    },
+    {
+      "path": "docs/contracts/receipts.md",
+      "review_revision": "10588248080a91412b0718eb0aa921cff6a90f10",
+      "review_sha256": "4871f753eab094baa280ec2c418fc2fb9a1340f8dda74122c037ed7c91bcc614",
+      "verdict": "approved_offline",
+      "findings": [],
+      "semantic_assessment": "Documents exactly three added Mail POST reads, metadata-preserving agent-only correction and decoded concrete marker; does not advertise a raw POST exception."
+    },
+    {
+      "path": "docs/sections/mail.md",
+      "review_revision": "0a17534930ef4033999932e0342a2bbe9110fc4e",
+      "review_sha256": "fed9f5fc294e103b4bfe904b40ae686cab70371b1cad50d7f3fef51f1cf7a546",
+      "verdict": "approved_offline",
+      "findings": [],
+      "semantic_assessment": "Adds explicit native generated read contract and negative-control evidence; acknowledges earlier generic catalog tests allowed unknown mutation outcome and could not prove all POST reads. Counts and explicit live skip remain distinguished."
+    },
+    {
+      "path": "tests/next_sections/mail/generated_read_e2e_test.go",
+      "review_revision": "0a17534930ef4033999932e0342a2bbe9110fc4e",
+      "review_sha256": "453de24f8c97e824e528b91c1e75a638cceeb77cb482f69a2fabc9efb7475ca0",
+      "verdict": "approved_offline",
+      "findings": [],
+      "semantic_assessment": "Entire new test file read. Batch-get user/bot and encoded mailbox scenarios assert exact method/path/identity/body, exit0, full HTML/large-number artifact values, exactly two requests and no receipts. Both user-only searches assert complete request filter/query and result equality with UseNumber, artifacts, continuation and no receipts. Neighbor batch_modify and raw POST assert exit22 unknown, one request and one receipt."
+    }
+  ],
+  "dependency_evidence": [
+    {
+      "path": "cmd/agent.go",
+      "review_revision": "10588248080a91412b0718eb0aa921cff6a90f10",
+      "sha256": "7758a555428d4b08426905f7db0316946a021f4d04acd16aa2c62f98cbf2f5aa",
+      "scope": "validateAgentOutput still allows --save-result only for declared business read risk and excludes every raw api command. Known read risk permits existing binding/exclusive artifact pipeline; no artifact mechanism change.",
+      "tested_revision": "not executed by reviewer; source inspected at 10588248080a91412b0718eb0aa921cff6a90f10"
+    },
+    {
+      "path": "cmd/agent_test.go",
+      "review_revision": "10588248080a91412b0718eb0aa921cff6a90f10",
+      "sha256": "03a5da37df76f050dfd74fd94893720a8c0cc7dafc289a1cc6fe009e3a545c5e",
+      "scope": "Static existing TestAgentRawReadCannotPersistCredentialArtifacts asserts invalid_argument and --save-result for raw API even when risk is read. Not executed.",
+      "tested_revision": "not executed by reviewer; source inspected at 10588248080a91412b0718eb0aa921cff6a90f10"
+    },
+    {
+      "path": "internal/cmdutil/read_request.go",
+      "review_revision": "10588248080a91412b0718eb0aa921cff6a90f10",
+      "sha256": "b95fa6aab68d9d09dac9d4e0caa4b83430e06b53478c68c5191ab5a0090b5c08",
+      "scope": "declaredRequestEffect matches exact HTTP method and URL.Path; marker value is scoped to context and cannot change other tuples.",
+      "tested_revision": "not executed by reviewer; source inspected at 10588248080a91412b0718eb0aa921cff6a90f10"
+    },
+    {
+      "path": "internal/cmdutil/agent_attempts.go",
+      "review_revision": "10588248080a91412b0718eb0aa921cff6a90f10",
+      "sha256": "d4c74c18042ee7b3f11916c972c5669682c4b24a4be2e9c20506bafc828c081a",
+      "scope": "Existing transport consumes exact request effect before command-risk fallback; neighboring generated commands retain write risk and raw POST gets no native metadata override.",
+      "tested_revision": "not executed by reviewer; source inspected at 10588248080a91412b0718eb0aa921cff6a90f10"
+    },
+    {
+      "path": "internal/validate/resource.go",
+      "review_revision": "10588248080a91412b0718eb0aa921cff6a90f10",
+      "sha256": "21b999ac3ad2490727f2c7fc8a5f7304cddbe05bd69359008cd23487c9291b7c",
+      "scope": "buildServiceRequest uses ResourceName and EncodePathSegment to reject unsafe resource values and escape substitution. Query params remain separate from request.URL.",
+      "tested_revision": "not executed by reviewer; source inspected at 10588248080a91412b0718eb0aa921cff6a90f10"
+    },
+    {
+      "path": "docs/reference/meta_data.json.gz",
+      "review_revision": "10588248080a91412b0718eb0aa921cff6a90f10",
+      "sha256": "c3717197efc20093b4b9eb737bbe3f5f5e6acb75c19b86071ccf5acf62f588d7",
+      "scope": "Frozen catalog inspected: exact three tuples declare readonly scopes; batch-get supports user/tenant and searches user only. Catalog bytes are unchanged across both reviewed commits.",
+      "tested_revision": "static catalog inspection only"
+    }
+  ],
+  "owner_execution_evidence": [
+    {
+      "path": ".tmp/mail-generated-read-before.json",
+      "sha256": "effd6af9ea38d01700d20b10e4ac8a6a0399a3c085038dded19666c5b19b3c20",
+      "status": "fail",
+      "tested_revision": "explicitly unbound: owner log has no immutable source revision/binary digest; reviewer did not execute tests",
+      "commands": [
+        {
+          "command": [
+            "go",
+            "test",
+            "-json",
+            "-count=1",
+            "-timeout=5m",
+            "./tests/next_sections/mail",
+            "-run",
+            "TestMailGenerated"
+          ],
+          "status": "fail",
+          "exit_code": 1,
+          "tests": {
+            "pass": 3,
+            "fail": 7,
+            "skip": 0
+          },
+          "focused_outcomes": [
+            {
+              "action": "fail",
+              "test": "TestMailGeneratedBatchGetReadContract/user/ordinary_read"
+            },
+            {
+              "action": "fail",
+              "test": "TestMailGeneratedBatchGetReadContract/user/full_artifact_with_projection"
+            },
+            {
+              "action": "fail",
+              "test": "TestMailGeneratedBatchGetReadContract/user"
+            },
+            {
+              "action": "fail",
+              "test": "TestMailGeneratedBatchGetReadContract/bot/ordinary_read"
+            },
+            {
+              "action": "fail",
+              "test": "TestMailGeneratedBatchGetReadContract/bot/full_artifact_with_projection"
+            },
+            {
+              "action": "fail",
+              "test": "TestMailGeneratedBatchGetReadContract/bot"
+            },
+            {
+              "action": "fail",
+              "test": "TestMailGeneratedBatchGetReadContract"
+            },
+            {
+              "action": "pass",
+              "test": "TestMailGeneratedReadExceptionDoesNotCoverWritesOrRawPOST/neighboring_mutation"
+            },
+            {
+              "action": "pass",
+              "test": "TestMailGeneratedReadExceptionDoesNotCoverWritesOrRawPOST/raw_POST"
+            },
+            {
+              "action": "pass",
+              "test": "TestMailGeneratedReadExceptionDoesNotCoverWritesOrRawPOST"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": ".tmp/mail-search-reads-before.json",
+      "sha256": "7061539c6ac6e100dcfe403272afa0125fbe1b8a8bf2ff885ef845df30778f42",
+      "status": "fail",
+      "tested_revision": "explicitly unbound: owner log has no immutable source revision/binary digest; reviewer did not execute tests",
+      "commands": [
+        {
+          "command": [
+            "go",
+            "test",
+            "-json",
+            "-count=1",
+            "-timeout=5m",
+            "./tests/next_sections/mail",
+            "-run",
+            "TestMailGeneratedSearchReadContracts"
+          ],
+          "status": "fail",
+          "exit_code": 1,
+          "tests": {
+            "pass": 0,
+            "fail": 3,
+            "skip": 0
+          },
+          "focused_outcomes": [
+            {
+              "action": "fail",
+              "test": "TestMailGeneratedSearchReadContracts/contact_search"
+            },
+            {
+              "action": "fail",
+              "test": "TestMailGeneratedSearchReadContracts/message_search"
+            },
+            {
+              "action": "fail",
+              "test": "TestMailGeneratedSearchReadContracts"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": ".tmp/mail-generated-read-boundary.json",
+      "sha256": "fd24e40dba58350c4f4128033191a8f28280234d4da742d05cf02c97bb1723eb",
+      "status": "pass",
+      "tested_revision": "explicitly unbound: owner log has no immutable source revision/binary digest; reviewer did not execute tests",
+      "commands": [
+        {
+          "command": [
+            "go",
+            "test",
+            "-json",
+            "-count=1",
+            "-timeout=10m",
+            "./shortcuts/mail/..."
+          ],
+          "status": "pass",
+          "exit_code": 0,
+          "tests": {
+            "pass": 1643,
+            "fail": 0,
+            "skip": 0
+          },
+          "focused_outcomes": []
+        },
+        {
+          "command": [
+            "go",
+            "test",
+            "-json",
+            "-count=1",
+            "-timeout=10m",
+            "./tests/cli_e2e/mail",
+            "-run",
+            "DryRun|Regression"
+          ],
+          "status": "pass",
+          "exit_code": 0,
+          "tests": {
+            "pass": 14,
+            "fail": 0,
+            "skip": 0
+          },
+          "focused_outcomes": []
+        },
+        {
+          "command": [
+            "go",
+            "test",
+            "-json",
+            "-count=1",
+            "-timeout=10m",
+            "./tests/next_sections/mail"
+          ],
+          "status": "pass",
+          "exit_code": 0,
+          "tests": {
+            "pass": 215,
+            "fail": 0,
+            "skip": 1
+          },
+          "focused_outcomes": [
+            {
+              "action": "pass",
+              "test": "TestMailGeneratedBatchGetReadContract/user/ordinary_read"
+            },
+            {
+              "action": "pass",
+              "test": "TestMailGeneratedBatchGetReadContract/user/full_artifact_with_projection"
+            },
+            {
+              "action": "pass",
+              "test": "TestMailGeneratedBatchGetReadContract/user"
+            },
+            {
+              "action": "pass",
+              "test": "TestMailGeneratedBatchGetReadContract/bot/ordinary_read"
+            },
+            {
+              "action": "pass",
+              "test": "TestMailGeneratedBatchGetReadContract/bot/full_artifact_with_projection"
+            },
+            {
+              "action": "pass",
+              "test": "TestMailGeneratedBatchGetReadContract/bot"
+            },
+            {
+              "action": "pass",
+              "test": "TestMailGeneratedBatchGetReadContract"
+            },
+            {
+              "action": "pass",
+              "test": "TestMailGeneratedReadExceptionDoesNotCoverWritesOrRawPOST/neighboring_mutation"
+            },
+            {
+              "action": "pass",
+              "test": "TestMailGeneratedReadExceptionDoesNotCoverWritesOrRawPOST/raw_POST"
+            },
+            {
+              "action": "pass",
+              "test": "TestMailGeneratedReadExceptionDoesNotCoverWritesOrRawPOST"
+            },
+            {
+              "action": "pass",
+              "test": "TestMailGeneratedSearchReadContracts/contact_search"
+            },
+            {
+              "action": "pass",
+              "test": "TestMailGeneratedSearchReadContracts/message_search"
+            },
+            {
+              "action": "pass",
+              "test": "TestMailGeneratedSearchReadContracts"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "assessment": "The correction is restricted to three native generated read tuples in agent mode. Exact concrete path marking accommodates substituted mailbox addresses. Legacy risk and frozen metadata remain intact, raw POST and neighboring writes retain mutation classification, and only read-risk generated operations gain existing artifact eligibility. Source/test inspection and retained owner red/green evidence support offline approval.",
+  "findings": [],
+  "limitations": [
+    "Reviewer ran no tests, live actions or model evaluations; owner red/green logs were inspected and hashed.",
+    "Owner execution reports are explicitly source-unbound. Semantic approval is bound to the exact listed immutable source/test blobs.",
+    "Mail-specific negative process controls exercise ordinary raw POST and neighboring writes, not --save-result on those controls; artifact rejection was verified by unchanged root guard and existing source test assertions.",
+    "Dedicated tests do not establish live permissions, delivery, backend normalization, all-page search consistency or account/tenant isolation. The owner full boundary retains one explicit live skip.",
+    "Existing shared artifact verification, receipt persistence, command-risk fallback and other endpoint corrections retain independent owning gates; this is not a whole-foundation or whole-Mail approval."
+  ]
+}
