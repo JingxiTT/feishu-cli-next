@@ -1,0 +1,590 @@
+{
+  "schema_version": 1,
+  "assignment_id": "command_recovery",
+  "reviewer": "/root/p2_contact (independent of command/recovery implementation author)",
+  "import_revision": "0c1ac7570543db3117ba5bdc6a66b69f87c4a62e",
+  "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+  "verdict": "changes_requested",
+  "review_method": "Read immutable blobs and import-to-review diffs; verified all 18 assigned SHA-256 values; inspected relevant existing and new tests; ran only scoped checks in a temporary immutable source snapshot using scripts/next_test.py isolated_env and frozen metadata. No product edits, live requests or model runs.",
+  "checks": [
+    {
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-count=1",
+        "-timeout=5m",
+        "./cmd",
+        "-run",
+        "TestAgent|TestHandleRootError|TestApplyNeedAuthorizationHint|TestBuildWithoutPlugins|TestExecutionContext"
+      ],
+      "status": "pass",
+      "exit_code": 0,
+      "tests": {
+        "pass": 31,
+        "fail": 0,
+        "skip": 0
+      },
+      "tested_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+      "diagnostics": []
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-count=1",
+        "-timeout=5m",
+        "./cmd/auth",
+        "-run",
+        "TestAgentTimeoutHint|TestAuthLoginRun_NoWaitJSONHintPreservesExplicitProfile|TestNoWaitAgentHint"
+      ],
+      "status": "pass",
+      "exit_code": 0,
+      "tests": {
+        "pass": 8,
+        "fail": 0,
+        "skip": 0
+      },
+      "tested_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+      "diagnostics": []
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-count=1",
+        "-timeout=5m",
+        "./cmd/discover",
+        "./internal/recovery",
+        "./internal/qualitygate/cmd/manifest-export",
+        "./internal/fileevent"
+      ],
+      "status": "pass",
+      "exit_code": 0,
+      "tests": {
+        "pass": 71,
+        "fail": 0,
+        "skip": 0
+      },
+      "tested_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+      "diagnostics": []
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-count=1",
+        "-timeout=5m",
+        "./internal/vfs/localfileio",
+        "-run",
+        "TestLocalFileIO_Save_RejectsPathOutsideAllowlist"
+      ],
+      "status": "pass",
+      "exit_code": 0,
+      "tests": {
+        "pass": 1,
+        "fail": 0,
+        "skip": 0
+      },
+      "tested_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+      "diagnostics": []
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-count=1",
+        "-timeout=5m",
+        "./tests/next_foundation",
+        "-run",
+        "TestGuideLiteralDiscoveryReachesContactIDFlags|TestReceiptLostResponseIsUnknownWithoutRetry|TestOutputInvalidOptionsBeforeRequests"
+      ],
+      "status": "pass",
+      "exit_code": 0,
+      "tests": {
+        "pass": 3,
+        "fail": 0,
+        "skip": 0
+      },
+      "tested_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+      "diagnostics": [
+        "fixture.go:106: fixture identity requests: user=5 tenant=0",
+        "fixture.go:106: fixture identity requests: user=4 tenant=0",
+        "fixture.go:106: fixture identity requests: user=1 tenant=0"
+      ]
+    }
+  ],
+  "test_totals": {
+    "pass": 114,
+    "fail": 0,
+    "skip": 0
+  },
+  "paths": [
+    {
+      "path": "cmd/auth/login.go",
+      "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+      "review_sha256": "dfc4df50a2ed954b3c447860bf73dce22e97db94a66ddd694665320be8e2a7c3",
+      "verdict": "changes_requested",
+      "evidence": [
+        {
+          "path": "cmd/auth/login_test.go",
+          "sha256": "85cc3cf744e1eadc18790946554b761992fc74965864cfda4088ec401c83d357",
+          "tested_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "scope": "Executed TestAuthLoginRun_NoWaitJSONHintPreservesExplicitProfile and TestNoWaitAgentHint: both executable names preserve explicit profile and device resume instructions; mocked authorization response only."
+        },
+        {
+          "path": "cmd/auth/login_messages_test.go",
+          "sha256": "44642bdd65176f184602f83149dcee48d05aa01effa8d66fabe92ae0e1ebb403",
+          "tested_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "scope": "Executed TestAgentTimeoutHint selectors: legacy byte digests, both locales and next executable plus quoted profile recovery."
+        }
+      ],
+      "findings": [
+        {
+          "id": "CR-1",
+          "see_path": "cmd/build.go",
+          "scope": "Eager credential-backed help construction affects local discovery."
+        }
+      ],
+      "assessment": "Code diff changes only invocation recovery context: no-wait JSON, synchronous hint and resumed polling receive Factory recovery context. Existing scope choice, device flow, token storage and profile-sync behavior remain. Eager help-brand config resolution is an integration issue described in CR-1.",
+      "limitations": [
+        "Hash-bound review is restricted to the assigned file and import-to-review diff; dependencies and release/live/platform gates are separate."
+      ]
+    },
+    {
+      "path": "cmd/auth/login_messages_test.go",
+      "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+      "review_sha256": "44642bdd65176f184602f83149dcee48d05aa01effa8d66fabe92ae0e1ebb403",
+      "verdict": "approved_offline",
+      "evidence": [
+        {
+          "path": "cmd/auth/login_messages_test.go",
+          "sha256": "44642bdd65176f184602f83149dcee48d05aa01effa8d66fabe92ae0e1ebb403",
+          "tested_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "scope": "Executed TestAgentTimeoutHint selectors: legacy byte digests, both locales and next executable plus quoted profile recovery."
+        }
+      ],
+      "findings": [],
+      "assessment": "New bilingual timeout test verifies next executable and quoted profile; original language and digest tests remain intact.",
+      "limitations": [
+        "Hash-bound review is restricted to the assigned file and import-to-review diff; dependencies and release/live/platform gates are separate."
+      ]
+    },
+    {
+      "path": "cmd/auth/login_test.go",
+      "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+      "review_sha256": "85cc3cf744e1eadc18790946554b761992fc74965864cfda4088ec401c83d357",
+      "verdict": "approved_offline",
+      "evidence": [
+        {
+          "path": "cmd/auth/login_test.go",
+          "sha256": "85cc3cf744e1eadc18790946554b761992fc74965864cfda4088ec401c83d357",
+          "tested_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "scope": "Executed TestAuthLoginRun_NoWaitJSONHintPreservesExplicitProfile and TestNoWaitAgentHint: both executable names preserve explicit profile and device resume instructions; mocked authorization response only."
+        }
+      ],
+      "findings": [],
+      "assessment": "Parameterized existing no-wait profile test covers legacy and next renderers without removing legacy expected bytes or mock request evidence.",
+      "limitations": [
+        "Hash-bound review is restricted to the assigned file and import-to-review diff; dependencies and release/live/platform gates are separate."
+      ]
+    },
+    {
+      "path": "cmd/build.go",
+      "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+      "review_sha256": "126c665f54d2b24e7718a74bd7d487055abb20f91bd7b6777c29117a744c8b66",
+      "verdict": "changes_requested",
+      "evidence": [
+        {
+          "path": "cmd/build_test.go",
+          "sha256": "15959e9700671fdb9a1c8b7822ac92c80c3d54904bb5cf35a2243ae69b5183a7",
+          "tested_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "scope": "Executed TestBuildWithoutPluginsStillBuildsBuiltinCommands; reviewed ordered assembly, agent opt-in, final-tree wrapping and existing fail-closed early return paths."
+        }
+      ],
+      "findings": [
+        {
+          "id": "CR-1",
+          "priority": 2,
+          "title": "Local discovery resolves credentials during command assembly",
+          "locations": [
+            {
+              "path": "cmd/auth/login.go",
+              "line": 86
+            },
+            {
+              "path": "cmd/build.go",
+              "line": 311
+            },
+            {
+              "path": "cmd/discover/discover.go",
+              "line": 34
+            }
+          ],
+          "description": "Constructing auth login invokes f.Config() to choose the --domain help brand before discover runs. Under authsidecar this resolves the current account and sends a user_info identity request for every local discovery. The selected immutable process test logged user=5 for one guide-show plus four discovery calls, despite discovery declaring that it never resolves credentials. Missing/slow credential enrichment can therefore add network work/latency to local command inspection, and existing zero-business-request assertions do not catch it.",
+          "requested_change": "Use already selected startup/build/catalog brand for command help metadata instead of resolving credential-backed config during discovery assembly, while retaining correct profile/brand help. Add a real-process discovery/help test asserting zero credential and business requests.",
+          "evidence": [
+            {
+              "path": "tests/next_foundation/guide_e2e_test.go",
+              "sha256": "fe633e59a0cbe7f6b29de06ffbeef7e5985180464023bff70c5d90f4773584bb",
+              "tested_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Executed TestGuideLiteralDiscoveryReachesContactIDFlags against authsidecar binary compiled from this revision. Four literal ID queries reach registered Contact methods; default omits flags. Test log records five identity requests for one guide show plus four discoveries."
+            },
+            {
+              "path": "tests/next_foundation/output_e2e_test.go",
+              "sha256": "fa50d801f6e6b998b6f61a42db0c39ff2b08a9c24caeeeda5d57847e973a051a",
+              "tested_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Executed TestOutputInvalidOptionsBeforeRequests: four invalid result-mode combinations produce validation stderr and zero business requests; fixture logs four startup identity requests, so this is not evidence of zero credential/network work."
+            }
+          ],
+          "scope_note": "Eager auth-help config lookup predates the import diff, but the new no-credential discovery workflow depends on that assembly path. No private or live requests were used to reproduce it."
+        }
+      ],
+      "assessment": "Agent mode supplies build-local recovery name, wraps only the normalized Factory stdout, and finalizes after plugin/policy/skill assembly. normalizeStreams copies the input struct, preventing opt-in writer changes from leaking into reused legacy Build options. Eager auth-help config resolution violates the discovery no-credential intent (CR-1).",
+      "limitations": [
+        "Hash-bound review is restricted to the assigned file and import-to-review diff; dependencies and release/live/platform gates are separate."
+      ]
+    },
+    {
+      "path": "cmd/root.go",
+      "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+      "review_sha256": "3f94fbc1936414bb865e4acd16c9c59af82c523f08d97bc60c34a06122d52e41",
+      "verdict": "approved_offline",
+      "evidence": [
+        {
+          "path": "cmd/root_test.go",
+          "sha256": "c10614cc90e61cc8efedc727973f9c937269a2783136abe13c5de029cc132414",
+          "tested_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "scope": "Executed TestHandleRootError and TestApplyNeedAuthorizationHint selectors: category/exit preservation, structured stderr, bare-error silence, partial stderr writes, auth scope enrichment and original cause preservation."
+        },
+        {
+          "path": "tests/next_foundation/receipts_e2e_test.go",
+          "sha256": "bc0359b03e468b4a41903ec77cad1eabf989c8aa7d195ee043dbe83fa9306091",
+          "tested_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "scope": "Executed TestReceiptLostResponseIsUnknownWithoutRetry: real process reports unknown outcome/receipt, non-success exit and no repeated mutation on a local synthetic backend."
+        },
+        {
+          "path": "tests/next_foundation/output_e2e_test.go",
+          "sha256": "fa50d801f6e6b998b6f61a42db0c39ff2b08a9c24caeeeda5d57847e973a051a",
+          "tested_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "scope": "Executed TestOutputInvalidOptionsBeforeRequests: four invalid result-mode combinations produce validation stderr and zero business requests; fixture logs four startup identity requests, so this is not evidence of zero credential/network work."
+        }
+      ],
+      "findings": [],
+      "assessment": "Legacy Execute signature and bootstrap behavior preserved. Agent mode suppresses background notices, retains typed/bare exit handling, emits separate compact mutation diagnostics on stderr and applies receipt exit overrides after command execution. Unknown-outcome fixture confirms real process behavior.",
+      "limitations": [
+        "Hash-bound review is restricted to the assigned file and import-to-review diff; dependencies and release/live/platform gates are separate."
+      ]
+    },
+    {
+      "path": "internal/fileevent/report.go",
+      "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+      "review_sha256": "7c1a1835f7a6dc0271c6dae098b0e7f2ead12ef2d0a222d522d2d9da0f19c966",
+      "verdict": "approved_offline",
+      "evidence": [
+        {
+          "path": "internal/fileevent/report_test.go",
+          "sha256": "3f194c7663d27eaaca7fa365228dc0796be7484696d601623f4c7902dfea356e",
+          "tested_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "scope": "Executed entire fileevent package: three executable prefixes normalize to drive +upload, fixed upload/report tags and upstream event schema preserved, bounded reporting and typed upload errors retained."
+        }
+      ],
+      "findings": [],
+      "assessment": "Adds only the next executable prefix to existing command-path normalization; fixed upstream file_scene/schema and reporting side effects are unchanged.",
+      "limitations": [
+        "Hash-bound review is restricted to the assigned file and import-to-review diff; dependencies and release/live/platform gates are separate."
+      ]
+    },
+    {
+      "path": "internal/fileevent/report_test.go",
+      "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+      "review_sha256": "3f194c7663d27eaaca7fa365228dc0796be7484696d601623f4c7902dfea356e",
+      "verdict": "approved_offline",
+      "evidence": [
+        {
+          "path": "internal/fileevent/report_test.go",
+          "sha256": "3f194c7663d27eaaca7fa365228dc0796be7484696d601623f4c7902dfea356e",
+          "tested_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "scope": "Executed entire fileevent package: three executable prefixes normalize to drive +upload, fixed upload/report tags and upstream event schema preserved, bounded reporting and typed upload errors retained."
+        }
+      ],
+      "findings": [],
+      "assessment": "Expands the existing prefix assertion to all three executable names without removing request/effect coverage.",
+      "limitations": [
+        "Hash-bound review is restricted to the assigned file and import-to-review diff; dependencies and release/live/platform gates are separate."
+      ]
+    },
+    {
+      "path": "internal/qualitygate/cmd/manifest-export/collect.go",
+      "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+      "review_sha256": "c42440bacc39ce375ec546dc7f01e8b1b0ac11ffc460d028e3d397c7538de9a6",
+      "verdict": "approved_offline",
+      "evidence": [
+        {
+          "path": "internal/qualitygate/cmd/manifest-export/main_test.go",
+          "sha256": "6e4a3c377f91d07cac3c70272ff1aca9b17fac56807cd7124d524c26bf032210",
+          "tested_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "scope": "Executed entire manifest-export package: agent discover/guide/receipts registrations and inherited result flags in hand-authored/full indexes; real generated catalog separation, deterministic environment and docs fetch dry-run/alias contracts."
+        },
+        {
+          "path": "internal/qualitygate/cmd/manifest-export/collect_alias_test.go",
+          "sha256": "b52020d7d8997efdfe6eee4c27719ae68de88143e42a71f2f4f141765e1b5c94",
+          "tested_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "scope": "Executed entire manifest-export package: canonical command paths, flag aliases exported as metadata rather than duplicate flags, internal alias annotation omitted."
+        }
+      ],
+      "findings": [],
+      "assessment": "Both collectors construct actual agent trees with isolated/disallowed plugin/strict-mode side effects, and normalize paths against each actual root name. Existing generated/hand-authored overlay, metadata, flags and aliases remain intact.",
+      "limitations": [
+        "Hash-bound review is restricted to the assigned file and import-to-review diff; dependencies and release/live/platform gates are separate."
+      ]
+    },
+    {
+      "path": "internal/qualitygate/cmd/manifest-export/main_test.go",
+      "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+      "review_sha256": "6e4a3c377f91d07cac3c70272ff1aca9b17fac56807cd7124d524c26bf032210",
+      "verdict": "approved_offline",
+      "evidence": [
+        {
+          "path": "internal/qualitygate/cmd/manifest-export/main_test.go",
+          "sha256": "6e4a3c377f91d07cac3c70272ff1aca9b17fac56807cd7124d524c26bf032210",
+          "tested_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "scope": "Executed entire manifest-export package: agent discover/guide/receipts registrations and inherited result flags in hand-authored/full indexes; real generated catalog separation, deterministic environment and docs fetch dry-run/alias contracts."
+        }
+      ],
+      "findings": [],
+      "assessment": "New assertions verify runnable next registrations and all three inherited result controls in both exported surfaces; existing generated-vs-hand-authored and alias cases remain.",
+      "limitations": [
+        "Hash-bound review is restricted to the assigned file and import-to-review diff; dependencies and release/live/platform gates are separate."
+      ]
+    },
+    {
+      "path": "internal/recovery/context.go",
+      "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+      "review_sha256": "cb55dc6f4c4636059e181bbe210facc8896a1e8490df0e5245e8003dce510263",
+      "verdict": "approved_offline",
+      "evidence": [
+        {
+          "path": "internal/recovery/hint_test.go",
+          "sha256": "3a69184b55a045ce034d815311c320d0ce2a9f34f9cae522ee1f0111a59e6a11",
+          "tested_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "scope": "Executed entire recovery package: build-local executable/profile escaping, exact annotated-fragment replacement, producer immutability, raw/unannotated text untouched and hidden recovery targets removed."
+        }
+      ],
+      "findings": [],
+      "assessment": "CommandName is an internal code-owned build fact; empty retains lark-cli, profile shell quoting and Markdown delimiters remain unchanged, and no user result/message rewriting is introduced.",
+      "limitations": [
+        "Hash-bound review is restricted to the assigned file and import-to-review diff; dependencies and release/live/platform gates are separate."
+      ]
+    },
+    {
+      "path": "internal/recovery/hint_test.go",
+      "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+      "review_sha256": "3a69184b55a045ce034d815311c320d0ce2a9f34f9cae522ee1f0111a59e6a11",
+      "verdict": "approved_offline",
+      "evidence": [
+        {
+          "path": "internal/recovery/hint_test.go",
+          "sha256": "3a69184b55a045ce034d815311c320d0ce2a9f34f9cae522ee1f0111a59e6a11",
+          "tested_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "scope": "Executed entire recovery package: build-local executable/profile escaping, exact annotated-fragment replacement, producer immutability, raw/unannotated text untouched and hidden recovery targets removed."
+        }
+      ],
+      "findings": [],
+      "assessment": "Tests exact next invocation rendering, hostile profile escaping, raw/unannotated text preservation and immutable source errors, complementing legacy golden bytes.",
+      "limitations": [
+        "Hash-bound review is restricted to the assigned file and import-to-review diff; dependencies and release/live/platform gates are separate."
+      ]
+    },
+    {
+      "path": "internal/recovery/projector.go",
+      "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+      "review_sha256": "36208b53a3c2131dc8af40442ec47e4a4e6187246d841d033952ee1e9daa06c4",
+      "verdict": "approved_offline",
+      "evidence": [
+        {
+          "path": "internal/recovery/hint_test.go",
+          "sha256": "3a69184b55a045ce034d815311c320d0ce2a9f34f9cae522ee1f0111a59e6a11",
+          "tested_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "scope": "Executed entire recovery package: build-local executable/profile escaping, exact annotated-fragment replacement, producer immutability, raw/unannotated text untouched and hidden recovery targets removed."
+        }
+      ],
+      "findings": [],
+      "assessment": "New Context method returns a value copy and handles nil receivers; lazy build-local plan and concrete typed rendering remain unchanged.",
+      "limitations": [
+        "Hash-bound review is restricted to the assigned file and import-to-review diff; dependencies and release/live/platform gates are separate."
+      ]
+    },
+    {
+      "path": "internal/recovery/render.go",
+      "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+      "review_sha256": "6e037117a37e759ad4fe66322507cb25227bdf49c893b23c17cd48e5d2c2c1ea",
+      "verdict": "approved_offline",
+      "evidence": [
+        {
+          "path": "internal/recovery/render_test.go",
+          "sha256": "bc2aa771a0b92912be563be2439f185f4287b1e16b63a4beedb4b1ebd030b6ca",
+          "tested_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "scope": "Executed entire recovery package: concrete typed clones preserve wire extensions and causes; mutation receipt/CauseDetail slices independently copied; nested typed annotation isolation."
+        }
+      ],
+      "findings": [],
+      "assessment": "Adds the exact outer MutationOutcomeError type to cloning, independently cloning receipt and raw CauseDetail byte slices without changing typed cause, status, outcome or arbitrary producer fields.",
+      "limitations": [
+        "Hash-bound review is restricted to the assigned file and import-to-review diff; dependencies and release/live/platform gates are separate."
+      ]
+    },
+    {
+      "path": "internal/recovery/render_test.go",
+      "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+      "review_sha256": "bc2aa771a0b92912be563be2439f185f4287b1e16b63a4beedb4b1ebd030b6ca",
+      "verdict": "approved_offline",
+      "evidence": [
+        {
+          "path": "internal/recovery/render_test.go",
+          "sha256": "bc2aa771a0b92912be563be2439f185f4287b1e16b63a4beedb4b1ebd030b6ca",
+          "tested_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "scope": "Executed entire recovery package: concrete typed clones preserve wire extensions and causes; mutation receipt/CauseDetail slices independently copied; nested typed annotation isolation."
+        }
+      ],
+      "findings": [],
+      "assessment": "Extends every-concrete-type wire equivalence tests and mutates clone slices to demonstrate no aliasing back to original mutation diagnostics.",
+      "limitations": [
+        "Hash-bound review is restricted to the assigned file and import-to-review diff; dependencies and release/live/platform gates are separate."
+      ]
+    },
+    {
+      "path": "internal/vfs/localfileio/localfileio_test.go",
+      "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+      "review_sha256": "12e6afc8479ffb4f1f685abbb1b180386dd6e36e5c03cc8f11bcae7b5907a47f",
+      "verdict": "approved_offline",
+      "evidence": [
+        {
+          "path": "internal/vfs/localfileio/localfileio_test.go",
+          "sha256": "12e6afc8479ffb4f1f685abbb1b180386dd6e36e5c03cc8f11bcae7b5907a47f",
+          "tested_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "scope": "Executed TestLocalFileIO_Save_RejectsPathOutsideAllowlist: synthetic FS cannot write host state even on regression; typed path rejection, zero mkdir/write calls, nil result and unread input asserted."
+        }
+      ],
+      "findings": [],
+      "assessment": "Replaces a host-home negative fixture with a no-backing synthetic FS and explicit effect/cause assertions; default FS is restored by cleanup and no parallel test is introduced.",
+      "limitations": [
+        "Hash-bound review is restricted to the assigned file and import-to-review diff; dependencies and release/live/platform gates are separate."
+      ]
+    },
+    {
+      "path": "main.go",
+      "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+      "review_sha256": "2a52b14e8f32dc86cf54777d96ae38a48a77e15f9b73823e0aa5dbc845bf679f",
+      "verdict": "approved_offline",
+      "evidence": [
+        {
+          "path": "tests/next_foundation/guide_e2e_test.go",
+          "sha256": "fe633e59a0cbe7f6b29de06ffbeef7e5985180464023bff70c5d90f4773584bb",
+          "tested_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "scope": "Executed TestGuideLiteralDiscoveryReachesContactIDFlags against authsidecar binary compiled from this revision. Four literal ID queries reach registered Contact methods; default omits flags. Test log records five identity requests for one guide show plus four discoveries."
+        }
+      ],
+      "findings": [],
+      "assessment": "Normal main explicitly opts this distribution into agent mode; exported cmd.Execute remains legacy. Selected authsidecar process tests compile and execute this exact main wiring; normal/platform build matrix remains separate.",
+      "limitations": [
+        "Hash-bound review is restricted to the assigned file and import-to-review diff; dependencies and release/live/platform gates are separate."
+      ]
+    },
+    {
+      "path": "cmd/agent.go",
+      "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+      "review_sha256": "7758a555428d4b08426905f7db0316946a021f4d04acd16aa2c62f98cbf2f5aa",
+      "verdict": "approved_offline",
+      "evidence": [
+        {
+          "path": "cmd/agent_test.go",
+          "sha256": "03a5da37df76f050dfd74fd94893720a8c0cc7dafc289a1cc6fe009e3a545c5e",
+          "tested_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "scope": "Executed all TestAgent selectors: legacy build isolation, unchanged domain fields/detail flags, compact/detail discovery, incompatible result guards, source update channel rejection and raw-read artifact refusal."
+        },
+        {
+          "path": "tests/next_foundation/receipts_e2e_test.go",
+          "sha256": "bc0359b03e468b4a41903ec77cad1eabf989c8aa7d195ee043dbe83fa9306091",
+          "tested_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "scope": "Executed TestReceiptLostResponseIsUnknownWithoutRetry: real process reports unknown outcome/receipt, non-success exit and no repeated mutation on a local synthetic backend."
+        },
+        {
+          "path": "tests/next_foundation/output_e2e_test.go",
+          "sha256": "fa50d801f6e6b998b6f61a42db0c39ff2b08a9c24caeeeda5d57847e973a051a",
+          "tested_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "scope": "Executed TestOutputInvalidOptionsBeforeRequests: four invalid result-mode combinations produce validation stderr and zero business requests; fixture logs four startup identity requests, so this is not evidence of zero credential/network work."
+        }
+      ],
+      "findings": [],
+      "assessment": "Introduces opt-in compact writer, receipts and artifact binding callbacks, additive global result controls, source-update refusal, parser stderr routing and final RunE wrappers. Validation leaves original domain fields/detail meanings intact; mutation finalization runs after underlying command/output result. Dependency CR-1 affects local discovery assembly.",
+      "limitations": [
+        "Hash-bound review is restricted to the assigned file and import-to-review diff; dependencies and release/live/platform gates are separate."
+      ]
+    },
+    {
+      "path": "cmd/discover/discover.go",
+      "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+      "review_sha256": "154ef22cc6ee9102e00c65d36241988169fd7fc69093880835f2d63298eafad6",
+      "verdict": "changes_requested",
+      "evidence": [
+        {
+          "path": "cmd/discover/discover_test.go",
+          "sha256": "142dfa6119538713de03453d49704b005ff6f950bdcfa4942f957a2d8be66891",
+          "tested_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "scope": "Executed entire package: bounded pages/offsets, empty array, hidden subtree exclusion, public flag name/usage matching, no hidden/default-text match, required flags and unchanged default output shape."
+        },
+        {
+          "path": "tests/next_foundation/guide_e2e_test.go",
+          "sha256": "fe633e59a0cbe7f6b29de06ffbeef7e5985180464023bff70c5d90f4773584bb",
+          "tested_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "scope": "Executed TestGuideLiteralDiscoveryReachesContactIDFlags against authsidecar binary compiled from this revision. Four literal ID queries reach registered Contact methods; default omits flags. Test log records five identity requests for one guide show plus four discoveries."
+        }
+      ],
+      "findings": [
+        {
+          "id": "CR-1",
+          "see_path": "cmd/build.go",
+          "scope": "Eager credential-backed help construction affects local discovery."
+        }
+      ],
+      "assessment": "Walks the final visible tree, shares public/local-shadowed flag selection for searching and optional output, ANDs literal substrings and sorts paths/flags deterministically. Pagination remains explicit and bounded. Local function has no credential calls, but assembled process still resolves credentials before reaching it (CR-1).",
+      "limitations": [
+        "Hash-bound review is restricted to the assigned file and import-to-review diff; dependencies and release/live/platform gates are separate."
+      ]
+    }
+  ],
+  "cross_assignment_dependencies": [
+    {
+      "assignment_id": "invocation_identity",
+      "scope": "Factory recovery-context propagation, startup profile/brand and credential-enrichment side effects; CR-1 remediation crosses this boundary."
+    },
+    {
+      "assignment_id": "output_artifacts",
+      "scope": "AgentOptions validation/emission/Finish and exclusive FileIO/artifact binding remain owning mechanisms; this review verifies root wiring and selected process behavior."
+    },
+    {
+      "assignment_id": "mutation_receipts",
+      "scope": "AgentAttemptSummary/FinalizeAgentAttempt and outcome exit classification supply root/host evidence; selected lost-response process fixture verifies integration."
+    },
+    {
+      "assignment_id": "skill_lifecycle",
+      "scope": "Guide content embedding/install/update/removal belongs to root owner; reviewed only command registration and selected guide/discovery integration."
+    },
+    {
+      "assignment_id": "packaging_build_scripts",
+      "scope": "Source-build update refusal is preserved. Bare TTY root retains inherited cached-upstream upgrade prompt for clean semver builds; not executed in this review. Final update RunE is replaced, so no upstream installation path was found. Packaging should assess prompt behavior and normal/platform builds."
+    }
+  ],
+  "limitations": [
+    "Required live/platform/release/evaluation gates remain separate.",
+    "114 selected test events passed at the immutable revision, but passing tests do not negate CR-1 because they assert zero business requests rather than zero credential requests.",
+    "No new product tests or implementation files were written; only this review report is persisted. Temporary source snapshots/test output were removed after scoped execution.",
+    "No claims about later HEAD blobs, numerical token improvements, live authorization or backend guarantees.",
+    "Full inherited login/device storage tests and broad repository suites were inspected selectively, not rerun; auth behavior change here is limited to recovery presentation context."
+  ]
+}
