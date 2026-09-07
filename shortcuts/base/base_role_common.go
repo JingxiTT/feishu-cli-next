@@ -39,7 +39,7 @@ func handleRoleResponse(runtime *common.RuntimeContext, rawBody []byte, action s
 		result := map[string]interface{}{"code": resp.Code, "msg": resp.Msg}
 		if len(resp.Data) > 0 {
 			var data interface{}
-			if json.Unmarshal(resp.Data, &data) == nil {
+			if parseBaseJSON(resp.Data, &data) == nil {
 				result["data"] = data
 			}
 		}
@@ -53,7 +53,7 @@ func handleRoleResponse(runtime *common.RuntimeContext, rawBody []byte, action s
 
 	// Parse data
 	var data any
-	if err := json.Unmarshal(resp.Data, &data); err != nil {
+	if err := parseBaseJSON(resp.Data, &data); err != nil {
 		runtime.Out(map[string]any{"data": string(resp.Data)}, nil)
 		return nil
 	}
@@ -61,7 +61,7 @@ func handleRoleResponse(runtime *common.RuntimeContext, rawBody []byte, action s
 	// If data is a string (double-encoded JSON), try to parse it
 	if s, ok := data.(string); ok && s != "" {
 		var inner any
-		if err := json.Unmarshal([]byte(s), &inner); err == nil {
+		if err := parseBaseJSON([]byte(s), &inner); err == nil {
 			data = inner
 		}
 	}
@@ -69,12 +69,9 @@ func handleRoleResponse(runtime *common.RuntimeContext, rawBody []byte, action s
 	// Check for business-level error: data may contain its own code/message
 	if m, ok := data.(map[string]any); ok {
 		if code, exists := m["code"]; exists {
-			var codeInt int
-			switch v := code.(type) {
-			case float64:
-				codeInt = int(v)
-			case int:
-				codeInt = v
+			codeInt, valid := toIntStrict(code)
+			if !valid {
+				return errs.NewInternalError(errs.SubtypeInvalidResponse, "%s: role response code must be an integer", action)
 			}
 			if codeInt != 0 {
 				msg, _ := m["message"].(string)
@@ -86,7 +83,7 @@ func handleRoleResponse(runtime *common.RuntimeContext, rawBody []byte, action s
 				// Inner data might be a double-encoded JSON string
 				if s, ok := innerData.(string); ok && s != "" {
 					var parsed any
-					if err := json.Unmarshal([]byte(s), &parsed); err == nil {
+					if err := parseBaseJSON([]byte(s), &parsed); err == nil {
 						runtime.Out(parsed, nil)
 						return nil
 					}

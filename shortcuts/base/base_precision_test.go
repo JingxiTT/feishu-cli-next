@@ -39,3 +39,16 @@ func TestBaseJSONRejectsTrailingValueAndRetainsSyntaxCause(t *testing.T) {
 		}
 	}
 }
+
+func TestBaseRoleResponsePreservesNestedLargeNumbers(t *testing.T) {
+	factory, stdout, _ := newExecuteFactory(t)
+	runtime := newBaseTestRuntime(nil, nil, nil)
+	runtime.Factory = factory
+	raw := []byte(`{"code":0,"data":{"code":0,"data":{"quota":9007199254740993}}}`)
+	if err := handleRoleResponse(runtime, raw, "read role"); err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(stdout.String(), "9007199254740993") {
+		t.Fatalf("precision lost: %s", stdout.String())
+	}
+}
