@@ -52,6 +52,10 @@ jobs:
         run: |
           python scripts/next_meta.py
           go build -trimpath -o "$NEXT_BINARY" .
+      - name: Compare configured-brand capability registrations
+        id: capabilities
+        if: ${{ always() && steps.dependencies.outcome == 'success' && steps.build.outcome == 'success' }}
+        run: python scripts/next_inventory.py gate --target . --out .tmp/next-ci/capabilities.json
       - name: Inventory, metadata, runner and workflow tests
         id: scripts
         if: ${{ always() && steps.dependencies.outcome == 'success' }}
@@ -73,6 +77,7 @@ jobs:
         env:
           DEPENDENCIES_OUTCOME: ${{ steps.dependencies.outcome }}
           BUILD_OUTCOME: ${{ steps.build.outcome }}
+          CAPABILITIES_OUTCOME: ${{ steps.capabilities.outcome }}
           SCRIPTS_OUTCOME: ${{ steps.scripts.outcome }}
           SECTIONS_OUTCOME: ${{ steps.sections.outcome }}
           EVALUATION_OUTCOME: ${{ steps.evaluation.outcome }}
@@ -83,10 +88,11 @@ jobs:
           root = pathlib.Path('.tmp/next-ci')
           root.mkdir(parents=True, exist_ok=True)
           stages = {name.lower(): os.environ.get(name + '_OUTCOME') or 'not_run'
-                    for name in ('DEPENDENCIES', 'BUILD', 'SCRIPTS', 'SECTIONS', 'EVALUATION', 'INTEGRATION')}
+                    for name in ('DEPENDENCIES', 'BUILD', 'CAPABILITIES', 'SCRIPTS', 'SECTIONS', 'EVALUATION', 'INTEGRATION')}
           (root / 'gate.json').write_text(json.dumps({
               'evidence': 'offline', 'platform': platform.system(), 'revision': os.environ['GITHUB_SHA'],
               'stages': stages, 'limits': [
+                  'Capability reconciliation does not clear retained source review_required findings.',
                   'Skipped or blocked scenarios remain unverified; suite reports retain individual counts and reasons.',
                   'Unix signal and symlink contracts are platform-specific; native platform results are separate evidence.',
                   'This gate does not run live APIs, real model comparisons, held-out trials, signing, or release publication.'

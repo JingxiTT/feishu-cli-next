@@ -27,3 +27,14 @@ python3 -m unittest discover -s scripts -p 'next_inventory_test.py'
 These cover exact value matching, changed new-subtree definitions, missing capabilities, existing flags and brand guards that cannot be waived by a mapping, wrong capture context, mixed snapshots, source-review separation, and JSON report/exit behavior on success, rejection, and collection errors.
 
 The local actual-process checkpoint `ci-capability-checkpoint.json.gz` passed on immutable product revision `8d92e5253aa9d0582314180d51cdec1b10778897` with both configured brands, 951 candidate command nodes and 538 shortcuts per brand, all 938 reference nodes and 535 shortcuts retained, and 25 event keys retained. Its 5,742 interface deltas exactly match the mapping. This is local registration execution, not execution of the remote CI matrix. The preceding shared-checkout run correctly rejected a mixed tracked snapshot; no interface exception was added for that rejection. The complete inventory/review-aggregation test selection passed 26 tests (18 inventory and eight review aggregation).
+
+The native Linux/macOS/Windows `.github/workflows/next-offline.yml` runs this
+actual guard as the required `capabilities` stage after dependency preloading
+and the frozen metadata build. It uses the exporter's temporary-copy and
+synthetic-account isolation directly, without invoking business commands. The
+step retains the guard's nonzero exit, so mismatches and collection failures fail
+the job. The always-written `gate.json` records its step outcome, and the always
+uploaded `.tmp/next-ci/` artifact includes `capabilities.json` when the guard
+could write it. The source report's `review_required` status remains unchanged;
+only `capability_gate.status` determines interface reconciliation success.
+A workflow definition is not evidence of a completed native CI run.

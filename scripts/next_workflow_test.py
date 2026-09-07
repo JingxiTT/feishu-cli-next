@@ -2,7 +2,13 @@
 # SPDX-License-Identifier: MIT
 
 """Contract checks for the additional offline gate (stdlib only)."""
+import json
+import os
 import re
+import subprocess
+import sys
+import tempfile
+import textwrap
 from pathlib import Path
 import unittest
 
@@ -42,6 +48,32 @@ class OfflineWorkflowTests(unittest.TestCase):
         self.assertIn('if-no-files-found: error', self.workflow)
         self.assertIn("'evidence': 'offline'", self.workflow)
         self.assertIn('Skipped or blocked scenarios remain unverified', self.workflow)
+
+    def test_capability_guard_executes_actual_helper_as_required_stage(self):
+        stage = self.workflow.split('      - name: Compare configured-brand capability registrations\n', 1)[1].split('      - name:', 1)[0]
+        self.assertIn('id: capabilities', stage)
+        self.assertIn("if: ${{ always() && steps.dependencies.outcome == 'success' && steps.build.outcome == 'success' }}", stage)
+        self.assertIn('run: python scripts/next_inventory.py gate --target . --out .tmp/next-ci/capabilities.json\n', stage)
+        self.assertNotIn('continue-on-error', stage)
+        self.assertNotIn('||', stage)
+        self.assertLess(self.workflow.index('go build -trimpath'), self.workflow.index('id: capabilities'))
+        self.assertIn('CAPABILITIES_OUTCOME: ${{ steps.capabilities.outcome }}', self.workflow)
+        self.assertIn('path: .tmp/next-ci/', self.workflow)
+        self.assertIn('Capability reconciliation does not clear retained source review_required findings.', self.workflow)
+
+    def test_always_gate_report_preserves_failed_capability_stage(self):
+        stage = self.workflow.split('      - name: Record gate outcomes and evidence limits\n', 1)[1].split('      - name:', 1)[0]
+        source = textwrap.dedent(re.search(r"python - <<'PY'\n(.*?)\n          PY", stage, re.DOTALL).group(1))
+        with tempfile.TemporaryDirectory() as directory:
+            env = dict(os.environ, GITHUB_SHA='synthetic-revision', CAPABILITIES_OUTCOME='failure')
+            result = subprocess.run([sys.executable, '-c', source], cwd=directory, env=env,
+                                    capture_output=True, encoding='utf-8', timeout=10)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            report = json.loads((Path(directory) / '.tmp/next-ci/gate.json').read_text(encoding='utf-8'))
+        self.assertEqual(report['stages']['capabilities'], 'failure')
+        self.assertEqual(report['stages']['integration'], 'not_run')
+        self.assertEqual(report['evidence'], 'offline')
+        self.assertNotIn('pass', report.values())
 
     def test_make_keeps_original_gates_and_includes_cross_domain_and_python(self):
         self.assertIn('cross-domain-test: build\n', self.makefile)
