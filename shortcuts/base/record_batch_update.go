@@ -19,9 +19,11 @@ var BaseRecordBatchUpdate = common.Shortcut{
 	Flags: []common.Flag{
 		baseTokenFlag(true),
 		tableRefFlag(true),
+		recordSkipUnchangedFlag(),
 		{Name: "json", Desc: `batch update JSON object; update_records maps each record ID to its field map, e.g. {"update_records":{"recA":{"Status":["Done"]},"recB":{"Score":20}}}`, Required: true},
 	},
 	Tips: append([]string{
+		recordComparisonTip,
 		"Happy path field: update_records maps each record ID to its own field map.",
 		`Example: {"update_records":{"recA":{"Status":["Done"]},"recB":{"Score":20}}}.`,
 		"The response contains only optional ignored_fields and does not check whether record IDs exist; read records back when confirmation is required.",
@@ -29,7 +31,7 @@ var BaseRecordBatchUpdate = common.Shortcut{
 		"Batch update supports max 200 records per call; use the record-batch-update guide for command limits and edge cases.",
 	}, recordCellValueHappyPathTips...),
 	Validate: func(ctx context.Context, runtime *common.RuntimeContext) error {
-		return validateRecordJSON(runtime)
+		return validateRecordBatchUpdate(runtime)
 	},
 	DryRun: dryRunRecordBatchUpdate,
 	Execute: func(ctx context.Context, runtime *common.RuntimeContext) error {

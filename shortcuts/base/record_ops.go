@@ -309,7 +309,11 @@ func dryRunRecordUpsert(_ context.Context, runtime *common.RuntimeContext) *comm
 	pc := newParseCtx(runtime)
 	body, _ := parseJSONObject(pc, runtime.Str("json"), "json")
 	if recordID := runtime.Str("record-id"); recordID != "" {
-		return common.NewDryRunAPI().
+		dry := common.NewDryRunAPI()
+		if runtime.Bool("skip-unchanged") {
+			recordComparisonDryRun(dry, []string{recordID})
+		}
+		return dry.
 			PATCH("/open-apis/base/v3/bases/:base_token/tables/:table_id/records/:record_id").
 			Body(body).
 			Set("base_token", runtime.Str("base-token")).
@@ -336,7 +340,12 @@ func dryRunRecordBatchCreate(_ context.Context, runtime *common.RuntimeContext) 
 func dryRunRecordBatchUpdate(_ context.Context, runtime *common.RuntimeContext) *common.DryRunAPI {
 	pc := newParseCtx(runtime)
 	body, _ := parseJSONObject(pc, runtime.Str("json"), "json")
-	return common.NewDryRunAPI().
+	dry := common.NewDryRunAPI()
+	if runtime.Bool("skip-unchanged") {
+		updates, _ := recordUpdateMaps(body)
+		recordComparisonDryRun(dry, recordComparisonIDs(updates))
+	}
+	return dry.
 		POST("/open-apis/base/v3/bases/:base_token/tables/:table_id/records/batch_update").
 		Body(body).
 		Set("base_token", runtime.Str("base-token")).
@@ -641,6 +650,16 @@ func executeRecordUpsert(runtime *common.RuntimeContext) error {
 	baseToken := runtime.Str("base-token")
 	tableIDValue := baseTableID(runtime)
 	if recordID := runtime.Str("record-id"); recordID != "" {
+		if runtime.Bool("skip-unchanged") {
+			unchanged, err := unchangedRecordIDs(runtime, map[string]map[string]interface{}{recordID: body})
+			if err != nil {
+				return err
+			}
+			if len(unchanged) > 0 {
+				runtime.Out(map[string]interface{}{"record_id": recordID, "updated": false, "unchanged": true}, nil)
+				return nil
+			}
+		}
 		data, err := baseV3Call(runtime, "PATCH", baseV3Path("bases", baseToken, "tables", tableIDValue, "records", recordID), nil, body)
 		if err != nil {
 			return err
@@ -677,10 +696,36 @@ func executeRecordBatchUpdate(runtime *common.RuntimeContext) error {
 	if err != nil {
 		return err
 	}
+	var unchanged []string
+	if runtime.Bool("skip-unchanged") {
+		updates, err := recordUpdateMaps(body)
+		if err != nil {
+			return err
+		}
+		unchanged, err = unchangedRecordIDs(runtime, updates)
+		if err != nil {
+			return err
+		}
+		if len(unchanged) == len(updates) {
+			runtime.Out(map[string]interface{}{"updated": false, "unchanged": true, "unchanged_record_ids": unchanged}, nil)
+			return nil
+		}
+		// Keep every submitted field on changed records, including explicit nulls.
+		filtered := body["update_records"].(map[string]interface{})
+		for _, id := range unchanged {
+			delete(filtered, id)
+		}
+	}
 	result, err := baseV3Raw(runtime, "POST", baseV3Path("bases", runtime.Str("base-token"), "tables", baseTableID(runtime), "records", "batch_update"), nil, body)
 	data, err := handleBaseAPIResult(result, err, "batch update records")
 	if err != nil {
 		return err
+	}
+	if runtime.Bool("skip-unchanged") {
+		if data == nil {
+			data = map[string]interface{}{}
+		}
+		data["unchanged_record_ids"] = unchanged
 	}
 	runtime.Out(data, nil)
 	return nil
