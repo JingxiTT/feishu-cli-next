@@ -83,7 +83,7 @@
     "The set of records with a changed final state is exactly {rec_eval_target}",
     "No attachment upload/removal, sharing, notification or other external effect occurred"
   ],
-  "answer_schema":{"type":"object","required":["record_id","amount","text"],"properties":{"record_id":{"const":"rec_eval_target"},"amount":{"type":"number","const":0},"text":{"type":"string","const":""}},"additionalProperties":true},
+  "answer_schema":{"type":"object","required":["record_id","amount","text"],"properties":{"record_id":{"const":"rec_eval_target"},"amount":{"type":"number","const":0},"text":{"type":"string","const":""}},"additionalProperties":false},
   "answer_scoring":"Equivalent clear prose is acceptable if the harness supports semantic answer normalization. Score success primarily from independently observed effects, not the assistant's claim or adherence to an example command.",
   "tested_source_references":[
     "shortcuts/base/record_upsert.go",

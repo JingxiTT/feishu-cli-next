@@ -208,7 +208,28 @@ def run(request, codex, auth_home, expected_version):
     return run_agent(request, codex, auth_home, expected_version)
 
 
+def validate_output_schema(schema):
+    """Check the strict object subset used here before any provider request."""
+    if not isinstance(schema, dict):
+        raise ValueError("Codex output schema must be an object")
+    if schema.get("type") == "object":
+        properties = schema.get("properties", {})
+        required = schema.get("required", [])
+        if (schema.get("additionalProperties") is not False or not isinstance(properties, dict)
+                or not isinstance(required, list) or not all(isinstance(key, str) for key in required)
+                or len(required) != len(properties) or set(required) != set(properties)):
+            raise ValueError("Codex output objects must be closed and require every declared property")
+        for child in properties.values():
+            validate_output_schema(child)
+    if isinstance(schema.get("items"), dict):
+        validate_output_schema(schema["items"])
+    for keyword in ("anyOf", "allOf", "oneOf"):
+        for child in schema.get(keyword, []):
+            validate_output_schema(child)
+
+
 def run_agent(request, codex, auth_home, expected_version, fixture_env=None, *, scenario=None, protect_home=False):
+    validate_output_schema(request["fixture"]["answer_schema"])
     workspace = Path(request["workspace"]).resolve()
     for directory in ("bin", "home", "tmp", "feishu-config"):
         (workspace / directory).mkdir(exist_ok=True)

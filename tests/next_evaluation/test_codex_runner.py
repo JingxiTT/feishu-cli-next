@@ -22,6 +22,24 @@ class CodexAccountingTests(unittest.TestCase):
             {"type": "turn.completed", "usage": {"input_tokens": 200, "cached_input_tokens": 80, "output_tokens": 30}},
             *extra])
 
+    def test_all_executable_manifests_have_provider_compatible_object_schemas(self):
+        for name in ('foundation', 'contact', 'read-sections', 'scenarios', 'scaling', 'business'):
+            tasks = json.loads((ROOT / ('evaluation/tasks.' + name + '.json')).read_text())['tasks']
+            for task in tasks:
+                with self.subTest(task=task['id']):
+                    runner.validate_output_schema(task['fixture']['answer_schema'])
+
+    def test_invalid_nested_output_schema_fails_before_process_or_workspace_setup(self):
+        from unittest.mock import patch
+        invalid = {'type': 'object', 'properties': {}, 'required': [], 'additionalProperties': True}
+        for schema in (invalid, {'type': 'array', 'items': invalid},
+                       {'type': 'object', 'properties': {'value': {'type': 'string'}},
+                        'required': [], 'additionalProperties': False}):
+            with self.subTest(schema=schema), patch.object(runner.subprocess, 'Popen') as process:
+                with self.assertRaises(ValueError):
+                    runner.run_agent({'fixture': {'answer_schema': schema}}, None, None, None)
+                process.assert_not_called()
+
     def test_uses_provider_aggregate_without_byte_estimates(self):
         result = runner.parse_events(self.stream(), 0)
         self.assertTrue(result["accounting_complete"])
@@ -131,7 +149,7 @@ print(json.dumps({'type':'turn.completed','usage':{'input_tokens':200,'cached_in
             request = {"workspace": str(workspace), "cli": str(fake), "skill": str(guidance / "SKILL.md"),
                        "prompt": "Inspect the synthetic config.", "settings": {"backend": "offline-foundation-v1",
                        "model": "synthetic-model", "tokenizer": "provider-undisclosed", "reasoning": "high",
-                       "budget": {"timeout_seconds": 5}}, "fixture": {"answer_schema": {"type": "object"}}}
+                       "budget": {"timeout_seconds": 5}}, "fixture": {"answer_schema": {"type": "object", "properties": {}, "required": [], "additionalProperties": False}}}
             process = subprocess.run([sys.executable, str(ROOT / "tests/next_evaluation/python_fixture_entry.py"),
                                       "--entry", str(ROOT / "evaluation/codex_runner.py"), "--fixture", str(fake), "--",
                                       "--codex", str(fake), "--auth-home", str(root / "auth")],

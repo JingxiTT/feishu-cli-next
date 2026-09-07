@@ -77,7 +77,7 @@ class ScenarioIntegrationTests(unittest.TestCase):
             skill = root / 'skill'; skill.mkdir(); (skill / 'SKILL.md').write_text('controlled')
             cli = root / 'cli'; cli.write_text('fixture')
             request = {'workspace': str(workspace), 'cli': str(cli), 'skill': str(skill / 'SKILL.md'),
-                       'fixture': {'answer_schema': {'type': 'object'}}, 'prompt': 'controlled',
+                       'fixture': {'answer_schema': {'type': 'object', 'properties': {}, 'required': [], 'additionalProperties': False}}, 'prompt': 'controlled',
                        'settings': {'model': 'controlled', 'reasoning': 'high', 'tokenizer': 'provider-undisclosed',
                                     'budget': {'timeout_seconds': 5}}}
             with patch('codex_runner.subprocess.run') as version, patch('codex_runner.subprocess.Popen', return_value=Child()):

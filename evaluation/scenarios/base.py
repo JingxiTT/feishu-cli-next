@@ -33,7 +33,7 @@ TASK = {
                 "answer_schema": {"type": "object", "required": ["record_id", "amount", "text"],
                                   "properties": {"record_id": {"type": "string"},
                                                  "amount": {"type": "number"}, "text": {"type": "string"}},
-                                  "additionalProperties": True}},
+                                  "additionalProperties": False}},
     "expected": {"answer": {"record_id": TARGET, "amount": 0, "text": ""},
                  "initial": deepcopy(INITIAL), "final": deepcopy(FINAL), "fields": deepcopy(FIELDS)},
 }
