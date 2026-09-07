@@ -210,7 +210,7 @@ var DrivePush = common.Shortcut{
 			return err
 		}
 
-		entries, err := listRemoteFolderEntries(ctx, runtime, folderToken, "")
+		entries, err := listRemoteFolderEntries(ctx, runtime, folderToken, "", deleteRemote)
 		if err != nil {
 			return err
 		}

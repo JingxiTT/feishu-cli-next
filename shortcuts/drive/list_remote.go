@@ -72,11 +72,11 @@ type driveDuplicateRemotePath struct {
 //
 // Pagination uses common.PaginationMeta, which accepts both page_token and
 // next_page_token.
-func listRemoteFolderEntries(ctx context.Context, runtime *common.RuntimeContext, folderToken, relBase string) ([]driveRemoteEntry, error) {
-	return listRemoteFolderTree(ctx, runtime, folderToken, relBase, make(map[string]bool))
+func listRemoteFolderEntries(ctx context.Context, runtime *common.RuntimeContext, folderToken, relBase string, requireExplicitListing bool) ([]driveRemoteEntry, error) {
+	return listRemoteFolderTree(ctx, runtime, folderToken, relBase, requireExplicitListing, make(map[string]bool))
 }
 
-func listRemoteFolderTree(ctx context.Context, runtime *common.RuntimeContext, folderToken, relBase string, ancestors map[string]bool) ([]driveRemoteEntry, error) {
+func listRemoteFolderTree(ctx context.Context, runtime *common.RuntimeContext, folderToken, relBase string, requireExplicitListing bool, ancestors map[string]bool) ([]driveRemoteEntry, error) {
 	if ancestors[folderToken] {
 		return nil, errs.NewInternalError(errs.SubtypeInvalidResponse, "Drive listing contains a folder cycle").WithHint("No mirror changes were applied; inspect the folder hierarchy before retrying")
 	}
@@ -104,6 +104,17 @@ func listRemoteFolderTree(ctx context.Context, runtime *common.RuntimeContext, f
 		if result["files"] != nil && !validFiles {
 			return nil, errs.NewInternalError(errs.SubtypeInvalidResponse, "Drive listing files must be an array")
 		}
+		if value, present := result["has_more"]; present {
+			if _, valid := value.(bool); !valid {
+				return nil, errs.NewInternalError(errs.SubtypeInvalidResponse, "Drive listing has_more must be a boolean")
+			}
+		}
+		// The API permits omitted fields, but deletion requires affirmative evidence
+		// of both the collection and whether the listing continues on every page.
+		_, explicitPagination := result["has_more"].(bool)
+		if requireExplicitListing && (!validFiles || !explicitPagination) {
+			return nil, errs.NewValidationError(errs.SubtypeFailedPrecondition, "Drive mirror deletion requires explicit files and has_more listing evidence").WithHint("No mirror changes were applied. Retry after the listing returns an array and boolean on every page, or omit the deletion flag")
+		}
 		for _, item := range rawFiles {
 			f, ok := item.(map[string]interface{})
 			if !ok {
@@ -129,16 +140,11 @@ func listRemoteFolderTree(ctx context.Context, runtime *common.RuntimeContext, f
 				if err := ctx.Err(); err != nil {
 					return nil, err
 				}
-				sub, err := listRemoteFolderTree(ctx, runtime, fToken, rel, ancestors)
+				sub, err := listRemoteFolderTree(ctx, runtime, fToken, rel, requireExplicitListing, ancestors)
 				if err != nil {
 					return nil, err
 				}
 				out = append(out, sub...)
-			}
-		}
-		if value, present := result["has_more"]; present {
-			if _, valid := value.(bool); !valid {
-				return nil, errs.NewInternalError(errs.SubtypeInvalidResponse, "Drive listing has_more must be a boolean")
 			}
 		}
 		hasMore, nextToken := common.PaginationMeta(result)

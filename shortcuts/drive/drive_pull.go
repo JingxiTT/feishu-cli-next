@@ -162,7 +162,7 @@ var DrivePull = common.Shortcut{
 			return errs.NewValidationError(errs.SubtypeInvalidArgument, "--local-dir resolves outside cwd: %s", err).WithParam("--local-dir")
 		}
 
-		entries, err := listRemoteFolderEntries(ctx, runtime, folderToken, "")
+		entries, err := listRemoteFolderEntries(ctx, runtime, folderToken, "", deleteLocal)
 		if err != nil {
 			return err
 		}

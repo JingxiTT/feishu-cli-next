@@ -156,7 +156,7 @@ var DriveStatus = common.Shortcut{
 			return err
 		}
 
-		entries, err := listRemoteFolderEntries(ctx, runtime, folderToken, "")
+		entries, err := listRemoteFolderEntries(ctx, runtime, folderToken, "", false)
 		if err != nil {
 			return err
 		}
