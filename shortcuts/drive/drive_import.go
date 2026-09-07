@@ -215,7 +215,8 @@ func RunImport(ctx context.Context, runtime *common.RuntimeContext, p ImportPara
 		out["next_command"] = driveImportTaskResultCommand(runtime, ticket)
 	}
 	if ready {
-		if grant := common.AutoGrantCurrentUserDrivePermission(runtime, common.GetString(out, "token"), resultType); grant != nil {
+		verified := common.DriveImportCompletionMatches(ticket, spec.CreateTaskBody(fileToken), status.nativeData)
+		if grant := driveImportPermissionGrant(runtime, status, verified); grant != nil {
 			out["permission_grant"] = grant
 		}
 	}
@@ -337,4 +338,21 @@ func importDefaultFileName(filePath string) string {
 		return base
 	}
 	return name
+}
+
+// driveImportPermissionGrant prevents a dependent permission write when native
+// task proof is contradictory or its receipt could not be durably saved.
+func driveImportPermissionGrant(runtime *common.RuntimeContext, status driveImportStatus, verified bool) map[string]interface{} {
+	if !runtime.IsBot() {
+		return nil
+	}
+	persistenceFailed := runtime.Factory != nil && runtime.Factory.AgentAttemptSummary().PersistenceFailed
+	if !verified || persistenceFailed {
+		return map[string]interface{}{
+			"status":  common.PermissionGrantSkipped,
+			"message": "Import completion evidence is incomplete or could not be saved; no current-user permission change was attempted.",
+			"hint":    "Inspect the import result and receipt before granting permissions. Task result: " + driveImportTaskResultCommand(runtime, status.Ticket),
+		}
+	}
+	return common.AutoGrantCurrentUserDrivePermission(runtime, status.Token, status.DocType)
 }

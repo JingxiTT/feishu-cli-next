@@ -212,7 +212,11 @@ func queryImportTaskAndAutoGrantPermission(runtime *common.RuntimeContext, ticke
 		"extra":            status.Extra,
 	}
 	if status.Ready() {
-		if grant := common.AutoGrantCurrentUserDrivePermission(runtime, status.Token, status.DocType); grant != nil {
+		// Recovery has no original create body to compare. Require the exact
+		// ticket's HTTP-200 native result to identify a supported target without
+		// a contradictory error before the existing bot auto-grant behavior.
+		verified := status.JobErrorMsg == "" && normalizeDriveImportKindForURL(status.DocType, "") == status.DocType && status.DocType != ""
+		if grant := driveImportPermissionGrant(runtime, status, verified); grant != nil {
 			result["permission_grant"] = grant
 		}
 	}

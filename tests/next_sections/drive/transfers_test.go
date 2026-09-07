@@ -73,10 +73,11 @@ func TestImportExportPreservesSourceAndAsyncRecovery(t *testing.T) {
 		t.Fatal(err)
 	}
 	importedResult := f.Run("drive", "+import", "--file", "source.md", "--type", "docx", "--as", "user")
-	// An accepted async task remains unknown at the transport receipt boundary,
-	// even when read-only polling observes completion. Never replay the import.
-	if importedResult.ExitCode != 22 || !strings.Contains(importedResult.Stdout, "doc1") || !strings.Contains(importedResult.Stdout, `"outcome":"unknown"`) {
-		t.Fatalf("async outcome lost: %+v", importedResult)
+	// Exact same-invocation task completion reconciles the accepted create;
+	// an acknowledgement alone must never authorize replay or completion.
+	successful(t, importedResult)
+	if !strings.Contains(importedResult.Stdout, `"outcome":"confirmed_applied"`) || !strings.Contains(importedResult.Stdout, `"ready":true`) {
+		t.Fatalf("completed import outcome lost: %+v", importedResult)
 	}
 	if tasks.Load() != 1 || !bytes.Equal(imported, markdown) {
 		t.Fatal("import bytes changed or task replayed")

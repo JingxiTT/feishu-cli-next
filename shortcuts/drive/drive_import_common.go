@@ -7,10 +7,13 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
+
+	larkcore "github.com/larksuite/oapi-sdk-go/v3/core"
 
 	"github.com/larksuite/cli/errs"
 	"github.com/larksuite/cli/internal/validate"
@@ -339,14 +342,15 @@ type driveImportStatus struct {
 	JobErrorMsg string
 	Extra       interface{}
 	JobStatus   int
+	nativeData  map[string]interface{}
 }
 
 func (s driveImportStatus) Ready() bool {
-	return s.Token != "" && s.JobStatus == 0
+	return strings.TrimSpace(s.Token) != "" && s.JobStatus == 0
 }
 
 func (s driveImportStatus) Pending() bool {
-	return s.JobStatus == 1 || s.JobStatus == 2 || (s.JobStatus == 0 && s.Token == "")
+	return s.JobStatus == 1 || s.JobStatus == 2 || (s.JobStatus == 0 && strings.TrimSpace(s.Token) == "")
 }
 
 func (s driveImportStatus) Failed() bool {
@@ -358,7 +362,7 @@ func (s driveImportStatus) StatusLabel() string {
 	case 0:
 		// Some responses report status=0 before the imported token is materialized.
 		// Treat that intermediate state as pending rather than completed.
-		if s.Token == "" {
+		if strings.TrimSpace(s.Token) == "" {
 			return "pending"
 		}
 		return "success"
@@ -399,37 +403,83 @@ func getDriveImportStatus(runtime *common.RuntimeContext, ticket string) (driveI
 		return driveImportStatus{}, errs.NewValidationError(errs.SubtypeInvalidArgument, "%s", err).WithParam("--ticket")
 	}
 
-	data, err := runtime.CallAPITyped(
-		"GET",
-		fmt.Sprintf("/open-apis/drive/v1/import_tasks/%s", validate.EncodePathSegment(ticket)),
-		nil,
-		nil,
-	)
+	apiPath := fmt.Sprintf("/open-apis/drive/v1/import_tasks/%s", validate.EncodePathSegment(ticket))
+	pollContext := common.WithDriveImportStatusRequest(runtime.Ctx(), apiPath)
+	response, err := runtime.DoAPIWithContext(pollContext, &larkcore.ApiReq{
+		HttpMethod: http.MethodGet,
+		ApiPath:    apiPath,
+	})
 	if err != nil {
 		return driveImportStatus{}, err
 	}
+	data, err := runtime.ClassifyAPIResponse(response)
+	if err != nil {
+		return driveImportStatus{}, err
+	}
+	if response.StatusCode != http.StatusOK {
+		return driveImportStatus{}, errs.NewInternalError(errs.SubtypeInvalidResponse, "import task completion requires a final HTTP 200 response")
+	}
 
-	return parseDriveImportStatus(ticket, data), nil
+	status, err := parseDriveImportStatus(ticket, data)
+	if err != nil {
+		return driveImportStatus{}, err
+	}
+	if status.Ready() {
+		// A terminal status can reconcile only an import created by this same
+		// invocation. The receipt owner checks actor, task, source and target
+		// evidence; a standalone recovery read cannot rewrite an older receipt.
+		if err := runtime.ReconcileDriveImport(ticket, data); err != nil {
+			return driveImportStatus{}, err
+		}
+	}
+	return status, nil
 }
 
 // parseDriveImportStatus accepts either the wrapped API response or an already
 // extracted result object to keep the helper easy to test.
-func parseDriveImportStatus(ticket string, data map[string]interface{}) driveImportStatus {
-	result := common.GetMap(data, "result")
-	if result == nil {
-		// Some tests and helper call sites already pass the unwrapped result body.
-		result = data
+func parseDriveImportStatus(ticket string, data map[string]interface{}) (driveImportStatus, error) {
+	result := data
+	if wrapped, present := data["result"]; present {
+		var valid bool
+		result, valid = wrapped.(map[string]interface{})
+		if !valid || result == nil {
+			return driveImportStatus{}, errs.NewInternalError(errs.SubtypeInvalidResponse, "import task result must be an object")
+		}
 	}
-
+	// Retain the helper's unwrapped-result compatibility, but never infer
+	// a successful terminal status from an omitted or malformed number.
+	var native struct {
+		Ticket      json.RawMessage `json:"ticket"`
+		DocType     string          `json:"type"`
+		Token       string          `json:"token"`
+		URL         string          `json:"url"`
+		JobErrorMsg json.RawMessage `json:"job_error_msg"`
+		Extra       interface{}     `json:"extra"`
+		JobStatus   *int            `json:"job_status"`
+	}
+	encoded, err := json.Marshal(result)
+	if err != nil || json.Unmarshal(encoded, &native) != nil || native.JobStatus == nil {
+		return driveImportStatus{}, errs.NewInternalError(errs.SubtypeInvalidResponse, "import task result requires an explicit integer job_status and typed result fields")
+	}
+	if len(native.Ticket) > 0 {
+		var echoed *string
+		if json.Unmarshal(native.Ticket, &echoed) != nil || echoed == nil || *echoed != ticket {
+			return driveImportStatus{}, errs.NewInternalError(errs.SubtypeInvalidResponse, "import task result ticket does not match the requested task")
+		}
+	}
+	jobErrorMsg := ""
+	if len(native.JobErrorMsg) > 0 {
+		var message *string
+		if json.Unmarshal(native.JobErrorMsg, &message) != nil || message == nil {
+			return driveImportStatus{}, errs.NewInternalError(errs.SubtypeInvalidResponse, "import task job_error_msg must be text when present")
+		}
+		jobErrorMsg = *message
+	}
 	return driveImportStatus{
-		Ticket:      ticket,
-		DocType:     common.GetString(result, "type"),
-		Token:       common.GetString(result, "token"),
-		URL:         common.GetString(result, "url"),
-		JobErrorMsg: common.GetString(result, "job_error_msg"),
-		Extra:       result["extra"],
-		JobStatus:   int(common.GetFloat(result, "job_status")),
-	}
+		Ticket: ticket, DocType: native.DocType, Token: native.Token,
+		URL: native.URL, JobErrorMsg: jobErrorMsg, Extra: native.Extra,
+		JobStatus: *native.JobStatus, nativeData: data,
+	}, nil
 }
 
 // driveImportPollSummary reports a poll run that needed retries. Transient
@@ -479,6 +529,12 @@ func pollDriveImportTask(runtime *common.RuntimeContext, ticket string) (driveIm
 		summary.Attempts = attempt
 		status, err := getDriveImportStatus(runtime, ticket)
 		if err != nil {
+			// A malformed or non-final response is not transient completion
+			// evidence. Keep the created task unknown and expose its recovery
+			// command instead of repeating an uninterpretable poll.
+			if problem, ok := errs.ProblemOf(err); ok && problem.Subtype == errs.SubtypeInvalidResponse {
+				return lastStatus, false, summary, err
+			}
 			lastErr = err
 			// Keep polling through transient failures; the count rides out on
 			// the result instead of on stderr.

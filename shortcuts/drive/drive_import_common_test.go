@@ -181,7 +181,7 @@ func TestValidateDriveImportFileSize(t *testing.T) {
 func TestParseDriveImportStatus(t *testing.T) {
 	t.Parallel()
 
-	status := parseDriveImportStatus("tk_123", map[string]interface{}{
+	status, err := parseDriveImportStatus("tk_123", map[string]interface{}{
 		"result": map[string]interface{}{
 			"type":          "sheet",
 			"job_status":    0,
@@ -192,6 +192,9 @@ func TestParseDriveImportStatus(t *testing.T) {
 		},
 	})
 
+	if err != nil {
+		t.Fatal(err)
+	}
 	if !status.Ready() {
 		t.Fatal("expected import status to be ready")
 	}
