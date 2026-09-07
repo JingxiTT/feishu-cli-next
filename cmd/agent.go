@@ -120,14 +120,11 @@ func validateAgentOutput(f *cmdutil.Factory, c *cobra.Command, opts *output.Agen
 		}
 		if opts.SaveResult != "" {
 			risk, _ := cmdmeta.Risk(c)
-			if c.Name() == "api" {
-				args := c.Flags().Args()
-				if len(args) > 0 && (strings.EqualFold(args[0], "GET") || strings.EqualFold(args[0], "HEAD")) {
-					risk = "read"
-				}
-			}
-			if !business || risk != "read" {
-				return errs.NewValidationError(errs.SubtypeInvalidArgument, "--save-result requires a declared read operation").WithParam("--save-result")
+			// Raw GET can issue credentials (for example API keys and Git PATs).
+			// Without an operation schema, resource tokens cannot safely be
+			// distinguished from secrets destined for persistent artifacts.
+			if !business || c.Name() == "api" || risk != "read" {
+				return errs.NewValidationError(errs.SubtypeInvalidArgument, "--save-result requires a declared, non-raw read operation").WithParam("--save-result")
 			}
 			opts.FileIO = f.ResolveFileIO(c.Context())
 		}

@@ -126,3 +126,18 @@ func TestAgentUpdateDoesNotUseUpstreamChannel(t *testing.T) {
 		}
 	}
 }
+
+func TestAgentRawReadCannotPersistCredentialArtifacts(t *testing.T) {
+	f, _, _, _ := cmdutil.TestFactory(t, nil)
+	for _, path := range []string{"/open-apis/apps/v1/apps/fixture/oapi_apikeys/fixture", "/open-apis/apps/v1/apps/fixture/git_info"} {
+		c := &cobra.Command{Use: "api"}
+		cmdutil.SetRisk(c, "read")
+		if err := c.ParseFlags([]string{"GET", path}); err != nil {
+			t.Fatal(err)
+		}
+		opts := output.AgentOptions{SaveResult: "credentials.json"}
+		if err := validateAgentOutput(f, c, &opts); err == nil {
+			t.Fatalf("raw credential artifact allowed: %s", path)
+		}
+	}
+}
