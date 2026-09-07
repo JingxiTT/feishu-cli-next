@@ -65,12 +65,32 @@ func callTool(
 	toolName string,
 	input map[string]interface{},
 ) (interface{}, error) {
-	body, err := buildToolBody(toolName, input)
-	if err != nil {
+	rawOutput, err := callToolOutput(ctx, runtime, token, kind, toolName, input)
+	if err != nil || rawOutput == "" {
 		return nil, err
 	}
+	var out interface{}
+	if err := json.Unmarshal([]byte(rawOutput), &out); err != nil {
+		return nil, errs.NewInternalError(errs.SubtypeInvalidResponse,
+			"tool %q returned invalid JSON output: %v", toolName, err).WithCause(err)
+	}
+	return out, nil
+}
 
-	data, err := runtime.CallAPITyped("POST", toolInvokePath(token, kind), nil, body)
+// callToolOutput retains the exact JSON text for consumers that need numeric
+// precision or explicit field presence. Error classification stays shared.
+func callToolOutput(ctx context.Context, runtime *common.RuntimeContext, token string, kind ToolKind, toolName string, input map[string]interface{}) (string, error) {
+	body, err := buildToolBody(toolName, input)
+	if err != nil {
+		return "", err
+	}
+
+	var data map[string]interface{}
+	if kind == ToolKindRead {
+		data, err = runtime.CallReadOnlyAPITyped("POST", toolInvokePath(token, kind), nil, body)
+	} else {
+		data, err = runtime.CallAPITyped("POST", toolInvokePath(token, kind), nil, body)
+	}
 	if err != nil {
 		// A classified business error (non-zero API code) carries the tool's
 		// own code and raw msg. Rewrite the typed error in place: the Message
@@ -95,19 +115,10 @@ func callTool(
 			}
 			p.Message = fmt.Sprintf("tool %q failed: [%d] %s", toolName, p.Code, flat)
 		}
-		return nil, err
+		return "", err
 	}
 	rawOutput, _ := data["output"].(string)
-	if rawOutput == "" {
-		return nil, nil
-	}
-
-	var out interface{}
-	if err := json.Unmarshal([]byte(rawOutput), &out); err != nil {
-		return nil, errs.NewInternalError(errs.SubtypeInvalidResponse,
-			"tool %q returned invalid JSON output: %v", toolName, err).WithCause(err)
-	}
-	return out, nil
+	return rawOutput, nil
 }
 
 // flattenToolErrorMsg unwraps the nested-escaped-JSON error payload some

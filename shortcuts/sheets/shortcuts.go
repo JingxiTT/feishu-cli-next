@@ -56,6 +56,9 @@ func withSpreadsheetTokenAlias(flags []common.Flag) []common.Flag {
 
 func shortcutList() []common.Shortcut {
 	return []common.Shortcut{
+		// Exact native-cell artifact workflows.
+		DataExport, DataImport,
+
 		// lark_sheet_workbook
 		WorkbookInfo,
 		RevisionGet,

@@ -6044,5 +6044,68 @@
         "default": "-1"
       }
     ]
+  },
+  "+data-export": {
+    "risk": "read",
+    "flags": [
+      {
+        "name": "spreadsheet-token",
+        "kind": "own",
+        "type": "string",
+        "required": "required",
+        "desc": "Spreadsheet token"
+      },
+      {
+        "name": "sheet-id",
+        "kind": "own",
+        "type": "string",
+        "required": "required",
+        "desc": "Stable sheet ID"
+      },
+      {
+        "name": "range",
+        "kind": "own",
+        "type": "string",
+        "required": "required",
+        "desc": "Explicit rectangular A1 range; completeness applies only to this extent"
+      }
+    ]
+  },
+  "+data-import": {
+    "risk": "write",
+    "flags": [
+      {
+        "name": "spreadsheet-token",
+        "kind": "own",
+        "type": "string",
+        "required": "required",
+        "desc": "Spreadsheet token"
+      },
+      {
+        "name": "sheet-id",
+        "kind": "own",
+        "type": "string",
+        "required": "required",
+        "desc": "Stable sheet ID"
+      },
+      {
+        "name": "range",
+        "kind": "own",
+        "type": "string",
+        "required": "required",
+        "desc": "Explicit rectangular A1 range; completeness applies only to this extent"
+      },
+      {
+        "name": "artifact",
+        "kind": "own",
+        "type": "string",
+        "required": "required",
+        "desc": "Complete bound native-cell result artifact",
+        "input": [
+          "file",
+          "stdin"
+        ]
+      }
+    ]
   }
 }

@@ -471,6 +471,23 @@ var flagDefs = map[string]commandDef{
 			{Name: "dry-run", Kind: "system", Type: "bool", Required: "optional"},
 		},
 	},
+	"+data-export": {
+		Risk: "read",
+		Flags: []flagDef{
+			{Name: "spreadsheet-token", Kind: "own", Type: "string", Required: "required", Desc: "Spreadsheet token"},
+			{Name: "sheet-id", Kind: "own", Type: "string", Required: "required", Desc: "Stable sheet ID"},
+			{Name: "range", Kind: "own", Type: "string", Required: "required", Desc: "Explicit rectangular A1 range; completeness applies only to this extent"},
+		},
+	},
+	"+data-import": {
+		Risk: "write",
+		Flags: []flagDef{
+			{Name: "spreadsheet-token", Kind: "own", Type: "string", Required: "required", Desc: "Spreadsheet token"},
+			{Name: "sheet-id", Kind: "own", Type: "string", Required: "required", Desc: "Stable sheet ID"},
+			{Name: "range", Kind: "own", Type: "string", Required: "required", Desc: "Explicit rectangular A1 range; completeness applies only to this extent"},
+			{Name: "artifact", Kind: "own", Type: "string", Required: "required", Desc: "Complete bound native-cell result artifact", Input: []string{"file", "stdin"}},
+		},
+	},
 	"+dim-delete": {
 		Risk: "high-risk-write",
 		Flags: []flagDef{
