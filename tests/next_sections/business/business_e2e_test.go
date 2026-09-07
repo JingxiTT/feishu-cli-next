@@ -76,6 +76,16 @@ func outcome(t *testing.T, r nextfixture.Result, want string) {
 	require.Contains(t, r.Stderr, `"outcome":"`+want+`"`, r.Stderr)
 }
 
+func businessRead(tc methodCase) bool {
+	return tc.method == "GET" || tc.command == "approval approvals search" || tc.command == "attendance user_tasks query"
+}
+func unknown(t *testing.T, r nextfixture.Result) {
+	t.Helper()
+	require.Equal(t, 22, r.ExitCode, "stdout=%s stderr=%s", r.Stdout, r.Stderr)
+	require.False(t, gjson.Get(r.Stdout, "ok").Bool())
+	outcome(t, r, "unknown")
+}
+
 func TestEveryBusinessMethodWireAndFileInput(t *testing.T) {
 	require.Len(t, methods, 17)
 	for _, tc := range methods {
@@ -112,7 +122,11 @@ func TestEveryBusinessMethodWireAndFileInput(t *testing.T) {
 						args[len(args)-1] = "@" + path
 					}
 					r := f.Run(args...)
-					success(t, r)
+					if tc.command == "mindnotes nodes create" {
+						unknown(t, r)
+					} else {
+						success(t, r)
+					}
 					require.Equal(t, int32(1), requests.Load())
 					require.Equal(t, identity, gjson.Get(r.Stdout, "identity").String())
 					require.Equal(t, "9007199254740993", gjson.Get(r.Stdout, "data.integer").Raw)
@@ -120,8 +134,10 @@ func TestEveryBusinessMethodWireAndFileInput(t *testing.T) {
 					require.Equal(t, "null", gjson.Get(r.Stdout, "data.nullable").Raw)
 					require.Equal(t, "false", gjson.Get(r.Stdout, "data.enabled").Raw)
 					require.Equal(t, "", gjson.Get(r.Stdout, "data.empty").String())
-					if tc.method == "POST" {
-						outcome(t, r, "confirmed_applied")
+					if !businessRead(tc) {
+						if tc.command != "mindnotes nodes create" {
+							outcome(t, r, "confirmed_applied")
+						}
 					} else {
 						require.NotContains(t, r.Stderr, `"mutation"`)
 					}
@@ -165,7 +181,7 @@ func TestEveryBusinessMethodIdentityPermissionAndUnknown(t *testing.T) {
 						require.Equal(t, int32(1), requests.Load(), "never replay mutations")
 					}
 					require.False(t, gjson.Get(r.Stdout, "ok").Bool(), r.Stdout)
-					if tc.method == "POST" {
+					if !businessRead(tc) {
 						if mode == "scope" {
 							require.Equal(t, 20, r.ExitCode)
 							outcome(t, r, "confirmed_unapplied")
@@ -430,8 +446,10 @@ func TestBusinessRawParamsOverlayAndPartialData(t *testing.T) {
 	require.NoError(t, os.WriteFile(path, []byte(`{"employee_type":"employee_no","ignore_invalid_users":true,"future_parameter":"raw retained"}`), 0600))
 	r := f.Run("attendance", "user_tasks", "query", "--as", "bot", "--params", "@"+path, "--employee-type", "employee_id", "--ignore-invalid-users=false", "--data", `{"user_ids":["0001","0002","0003"],"check_date_from":20260901,"check_date_to":20260907}`)
 	// Keep the actual backend partial-result fields visible. Frozen metadata
-	// declares a POST write; its receipt acknowledges the response, not coverage.
+	// declares write risk; the exact known read route bypasses mutation receipts.
 	success(t, r)
+	require.NotContains(t, r.Stderr, `"mutation"`)
+	require.False(t, gjson.Get(r.Stdout, "mutation").Exists())
 	require.Equal(t, int32(1), requests.Load())
 	require.Equal(t, "0002", gjson.Get(r.Stdout, "data.invalid_user_ids.0").String())
 	require.Equal(t, "0003", gjson.Get(r.Stdout, "data.unauthorized_user_ids.0").String())
@@ -474,7 +492,7 @@ func TestMindnoteRichContentReadbackAndExplicitReplay(t *testing.T) {
 	}))
 	for i := 0; i < 2; i++ {
 		r := f.Run(argsFor(tc, "user")...)
-		success(t, r)
+		unknown(t, r)
 		require.False(t, gjson.Get(r.Stdout, "data.unchanged").Bool(), "no fabricated CLI no-op proof")
 	}
 	require.Equal(t, int32(2), writes.Load(), "explicit replay is two requests; idempotency belongs to backend")
@@ -594,6 +612,91 @@ func TestApprovalCreateActionReadbackPreservesFormAndHistory(t *testing.T) {
 			require.Equal(t, "9007199254740993", gjson.Get(read.Stdout, "data.comments.0.files.0.file_size").Raw)
 			require.Equal(t, "0000123", gjson.Get(read.Stdout, "data.serial_number").String())
 			require.Equal(t, int32(2), mutations.Load(), "readback does not mutate")
+		})
+	}
+}
+
+func TestMindnoteCreatedIDCompletenessAndUpdateUncertainty(t *testing.T) {
+	creates := `{"client_token":"create-fixture","nodes":[{"parent_id":"root_fixture","texts":[{"element_type":"text","text":{"content":"一"}}]},{"parent_id":"root_fixture","texts":[{"element_type":"text","text":{"content":"二"}}]}]}`
+	for _, tc := range []struct {
+		name, body, response string
+		applied              bool
+	}{
+		{"complete creates", creates, `{"ids":["created_one","created_two"],"client_token":"create-fixture"}`, true},
+		{"missing IDs", creates, `{"client_token":"create-fixture"}`, false},
+		{"short IDs", creates, `{"ids":["created_one"]}`, false},
+		{"duplicate IDs", creates, `{"ids":["created_one","created_one"]}`, false},
+		{"empty ID", creates, `{"ids":["created_one",""]}`, false},
+		{"extra IDs", creates, `{"ids":["created_one","created_two","unrelated"]}`, false},
+		{"wrong ID type", creates, `{"ids":["created_one",123]}`, false},
+		{"update matching ID", `{"nodes":[{"node_id":"node_existing","finish":false}]}`, `{"ids":["node_existing"]}`, false},
+		{"update unrelated ID", `{"nodes":[{"node_id":"node_existing","finish":false}]}`, `{"ids":["unrelated"]}`, false},
+		{"mixed creates updates", `{"nodes":[{"node_id":"node_existing","finish":false},{"parent_id":"root_fixture"}]}`, `{"ids":["node_existing","created_one"]}`, false},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			var writes atomic.Int32
+			f := nextfixture.NewFixture(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				require.Equal(t, "POST", r.Method)
+				require.Equal(t, "/open-apis/mindnote/v1/mindnotes/mind_fixture/nodes", r.URL.Path)
+				body, err := io.ReadAll(r.Body)
+				require.NoError(t, err)
+				require.JSONEq(t, tc.body, string(body))
+				writes.Add(1)
+				reply(w, `{"code":0,"data":`+tc.response+`}`)
+			}))
+			r := f.Run("mindnotes", "nodes", "create", "--mindnote-id", "mind_fixture", "--as", "user", "--data", tc.body)
+			if tc.applied {
+				success(t, r)
+				outcome(t, r, "confirmed_applied")
+			} else {
+				unknown(t, r)
+			}
+			require.JSONEq(t, tc.response, gjson.Get(r.Stdout, "data").Raw, "retain full observed evidence")
+			require.Equal(t, int32(1), writes.Load(), "never infer safe duplicate replay")
+		})
+	}
+}
+
+func TestApprovalMissingOrRepeatedContinuationFails(t *testing.T) {
+	for _, operation := range []struct {
+		resource, method, path, collection string
+		extra                              []string
+	}{
+		{"instances", "initiated", "/open-apis/approval/v4/instances/initiated", "instances", nil},
+		{"tasks", "query", "/open-apis/approval/v4/tasks", "tasks", []string{"--topic", "1"}},
+	} {
+		t.Run(operation.resource, func(t *testing.T) {
+			for _, mode := range []string{"missing", "repeated"} {
+				t.Run(mode, func(t *testing.T) {
+					var pages atomic.Int32
+					f := nextfixture.NewFixture(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+						require.Equal(t, operation.path, r.URL.Path)
+						n := pages.Add(1)
+						require.LessOrEqual(t, n, int32(2), "must stop a cyclic cursor before replaying again")
+						token := ""
+						if mode == "repeated" {
+							token = `,"page_token":"cycle"`
+						}
+						if n == 2 {
+							require.Equal(t, "cycle", r.URL.Query().Get("page_token"))
+						}
+						reply(w, `{"code":0,"data":{"`+operation.collection+`":[{"instance_code":"first"}],"has_more":true`+token+`}}`)
+					}))
+					path := filepath.Join(f.WorkDir, "incomplete.json")
+					args := []string{"approval", operation.resource, operation.method, "--as", "user", "--page-all", "--page-delay", "0", "--save-result", path}
+					r := f.Run(append(args, operation.extra...)...)
+					require.Equal(t, 5, r.ExitCode, "stdout=%s stderr=%s", r.Stdout, r.Stderr)
+					require.Contains(t, r.Stderr, "invalid_response")
+					require.Empty(t, r.Stdout)
+					wantPages := int32(1)
+					if mode == "repeated" {
+						wantPages = 2
+					}
+					require.Equal(t, wantPages, pages.Load())
+					_, err := os.Stat(path)
+					require.True(t, os.IsNotExist(err))
+				})
+			}
 		})
 	}
 }

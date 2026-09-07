@@ -1,8 +1,8 @@
 # Generated business API section
 
-Status: offline section boundary failed on an exposed shared pagination defect;
-live verification and comparative agent trials remain blocked/pending. This
-section is not release accepted.
+Status: the complete offline section boundary passes. Live verification and
+comparative agent trials remain blocked/pending; this section is not release
+accepted.
 
 ## Scope and ownership
 
@@ -67,7 +67,10 @@ All eight help routes and discovery reachability of all 17 leaves are executed.
   create accept both bot and user; mindnotes list accepts user only. Process
   tests reject unsupported bot identities before business dispatch.
 - Frozen approval search and attendance query risks are `write`, despite being
-  query operations; this section preserves the advertised risk. Approval's nine
+  query operations; the advertised risk remains unchanged. The shared service
+  runtime marks only those exact generated requests read-only, so they produce
+  no mutation receipts. Arbitrary raw API POST calls retain conservative
+  mutation classification. Approval's nine
   high-risk operations require `--yes`, including cancellation, cc, initiation,
   signing, approval, rejection, reminder, rollback, and transfer.
 - All bodies remain schema-guided JSON through `--data`, including `@file`.
@@ -84,11 +87,17 @@ All eight help routes and discovery reachability of all 17 leaves are executed.
 - Read artifacts preserve full nested content, escaped forms, identity, and
   continuation despite projected stdout. Large numeric results, leading-zero
   strings, null, empty strings, false, and Unicode are distinct.
-- Lost POST responses and arbitrary domain errors are unknown, exit 22, with
-  one observed request and no automatic replay. Scope rejection is confirmed
-  unapplied, exit 20. GET transport may reconnect once after a lost response;
-  this inherited read behavior never creates a mutation receipt.
-- Identical mindnote create/update input is still an explicit request. The CLI
+- Lost mutating POST responses and arbitrary domain errors are unknown, exit
+  22, with one observed request and no automatic replay. Mutation scope rejection
+  is confirmed unapplied, exit 20. GET transport may reconnect once after a lost
+  response. GETs and the two domain-known generated POST reads retain typed read
+  errors without mutation receipts.
+- Mindnote pure-create acknowledgement requires one unique nonempty created ID
+  for every requested node and no unrecognized response fields. Missing, short,
+  duplicate, empty, extra, or wrongly typed IDs remain unknown. Requests with
+  any existing `node_id` remain unknown even when IDs appear complete: the
+  response describes created nodes and cannot establish update coverage.
+  Identical mindnote create/update input is still an explicit request. The CLI
   does not claim a no-op or concurrency guarantee. `client_token` and approval
   `uuid` are preserved; fixture readback is not proof of backend idempotency,
   atomicity, collision behavior, notification delivery, or conditional writes.
@@ -105,30 +114,39 @@ paths, methods, query values and request bodies. They never forward requests.
 The test parent uses `scripts/next_test.py`'s `isolated_env`, excludes personal
 credentials, and sets an unreachable external proxy. All fixture data is synthetic.
 
-Full section commands (once coordinator runner registration is present):
+Full section commands:
 
 ```sh
 python3 scripts/next_test.py --section business --suite all --report .tmp/next-tests/business.json
 python3 scripts/next_test.py --section business --suite live --allow-live --report .tmp/next-tests/business-live.json
 ```
 
-Current execution (2026-09-07): used `scripts/next_test.py.isolated_env` and
-`run_command` directly while the coordinator registers the new section label.
-The authsidecar build is performed by `TestMain` for the process suite.
+Current complete section execution (2026-09-07): canonical runner registration
+`6226e3c`, shared receipt/read-marker correction `041a9cd`, and the coordinator's
+pagination correction in the shared working tree. The authsidecar build is
+performed by `TestMain` for the process suite.
 
 | Isolated command | Result |
 | --- | --- |
-| `go test -json -count=1 -timeout=10m ./cmd/service/... ./internal/apicatalog/... ./internal/schema/... ./internal/client/... ./internal/nextattempt/...` | PASS: 392 test/subtest pass records, zero fails/skips |
-| `go test -json -count=1 -timeout=10m ./tests/next_sections/business` | FAIL: 161 pass records, seven fail records (four later-page regression cases plus their parents), 17 blocked live skips |
+| `python3 scripts/next_test.py --section business --suite all --report .tmp/next-tests/business.json` | PASS: shared units 500 pass records, zero failures, one skip; process suite 186 pass records, zero failures, 17 blocked live skips |
+| `python3 scripts/next_test.py --section business --suite live --allow-live --report .tmp/next-tests/business-live.json` | BLOCKED, exit 2: no verified authorized fixture harness |
 
-Machine-readable command output is in
-`.tmp/next-tests/business-unit-development.json` and
-`.tmp/next-tests/business-development.json`. Failure cases are
-`TestApprovalPageFailureDoesNotClaimComplete/{instances,tasks}/{scope,lost_response}`.
-All other written process tests pass, including independent approval lifecycle
-readback, exact body/form preservation, nested attachment sizes, and mindnote
-readback. The shared generic unit selection includes inherited reference
-regressions; no legacy domain E2E package exists for these three services.
+The unit package set is `cmd/service`, `internal/apicatalog`, `internal/registry`,
+`internal/schema`, `internal/client`, and `internal/nextattempt`. Registry's
+`TestColdStart_NoEmbedded_SyncFetch` skips because the canonical embedded catalog
+is present; the no-embedded build scenario is not passing evidence from this run.
+The 17 process skips are exactly the named `TestBusinessLive/<method>` cases.
+They are not passing live evidence. Go counts include parent tests and subtests,
+not only independent scenarios.
+
+Machine-readable full command output is in `.tmp/next-tests/business.json` and
+`.tmp/next-tests/business-live.json`. All four later-page faults and all four
+missing/repeated continuation cases now pass without saving successful artifacts.
+Ten mindnote completeness/update uncertainty cases pass. Independent approval
+create→approve/reject/cancel→readback retains exact forms, history, comments,
+leading-zero identifiers, and a 64-bit attachment size. The shared generic unit
+selection includes inherited reference regressions; no legacy domain E2E package
+exists for these three services.
 No product source was changed by this section; broader root CI/static checks
 and comparative evaluations remain coordinator-owned and were not run here.
 
@@ -136,22 +154,20 @@ The live selector is deliberately blocked until authorized fixtures exist.
 `TestBusinessLive` contains a separately named blocked scenario for each of the
 17 leaves and never accesses personal configuration. These skips are not passes.
 
-## Shared findings under coordination
+## Shared corrections verified offline
 
-The new `TestApprovalPageFailureDoesNotClaimComplete` exposes an inherited
-pagination defect: a later API error is merged with the first successful page
-and exits zero; later transport failure is also swallowed. The merged response
-can falsely clear `has_more` and save a successful artifact. Both approval list
-methods have failing process regressions covering later scope rejection and
-lost response. The coordinator owns the fix in `internal/client`; the section
-must rerun these before recording an offline pass.
+The coordinator fixed generic pagination so later API/transport failures return
+nonzero typed errors instead of a merged success. The business suite checks both
+approval list methods for later scope rejection and lost response, with no
+successful result artifact. Missing and cyclic continuation tokens also return
+`internal/invalid_response` and stop before another cyclic request.
 
-Mindnote create/update response `ids` describes created nodes and does not prove
-all mixed create/update items applied. A naive requested-node count would be
-incorrect. The coordinator is reviewing conservative endpoint receipt evidence.
-Attendance's native partial-user arrays likewise require careful interpretation
-under the inherited write-risk classification. No domain-specific applied-item
-count is inferred here.
+The shared receipt owner implemented conservative mindnote created-ID evidence
+and exact read-only markers for generated attendance query and approval search.
+The business suite preserves native partial attendance arrays and separately
+checks ten mindnote response completeness/update uncertainty cases. It does not
+infer applied item counts for mixed updates or employee coverage from an API
+success envelope.
 
 ## Outstanding acceptance
 
