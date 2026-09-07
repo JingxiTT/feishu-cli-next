@@ -74,9 +74,9 @@ def generate(root, revision, review_dir):
         for entry in archive:
             if entry.isfile():
                 hashes[entry.name] = digest(archive.extractfile(entry).read())
-    assignments = json.loads((root / "docs/reference/p3-review-assignments.json").read_text())
+    assignments = json.loads((root / "docs/reference/p3-review-assignments.json").read_text(encoding="utf-8"))
     initial = {p["path"]: {"assignment": a["id"], **p} for a in assignments["assignments"] for p in a["paths"]}
-    frozen = json.loads((root / "docs/reference/sources.json").read_text())
+    frozen = json.loads((root / "docs/reference/sources.json").read_text(encoding="utf-8"))
     changed_reference = {p for p, h in frozen["files"].items() if hashes.get(p) != h}
     new_runtime = {p for p in hashes if p not in frozen["files"] and p.endswith(".go") and not p.endswith("_test.go") and p.startswith(("cmd/", "internal/", "shortcuts/", "errs/"))}
     later = set(git("diff", "--name-only", assignments["checkpoint"], revision).decode().splitlines())
@@ -122,7 +122,7 @@ def main():
     args = parser.parse_args()
     root = args.target.resolve()
     report = generate(root, args.revision, root / "docs/reference/reviews")
-    args.out.write_text(json.dumps(report, ensure_ascii=False, sort_keys=True, indent=2) + "\n")
+    args.out.write_text(json.dumps(report, ensure_ascii=False, sort_keys=True, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(report["counts"], sort_keys=True))
     return 1 if report["invalid_review_hashes"] else 0
 

@@ -77,7 +77,7 @@ def source_inventory(root):
 
 def exporter_source(surface):
     """Select the real distribution surface without importing next into upstream."""
-    source = EXPORTER.read_text()
+    source = EXPORTER.read_text(encoding='utf-8')
     if surface == 'legacy':
         return source
     if surface != 'next':
@@ -99,7 +99,7 @@ def export(root, metadata, brand, surface='legacy'):
                 target = work / name
                 target.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copyfile(source, target)
-        (work / 'scripts/next_inventory_export.go').write_text(exporter_source(surface))
+        (work / 'scripts/next_inventory_export.go').write_text(exporter_source(surface), encoding='utf-8')
         (work / 'internal/registry/meta_data.json').write_bytes(metadata)
         env = {k: v for k, v in os.environ.items() if not k.startswith(('LARKSUITE_CLI_', 'FEISHU_'))}
         env.update(LARKSUITE_CLI_CONFIG_DIR=str(Path(temporary) / 'config'),
