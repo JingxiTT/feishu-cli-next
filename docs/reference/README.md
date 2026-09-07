@@ -80,7 +80,15 @@ commands/root flags, and lists additions separately from compatibility failures.
 required, and 2 for execution/input errors. Its JSON report distinguishes missing
 contracts, changed contracts, missing source, and changed source needing review.
 It allows new dictionary entries but reports changed existing contracts. Arrays
-are compared exactly, including enum options and aliases. It does not whitelist
+are compared exactly, including enum options and aliases. The report also records tracked-tree SHA-256 fingerprints, revisions and dirty
+scope before and after each brand export. A concurrent tracked-file change is
+reported as `tracked_source_changed_during_check`; it must not be presented as
+one stable snapshot. Untracked paths are visible in dirty scope but are not
+compiled: commit new implementation files before final reconciliation. Explicit
+presence fields distinguish removed commands, shortcuts, event keys and flags
+from additions, and include exact changed existing flag contracts.
+
+It does not whitelist
 an implementation change automatically. Section owners must explain intentional
 changes and attach relevant tests; source equality is only a conservative
 starting point for review. The candidate registration comparison always compiles

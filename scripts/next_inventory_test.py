@@ -86,6 +86,12 @@ class InventoryTests(unittest.TestCase):
                 self.assertIn('/feishu/commands//flags/result-fields', result['additions'])
                 self.assertIn('/feishu/commands/guide', result['additions'])
                 self.assertEqual(inventory.check(root, root, 'legacy')['status'], 'pass')
+                states = [{'revision': 'fixture-revision', 'tracked_tree_sha256': value}
+                          for value in ('before', 'before', 'after', 'after')]
+                with mock.patch.object(inventory, 'repository_state', side_effect=states):
+                    changed = inventory.check(root, root, 'legacy')
+                self.assertFalse(changed['tracked_source_consistent'])
+                self.assertIn({'path': '/', 'kind': 'tracked_source_changed_during_check'}, changed['differences'])
 
     def test_check_cli_defaults_next_and_reports_explicit_legacy(self):
         for arguments, surface in (([], 'next'), (['--surface', 'legacy'], 'legacy')):
@@ -93,6 +99,36 @@ class InventoryTests(unittest.TestCase):
                 with mock.patch('builtins.print'):
                     self.assertEqual(inventory.main(['check', *arguments]), 0)
                 self.assertEqual(check.call_args.args[-1], surface)
+
+    def test_repository_state_records_dirty_tracked_bytes(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / 'source.go').write_text('before')
+            def fake_git(root, *args):
+                if args == ('ls-files', '-z'):
+                    return 'source.go'
+                if args == ('status', '--porcelain=v1'):
+                    return ' M source.go\n?? new.go'
+                return 'fixture-revision'
+            with mock.patch.object(inventory, 'git', side_effect=fake_git):
+                before = inventory.repository_state(root)
+                (root / 'source.go').write_text('after')
+                after = inventory.repository_state(root)
+            self.assertEqual(before['revision'], after['revision'])
+            self.assertNotEqual(before['tracked_tree_sha256'], after['tracked_tree_sha256'])
+            self.assertIn('?? new.go', after['local_changes'])
+
+    def test_presence_does_not_confuse_added_flags_with_preserved_types(self):
+        before = {'commands': {'api': {'flags': {'count': {'type': 'int'}}}},
+                  'shortcuts': {'domain +operation': {}}, 'events': {'event.key': {}}}
+        after = {'commands': {'api': {'flags': {'count': {'type': 'string'}, 'extra': {}}}},
+                 'shortcuts': {}, 'events': {}}
+        result = inventory.presence(before, after)
+        self.assertTrue(result['raw_api_present'])
+        self.assertEqual(result['missing_commands'], [])
+        self.assertEqual(result['missing_shortcuts'], ['domain +operation'])
+        self.assertEqual(result['missing_event_keys'], ['event.key'])
+        self.assertEqual(result['changed_existing_flags'][0]['flag'], 'count')
 
     def test_process_reports_bad_metadata_to_stderr_with_exit_two(self):
         with tempfile.TemporaryDirectory() as temporary:
