@@ -134,10 +134,13 @@ E2E/harness pass events and 57 skips across all 23 section suites and supporting
 checks. The script gate also passes, including 166 Node tests. These runs used
 the existing Linux aarch64 VM with no external network access or host mounts.
 Independent recount verifies the suite totals and twelve evidence-report hashes.
-Initial setup failures remain recorded. The original capability gate still fails
+Initial setup failures remain recorded. The original capability gate failed
 because its Darwin reference differs on two platform-specific keychain risk
-fields. An actual Linux reference capture confirms exactly those two differences;
-the platform selector correction and its capability-only follow-up remain pending.
+fields. An actual Linux reference capture confirms exactly those two differences.
+The independently reviewed platform correction in `cb3a750` passes its actual
+Linux CLI follow-up with all 5,742 approved differences and no new exceptions.
+Four closure-artifact hashes and unchanged product source/binary were independently
+verified. The original failed report and separate semantic-review requirement remain.
 
 [Packaging evidence](sections/packaging-evidence.json) covers all 14 cross-built
 platform/variant archives, local installation/update/removal, and actual Node 16
@@ -153,9 +156,11 @@ unverified or unavailable. Local evidence does not establish public release read
 P2 domain acceptance, verified private live fixtures,
 remaining development comparisons and provider-token scaling measurements,
 remaining OS-specific and remote lifecycle checks, full release checks and held-out
-evaluation remain open. The [source review aggregate](reference/p3-effective-review-final.json)
+evaluation remain open. The [source review aggregate](reference/p3-effective-review-current.json)
 records exact-hash offline approvals for all runtime/build paths; it grants no
-live or release acceptance. The concrete cross-section workflow audit and 18-event
+live or release acceptance. Its `cb3a750` checkpoint includes the platform guard
+correction; the [earlier aggregate](reference/p3-effective-review-final.json)
+retains the `8ce0688` boundary. The concrete cross-section workflow audit and 18-event
 transfer/binding follow-up close the previously identified offline composition
 gap; they do not establish live guarantees. Completed offline transfer and local
 packaging checks remain milestones. Blocked or unverified checks remain
@@ -166,6 +171,6 @@ complete goal.
 | --- | --- |
 | Private live fixtures | Verify current-account and tenant binding plus account-only creation visibility before writing; run the owning live suites and clean up only their resources. |
 | Contact bot search | Current-user authorization for `search:bot`, followed by the failed live scenario and bot binding checks. |
-| OS-specific runtime coverage | Finish the Linux capability comparison against its captured platform reference; Linux runtime suites already ran. Execute the retained Windows behavior checks on an appropriate OS runner or VM; cross-built archives do not substitute. Darwin/amd64 smoke checks already ran under Rosetta. Additional gaps must name the unverified scenario, not require physical hardware absent from PLAN. |
+| OS-specific runtime coverage | Linux runtime suites and platform capability comparison pass; delivered Linux archive lifecycle verification is a separate follow-up. Execute the retained Windows behavior checks and native reference capture on an appropriate OS runner or VM; cross-built archives do not substitute. Darwin/amd64 smoke checks already ran under Rosetta. Additional gaps must name the unverified scenario, not require physical hardware absent from PLAN. |
 | Remote release ownership | An owned Next repository/download destination and package identity, then the documented updater identity integration and remote install/update checks. Public signing/notarization and publication retain their separate prerequisites. |
 | Comparative release evidence | Finish the serialized development/scaling comparisons, review their tradeoffs, and perform independently replaced held-out tasks only at the final release gate. |

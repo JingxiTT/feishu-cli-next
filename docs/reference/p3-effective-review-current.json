@@ -1,27 +1,49 @@
 {
-  "candidate_revision": "72fc5e4467494e158216de16b6d3e451a31d0757",
+  "candidate_revision": "cb3a7500f62c53ecb9b1bd893d4953d9652b3e54",
   "counts": {
-    "additional_scope": 153,
+    "additional_scope": 230,
     "all_effective_status": {
-      "recorded_approval_at_current_hash": 244,
-      "unreviewed": 122
+      "changed_after_review": 2,
+      "recorded_approval_at_current_hash": 253,
+      "unreviewed": 188
     },
-    "candidate_changed_reference_paths": 192,
-    "candidate_new_runtime_go_paths": 36,
+    "candidate_changed_reference_paths": 196,
+    "candidate_new_runtime_go_paths": 39,
     "initial_effective_status": {
       "recorded_approval_at_current_hash": 213
     },
     "initial_paths": 213,
-    "total_in_scope": 366
+    "total_in_scope": 443
   },
   "excluded_inventory_evidence": [
+    "docs/reference/BRANDS.md",
+    "docs/reference/CI.md",
     "docs/reference/P3.md",
+    "docs/reference/README.md",
+    "docs/reference/ci-capability-checkpoint.json.gz",
+    "docs/reference/ci-capability-linux-checkpoint.json.gz",
+    "docs/reference/configured-brand-context-linux.json",
+    "docs/reference/configured-brand-context.json",
+    "docs/reference/configured-brand-linux-evidence.json",
+    "docs/reference/configured-brand-platforms.json",
+    "docs/reference/configured-brand-registrations-linux.json.gz",
+    "docs/reference/configured-brand-registrations.json.gz",
+    "docs/reference/next-interface-mapping.json.gz",
     "docs/reference/p3-cross-section-coverage.json",
+    "docs/reference/p3-cross-section-follow-up.json",
     "docs/reference/p3-effective-review-coverage.json",
+    "docs/reference/p3-effective-review-current.json",
+    "docs/reference/p3-effective-review-final.json",
+    "docs/reference/p3-next-post-mail-reconciliation.json",
     "docs/reference/p3-next-reconciliation.json",
+    "docs/reference/p3-post-mail-interface-mapping.json",
     "docs/reference/p3-review-assignments.json",
     "docs/reference/p3-source-follow-up.json",
     "docs/reference/p3-source-review.json",
+    "docs/reference/reviews/p3-capability-guard-review.json",
+    "docs/reference/reviews/p3-ci-cleanup-report-follow-up.json",
+    "docs/reference/reviews/p3-ci-cleanup-report-review.json",
+    "docs/reference/reviews/p3-ci-portability-follow-up.json",
     "docs/reference/reviews/p3-ci-portability-review.json",
     "docs/reference/reviews/p3-command-follow-up.json",
     "docs/reference/reviews/p3-command-review.json",
@@ -29,6 +51,8 @@
     "docs/reference/reviews/p3-docs-drive-review.json",
     "docs/reference/reviews/p3-domain-followup-review.json",
     "docs/reference/reviews/p3-domain-review.json",
+    "docs/reference/reviews/p3-drive-import-nilerr-review.json",
+    "docs/reference/reviews/p3-drive-import-receipt-review.json",
     "docs/reference/reviews/p3-foundation-follow-up.json",
     "docs/reference/reviews/p3-foundation-helper-review.json",
     "docs/reference/reviews/p3-foundation-review.json",
@@ -36,6 +60,7 @@
     "docs/reference/reviews/p3-mail-native-read-review.json",
     "docs/reference/reviews/p3-minutes-task-review.json",
     "docs/reference/reviews/p3-packaging-skill-review.json",
+    "docs/reference/reviews/p3-review-join-review.json",
     "docs/reference/reviews/p3-shortcut-registration-review.json"
   ],
   "initial_assignment_checkpoint": "0084501742edb1ee87bdf9623adf7da37267f142",
@@ -50,13 +75,64 @@
   "paths": [
     {
       "additional_scope": true,
-      "candidate_sha256": "be90e82e603065ff7736df3bd20b201eb15cb11f8a304b67edde6fa47a265736",
+      "candidate_sha256": "ffa9de0a5e4e0fb3f9f687e39920f963d5d796ad15bd4a489e5ba7ab91da3ac9",
       "category": "build_distribution",
       "effective_status": "recorded_approval_at_current_hash",
       "initial_assignment": null,
       "path": ".github/workflows/next-offline.yml",
       "reference_sha256": null,
       "review_history": [
+        {
+          "assignment_id": "ci_capability_guard",
+          "findings": [],
+          "hash_verified": true,
+          "pointer": "/assignments/0/paths/5",
+          "report": "docs/reference/reviews/p3-capability-guard-review.json",
+          "review_revision": "4b56e1a63bbe136ced28037113a7123e95d12d35",
+          "review_scope": "Whole latest workflow read, with focused new capability stage review: actual gate runs after successful prerequisites on all three matrix OSes; no continue-on-error or shell suppression; always summary retains stage outcome and uploaded folder includes report when written. Existing offline suite gates remain required.",
+          "review_sha256": "ffa9de0a5e4e0fb3f9f687e39920f963d5d796ad15bd4a489e5ba7ab91da3ac9",
+          "reviewer": "/root/foundation_skill",
+          "verdict": "approved_offline"
+        },
+        {
+          "assignment_id": "ci_portability_follow_up",
+          "findings": [
+            {
+              "closure_kind": "unchanged_hash_runner_dependency",
+              "id": "CI4",
+              "status": "closed_at_review_revision"
+            }
+          ],
+          "hash_verified": true,
+          "pointer": "/assignments/0/paths/2",
+          "prior_review_revision": "72fc5e4467494e158216de16b6d3e451a31d0757",
+          "prior_review_sha256": "be90e82e603065ff7736df3bd20b201eb15cb11f8a304b67edde6fa47a265736",
+          "report": "docs/reference/reviews/p3-ci-cleanup-report-follow-up.json",
+          "review_revision": "2dcd561c987179e5ee36d2aab803be0dc81eddef",
+          "review_scope": "Unchanged workflow dependency closure only: corrected runner now publishes completed command reports after handled environment teardown errors when report destination is writable. No native CI execution claim.",
+          "review_sha256": "be90e82e603065ff7736df3bd20b201eb15cb11f8a304b67edde6fa47a265736",
+          "reviewer": "/root/foundation_skill",
+          "verdict": "approved_offline"
+        },
+        {
+          "assignment_id": "ci_portability_follow_up",
+          "findings": [
+            {
+              "dependency": "scripts/next_test.py",
+              "id": "CI4",
+              "impact": "Always-uploaded machine reports can be missing after the dependent runner exits during environment teardown.",
+              "status": "open"
+            }
+          ],
+          "hash_verified": true,
+          "pointer": "/assignments/0/paths/1",
+          "report": "docs/reference/reviews/p3-ci-cleanup-report-review.json",
+          "review_revision": "72fc5e4467494e158216de16b6d3e451a31d0757",
+          "review_scope": "Additional CI4 teardown/report-publication finding only. Prior CI1/CI2/CI3 closure remains intact. No other previously approved source behavior is reopened.",
+          "review_sha256": "be90e82e603065ff7736df3bd20b201eb15cb11f8a304b67edde6fa47a265736",
+          "reviewer": "/root/foundation_skill",
+          "verdict": "changes_requested"
+        },
         {
           "assignment_id": "ci_portability_follow_up",
           "findings": [
@@ -204,6 +280,26 @@
           "verdict": "approved_offline"
         }
       ]
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "8e1188b256f9c15909a0082d2781f5709e01c6a8ade66d5c97ebfb6c8ffbd44a",
+      "category": "documentation_evidence",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "README.md",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "c0de66cb47e62ca389a691ca7c9549d68e262702cb692d45dd2a5965779c9f1b",
+      "category": "documentation_evidence",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "agent-skills/feishu-cli-next/SKILL.md",
+      "reference_sha256": null,
+      "review_history": []
     },
     {
       "additional_scope": false,
@@ -698,7 +794,7 @@
     },
     {
       "additional_scope": true,
-      "candidate_sha256": "042f3bbd23793d57fbd5023cf365884b24dad51d99b2b66a9a0b2bf470f5e5b7",
+      "candidate_sha256": "729b607d3728ab124b1d9ffa86b5bc81a4528db1508db741a86746c78614d1a6",
       "category": "documentation_evidence",
       "effective_status": "unreviewed",
       "initial_assignment": null,
@@ -728,9 +824,9 @@
     },
     {
       "additional_scope": true,
-      "candidate_sha256": "4871f753eab094baa280ec2c418fc2fb9a1340f8dda74122c037ed7c91bcc614",
+      "candidate_sha256": "24fafccea054d27c1e117e9e782d7f0c376bc06684182d2dc42f7d9305505f44",
       "category": "documentation_evidence",
-      "effective_status": "recorded_approval_at_current_hash",
+      "effective_status": "changed_after_review",
       "initial_assignment": null,
       "path": "docs/contracts/receipts.md",
       "reference_sha256": null,
@@ -754,6 +850,16 @@
       "effective_status": "unreviewed",
       "initial_assignment": null,
       "path": "docs/contracts/skill.md",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "eac615f258e35562443a43cb1314be5615b9fd89029649346c7e96b486be2558",
+      "category": "documentation_evidence",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "docs/distribution.md",
       "reference_sha256": null,
       "review_history": []
     },
@@ -849,9 +955,9 @@
     },
     {
       "additional_scope": true,
-      "candidate_sha256": "fd0abb04bcd133f1c188c31d835c525e9aa7f25584ac977baa254751039b6db1",
+      "candidate_sha256": "b885b3a81d9b62428a04ca44f41b3dc7551b153fe3dc08b9455276a95dbf25b0",
       "category": "documentation_evidence",
-      "effective_status": "recorded_approval_at_current_hash",
+      "effective_status": "changed_after_review",
       "initial_assignment": null,
       "path": "docs/sections/drive.md",
       "reference_sha256": null,
@@ -877,6 +983,16 @@
       "effective_status": "unreviewed",
       "initial_assignment": null,
       "path": "docs/sections/im.md",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "6fa29e1c23b7871b4590c29c3aa225b0a6e46045d2f42526cfebda46f29bab92",
+      "category": "documentation_evidence",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "docs/sections/linux-runtime-evidence.json",
       "reference_sha256": null,
       "review_history": []
     },
@@ -948,7 +1064,7 @@
     },
     {
       "additional_scope": true,
-      "candidate_sha256": "3d4b353686442da1ad0aea5cb35ab30d5bc68b464f9326facacab00c2a1fb547",
+      "candidate_sha256": "3544a06413455eb4668b9175dda56a6d5e22a0f6033af6bfe6c420ad3edfc488",
       "category": "documentation_evidence",
       "effective_status": "unreviewed",
       "initial_assignment": null,
@@ -958,7 +1074,7 @@
     },
     {
       "additional_scope": true,
-      "candidate_sha256": "d79b833e88416a05cbf1e6bb4f7bbb4856e44d78b713b44ea5604036d2fb87e1",
+      "candidate_sha256": "34f3996eb9ea1d6ac1b7aafde1aea731a7ef6f54b9760e9def9b844d0bfd0eea",
       "category": "documentation_evidence",
       "effective_status": "unreviewed",
       "initial_assignment": null,
@@ -968,7 +1084,7 @@
     },
     {
       "additional_scope": true,
-      "candidate_sha256": "936c715ea9547b64543ee5d5d3b7d2d443ffd9a6912fb19e7832dde86d3870df",
+      "candidate_sha256": "b138bd3d439987d43a02b7055f5082575a6b271b8ef0c16170981ca084b65644",
       "category": "documentation_evidence",
       "effective_status": "unreviewed",
       "initial_assignment": null,
@@ -978,11 +1094,41 @@
     },
     {
       "additional_scope": true,
-      "candidate_sha256": "263846ef3fde72bb94d1053f273d21938688b53a67793375299b39d015f1092d",
+      "candidate_sha256": "7a5476920cc498f792330ece49109433cfc3461c8214b45ac7462f3599118ca8",
+      "category": "documentation_evidence",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "docs/sections/packaging-evidence.json",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "6b437d9aa253e1b49c6942efe78f8ccc8069429517c0c8e049e2e848a99254d5",
+      "category": "documentation_evidence",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "docs/sections/packaging.md",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "32f8c70d21c3d17354328f3552eaa99d3f68725d808435b610f116e8277d038c",
       "category": "documentation_evidence",
       "effective_status": "unreviewed",
       "initial_assignment": null,
       "path": "docs/sections/sheets.md",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "3f71c679932f94ec643fe16c23fc78475f21247f062010564b7b2f1704444f4f",
+      "category": "documentation_evidence",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "docs/sections/slides.md",
       "reference_sha256": null,
       "review_history": []
     },
@@ -1115,7 +1261,7 @@
     },
     {
       "additional_scope": true,
-      "candidate_sha256": "007e8b98c7be4e280648210d26cc36cb027d5264baa412c2244682c0ca356473",
+      "candidate_sha256": "31bf911bcf3abfd33c81ebe9ec8782d62c9415882cab48a876a437206642ab5a",
       "category": "evaluation",
       "effective_status": "unreviewed",
       "initial_assignment": null,
@@ -1125,7 +1271,7 @@
     },
     {
       "additional_scope": true,
-      "candidate_sha256": "a2bb076dbfcbec6b855a96cfd23111575c6a931f846e55d695b5d24f3caf57bf",
+      "candidate_sha256": "3a576e33da10200264da7bb8955940627470faeac5b17d8e774ba35dc457a602",
       "category": "evaluation",
       "effective_status": "unreviewed",
       "initial_assignment": null,
@@ -1345,11 +1491,41 @@
     },
     {
       "additional_scope": true,
+      "candidate_sha256": "1e659c4f1f080676f9be4d41a78c846f6bb9a7a86bc4fad82792c50df25832fd",
+      "category": "evaluation",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "evaluation/contracts/base.json",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "6f9eaf34b02ca337c14d95b5959245121dcf0cce05702800b20792587ba04ee9",
+      "category": "evaluation",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "evaluation/contracts/docs.json",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
       "candidate_sha256": "ccb1a3179096be0ff9841e1846ad53913f525ee3108893c6cdf538a37166b4c9",
       "category": "evaluation",
       "effective_status": "unreviewed",
       "initial_assignment": null,
       "path": "evaluation/contracts/extensions.json",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "2d7e2b153ae4ee3bd0de62232b442d98504f8e8edcde9924174e2f42a9b36610",
+      "category": "evaluation",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "evaluation/contracts/generated-business.json",
       "reference_sha256": null,
       "review_history": []
     },
@@ -1365,11 +1541,301 @@
     },
     {
       "additional_scope": true,
+      "candidate_sha256": "2db6ad6c4429d3ba0041152798018585a03c9a6145a8f6cc7bcc64de1b31135b",
+      "category": "evaluation",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "evaluation/evidence/business-controlled.json",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "1ddc5746cbe49bf722a97cea8bddb6fd3f38a9a3590c76a8e936da587c35330e",
+      "category": "evaluation",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "evaluation/evidence/execution-environment-8d.json",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
       "candidate_sha256": "befc615c70ebb3fc382d2aac7703a672a94790418c975631d27bfc02b4a61f82",
       "category": "evaluation",
       "effective_status": "unreviewed",
       "initial_assignment": null,
       "path": "evaluation/evidence/held-out-exposure.json",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "956c4a9bef02f6072b05b8458c03af2d8af414d19c6bb1774f08c7f475476b7a",
+      "category": "evaluation",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "evaluation/evidence/markdown-dual-strategy-controlled.json",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "29f294bfbc83e26931339cdc7979bc3f3f1535de8442dee4d9a97f864fb117a3",
+      "category": "evaluation",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "evaluation/evidence/markdown-import-fixed-controlled.json",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "b061555b8c9ca781355a5bb2193c4574fb8a48cb0ea3d5a6bf394705e06c74f5",
+      "category": "evaluation",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "evaluation/evidence/read-312af93/REPORT.md",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "232b615ebdaeef5bbbac682741de869fa20188b2b11489bb4ef93d192207fe7c",
+      "category": "evaluation",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "evaluation/evidence/read-312af93/application/batch-01.json",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "45b2ae839d13ea9f73142070e135a3a69f238047ccf123e713dda7df334edc84",
+      "category": "evaluation",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "evaluation/evidence/read-312af93/apps/batch-01.json",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "7a90dc7f00ff372dbd734f214e2f5bd4e89702e9d0cff2d53f2be23fe007ed87",
+      "category": "evaluation",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "evaluation/evidence/read-312af93/environment.json",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "78452cfde32bfa6d842064e665fd7ff0d57f14f06d34e20e0475be3c4c4e0a1e",
+      "category": "evaluation",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "evaluation/evidence/read-312af93/im/batch-01.json",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "581ecf1fc6867ae0e4d4226786ba3bb0b1593e68bea80d9baf87220920352db3",
+      "category": "evaluation",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "evaluation/evidence/read-312af93/minutes/batch-01.json",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "fa346677d82a0de70a16ce7317e9f42dbdf3cf3472ebb04efe0fa726f736b2da",
+      "category": "evaluation",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "evaluation/evidence/read-312af93/note/batch-01.json",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "209a1ec8c897ec3255435a7027be6aa624ac8a043660f9cdc812da625c085759",
+      "category": "evaluation",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "evaluation/evidence/read-312af93/slides/batch-01.json",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "0e506dbfafd7aa727a87fd98915f3322e5a8ebba9e77f65e06bf9f0f3e54521a",
+      "category": "evaluation",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "evaluation/evidence/read-312af93/summary.json",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "caabf031091f4a6022cc296104061c59490214cd6a6284150f9603243cecb8d5",
+      "category": "evaluation",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "evaluation/evidence/read-312af93/vc/batch-01.json",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "66bbe1e3003c72972ee4009f716cb92a1ca3f7b4c589d19dd6e652c5c1a18c4a",
+      "category": "evaluation",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "evaluation/evidence/read-312af93/whiteboard/batch-01.json",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "8143415ed5f308724fe883e3cd33e8ea4d26809d696fea194b55d8d3de51ebbb",
+      "category": "evaluation",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "evaluation/evidence/read-312af93/wiki/batch-01.json",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "1afb928085fdf736b9b0b40c8ac4c9a7fb3eb8178d1f66f379c2738681c84bc6",
+      "category": "evaluation",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "evaluation/evidence/read-8d92e5/REPORT.md",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "a546b4d5aba71aaa56f81e6b1d912f50f321b25e044b9d3135d65a6c9e1c4583",
+      "category": "evaluation",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "evaluation/evidence/read-8d92e5/calendar/batch-01.json",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "a7997eb0ee637857e0fbb110486dc432a8f386bb998829838a1efc603f25e611",
+      "category": "evaluation",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "evaluation/evidence/read-8d92e5/environment.json",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "3c9bb6b321ec3e4c6ac62bb39f9ff1bcef465b6511481eb4ac268b0dbc144b8f",
+      "category": "evaluation",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "evaluation/evidence/read-8d92e5/mail/batch-01.json",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "de8156a7bac37bfce5de150e8a2f7edb4118b18d15f2553d7349c46a294a097c",
+      "category": "evaluation",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "evaluation/evidence/read-8d92e5/okr/batch-01.json",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "b847aeb0d1681e7be6001ac4d089e55d4d70f66629b9d0130d76f0dc160ced2f",
+      "category": "evaluation",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "evaluation/evidence/read-8d92e5/summary.json",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "26d041d48f58d2b25f3a021f5783f6812ab3c5c42ddee6e0b2f88047f4685008",
+      "category": "evaluation",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "evaluation/evidence/scaling-8d92e5/environment.json",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "3049b220feccefe370c040334dd1b5dde8ca5b666ad59fb324116289b021dd5f",
+      "category": "evaluation",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "evaluation/evidence/scaling-controlled.json",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "2f1a0da4096ce2ab02ef9b651b8ce93764d053fba667953975399d8e5c878e5f",
+      "category": "evaluation",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "evaluation/evidence/scenario-schema-diagnostic.json",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "0ba198d078cc3b9b86429b9e4988049456d6550e957d81ff704895cdb5c023d0",
+      "category": "evaluation",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "evaluation/evidence/scenarios-8d92e5/REPORT.md",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "4fad4f541d441a40063a5f9a42fc82c992ffae437f8e22ba321394c79b4b694f",
+      "category": "evaluation",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "evaluation/evidence/scenarios-8d92e5/base/batch-01.json",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "c6f7896766be24ac679c9d79cfeaba4763e095e4b79b0bad2545dedfbdc34f4a",
+      "category": "evaluation",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "evaluation/evidence/scenarios-8d92e5/docs/batch-01.json",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "64b2584b36ccbfe93dabfa77d5f13d2435872793fca7eda528594664721c05d3",
+      "category": "evaluation",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "evaluation/evidence/scenarios-8d92e5/environment.json",
       "reference_sha256": null,
       "review_history": []
     },
@@ -1385,7 +1851,87 @@
     },
     {
       "additional_scope": true,
-      "candidate_sha256": "e7be9f53c8bc7afc3bae6958de42d70dd27ed9afec42b46d5fa9ed80fe7efd5e",
+      "candidate_sha256": "71a6a1d232267b100076d2c9cb19de8e36b2b9bd0895d10625e527dd1eb39c0f",
+      "category": "evaluation",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "evaluation/evidence/schema-preflight-controlled.json",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "5a4ab8c301cbcb1211f7235c1192e9570dc0bc8201fb7430dca666b53c2d71f7",
+      "category": "evaluation",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "evaluation/evidence/wiki-diagnostic-74/REPORT.md",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "8329224baae1e1a81425749b4aafe92f0154f4b7a3e1e06cb94b922c480230b6",
+      "category": "evaluation",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "evaluation/evidence/wiki-diagnostic-74/environment.json",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "fb8ff81a8c47f16e4509a0c31ee0de342409b8264227598bf37eeca6d8d91b2f",
+      "category": "evaluation",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "evaluation/evidence/wiki-diagnostic-74/wiki/batch-01.json",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "33b5ada11f23b7275096b3ef81c61d39dcd5fb8a9836bd2344e006a1fa999ea2",
+      "category": "evaluation",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "evaluation/evidence/wiki-native-74/REPORT.md",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "d951ddbcaec3e6872bc652a540ab7f1c887c59c62df46203b574eb3c29e3a3f3",
+      "category": "evaluation",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "evaluation/evidence/wiki-native-74/environment.json",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "74d966813f5063f15cefe403de1e17321646ca86ad9a3ab8157e8f9eef0ed9eb",
+      "category": "evaluation",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "evaluation/evidence/wiki-native-74/summary.json",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "5f8cdaca03805c3c5b5e807645a7fd496737bde30eba8e3a8dee2f4186e992eb",
+      "category": "evaluation",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "evaluation/evidence/wiki-native-74/wiki/batch-01.json",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "cf8972f72cae2dce9c3c3ed60f9da07e0e59607d614a2bdf5bb1b10c1ae070c7",
       "category": "evaluation",
       "effective_status": "unreviewed",
       "initial_assignment": null,
@@ -1395,7 +1941,7 @@
     },
     {
       "additional_scope": true,
-      "candidate_sha256": "0727e16e1e62262f12c98f856d635d259381940f71b9e74da953f4a6c256508f",
+      "candidate_sha256": "593f76bb0f293495d0348afb7cc6f5bac7890b541ba948a14405305b5c25225d",
       "category": "evaluation",
       "effective_status": "unreviewed",
       "initial_assignment": null,
@@ -1415,7 +1961,7 @@
     },
     {
       "additional_scope": true,
-      "candidate_sha256": "e2f64159e60fbca3b4a216010d7e4dd1785406e5c47ff213f553ad3cb9aaf582",
+      "candidate_sha256": "de055b05e7883bbeff34850527dc67eb1cbb3032ff60ebb1db38b0d4cbb11852",
       "category": "evaluation",
       "effective_status": "unreviewed",
       "initial_assignment": null,
@@ -1545,7 +2091,7 @@
     },
     {
       "additional_scope": true,
-      "candidate_sha256": "33a09cd0ec65595a7b49a76049eda8babb37ec18bce9b2796f6ae044b46e597a",
+      "candidate_sha256": "592750e78c788c835b86883bd9e3a94a531d8929eb1af0ad606a9a656f7f162d",
       "category": "evaluation",
       "effective_status": "unreviewed",
       "initial_assignment": null,
@@ -1555,7 +2101,47 @@
     },
     {
       "additional_scope": true,
-      "candidate_sha256": "43d273c9b89ace5e6d8eb38e83ac4075169471203313582a4313f899553194e0",
+      "candidate_sha256": "6b35a36e4b4e4bdde3010ab2fddef73908d8eb50727af3be5567b984012270dd",
+      "category": "evaluation",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "evaluation/scaling/base-contract.json",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "eb2dcb6b0f12f3948ef48e643e93fd3db1eed539e2ea1d3c1fd1e7144acd6b0c",
+      "category": "evaluation",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "evaluation/scaling/base.py",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "12221df12530091615eb5beff23ad036f86fe946c4cfc91226d028b9ebb12be0",
+      "category": "evaluation",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "evaluation/scaling/sheets-contract.json",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "af08dc638b28e4da1bd6b4fcf8334b97401b9a264139289f8e9b09fc2632a95b",
+      "category": "evaluation",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "evaluation/scaling/sheets.py",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "9ed742b39277eb1d1771fb0768099aa22443d3f7eb6ad5a2ef9150077329a855",
       "category": "evaluation",
       "effective_status": "unreviewed",
       "initial_assignment": null,
@@ -1575,7 +2161,7 @@
     },
     {
       "additional_scope": true,
-      "candidate_sha256": "943129b6b40192ac861441297c7c4cdf03980ed702685c93cb556d6b78674af6",
+      "candidate_sha256": "d6f59ce65fb7ff8877510dcbcf4199a14a05235765fa6fe983818e766d73de1c",
       "category": "evaluation",
       "effective_status": "unreviewed",
       "initial_assignment": null,
@@ -1595,7 +2181,7 @@
     },
     {
       "additional_scope": true,
-      "candidate_sha256": "5ea61de04ff3131cc848113f88c8765a972d843a8170689a1a5ca3a4c444178d",
+      "candidate_sha256": "ef6ca2a96002098b4ede7f5f7c12bfbb0ba718a6fe7877d5d10008d70f69dab4",
       "category": "evaluation",
       "effective_status": "unreviewed",
       "initial_assignment": null,
@@ -1605,7 +2191,7 @@
     },
     {
       "additional_scope": true,
-      "candidate_sha256": "d577160a841fa924a9f583fdc7ccd4ce065e469359e5ba375108e915dc3dfb53",
+      "candidate_sha256": "32fdcd8d1616a05d4192701cb84133fd306c136cd49244a9f9c52761a3f8db8b",
       "category": "evaluation",
       "effective_status": "unreviewed",
       "initial_assignment": null,
@@ -1645,7 +2231,17 @@
     },
     {
       "additional_scope": true,
-      "candidate_sha256": "0b2091b290f8a8a68dd963ec978b3f6e26859c4e7e9f5d8cdd686cb424a065eb",
+      "candidate_sha256": "816522b82c6ecfd1268f873b09b0db900fd510a219979416d188570a359b32b8",
+      "category": "evaluation",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "evaluation/scenarios/generated_business.py",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "221086f79a69749398c792b134d4e6a32b32c638129b78a6081769417d64ced0",
       "category": "evaluation",
       "effective_status": "unreviewed",
       "initial_assignment": null,
@@ -1685,7 +2281,7 @@
     },
     {
       "additional_scope": true,
-      "candidate_sha256": "6057ea5d664e4d9c7296511342cd533917a17869ff5263a1dc1b3453520c3391",
+      "candidate_sha256": "3df4ee0f7005e12f035cd88d86a4b3a59234cd9baf6f0d9b6619ab77a6904992",
       "category": "evaluation",
       "effective_status": "unreviewed",
       "initial_assignment": null,
@@ -1695,7 +2291,17 @@
     },
     {
       "additional_scope": true,
-      "candidate_sha256": "df93bbc7e58ae5f182ef16d21c8d803b509b8541c2c03508b1fccbfa23420f51",
+      "candidate_sha256": "7d9a58ff8c561fffa55f0bcd2d6723bdf2f0eb6c6159516f55c700b114f50d59",
+      "category": "evaluation",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "evaluation/tasks.business.json",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "fe3d9af975b3e9d98b1c9092c2d87c1618628aa7e98f3f76a50bb76d992b950d",
       "category": "evaluation",
       "effective_status": "unreviewed",
       "initial_assignment": null,
@@ -1705,7 +2311,17 @@
     },
     {
       "additional_scope": true,
-      "candidate_sha256": "87e563bbaed35bd3010925e6fbb40f157091df64f1c5b61a9c09818a9e9f716c",
+      "candidate_sha256": "98baf269b5fc65cff23ed244583c10cca216e2548a5b1fb0a5e2db038fc01b60",
+      "category": "evaluation",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "evaluation/tasks.scaling.json",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "ff0fecb722ca5eca7d34c3f088d6cd8c8766dc966c1e3bb82c59b180897c3a68",
       "category": "evaluation",
       "effective_status": "unreviewed",
       "initial_assignment": null,
@@ -1870,13 +2486,25 @@
     },
     {
       "additional_scope": false,
-      "candidate_sha256": "d4c74c18042ee7b3f11916c972c5669682c4b24a4be2e9c20506bafc828c081a",
+      "candidate_sha256": "fdbe74a723c5c57eed330968ab20baee6fc077de94eb4a4ee23d27824054b69b",
       "category": "runtime_contract",
       "effective_status": "recorded_approval_at_current_hash",
       "initial_assignment": "invocation_identity",
       "path": "internal/cmdutil/agent_attempts.go",
       "reference_sha256": null,
       "review_history": [
+        {
+          "assignment_id": "invocation_identity",
+          "findings": [],
+          "hash_verified": true,
+          "pointer": "/assignments/1/paths/0",
+          "report": "docs/reference/reviews/p3-drive-import-receipt-review.json",
+          "review_revision": "032b922eb4b3c62bdb97ebf8749c5fc8f71b510f",
+          "review_scope": "Binding-extraction follow-up: receipt transport and reconciliation share identical selected config plus per-request identity precedence and verified user-binding logic. Existing auth/read/effect classifier behavior retained.",
+          "review_sha256": "fdbe74a723c5c57eed330968ab20baee6fc077de94eb4a4ee23d27824054b69b",
+          "reviewer": "/root/foundation_review",
+          "verdict": "approved_offline"
+        },
         {
           "assignment_id": "invocation_identity",
           "findings": [
@@ -1957,6 +2585,51 @@
       ]
     },
     {
+      "additional_scope": true,
+      "candidate_sha256": "6d1e72edc713ae534f906cad4e84d852d05e0d9bb315aa4bd71b47eb8e36a6c7",
+      "category": "runtime_contract",
+      "effective_status": "recorded_approval_at_current_hash",
+      "initial_assignment": null,
+      "path": "internal/cmdutil/drive_import_receipts.go",
+      "reference_sha256": null,
+      "review_history": [
+        {
+          "assignment_id": "invocation_identity",
+          "findings": [],
+          "hash_verified": true,
+          "pointer": "/assignments/0/paths/0",
+          "report": "docs/reference/reviews/p3-drive-import-nilerr-review.json",
+          "review_revision": "8ce0688b303eb646e1b79a329002dddcb6403be4",
+          "review_scope": "Narrow static-lint follow-up. All five production additions are comments: documented intentional local-proof error suppression and one function-scoped nilerr annotation. No runtime statement changes. Suppression retains existing pending evidence and nonzero outcome; it does not assert completion or authorize dependent grants.",
+          "review_sha256": "6d1e72edc713ae534f906cad4e84d852d05e0d9bb315aa4bd71b47eb8e36a6c7",
+          "reviewer": "/root/foundation_review",
+          "verdict": "approved_offline"
+        },
+        {
+          "assignment_id": "invocation_identity",
+          "findings": [],
+          "hash_verified": true,
+          "pointer": "/assignments/1/paths/1",
+          "report": "docs/reference/reviews/p3-drive-import-receipt-review.json",
+          "review_revision": "032b922eb4b3c62bdb97ebf8749c5fc8f71b510f",
+          "review_scope": "Whole new facade: no captured same-invocation ticket means no identity/storage work; replay-free current binding resolution; exact native GET marker checks secure platform Open origin and escaped ticket path. Matching native proof forwarded only through domain callsite contract.",
+          "review_sha256": "bce3f9d2384faf8fe39669cc4d45759453d9555ac54c1550a6c106374db73027",
+          "reviewer": "/root/foundation_review",
+          "verdict": "approved_offline"
+        }
+      ]
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "d1cc1c8a5792431eb75d7c2af931462b5eeeb09f3b6900f4d383e5c178430952",
+      "category": "tests_harness",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "internal/cmdutil/drive_import_receipts_test.go",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
       "additional_scope": false,
       "candidate_sha256": "dbe9058e97e99c1474edad507f8ea76e9bd5ac076de7f8809ec673fefa526fa1",
       "category": "tests_harness",
@@ -2018,13 +2691,25 @@
     },
     {
       "additional_scope": false,
-      "candidate_sha256": "c0a83ca28f787de3c2cc3ec1c3ef4d4bb631c9a76fb931ab9b1e4846e72973d2",
+      "candidate_sha256": "d14e983ea69dee6943f16e65f5a6c1435f86ebc42f5079744cb9b143455f8686",
       "category": "runtime_contract",
       "effective_status": "recorded_approval_at_current_hash",
       "initial_assignment": "invocation_identity",
       "path": "internal/cmdutil/factory_default.go",
       "reference_sha256": "ba3278b2fcbabfd548796f3480322f2e938f5e87a515a9dbfe78915655968987",
       "review_history": [
+        {
+          "assignment_id": "invocation_identity",
+          "findings": [],
+          "hash_verified": true,
+          "pointer": "/assignments/1/paths/2",
+          "report": "docs/reference/reviews/p3-drive-import-receipt-review.json",
+          "review_revision": "032b922eb4b3c62bdb97ebf8749c5fc8f71b510f",
+          "review_scope": "Redirect-policy follow-up only: native marked import status request returns original redirect response without following it. Unmarked redirects retain existing compatibility; no global redirect prohibition.",
+          "review_sha256": "d14e983ea69dee6943f16e65f5a6c1435f86ebc42f5079744cb9b143455f8686",
+          "reviewer": "/root/foundation_review",
+          "verdict": "approved_offline"
+        },
         {
           "assignment_id": "invocation_identity",
           "findings": [],
@@ -2348,14 +3033,59 @@
       ]
     },
     {
+      "additional_scope": true,
+      "candidate_sha256": "05b28b3e520128fe8e801157b53db4d98093b5b1afd3eebf66ffa01957ac4873",
+      "category": "runtime_contract",
+      "effective_status": "recorded_approval_at_current_hash",
+      "initial_assignment": null,
+      "path": "internal/nextattempt/drive_import.go",
+      "reference_sha256": null,
+      "review_history": [
+        {
+          "assignment_id": "mutation_receipts",
+          "findings": [],
+          "hash_verified": true,
+          "pointer": "/assignments/0/paths/0",
+          "report": "docs/reference/reviews/p3-drive-import-receipt-review.json",
+          "review_revision": "032b922eb4b3c62bdb97ebf8749c5fc8f71b510f",
+          "review_scope": "Whole new module: bounded actual-POST-ack capture, exact binding/origin/ticket uniqueness, strict completed native result and echo checking, pending-only reconciliation, locked validated store update before summary update, pure grant matcher without journal authority. No replay or persisted source/ticket identifiers.",
+          "review_sha256": "05b28b3e520128fe8e801157b53db4d98093b5b1afd3eebf66ffa01957ac4873",
+          "reviewer": "/root/foundation_review",
+          "verdict": "approved_offline"
+        }
+      ]
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "f4d4b8a393126ce49d63456664aaa7b8a141225cfc6e2ea306fc7e232bf1df22",
+      "category": "tests_harness",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "internal/nextattempt/drive_import_test.go",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
       "additional_scope": false,
-      "candidate_sha256": "01872064867b69936cd406cd4afeecd49cb888aa33da320d4cc4d234170af29f",
+      "candidate_sha256": "c88436cf4fd9e860f500f52143f290c478cdbbc61bb1d3979a8ef8bb340f0ee3",
       "category": "runtime_contract",
       "effective_status": "recorded_approval_at_current_hash",
       "initial_assignment": "mutation_receipts",
       "path": "internal/nextattempt/response_evidence.go",
       "reference_sha256": null,
       "review_history": [
+        {
+          "assignment_id": "mutation_receipts",
+          "findings": [],
+          "hash_verified": true,
+          "pointer": "/assignments/0/paths/2",
+          "report": "docs/reference/reviews/p3-drive-import-receipt-review.json",
+          "review_revision": "032b922eb4b3c62bdb97ebf8749c5fc8f71b510f",
+          "review_scope": "Drive-specific classifier follow-up: exact import POST acknowledgement may be captured but remains unknown; unsupported/oversized/unmatched capture stays generic async unknown; unrelated async classifiers not waived.",
+          "review_sha256": "c88436cf4fd9e860f500f52143f290c478cdbbc61bb1d3979a8ef8bb340f0ee3",
+          "reviewer": "/root/foundation_review",
+          "verdict": "approved_offline"
+        },
         {
           "assignment_id": "mutation_receipts",
           "findings": [],
@@ -2418,13 +3148,25 @@
     },
     {
       "additional_scope": false,
-      "candidate_sha256": "5220a653b3054bf7ddecd4204aab265893c5d5efe9c3952ccbd4f927ec0c1e90",
+      "candidate_sha256": "627e98ead32f5e46ad4a124ec65bccc3ccab94c4c1f71f97a6300cfd6e296e8c",
       "category": "runtime_contract",
       "effective_status": "recorded_approval_at_current_hash",
       "initial_assignment": "mutation_receipts",
       "path": "internal/nextattempt/transport.go",
       "reference_sha256": null,
       "review_history": [
+        {
+          "assignment_id": "mutation_receipts",
+          "findings": [],
+          "hash_verified": true,
+          "pointer": "/assignments/0/paths/1",
+          "report": "docs/reference/reviews/p3-drive-import-receipt-review.json",
+          "review_revision": "032b922eb4b3c62bdb97ebf8749c5fc8f71b510f",
+          "review_scope": "Drive follow-up delta plus cohesive transport/classification/journal integration: only bounded invocation-memory fields added; existing dispatch lock, finish, Add, response replay and summary semantics retained.",
+          "review_sha256": "627e98ead32f5e46ad4a124ec65bccc3ccab94c4c1f71f97a6300cfd6e296e8c",
+          "reviewer": "/root/foundation_review",
+          "verdict": "approved_offline"
+        },
         {
           "assignment_id": "mutation_receipts",
           "findings": [],
@@ -2936,33 +3678,198 @@
     },
     {
       "additional_scope": true,
-      "candidate_sha256": "54f415fb579caaf623dc6f1b03fd3ea5fe01bfdae4028e1ed636d3c80aa98d1e",
+      "candidate_sha256": "e2760eab86d4dfadfac8a75ff25d49dc18ecf26354f8ac626a73a8a3e6e25d16",
       "category": "build_distribution",
-      "effective_status": "unreviewed",
+      "effective_status": "recorded_approval_at_current_hash",
+      "initial_assignment": null,
+      "path": "scripts/next_inventory.py",
+      "reference_sha256": null,
+      "review_history": [
+        {
+          "assignment_id": "ci_capability_guard",
+          "findings": [],
+          "hash_verified": true,
+          "pointer": "/assignments/0/paths/0",
+          "report": "docs/reference/reviews/p3-capability-guard-review.json",
+          "review_revision": "4b56e1a63bbe136ced28037113a7123e95d12d35",
+          "review_scope": "Whole owning module reviewed: deterministic canonical serialization, tracked source inventory, actual temporary-copy exporter, bootstrap/configured-brand capture, metadata checksum, source-snapshot consistency, reference presence and recursive changes, exact mapping gate, CLI exits and handled error reporting. Source-review differences are retained separately; no semantic source allowlist introduced.",
+          "review_sha256": "30ab25e72333aff049c4c679ad37ea80f21efc6a560c1bce1ae369dd2cd2f46b",
+          "reviewer": "/root/foundation_skill",
+          "verdict": "approved_offline"
+        },
+        {
+          "assignment_id": "ci_capability_guard",
+          "findings": [],
+          "hash_verified": true,
+          "pointer": "/assignments/0/paths/0",
+          "report": "docs/reference/reviews/p3-platform-capability-follow-up.json",
+          "review_revision": "cb3a7500f62c53ecb9b1bd893d4953d9652b3e54",
+          "review_scope": "Whole current module reviewed by composing prior whole-module review with c7c9f7b build-context capture and cb3a750 profile selection/reporting. Exact GOOS profiles and reference file hashes selected before collection; target/host OS mismatch and context drift rejected. Only selected reference hash changes in the in-memory mapping context; all intentional rows and existing protected-contract predicates remain unchanged.",
+          "review_sha256": "e2760eab86d4dfadfac8a75ff25d49dc18ecf26354f8ac626a73a8a3e6e25d16",
+          "reviewer": "/root/foundation_skill",
+          "verdict": "approved_offline"
+        }
+      ]
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "3cc40a3c1513a0e9dea9d402d187a2fcd58aead22ac7ac49aa2d653f71e8a136",
+      "category": "build_distribution",
+      "effective_status": "recorded_approval_at_current_hash",
+      "initial_assignment": null,
+      "path": "scripts/next_inventory_export.go",
+      "reference_sha256": null,
+      "review_history": [
+        {
+          "assignment_id": "ci_capability_guard",
+          "findings": [],
+          "hash_verified": true,
+          "pointer": "/assignments/0/paths/1",
+          "report": "docs/reference/reviews/p3-capability-guard-review.json",
+          "review_revision": "4b56e1a63bbe136ced28037113a7123e95d12d35",
+          "review_scope": "Whole exporter reviewed: production Build with explicit configured startup brand and synthetic environment credential provider, next agent mode injection by the Python owner, frozen embedded service catalog, all command/inherited flag registrations, shortcut typed/schema/identity/scope/dry-run/validation declarations, compiled events and service list. No business command executes; plugin and strict-mode effects excluded explicitly.",
+          "review_sha256": "3cc40a3c1513a0e9dea9d402d187a2fcd58aead22ac7ac49aa2d653f71e8a136",
+          "reviewer": "/root/foundation_skill",
+          "verdict": "approved_offline"
+        }
+      ]
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "7b18f5d047b91622e10c0b8cdf2c05d29ed53f1656255b9a002077009b15a650",
+      "category": "build_distribution",
+      "effective_status": "recorded_approval_at_current_hash",
       "initial_assignment": null,
       "path": "scripts/next_inventory_reviews.py",
       "reference_sha256": null,
-      "review_history": []
+      "review_history": [
+        {
+          "hash_verified": true,
+          "pointer": "/paths/0",
+          "report": "docs/reference/reviews/p3-review-join-review.json",
+          "review_revision": "8d92e5253aa9d0582314180d51cdec1b10778897",
+          "review_scope": "Whole immutable file; report generation and exact per-path review aggregation, not product acceptance.",
+          "review_sha256": "7b18f5d047b91622e10c0b8cdf2c05d29ed53f1656255b9a002077009b15a650",
+          "reviewed_scope": "Whole two-file review join helper and regression suite. Read archive hashing, tracked review extraction, per-path traversal, hash verification, current-hash matching, explicit same-hash finding closure, scope categorization and report-only CLI. No product changes.",
+          "reviewer": "coordinator independent of inventory implementation",
+          "verdict": "approved_offline"
+        }
+      ]
     },
     {
       "additional_scope": true,
-      "candidate_sha256": "3f03dea02e8ed297371755e60bf648066db42030ae1bea06bdd129e4d0864b08",
+      "candidate_sha256": "a1b30e9b9da19155410efca7c940ba3d314e5da95941f9dd3e2303716d82e92c",
       "category": "tests_harness",
-      "effective_status": "unreviewed",
+      "effective_status": "recorded_approval_at_current_hash",
       "initial_assignment": null,
       "path": "scripts/next_inventory_reviews_test.py",
       "reference_sha256": null,
-      "review_history": []
+      "review_history": [
+        {
+          "hash_verified": true,
+          "pointer": "/paths/1",
+          "report": "docs/reference/reviews/p3-review-join-review.json",
+          "review_revision": "8d92e5253aa9d0582314180d51cdec1b10778897",
+          "review_scope": "Whole immutable file; report generation and exact per-path review aggregation, not product acceptance.",
+          "review_sha256": "a1b30e9b9da19155410efca7c940ba3d314e5da95941f9dd3e2303716d82e92c",
+          "reviewed_scope": "Whole two-file review join helper and regression suite. Read archive hashing, tracked review extraction, per-path traversal, hash verification, current-hash matching, explicit same-hash finding closure, scope categorization and report-only CLI. No product changes.",
+          "reviewer": "coordinator independent of inventory implementation",
+          "verdict": "approved_offline"
+        }
+      ]
     },
     {
       "additional_scope": true,
-      "candidate_sha256": "5e377a5c8ed786003bc6e43fb7eb99fb6ea7e57933c1895ced507ed409eff47e",
+      "candidate_sha256": "64eab516cd6bbc98ce975069fd44848f3cc6316fd6a9a1c5f4114736450d7831",
+      "category": "tests_harness",
+      "effective_status": "recorded_approval_at_current_hash",
+      "initial_assignment": null,
+      "path": "scripts/next_inventory_test.py",
+      "reference_sha256": null,
+      "review_history": [
+        {
+          "assignment_id": "ci_capability_guard",
+          "findings": [],
+          "hash_verified": true,
+          "pointer": "/assignments/0/paths/2",
+          "report": "docs/reference/reviews/p3-capability-guard-review.json",
+          "review_revision": "4b56e1a63bbe136ced28037113a7123e95d12d35",
+          "review_scope": "Whole regression file read and all18 tests independently run from exact committed files in an isolated temporary tree. Covers unchanged semantic status, exact delta values, newly added subtrees, protected flags/guards/missing capabilities, context/snapshot mismatch, source-file loss and saved report/exit outcomes.",
+          "review_sha256": "37d797d538416728e89e5fd6a123ad6f60607f3006423515f8e48b91983d3b20",
+          "reviewer": "/root/foundation_skill",
+          "verdict": "approved_offline"
+        },
+        {
+          "assignment_id": "ci_capability_guard",
+          "findings": [],
+          "hash_verified": true,
+          "pointer": "/assignments/0/paths/1",
+          "report": "docs/reference/reviews/p3-platform-capability-follow-up.json",
+          "review_revision": "cb3a7500f62c53ecb9b1bd893d4953d9652b3e54",
+          "review_scope": "Full current file and new platform/provenance regressions read; all21 independently executed from exact source. Exact profiles, checksum mismatch, unsupported/cross-OS targets, platform false-positive correction and continued rejection of new risk drift are covered.",
+          "review_sha256": "64eab516cd6bbc98ce975069fd44848f3cc6316fd6a9a1c5f4114736450d7831",
+          "reviewer": "/root/foundation_skill",
+          "verdict": "approved_offline"
+        }
+      ]
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "2a8222b60269ae4250dabc1e44efb9a3d3af9fb4108adf77f3044b533e906a8d",
       "category": "tests_harness",
       "effective_status": "recorded_approval_at_current_hash",
       "initial_assignment": null,
       "path": "scripts/next_test.py",
       "reference_sha256": null,
       "review_history": [
+        {
+          "assignment_id": "ci_portability_follow_up",
+          "findings": [
+            {
+              "closure_kind": "source_fix",
+              "id": "CI4",
+              "status": "closed_at_review_revision"
+            }
+          ],
+          "hash_verified": true,
+          "pointer": "/assignments/0/paths/0",
+          "prior_review_revision": "72fc5e4467494e158216de16b6d3e451a31d0757",
+          "prior_review_sha256": "5e377a5c8ed786003bc6e43fb7eb99fb6ea7e57933c1895ced507ed409eff47e",
+          "report": "docs/reference/reviews/p3-ci-cleanup-report-follow-up.json",
+          "review_revision": "2dcd561c987179e5ee36d2aab803be0dc81eddef",
+          "review_scope": "Narrow CI4 closure: flag marks completion of the with-body; teardown-only OSError becomes explicit failed report while original nonzero command code remains. Setup/body OSError is rethrown. Report write follows handled teardown.",
+          "review_sha256": "2a8222b60269ae4250dabc1e44efb9a3d3af9fb4108adf77f3044b533e906a8d",
+          "reviewer": "/root/foundation_skill",
+          "verdict": "approved_offline"
+        },
+        {
+          "assignment_id": "ci_portability_follow_up",
+          "findings": [
+            {
+              "id": "CI4",
+              "impact": "main propagates the teardown error before writing its JSON report. Completed pass, failure and timeout evidence disappears; child failure/timeout exit codes are replaced by an uncaught exception. This is a finite fault-injection finding, not a claim that native Windows has reproduced the trigger.",
+              "line": 259,
+              "path": "scripts/next_test.py",
+              "priority": "P2",
+              "related_lines": [
+                286,
+                288
+              ],
+              "requested_change": "Handle the isolated environment cleanup failure separately from command execution, preserve completed command results and existing nonzero child/timeout code, turn otherwise-successful cleanup failure into nonzero failed status, and publish an explicit cleanup diagnostic through the requested report when its destination is writable.",
+              "status": "open",
+              "title": "Environment teardown failure prevents publication of completed command evidence",
+              "trigger": "TemporaryDirectory.__exit__ raises OSError/PermissionError while cleaning the isolated test environment, after run_command has returned. The report destination itself remains writable."
+            }
+          ],
+          "hash_verified": true,
+          "pointer": "/assignments/0/paths/0",
+          "report": "docs/reference/reviews/p3-ci-cleanup-report-review.json",
+          "review_revision": "72fc5e4467494e158216de16b6d3e451a31d0757",
+          "review_scope": "Additional CI4 teardown/report-publication finding only. Prior CI1/CI2/CI3 closure remains intact. No other previously approved source behavior is reopened.",
+          "review_sha256": "5e377a5c8ed786003bc6e43fb7eb99fb6ea7e57933c1895ced507ed409eff47e",
+          "reviewer": "/root/foundation_skill",
+          "verdict": "changes_requested"
+        },
         {
           "assignment_id": "ci_portability_follow_up",
           "findings": [
@@ -3013,13 +3920,25 @@
     },
     {
       "additional_scope": true,
-      "candidate_sha256": "23f2c36e00a83caadf4913808502b265e5c5905381f3df97c4ff878e4184b6e2",
+      "candidate_sha256": "950a8a42140ad1526c4c9ec647fcae79955fd6595d65f3427265a67a22598630",
       "category": "tests_harness",
       "effective_status": "recorded_approval_at_current_hash",
       "initial_assignment": null,
       "path": "scripts/next_test_test.py",
       "reference_sha256": null,
       "review_history": [
+        {
+          "assignment_id": "ci_portability_follow_up",
+          "findings": [],
+          "hash_verified": true,
+          "pointer": "/assignments/0/paths/1",
+          "report": "docs/reference/reviews/p3-ci-cleanup-report-follow-up.json",
+          "review_revision": "2dcd561c987179e5ee36d2aab803be0dc81eddef",
+          "review_scope": "Read and independently execute both added regressions: three actual finite command cases preserve pass/failure/timeout evidence after injected teardown error; setup OSError remains visible.",
+          "review_sha256": "950a8a42140ad1526c4c9ec647fcae79955fd6595d65f3427265a67a22598630",
+          "reviewer": "/root/foundation_skill",
+          "verdict": "approved_offline"
+        },
         {
           "assignment_id": "ci_portability_follow_up",
           "findings": [],
@@ -3050,13 +3969,25 @@
     },
     {
       "additional_scope": true,
-      "candidate_sha256": "30d8aad9b9481f081a527a03fe7b1caa7e4dcc4a96035485688bbbc43e342ed9",
+      "candidate_sha256": "57abd16cc88e13f40f7e5cc54738f9cb9196d4b6830f955cba1424d8aa8be152",
       "category": "tests_harness",
       "effective_status": "recorded_approval_at_current_hash",
       "initial_assignment": null,
       "path": "scripts/next_workflow_test.py",
       "reference_sha256": null,
       "review_history": [
+        {
+          "assignment_id": "ci_capability_guard",
+          "findings": [],
+          "hash_verified": true,
+          "pointer": "/assignments/0/paths/6",
+          "report": "docs/reference/reviews/p3-capability-guard-review.json",
+          "review_revision": "4b56e1a63bbe136ced28037113a7123e95d12d35",
+          "review_scope": "Whole workflow contract file read and all5 tests independently executed from an exact-commit temporary tree. Includes running the real summary Python with a synthetic failed capability stage and verifying failure is retained.",
+          "review_sha256": "57abd16cc88e13f40f7e5cc54738f9cb9196d4b6830f955cba1424d8aa8be152",
+          "reviewer": "/root/foundation_skill",
+          "verdict": "approved_offline"
+        },
         {
           "assignment_id": "ci_portability_follow_up",
           "findings": [],
@@ -4334,6 +5265,29 @@
       ]
     },
     {
+      "additional_scope": true,
+      "candidate_sha256": "1de01616af99db254909ba3c24169960132907a43f180dc78fff26be9d681899",
+      "category": "runtime_contract",
+      "effective_status": "recorded_approval_at_current_hash",
+      "initial_assignment": null,
+      "path": "shortcuts/common/drive_import_receipts.go",
+      "reference_sha256": null,
+      "review_history": [
+        {
+          "assignment_id": "mutation_receipts",
+          "findings": [],
+          "hash_verified": true,
+          "pointer": "/assignments/0/paths/3",
+          "report": "docs/reference/reviews/p3-drive-import-receipt-review.json",
+          "review_revision": "032b922eb4b3c62bdb97ebf8749c5fc8f71b510f",
+          "review_scope": "Whole new runtime facade: explicit runtime identity forwarded to receipt matching; nil legacy Factory tolerated; pure create-body/completion matcher cannot modify receipts; request marker scoped to native status read.",
+          "review_sha256": "1de01616af99db254909ba3c24169960132907a43f180dc78fff26be9d681899",
+          "reviewer": "/root/foundation_review",
+          "verdict": "approved_offline"
+        }
+      ]
+    },
+    {
       "additional_scope": false,
       "candidate_sha256": "a057aa2736234214ed6be7637cd9d728a0b8a8af539bd4b282e07e48fe8c90f9",
       "category": "runtime_contract",
@@ -4702,6 +5656,72 @@
     },
     {
       "additional_scope": true,
+      "candidate_sha256": "936615ed170f48ffa21ff33ff21ffe9405efb964982a17b9e9008e110b7235d2",
+      "category": "runtime_contract",
+      "effective_status": "recorded_approval_at_current_hash",
+      "initial_assignment": null,
+      "path": "shortcuts/drive/drive_import.go",
+      "reference_sha256": "b88000cf2a0602afbe9f8fb7d9a747282123c33d574519050ae8bd9ac6a52f3b",
+      "review_history": [
+        {
+          "assignment_id": "drive",
+          "findings": [],
+          "hash_verified": true,
+          "pointer": "/assignments/2/paths/1",
+          "report": "docs/reference/reviews/p3-drive-import-receipt-review.json",
+          "review_revision": "68126eebf8041e2b39b4bd442a6a669cc0a79acb",
+          "review_scope": "RunImport/dependent-grant follow-up only: compare native completion against original spec.CreateTaskBody(uploaded media token) before bot grant; skip grant on contradictory/incomplete proof or any receipt persistence failure, with actual readiness and recovery output retained.",
+          "review_sha256": "936615ed170f48ffa21ff33ff21ffe9405efb964982a17b9e9008e110b7235d2",
+          "reviewer": "/root/foundation_review",
+          "verdict": "approved_offline"
+        }
+      ]
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "49433ef6525d6c76613691312cd097d4950838b36f1829c2ed785787da6829ba",
+      "category": "runtime_contract",
+      "effective_status": "recorded_approval_at_current_hash",
+      "initial_assignment": null,
+      "path": "shortcuts/drive/drive_import_common.go",
+      "reference_sha256": "da9f8677fc6a4d3460840dda15955ededdb7650068b4a636d2e135e66d844e99",
+      "review_history": [
+        {
+          "assignment_id": "drive",
+          "findings": [],
+          "hash_verified": true,
+          "pointer": "/assignments/2/paths/0",
+          "report": "docs/reference/reviews/p3-drive-import-receipt-review.json",
+          "review_revision": "68126eebf8041e2b39b4bd442a6a669cc0a79acb",
+          "review_scope": "Import-status/poll follow-up only: exact encoded-ticket GET uses scoped no-redirect context, typed native error classification preserved, final HTTP200 required, explicit integer status and optional echo types validated, original native data retained for proof matching; invalid_response stops polling while transient errors keep bounded retry behavior.",
+          "review_sha256": "49433ef6525d6c76613691312cd097d4950838b36f1829c2ed785787da6829ba",
+          "reviewer": "/root/foundation_review",
+          "verdict": "approved_offline"
+        }
+      ]
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "eb6e74cb74cb00af779dcd51bcdcd802ce0ac76ca76a423427b5a6525b2116f6",
+      "category": "tests_harness",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "shortcuts/drive/drive_import_common_test.go",
+      "reference_sha256": "6427620b7de105a66171e38b93f722dd6daf10e374a3257fd6ab060c62652d40",
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "6e2aa8f87d917fd1cae3bc997e4b62ce6d28ec0feb8eaf0f27f471c10a273a47",
+      "category": "tests_harness",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "shortcuts/drive/drive_import_status_integrity_test.go",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
       "candidate_sha256": "676e6498aafe23f298e6aee23d7eea4f7b9f616ad4628f01c5a5e121827987ed",
       "category": "runtime_contract",
       "effective_status": "recorded_approval_at_current_hash",
@@ -4788,6 +5808,29 @@
           "review_revision": "6fcd52e8ff5be0a52d9a1d33fd0083052211b223",
           "review_sha256": "cf5fbfc2b77178ccb979066b605bc41b66308da7dab5871356545654e73c4343",
           "reviewer": "/root/p3_domain_review",
+          "verdict": "approved_offline"
+        }
+      ]
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "7505869ff475a6720a3a142d0982502fb842cb7023b220c45d70232396ffc6ed",
+      "category": "runtime_contract",
+      "effective_status": "recorded_approval_at_current_hash",
+      "initial_assignment": null,
+      "path": "shortcuts/drive/drive_task_result.go",
+      "reference_sha256": "13d8ba5f642d5f3ec3461c22624986a136439c524d6a20463094874f88459b93",
+      "review_history": [
+        {
+          "assignment_id": "drive",
+          "findings": [],
+          "hash_verified": true,
+          "pointer": "/assignments/2/paths/2",
+          "report": "docs/reference/reviews/p3-drive-import-receipt-review.json",
+          "review_revision": "68126eebf8041e2b39b4bd442a6a669cc0a79acb",
+          "review_scope": "Standalone import-status grant follow-up only: no cross-invocation receipt rewrite; existing optional bot grant now needs direct HTTP200 status, explicit completion, exact supported type and noncontradictory error, and shared persistence guard. Export task behavior outside this follow-up.",
+          "review_sha256": "7505869ff475a6720a3a142d0982502fb842cb7023b220c45d70232396ffc6ed",
+          "reviewer": "/root/foundation_review",
           "verdict": "approved_offline"
         }
       ]
@@ -7541,6 +8584,16 @@
     },
     {
       "additional_scope": true,
+      "candidate_sha256": "3bc407cee212a0c7b3e6d90c49b74ecafc1a9668806bb483398f481d4d69b6bb",
+      "category": "evaluation",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "tests/next_evaluation/fake_runner.py",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
       "candidate_sha256": "a15cc1cf9fd62be53f0818c0141d4cd9dab4feda088d7c8b19a6a600b6e900f6",
       "category": "evaluation",
       "effective_status": "unreviewed",
@@ -7551,7 +8604,7 @@
     },
     {
       "additional_scope": true,
-      "candidate_sha256": "c15f242bab229b68d537706380d759e2f3f181a550f175f682f9b6a108bd871b",
+      "candidate_sha256": "a3833edefd5cdb128abd44785498e4b25f7d004adb025ece3bab8adab9609bfd",
       "category": "evaluation",
       "effective_status": "unreviewed",
       "initial_assignment": null,
@@ -7561,7 +8614,7 @@
     },
     {
       "additional_scope": true,
-      "candidate_sha256": "706bc0c181d193235e980d7c40ff3bb990afa03ca1551ce4a0fc44fabac11b81",
+      "candidate_sha256": "cb4772f9be29e3c7af883105ce0a2624c3cfda688165f3675c448417083718e6",
       "category": "evaluation",
       "effective_status": "unreviewed",
       "initial_assignment": null,
@@ -7571,11 +8624,31 @@
     },
     {
       "additional_scope": true,
-      "candidate_sha256": "0f4be2ca2f33adb6b3be66a0d613cb4ad561a60042ce8c1993f6ca22a7188911",
+      "candidate_sha256": "9aa84c902f6de9dc918a6824eea7200bb4e3a7cab4a4aa1bf992e78e9c392ca8",
       "category": "evaluation",
       "effective_status": "unreviewed",
       "initial_assignment": null,
       "path": "tests/next_evaluation/test_read_fixture.py",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "fd2efd22771c3bba8310b7d30fedc4f25f446b2fc16dda6cb81788f5b22d0155",
+      "category": "evaluation",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "tests/next_evaluation/test_scaling_base.py",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "4e2dc255f700302767db6d71d0af6f3b6487a6514f49daa63904bb096d1ac30d",
+      "category": "evaluation",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "tests/next_evaluation/test_scaling_sheets.py",
       "reference_sha256": null,
       "review_history": []
     },
@@ -7591,7 +8664,7 @@
     },
     {
       "additional_scope": true,
-      "candidate_sha256": "bb1c62fcd12f2a858060c7146007296359f0c8cfb08fad7b651e2c8372d77403",
+      "candidate_sha256": "3af8bdc47315c3c291c46db750f3f3c07ec1a386b9c891bf798fada2e85d0939",
       "category": "evaluation",
       "effective_status": "unreviewed",
       "initial_assignment": null,
@@ -7631,7 +8704,7 @@
     },
     {
       "additional_scope": true,
-      "candidate_sha256": "8279fceb298207ffe0ea65f65e6627722195da0e3bd04166c433e3244fcdc56e",
+      "candidate_sha256": "10ef930ad08f87a34681a8ee5646c27493a46c01113e2c525e3c4f4965e24dd4",
       "category": "evaluation",
       "effective_status": "unreviewed",
       "initial_assignment": null,
@@ -7641,7 +8714,17 @@
     },
     {
       "additional_scope": true,
-      "candidate_sha256": "bfc704a10b961ff6bdf122ffdf10f1d5e2b0a00d6d3e51b76f4959c59f6b4b20",
+      "candidate_sha256": "b8bc039c7411c6f5f14c334907afa1977712d9633d356b14c6c0f3de040a38f0",
+      "category": "evaluation",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "tests/next_evaluation/test_scenario_generated_business.py",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "164e10ebd0d7f4e715048b01f26693d6668289b3f8e392091891b748cb24458d",
       "category": "evaluation",
       "effective_status": "unreviewed",
       "initial_assignment": null,
@@ -7676,6 +8759,26 @@
       "effective_status": "unreviewed",
       "initial_assignment": null,
       "path": "tests/next_evaluation/test_scenario_task.py",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "4b952c9c28343c9d4dcfbe3d454e05cee03597cacb25c4a568cbc85daf8fb6d6",
+      "category": "evaluation",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "tests/next_evaluation/test_section_fixture.py",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "b558a20053b284df7a2823c868212f854e5c489561e8247edcbef90e880bf66a",
+      "category": "evaluation",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "tests/next_evaluation/test_wiki_native_fixture.py",
       "reference_sha256": null,
       "review_history": []
     },
@@ -7774,6 +8877,16 @@
     },
     {
       "additional_scope": true,
+      "candidate_sha256": "f4f1f6653f074f8208f5d26ef25a8e7d4bcf5ca1865fc90bd3d06f7ab6600b42",
+      "category": "tests_harness",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "tests/next_sections/drive/import_outcome_test.go",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
       "candidate_sha256": "c65e3fc92f9034af7dc41916718c52722cd9d4ac8bb1d3cf628f530787c5b6f3",
       "category": "tests_harness",
       "effective_status": "recorded_approval_at_current_hash",
@@ -7794,6 +8907,16 @@
           "verdict": "approved_offline"
         }
       ]
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "85fb57a41e42b83c62f5de65acebe1a7ebab4b23cb0dba7a5d338d25405a2e5a",
+      "category": "tests_harness",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "tests/next_sections/drive/transfers_test.go",
+      "reference_sha256": null,
+      "review_history": []
     },
     {
       "additional_scope": true,
@@ -7962,6 +9085,26 @@
     },
     {
       "additional_scope": true,
+      "candidate_sha256": "3a3f242e97d2378f08a54d8d32133ac60db9f20a96b0940640d5191762711661",
+      "category": "tests_harness",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "tests/next_sections/sheets/workbook_import_test.go",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
+      "candidate_sha256": "ac7e2f1761cf53a798fa801291e2875b9d25abecb45601c7e2cc5456ae0907b9",
+      "category": "tests_harness",
+      "effective_status": "unreviewed",
+      "initial_assignment": null,
+      "path": "tests/next_sections/slides/slides_render_e2e_test.go",
+      "reference_sha256": null,
+      "review_history": []
+    },
+    {
+      "additional_scope": true,
       "candidate_sha256": "7ff06bc3dc980f2b18c4f05da11c15e017289f4b4846c34de38d9c1143afce14",
       "category": "tests_harness",
       "effective_status": "recorded_approval_at_current_hash",
@@ -8042,8 +9185,20 @@
       ]
     }
   ],
-  "review_input_revision": "e417d175eaf07536dce9c1b01502dc5ca918bce3",
+  "review_input_revision": "61f7ce0fe1ebcd37d36579c3d838d07aab0f7720",
   "review_inputs": [
+    {
+      "path": "docs/reference/reviews/p3-capability-guard-review.json",
+      "sha256": "f043c79ea6134a0ab3fb4cf4022ca555259b783ed8e65fe5e08e8d035f16d80e"
+    },
+    {
+      "path": "docs/reference/reviews/p3-ci-cleanup-report-follow-up.json",
+      "sha256": "afbddc282c361ee335554180084b711a127ae8f732ca1b004d038e03dd09deb8"
+    },
+    {
+      "path": "docs/reference/reviews/p3-ci-cleanup-report-review.json",
+      "sha256": "c474702b6beff1f0ddf1c35ab36c146342a0e09444de4b32c835557370c23741"
+    },
     {
       "path": "docs/reference/reviews/p3-ci-portability-follow-up.json",
       "sha256": "b74cbc7eaeee4318b81b7260df60e334d6a3df3d659a9360511b67a04508e591"
@@ -8077,6 +9232,14 @@
       "sha256": "8760bf0896692507ecce309e5065dc43258ff285cff151591f18d46b73381e2d"
     },
     {
+      "path": "docs/reference/reviews/p3-drive-import-nilerr-review.json",
+      "sha256": "e09db80e733c83d86b0d45bc3de2b908e330d044b4e58abe290e8e5f453fa62c"
+    },
+    {
+      "path": "docs/reference/reviews/p3-drive-import-receipt-review.json",
+      "sha256": "4f03490cba6fae29f40ae2cd9a0e5896f3159fc8a5a343858de3ba53c23305bf"
+    },
+    {
       "path": "docs/reference/reviews/p3-foundation-follow-up.json",
       "sha256": "a2eb3b84f8290f2c91efd5015a184ebeb5c83fa512a37d71b967e153f183821e"
     },
@@ -8105,11 +9268,19 @@
       "sha256": "af626ad905753b06f2ba2df737b63da46c4476bbd4cb4bc4322bf5c94fcff66a"
     },
     {
+      "path": "docs/reference/reviews/p3-platform-capability-follow-up.json",
+      "sha256": "72a760965ac2a2c14d31b0984e5cde12e3140207a0ff6f14a076693aa8fa954a"
+    },
+    {
+      "path": "docs/reference/reviews/p3-review-join-review.json",
+      "sha256": "7106d3af8b3a57ce48b232e792ce1fc5f5b789ec79a7779786fc1a41de8477e4"
+    },
+    {
       "path": "docs/reference/reviews/p3-shortcut-registration-review.json",
       "sha256": "36403df5fe5d839b1fd01960c760e27b533381deaca00a321a3a60c9922de06d"
     }
   ],
   "schema_version": 1,
   "status": "review_coverage_report_not_acceptance",
-  "working_scope_when_written": "M evaluation/scenarios/markdown.py\n M scripts/next_inventory_reviews.py\n M scripts/next_inventory_reviews_test.py\n M shortcuts/drive/drive_import_common.go\n M shortcuts/drive/drive_import_common_test.go\n M tests/next_evaluation/test_scenario_markdown.py\n M tests/next_sections/drive/transfers_test.go\n?? docs/reference/p3-effective-review-current.json\n?? docs/reference/p3-effective-review-post-mail.json\n?? evaluation/evidence/wiki-diagnostic-74/\n?? evaluation/scaling/\n?? shortcuts/drive/drive_import_status_integrity_test.go\n?? tests/next_evaluation/test_scaling_sheets.py\n?? tests/next_sections/drive/import_outcome_test.go"
+  "working_scope_when_written": "?? evaluation/evidence/business-8d-schema02/\n?? evaluation/evidence/events-script-proof-controlled.json\n?? evaluation/evidence/scaling-8d-schema02/\n?? evaluation/evidence/scenarios-8d-schema02/"
 }
