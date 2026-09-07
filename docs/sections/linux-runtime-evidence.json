@@ -1,0 +1,1314 @@
+{
+  "schema_version": 1,
+  "section": "integration",
+  "gate": "Actual Linux aarch64 offline runtime correctness",
+  "revision": "8ce0688b303eb646e1b79a329002dddcb6403be4",
+  "status": "fail",
+  "runtime_status": "pass",
+  "capability_gate_status": "fail",
+  "release_accepted": false,
+  "native_physical_hardware_claim": false,
+  "runtime_boundary": "Actual Linux aarch64 kernel/ABI and glibc in a resource-capped container inside the existing Rancher Desktop VM; this is not physical Linux hardware or Windows evidence.",
+  "source": {
+    "archive_revision": "8ce0688b303eb646e1b79a329002dddcb6403be4",
+    "archive_sha256": "82c49d2e5d7c43785b217b51d53930070ef1e6df481f483b0b12814c06373eb3",
+    "initial_git_context": "Exact committed source archive plus empty git init for root discovery; no HEAD/history during initial build, unit/race, integration, Python scripts or controlled evaluation. Canonical make build explicitly sets VERSION=8ce0688. The initial plugin E2E failure is retained and corrected below.",
+    "followup_git_context": {
+      "head": "8ce0688b303eb646e1b79a329002dddcb6403be4",
+      "tracked_tree": "2827a1f2f492d36df50b41435da67258e5e88a78",
+      "status_porcelain": "",
+      "remotes": "",
+      "archive_bytes_unchanged": true,
+      "bundle_sha256": "bdd2e34008caac6a2ec5048d200a992580a5bfc067f7661f7ca15bb385350ee7"
+    },
+    "original_reference_checkout_modified": false
+  },
+  "environment": {
+    "runtime": {
+      "platform": "Linux-6.6.119-0-virt-aarch64-with-glibc2.36",
+      "system": "Linux",
+      "machine": "aarch64",
+      "uid": 10001,
+      "os_release": "PRETTY_NAME=\"Debian GNU/Linux 12 (bookworm)\"\nNAME=\"Debian GNU/Linux\"\nVERSION_ID=\"12\"\nVERSION=\"12 (bookworm)\"\nVERSION_CODENAME=bookworm\nID=debian\nHOME_URL=\"https://www.debian.org/\"\nSUPPORT_URL=\"https://www.debian.org/support\"\nBUG_REPORT_URL=\"https://bugs.debian.org/\"\n",
+      "network_routes": "Iface\tDestination\tGateway \tFlags\tRefCnt\tUse\tMetric\tMask\t\tMTU\tWindow\tIRTT                                                       \n"
+    },
+    "tool_versions": {
+      "go": "go version go1.26.4 linux/arm64",
+      "python": "Python 3.11.2",
+      "node": "v18.20.4",
+      "git": "git version 2.39.5",
+      "gcc": "gcc (Debian 12.2.0-14+deb12u1) 12.2.0",
+      "ruby": "ruby 3.1.2p20 (2022-04-12 revision 4491bb740a) [aarch64-linux-gnu]"
+    },
+    "daemon": {
+      "ServerVersion": "29.1.3",
+      "KernelVersion": "6.6.119-0-virt",
+      "OperatingSystem": "Alpine Linux v3.23",
+      "Architecture": "aarch64",
+      "NCPU": 6,
+      "MemTotal": 12528521216
+    },
+    "containers": [
+      {
+        "phase": "initial",
+        "id": "7cc8dfee55c9c5af007c3bafecba32f08c5f04cfbeaf6c0f86d6f60f898653aa",
+        "image_id": "sha256:69c136319dda18fd4e38caec70d3662a2bd6e436ef840436bbec981ff95c1380",
+        "user": "10001:10001",
+        "network": "none",
+        "mounts": [],
+        "nano_cpus": 2000000000,
+        "memory_bytes": 4294967296,
+        "memory_swap_bytes": 4294967296,
+        "pids_limit": 512,
+        "cap_drop": [
+          "ALL"
+        ],
+        "security_options": [
+          "no-new-privileges"
+        ],
+        "oom_killed": false
+      },
+      {
+        "phase": "followup",
+        "id": "54ab1c749a3d2fbafd9f9f1a693e4368981afd0e4ca413de9f9a7d0fdcf874bc",
+        "image_id": "sha256:342d42770f458569d2327f681b2365aa675aed2b9f80d2c5bdbc664530b10557",
+        "user": "10001:10001",
+        "network": "none",
+        "mounts": [],
+        "nano_cpus": 2000000000,
+        "memory_bytes": 4294967296,
+        "memory_swap_bytes": 4294967296,
+        "pids_limit": 512,
+        "cap_drop": [
+          "ALL"
+        ],
+        "security_options": [
+          "no-new-privileges"
+        ],
+        "oom_killed": false
+      }
+    ],
+    "isolation": "No Docker socket, host source, personal HOME or credentials mounted. Public image/package/module bootstrap completed separately; all test containers have --network none plus isolated HOME/config/temp and disabled dependency fetching.",
+    "toolchain_note": "Go1.26.4, Python3.11 and Node18 are recorded actual tools; this is not a claim of matching every hosted-CI version."
+  },
+  "images": {
+    "index_digest": "sha256:b305420a68d0f229d91eb3b3ed9e519fcf2cf5461da4bef997bf927e8c0bfd2b",
+    "index_content_digest": "sha256:b305420a68d0f229d91eb3b3ed9e519fcf2cf5461da4bef997bf927e8c0bfd2b",
+    "arm64_descriptor": {
+      "annotations": {
+        "com.docker.official-images.bashbrew.arch": "arm64v8",
+        "org.opencontainers.image.base.digest": "sha256:b6c7621f7d37399c56d06c44ea04f19c77ded98c7b47aebf09caea2a655e88a2",
+        "org.opencontainers.image.base.name": "buildpack-deps:bookworm-scm",
+        "org.opencontainers.image.created": "2026-06-24T03:16:36Z",
+        "org.opencontainers.image.revision": "06d3b7744447bbfe4679ad0b53c8ddd260e04190",
+        "org.opencontainers.image.source": "https://github.com/docker-library/golang.git#06d3b7744447bbfe4679ad0b53c8ddd260e04190:1.26/bookworm",
+        "org.opencontainers.image.url": "https://hub.docker.com/_/golang",
+        "org.opencontainers.image.version": "1.26.4-bookworm"
+      },
+      "digest": "sha256:b58a2431884c6dfc5ddcea953c7f426ad72c2ff9e94b4b8495fefa74e4dabcc0",
+      "mediaType": "application/vnd.oci.image.manifest.v1+json",
+      "platform": {
+        "architecture": "arm64",
+        "os": "linux",
+        "variant": "v8"
+      },
+      "size": 2324
+    },
+    "manifest_digest": "sha256:b58a2431884c6dfc5ddcea953c7f426ad72c2ff9e94b4b8495fefa74e4dabcc0",
+    "manifest_content_digest": "sha256:b58a2431884c6dfc5ddcea953c7f426ad72c2ff9e94b4b8495fefa74e4dabcc0",
+    "config_digest": "sha256:7b1b84a9dac061f4eb0a39c581c9efacdc4b39a87197383fa09799f1b23216e8",
+    "layer_digests": [
+      "sha256:0fb1189398e2e4b474d43aac6502510d0da0318e70137a377c21087f198814db",
+      "sha256:03ebca214f1a4b66acfdb0bd20aa3ee139d1747885ef4b0f3d07aa2a68459230",
+      "sha256:533bb0e918720911be6cb7a1a5ba9ad0e1a308fcbf24961a23aba0cd220df6cf",
+      "sha256:63faff6316bd1d2d901b3612100bbea84bbfe7a477beff3853b04bcac92f86ba",
+      "sha256:a477eaf154b7c8070862d9db01681f78c8a60ce90e8936310f6a906696df475a",
+      "sha256:09e821fe2d4bc3fa8873bdb939114850c34148b272b4e0c917af9e6f47c23a6c",
+      "sha256:4f4fb700ef54461cfa02571ae0db9a0dc1e0cdb5577484a6d75e68dc38e8acc1"
+    ],
+    "mirror_ref": "public.ecr.aws/docker/library/golang:1.26.4-bookworm",
+    "official_ref": "docker.io/library/golang:1.26.4-bookworm",
+    "mirror_index_digest": "sha256:b305420a68d0f229d91eb3b3ed9e519fcf2cf5461da4bef997bf927e8c0bfd2b",
+    "mirror_arm64_manifest_digest": "sha256:b58a2431884c6dfc5ddcea953c7f426ad72c2ff9e94b4b8495fefa74e4dabcc0",
+    "index_manifest_config_layers_match": true
+  },
+  "binary_sha256": "72e9002d077af6c23e9715fb45a4bb75fcfb47e1f61d088636ac059f7cb10e7e",
+  "metadata_sha256": "b5375251ff1f0a5939925587b0d514669a748135cde36c56f1c8ab5f5fe266c8",
+  "build": {
+    "name": "build",
+    "command": [
+      "make",
+      "build",
+      "VERSION=8ce0688"
+    ],
+    "exit_code": 0,
+    "status": "pass",
+    "duration_seconds": 32.776,
+    "tests": {
+      "pass": 0,
+      "fail": 0,
+      "skip": 0
+    },
+    "packages": {
+      "pass": 0,
+      "fail": 0,
+      "skip": 0
+    },
+    "failures": [],
+    "skipped_tests": [],
+    "race_detected": false,
+    "log": "build.log",
+    "log_sha256": "466af1796e436175d3edc9ac572842d1157bc73ce92771ad9e815a72a4c622b9"
+  },
+  "unit_race": {
+    "name": "unit-race",
+    "command": [
+      "go",
+      "test",
+      "-json",
+      "-race",
+      "-gcflags=all=-N -l",
+      "-count=1",
+      "-p=2",
+      ".",
+      "./cmd/...",
+      "./internal/...",
+      "./shortcuts/...",
+      "./extension/...",
+      "./errs/...",
+      "./events/..."
+    ],
+    "exit_code": 0,
+    "status": "pass",
+    "duration_seconds": 245.003,
+    "tests": {
+      "pass": 18641,
+      "fail": 0,
+      "skip": 14
+    },
+    "packages": {
+      "pass": 144,
+      "fail": 0,
+      "skip": 13
+    },
+    "failures": [],
+    "skipped_tests": [
+      {
+        "package": "github.com/larksuite/cli/cmd",
+        "test": "TestCommandSetSubprocess",
+        "reason": "command_sets_test.go:94: subprocess helper"
+      },
+      {
+        "package": "github.com/larksuite/cli/cmd",
+        "test": "TestScopeSnapshot",
+        "reason": "diagnose_scope_test.go:202: set SCOPE_SNAPSHOT_DIR to enable snapshot generation"
+      },
+      {
+        "package": "github.com/larksuite/cli/cmd/update",
+        "test": "TestPrepareLiveSkillsIntegration/requires_explicit_opt-in",
+        "reason": "update_test.go:1714: live skills integration test disabled; set LARKSUITE_CLI_RUN_LIVE_SKILLS_TESTS=1 to run"
+      },
+      {
+        "package": "github.com/larksuite/cli/cmd/update",
+        "test": "TestUpdateCommand_RealSkillsSyncRewritesState",
+        "reason": "update_test.go:1792: live skills integration test disabled; set LARKSUITE_CLI_RUN_LIVE_SKILLS_TESTS=1 to run"
+      },
+      {
+        "package": "github.com/larksuite/cli/cmd/update",
+        "test": "TestUpdateCommand_SkillsSyncColdStart",
+        "reason": "update_test.go:1896: live skills integration test disabled; set LARKSUITE_CLI_RUN_LIVE_SKILLS_TESTS=1 to run"
+      },
+      {
+        "package": "github.com/larksuite/cli/internal/qualitygate/semantic",
+        "test": "TestArkSemanticLiveCases",
+        "reason": "ark_live_test.go:45: set ARK_SEMANTIC_LIVE=1 to run Ark semantic live eval"
+      },
+      {
+        "package": "github.com/larksuite/cli/internal/qualitygate/semantic",
+        "test": "TestArkSemanticPromptStability",
+        "reason": "ark_live_test.go:57: set ARK_SEMANTIC_STABILITY=1 to run Ark semantic prompt stability eval"
+      },
+      {
+        "package": "github.com/larksuite/cli/internal/registry",
+        "test": "TestColdStart_NoEmbedded_SyncFetch",
+        "reason": "remote_test.go:124: embedded data present, skipping no-embedded test"
+      },
+      {
+        "package": "github.com/larksuite/cli/internal/vfs/localfileio",
+        "test": "TestPolicy_CaseVariantCannotBypassDenyRoot",
+        "reason": "policy_test.go:64: default filesystem is case-sensitive on this platform"
+      },
+      {
+        "package": "github.com/larksuite/cli/internal/vfs/localfileio",
+        "test": "TestPolicy_UnicodeFoldingCannotBypassDenyRoot",
+        "reason": "policy_test.go:109: ~/.ssh not present on this host: stat /home/verifier/.ssh: no such file or directory"
+      },
+      {
+        "package": "github.com/larksuite/cli/internal/vfs/localfileio",
+        "test": "TestPolicy_DenyRootWinsOverHomeFilesForRoot",
+        "reason": "policy_test.go:167: only meaningful when the account's home is the /root deny root"
+      },
+      {
+        "package": "github.com/larksuite/cli/shortcuts",
+        "test": "TestGenerateShortcutsJSON",
+        "reason": "register_test.go:391: set SHORTCUTS_OUTPUT env to generate shortcuts.json"
+      },
+      {
+        "package": "github.com/larksuite/cli/shortcuts/doc",
+        "test": "TestExtractBase64ImageFromClipboard_WithFakeOsascript",
+        "reason": "clipboard_test.go:259: fake osascript test only runs on macOS"
+      },
+      {
+        "package": "github.com/larksuite/cli/shortcuts/markdown",
+        "test": "TestUploadMarkdownMultipartPartsRejectsOversizedBlockSize",
+        "reason": "markdown_test.go:1323: oversized block_size guard is only reachable on platforms where int is narrower than int64"
+      }
+    ],
+    "race_detected": false,
+    "log": "unit-race.log",
+    "log_sha256": "c0a1374ea601d086da7beba6980aad7792d1b673ca1850d6d769fd0f5dc6dc2b"
+  },
+  "section_suites": [
+    {
+      "section": "application",
+      "package": "./tests/next_sections/application",
+      "status": "present"
+    },
+    {
+      "section": "apps",
+      "package": "./tests/next_sections/apps",
+      "status": "present"
+    },
+    {
+      "section": "base",
+      "package": "./tests/next_sections/base",
+      "status": "present"
+    },
+    {
+      "section": "business",
+      "package": "./tests/next_sections/business",
+      "status": "present"
+    },
+    {
+      "section": "calendar",
+      "package": "./tests/next_sections/calendar",
+      "status": "present"
+    },
+    {
+      "section": "contact",
+      "package": "./tests/next_sections/contact",
+      "status": "present"
+    },
+    {
+      "section": "docs",
+      "package": "./tests/next_sections/docs",
+      "status": "present"
+    },
+    {
+      "section": "drive",
+      "package": "./tests/next_sections/drive",
+      "status": "present"
+    },
+    {
+      "section": "events",
+      "package": "./tests/next_sections/events",
+      "status": "present"
+    },
+    {
+      "section": "extensions",
+      "package": "./tests/next_sections/extensions",
+      "status": "present"
+    },
+    {
+      "section": "im",
+      "package": "./tests/next_sections/im",
+      "status": "present"
+    },
+    {
+      "section": "mail",
+      "package": "./tests/next_sections/mail",
+      "status": "present"
+    },
+    {
+      "section": "markdown",
+      "package": "./tests/next_sections/markdown",
+      "status": "present"
+    },
+    {
+      "section": "minutes",
+      "package": "./tests/next_sections/minutes",
+      "status": "present"
+    },
+    {
+      "section": "note",
+      "package": "./tests/next_sections/note",
+      "status": "present"
+    },
+    {
+      "section": "okr",
+      "package": "./tests/next_sections/okr",
+      "status": "present"
+    },
+    {
+      "section": "packaging",
+      "package": "./tests/next_sections/packaging",
+      "status": "present"
+    },
+    {
+      "section": "sheets",
+      "package": "./tests/next_sections/sheets",
+      "status": "present"
+    },
+    {
+      "section": "slides",
+      "package": "./tests/next_sections/slides",
+      "status": "present"
+    },
+    {
+      "section": "task",
+      "package": "./tests/next_sections/task",
+      "status": "present"
+    },
+    {
+      "section": "vc",
+      "package": "./tests/next_sections/vc",
+      "status": "present"
+    },
+    {
+      "section": "whiteboard",
+      "package": "./tests/next_sections/whiteboard",
+      "status": "present"
+    },
+    {
+      "section": "wiki",
+      "package": "./tests/next_sections/wiki",
+      "status": "present"
+    }
+  ],
+  "all23_section_suites_executed": true,
+  "offline_suites": {
+    "all_section_e2e": {
+      "report": ".tmp/next-evidence/linux-8ce0688/followup/e2e.json",
+      "report_sha256": "3048587fb9b546b348370b6d4ec9cd2ba4eca7ef6d6d5799c71f0a15ba3a25b3",
+      "status": "pass",
+      "tests": {
+        "pass": 3287,
+        "fail": 0,
+        "skip": 42
+      },
+      "commands": [
+        {
+          "command": [
+            "/usr/bin/python3",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "tests/next_foundation",
+            "-p",
+            "*_test.py",
+            "-v"
+          ],
+          "status": "pass",
+          "exit_code": 0,
+          "duration_seconds": 0.216,
+          "tests": {
+            "pass": 13,
+            "fail": 0,
+            "skip": 0
+          },
+          "selection": {
+            "policy": "all tests in the listed packages"
+          },
+          "skipped_tests": [],
+          "failures": []
+        },
+        {
+          "command": [
+            "go",
+            "test",
+            "-json",
+            "-count=1",
+            "-timeout=10m",
+            "./tests/next_foundation",
+            "./tests/cli_e2e",
+            "./tests/cli_e2e/config"
+          ],
+          "status": "pass",
+          "exit_code": 0,
+          "duration_seconds": 4.183,
+          "tests": {
+            "pass": 105,
+            "fail": 0,
+            "skip": 4
+          },
+          "selection": {
+            "policy": "all tests in the listed packages"
+          },
+          "skipped_tests": [
+            {
+              "package": "github.com/larksuite/cli/tests/cli_e2e",
+              "test": "TestSkipWithoutUserToken/skips_when_local_auth_is_not_user/inner",
+              "reason": "core_test.go:172: skipped: LARKSUITE_CLI_USER_ACCESS_TOKEN not set and local auth is not a verified user login"
+            },
+            {
+              "package": "github.com/larksuite/cli/tests/cli_e2e",
+              "test": "TestSkipWithoutTenantAccessToken/skips_when_env_tenant_access_token_is_missing/inner",
+              "reason": "core_test.go:193: skipped: tenant test credentials not set and local bot config is not ready"
+            },
+            {
+              "package": "github.com/larksuite/cli/tests/cli_e2e",
+              "test": "TestSkipWithoutTenantAccessToken/skips_when_local_bot_config_verification_fails/inner",
+              "reason": "core_test.go:231: skipped: tenant test credentials not set and local bot config verification failed"
+            },
+            {
+              "package": "github.com/larksuite/cli/tests/cli_e2e",
+              "test": "TestSkipWithoutTenantAccessToken/skips_when_local_bot_verification_result_is_missing/inner",
+              "reason": "core_test.go:250: skipped: tenant test credentials not set and local bot config verification failed"
+            }
+          ],
+          "failures": []
+        },
+        {
+          "command": [
+            "go",
+            "test",
+            "-json",
+            "-count=1",
+            "-timeout=10m",
+            "./tests/plugin_e2e"
+          ],
+          "status": "pass",
+          "exit_code": 0,
+          "duration_seconds": 46.743,
+          "tests": {
+            "pass": 54,
+            "fail": 0,
+            "skip": 0
+          },
+          "selection": {
+            "policy": "all tests in the listed packages"
+          },
+          "skipped_tests": [],
+          "failures": []
+        },
+        {
+          "command": [
+            "go",
+            "test",
+            "-json",
+            "-count=1",
+            "-timeout=10m",
+            "./tests/cli_e2e/application",
+            "./tests/cli_e2e/apps",
+            "./tests/cli_e2e/base",
+            "./tests/cli_e2e/calendar",
+            "./tests/cli_e2e/contact",
+            "./tests/cli_e2e/docs",
+            "./tests/cli_e2e/drive",
+            "./tests/cli_e2e/event",
+            "./tests/cli_e2e/im",
+            "./tests/cli_e2e/mail",
+            "./tests/cli_e2e/markdown",
+            "./tests/cli_e2e/minutes",
+            "./tests/cli_e2e/note",
+            "./tests/cli_e2e/okr",
+            "./tests/cli_e2e/sheets",
+            "./tests/cli_e2e/slides",
+            "./tests/cli_e2e/task",
+            "./tests/cli_e2e/vc",
+            "./tests/cli_e2e/whiteboard",
+            "./tests/cli_e2e/wiki",
+            "./tests/cli_e2e/dryrun",
+            "-run",
+            "DryRun|Regression"
+          ],
+          "status": "pass",
+          "exit_code": 0,
+          "duration_seconds": 25.637,
+          "tests": {
+            "pass": 922,
+            "fail": 0,
+            "skip": 0
+          },
+          "selection": {
+            "policy": "official CI deterministic name selector; excluded tests remain unverified",
+            "selector": "DryRun|Regression",
+            "selected_tests_count": 393,
+            "excluded_tests_count": 174
+          },
+          "skipped_tests": [],
+          "failures": []
+        },
+        {
+          "command": [
+            "go",
+            "test",
+            "-json",
+            "-count=1",
+            "-timeout=10m",
+            "./tests/next_sections/application",
+            "./tests/next_sections/apps",
+            "./tests/next_sections/base",
+            "./tests/next_sections/business",
+            "./tests/next_sections/calendar",
+            "./tests/next_sections/contact",
+            "./tests/next_sections/docs",
+            "./tests/next_sections/drive",
+            "./tests/next_sections/events",
+            "./tests/next_sections/extensions",
+            "./tests/next_sections/im",
+            "./tests/next_sections/mail",
+            "./tests/next_sections/markdown",
+            "./tests/next_sections/minutes",
+            "./tests/next_sections/note",
+            "./tests/next_sections/okr",
+            "./tests/next_sections/packaging",
+            "./tests/next_sections/sheets",
+            "./tests/next_sections/slides",
+            "./tests/next_sections/task",
+            "./tests/next_sections/vc",
+            "./tests/next_sections/whiteboard",
+            "./tests/next_sections/wiki"
+          ],
+          "status": "pass",
+          "exit_code": 0,
+          "duration_seconds": 100.479,
+          "tests": {
+            "pass": 2193,
+            "fail": 0,
+            "skip": 38
+          },
+          "selection": {
+            "policy": "all tests in the listed packages"
+          },
+          "skipped_tests": [
+            {
+              "package": "github.com/larksuite/cli/tests/next_sections/application",
+              "test": "TestApplicationLivePrivateLifecycle",
+              "reason": "application_e2e_test.go:288: BLOCKED: app slash commands are visible to app users; current-account-only app installation/visibility and cleanable private app creation are not verified. No live credentials or writes are used. Required scenario: verify effective account/tenant and app visibility, create localized command, list, no-op update, replace description/icon, delete only the created command, verify removal and client cache behavior."
+            },
+            {
+              "package": "github.com/larksuite/cli/tests/next_sections/apps",
+              "test": "TestAppsLivePrivateLifecycle",
+              "reason": "apps_workflows_e2e_test.go:228: blocked: no verified fixture proves current account and tenant, private app creation visibility, run-owned deletion, or downstream automation recipient scope; legacy live fixtures are unauthorized here"
+            },
+            {
+              "package": "github.com/larksuite/cli/tests/next_sections/business",
+              "test": "TestBusinessLive/approval_approvals_get",
+              "reason": "business_e2e_test.go:473: BLOCKED live: no verified current-account/tenant-bound, run-owned fixture with private visibility and cleanup"
+            },
+            {
+              "package": "github.com/larksuite/cli/tests/next_sections/business",
+              "test": "TestBusinessLive/approval_approvals_search",
+              "reason": "business_e2e_test.go:473: BLOCKED live: no verified current-account/tenant-bound, run-owned fixture with private visibility and cleanup"
+            },
+            {
+              "package": "github.com/larksuite/cli/tests/next_sections/business",
+              "test": "TestBusinessLive/approval_instances_get",
+              "reason": "business_e2e_test.go:473: BLOCKED live: no verified current-account/tenant-bound, run-owned fixture with private visibility and cleanup"
+            },
+            {
+              "package": "github.com/larksuite/cli/tests/next_sections/business",
+              "test": "TestBusinessLive/approval_instances_create",
+              "reason": "business_e2e_test.go:473: BLOCKED live: approval workflow may notify/assign other people; no verified Ying Wu-only participants, private workflow, and owned cleanup"
+            },
+            {
+              "package": "github.com/larksuite/cli/tests/next_sections/business",
+              "test": "TestBusinessLive/approval_instances_cancel",
+              "reason": "business_e2e_test.go:473: BLOCKED live: approval workflow may notify/assign other people; no verified Ying Wu-only participants, private workflow, and owned cleanup"
+            },
+            {
+              "package": "github.com/larksuite/cli/tests/next_sections/business",
+              "test": "TestBusinessLive/approval_instances_cc",
+              "reason": "business_e2e_test.go:473: BLOCKED live: approval workflow may notify/assign other people; no verified Ying Wu-only participants, private workflow, and owned cleanup"
+            },
+            {
+              "package": "github.com/larksuite/cli/tests/next_sections/business",
+              "test": "TestBusinessLive/approval_instances_initiated",
+              "reason": "business_e2e_test.go:473: BLOCKED live: no verified current-account/tenant-bound, run-owned fixture with private visibility and cleanup"
+            },
+            {
+              "package": "github.com/larksuite/cli/tests/next_sections/business",
+              "test": "TestBusinessLive/approval_tasks_approve",
+              "reason": "business_e2e_test.go:473: BLOCKED live: approval workflow may notify/assign other people; no verified Ying Wu-only participants, private workflow, and owned cleanup"
+            },
+            {
+              "package": "github.com/larksuite/cli/tests/next_sections/business",
+              "test": "TestBusinessLive/approval_tasks_reject",
+              "reason": "business_e2e_test.go:473: BLOCKED live: approval workflow may notify/assign other people; no verified Ying Wu-only participants, private workflow, and owned cleanup"
+            },
+            {
+              "package": "github.com/larksuite/cli/tests/next_sections/business",
+              "test": "TestBusinessLive/approval_tasks_transfer",
+              "reason": "business_e2e_test.go:473: BLOCKED live: approval workflow may notify/assign other people; no verified Ying Wu-only participants, private workflow, and owned cleanup"
+            },
+            {
+              "package": "github.com/larksuite/cli/tests/next_sections/business",
+              "test": "TestBusinessLive/approval_tasks_query",
+              "reason": "business_e2e_test.go:473: BLOCKED live: no verified current-account/tenant-bound, run-owned fixture with private visibility and cleanup"
+            },
+            {
+              "package": "github.com/larksuite/cli/tests/next_sections/business",
+              "test": "TestBusinessLive/approval_tasks_add_sign",
+              "reason": "business_e2e_test.go:473: BLOCKED live: approval workflow may notify/assign other people; no verified Ying Wu-only participants, private workflow, and owned cleanup"
+            },
+            {
+              "package": "github.com/larksuite/cli/tests/next_sections/business",
+              "test": "TestBusinessLive/approval_tasks_rollback",
+              "reason": "business_e2e_test.go:473: BLOCKED live: approval workflow may notify/assign other people; no verified Ying Wu-only participants, private workflow, and owned cleanup"
+            },
+            {
+              "package": "github.com/larksuite/cli/tests/next_sections/business",
+              "test": "TestBusinessLive/approval_tasks_remind",
+              "reason": "business_e2e_test.go:473: BLOCKED live: approval workflow may notify/assign other people; no verified Ying Wu-only participants, private workflow, and owned cleanup"
+            },
+            {
+              "package": "github.com/larksuite/cli/tests/next_sections/business",
+              "test": "TestBusinessLive/attendance_user_tasks_query",
+              "reason": "business_e2e_test.go:473: BLOCKED live: no account-bound synthetic workforce fixture or verified current employee ID; other employee records are outside the test fixture"
+            },
+            {
+              "package": "github.com/larksuite/cli/tests/next_sections/business",
+              "test": "TestBusinessLive/mindnotes_nodes_create",
+              "reason": "business_e2e_test.go:473: BLOCKED live: no verified current-account/tenant-bound, run-owned fixture with private visibility and cleanup"
+            },
+            {
+              "package": "github.com/larksuite/cli/tests/next_sections/business",
+              "test": "TestBusinessLive/mindnotes_nodes_list",
+              "reason": "business_e2e_test.go:473: BLOCKED live: no verified current-account/tenant-bound, run-owned fixture with private visibility and cleanup"
+            },
+            {
+              "package": "github.com/larksuite/cli/tests/next_sections/calendar",
+              "test": "TestCalendarLivePrivateLifecycle",
+              "reason": "calendar_e2e_test.go:280: BLOCKED: no verified current-account/tenant/private calendar creation fixture; live invitations and notifications also require verified self or unambiguous Ying Wu. Legacy personal-state tests are excluded."
+            },
+            {
+              "package": "github.com/larksuite/cli/tests/next_sections/base",
+              "test": "TestBaseLivePrivateLifecycle",
+              "reason": "recovery_test.go:191: BLOCKED: no verified pre-creation visibility fixture binds the effective account and tenant, prevents inherited workspace/group/link access, resolves Ying Wu by stable identity for any intentional share, and guarantees cleanup only of run-owned Base/Drive resources; legacy live suites are not authorized substitutes. See docs/sections/base-process.md"
+            },
+            {
+              "package": "github.com/larksuite/cli/tests/next_sections/contact",
+              "test": "TestContactLiveAccountBoundReads",
+              "reason": "contact_e2e_test.go:265: live blocked: use coordinator-verified effective current account and tenant; inherited live helpers are not bound fixtures; no recipient delivery is performed by contact reads"
+            },
+            {
+              "package": "github.com/larksuite/cli/tests/next_sections/docs",
+              "test": "TestDocsLivePrivateLifecycle",
+              "reason": "docs_e2e_test.go:406: BLOCKED: no independently verified current-account and tenant-bound fixture proves private creation visibility before writing. Required live flow: private create; rich fetch/update and no-op; script/search; media/cover lifecycle; history revert/status; receipt recovery; delete only run-owned resources. No legacy live helpers or personal credentials are used. Other-recipient actions require independently resolved Ying Wu identity."
+            },
+            {
+              "package": "github.com/larksuite/cli/tests/next_sections/im",
+              "test": "TestLiveIMBoundary",
+              "reason": "im_e2e_test.go:212: blocked live: current account/tenant, private destination and unambiguous Ying Wu-only delivery have not been verified; no live content dispatched"
+            },
+            {
+              "package": "github.com/larksuite/cli/tests/next_sections/mail",
+              "test": "TestMailLivePrivateMailboxLifecycle",
+              "reason": "mail_e2e_test.go:252: BLOCKED: no verified live harness binds current account/tenant, run-owned private drafts and self-only recipients (including CC/BCC, reply-all, calendar attendees and receipt/share destinations); legacy credentialed mail workflows are not authorized substitutes"
+            },
+            {
+              "package": "github.com/larksuite/cli/tests/next_sections/minutes",
+              "test": "TestLiveMinutesPrivateLifecycle",
+              "reason": "minutes_e2e_test.go:374: blocked: no verified run-owned private Drive media plus Minutes creation visibility/current-account tenant fixture; permission requests and speaker rebinding may notify unrelated users. No live requests are dispatched. See docs/sections/minutes.md"
+            },
+            {
+              "package": "github.com/larksuite/cli/tests/next_sections/okr",
+              "test": "TestOKRLivePrivateLifecycle",
+              "reason": "okr_e2e_test.go:366: Live blocked: no verified current-account/tenant private OKR cycle, non-notifying mutation semantics, and run-owned cleanup target. PLAN forbids using existing unrelated objectives; inherited live scenarios remain excluded."
+            },
+            {
+              "package": "github.com/larksuite/cli/tests/next_sections/sheets",
+              "test": "TestLivePrivateSheetsAcceptance/private-workbook-create-use-cleanup",
+              "reason": "errors_test.go:120: BLOCKED: effective account and tenant plus account-only creation visibility have not been proven; no live writes, delivery, sharing, or cleanup of pre-existing resources permitted"
+            },
+            {
+              "package": "github.com/larksuite/cli/tests/next_sections/sheets",
+              "test": "TestLivePrivateSheetsAcceptance/typed-cells-formulas-native-roundtrip",
+              "reason": "errors_test.go:120: BLOCKED: effective account and tenant plus account-only creation visibility have not been proven; no live writes, delivery, sharing, or cleanup of pre-existing resources permitted"
+            },
+            {
+              "package": "github.com/larksuite/cli/tests/next_sections/sheets",
+              "test": "TestLivePrivateSheetsAcceptance/sheet-dimension-range-lifecycle",
+              "reason": "errors_test.go:120: BLOCKED: effective account and tenant plus account-only creation visibility have not been proven; no live writes, delivery, sharing, or cleanup of pre-existing resources permitted"
+            },
+            {
+              "package": "github.com/larksuite/cli/tests/next_sections/sheets",
+              "test": "TestLivePrivateSheetsAcceptance/chart-pivot-condition-filter-view-sparkline-image-lifecycle",
+              "reason": "errors_test.go:120: BLOCKED: effective account and tenant plus account-only creation visibility have not been proven; no live writes, delivery, sharing, or cleanup of pre-existing resources permitted"
+            },
+            {
+              "package": "github.com/larksuite/cli/tests/next_sections/sheets",
+              "test": "TestLivePrivateSheetsAcceptance/import-export-large-file-cleanup",
+              "reason": "errors_test.go:120: BLOCKED: effective account and tenant plus account-only creation visibility have not been proven; no live writes, delivery, sharing, or cleanup of pre-existing resources permitted"
+            },
+            {
+              "package": "github.com/larksuite/cli/tests/next_sections/sheets",
+              "test": "TestLivePrivateSheetsAcceptance/history-revert-status-and-changesets",
+              "reason": "errors_test.go:120: BLOCKED: effective account and tenant plus account-only creation visibility have not been proven; no live writes, delivery, sharing, or cleanup of pre-existing resources permitted"
+            },
+            {
+              "package": "github.com/larksuite/cli/tests/next_sections/sheets",
+              "test": "TestLivePrivateSheetsAcceptance/generated-filter-and-find-lifecycle",
+              "reason": "errors_test.go:120: BLOCKED: effective account and tenant plus account-only creation visibility have not been proven; no live writes, delivery, sharing, or cleanup of pre-existing resources permitted"
+            },
+            {
+              "package": "github.com/larksuite/cli/tests/next_sections/slides",
+              "test": "TestLivePrivateSlideLifecycle",
+              "reason": "slides_e2e_test.go:315: BLOCKED: selectable live scenario requires verified current account and tenant plus private creation visibility BEFORE any content write; no verified private fixture/cleanup harness is available. Then create owned deck, upload image, add/update/no-op/replace/read/screenshot/history/delete and clean up only run-owned resources; any other recipient must be unambiguous Ying Wu."
+            },
+            {
+              "package": "github.com/larksuite/cli/tests/next_sections/vc",
+              "test": "TestVCLivePrivateLifecycle",
+              "reason": "vc_e2e_test.go:410: BLOCKED: no live harness verifies current account and tenant, private Agent Calendar creation visibility, app-bot host ownership, self-only or unambiguously Ying Wu-only participants/eligible invitees, and run-owned cleanup; do not use unrelated existing meetings"
+            },
+            {
+              "package": "github.com/larksuite/cli/tests/next_sections/whiteboard",
+              "test": "TestWhiteboardLivePrivateFixture",
+              "reason": "whiteboard_e2e_test.go:292: BLOCKED: no verified account/tenant-bound private whiteboard creation harness. Required scenario: create a private run-owned document and board after verifying creation visibility; import every format, read nodes/source/SVG/preview, verify identities and permissions after overwrite and explicit clear, and clean up only run-owned resources. No legacy external whiteboard token is accepted as proof of private run ownership."
+            },
+            {
+              "package": "github.com/larksuite/cli/tests/next_sections/wiki",
+              "test": "TestWikiAuthorizedLiveFixture",
+              "reason": "wiki_e2e_test.go:264: BLOCKED: no verified current-account/tenant Wiki creation visibility fixture. Legacy any-host tests may inherit other-user access; do not run them live. Need a run-owned private space, private Drive source/destination and unambiguous Ying Wu identity before permission delivery."
+            }
+          ],
+          "failures": []
+        }
+      ]
+    },
+    "cross_integration": {
+      "report": ".tmp/next-evidence/linux-8ce0688/initial/integration.json",
+      "report_sha256": "504df213de42bb03b7d999790781658a262bd11dee541bd388ce4ddefaf38a6f",
+      "status": "pass",
+      "tests": {
+        "pass": 18,
+        "fail": 0,
+        "skip": 0
+      },
+      "commands": [
+        {
+          "command": [
+            "go",
+            "test",
+            "-json",
+            "-count=1",
+            "-timeout=10m",
+            "./tests/next_integration/sheets_base"
+          ],
+          "status": "pass",
+          "exit_code": 0,
+          "duration_seconds": 2.851,
+          "tests": {
+            "pass": 18,
+            "fail": 0,
+            "skip": 0
+          },
+          "selection": {
+            "policy": "all tests in the listed packages"
+          },
+          "skipped_tests": [],
+          "failures": []
+        }
+      ]
+    },
+    "scripts": {
+      "report": ".tmp/next-evidence/linux-8ce0688/initial/scripts.json",
+      "report_sha256": "9d36d57761ab2b62264acb42a06aeb83ee4d0914efcefb69de516cc48c2dc134",
+      "status": "pass",
+      "tests": {
+        "pass": 60,
+        "fail": 0,
+        "skip": 0
+      },
+      "commands": [
+        {
+          "command": [
+            "/usr/bin/python3",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "scripts",
+            "-p",
+            "next_*test.py",
+            "-v"
+          ],
+          "status": "pass",
+          "exit_code": 0,
+          "duration_seconds": 1.856,
+          "tests": {
+            "pass": 60,
+            "fail": 0,
+            "skip": 0
+          },
+          "selection": {
+            "policy": "all tests in the listed packages"
+          },
+          "skipped_tests": [],
+          "failures": []
+        }
+      ]
+    },
+    "controlled_evaluation": {
+      "report": ".tmp/next-evidence/linux-8ce0688/initial/evaluation.json",
+      "report_sha256": "ec53471b71fb5e097a6fc3ad6cdf588725e7051f177e06a1e12958b206c87676",
+      "status": "pass",
+      "tests": {
+        "pass": 179,
+        "fail": 0,
+        "skip": 15
+      },
+      "commands": [
+        {
+          "command": [
+            "/usr/bin/python3",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "tests/next_evaluation",
+            "-p",
+            "test_*.py",
+            "-v"
+          ],
+          "status": "pass",
+          "exit_code": 0,
+          "duration_seconds": 16.289,
+          "tests": {
+            "pass": 179,
+            "fail": 0,
+            "skip": 15
+          },
+          "selection": {
+            "policy": "all tests in the listed packages"
+          },
+          "skipped_tests": [
+            {
+              "test": "test_all_runtime_examples_and_independent_proofs (test_read_fixture.ReadBinaryProcessTests.test_all_runtime_examples_and_independent_proofs)",
+              "reason": "'set archived authsidecar binary paths in EVAL_READ_BINARIES'"
+            },
+            {
+              "test": "test_clean_official_and_next_complete_each_size (test_scaling_base.BaseScalingBinaryTests.test_clean_official_and_next_complete_each_size)",
+              "reason": "'set EVAL_SCALING_BASE_CLI=1 for supplied clean archive binary checks'"
+            },
+            {
+              "test": "test_all_sizes_from_clean_official_and_next_cli (test_scaling_sheets.ScalingSheetsBinaryTests.test_all_sizes_from_clean_official_and_next_cli)",
+              "reason": "'set EVAL_SCALING_SHEETS_BINARIES to clean archive binary paths'"
+            },
+            {
+              "test": "test_each_binary_updates_native_state (test_scenario_base.BaseBinaryTests.test_each_binary_updates_native_state)",
+              "reason": "'set EVAL_BASE_BINARIES to clean archived authsidecar binaries'"
+            },
+            {
+              "test": "test_official_and_next_equivalent_strategies (test_scenario_docs.DocsBinaryTests.test_official_and_next_equivalent_strategies)",
+              "reason": "'set EVAL_DOCS_BINARIES to clean archived authsidecar binaries'"
+            },
+            {
+              "test": "test_real_download_strategies (test_scenario_drive.DriveArchivedCLITests.test_real_download_strategies)",
+              "reason": "'optional clean archived CLI paths unavailable'"
+            },
+            {
+              "test": "test_selected_cli_two_native_events_and_exit (test_scenario_events.CleanCLIProcessTests.test_selected_cli_two_native_events_and_exit)",
+              "reason": "'set EVAL_EVENTS_BINARIES to clean archived authsidecar CLI paths'"
+            },
+            {
+              "test": "test_native_packaging_permissions_reject_home_and_network_writes (test_scenario_fixture.ScenarioIntegrationTests.test_native_packaging_permissions_reject_home_and_network_writes)",
+              "reason": "'set EVAL_NATIVE_CODEX for native protected-home enforcement'"
+            },
+            {
+              "test": "test_both_clean_archive_binaries_execute_all_seventeen_native_methods (test_scenario_generated_business.BusinessBinaryTests.test_both_clean_archive_binaries_execute_all_seventeen_native_methods)",
+              "reason": "'set EVAL_GENERATED_BUSINESS_BINARIES=1 for existing clean-archive manifest binaries'"
+            },
+            {
+              "test": "test_each_binary_preserves_native_structure_and_successful_outcomes (test_scenario_markdown.MarkdownBinaryTests.test_each_binary_preserves_native_structure_and_successful_outcomes)",
+              "reason": "'set EVAL_MARKDOWN_BINARIES to clean archived authsidecar binaries'"
+            },
+            {
+              "test": "test_real_clean_candidate_guide_install (test_scenario_packaging.PackagingScenarioTests.test_real_clean_candidate_guide_install)",
+              "reason": "'optional native check requires explicit clean-archive binary and skill source'"
+            },
+            {
+              "test": "test_native_artifacts_from_clean_binaries (test_scenario_sheets.SheetsBinaryTests.test_native_artifacts_from_clean_binaries)",
+              "reason": "'set EVAL_SHEETS_BINARIES to clean archive binary paths'"
+            },
+            {
+              "test": "test_each_binary_reads_same_fixture_through_signed_transport (test_section_fixture.ContactBinaryProcessTests.test_each_binary_reads_same_fixture_through_signed_transport)",
+              "reason": "'set EVAL_CONTACT_BINARIES to archived authsidecar binary paths'"
+            },
+            {
+              "test": "test_native_sandbox_allows_fixture_and_denies_external_socket (test_section_fixture.ContactBinaryProcessTests.test_native_sandbox_allows_fixture_and_denies_external_socket)",
+              "reason": "'set EVAL_CONTACT_BINARIES to archived authsidecar binary paths'"
+            },
+            {
+              "test": "test_pinned_official_and_candidate_native_read_proof (test_wiki_native_fixture.WikiNativeBinaryTests.test_pinned_official_and_candidate_native_read_proof)",
+              "reason": "'set EVAL_WIKI_BINARY_PATHS to the archived evaluation paths JSON'"
+            }
+          ],
+          "failures": []
+        }
+      ]
+    }
+  },
+  "offline_suite_totals": {
+    "pass": 3544,
+    "fail": 0,
+    "skip": 57
+  },
+  "script_gate": {
+    "command": {
+      "name": "make-script-test",
+      "command": [
+        "make",
+        "script-test"
+      ],
+      "exit_code": 0,
+      "status": "pass",
+      "duration_seconds": 3.392,
+      "tests": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "packages": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "failures": [],
+      "skipped_tests": [],
+      "race_detected": false,
+      "log": "make-script-test.log",
+      "log_sha256": "391de5a1b26082a8043fc9bb159c03c1de47cbf95a28f418cee314aacbf3c1d5"
+    },
+    "node_tap": {
+      "tests": 166,
+      "pass": 166,
+      "fail": 0,
+      "skipped": 0
+    },
+    "note": "Includes shell workflow checks plus Python script harness already counted separately; do not sum duplicate Python executions."
+  },
+  "linux_relevant_coverage": {
+    "tested_package_counts": {
+      "github.com/larksuite/cli/internal/binding": 141,
+      "github.com/larksuite/cli/internal/nextattempt": 159,
+      "github.com/larksuite/cli/internal/output": 294,
+      "github.com/larksuite/cli/internal/vfs/localfileio": 110,
+      "github.com/larksuite/cli/extension/command": 48
+    },
+    "representative_passed_tests": [
+      {
+        "package": "github.com/larksuite/cli/internal/binding",
+        "test": "TestAssertSecurePath_Symlink_Rejected"
+      },
+      {
+        "package": "github.com/larksuite/cli/internal/binding",
+        "test": "TestAssertSecurePath_Symlink_Allowed"
+      },
+      {
+        "package": "github.com/larksuite/cli/internal/binding",
+        "test": "TestResolveExecRef_EmptyCommand"
+      },
+      {
+        "package": "github.com/larksuite/cli/internal/binding",
+        "test": "TestResolveExecRef_CommandNotFound"
+      },
+      {
+        "package": "github.com/larksuite/cli/internal/binding",
+        "test": "TestResolveExecRef_JSONResponse"
+      },
+      {
+        "package": "github.com/larksuite/cli/internal/binding",
+        "test": "TestResolveExecRef_PerRefError"
+      },
+      {
+        "package": "github.com/larksuite/cli/internal/binding",
+        "test": "TestResolveExecRef_WrongProtocolVersion"
+      },
+      {
+        "package": "github.com/larksuite/cli/internal/binding",
+        "test": "TestResolveExecRef_MissingValues"
+      },
+      {
+        "package": "github.com/larksuite/cli/internal/binding",
+        "test": "TestResolveExecRef_MissingID"
+      },
+      {
+        "package": "github.com/larksuite/cli/internal/binding",
+        "test": "TestResolveExecRef_EmptyStdout"
+      },
+      {
+        "package": "github.com/larksuite/cli/internal/binding",
+        "test": "TestResolveExecRef_InvalidJSON_JSONOnly"
+      },
+      {
+        "package": "github.com/larksuite/cli/internal/binding",
+        "test": "TestResolveExecRef_NonJSON_RawString"
+      },
+      {
+        "package": "github.com/larksuite/cli/internal/binding",
+        "test": "TestResolveExecRef_NonStringValue_JSONOnly"
+      },
+      {
+        "package": "github.com/larksuite/cli/internal/binding",
+        "test": "TestResolveExecRef_NonStringValue_NoJSONOnly"
+      },
+      {
+        "package": "github.com/larksuite/cli/internal/binding",
+        "test": "TestResolveExecRef_CommandExitError"
+      },
+      {
+        "package": "github.com/larksuite/cli/internal/binding",
+        "test": "TestResolveExecRef_PassEnv"
+      },
+      {
+        "package": "github.com/larksuite/cli/internal/binding",
+        "test": "TestResolveExecRef_ExplicitEnv"
+      },
+      {
+        "package": "github.com/larksuite/cli/internal/binding",
+        "test": "TestResolveExecRef_OutputExceedsMax"
+      },
+      {
+        "package": "github.com/larksuite/cli/internal/binding",
+        "test": "TestResolveFileRef_JSONMode"
+      },
+      {
+        "package": "github.com/larksuite/cli/internal/binding",
+        "test": "TestResolveFileRef_JSONMode_MissingPointer"
+      },
+      {
+        "package": "github.com/larksuite/cli/internal/binding",
+        "test": "TestResolveFileRef_JSONMode_NonStringValue"
+      },
+      {
+        "package": "github.com/larksuite/cli/internal/binding",
+        "test": "TestResolveFileRef_UnsupportedMode"
+      },
+      {
+        "package": "github.com/larksuite/cli/internal/binding",
+        "test": "TestResolveFileRef_DefaultMode_IsJSON"
+      },
+      {
+        "package": "github.com/larksuite/cli/internal/binding",
+        "test": "TestResolveFileRef_JSONMode_InvalidJSON"
+      },
+      {
+        "package": "github.com/larksuite/cli/internal/binding",
+        "test": "TestResolveFileRef_TildePath_JSONMode"
+      },
+      {
+        "package": "github.com/larksuite/cli/internal/nextattempt",
+        "test": "TestSymlinkStorageRejectedBeforeCreation"
+      },
+      {
+        "package": "github.com/larksuite/cli/internal/vfs/localfileio",
+        "test": "TestAtomicWrite_WritesContentAndPermissionCorrectly"
+      },
+      {
+        "package": "github.com/larksuite/cli/internal/vfs/localfileio",
+        "test": "TestAtomicWrite_SetsRestrictivePermission"
+      },
+      {
+        "package": "github.com/larksuite/cli/internal/vfs/localfileio",
+        "test": "TestLocalFileIO_Save_RejectsPathOutsideAllowlist"
+      },
+      {
+        "package": "github.com/larksuite/cli/internal/vfs/localfileio",
+        "test": "TestOpenValidated_RejectsSymlinkFinalComponent"
+      },
+      {
+        "package": "github.com/larksuite/cli/internal/vfs/localfileio",
+        "test": "TestSafeOutputPath_RejectsSymlinkEscapingCWD"
+      },
+      {
+        "package": "github.com/larksuite/cli/internal/vfs/localfileio",
+        "test": "TestSafeOutputPath_AllowsSymlinkWithinCWD"
+      }
+    ]
+  },
+  "capability_gate": {
+    "command": {
+      "name": "capability",
+      "command": [
+        "python3",
+        "scripts/next_inventory.py",
+        "gate",
+        "--target",
+        ".",
+        "--out",
+        "/evidence/followup/capability.json"
+      ],
+      "exit_code": 1,
+      "status": "fail",
+      "duration_seconds": 23.206,
+      "tests": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "packages": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "failures": [],
+      "skipped_tests": [],
+      "race_detected": false,
+      "log": "capability.log",
+      "log_sha256": "cb2e11e2d8d214745a42fbee73554664c8f839055814542c297a038cc936943d"
+    },
+    "result": {
+      "checked_registration_changes": 5744,
+      "failures": [
+        {
+          "change": {
+            "candidate_sha256": "12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126",
+            "kind": "changed",
+            "path": "/feishu/commands/config keychain-downgrade/risk",
+            "reference_sha256": "bc2434a12fecfa191ab66b56a67f8fe2507216b76be96a72b1f866562cdc3567"
+          },
+          "kind": "unmapped_registration_change"
+        },
+        {
+          "change": {
+            "candidate_sha256": "12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126",
+            "kind": "changed",
+            "path": "/lark/commands/config keychain-downgrade/risk",
+            "reference_sha256": "bc2434a12fecfa191ab66b56a67f8fe2507216b76be96a72b1f866562cdc3567"
+          },
+          "kind": "unmapped_registration_change"
+        }
+      ],
+      "live_verification": "not_run",
+      "mapping_revision": "10588248080a91412b0718eb0aa921cff6a90f10",
+      "mapping_sha256": "3597fe639ab729226de12283f70e002e98f670433f7ee837f18dd52a993b3bd2",
+      "semantic_review": "separate; source differences and original report status remain unchanged",
+      "status": "fail"
+    },
+    "report": ".tmp/next-evidence/linux-8ce0688/followup/capability.json",
+    "note": "Two unmapped platform-specific keychain-downgrade risk fields remain a failure at this original boundary; no product risk or broad exemption applied."
+  },
+  "history": [
+    {
+      "phase": "image bootstrap",
+      "status": "infrastructure_failure_then_recovered",
+      "details": "Two anonymous DockerHub pulls failed at blob CDN EOF. Public ECR mirror then downloaded successfully; DockerHub index, arm64 manifest, config and all layer digests independently matched before use. A verbose Hub inspection also failed at its config blob; direct public manifest lookup supplied digest proof.",
+      "logs": [
+        ".tmp/next-evidence/linux-8ce0688/image-pull.log",
+        ".tmp/next-evidence/linux-8ce0688/image-pull-retry.log",
+        ".tmp/next-evidence/linux-8ce0688/image-pull-ecr.log"
+      ]
+    },
+    {
+      "phase": "initial runtime",
+      "status": "fail",
+      "report": ".tmp/next-evidence/linux-8ce0688/initial/report.json",
+      "failures": [
+        {
+          "stage": "e2e",
+          "reason": "Plugin TestMain git archive HEAD failed because initial archive had empty Git root;118tests and4skips completed first. Followup injects exact bundle at terminal boundary and all suites pass."
+        },
+        {
+          "stage": "make-script-test",
+          "reason": "Ruby absent for release-workflow shell test; task image added Ruby and complete script gate passed."
+        }
+      ]
+    }
+  ],
+  "counting_note": "Go counts include subtests. Explicit skips and inherited selector exclusions remain unverified. Unit/race, final E2E/harness, and Node script counts are reported separately to avoid double counting retries. No live APIs or model runs were invoked.",
+  "evidence_reports": {
+    ".tmp/next-evidence/linux-8ce0688/initial/report.json": "c3542dedca728123d099b4424cdac852a8f009f9412efb92bdd0e66e11ce317f",
+    ".tmp/next-evidence/linux-8ce0688/followup/report.json": "fb0f2f317c994af53e44cf312ee5888e098a99e7a45dc994d7b62e5c252e0bb7",
+    ".tmp/next-evidence/linux-8ce0688/image-match-proof.json": "4363241b77303d0d0b88c1cd360c482a7c1786cf9c99d74da19817b6f7a11115",
+    ".tmp/next-evidence/linux-8ce0688/bootstrap.json": "d1188e785a59aa0729d9f81c6e3669bf9d84f84edd800d748f47c9a95c2b312a"
+  },
+  "reference_platform_capture": {
+    "status": "captured",
+    "report": {
+      "schema_version": 1,
+      "reference_revision": "7fd6ef3c07182257ce776cdc5a614e122d5bd4b3",
+      "reference_shallow_boundary": "7fd6ef3c07182257ce776cdc5a614e122d5bd4b3",
+      "candidate_revision": "8ce0688b303eb646e1b79a329002dddcb6403be4",
+      "export_tool_revision": "c7c9f7b",
+      "export_tool_sha256": "dbd1a49d8635932560e63700a895f5135c0d2aebf02379f24c6c5d5bf2c7ef97",
+      "exporter_sha256": "3cc40a3c1513a0e9dea9d402d187a2fcd58aead22ac7ac49aa2d653f71e8a136",
+      "capture_command": [
+        "python3",
+        "/workspace/export-tool/scripts/next_inventory.py",
+        "capture-brands",
+        "--reference-dir",
+        "/workspace/export-tool/docs/reference",
+        "--reference",
+        "/workspace/reference",
+        "--out",
+        "/evidence/reference-linux/configured-brand-registrations-linux.json.gz"
+      ],
+      "check_command": [
+        "python3",
+        "/workspace/export-tool/scripts/next_inventory.py",
+        "check",
+        "--reference-dir",
+        "/workspace/export-tool/docs/reference",
+        "--target",
+        "/workspace/source",
+        "--reference-registrations",
+        "/evidence/reference-linux/configured-brand-registrations-linux.json.gz"
+      ],
+      "check_exit_code": 1,
+      "check_status": "review_required",
+      "reference_platform_deltas": [
+        {
+          "path": "/feishu/commands/config keychain-downgrade/risk",
+          "darwin": "write",
+          "linux": ""
+        },
+        {
+          "path": "/lark/commands/config keychain-downgrade/risk",
+          "darwin": "write",
+          "linux": ""
+        }
+      ],
+      "mapped_capability_result": {
+        "status": "fail",
+        "failures": [
+          {
+            "kind": "context_mismatch",
+            "field": "reference_registrations_sha256"
+          }
+        ],
+        "mapping_revision": "10588248080a91412b0718eb0aa921cff6a90f10",
+        "checked_registration_changes": 5742,
+        "semantic_review": "separate; source differences and original report status remain unchanged",
+        "live_verification": "not_run"
+      }
+    },
+    "build_context": {
+      "GOARCH": "arm64",
+      "GOHOSTARCH": "arm64",
+      "GOHOSTOS": "linux",
+      "GOOS": "linux",
+      "go_version": "go version go1.26.4 linux/arm64"
+    },
+    "registrations_sha256": "dacdbc087857ee0c3d4e3f3f665a24ea3b0519bc5f9b0d049272b3fb90b099df",
+    "image_id": "sha256:342d42770f458569d2327f681b2365aa675aed2b9f80d2c5bdbc664530b10557",
+    "container_id": "002f80cef87204a09599d4877a6ac4147e1095dc87280fa5e23bb6ef62884fdb",
+    "network_mode": "none",
+    "user": "10001:10001",
+    "source_proof": {
+      "revision": "7fd6ef3c07182257ce776cdc5a614e122d5bd4b3",
+      "source_archive_sha256": "7fec6d9494d6c0ae734fcbfb551a94bd2893bd5cfcca6af152cdb0ccf9c88df0",
+      "bundle_sha256": "0e18a556bc19460a35bc240ecc5df3382d81f9c9bf0281982044ec9450eb03c5"
+    },
+    "outputs": {
+      ".tmp/next-evidence/linux-8ce0688/reference/output/configured-brand-registrations-linux.json.gz": "dacdbc087857ee0c3d4e3f3f665a24ea3b0519bc5f9b0d049272b3fb90b099df",
+      ".tmp/next-evidence/linux-8ce0688/reference/output/configured-brand-context-linux.json": "d60fd75a65ee2a80dc02e0ccdf6d8ab9cf5dea2cbbda66f51b473eca6d12e2d6",
+      ".tmp/next-evidence/linux-8ce0688/reference/output/candidate-linux-check.json": "7715fa1f6d85d949154e1f65dacc96c66794e131cc2daf6fd69dab6deb705761",
+      ".tmp/next-evidence/linux-8ce0688/reference/output/report.json": "cce03c5b8ba499ab760f4af66b5112ef62a95522df9c824718b19dd86546c8c2"
+    },
+    "setup_history": "Two setup attempts failed before capture because the shallow source bundle omitted the original7fd shallow boundary. Recreating that exact boundary in the owned reference Git root resolved fetch; original reference checkout was read-only throughout.",
+    "pending_followup": "Inventory owner will commit a selector/profile bound to this actual Linux reference hash. Rerun only corrected capability gate afterward; original failure and raw checker review_required remain retained."
+  }
+}
