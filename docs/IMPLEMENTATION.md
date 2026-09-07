@@ -102,9 +102,19 @@ three trials per arm/task, all 27 group token/API totals and full cached-input
 accounting. Of the five fully verified tasks, Next improves over both baselines
 on Drive, Sheets and Tasks, regresses against both on Base, and regresses against
 concise guidance on Markdown. Fixture corrections for Docs, Extensions and
-Packaging will receive separate balanced comparisons. Events retains an explicit
+Packaging received separate balanced comparisons below. Events retains an explicit
 missing-exit-proof limitation. Data-size and generated-business comparisons
 remain outstanding; no full-product efficiency claim follows from these results.
+The [corrected Docs, Extensions and Packaging series](../evaluation/evidence/scenarios-8d-corrected03/REPORT.md)
+(`193c424`) verifies all 27 outcomes with complete usage totaling 3,702,291 tokens.
+Independent recount confirms the three trials per arm/task, all group totals,
+API sums, distributions and matched-success pairs. Next regresses against both
+baselines on Docs, improves against both on Extensions, and uses slightly more
+than official guidance but less than concise official guidance on Packaging.
+The [Docs trace review](../evaluation/evidence/scenarios-8d-corrected03/docs-trace.md)
+records additional discovery/processing with equal API counts against the concise
+baseline; it provides no per-command token attribution or causal guarantee.
+Earlier failed and inconclusive attempts remain separate, with their costs intact.
 The first [size-series condition](../evaluation/evidence/scaling-8d-schema02/REPORT.md)
 stopped after seven Base attempts exposed missing valid metadata reads and an
 unstated optional-report convention. One recorded outcome is verified; all
@@ -127,6 +137,17 @@ separate unsupported read. Committed control copies and reviewed hashes were
 checked. No Go runtime source or shipped guide changed. Fresh balanced size
 54 and representative business 18 trials remain required under this new evaluator
 condition; earlier costs and outcomes remain separate.
+The [interrupted archive probe](../evaluation/evidence/scaling-8d-fixture03/REPORT.md)
+(`8a566f7`) preserves two later nonverified starts: one has unknown usage and the
+other has 237,389 actual provider tokens. Independent recount confirms those
+numbers plus 27 recorded API calls and 28 commands for the accounted attempt.
+Missing archived trace-vocabulary data caused accounting loss after the first
+model completed; the second's rejection cannot be attributed from retained data.
+The stopped process is terminal; 52 remaining size slots and all 18 business
+slots never started. The minimal `4b3abc6` preflight checks that dependency before
+provider startup, with 16 independently rerun controlled tests passing. New
+balanced trials require the complete pinned archive; these two interrupted
+attempts remain outside its comparison and cannot establish a size curve.
 Held-out trials have not run. A coordinator search exposed fragments of the Base
 and Sheets held-out prompts and one size field. The
 [exposure record](../evaluation/evidence/held-out-exposure.json) quarantines those
