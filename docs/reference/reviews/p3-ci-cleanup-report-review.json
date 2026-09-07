@@ -1,0 +1,110 @@
+{
+  "schema_version": 1,
+  "reviewer": "/root/foundation_skill",
+  "report_kind": "hash_bound_ci_cleanup_report_review",
+  "review_revision": "72fc5e4467494e158216de16b6d3e451a31d0757",
+  "verdict": "changes_requested",
+  "scope": {
+    "assignment_ids": [
+      "ci_portability_follow_up"
+    ],
+    "path_count": 2,
+    "method": "Exact runner source and existing reporting contract inspection, followed by three bounded synthetic command executions with a cleanup-only fault injection.",
+    "product_files_modified": false
+  },
+  "prior_closure_preserved": {
+    "path": "docs/reference/reviews/p3-ci-portability-follow-up.json",
+    "commit": "e417d175eaf07536dce9c1b01502dc5ca918bce3",
+    "sha256": "b74cbc7eaeee4318b81b7260df60e334d6a3df3d659a9360511b67a04508e591",
+    "finding_ids": [
+      "CI1",
+      "CI2",
+      "CI3"
+    ],
+    "scope_note": "CI3 eliminates pipe-EOF waiting in run_command. CI4 concerns its outer environment context teardown before report publication and does not invalidate that source fix."
+  },
+  "assignments": [
+    {
+      "assignment_id": "ci_portability_follow_up",
+      "verdict": "changes_requested",
+      "paths": [
+        {
+          "path": "scripts/next_test.py",
+          "review_revision": "72fc5e4467494e158216de16b6d3e451a31d0757",
+          "review_sha256": "5e377a5c8ed786003bc6e43fb7eb99fb6ea7e57933c1895ced507ed409eff47e",
+          "verdict": "changes_requested",
+          "review_scope": "Additional CI4 teardown/report-publication finding only. Prior CI1/CI2/CI3 closure remains intact. No other previously approved source behavior is reopened.",
+          "findings": [
+            {
+              "id": "CI4",
+              "priority": "P2",
+              "title": "Environment teardown failure prevents publication of completed command evidence",
+              "status": "open",
+              "path": "scripts/next_test.py",
+              "line": 259,
+              "related_lines": [
+                286,
+                288
+              ],
+              "trigger": "TemporaryDirectory.__exit__ raises OSError/PermissionError while cleaning the isolated test environment, after run_command has returned. The report destination itself remains writable.",
+              "impact": "main propagates the teardown error before writing its JSON report. Completed pass, failure and timeout evidence disappears; child failure/timeout exit codes are replaced by an uncaught exception. This is a finite fault-injection finding, not a claim that native Windows has reproduced the trigger.",
+              "requested_change": "Handle the isolated environment cleanup failure separately from command execution, preserve completed command results and existing nonzero child/timeout code, turn otherwise-successful cleanup failure into nonzero failed status, and publish an explicit cleanup diagnostic through the requested report when its destination is writable."
+            }
+          ]
+        },
+        {
+          "path": ".github/workflows/next-offline.yml",
+          "review_revision": "72fc5e4467494e158216de16b6d3e451a31d0757",
+          "review_sha256": "be90e82e603065ff7736df3bd20b201eb15cb11f8a304b67edde6fa47a265736",
+          "verdict": "changes_requested",
+          "review_scope": "Additional CI4 teardown/report-publication finding only. Prior CI1/CI2/CI3 closure remains intact. No other previously approved source behavior is reopened.",
+          "findings": [
+            {
+              "id": "CI4",
+              "status": "open",
+              "dependency": "scripts/next_test.py",
+              "impact": "Always-uploaded machine reports can be missing after the dependent runner exits during environment teardown."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "independent_execution": {
+    "source_revision": "72fc5e4467494e158216de16b6d3e451a31d0757",
+    "source_sha256": "5e377a5c8ed786003bc6e43fb7eb99fb6ea7e57933c1895ced507ed409eff47e",
+    "platform": "Darwin arm64",
+    "method": "Compile exact git-show runner module. Patch commands_for to run one actual finite synthetic Python child. Subclass the real TemporaryDirectory: __exit__ first performs real successful cleanup, then raises PermissionError(\"synthetic environment cleanup denied\"). Keep requested reports in a separate writable temporary directory. Invoke main with --suite unit --timeout1 and catch the injected error only in the diagnostic driver.",
+    "cases": [
+      {
+        "child_source": "print('fixture complete')",
+        "completed_status": "pass",
+        "completed_exit_code": 0,
+        "exception": "PermissionError",
+        "report_exists": false
+      },
+      {
+        "child_source": "import sys;print('fixture failed');sys.exit(7)",
+        "completed_status": "fail",
+        "completed_exit_code": 7,
+        "exception": "PermissionError",
+        "report_exists": false
+      },
+      {
+        "child_source": "import time;print('fixture running',flush=True);time.sleep(2)",
+        "completed_status": "timeout",
+        "completed_exit_code": 124,
+        "exception": "PermissionError",
+        "report_exists": false
+      }
+    ],
+    "maximum_command_timeout_seconds": 1,
+    "temporary_environments_actually_removed": true
+  },
+  "limitations": [
+    "No native Windows cleanup error, live request or broad suite was exercised. The injected cleanup error isolates a valid exception path without leaving processes or temporary environments behind.",
+    "The report destination was writable in every probe. Report publication cannot be promised when that destination itself fails; that is outside this finding.",
+    "Prior CI1/CI2/CI3 source and focused-test closure is retained. Native cross-platform acceptance remains unverified.",
+    "Only a new review artifact is authored here; the offline runner owner is responsible for the narrow implementation and regression fix."
+  ]
+}
