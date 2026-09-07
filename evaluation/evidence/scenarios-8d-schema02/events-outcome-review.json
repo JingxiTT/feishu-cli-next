@@ -1,0 +1,45 @@
+{
+  "scope": "Post-run interpretation; frozen raw batch records remain unchanged",
+  "finding": "The prompt allows Python/subprocess orchestration. The frozen Events observer ignores script invocations but its verifier requires a simple direct CLI exit record for every kernel-bound delivery episode. A valid orchestrated invocation can therefore fail this verifier.",
+  "evidence_limit": "The retained command trace shows script use after schema/list discovery; raw script, trusted receipts and artifacts were discarded. The precise original rejection branch and whether every other invariant passed cannot be recovered. These observations do not establish a product bug or retroactively establish success.",
+  "rows": [
+    {
+      "task_id": "events-dev-01",
+      "arm": "official",
+      "trial": 1,
+      "recorded_success": false,
+      "recorded_categories": [
+        "outcome_failure",
+        "misleading_success_claim"
+      ],
+      "reporting_classification": "inconclusive_execution_proof_coverage",
+      "known_provider_tokens": 140229
+    },
+    {
+      "task_id": "events-dev-01",
+      "arm": "official",
+      "trial": 0,
+      "recorded_success": false,
+      "recorded_categories": [
+        "outcome_failure",
+        "misleading_success_claim"
+      ],
+      "reporting_classification": "inconclusive_execution_proof_coverage",
+      "known_provider_tokens": 141200
+    },
+    {
+      "task_id": "events-dev-01",
+      "arm": "official",
+      "trial": 2,
+      "recorded_success": false,
+      "recorded_categories": [
+        "outcome_failure",
+        "misleading_success_claim"
+      ],
+      "reporting_classification": "inconclusive_execution_proof_coverage",
+      "known_provider_tokens": 173614
+    }
+  ],
+  "accounting": "All original attempt tokens remain included. Reporting treats these three outcomes as inconclusive and does not publish an Events comparative success-rate or token-efficiency claim. Other arms raw verified outcomes remain visible.",
+  "controlled_followup": "Four real Python subprocess controls, both frozen binaries and both aliases, achieved exact artifact/answer and actual child exit0, but the old verifier rejected all four because the script observer recorded no child exits. See ../events-script-proof-controlled.json. This demonstrates a strategy coverage gap without recovering historical outcomes. Explicit exit0 remains required; no process-supervision infrastructure or repeated model trials are planned for this limitation."
+}

@@ -1,0 +1,11 @@
+# Trace interpretation for the frozen scenario condition
+
+The [Base assessment](base-trace.md) records a token regression despite equal Next/original total API requests. Command counts and names below come from sanitized provider traces; script bodies, query values, raw outputs and per-command token attribution were deliberately not retained.
+
+Drive passed all nine trials. Next used five command executions in each trial, including domain help, download help and download. Original used six to nine executions and concise used eight each. Some baseline invocations occurred inside scripts and cannot be reconstructed from sanitized command names. API totals were original 10, concise 12 and Next 9. The lower Next provider-token distribution is observed for this fixed binary-download task; trace counts do not isolate a particular help response or output field as the cause.
+
+Markdown passed all nine trials. Next chose Docs create/fetch in all three, while original used Docs once and the equivalent Drive import route twice; concise used Docs three times. These are permitted alternatives against the same authored source and independently checked native artifact. Next used 9–18 command executions, including four on-demand skills reads per trial; original used 8–11 and concise 7–11. Next made fewer API requests (12 total versus original 23 and concise 18) but consumed more provider tokens than concise. The larger guide/reference acquisition and different model choices are visible; the trace cannot price individual reads or establish that each was unnecessary. The CLI contract remains free to choose either supported import route.
+
+Events and Extensions have separately documented observer coverage limits. Their raw failure categories must not be treated as evidence of CLI bugs or misleading agent conduct: see [Events interpretation](events-outcome-review.json) and [Extensions interpretation](extensions-outcome-review.json). Historical costs remain included, and no success is retroactively fabricated.
+
+No task-specific instructions, universal discovery sequence or product default was tuned from these observations. Small-sample model variability and accumulating context remain possible contributors. [Concurrent host activity](execution-environment.json) additionally limits latency attribution.
