@@ -65,10 +65,32 @@ func TestNoteDiscoveryAndFrozenFlags(t *testing.T) {
 			}
 		}
 	}
-	r := f.Run("discover", "note")
-	require.Equal(t, 0, r.ExitCode, r.Stderr)
-	require.Contains(t, r.Stdout, "note +detail")
-	require.Contains(t, r.Stdout, "note +transcript")
+	// Public flag descriptions can match this query in other domains. Consume
+	// every advertised page before asserting membership, without assuming rank.
+	commands := map[string]bool{}
+	for offset := 0; ; {
+		r := f.Run("discover", "note", "--offset", strconv.Itoa(offset))
+		data := success(t, r)
+		for _, entry := range data.Array() {
+			command := entry.Get("command").String()
+			require.NotEmpty(t, command, r.Stdout)
+			require.False(t, commands[command], "duplicate discovery entry %s", command)
+			commands[command] = true
+		}
+		meta := gjson.Get(r.Stdout, "meta")
+		require.True(t, meta.Get("complete").Exists(), r.Stdout)
+		if meta.Get("complete").Bool() {
+			require.Equal(t, int(meta.Get("total").Int()), len(commands), r.Stdout)
+			break
+		}
+		require.True(t, meta.Get("next_offset").Exists(), r.Stdout)
+		next := int(meta.Get("next_offset").Int())
+		require.Greater(t, next, offset, r.Stdout)
+		require.Less(t, next, int(meta.Get("total").Int()), r.Stdout)
+		offset = next
+	}
+	require.True(t, commands["note +detail"], "note +detail missing from complete discovery")
+	require.True(t, commands["note +transcript"], "note +transcript missing from complete discovery")
 }
 
 func TestNoteDetailIdentitiesTypesAndArtifacts(t *testing.T) {

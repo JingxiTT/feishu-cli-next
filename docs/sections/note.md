@@ -92,6 +92,22 @@ Changed files: `shortcuts/note/note_transcript.go`, its nearby
 Note affordance and command registrations require no changes. Root-wide unit,
 vet/fmt and committed quality gates remain coordinator-owned.
 
+## P3 discovery regression follow-up
+
+Public-flag search increased `discover note` beyond its default 20-result page.
+The section test now follows `meta.next_offset` until `meta.complete`, checks
+forward progress, unique entries and the complete reported total, and verifies
+exact membership of both Note commands. It no longer assumes either command's
+position in the result order. Product search and ranking are unchanged.
+
+The full boundary rerun passed:
+`python3 scripts/next_test.py --section note --suite all --report .tmp/next-tests/note-discovery-boundary.json`.
+All 44 unit, four inherited dry-run and 17 process test events passed with zero
+failures/skips. This repairs the test failure observed in
+`.tmp/next-evidence/p3-e2e-next-fixed-next-sections.json`; it does not establish
+any additional live or comparative evidence. Evaluation adapter files were not
+changed by this follow-up.
+
 ## Open acceptance evidence
 
 Live verification requires a run-owned private normal Note and unified Note,
