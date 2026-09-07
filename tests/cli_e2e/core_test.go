@@ -6,8 +6,12 @@ package clie2e
 import (
 	"context"
 	"errors"
+	"fmt"
+	"io"
 	"os"
 	"path/filepath"
+	"runtime"
+	"strconv"
 	"strings"
 	"testing"
 	"time"
@@ -15,6 +19,13 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
+
+func TestMain(m *testing.M) {
+	if os.Getenv("CLI_E2E_FAKE_PROCESS") == "1" {
+		os.Exit(runFakeCLI(os.Args[1:]))
+	}
+	os.Exit(m.Run())
+}
 
 func TestResolveBinaryPath(t *testing.T) {
 	t.Run("request binary path wins", func(t *testing.T) {
@@ -490,93 +501,68 @@ type fakeCLI struct {
 
 func newFakeCLI(t *testing.T) fakeCLI {
 	t.Helper()
+	binary, err := os.Executable()
+	require.NoError(t, err)
+	t.Setenv("CLI_E2E_FAKE_PROCESS", "1")
+	return fakeCLI{BinaryPath: binary}
+}
 
-	tmpDir := t.TempDir()
-
-	script := `#!/bin/sh
-if [ "$1" = "auth" ] && [ "$2" = "status" ] && [ "$3" = "--verify" ]; then
-  if [ -n "$FAKE_AUTH_STATUS_STDOUT" ]; then
-    echo "$FAKE_AUTH_STATUS_STDOUT"
-  fi
-  exit "${FAKE_AUTH_STATUS_EXIT_CODE:-0}"
-fi
-
-if [ "$1" = "emit-arg" ]; then
-  key="$2"
-  shift 2
-  while [ "$#" -gt 1 ]; do
-    if [ "$1" = "$key" ]; then
-      echo "$2"
-      exit 0
-    fi
-    shift
-  done
-  exit 1
-fi
-
-if [ "$1" = "emit-stdin" ]; then
-  cat
-  exit 0
-fi
-
-if [ "$1" = "fail-once-retryable" ]; then
-  state="$2"
-  count=0
-  if [ -f "$state" ]; then
-    count="$(cat "$state")"
-  fi
-  count=$((count + 1))
-  echo "$count" > "$state"
-  if [ "$count" -eq 1 ]; then
-    echo "Deleting folder fake..." >&2
-    echo '{"ok":false,"error":{"type":"api","code":1061045,"message":"resource contention occurred, please retry.","retryable":true}}' >&2
-    exit 1
-  fi
-  echo '{"ok":true}'
-  exit 0
-fi
-
-if [ "$1" = "always-non-retryable" ]; then
-  state="$2"
-  count=0
-  if [ -f "$state" ]; then
-    count="$(cat "$state")"
-  fi
-  count=$((count + 1))
-  echo "$count" > "$state"
-  echo '{"ok":false,"error":{"type":"api","code":123,"message":"validation failed","retryable":false}}' >&2
-  exit 1
-fi
-
-exit_code=0
-while [ "$#" -gt 0 ]; do
-  case "$1" in
-    --stdout-json)
-      echo "$2"
-      shift 2
-      ;;
-    --stderr-json)
-      echo "$2" >&2
-      shift 2
-      ;;
-    --exit)
-      exit_code="$2"
-      shift 2
-      ;;
-    *)
-      shift
-      ;;
-  esac
-done
-exit "$exit_code"
-`
-
-	binaryPath := filepath.Join(tmpDir, "fake-"+cliBinaryName)
-	require.NoError(t, os.WriteFile(binaryPath, []byte(script), 0o755))
-
-	return fakeCLI{
-		BinaryPath: binaryPath,
+// Re-execute this native test binary rather than requiring a POSIX shell.
+func runFakeCLI(args []string) int {
+	if len(args) >= 3 && args[0] == "auth" && args[1] == "status" && args[2] == "--verify" {
+		if value := os.Getenv("FAKE_AUTH_STATUS_STDOUT"); value != "" {
+			fmt.Println(value)
+		}
+		code, _ := strconv.Atoi(os.Getenv("FAKE_AUTH_STATUS_EXIT_CODE"))
+		return code
 	}
+	if len(args) >= 2 && args[0] == "emit-arg" {
+		for i := 2; i+1 < len(args); i++ {
+			if args[i] == args[1] {
+				fmt.Println(args[i+1])
+				return 0
+			}
+		}
+		return 1
+	}
+	if len(args) > 0 && args[0] == "emit-stdin" {
+		_, _ = io.Copy(os.Stdout, os.Stdin)
+		return 0
+	}
+	if len(args) >= 2 && (args[0] == "fail-once-retryable" || args[0] == "always-non-retryable") {
+		content, _ := os.ReadFile(args[1])
+		count, _ := strconv.Atoi(strings.TrimSpace(string(content)))
+		count++
+		if err := os.WriteFile(args[1], []byte(fmt.Sprintf("%d\n", count)), 0600); err != nil {
+			return 2
+		}
+		if args[0] == "always-non-retryable" {
+			fmt.Fprintln(os.Stderr, `{"ok":false,"error":{"type":"api","code":123,"message":"validation failed","retryable":false}}`)
+			return 1
+		}
+		if count == 1 {
+			fmt.Fprintln(os.Stderr, "Deleting folder fake...")
+			fmt.Fprintln(os.Stderr, `{"ok":false,"error":{"type":"api","code":1061045,"message":"resource contention occurred, please retry.","retryable":true}}`)
+			return 1
+		}
+		fmt.Println(`{"ok":true}`)
+		return 0
+	}
+	code := 0
+	for i := 0; i+1 < len(args); i++ {
+		switch args[i] {
+		case "--stdout-json":
+			fmt.Println(args[i+1])
+			i++
+		case "--stderr-json":
+			fmt.Fprintln(os.Stderr, args[i+1])
+			i++
+		case "--exit":
+			code, _ = strconv.Atoi(args[i+1])
+			i++
+		}
+	}
+	return code
 }
 
 func assertSamePath(t *testing.T, want string, got string) {
@@ -590,7 +576,10 @@ func assertSamePath(t *testing.T, want string, got string) {
 
 func mustWriteExecutable(t *testing.T, path string) string {
 	t.Helper()
-	require.NoError(t, os.WriteFile(path, []byte("#!/bin/sh\nexit 0\n"), 0o755))
+	if runtime.GOOS == "windows" {
+		path += ".exe"
+	}
+	require.NoError(t, os.WriteFile(path, []byte("synthetic executable path fixture"), 0o755))
 	absPath, err := filepath.Abs(path)
 	require.NoError(t, err)
 	return absPath

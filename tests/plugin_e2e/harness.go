@@ -28,6 +28,8 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
+	"strconv"
 	"strings"
 	"sync"
 	"testing"
@@ -179,7 +181,7 @@ func buildForkWithMainAndAffordance(t *testing.T, name, pluginSrc, mainSrc, affo
 		t.Fatalf("read archived go.mod: %v", err)
 	}
 	gomod := strings.Replace(string(rawMod), "module github.com/larksuite/cli", "module larkcustomer", 1)
-	gomod += "\nrequire github.com/larksuite/cli v0.0.0\n\nreplace github.com/larksuite/cli => " + cleanTree + "\n"
+	gomod += "\nrequire github.com/larksuite/cli v0.0.0\n\nreplace github.com/larksuite/cli => " + strconv.Quote(filepath.ToSlash(cleanTree)) + "\n"
 	writeFile(t, filepath.Join(mod, "go.mod"), gomod)
 
 	// go.sum: transitive dependency hashes are identical to cli's.
@@ -193,6 +195,9 @@ func buildForkWithMainAndAffordance(t *testing.T, name, pluginSrc, mainSrc, affo
 	writeFile(t, filepath.Join(mod, "plugin", "plugin.go"), pluginSrc)
 
 	bin := filepath.Join(mod, "lark-cli")
+	if runtime.GOOS == "windows" {
+		bin += ".exe"
+	}
 	build := exec.Command("go", "build", "-o", bin, ".")
 	build.Dir = mod
 	// -mod=mod fixes require annotations copied from cli's go.mod; the default

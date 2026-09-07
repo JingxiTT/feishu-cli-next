@@ -13,6 +13,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 	"time"
@@ -534,7 +535,11 @@ func ResolveBinaryPath(req Request) (string, error) {
 		return normalizeBinaryPath(envPath)
 	}
 	if rootDir, err := findProjectRootDir(); err == nil {
-		projectBinary := filepath.Join(rootDir, cliBinaryName)
+		name := cliBinaryName
+		if runtime.GOOS == "windows" {
+			name += ".exe"
+		}
+		projectBinary := filepath.Join(rootDir, name)
 		if _, statErr := os.Stat(projectBinary); statErr == nil {
 			return normalizeBinaryPath(projectBinary)
 		}
@@ -562,7 +567,16 @@ func normalizeBinaryPath(path string) (string, error) {
 	if info.IsDir() {
 		return "", fmt.Errorf("binary path %q is a directory", absPath)
 	}
-	if info.Mode()&0o111 == 0 {
+	executable := info.Mode()&0o111 != 0
+	if runtime.GOOS == "windows" {
+		switch strings.ToLower(filepath.Ext(absPath)) {
+		case ".exe", ".com", ".bat", ".cmd":
+			executable = true
+		default:
+			executable = false
+		}
+	}
+	if !executable {
 		return "", fmt.Errorf("binary path %q is not executable", absPath)
 	}
 	return absPath, nil

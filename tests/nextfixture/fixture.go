@@ -15,6 +15,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"sync/atomic"
 	"testing"
@@ -43,6 +44,9 @@ func RunMain(m *testing.M, repoRoot string) int {
 		return 2
 	}
 	fixtureBinary = filepath.Join(directory, "feishu-cli-next-fixture")
+	if runtime.GOOS == "windows" {
+		fixtureBinary += ".exe"
+	}
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
 	build := exec.CommandContext(ctx, "go", "build", "-tags", "authsidecar", "-o", fixtureBinary, ".")
 	build.Dir = repoRoot
