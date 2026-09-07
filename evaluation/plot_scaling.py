@@ -33,7 +33,9 @@ def read_batch(path, section):
     seen = set()
     rows = []
     for run in runs:
-        matches = [size for size in SIZES if run["task_id"] == f"{section}-scale-dev-{size:05d}"]
+        task_ids = {size: f"base-scale-dev-{size:05d}" if section == "base" else f"sheets-size-dev-{size}"
+                    for size in SIZES}
+        matches = [size for size, task_id in task_ids.items() if run["task_id"] == task_id]
         if len(matches) != 1 or run["arm"] not in ARMS or type(run["trial"]) is not int or run["trial"] not in (0, 1, 2):
             raise ValueError("Unexpected size, arm or trial identity")
         size = matches[0]
@@ -77,7 +79,7 @@ def main():
               "nonverified": {"marker": "x", "color": "#343A40"},
               "inconclusive": {"marker": "D", "edgecolors": "#6B7280", "facecolors": "none"}}
     fig, axes = plt.subplots(2, 3, figsize=(12, 7.2), sharey="row")
-    fig.subplots_adjust(left=0.09, right=0.985, top=0.81, bottom=0.23, hspace=0.52, wspace=0.08)
+    fig.subplots_adjust(left=0.09, right=0.985, top=0.81, bottom=0.23, hspace=0.52, wspace=0.20)
     fig.suptitle("Provider tokens by data size", x=0.09, y=0.975, ha="left", fontsize=20)
     fig.text(0.09, 0.915, "54 fresh attempts · three trials per arm and size · all recorded outcomes retained", fontsize=11)
     for row_index, section in enumerate(("base", "sheets")):
@@ -93,10 +95,10 @@ def main():
                 x = run["row_count"] * 10 ** ((run["trial"] - 1) * 0.045)
                 ax.scatter(x, run["usage"]["total_tokens"], s=48, linewidths=1.3, zorder=3, **styles[state])
             ax.set_xscale("log")
-            ax.set_xlim(65, 15500)
+            ax.set_xlim(50, 20000)
             ax.set_ylim(0, upper)
             labels = [f'{size:,}\n{sum(r["success"] for r in selected if r["row_count"] == size)}/3 verified' for size in SIZES]
-            ax.set_xticks(SIZES, labels)
+            ax.set_xticks(SIZES, labels, fontsize=9)
             ax.minorticks_off()
             ax.grid(axis="y", color="#E5E7EB", linewidth=0.7)
             ax.spines[["top", "right"]].set_visible(False)
