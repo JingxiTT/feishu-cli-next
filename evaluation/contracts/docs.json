@@ -1,0 +1,458 @@
+{
+  "schema_version": 1,
+  "section": "docs",
+  "task_id": "docs-dev-01",
+  "scenario": "docs-rich-status-v1",
+  "source_manifest": "evaluation/tasks.development.json",
+  "reference_revision": "7fd6ef3c07182257ce776cdc5a614e122d5bd4b3",
+  "adapter_status": "contract_ready_server_implementation_required",
+  "model_evaluation_status": "not_run",
+  "concrete_prompt": "In the private synthetic document doxcnEvalRichStatus (https://docs.example.invalid/docx/doxcnEvalRichStatus), change only the exact phrase Old status to New status. Preserve the existing native bold formatting and link on status, the Unicode text, and every other block and resource. Do not create, share, or delete any resource. Return JSON with document_id and paragraph_text, where paragraph_text is the resulting complete text of the changed paragraph.",
+  "valid_ids": {
+    "document_id": "doxcnEvalRichStatus",
+    "document_url": "https://docs.example.invalid/docx/doxcnEvalRichStatus",
+    "heading_block_id": "doxcnEvalHeading",
+    "target_block_id": "doxcnEvalTargetBlock",
+    "unrelated_block_id": "doxcnEvalUnrelated",
+    "image_block_id": "doxcnEvalImage",
+    "image_token": "syntheticImageToken",
+    "effective_user_id": "fixture_self",
+    "tenant_key": "fixture-tenant"
+  },
+  "id_mapping_reason": "The predeclared document has no concrete identifier. These alphanumeric document/block tokens pass the existing document reference parser; they identify only synthetic loopback state. Native run/link identities are fixture-ledger identities, not invented public Docx API fields.",
+  "initial_state": {
+    "document_id": "doxcnEvalRichStatus",
+    "title": "Fixture status",
+    "revision_id": 7,
+    "owner_id": "fixture_self",
+    "tenant_key": "fixture-tenant",
+    "visibility": "self_only",
+    "permissions": {
+      "users": [
+        "fixture_self"
+      ],
+      "public": false,
+      "link_wide": false,
+      "organization_wide": false
+    },
+    "block_order": [
+      "doxcnEvalHeading",
+      "doxcnEvalTargetBlock",
+      "doxcnEvalUnrelated",
+      "doxcnEvalImage"
+    ],
+    "blocks": [
+      {
+        "block_id": "doxcnEvalHeading",
+        "parent_id": "doxcnEvalRichStatus",
+        "kind": "title",
+        "text": "Fixture status"
+      },
+      {
+        "block_id": "doxcnEvalTargetBlock",
+        "parent_id": "doxcnEvalRichStatus",
+        "kind": "paragraph",
+        "runs": [
+          {
+            "native_identity": "run_prefix",
+            "text": "Old ",
+            "style": {
+              "bold": false,
+              "link": null
+            }
+          },
+          {
+            "native_identity": "run_status",
+            "text": "status",
+            "style": {
+              "bold": true,
+              "link": {
+                "native_identity": "link_reference",
+                "url": "synthetic://reference"
+              }
+            }
+          },
+          {
+            "native_identity": "run_unicode",
+            "text": " — 你好",
+            "style": {
+              "bold": false,
+              "link": null
+            }
+          }
+        ],
+        "text": "Old status — 你好"
+      },
+      {
+        "block_id": "doxcnEvalUnrelated",
+        "parent_id": "doxcnEvalRichStatus",
+        "kind": "paragraph",
+        "text": "Keep résumé 😀 and 001 unchanged."
+      },
+      {
+        "block_id": "doxcnEvalImage",
+        "parent_id": "doxcnEvalRichStatus",
+        "kind": "image",
+        "token": "syntheticImageToken",
+        "width": 640,
+        "height": 480
+      }
+    ],
+    "reference_map": {},
+    "full_xml": "<title block-id=\"doxcnEvalHeading\">Fixture status</title><p block-id=\"doxcnEvalTargetBlock\">Old <a href=\"synthetic://reference\"><b>status</b></a> — 你好</p><p block-id=\"doxcnEvalUnrelated\">Keep résumé 😀 and 001 unchanged.</p><img block-id=\"doxcnEvalImage\" token=\"syntheticImageToken\"/>"
+  },
+  "transport": {
+    "base": "existing signed non-forwarding SectionFixture sidecar",
+    "supported_identities": [
+      "user",
+      "bot"
+    ],
+    "preferred_default_identity": "user",
+    "all_responses": "HTTP 200 application/json {\"code\":0,\"msg\":\"success\",\"data\":<route data>} unless explicitly rejected. Every read renders current state, never a canned post-edit success.",
+    "unsupported_routes": "Reject without forwarding. Record unsupported valid strategies separately from task failures; expand equivalent route semantics before comparative scoring if an arm chooses a valid unsupported approach.",
+    "authentication_route": {
+      "method": "GET",
+      "path": "/open-apis/authen/v1/user_info",
+      "data": {
+        "open_id": "fixture_self",
+        "name": "Synthetic Fixture",
+        "tenant_key": "fixture-tenant"
+      }
+    }
+  },
+  "routes": [
+    {
+      "name": "native_document_fetch",
+      "method": "POST",
+      "path": "/open-apis/docs_ai/v1/documents/doxcnEvalRichStatus/fetch",
+      "mutation": false,
+      "request_example": {
+        "format": "xml",
+        "extra_param": "{\"enable_user_cite_reference_map\":true,\"include_comments\":true,\"return_html5_block_data\":true}",
+        "export_option": {
+          "export_block_id": true,
+          "export_style_attrs": true,
+          "export_cite_extra_data": true
+        }
+      },
+      "accepted_inputs": {
+        "format": [
+          "xml",
+          "markdown"
+        ],
+        "revision_id": "omitted, -1, or current revision; older snapshots are not required for this scenario and must not silently resolve to latest",
+        "export_option": "accept existing three boolean keys, with defaults matching native fetch; b/a semantics remain in content even when optional style attributes/IDs are suppressed",
+        "read_option": "omitted/full; outline; range with known start/end block IDs (end -1 supported); section at known heading; keyword substring/OR branches; context_before/context_after/max_depth accepted as integer strings. Implement actual selection, never return unmarked full content for a narrowed request.",
+        "lang": "optional display language, no synthetic user-cite data to alter",
+        "scene": "optional forwarded metadata, no state effects",
+        "extra_param": "optional JSON string; no comments or HTML5 blocks in this fixture"
+      },
+      "data_example": {
+        "document": {
+          "document_id": "doxcnEvalRichStatus",
+          "revision_id": 7,
+          "content": "<title block-id=\"doxcnEvalHeading\">Fixture status</title><p block-id=\"doxcnEvalTargetBlock\">Old <a href=\"synthetic://reference\"><b>status</b></a> — 你好</p><p block-id=\"doxcnEvalUnrelated\">Keep résumé 😀 and 001 unchanged.</p><img block-id=\"doxcnEvalImage\" token=\"syntheticImageToken\"/>",
+          "reference_map": {}
+        },
+        "complete": true
+      },
+      "response_semantics": "Render current state. XML full detail uses stable block-id attributes; simple detail may omit IDs without deleting native identity. Markdown renders the native bold/link as [**status**](synthetic://reference), preserving Unicode. A bounded response marks complete:false for document extent and includes returned block IDs; full response complete:true."
+    },
+    {
+      "name": "native_precise_edit",
+      "method": "PUT",
+      "path": "/open-apis/docs_ai/v1/documents/doxcnEvalRichStatus",
+      "mutation": true,
+      "request_example": {
+        "format": "xml",
+        "command": "str_replace",
+        "pattern": "Old status",
+        "content": "New status",
+        "revision_id": -1
+      },
+      "accepted_inputs": {
+        "format": [
+          "xml",
+          "markdown"
+        ],
+        "command": [
+          "str_replace",
+          "block_replace",
+          "overwrite",
+          "block_delete",
+          "block_insert_after",
+          "block_copy_insert_after",
+          "block_move_after"
+        ],
+        "revision_id": "omitted or -1 means current fixture state; nonnegative means exact expected fixture revision; mismatches reject without effect (a synthetic conditional contract only)",
+        "reference_map": "optional object; preserve unknown values and explicit distinctions; empty or absent is equal here",
+        "block_addressing": "block_id single or comma-separated; supported block_replace/block_delete inclusive start_block_id/end_block_id; source IDs for move/copy; end sentinel -1"
+      },
+      "data_example": {
+        "result": "success",
+        "document": {
+          "document_id": "doxcnEvalRichStatus",
+          "revision_id": 8
+        },
+        "affected_block_ids": [
+          "doxcnEvalTargetBlock"
+        ]
+      },
+      "transition_semantics": {
+        "str_replace": "Flatten each paragraph into a character stream with a native run/style/link identity per character. Find exact case-sensitive literal pattern occurrences; do not regex-substitute XML bytes. For this fixture Old status spans run_prefix and run_status. Compute longest common prefix/suffix of each matched old/new pair, alter only differing characters, and retain run identities/styles for all unaffected characters. Old→New changes only run_prefix text from Old[space] to New[space]; status, link_reference, run_status and run_unicode remain byte-for-byte unchanged. Apply actual arbitrary literal patterns, not only the expected payload. Reject zero matches or ambiguous multi-block matches without effect rather than return a false success. Multiple matches within this fixture should require explicit disambiguation; the supplied target phrase occurs once.",
+        "block_replace": "Parse the supplied XML/Markdown representation and change only addressed blocks; preserve identity only for explicitly retained native block IDs. Recreated nodes/runs receive new ledger identities, so destructive rewrite strategies can legitimately fail fidelity invariants. Do not secretly restore dropped formatting or unrelated content to make a request pass. If actual native identity behavior cannot be faithfully modeled for an alternative strategy, classify that trial unsupported instead of asserting product failure.",
+        "overwrite": "Replace the actual complete document representation; preserve explicitly retained native IDs only when representation/identity mapping is unambiguous. Dropped blocks, resources or styles remain dropped and must fail final invariants. An exact same full native XML/reference-map submission is unchanged and does not increment revision.",
+        "append_copy_move_delete": "Implement requested native block operations against the supplied IDs or reject as unsupported before comparative scoring; these are not expected to satisfy the task but must never be converted into the desired phrase edit.",
+        "effect_count": "Increment revision once per request with an actual semantic change. Record before/after hashes, target IDs, changed character spans and newly created/deleted native identities under the fixture lock. Repeated requests with no effect are not duplicate successful replacements."
+      }
+    },
+    {
+      "name": "equivalent_docx_metadata",
+      "method": "GET",
+      "path": "/open-apis/docx/v1/documents/doxcnEvalRichStatus",
+      "mutation": false,
+      "data_example": {
+        "document": {
+          "document_id": "doxcnEvalRichStatus",
+          "revision_id": 7,
+          "title": "Fixture status"
+        }
+      },
+      "response_semantics": "Current metadata from state."
+    },
+    {
+      "name": "equivalent_docx_raw_content",
+      "method": "GET",
+      "path": "/open-apis/docx/v1/documents/doxcnEvalRichStatus/raw_content",
+      "mutation": false,
+      "data_example": {
+        "content": "Fixture status\nOld status — 你好\nKeep résumé 😀 and 001 unchanged."
+      },
+      "response_semantics": "Concatenate current visible text in block order. This representation is deliberately insufficient evidence of native formatting by itself."
+    },
+    {
+      "name": "equivalent_docx_blocks",
+      "method": "GET",
+      "path": "/open-apis/docx/v1/documents/doxcnEvalRichStatus/blocks",
+      "mutation": false,
+      "query": "page_size/page_token/document_revision_id when supplied; deterministic bounded pages with has_more and page_token; IDs/type/content remain unchanged",
+      "data_example": {
+        "items": [
+          {
+            "block_id": "doxcnEvalTargetBlock",
+            "parent_id": "doxcnEvalRichStatus",
+            "block_type": 2,
+            "text": {
+              "elements": [
+                {
+                  "text_run": {
+                    "content": "Old ",
+                    "text_element_style": {}
+                  }
+                },
+                {
+                  "text_run": {
+                    "content": "status",
+                    "text_element_style": {
+                      "bold": true,
+                      "link": {
+                        "url": "synthetic://reference"
+                      }
+                    }
+                  }
+                },
+                {
+                  "text_run": {
+                    "content": " — 你好",
+                    "text_element_style": {}
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "has_more": false,
+        "page_token": ""
+      },
+      "response_semantics": "Example shows target block only; an unfiltered full read must include all actual blocks, not omit unrelated blocks. Internal native_identity fields are never exposed as public fields."
+    },
+    {
+      "name": "equivalent_docx_block_get",
+      "method": "GET",
+      "path": "/open-apis/docx/v1/documents/doxcnEvalRichStatus/blocks/{block_id}",
+      "mutation": false,
+      "response_semantics": "Return {block:<the requested current typed block>} or reject unknown block ID."
+    },
+    {
+      "name": "equivalent_docx_text_patch",
+      "method": "PATCH",
+      "path": "/open-apis/docx/v1/documents/doxcnEvalRichStatus/blocks/{block_id}",
+      "mutation": true,
+      "request_example": {
+        "update_text_elements": {
+          "elements": [
+            {
+              "text_run": {
+                "content": "New ",
+                "text_element_style": {}
+              }
+            },
+            {
+              "text_run": {
+                "content": "status",
+                "text_element_style": {
+                  "bold": true,
+                  "link": {
+                    "url": "synthetic://reference"
+                  }
+                }
+              }
+            },
+            {
+              "text_run": {
+                "content": " — 你好",
+                "text_element_style": {}
+              }
+            }
+          ]
+        }
+      },
+      "response_semantics": "Apply complete submitted text elements for the existing block; preserve an existing internal run/link identity only where unchanged content/style/link identity mapping is unique. Omitted styles are actually cleared; other blocks never mutate. Return {block:<updated block>,document_revision_id:<current revision>}. Identity alignment is a synthetic fixture policy and does not prove backend run object reuse."
+    }
+  ],
+  "independent_verifier": {
+    "source_of_truth": "Fixture-owned final state and ledger captured after the agent process exits. Do not trust agent-written receipts, final answer, a command success string, or a public fetch renderer to establish fidelity.",
+    "invariants": [
+      {
+        "path": "document_id",
+        "equals": "doxcnEvalRichStatus"
+      },
+      {
+        "path": "blocks[target].text",
+        "equals": "New status — 你好"
+      },
+      {
+        "path": "blocks[target].runs[0].native_identity",
+        "equals": "run_prefix"
+      },
+      {
+        "path": "blocks[target].runs[0].text",
+        "equals": "New "
+      },
+      {
+        "path": "blocks[target].runs[1]",
+        "deep_equals_initial": true
+      },
+      {
+        "path": "blocks[target].runs[2]",
+        "deep_equals_initial": true
+      },
+      {
+        "path": "blocks excluding target",
+        "deep_equals_initial": true
+      },
+      {
+        "path": "block_order",
+        "deep_equals_initial": true
+      },
+      {
+        "path": "reference_map",
+        "deep_equals_initial": true
+      },
+      {
+        "path": "owner_id,tenant_key,visibility,permissions",
+        "deep_equals_initial": true
+      },
+      {
+        "path": "resource_registry",
+        "equals_initial": true
+      },
+      {
+        "path": "ledger semantic changed character spans",
+        "exactly": "One Old→New substitution in run_prefix; no inserted/deleted/reparented native block, run or link identity; no unrelated changes"
+      }
+    ],
+    "success_policy": "Score final state and answer independently of command sequence. A correct equivalent approach may use more reads or mutations; no fixed call-count requirement. Report rejected/unsupported requests separately; never make unsupported valid strategies look like proven CLI failures. Final state must demonstrate a real edit from the fresh initial fixture."
+  },
+  "answer_schema": {
+    "type": "object",
+    "properties": {
+      "document_id": {
+        "type": "string"
+      },
+      "paragraph_text": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "document_id",
+      "paragraph_text"
+    ],
+    "additionalProperties": false
+  },
+  "expected_answer": {
+    "document_id": "doxcnEvalRichStatus",
+    "paragraph_text": "New status — 你好"
+  },
+  "working_cli_examples": {
+    "applicability": "Same existing shortcut arguments work with both pinned official CLI and feishu-cli-next. Examples are options, not an enforced sequence. Do not inject examples into one arm without equivalent guidance coverage.",
+    "next": [
+      "feishu-cli-next docs +fetch --doc doxcnEvalRichStatus --doc-format xml --detail full --as user",
+      "feishu-cli-next docs +update --doc doxcnEvalRichStatus --command str_replace --pattern 'Old status' --content 'New status' --as user",
+      "feishu-cli-next docs +fetch --doc doxcnEvalRichStatus --scope range --start-block-id doxcnEvalTargetBlock --end-block-id doxcnEvalTargetBlock --detail full --as user"
+    ],
+    "official": [
+      "lark-cli docs +fetch --doc doxcnEvalRichStatus --doc-format xml --detail full --as user",
+      "lark-cli docs +update --doc doxcnEvalRichStatus --command str_replace --pattern 'Old status' --content 'New status' --as user"
+    ],
+    "verification_status": "Arguments and routes match current source and passing Docs process tests; the new server contract has not yet been replayed."
+  },
+  "source_and_test_references": [
+    {
+      "path": "shortcuts/doc/docs_update_v2.go",
+      "symbols": [
+        "validCommandsV2",
+        "buildUpdateBodyBase",
+        "executeUpdateV2"
+      ],
+      "evidence": "Existing str_replace/body/address/revision route; append lowers to block_insert_after with -1."
+    },
+    {
+      "path": "shortcuts/doc/docs_fetch_v2.go",
+      "symbols": [
+        "buildFetchBody",
+        "buildReadOption"
+      ],
+      "evidence": "Native read endpoint, format/detail/read scope and query shape."
+    },
+    {
+      "path": "skills/lark-doc/references/lark-doc-update.md",
+      "evidence": "Reference documents str_replace as inline rich-text replacement; block_replace for multiline/multiblock content."
+    },
+    {
+      "path": "tests/next_sections/docs/docs_e2e_test.go",
+      "symbols": [
+        "TestDocsEveryUpdateOperation",
+        "TestDocsBoundedReadScopes",
+        "TestDocsExplicitMarkdownConversionsPreserveSidecars"
+      ],
+      "evidence": "Production-process request fidelity, scope semantics and explicit format conversion coverage."
+    },
+    {
+      "path": "shortcuts/doc/docs_update_noop_test.go",
+      "evidence": "Exact native XML overwrite comparison preserves identities and zero mutation behavior; not invoked by precise str_replace."
+    },
+    {
+      "path": "docs/sections/docs.md",
+      "evidence": "Full parity mapping and unresolved native backend guarantees."
+    }
+  ],
+  "limitations": [
+    "This is a development-only synthetic task, never a live Feishu object. It does not prove live str_replace formatting behavior, native run/link reuse, or revision concurrency guarantees.",
+    "Fixture stable inline identities are independent verifier ledger fields; do not inject invented run IDs into public DocxXML/Docx API responses.",
+    "Bounded scopes must be implemented semantically or reported unsupported. Full response fixtures must not silently stand in for every scope.",
+    "The adapter needs deterministic XML/typed-block rendering from common state and actual text edit transitions; golden-response request matching alone is not valid evaluation.",
+    "Before comparative runs, replay CLI examples through both built binaries and verify initial/final states without a model; also test wrong document, missing/ambiguous phrase, style-dropping overwrite and revision mismatch as negative controls. No model runs or fixture server implementation were performed while producing this contract.",
+    "General XML rewrite/native identity correspondence is not fully validated. A valid alternative strategy unsupported by the adapter requires adapter expansion or an explicitly inconclusive trial, not an efficiency or capability claim."
+  ]
+}

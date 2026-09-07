@@ -1,0 +1,312 @@
+{
+  "schema_version": 1,
+  "task_id": "mail-dev-01",
+  "section": "mail",
+  "split": "development",
+  "scenario": "mail-bounded-list-v1",
+  "status": "contract_ready_adapter_not_implemented",
+  "source_task": "evaluation/tasks.development.json#mail-dev-01",
+  "prompt": "List at most two messages from the INBOX of the synthetic mailbox mail-fixture@example.invalid in its returned mailbox order, and explicitly state whether more messages exist. Return JSON with exactly messages and has_more; each message must contain exactly message_id and subject. Keep the mailbox unchanged: do not send, mark read, move, delete, subscribe or otherwise modify anything.",
+  "fixture": {
+    "kind": "synthetic",
+    "visibility": "self_only",
+    "version": 1,
+    "mailbox": "mail-fixture@example.invalid",
+    "mailbox_aliases": [
+      "mail-fixture@example.invalid",
+      "me"
+    ],
+    "folder_id": "INBOX",
+    "limit": 2,
+    "accepted_identities": [
+      "user",
+      "bot"
+    ],
+    "binding": {
+      "open_id": "ou_mail_fixture_self",
+      "tenant_key": "mail-fixture-tenant",
+      "app_id": "synthetic-evaluation-app"
+    },
+    "messages": [
+      {
+        "message_id": "0123456789abcdef0000000000000001",
+        "subject": "Budget review 预算",
+        "folder_id": "INBOX",
+        "internal_date": "1893549600",
+        "to": [
+          {
+            "mail_address": "mail-fixture@example.invalid",
+            "name": "Synthetic Mail Fixture"
+          }
+        ],
+        "cc": [],
+        "bcc": [],
+        "label_ids": [],
+        "body_plain_text": "Synthetic fixture message 1",
+        "body_html": "<p>Synthetic fixture message 1</p>",
+        "attachments": [],
+        "head_from": {
+          "mail_address": "mail-fixture@example.invalid",
+          "name": "Synthetic Mail Fixture"
+        }
+      },
+      {
+        "message_id": "0123456789abcdef0000000000000002",
+        "subject": "Fixture update",
+        "folder_id": "INBOX",
+        "internal_date": "1893549540",
+        "to": [
+          {
+            "mail_address": "mail-fixture@example.invalid",
+            "name": "Synthetic Mail Fixture"
+          }
+        ],
+        "cc": [],
+        "bcc": [],
+        "label_ids": [],
+        "body_plain_text": "Synthetic fixture message 2",
+        "body_html": "<p>Synthetic fixture message 2</p>",
+        "attachments": [],
+        "head_from": {
+          "mail_address": "mail-fixture@example.invalid",
+          "name": "Synthetic Mail Fixture"
+        }
+      },
+      {
+        "message_id": "0123456789abcdef0000000000000003",
+        "subject": "Remaining fixture mail",
+        "folder_id": "INBOX",
+        "internal_date": "1893549480",
+        "to": [
+          {
+            "mail_address": "mail-fixture@example.invalid",
+            "name": "Synthetic Mail Fixture"
+          }
+        ],
+        "cc": [],
+        "bcc": [],
+        "label_ids": [],
+        "body_plain_text": "Synthetic fixture message 3",
+        "body_html": "<p>Synthetic fixture message 3</p>",
+        "attachments": [],
+        "head_from": {
+          "mail_address": "mail-fixture@example.invalid",
+          "name": "Synthetic Mail Fixture"
+        }
+      }
+    ],
+    "sent_messages": [],
+    "subscriptions": [],
+    "notifications": []
+  },
+  "fixture_id_mapping": {
+    "m1": "0123456789abcdef0000000000000001",
+    "m2": "0123456789abcdef0000000000000002",
+    "m3": "0123456789abcdef0000000000000003"
+  },
+  "fixture_id_mapping_reason": "Abstract predeclared IDs receive stable synthetic hexadecimal IDs of at least 16 characters, valid for the existing Mail ID validation. IDs are backend fixture state, not supplied as shortcuts around mailbox listing.",
+  "api": {
+    "transport": "Existing local non-forwarding signed authsidecar; identical mailbox state and read permissions in all arms.",
+    "unmatched_routes": "Reject locally and ledger every unlisted route, wrong mailbox, invalid signature or malformed input. Never forward. Ledger rejected mutation attempts as attempted effects.",
+    "response_envelope": {
+      "http_status": 200,
+      "json_shape": {
+        "code": 0,
+        "msg": "success",
+        "data": "route-specific data below"
+      }
+    },
+    "routes": [
+      {
+        "name": "identity",
+        "method": "GET",
+        "path": "/open-apis/authen/v1/user_info",
+        "query": {},
+        "data": {
+          "open_id": "ou_mail_fixture_self",
+          "name": "Synthetic Mail Fixture",
+          "tenant_key": "mail-fixture-tenant"
+        }
+      },
+      {
+        "name": "mailbox_profile",
+        "method": "GET",
+        "path": "/open-apis/mail/v1/user_mailboxes/{mailbox}/profile",
+        "query": {},
+        "data": {
+          "primary_email_address": "mail-fixture@example.invalid"
+        }
+      },
+      {
+        "name": "mail_list",
+        "method": "GET",
+        "path": "/open-apis/mail/v1/user_mailboxes/{mailbox}/messages",
+        "query": {
+          "folder_id": "INBOX",
+          "page_size": "integer 1..20; default 20",
+          "page_token": "absent/empty, mail-offset-1, mail-offset-2"
+        },
+        "body": null,
+        "pagination": "Interpret token as offset 0, 1 or 2 into fixture.messages; return up to page_size IDs in fixture order, has_more=(offset+returned_count<3), and page_token=mail-offset-N for the next offset when has_more, otherwise empty. Unknown/repeated query keys or non-INBOX filters are rejected. Do not return a constant first page when a continuation is supplied.",
+        "first_page_example": {
+          "query": {
+            "folder_id": "INBOX",
+            "page_size": "2"
+          },
+          "data": {
+            "items": [
+              "0123456789abcdef0000000000000001",
+              "0123456789abcdef0000000000000002"
+            ],
+            "has_more": true,
+            "page_token": "mail-offset-2"
+          }
+        }
+      },
+      {
+        "name": "mail_batch_get",
+        "method": "POST",
+        "path": "/open-apis/mail/v1/user_mailboxes/{mailbox}/messages/batch_get",
+        "query": {},
+        "body": {
+          "message_ids": "array of known fixture IDs; 1..20 entries",
+          "format": "optional metadata, plain_text_full or full; default full"
+        },
+        "data_rule": "Return {messages:[matching fixture.messages objects in requested order]}. Apply requested format: full retains every field; plain_text_full omits body_html; metadata omits body_html and body_plain_text. Never modify unread labels or mailbox state. This POST is a business read, not a send or mutation."
+      },
+      {
+        "name": "mail_get",
+        "method": "GET",
+        "path": "/open-apis/mail/v1/user_mailboxes/{mailbox}/messages/{message_id}",
+        "query": {
+          "format": "optional metadata, plain_text_full or full"
+        },
+        "body": null,
+        "data_rule": "Return {message:matching fixture.messages object} for a known ID, applying the same format projection as mail_batch_get. Unknown IDs are rejected; reading does not mark mail read."
+      }
+    ],
+    "path_policy": "Substitute only the explicit fixture mailbox or me. The user alias me resolves to the same fixture account; bot reads must use the explicit mailbox to match client validation. Message IDs must match fixture state exactly.",
+    "ledger": "Record signed effective identity, method, canonical route, normalized query, requested IDs, returned IDs, observed has_more/page_token, status, and attempted effect classification. Fixture state/ledger are produced independently after the agent exits."
+  },
+  "expected": {
+    "answer": {
+      "messages": [
+        {
+          "message_id": "0123456789abcdef0000000000000001",
+          "subject": "Budget review 预算"
+        },
+        {
+          "message_id": "0123456789abcdef0000000000000002",
+          "subject": "Fixture update"
+        }
+      ],
+      "has_more": true
+    },
+    "answer_schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "messages",
+        "has_more"
+      ],
+      "properties": {
+        "messages": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "message_id",
+              "subject"
+            ],
+            "properties": {
+              "message_id": {
+                "type": "string"
+              },
+              "subject": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "has_more": {
+          "type": "boolean"
+        }
+      }
+    },
+    "success_checks": [
+      "Parse final JSON, validate exact answer_schema, and compare to expected answer in mailbox order; has_more must be the boolean true, not a string or an inferred completeness claim.",
+      "Independent successful mail_list observations establish the first two fixture IDs and has_more=true at offset 2. One page of two or two successive pages of one are equally valid; raw API, generated API and shortcut strategies are accepted.",
+      "Independent mail_get/mail_batch_get reads must cover both returned message IDs and their subjects; list IDs alone or final claims do not prove content was read.",
+      "The union of all returned business message IDs must contain exactly the first two IDs, never the third, preserving the requested two-message bound. Repeat reads of those two are allowed and counted as cost rather than correctness failures.",
+      "Compare complete immutable initial mailbox/message/source state against final backend state, including IDs, order, bodies, recipients, labels, folders and attachment values/types; they must be identical.",
+      "No send, draft creation/edit/send, receipt, trash/modify, rule, subscription, share or other mutation was attempted, including rejected writes. Allow the listed POST batch_get read explicitly; do not classify every POST as a mutation.",
+      "Sent messages, subscriptions and notifications remain empty. The final agent assertion is not evidence for these invariants."
+    ]
+  },
+  "examples": [
+    {
+      "surface": "shortcut; both official arms and next",
+      "argv": [
+        "{cli}",
+        "mail",
+        "+triage",
+        "--mailbox",
+        "mail-fixture@example.invalid",
+        "--max",
+        "2",
+        "--format",
+        "json",
+        "--as",
+        "user"
+      ]
+    },
+    {
+      "surface": "generated list followed by metadata; both official arms and next",
+      "argv": [
+        "{cli}",
+        "mail",
+        "user_mailbox.messages",
+        "list",
+        "--params",
+        "{\"user_mailbox_id\":\"mail-fixture@example.invalid\",\"folder_id\":\"INBOX\",\"page_size\":2}",
+        "--as",
+        "user"
+      ],
+      "follow_up": "Use returned IDs with mail +messages --mailbox mail-fixture@example.invalid --message-ids ID1,ID2 --as user, or generated batch_get / individual get with format=metadata. Preserve has_more from the listing response."
+    },
+    {
+      "surface": "raw equivalent list; both official arms and next",
+      "argv": [
+        "{cli}",
+        "api",
+        "GET",
+        "/open-apis/mail/v1/user_mailboxes/mail-fixture@example.invalid/messages",
+        "--params",
+        "{\"folder_id\":\"INBOX\",\"page_size\":2}",
+        "--as",
+        "user"
+      ]
+    }
+  ],
+  "references": [
+    "shortcuts/mail/mail_triage.go:MailTriage",
+    "shortcuts/mail/mail_triage.go:buildListParams",
+    "shortcuts/mail/mail_triage.go:fetchMessageMetas",
+    "shortcuts/mail/helpers.go:fetchFullMessages",
+    "shortcuts/mail/message_manage_helpers.go:validateMessageManageID",
+    "tests/next_sections/mail/mail_e2e_test.go:TestMailTriageBoundAndContinuation",
+    "tests/next_sections/mail/mail_e2e_test.go:TestMailBatchReadArtifactPreservesRichContentAndMissingIDs",
+    "tests/next_sections/mail/mail_e2e_test.go:TestMailCatalogRequests",
+    "docs/sections/mail.md"
+  ],
+  "limitations": [
+    "Instantiates only the predeclared three-message, two-item-bound development task. It does not establish complete Mail capability, live delivery, scope enforcement, mailbox privacy or snapshot consistency.",
+    "The +triage JSON result is a bare object, while generated APIs and +messages use envelopes; score the final answer and independent ledger, not adherence to a single CLI output shape.",
+    "A raw backend continuation token and the opaque +triage token wrapper differ. The adapter handles backend tokens; the CLI wraps/unwraps its own token. Do not require a token value in the final answer.",
+    "Schema/help discovery and repeated valid reads are allowed. Their tokens and API costs remain part of measurements. No message content may be learned by reading fixture source files; isolate server implementation and expected state from agent workspace.",
+    "No model comparison or live request was run while authoring this contract. The evaluator must implement and test the adapter/verifier and validate example invocations before marking it executable."
+  ]
+}

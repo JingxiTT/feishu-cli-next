@@ -1,0 +1,288 @@
+{
+  "schema_version": 1,
+  "task_id": "calendar-dev-01",
+  "section": "calendar",
+  "scenario": "calendar-explicit-day-v1",
+  "status": "contract_ready_adapter_not_implemented",
+  "source_task": "evaluation/tasks.development.json#calendar-dev-01",
+  "prompt": "Read the fixture calendar cal_calendar_dev_01 for 2030-01-02 in Asia/Shanghai. This is the explicit date meant by tomorrow in the original task; do not use the real current date. Report every event for that date, preserving its start and end instants and whether it is all-day. Do not change the calendar or send invitations. Return JSON with exactly date, timezone and events; every event must contain exactly event_id, title, start, end and all_day. Express start and end as RFC3339 with the Asia/Shanghai offset.",
+  "fixture": {
+    "kind": "synthetic",
+    "visibility": "self_only",
+    "version": 1,
+    "timezone": "Asia/Shanghai",
+    "environment": {
+      "TZ": "Asia/Shanghai"
+    },
+    "binding": {
+      "identity": "user",
+      "open_id": "ou_calendar_fixture_self",
+      "tenant_key": "calendar-fixture-tenant",
+      "app_id": "synthetic-evaluation-app"
+    },
+    "calendar": {
+      "calendar_id": "cal_calendar_dev_01",
+      "permissions": "private",
+      "owner_id": "ou_calendar_fixture_self"
+    },
+    "events": [
+      {
+        "event_id": "calendar_review_0",
+        "summary": "Review",
+        "status": "confirmed",
+        "start_time": {
+          "timestamp": "1893546000",
+          "timezone": "Asia/Shanghai"
+        },
+        "end_time": {
+          "timestamp": "1893549600",
+          "timezone": "Asia/Shanghai"
+        },
+        "visibility": "private",
+        "attendee_ability": "none",
+        "attendees": [],
+        "recurrence": ""
+      }
+    ],
+    "invitations": [],
+    "notifications": []
+  },
+  "api": {
+    "transport": "local non-forwarding signed sidecar; use existing evaluation signature validation",
+    "default": "reject and ledger every unlisted route; never forward a request",
+    "routes": [
+      {
+        "name": "identity",
+        "method": "GET",
+        "path": "/open-apis/authen/v1/user_info",
+        "request": {
+          "body": null,
+          "query": {}
+        },
+        "response": {
+          "http_status": 200,
+          "json": {
+            "code": 0,
+            "data": {
+              "open_id": "ou_calendar_fixture_self",
+              "name": "Synthetic Calendar Fixture",
+              "tenant_key": "calendar-fixture-tenant"
+            }
+          }
+        }
+      },
+      {
+        "name": "instance_view",
+        "method": "GET",
+        "path": "/open-apis/calendar/v4/calendars/cal_calendar_dev_01/events/instance_view",
+        "request": {
+          "body": null,
+          "required_query": {
+            "start_time": "1893513600",
+            "end_time": "1893599999"
+          },
+          "optional_query": {
+            "user_id_type": [
+              "open_id"
+            ]
+          },
+          "equivalent_query_policy": "Accept an end_time of 1893600000 (following midnight) or narrower bounded reads within the same local day; filter returned items by intersection with each requested interval. Accept full-day query partitioning only when the union of successful read intervals covers the entire target day. Do not require one exact command sequence."
+        },
+        "response": {
+          "http_status": 200,
+          "json": {
+            "code": 0,
+            "data": {
+              "items": [
+                {
+                  "event_id": "calendar_review_0",
+                  "summary": "Review",
+                  "status": "confirmed",
+                  "start_time": {
+                    "timestamp": "1893546000",
+                    "timezone": "Asia/Shanghai"
+                  },
+                  "end_time": {
+                    "timestamp": "1893549600",
+                    "timezone": "Asia/Shanghai"
+                  },
+                  "visibility": "private",
+                  "attendee_ability": "none",
+                  "attendees": [],
+                  "recurrence": ""
+                }
+              ],
+              "has_more": false
+            }
+          }
+        }
+      },
+      {
+        "name": "get_known_event",
+        "method": "GET",
+        "path": "/open-apis/calendar/v4/calendars/cal_calendar_dev_01/events/calendar_review_0",
+        "request": {
+          "body": null,
+          "optional_query": {
+            "user_id_type": [
+              "open_id"
+            ],
+            "need_attendee": [
+              "true",
+              "false"
+            ],
+            "need_meeting_settings": [
+              "true",
+              "false"
+            ],
+            "max_attendee_num": "nonnegative integer"
+          }
+        },
+        "response": {
+          "http_status": 200,
+          "json": {
+            "code": 0,
+            "data": {
+              "event": {
+                "event_id": "calendar_review_0",
+                "summary": "Review",
+                "status": "confirmed",
+                "start_time": {
+                  "timestamp": "1893546000",
+                  "timezone": "Asia/Shanghai"
+                },
+                "end_time": {
+                  "timestamp": "1893549600",
+                  "timezone": "Asia/Shanghai"
+                },
+                "visibility": "private",
+                "attendee_ability": "none",
+                "attendees": [],
+                "recurrence": ""
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  "expected": {
+    "answer": {
+      "date": "2030-01-02",
+      "timezone": "Asia/Shanghai",
+      "events": [
+        {
+          "event_id": "calendar_review_0",
+          "title": "Review",
+          "start": "2030-01-02T09:00:00+08:00",
+          "end": "2030-01-02T10:00:00+08:00",
+          "all_day": false
+        }
+      ]
+    },
+    "answer_schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "date",
+        "timezone",
+        "events"
+      ],
+      "properties": {
+        "date": {
+          "const": "2030-01-02"
+        },
+        "timezone": {
+          "const": "Asia/Shanghai"
+        },
+        "events": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "event_id",
+              "title",
+              "start",
+              "end",
+              "all_day"
+            ],
+            "properties": {
+              "event_id": {
+                "const": "calendar_review_0"
+              },
+              "title": {
+                "const": "Review"
+              },
+              "start": {
+                "const": "2030-01-02T09:00:00+08:00"
+              },
+              "end": {
+                "const": "2030-01-02T10:00:00+08:00"
+              },
+              "all_day": {
+                "const": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "success_checks": [
+      "The final parsed answer satisfies the exact schema and equals the expected answer; list order is irrelevant.",
+      "Independent signed fixture ledger proves successful instance_view read interval union covers the complete target date; final answer alone and event GET alone do not prove all events were read.",
+      "Compare immutable initial fixture calendar/events/attendees/invitations/notifications with final backend state; every value and type must remain identical.",
+      "No mutating request was attempted, including rejected POST/PUT/PATCH/DELETE calls, event replies, attendees, transfer, join, upload or share routes.",
+      "Invitations and notifications remain empty; successful CLI output is not evidence for this invariant.",
+      "Reject any request to another tenant/calendar, malformed signature, unexpected route or external forwarding attempt."
+    ]
+  },
+  "examples": [
+    {
+      "surface": "shortcut, valid for all three arms",
+      "argv": [
+        "{cli}",
+        "calendar",
+        "+agenda",
+        "--calendar-id",
+        "cal_calendar_dev_01",
+        "--start",
+        "2030-01-02T00:00:00+08:00",
+        "--end",
+        "2030-01-02T23:59:59+08:00",
+        "--as",
+        "user"
+      ]
+    },
+    {
+      "surface": "generic frozen API, valid for all three arms",
+      "argv": [
+        "{cli}",
+        "calendar",
+        "events",
+        "instance_view",
+        "--params",
+        "{\"calendar_id\":\"cal_calendar_dev_01\",\"start_time\":\"1893513600\",\"end_time\":\"1893599999\"}",
+        "--as",
+        "user"
+      ]
+    }
+  ],
+  "references": [
+    "shortcuts/calendar/calendar_agenda.go:fetchInstanceViewRange",
+    "shortcuts/calendar/calendar_get.go:buildCalendarEventOutput",
+    "tests/next_sections/calendar/calendar_e2e_test.go:TestCalendarReadsAndPlanning",
+    "tests/next_sections/calendar/generated_e2e_test.go:TestCalendarGeneratedMethods",
+    "docs/reference/registrations.json.gz#/feishu/commands/calendar +agenda",
+    "docs/sections/calendar.md"
+  ],
+  "limitations": [
+    "This instantiates the predeclared single timed-event timezone task only; no claims about all-day events, DST, recurrence, paging, conflicts or live backend behavior.",
+    "The process fixture currently covers the endpoint but this evaluation adapter and independent verifier have not been implemented or run.",
+    "Explicit date removes wall-clock ambiguity; TZ is pinned for reproducible CLI presentation, but the verifier must still compare actual RFC3339 instants and offsets.",
+    "GET-only route allowance describes this task fixture, not a product restriction; generated POST reads are not needed for this explicit-calendar scenario.",
+    "Do not infer live privacy/recipient authorization from synthetic self-only fixture data; no live calls or model comparisons were performed when authoring this contract."
+  ]
+}

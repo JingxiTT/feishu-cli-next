@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "task_id": "apps-dev-01",
+  "section": "apps",
+  "reference_revision": "7fd6ef3c07182257ce776cdc5a614e122d5bd4b3",
+  "prompt": "Find the synthetic aPaaS app named Journal and report its app ID and owner without changing any app, code, data, access, or automation. Write answer.json in the task workspace with exactly {\"app_id\":\"...\",\"name\":\"...\",\"owner\":\"...\"}. The current account is the fixture account; owner \"self\" means that account.",
+  "fixture": {
+    "kind": "synthetic",
+    "visibility": "self_only",
+    "version": 1,
+    "current_account": {
+      "open_id": "ou_foundation_fixture",
+      "name": "Synthetic Fixture",
+      "tenant_key": "foundation-fixture-tenant"
+    },
+    "apps": [
+      {
+        "app_id": "app_fixture",
+        "name": "Journal",
+        "owner": "self",
+        "app_type": "full_stack",
+        "description": "Synthetic owner lookup fixture",
+        "is_published": false
+      }
+    ]
+  },
+  "backend": {
+    "no_forwarding": true,
+    "routes": [
+      {
+        "method": "GET",
+        "path": "/open-apis/authen/v1/user_info",
+        "query": {},
+        "response": {
+          "code": 0,
+          "data": {
+            "open_id": "ou_foundation_fixture",
+            "name": "Synthetic Fixture",
+            "tenant_key": "foundation-fixture-tenant"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/open-apis/spark/v1/apps",
+        "query_policy": {
+          "optional": [
+            "keyword",
+            "ownership",
+            "app_type",
+            "page_size",
+            "page_token"
+          ],
+          "defaults": {
+            "page_size": 20
+          },
+          "semantics": "Filter the seeded app by substring keyword, exact app_type, and ownership mine/all; ownership shared returns no items. Only empty page_token is valid; one page is complete."
+        },
+        "response": {
+          "code": 0,
+          "data": {
+            "items": [
+              {
+                "app_id": "app_fixture",
+                "name": "Journal",
+                "owner": "self",
+                "app_type": "full_stack",
+                "description": "Synthetic owner lookup fixture",
+                "is_published": false
+              }
+            ],
+            "has_more": false,
+            "page_token": ""
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/open-apis/spark/v1/apps/app_fixture",
+        "query": {},
+        "response": {
+          "code": 0,
+          "data": {
+            "app": {
+              "app_id": "app_fixture",
+              "name": "Journal",
+              "owner": "self",
+              "app_type": "full_stack",
+              "description": "Synthetic owner lookup fixture",
+              "is_published": false
+            }
+          }
+        }
+      }
+    ],
+    "unmatched_requests": "Reject locally and record request; never forward to a real service. Mutations must fail the independent no-change check even if rejected. Discovery/help/schema use the real CLI and need no backend fixture."
+  },
+  "answer": {
+    "path": "answer.json",
+    "json_schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "app_id",
+        "name",
+        "owner"
+      ],
+      "properties": {
+        "app_id": {
+          "const": "app_fixture"
+        },
+        "name": {
+          "const": "Journal"
+        },
+        "owner": {
+          "const": "self"
+        }
+      }
+    },
+    "expected": {
+      "app_id": "app_fixture",
+      "name": "Journal",
+      "owner": "self"
+    }
+  },
+  "independent_verification": {
+    "checks": [
+      "Parse answer.json and compare exact values against fixture state, independently of CLI stdout and final model claim.",
+      "Canonical backend apps state equals its initial snapshot.",
+      "Request ledger contains no mutating business request and no credential issuance, publication, notification, access, automation, or code operation.",
+      "All backend requests target synthetic local routes; no external forwarding occurred."
+    ],
+    "allowed_local_artifacts": [
+      "answer.json",
+      "optional command read artifacts within this trial workspace"
+    ]
+  },
+  "working_cli_examples": [
+    "feishu-cli-next apps +list --keyword Journal --ownership mine --as user",
+    "feishu-cli-next apps +get --app-id app_fixture --as user",
+    "lark-cli apps +list --keyword Journal --ownership mine --as user",
+    "lark-cli apps +get --app-id app_fixture --as user"
+  ],
+  "valid_strategies": [
+    "List with or without keyword/ownership filters, inspect matching data, and answer.",
+    "List then get the exact app ID for detail.",
+    "Use equivalent read-only raw API GET requests or CLI JSON filtering without changing fixture state."
+  ],
+  "source_evidence": [
+    "shortcuts/apps/apps_list.go",
+    "shortcuts/apps/apps_get.go",
+    "shortcuts/apps/apps_list_test.go",
+    "shortcuts/apps/apps_get_test.go",
+    "tests/next_sections/apps/testdata/reference_dryrun.json",
+    "tests/next_sections/apps/apps_e2e_test.go:TestAppsEveryAPIShortcutRejectionPath",
+    "docs/sections/apps-mapping.json"
+  ],
+  "limitations": [
+    "This contract uses the predeclared synthetic owner=self field; list/get preserve opaque app fields, but this is not proof of a live owner field schema or live ownership/tenant authorization.",
+    "No comparative model runs were performed by the section owner.",
+    "No live app creation or mutation is authorized by this fixture.",
+    "The adapter may need the shared account/tenant discovery fixture routes for current shared binding; coordinate those with the foundation adapter rather than fabricating production identity responses."
+  ]
+}

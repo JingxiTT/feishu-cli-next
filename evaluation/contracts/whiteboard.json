@@ -1,0 +1,118 @@
+{
+  "schema_version": 1,
+  "task_id": "whiteboard-dev-01",
+  "section": "whiteboard",
+  "scenario": "whiteboard-native-text-v1",
+  "split": "development",
+  "status": "contract_ready_adapter_not_implemented; model_evaluation_not_run",
+  "source_task": "evaluation/tasks.development.json#whiteboard-dev-01",
+  "prompt": "Read the two text nodes in the synthetic whiteboard wbcnWhiteboardDev01. Return JSON with exactly a nodes array; each entry must contain exactly id and text. Preserve each native node ID and its exact text, including Unicode and an empty string. Do not recreate nodes, modify the board, change permissions, or subscribe to events.",
+  "fixture": {
+    "kind": "synthetic",
+    "visibility": "self_only",
+    "version": 1,
+    "whiteboard_token": "wbcnWhiteboardDev01",
+    "accepted_identities": ["user", "bot"],
+    "binding": {
+      "app_id": "synthetic-evaluation-app",
+      "open_id": "ou_whiteboard_fixture_self",
+      "tenant_key": "whiteboard-fixture-tenant"
+    },
+    "nodes": [{"id": "n1", "text": "你好"}, {"id": "n2", "text": ""}],
+    "permissions": {"visibility": "self_only", "collaborators": []}
+  },
+  "api": {
+    "transport": "Existing loopback non-forwarding signed authsidecar; identical fixtures and accepted identities across all comparison arms.",
+    "routes": [
+      {
+        "name": "identity",
+        "method": "GET",
+        "path": "/open-apis/authen/v1/user_info",
+        "request": {"query": {}, "body": null},
+        "semantics": "read_only",
+        "response": {
+          "http_status": 200,
+          "json": {"code": 0, "data": {"open_id": "ou_whiteboard_fixture_self", "name": "Synthetic Whiteboard Fixture", "tenant_key": "whiteboard-fixture-tenant"}}
+        }
+      },
+      {
+        "name": "whiteboard_nodes",
+        "method": "GET",
+        "path": "/open-apis/board/v1/whiteboards/wbcnWhiteboardDev01/nodes",
+        "request": {"query": {}, "body": null},
+        "semantics": "read_only",
+        "response": {
+          "http_status": 200,
+          "json": {"code": 0, "data": {"nodes": [{"id": "n1", "text": "你好"}, {"id": "n2", "text": ""}]}}
+        },
+        "returned_ids": ["n1", "n2"]
+      }
+    ],
+    "pagination": "This frozen endpoint reads the nodes in one response without a pagination parameter. Both nodes are included. Repeated legitimate reads are allowed.",
+    "default": "Reject and ledger every unlisted method/path/query/body combination locally, including attempted mutations; never forward a request. Shared fixture authentication is handled by the evaluator."
+  },
+  "expected": {
+    "answer": {"nodes": [{"id": "n1", "text": "你好"}, {"id": "n2", "text": ""}]},
+    "answer_schema": {
+      "type": "object",
+      "required": ["nodes"],
+      "additionalProperties": false,
+      "properties": {
+        "nodes": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {
+            "type": "object",
+            "required": ["id", "text"],
+            "additionalProperties": false,
+            "properties": {"id": {"type": "string"}, "text": {"type": "string"}}
+          }
+        }
+      }
+    }
+  },
+  "independent_verification": {
+    "answer": "Parse final JSON and validate answer_schema, then compare nodes as an unordered exact collection. Require unique IDs n1 and n2, exact ID-to-text mapping, and text n2 equal to the empty string. Omitted text, null, whitespace, duplicate IDs, replacement IDs or escaping that changes decoded Unicode fail. Object key order and JSON Unicode escape notation do not affect correctness.",
+    "read_proof": "Require at least one successful signed whiteboard_nodes ledger entry for the exact board path, under an accepted identity, returning both n1 and n2. An answer alone, local reconstruction of fixture values, an identity-only request or a source export without the native IDs is insufficient. Additional legitimate reads are allowed; command sequence is not prescribed.",
+    "unchanged": [
+      "Evaluator-owned initial and final snapshots must match exactly for whiteboard token, ordered complete node objects, all text values and permission/collaborator state.",
+      "There must be no mutating business request or event-subscription attempt, including rejected POST/PUT/PATCH/DELETE requests. No node recreation, recipient, notification or visibility effect is allowed.",
+      "The evaluator retains the backend ledger and state outside the agent workspace and writes verification evidence after the process ends; do not trust an agent-authored ledger or its no-change claim."
+    ]
+  },
+  "cli_examples": [
+    {
+      "strategy": "Current raw-node export; reads both IDs and exact text",
+      "official": "lark-cli whiteboard +export --whiteboard-token wbcnWhiteboardDev01 --output-type raw --as user",
+      "next": "feishu-cli-next whiteboard +export --whiteboard-token wbcnWhiteboardDev01 --output-type raw --as user"
+    },
+    {
+      "strategy": "Retained hidden alias; bot identity is equally accepted",
+      "official": "lark-cli whiteboard +query --whiteboard-token wbcnWhiteboardDev01 --output_as raw --as bot",
+      "next": "feishu-cli-next whiteboard +query --whiteboard-token wbcnWhiteboardDev01 --output_as raw --as bot"
+    },
+    {
+      "strategy": "Equivalent generic endpoint read",
+      "official": "lark-cli api GET /open-apis/board/v1/whiteboards/wbcnWhiteboardDev01/nodes --as user",
+      "next": "feishu-cli-next api GET /open-apis/board/v1/whiteboards/wbcnWhiteboardDev01/nodes --as user"
+    }
+  ],
+  "tested_source_references": [
+    "shortcuts/whiteboard/whiteboard_export.go:fetchWhiteboardNodes",
+    "shortcuts/whiteboard/whiteboard_export.go:exportWhiteboardRaw",
+    "shortcuts/whiteboard/whiteboard_export_test.go:TestWhiteboardQueryExecute_AsRaw",
+    "tests/next_sections/whiteboard/whiteboard_e2e_test.go:TestRawExportImportAndExplicitClear",
+    "tests/next_sections/whiteboard/whiteboard_e2e_test.go:TestRawAppendOverwriteClearObservedState",
+    "tests/cli_e2e/whiteboard/whiteboard_export_dryrun_test.go:TestWhiteboardExportDryRun_RequestShapes",
+    "docs/sections/whiteboard.md",
+    "evaluation/section_fixture.py"
+  ],
+  "limits": [
+    "The predeclared n1/n2 native IDs and Unicode/empty text are retained exactly. wbcnWhiteboardDev01 supplies the previously unspecified board address and passes the CLI's token validation.",
+    "This is a minimal opaque raw-node synthetic response accepted by both frozen and next implementations. It does not claim a complete live Whiteboard node schema, rendering layout, rich-text extraction or backend-native node creation validity.",
+    "Both shortcut names and generic GET use the same route. There is no generated board command in the frozen catalog; do not invent one. Help/schema, local files, jq or other read-only compositions are permitted when all independent invariants hold.",
+    "The server snapshot is authoritative for completeness here. Raw export does not establish live pagination/snapshot consistency, permissions, tenant guarantees or identity preservation after updates.",
+    "No model run, product edit, live request or comparison score is part of this contract. Evaluator-owned route adaptation and independently tested verification are required before marking it executable."
+  ]
+}

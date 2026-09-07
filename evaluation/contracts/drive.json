@@ -1,0 +1,191 @@
+{
+  "schema_version": 1,
+  "task_id": "drive-dev-01",
+  "section": "drive",
+  "prompt": "Download the synthetic Drive file fileDriveDev01 (https://example.feishu.cn/file/fileDriveDev01) into this workspace as downloads/drive-dev-01.bin. Report its workspace-relative path and SHA-256 checksum. Preserve the remote source and do not print, encode, or include the binary contents in your answer or tool output.",
+  "fixture": {
+    "kind": "synthetic",
+    "visibility": "self_only",
+    "file_token": "fileDriveDev01",
+    "file_type": "file",
+    "title": "drive-dev-01.bin",
+    "url": "https://example.feishu.cn/file/fileDriveDev01",
+    "content": {
+      "generator": "byte_sequence_mod_251",
+      "definition": "For zero-based offset i, byte[i] = i % 251.",
+      "size_bytes": 1048576,
+      "sha256": "631b84027d6b9e52b539c4e8373622d23032dfadc64d60af87339c9037e4f769"
+    },
+    "identities": "The shared fixture account is authorized to read this file; user and bot strategies are both valid. Shared auth setup is owned by the evaluator.",
+    "initial_workspace": "downloads/drive-dev-01.bin does not exist; unrelated workspace sentinel files must be preserved."
+  },
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/open-apis/drive/v1/permissions/fileDriveDev01/members/auth",
+      "query": {
+        "action": "export",
+        "type": "file"
+      },
+      "semantics": "read_only",
+      "status": 200,
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "json": {
+        "code": 0,
+        "data": {
+          "auth_result": true
+        }
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/open-apis/drive/v1/metas/batch_query",
+      "body": {
+        "request_docs": [
+          {
+            "doc_token": "fileDriveDev01",
+            "doc_type": "file"
+          }
+        ]
+      },
+      "optional_body_fields": {
+        "with_url": true
+      },
+      "semantics": "read_only",
+      "status": 200,
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "json": {
+        "code": 0,
+        "data": {
+          "metas": [
+            {
+              "doc_token": "fileDriveDev01",
+              "doc_type": "file",
+              "title": "drive-dev-01.bin",
+              "url": "https://example.feishu.cn/file/fileDriveDev01"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/open-apis/drive/v1/files/fileDriveDev01/download",
+      "query": {},
+      "semantics": "read_only",
+      "status": 200,
+      "headers": {
+        "Content-Type": "application/octet-stream",
+        "Content-Length": "1048576",
+        "Content-Disposition": "attachment; filename=\"drive-dev-01.bin\""
+      },
+      "binary_body": {
+        "fixture_ref": "fixture.content",
+        "do_not_json_wrap": true
+      }
+    }
+  ],
+  "valid_strategies": [
+    "Preferred: drive +download --file-token fileDriveDev01 --output downloads/drive-dev-01.bin. The shortcut first checks export permission, skips metadata when output is explicit, then streams binary bytes into FileIO.",
+    "Equivalent: drive +download --url https://example.feishu.cn/file/fileDriveDev01 --output downloads/drive-dev-01.bin.",
+    "Equivalent: optionally inspect the source using drive +inspect or drive metas batch_query, then download; metadata must bind doc_token and doc_type.",
+    "Equivalent: create/change into workspace downloads directory and omit --output; export-permission and metadata reads precede binary download, and Content-Disposition supplies drive-dev-01.bin.",
+    "Other read-only CLI or shell compositions are acceptable when the actual fixture download is observed and all independent invariants hold; do not require a prescribed command sequence."
+  ],
+  "cli_examples": [
+    {
+      "arm": "official and official_concise",
+      "command": "lark-cli drive +download --file-token fileDriveDev01 --output downloads/drive-dev-01.bin --as user"
+    },
+    {
+      "arm": "next",
+      "command": "feishu-cli-next drive +download --file-token fileDriveDev01 --output downloads/drive-dev-01.bin --as user"
+    },
+    {
+      "arm": "all",
+      "command": "shasum -a 256 downloads/drive-dev-01.bin",
+      "alternative": "Compute hashlib.sha256 over the saved file in a local Python script; print only the digest and path."
+    }
+  ],
+  "local_artifact": {
+    "path": "downloads/drive-dev-01.bin",
+    "path_base": "trial workspace",
+    "schema": "raw-binary-file/v1",
+    "content_type": "application/octet-stream",
+    "size_bytes": 1048576,
+    "not_a_result_artifact": "This is a downloaded binary, not feishu-cli-next/result/v1. --save-result would save CLI result JSON and does not replace --output."
+  },
+  "independent_checks": [
+    {
+      "id": "download_observed",
+      "assertion": "The fixture journal records at least one successful GET to the exact file download path; synthesizing the public generator locally without downloading is not completion."
+    },
+    {
+      "id": "bytes_exact",
+      "assertion": "Read the actual regular file at workspace/downloads/drive-dev-01.bin outside the model; require 1048576 bytes and compare byte-for-byte with an independently generated byte[i] = i % 251 payload."
+    },
+    {
+      "id": "checksum_exact",
+      "assertion": "Independently hash the saved file with SHA-256; require fixture.content.sha256 and a matching 64-hex-character digest in the final answer. Never trust a checksum claimed by the CLI or agent without reading the artifact."
+    },
+    {
+      "id": "path_reported",
+      "assertion": "The final answer identifies downloads/drive-dev-01.bin or its correct absolute workspace path; reject a path outside the trial workspace, symlink escape, missing file, or substituted result JSON."
+    },
+    {
+      "id": "source_unchanged",
+      "assertion": "Compare source token, type, title, bytes, size, SHA-256 and ACL with the initial fixture snapshot. No mutating business request is permitted. POST metas/batch_query is explicitly a read and must not count as a source mutation."
+    },
+    {
+      "id": "unrelated_unchanged",
+      "assertion": "Compare preexisting workspace sentinel file hashes; the download must not overwrite unrelated files."
+    },
+    {
+      "id": "no_binary_dump",
+      "assertion": "Inspect final answer and model-visible tool outputs for raw, base64, hex or numeric-array dumps of the payload. A 64-hex-character SHA-256 digest, ordinary command output, saved path and size are allowed; reject emitted payload content. Keep this qualitative output check distinct from the deterministic byte/hash checks."
+    }
+  ],
+  "tested_source_references": [
+    {
+      "path": "shortcuts/drive/drive_download.go",
+      "symbols": [
+        "DriveDownload",
+        "driveDownloadDefaultOutputPath"
+      ]
+    },
+    {
+      "path": "shortcuts/common/drive_permission_auth.go",
+      "symbols": [
+        "CheckDriveFileExportPermission"
+      ]
+    },
+    {
+      "path": "shortcuts/common/drive_meta.go",
+      "symbols": [
+        "FetchDriveMeta",
+        "FetchDriveMetaTitle"
+      ]
+    },
+    {
+      "path": "tests/next_sections/drive/workflows_test.go",
+      "tests": [
+        "TestUploadDownloadAndVersionBytes"
+      ]
+    },
+    {
+      "path": "shortcuts/drive/drive_io_test.go",
+      "coverage": "Export-permission preflight, malformed/denied authorization, explicit/default output, metadata, download and local file protections."
+    }
+  ],
+  "limits": [
+    "Offline synthetic transfer only; no live account privacy, tenant propagation, backend authorization or actual document conversion claim.",
+    "The 1 MiB sample exercises streamed binary download and file fidelity, not multipart upload, network interruption, bounded-memory scalability or a large-file performance claim.",
+    "The fixture server must send binary bytes directly with Content-Length; never return a JSON success envelope for the download route.",
+    "Permit shared auth/user-info requests handled by the evaluator and optional metadata/export-permission reads. Fail unexpected mutating business requests rather than forwarding them.",
+    "No model run or evaluation score is supplied by this contract; shared runner/verifier and balanced comparison remain evaluator-owned."
+  ]
+}

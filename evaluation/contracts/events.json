@@ -1,0 +1,235 @@
+{
+  "schema_version": 1,
+  "task_id": "events-dev-01",
+  "section": "events",
+  "source_task_manifest": "evaluation/tasks.development.json",
+  "status": "contract_ready_adapter_integration_pending",
+  "prompt": "Consume the two synthetic im.chat.updated_v1 events available through the configured CLI event bus, then stop the consumer cleanly after the second event. Save the complete received JSON objects as events.ndjson in the working directory. Preserve both event IDs and the new chat names exactly, including Unicode and the empty second name. Return JSON with an events array of {id,text} values. This is a read-only local fixture task; leave the fixture bus running and do not change resources.",
+  "fixture": {
+    "scenario": "events-two-native-v1",
+    "kind": "offline_local_ipc_and_authsidecar",
+    "app_id": "synthetic-evaluation-events",
+    "event_key": "im.chat.updated_v1",
+    "environment": {
+      "LARKSUITE_CLI_APP_ID": "synthetic-evaluation-events",
+      "LARKSUITE_CLI_BRAND": "feishu",
+      "LARKSUITE_CLI_DEFAULT_AS": "bot",
+      "TZ": "UTC"
+    },
+    "isolation": "Use scripts/next_test.py isolated_env under a fresh /tmp/next-tests-* root. Build every comparison binary with authsidecar and point its auth proxy at the same non-forwarding local adapter; inject only synthetic credentials. Keep socket path below the Unix path-length limit.",
+    "http_routes": [
+      {
+        "method": "GET",
+        "path": "/open-apis/authen/v1/user_info",
+        "response": {
+          "code": 0,
+          "data": {
+            "open_id": "fixture_self",
+            "name": "Synthetic Fixture",
+            "tenant_key": "fixture-tenant"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/open-apis/application/v6/applications/synthetic-evaluation-events/app_versions",
+        "query_policy": "Allow the read-only pagination/status query emitted by FetchCurrentPublished.",
+        "response": {
+          "code": 0,
+          "data": {}
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/open-apis/event/v1/connection",
+        "response": {
+          "code": 0,
+          "data": {
+            "online_instance_cnt": 0
+          }
+        }
+      }
+    ],
+    "http_policy": "Reuse evaluation/section_fixture.py signature validation and request ledger; only these GET routes succeed. Reject and record every other route, especially mutations; never forward. No published version deliberately yields an honest weak-preflight skip, identically across arms.",
+    "hello_ack": {
+      "type": "hello_ack",
+      "bus_version": "fixture",
+      "first_for_key": false,
+      "capabilities": [
+        "canonical_metadata_v1"
+      ]
+    },
+    "frames": [
+      {
+        "type": "event",
+        "event_type": "im.chat.updated_v1",
+        "event_id": "e1",
+        "source_time": "1700000000001",
+        "app_id": "synthetic-evaluation-events",
+        "tenant_key": "fixture-tenant",
+        "observed_at": "2023-11-14T22:13:21Z",
+        "seq": 1,
+        "payload": {
+          "schema": "2.0",
+          "header": {
+            "event_id": "e1",
+            "event_type": "im.chat.updated_v1",
+            "create_time": "1700000000001",
+            "app_id": "synthetic-evaluation-events",
+            "tenant_key": "fixture-tenant"
+          },
+          "event": {
+            "chat_id": "oc_fixture_events",
+            "after_change": {
+              "name": "你好"
+            }
+          }
+        }
+      },
+      {
+        "type": "event",
+        "event_type": "im.chat.updated_v1",
+        "event_id": "e2",
+        "source_time": "1700000000002",
+        "app_id": "synthetic-evaluation-events",
+        "tenant_key": "fixture-tenant",
+        "observed_at": "2023-11-14T22:13:21Z",
+        "seq": 2,
+        "payload": {
+          "schema": "2.0",
+          "header": {
+            "event_id": "e2",
+            "event_type": "im.chat.updated_v1",
+            "create_time": "1700000000002",
+            "app_id": "synthetic-evaluation-events",
+            "tenant_key": "fixture-tenant"
+          },
+          "event": {
+            "chat_id": "oc_fixture_events",
+            "after_change": {
+              "name": ""
+            }
+          }
+        }
+      }
+    ],
+    "minimal_unix_listener_python": "import json, os, pathlib, signal, socket, sys, threading\ncontract = json.loads(pathlib.Path(sys.argv[1]).read_text())\nfixture = contract[\"fixture\"]\naddress = pathlib.Path(os.environ[\"LARKSUITE_CLI_CONFIG_DIR\"]) / \"events\" / fixture[\"app_id\"] / \"bus.sock\"\naddress.parent.mkdir(parents=True, exist_ok=True, mode=0o700)\nserver = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)\nserver.bind(str(address))\nserver.listen()\nrecords, clients, lock = [], set(), threading.Lock()\ndef record(item):\n    with lock: records.append(item)\ndef serve(conn):\n    with lock: clients.add(conn)\n    conn.settimeout(15)\n    try:\n        stream = conn.makefile(\"rb\")\n        while line := stream.readline(65537):\n            if len(line) > 65536: return\n            message = json.loads(line)\n            kind = message.get(\"type\")\n            def send(value):\n                conn.sendall((json.dumps(value, ensure_ascii=False, separators=(\",\", \":\"))+\"\\n\").encode())\n            if kind == \"status_query\":\n                send({\"type\":\"status_response\",\"pid\":os.getpid(),\"uptime_sec\":1,\"active_conns\":0,\"consumers\":[]})\n                return\n            if kind == \"hello\":\n                if message.get(\"event_key\") != fixture[\"event_key\"]: return\n                record({\"kind\":\"hello\",\"pid\":message.get(\"pid\"),\"event_key\":message[\"event_key\"]})\n                send(fixture[\"hello_ack\"])\n                for frame in fixture[\"frames\"]:\n                    send(frame)\n                    record({\"kind\":\"sent\",\"event_id\":frame[\"event_id\"]})\n            elif kind == \"pre_shutdown_check\":\n                send({\"type\":\"pre_shutdown_ack\",\"last_for_key\":True})\n            elif kind == \"bye\":\n                record({\"kind\":\"bye\"})\n                return\n    except (OSError, ValueError):\n        record({\"kind\":\"connection_closed\"})\n    finally:\n        with lock: clients.discard(conn)\n        conn.close()\ndef stop(*_):\n    server.close()\n    with lock:\n        ledger = {\"records\":list(records),\"open_consumers_before_teardown\":len(clients)}\n        for conn in clients: conn.close()\n    pathlib.Path(sys.argv[2]).write_text(json.dumps(ledger), encoding=\"utf-8\")\n    address.unlink(missing_ok=True)\n    sys.exit(0)\nsignal.signal(signal.SIGTERM, stop)\nprint(json.dumps({\"ready\":True,\"socket\":str(address)}), flush=True)\nwhile True:\n    conn, _ = server.accept()\n    threading.Thread(target=serve,args=(conn,),daemon=True).start()\n",
+    "launch": "python3 <private listener.py> <absolute contract events.json> <private fixture-ledger.json>; wait for its ready line before starting the model. The evaluator supplies the local authsidecar separately using the fixed routes above. After model completion and verifier checks, SIGTERM only this run-owned listener and read its independent ledger.",
+    "replay_policy": "Each accepted connection receives the same two synthetic frames. Multiple connections are permitted; scoring requires exactly one copy of each event in the submitted artifact. This is deterministic test replay, not a product durable-replay guarantee."
+  },
+  "expected": {
+    "artifact": {
+      "path": "events.ndjson",
+      "format": "UTF-8 NDJSON",
+      "values_in_order": [
+        {
+          "schema": "2.0",
+          "header": {
+            "event_id": "e1",
+            "event_type": "im.chat.updated_v1",
+            "create_time": "1700000000001",
+            "app_id": "synthetic-evaluation-events",
+            "tenant_key": "fixture-tenant"
+          },
+          "event": {
+            "chat_id": "oc_fixture_events",
+            "after_change": {
+              "name": "你好"
+            }
+          }
+        },
+        {
+          "schema": "2.0",
+          "header": {
+            "event_id": "e2",
+            "event_type": "im.chat.updated_v1",
+            "create_time": "1700000000002",
+            "app_id": "synthetic-evaluation-events",
+            "tenant_key": "fixture-tenant"
+          },
+          "event": {
+            "chat_id": "oc_fixture_events",
+            "after_change": {
+              "name": ""
+            }
+          }
+        }
+      ],
+      "checks": [
+        "Exactly two nonempty lines, each a complete JSON object; whitespace/object-key ordering is immaterial.",
+        "header.event_id equals e1/e2, event.after_change.name equals 你好/empty string; omitted/null is not empty string.",
+        "No SDK diagnostics, success wrappers, or extra event objects appear in the file."
+      ]
+    },
+    "answer": {
+      "events": [
+        {
+          "id": "e1",
+          "text": "你好"
+        },
+        {
+          "id": "e2",
+          "text": ""
+        }
+      ]
+    },
+    "answer_schema": {
+      "type": "object",
+      "required": [
+        "events"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "events": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "text"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "text": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "independent_invariants": [
+      "At least one actual selected-arm CLI consume subprocess must attach to the fixture and receive both event IDs; a file or final answer alone cannot pass.",
+      "Observe every trial-owned CLI consumer subprocess exit 0 within 5 seconds after the second event is delivered; fail a leaked process or harness timeout/kill. Exclude the evaluator-owned listener itself.",
+      "After a short bounded scheduling grace, listener active-consumer count is zero before teardown; leave the listener alive until the evaluator stops it. A bye frame is useful evidence but not required when clean EOF and OS exit independently establish termination.",
+      "No event _bus daemon was started; no subscription, unsubscribe, resource write, external network request, or unrelated config/resource change occurred.",
+      "Read events.ndjson and the independent fixture/controller ledger after model completion; never trust an agent-authored ledger or a claimed success."
+    ]
+  },
+  "cli_examples": {
+    "bounded_stdout": "<cli> event consume im.chat.updated_v1 --as bot --max-events 2 --timeout 5s > events.ndjson",
+    "discovery": "<cli> event schema im.chat.updated_v1 --json",
+    "alternative": "An event-file sink followed by a lossless ordered NDJSON composition is acceptable. Explicit jq is acceptable only when the saved artifact still contains both complete event objects."
+  },
+  "tested_source_references": [
+    "tests/next_sections/events/events_e2e_test.go: TestAllEventKeysReplayThroughCLI",
+    "tests/next_sections/events/events_e2e_test.go: TestStreamControlsAndDiagnostics",
+    "tests/next_sections/events/events_e2e_test.go: startBus/envelope/frame",
+    "events/im/native.go: im.chat.updated_v1 uses the Native V2 envelope",
+    "cmd/event/consume.go: bounded runs ignore stdin EOF",
+    "internal/event/consume/consume.go: max-events exit reason and lifecycle",
+    "internal/event/adapter/localbus/protocol/messages.go",
+    "evaluation/section_fixture.py: valid_signature and independent request ledger"
+  ],
+  "validation_limits": [
+    "The small listener source was syntax-checked only; evaluator must run a controlled, no-model CLI replay and tampered-artifact/verifier rejection checks before any balanced model trials.",
+    "This contract does not run models, edit product code, or claim live WebSocket delivery, source reconnection, exactly-once semantics, or remote subscription cleanup.",
+    "The embedded listener targets Unix/macOS/Linux. A Windows trial needs the existing Go named-pipe transport fixture, not AF_UNIX path assumptions.",
+    "Fixture text is mapped to the native after_change.name field so it conforms to the published chat-update event schema while preserving the predeclared task IDs and values."
+  ]
+}

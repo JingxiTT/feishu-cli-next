@@ -1,0 +1,321 @@
+{
+  "schema_version": 1,
+  "task_id": "sheets-dev-01",
+  "section": "sheets",
+  "split": "development",
+  "scenario": "sheets-native-read-artifact-v1",
+  "status": "contract_ready_adapter_not_implemented_model_evaluation_not_run",
+  "source_task": "evaluation/tasks.development.json#sheets-dev-01",
+  "prompt": "Read all five cells in A1:E1 of the synthetic spreadsheet shtSheetsDev01, sheet ID shdev01 (Fixture), into a local JSON artifact. Preserve numeric zero, boolean false, empty text, Unicode and the formula as an explicit formula field, not only its calculated value. Save the native cell JSON payload, optionally inside the CLI result/artifact envelope. Keep the source unchanged. Use any available read/export commands or local processing. Finish with JSON containing artifact_path, relative to your workspace.",
+  "fixture": {
+    "kind": "synthetic",
+    "visibility": "self_only",
+    "version": 1,
+    "binding": {
+      "identity": "user",
+      "app_id": "synthetic-evaluation-app",
+      "open_id": "ou_sheets_fixture_self",
+      "tenant_key": "sheets-fixture-tenant"
+    },
+    "state": {
+      "spreadsheet_token": "shtSheetsDev01",
+      "sheet_id": "shdev01",
+      "range": "A1:E1",
+      "revision": 17,
+      "cells": [
+        [
+          {
+            "value": 0
+          },
+          {
+            "value": false
+          },
+          {
+            "value": ""
+          },
+          {
+            "value": "你好"
+          },
+          {
+            "value": 1,
+            "formula": "=A1+1"
+          }
+        ]
+      ],
+      "permissions": {
+        "owner_id": "ou_sheets_fixture_self",
+        "visibility": "self_only",
+        "collaborators": []
+      },
+      "notifications": []
+    }
+  },
+  "api": {
+    "transport": "Signed, non-forwarding local sidecar; identical data, permissions and render semantics for all comparison arms. Examples use user identity.",
+    "routes": [
+      {
+        "name": "identity",
+        "method": "GET",
+        "path": "/open-apis/authen/v1/user_info",
+        "request": {
+          "query": {},
+          "body": null
+        },
+        "response": {
+          "http_status": 200,
+          "json": {
+            "code": 0,
+            "data": {
+              "open_id": "ou_sheets_fixture_self",
+              "name": "Synthetic Sheets Fixture",
+              "tenant_key": "sheets-fixture-tenant"
+            }
+          }
+        },
+        "effect": "read_only"
+      },
+      {
+        "name": "sheet_ai_read",
+        "method": "POST",
+        "path": "/open-apis/sheet_ai/v2/spreadsheets/shtSheetsDev01/tools/invoke_read",
+        "request": {
+          "query": {},
+          "body_schema": {
+            "tool_name": "get_cell_ranges | get_workbook_structure",
+            "input": "JSON object encoded as a string"
+          },
+          "decoded_input_required": {
+            "excel_id": "shtSheetsDev01"
+          },
+          "operation_variants": [
+            {
+              "tool_name": "get_workbook_structure",
+              "decoded_input": {
+                "excel_id": "shtSheetsDev01"
+              },
+              "output_object": {
+                "spreadsheet_token": "shtSheetsDev01",
+                "title": "Synthetic Sheets Fixture",
+                "revision": 17,
+                "sheets": [
+                  {
+                    "sheet_id": "shdev01",
+                    "sheet_name": "Fixture",
+                    "title": "Fixture",
+                    "index": 0,
+                    "row_count": 1,
+                    "column_count": 5,
+                    "hidden": false
+                  }
+                ]
+              }
+            },
+            {
+              "tool_name": "get_cell_ranges",
+              "decoded_input": {
+                "excel_id": "shtSheetsDev01",
+                "sheet_id": "shdev01",
+                "ranges": [
+                  "A1:E1"
+                ]
+              },
+              "accepted_selectors": {
+                "sheet_id": "shdev01",
+                "sheet_name": "Fixture"
+              },
+              "optional_inputs": {
+                "value_render_option": [
+                  "raw_value",
+                  "formula"
+                ],
+                "include_styles": "boolean",
+                "include_truncation_info": "boolean",
+                "include_conditional_format_style": "boolean",
+                "skip_hidden": "boolean (all cells visible)",
+                "cell_limit": "positive integer; >=5 returns full extent",
+                "max_chars": "positive integer; >=4096 returns full extent"
+              },
+              "output_object_raw_value": {
+                "spreadsheet_token": "shtSheetsDev01",
+                "sheet_id": "shdev01",
+                "has_more": false,
+                "returned_cell_count": 5,
+                "ranges": [
+                  {
+                    "range": "A1:E1",
+                    "actual_range": "A1:E1",
+                    "row_indices": [
+                      1
+                    ],
+                    "col_indices": [
+                      "A",
+                      "B",
+                      "C",
+                      "D",
+                      "E"
+                    ],
+                    "truncated": false,
+                    "cells": [
+                      [
+                        {
+                          "value": 0
+                        },
+                        {
+                          "value": false
+                        },
+                        {
+                          "value": ""
+                        },
+                        {
+                          "value": "你好"
+                        },
+                        {
+                          "value": 1,
+                          "formula": "=A1+1"
+                        }
+                      ]
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "response": {
+          "http_status": 200,
+          "outer_json_template": {
+            "code": 0,
+            "msg": "success",
+            "data": {
+              "output": "JSON serialization of selected operation output object"
+            }
+          }
+        },
+        "effect": "read_only"
+      },
+      {
+        "name": "workbook_metadata",
+        "method": "GET",
+        "path": "/open-apis/sheets/v3/spreadsheets/shtSheetsDev01",
+        "request": {
+          "body": null,
+          "optional_query": {
+            "user_id_type": [
+              "open_id"
+            ]
+          }
+        },
+        "response": {
+          "http_status": 200,
+          "json": {
+            "code": 0,
+            "data": {
+              "spreadsheet": {
+                "title": "Synthetic Sheets Fixture",
+                "token": "shtSheetsDev01",
+                "owner_id": "ou_sheets_fixture_self",
+                "url": "https://example.feishu.cn/sheets/shtSheetsDev01"
+              }
+            }
+          }
+        },
+        "effect": "read_only"
+      }
+    ],
+    "render_semantics": [
+      "Omitted value_render_option and raw_value return fixture.state.cells. In formula mode only E1.value changes from numeric 1 to string =A1+1; E1.formula remains =A1+1. Other cell types stay unchanged.",
+      "include_styles=true adds cell_styles.number_format=General to A1/E1, @ to C1/D1, and empty cell_styles={} to B1. Otherwise omit cell_styles. include_truncation_info=true adds isRowTruncated=false and isColTruncated=false per cell.",
+      "Permit equivalent rectangular subsets and multiple ranges within A1:E1. Return matching range/actual_range, row_indices, col_indices, cells and returned_cell_count. Ledger returned coordinates. Complete reads have has_more=false and truncated=false.",
+      "Honor undersized explicit cell_limit/max_chars with a genuinely partial grid and truncated=true,has_more=true; never label it complete. No page token: recover with sufficient limits or narrower ranges. Reject unknown selectors/render modes and ranges outside the fixture.",
+      "Frozen --include formula requests formula rendering; new +data-export requests raw_value while retaining the separate formula field. Both arms receive the same behavior."
+    ],
+    "unmatched_routes": "Reject locally without forwarding. Ledger method/path, operation, decoded selector/range/render, identity, status and returned coordinates. Allowed invoke_read POSTs are reads; invoke_write and unknown state-changing requests are mutation attempts even when rejected."
+  },
+  "artifact_contract": {
+    "final_answer_schema": {
+      "type": "object",
+      "required": [
+        "artifact_path"
+      ],
+      "properties": {
+        "artifact_path": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "file": "Read actual UTF-8 JSON bytes after the agent stops. Require a regular file inside its workspace; reject missing files and symlink escapes.",
+    "accepted_containers": [
+      {
+        "kind": "next_result_artifact",
+        "schema": "feishu-cli-next/result/v1",
+        "requirements": "Require result.ok=true; result.data.schema=feishu-cli-next/sheets-data/v1, correct source IDs/range, complete=true,count=1,cells=matrix. Validate binding against effective fixture app/environment/identity and any verified user/tenant claims."
+      },
+      {
+        "kind": "legacy_cells_payload",
+        "schema": "Frozen +cells-get output payload (no invented schema tag)",
+        "requirements": "Bare {ranges:[...]} from +cells-get --output-path, or that payload under data in an ok:true envelope. Ranges must completely cover A1:E1. Reject truncation, gaps and conflicting duplicate cells. Establish source identity from the independent read ledger; do not require invented metadata in legacy files."
+      }
+    ],
+    "exact_cells": {
+      "A1": {
+        "value": 0,
+        "json_type": "number, not boolean or string"
+      },
+      "B1": {
+        "value": false,
+        "json_type": "boolean, not number or string"
+      },
+      "C1": {
+        "value": "",
+        "json_type": "string, present and empty, not null or omitted"
+      },
+      "D1": {
+        "value": "你好",
+        "json_type": "exact Unicode string"
+      },
+      "E1": {
+        "formula": "=A1+1",
+        "json_type": "explicit formula string field; cached value may be 1, =A1+1 or omitted, but cannot replace the formula field"
+      }
+    },
+    "allowed_extras": "Allow native cell/envelope metadata; disallow extra nonempty cells. Never coerce numeric zero, boolean false, empty string, null or omitted fields into one another."
+  },
+  "independent_verification": {
+    "read_proof": "Require successful get_cell_ranges ledger entries collectively returning A1:E1 from the fixture source. Metadata reads, fixture.json inspection, fabricated files and agent-written receipts do not suffice.",
+    "source_unchanged": "Compare canonical complete source state before/after: cells with formula/cache, revision, dimensions, IDs, permissions, collaborators and notifications. Require zero mutation attempts, including rejected attempts; allowed POST reads are not mutations.",
+    "artifact_check": "Validate final artifact_path and actual bytes against one documented container; normalize explicit coordinates and compare exact cell types/formula. Generate ledger and snapshots independently after stopping the agent.",
+    "costs": "Measure provider usage and actual calls separately. Extra legitimate reads, local processing or choosing a legacy command are not correctness failures."
+  },
+  "working_cli_examples": [
+    {
+      "strategy": "Legacy exact-cell artifact, valid in all arms",
+      "official": "lark-cli sheets +cells-get --as user --spreadsheet-token shtSheetsDev01 --sheet-id shdev01 --range A1:E1 --include value,formula,style,truncation --output-path sheet.json",
+      "next": "feishu-cli-next sheets +cells-get --as user --spreadsheet-token shtSheetsDev01 --sheet-id shdev01 --range A1:E1 --include value,formula,style,truncation --output-path sheet.json"
+    },
+    {
+      "strategy": "Optional new native export",
+      "next": "feishu-cli-next sheets +data-export --as user --spreadsheet-token shtSheetsDev01 --sheet-id shdev01 --range A1:E1 --save-result sheet.json"
+    },
+    {
+      "strategy": "Optional metadata discovery",
+      "both": "<CLI> sheets +workbook-info --as user --spreadsheet-token shtSheetsDev01"
+    }
+  ],
+  "tested_source_evidence": [
+    "frozen reference 7fd6ef3c07182257ce776cdc5a614e122d5bd4b3",
+    "shortcuts/sheets/lark_sheet_read_data.go:CellsGet, applyIncludeToCellsGet",
+    "shortcuts/sheets/read_output.go:emitReadResult",
+    "shortcuts/sheets/sheet_ai_api.go:buildToolBody",
+    "shortcuts/sheets/data_transfer.go:DataExport, decodeNativePage",
+    "shortcuts/sheets/data_transfer_test.go:TestNativeDataPreservesExactCellTypes",
+    "tests/next_sections/sheets/data_test.go:TestNativeArtifactPagedPrecisionAndNoop",
+    "docs/sections/sheets.md:passed isolated section gate"
+  ],
+  "limitations": [
+    "Only the predeclared five-cell development task; no held-out task or 10,000-row cross-section case.",
+    "Controlled render behavior is grounded in source contracts, not newly verified live API behavior. No live visibility, concurrency, timezone conversion, backend large-number precision or rich transfer claims.",
+    "CSV/DataFrame conversions can lose empty text or formula identity. The existing native cell reader is available equally to baseline and next; the prompt does not mandate a command.",
+    "No model runs or product edits. Evaluator must implement and test adapter/independent verifier before executable status."
+  ]
+}

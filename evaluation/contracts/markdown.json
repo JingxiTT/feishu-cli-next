@@ -1,0 +1,160 @@
+{
+  "schema_version": 1,
+  "task_id": "markdown-dev-01",
+  "section": "markdown",
+  "split": "development",
+  "status": "ready_for_adapter_implementation_not_model_evaluated",
+  "prompt": "Convert the synthetic Markdown in fixture.md into the supported native document representation using this isolated fixture account. Preserve the Chinese heading, the two-column table, and the genuinely empty Value cell in row A. Save the returned native XML, including native block IDs, as converted.xml and report the document ID and any unsupported conversion. Do not share the document or change unrelated resources.",
+  "local_inputs": {
+    "fixture.md": {
+      "encoding": "UTF-8",
+      "content": "# 你好\n\n| Name | Value |\n| --- | --- |\n| A | |\n",
+      "must_remain_byte_identical": true
+    }
+  },
+  "identity": {
+    "mode": "user",
+    "open_id": "ou_markdown_development_self",
+    "tenant_key": "markdown-development-tenant",
+    "visibility": "synthetic_self_only",
+    "no_live_access": true
+  },
+  "ids": {
+    "document_id": "docxMarkdownDevelopment01",
+    "document_url": "https://fixture.example/docx/docxMarkdownDevelopment01"
+  },
+  "implementation_boundary": {
+    "owner": "Docs for Markdown import and DocxXML; Markdown for source-file operations",
+    "mechanism": "docs +create --doc-format markdown forwards source to docs_ai; docs +fetch --doc-format xml returns backend-native DocxXML. There is no standalone local Markdown-to-DocxXML converter.",
+    "scope_of_evidence": "Exact request forwarding and returned representation preservation against a deterministic synthetic backend; does not establish real backend conversion fidelity."
+  },
+  "routes": [
+    {
+      "method": "POST",
+      "path": "/open-apis/docs_ai/v1/documents",
+      "request": {
+        "required_equal": {
+          "format": "markdown",
+          "content": "# 你好\n\n| Name | Value |\n| --- | --- |\n| A | |\n"
+        },
+        "optional_keys": [
+          "scene"
+        ],
+        "forbidden_keys": [
+          "reference_map"
+        ],
+        "identity": "user"
+      },
+      "effect": "Create exactly one run-owned synthetic document only when source and format match; do not construct native structure from other caller text.",
+      "response": {
+        "code": 0,
+        "data": {
+          "document": {
+            "document_id": "docxMarkdownDevelopment01",
+            "url": "https://fixture.example/docx/docxMarkdownDevelopment01"
+          }
+        }
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/open-apis/docs_ai/v1/documents/docxMarkdownDevelopment01/fetch",
+      "request": {
+        "required_equal": {
+          "format": "xml"
+        },
+        "expected_for_full_detail": {
+          "export_option": {
+            "export_block_id": true,
+            "export_style_attrs": true,
+            "export_cite_extra_data": true
+          }
+        },
+        "accepted_other_keys": [
+          "extra_param",
+          "lang",
+          "revision_id",
+          "scene"
+        ],
+        "reject_partial_selection": "read_option must be absent; this task needs the whole document"
+      },
+      "effect": "Read only; require prior successful create.",
+      "response": {
+        "code": 0,
+        "data": {
+          "document": {
+            "document_id": "docxMarkdownDevelopment01",
+            "revision_id": 1,
+            "content": "<h1 block-id=\"heading_1\">你好</h1><table block-id=\"table_1\"><tr block-id=\"row_header\"><td block-id=\"cell_name\"><p>Name</p></td><td block-id=\"cell_value\"><p>Value</p></td></tr><tr block-id=\"row_a\"><td block-id=\"cell_a\"><p>A</p></td><td block-id=\"cell_empty\"><p></p></td></tr></table>"
+          }
+        }
+      }
+    }
+  ],
+  "transport_policy": {
+    "identity_route": "Use evaluator shared synthetic authen/v1/user_info response bound to identity above.",
+    "default": "Reject all unlisted business endpoints; never forward to network.",
+    "forbidden_effects": [
+      "permission grants",
+      "notifications",
+      "file upload masquerading as native conversion",
+      "updates to existing resources"
+    ],
+    "read_repeat_policy": "Repeated fetch/discovery is allowed; mutation count must be exactly one successful create."
+  },
+  "artifact": {
+    "path": "converted.xml",
+    "encoding": "UTF-8",
+    "schema": "DocxXML fragment, not a generic feishu-cli-next/result/v1 JSON artifact and not plain Markdown. Parse by wrapping a verifier-only root element.",
+    "expected_fragment": "<h1 block-id=\"heading_1\">你好</h1><table block-id=\"table_1\"><tr block-id=\"row_header\"><td block-id=\"cell_name\"><p>Name</p></td><td block-id=\"cell_value\"><p>Value</p></td></tr><tr block-id=\"row_a\"><td block-id=\"cell_a\"><p>A</p></td><td block-id=\"cell_empty\"><p></p></td></tr></table>",
+    "comparison": "Parse XML; ignore serialization-only whitespace between elements and optional trailing newline, not text content. Keep native block-id attributes.",
+    "invariants": [
+      "Exactly one h1 with block-id heading_1 and text 你好; no question marks, HTML entity double-escaping, or replacement characters.",
+      "Exactly one table table_1 containing two tr rows, each containing exactly two td cells.",
+      "Header cell texts are Name and Value in order; data row texts are A and empty string in order.",
+      "cell_empty is a present native td containing a p whose text is absent or exactly empty string; whitespace between XML block elements may be serialization indentation, but a space inside p, null, 0, or the string empty is not an empty cell.",
+      "All supplied block-id values remain attached to their original native nodes.",
+      "No image, flattened pipe-delimited text, screenshot, or source-file URL substitutes for the native table."
+    ]
+  },
+  "unsupported_conversion": {
+    "primary_fixture": "Only a heading and a simple table are supplied and the synthetic backend returns their complete supported native representation. No unsupported warning should be invented.",
+    "optional_adapter_fault_probe_not_new_scored_task": {
+      "replace_create_response": {
+        "code": 0,
+        "data": {
+          "result": "failed",
+          "warnings": [
+            "synthetic Markdown table conversion unsupported"
+          ]
+        }
+      },
+      "expected": "Preserve failed result and warning, report conversion unsupported/incomplete, do not claim a native document or write a success artifact, and do not automatically replay the create. Existing next receipt behavior may classify this service failure unknown (exit 22); reference preserves the failed result with its own nonzero exit."
+    },
+    "limitation": "Do not infer support for arbitrary Markdown extensions or rich XML-to-Markdown round trips from this task."
+  },
+  "cli_examples": [
+    "${CLI} docs +create --content @fixture.md --doc-format markdown --as user",
+    "${CLI} docs +fetch --doc docxMarkdownDevelopment01 --doc-format xml --detail full --as user --format pretty > converted.xml"
+  ],
+  "source_refs": [
+    "evaluation/tasks.development.json#markdown-dev-01",
+    "shortcuts/doc/docs_create_v2.go:buildCreateBody",
+    "shortcuts/doc/docs_fetch_v2.go:buildFetchBody",
+    "shortcuts/doc/docs_fetch_v2.go:executeFetchV2",
+    "shortcuts/doc/docs_result_test.go:TestDocsWritePreservesServiceFailureDetails",
+    "tests/next_sections/docs/docs_e2e_test.go:TestDocsCreateFetchRichArtifact",
+    "tests/next_sections/docs/docs_e2e_test.go:TestDocsServiceFailureKeepsPartialResult",
+    "tests/next_sections/markdown/markdown_e2e_test.go:TestMarkdownCompleteSourceLifecycle"
+  ],
+  "validation": {
+    "performed": "JSON parse plus exact predeclared source equality and XML structural assertions for the proposed fixture. Existing cited process tests exercise the reused create/fetch/rich artifact/failure surfaces.",
+    "not_performed": [
+      "No model runs",
+      "No product edits",
+      "No new backend conversion claim",
+      "No live writes",
+      "No held-out tasks"
+    ]
+  }
+}

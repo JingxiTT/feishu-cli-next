@@ -1,0 +1,235 @@
+{
+  "schema_version": 1,
+  "task_id": "wiki-dev-01",
+  "section": "wiki",
+  "source_task": "evaluation/tasks.development.json#wiki-dev-01",
+  "status": "contract_ready_adapter_not_implemented_model_not_run",
+  "prompt": "Resolve the synthetic Wiki node wikcnEvaluationNode000000001 (https://example.feishu.cn/wiki/wikcnEvaluationNode000000001) to its underlying document identity, then read that document. Return JSON with exactly node_token, document_id, obj_type and text. Preserve the complete document text exactly, including Unicode. Do not modify any content, permissions or visibility.",
+  "fixture": {
+    "kind": "synthetic",
+    "visibility": "self_only",
+    "version": 1,
+    "node_id": "wikcnEvaluationNode000000001",
+    "document_id": "doccnEvaluationDoc0000000001",
+    "text": "Knowledge 你好",
+    "node": {
+      "node_token": "wikcnEvaluationNode000000001",
+      "obj_token": "doccnEvaluationDoc0000000001",
+      "obj_type": "docx",
+      "node_type": "origin",
+      "space_id": "7000000000000000001",
+      "parent_node_token": "",
+      "origin_node_token": "",
+      "title": "Knowledge fixture",
+      "has_child": false
+    },
+    "document": {
+      "document_id": "doccnEvaluationDoc0000000001",
+      "obj_type": "docx",
+      "title": "Knowledge fixture",
+      "revision_id": 1,
+      "text": "Knowledge 你好"
+    },
+    "permissions": {
+      "space": "current-account-only",
+      "wiki_node": "current-account-only",
+      "document": "current-account-only"
+    },
+    "notifications": [],
+    "identity": "Use common evaluator app/account/tenant and shared user_info fixture. Both user and bot can read these synthetic objects; no live bindings.",
+    "manifest_instantiation": "Replace predeclared wiki_fixture/doc_fixture placeholders with complete resource tokens so existing Wiki token validation accepts the fixture. Text and task intent are unchanged."
+  },
+  "endpoints": [
+    {
+      "name": "wiki_resolve",
+      "method": "GET",
+      "path": "/open-apis/wiki/v2/spaces/get_node",
+      "query": {
+        "token": "wikcnEvaluationNode000000001"
+      },
+      "semantics": "read_only",
+      "status": 200,
+      "json": {
+        "code": 0,
+        "data": {
+          "node": {
+            "node_token": "wikcnEvaluationNode000000001",
+            "obj_token": "doccnEvaluationDoc0000000001",
+            "obj_type": "docx",
+            "node_type": "origin",
+            "space_id": "7000000000000000001",
+            "parent_node_token": "",
+            "origin_node_token": "",
+            "title": "Knowledge fixture",
+            "has_child": false
+          }
+        }
+      },
+      "optional_query": {
+        "obj_type": "wiki"
+      }
+    },
+    {
+      "name": "docs_fetch_xml",
+      "method": "POST",
+      "path": "/open-apis/docs_ai/v1/documents/doccnEvaluationDoc0000000001/fetch",
+      "query": {},
+      "semantics": "read_only",
+      "status": 200,
+      "json": {
+        "code": 0,
+        "data": {
+          "document": {
+            "document_id": "doccnEvaluationDoc0000000001",
+            "title": "Knowledge fixture",
+            "revision_id": 1,
+            "content": "<p>Knowledge 你好</p>"
+          }
+        }
+      },
+      "body_required": {
+        "format": "xml"
+      },
+      "body_allowed_fields": [
+        "format",
+        "extra_param",
+        "export_option",
+        "revision_id",
+        "lang",
+        "read_option"
+      ],
+      "body_constraints": {
+        "revision_id": "absent or -1 or 1",
+        "read_option": "absent or full-document read only"
+      },
+      "notes": "Match this route by format; allow documented extra/export detail fields. This POST is a read, never a content mutation."
+    },
+    {
+      "name": "docs_fetch_markdown",
+      "method": "POST",
+      "path": "/open-apis/docs_ai/v1/documents/doccnEvaluationDoc0000000001/fetch",
+      "query": {},
+      "semantics": "read_only",
+      "status": 200,
+      "json": {
+        "code": 0,
+        "data": {
+          "document": {
+            "document_id": "doccnEvaluationDoc0000000001",
+            "title": "Knowledge fixture",
+            "revision_id": 1,
+            "content": "Knowledge 你好"
+          }
+        }
+      },
+      "body_required": {
+        "format": "markdown"
+      },
+      "body_allowed_fields": [
+        "format",
+        "extra_param",
+        "export_option",
+        "revision_id",
+        "lang",
+        "read_option"
+      ],
+      "body_constraints": {
+        "revision_id": "absent or -1 or 1",
+        "read_option": "absent or full-document read only"
+      },
+      "notes": "Match this route by format; allow documented extra/export detail fields. This POST is a read, never a content mutation."
+    }
+  ],
+  "expected": {
+    "answer": {
+      "node_token": "wikcnEvaluationNode000000001",
+      "document_id": "doccnEvaluationDoc0000000001",
+      "obj_type": "docx",
+      "text": "Knowledge 你好"
+    },
+    "answer_schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "node_token",
+        "document_id",
+        "obj_type",
+        "text"
+      ],
+      "properties": {
+        "node_token": {
+          "type": "string"
+        },
+        "document_id": {
+          "type": "string"
+        },
+        "obj_type": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "independent_checks": [
+    {
+      "id": "resolve_observed",
+      "assertion": "Backend ledger records successful GET wiki_resolve returning node_token=wikcnEvaluationNode000000001, obj_type=docx, obj_token=doccnEvaluationDoc0000000001. Reject a final answer with a guessed or unrelated document identity."
+    },
+    {
+      "id": "document_read_observed",
+      "assertion": "Ledger records successful docs_fetch_xml/docs_fetch_markdown at the exact resolved document ID doccnEvaluationDoc0000000001. Metadata alone is not a content read. Verify both resolution and content were actually obtained; accept any valid command composition, repeated legitimate reads and either permitted identity."
+    },
+    {
+      "id": "answer_exact",
+      "assertion": "Parse final JSON, enforce expected.answer_schema, then compare all fields exactly with expected.answer. XML markup is a transport representation; text must be Knowledge 你好 without tags, extra whitespace or added newline."
+    },
+    {
+      "id": "state_unchanged",
+      "assertion": "Independently compare full Wiki node, document identity, revision, title, exact text and ACL snapshots before/after the run. No mutation attempt, grant, share, notification, move, create or delete is allowed, including rejected mutation requests. The two concrete POST fetch routes are allowlisted reads; do not classify all POSTs as mutations."
+    },
+    {
+      "id": "permissions_unchanged",
+      "assertion": "Assert space/node/document visibility and access grants remain exactly self-only with no new members or notifications. The evaluator owns state snapshots and ledger; never trust the agent final no-change claim."
+    }
+  ],
+  "cli_examples": [
+    {
+      "arm": "official and official_concise",
+      "commands": [
+        "lark-cli wiki +node-get --node-token wikcnEvaluationNode000000001 --as user",
+        "lark-cli docs +fetch --doc doccnEvaluationDoc0000000001 --doc-format markdown --as user"
+      ]
+    },
+    {
+      "arm": "next",
+      "commands": [
+        "feishu-cli-next wiki +node-get --node-token wikcnEvaluationNode000000001 --as user",
+        "feishu-cli-next docs +fetch --doc doccnEvaluationDoc0000000001 --doc-format markdown --as user"
+      ]
+    },
+    {
+      "arm": "all; substitute arm binary",
+      "commands": [
+        "<cli> wiki spaces get_node --params '{\"token\":\"wikcnEvaluationNode000000001\"}' --as user",
+        "<cli> api POST /open-apis/docs_ai/v1/documents/doccnEvaluationDoc0000000001/fetch --data '{\"format\":\"markdown\"}' --as user"
+      ]
+    }
+  ],
+  "route_policy": "Common non-forwarding fixture server validates shared auth. Reject and ledger all unmatched routes; never forward. Match fetch response to requested xml/markdown format. Shortcut and generic API calls to the same Wiki and Docs read routes are equivalent strategies. Help/discovery and local file artifacts are permitted.",
+  "source_evidence": [
+    "shortcuts/wiki/wiki_node_get.go:WikiNodeGet, parseWikiNodeGetSpec, wikiNodeGetOutput",
+    "tests/next_sections/wiki/wiki_e2e_test.go:TestWikiNodeLifecycleAndMemberPermissions",
+    "tests/next_sections/wiki/catalog_e2e_test.go:TestWikiAllGeneratedEndpointsPreserveRequestsAndFullOutput",
+    "shortcuts/doc/docs_fetch_v2.go:executeFetchV2, buildFetchBody",
+    "tests/nextfixture/fixture.go",
+    "docs/sections/wiki.md"
+  ],
+  "limits": [
+    "Offline development task only; no live privacy, tenant or content-fidelity claim.",
+    "The short text fixture tests Wiki-to-Docs identity handoff and exact Unicode text; it does not establish rich-document formatting, ACL inheritance, pagination, large artifacts or transfer performance.",
+    "Docs fetch routes are source-derived here; the evaluator must implement and test their adapter against both binaries before balanced model runs. Generic api POST fetch is an equivalent read, not a new Wiki shortcut. Optional alternative document APIs can be added symmetrically if demanded by observed strategies; no unimplemented route should be claimed as supported.",
+    "No held-out task was inspected or modified; no model run, score or performance claim is supplied."
+  ]
+}

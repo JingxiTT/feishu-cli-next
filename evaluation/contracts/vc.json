@@ -1,0 +1,217 @@
+{
+  "schema_version": 1,
+  "task_id": "vc-dev-01",
+  "section": "vc",
+  "scenario": "vc-exact-meeting-duration-v1",
+  "status": "contract_ready_adapter_not_implemented",
+  "source_task": "evaluation/tasks.development.json#vc-dev-01",
+  "prompt": "Read the private fixture meeting record with meeting ID 7651377260537433044. Report its exact meeting ID and elapsed meeting duration in seconds, calculated from its start and end instants. Distinguish the long meeting ID from the 9-digit meeting number. Do not join, invite, send messages, change settings, or change any resource. Return JSON with exactly meeting_id (string) and duration_seconds (integer).",
+  "fixture": {
+    "kind": "synthetic",
+    "visibility": "self_only",
+    "version": 1,
+    "source_fixture_id": "meeting_fixture",
+    "binding": {
+      "identity": "user",
+      "open_id": "ou_vc_fixture_self",
+      "tenant_key": "vc-fixture-tenant",
+      "app_id": "synthetic-evaluation-app"
+    },
+    "meeting": {
+      "id": "7651377260537433044",
+      "meeting_no": "012345678",
+      "topic": "Private VC development fixture",
+      "start_time": "1700000000",
+      "end_time": "1700000090",
+      "status": 3,
+      "participant_count": 1,
+      "participants": [
+        {
+          "id": "ou_vc_fixture_self",
+          "user_type": 1
+        }
+      ],
+      "note_id": ""
+    },
+    "recording": {
+      "url": "https://example.invalid/minutes/vcfixtureminute",
+      "duration": "90"
+    },
+    "invitations": [],
+    "notifications": [],
+    "messages": []
+  },
+  "api": {
+    "transport": "local non-forwarding signed sidecar; reuse existing evaluator signature validation",
+    "default": "Reject and ledger every unlisted route, identity/tenant mismatch or mutation attempt; never forward a request.",
+    "routes": [
+      {
+        "name": "identity",
+        "method": "GET",
+        "path": "/open-apis/authen/v1/user_info",
+        "request": {
+          "body": null,
+          "query": {}
+        },
+        "response": {
+          "http_status": 200,
+          "json": {
+            "code": 0,
+            "data": {
+              "open_id": "ou_vc_fixture_self",
+              "name": "Synthetic VC Fixture",
+              "tenant_key": "vc-fixture-tenant"
+            }
+          }
+        }
+      },
+      {
+        "name": "meeting_record",
+        "method": "GET",
+        "path": "/open-apis/vc/v1/meetings/7651377260537433044",
+        "request": {
+          "body": null,
+          "optional_query": {
+            "query_mode": [
+              "0"
+            ],
+            "with_participants": [
+              "true",
+              "false"
+            ],
+            "with_meeting_ability": [
+              "true",
+              "false"
+            ],
+            "user_id_type": [
+              "open_id",
+              "user_id",
+              "union_id"
+            ]
+          },
+          "equivalent_query_policy": "Absent query_mode means 0. Accept omitted optional flags and equivalent boolean query serialization. The synthetic fixture has the same one self participant for each supported identity namespace. GET via generic CLI, vc +detail or endpoint-agnostic api is equally valid; do not prescribe the command sequence."
+        },
+        "response": {
+          "http_status": 200,
+          "json": {
+            "code": 0,
+            "data": {
+              "meeting": {
+                "id": "7651377260537433044",
+                "meeting_no": "012345678",
+                "topic": "Private VC development fixture",
+                "start_time": "1700000000",
+                "end_time": "1700000090",
+                "status": 3,
+                "participant_count": 1,
+                "participants": [
+                  {
+                    "id": "ou_vc_fixture_self",
+                    "user_type": 1
+                  }
+                ],
+                "note_id": ""
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "recording_supplement",
+        "method": "GET",
+        "path": "/open-apis/vc/v1/meetings/7651377260537433044/recording",
+        "request": {
+          "body": null,
+          "query": {}
+        },
+        "response": {
+          "http_status": 200,
+          "json": {
+            "code": 0,
+            "data": {
+              "recording": {
+                "url": "https://example.invalid/minutes/vcfixtureminute",
+                "duration": "90"
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  "expected": {
+    "answer": {
+      "meeting_id": "7651377260537433044",
+      "duration_seconds": 90
+    },
+    "answer_schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "meeting_id",
+        "duration_seconds"
+      ],
+      "properties": {
+        "meeting_id": {
+          "type": "string",
+          "const": "7651377260537433044"
+        },
+        "duration_seconds": {
+          "type": "integer",
+          "const": 90
+        }
+      }
+    },
+    "success_checks": [
+      "Parse the final answer as JSON, enforce the exact schema and compare it with the independently computed expected ID and integer difference between fixture end_time and start_time.",
+      "Independent signed request ledger must show at least one successful meeting_record read under the bound account/tenant. Answer text alone, user_info, help/schema and recording_supplement alone do not prove the meeting record was read.",
+      "Compare initial and final meeting, participant identity/type, recording, invitations, notifications and messages deeply and type-sensitively; all must remain unchanged.",
+      "No mutation request was attempted, including rejected invitation, join/start, leave/end, countdown, message/reaction, calendar, permission, subscription or upload routes. Record denied attempts independently of the CLI exit status.",
+      "No invitation, notification or message was created; verify the fixture effect ledger and collections rather than relying on CLI success output.",
+      "The long meeting ID is an exact decimal string, never a rounded floating-point value or the 9-digit meeting number. Duration is meeting elapsed seconds, not an inferred recording length.",
+      "Reject unexpected routes, malformed signatures, binding mismatches and forwarding attempts. Allow any supported command strategy producing these verified reads and invariants."
+    ]
+  },
+  "examples": [
+    {
+      "surface": "generic frozen API, all three arms",
+      "argv": [
+        "{cli}",
+        "vc",
+        "meeting",
+        "get",
+        "--meeting-id",
+        "7651377260537433044",
+        "--as",
+        "user"
+      ]
+    },
+    {
+      "surface": "consolidated shortcut, all three arms",
+      "argv": [
+        "{cli}",
+        "vc",
+        "+detail",
+        "--meeting-ids",
+        "7651377260537433044",
+        "--as",
+        "user"
+      ]
+    }
+  ],
+  "references": [
+    "shortcuts/vc/vc_detail.go:fetchMeetingDetail",
+    "shortcuts/vc/vc_recording.go:fetchRecordingByMeetingID",
+    "tests/next_sections/vc/vc_e2e_test.go:TestVCSearchAndGenericMeetingArtifacts",
+    "tests/next_sections/vc/vc_e2e_test.go:TestVCDetailRecordingAndNotesResolution",
+    "docs/reference/registrations.json.gz#/feishu/commands/vc meeting get",
+    "docs/reference/registrations.json.gz#/feishu/commands/vc +detail",
+    "docs/sections/vc.md"
+  ],
+  "limitations": [
+    "Instantiates only the predeclared development record-read task: one ended meeting with a 90-second elapsed duration. It does not evaluate live meetings, invitations, recording generation, pagination or notifications.",
+    "The optional recording response accommodates vc +detail supplementary lookup; a recording may differ from meeting elapsed duration in general, so the verifier derives duration only from the meeting timestamps.",
+    "This JSON contract is not an implemented evaluator backend, independent verifier or model-run result. No efficiency or success claim follows until the common evaluator adapter and balanced trials run.",
+    "Synthetic self-only visibility is not verification of live account/tenant privacy or recipient authorization. No live action or model run was performed to author this contract."
+  ]
+}
