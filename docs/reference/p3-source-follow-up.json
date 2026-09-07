@@ -1,0 +1,259 @@
+{
+  "boundary": "This supplements exact source review proposals, not a blanket pass. Current dirty E2E-harness work is outside this committed checkpoint. Required live/platform/release/evaluation acceptance remains separately open.",
+  "candidate_revision": "dcfe8afa41b772a6fc5c8315d1c75936442f2ffb",
+  "counts": {
+    "changed_reference_paths": 177,
+    "changed_since_checkpoint": 3,
+    "preserved_build_conditions": 61,
+    "unchanged_review_entries": 174
+  },
+  "independently_recounted_evidence": [
+    {
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-count=1",
+        "-timeout=10m",
+        "./shortcuts/apps/..."
+      ],
+      "exit_code": 0,
+      "focused_tests": [],
+      "independently_counted_test_events": {
+        "pass": 1542
+      },
+      "path": ".tmp/apps-put-confirmation.json",
+      "sha256": "4f5d5a8ec17e20c948d50a3240677e48a5da8327579ee085b3e9839d80477d20"
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-count=1",
+        "-timeout=10m",
+        "./tests/cli_e2e/apps",
+        "-run",
+        "DryRun|Regression"
+      ],
+      "exit_code": 0,
+      "focused_tests": [],
+      "independently_counted_test_events": {
+        "pass": 123
+      },
+      "path": ".tmp/apps-put-confirmation.json",
+      "sha256": "4f5d5a8ec17e20c948d50a3240677e48a5da8327579ee085b3e9839d80477d20"
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-count=1",
+        "-timeout=10m",
+        "./tests/next_sections/apps"
+      ],
+      "exit_code": 0,
+      "focused_tests": [
+        {
+          "action": "pass",
+          "test": "TestAppsFileTransferAndCallbackPartial/complete"
+        },
+        {
+          "action": "pass",
+          "test": "TestAppsFileTransferAndCallbackPartial/callback-denied"
+        },
+        {
+          "action": "pass",
+          "test": "TestAppsFileTransferAndCallbackPartial/lost-put"
+        },
+        {
+          "action": "pass",
+          "test": "TestAppsFileTransferAndCallbackPartial/accepted-put"
+        },
+        {
+          "action": "pass",
+          "test": "TestAppsFileTransferAndCallbackPartial/redirect-put"
+        },
+        {
+          "action": "pass",
+          "test": "TestAppsFileTransferAndCallbackPartial/see-other-put"
+        },
+        {
+          "action": "pass",
+          "test": "TestAppsFileTransferAndCallbackPartial/temporary-redirect-put"
+        },
+        {
+          "action": "pass",
+          "test": "TestAppsFileTransferAndCallbackPartial"
+        },
+        {
+          "action": "pass",
+          "test": "TestAppsHTMLStorageAndReleaseRemainSeparateEffects/complete"
+        },
+        {
+          "action": "pass",
+          "test": "TestAppsHTMLStorageAndReleaseRemainSeparateEffects/lost-put"
+        },
+        {
+          "action": "pass",
+          "test": "TestAppsHTMLStorageAndReleaseRemainSeparateEffects/release-denied"
+        },
+        {
+          "action": "pass",
+          "test": "TestAppsHTMLStorageAndReleaseRemainSeparateEffects/accepted-put"
+        },
+        {
+          "action": "pass",
+          "test": "TestAppsHTMLStorageAndReleaseRemainSeparateEffects/redirect-put"
+        },
+        {
+          "action": "pass",
+          "test": "TestAppsHTMLStorageAndReleaseRemainSeparateEffects/see-other-put"
+        },
+        {
+          "action": "pass",
+          "test": "TestAppsHTMLStorageAndReleaseRemainSeparateEffects/temporary-redirect-put"
+        },
+        {
+          "action": "pass",
+          "test": "TestAppsHTMLStorageAndReleaseRemainSeparateEffects"
+        }
+      ],
+      "independently_counted_test_events": {
+        "pass": 249,
+        "skip": 1
+      },
+      "path": ".tmp/apps-put-confirmation.json",
+      "sha256": "4f5d5a8ec17e20c948d50a3240677e48a5da8327579ee085b3e9839d80477d20"
+    },
+    {
+      "command": [
+        "go",
+        "vet",
+        "./shortcuts/apps/...",
+        "./tests/next_sections/apps"
+      ],
+      "exit_code": 0,
+      "focused_tests": [],
+      "independently_counted_test_events": {},
+      "path": ".tmp/apps-put-confirmation-checks.json",
+      "sha256": "22524732d275e05652aad2faa2ed14a600848a2d6e893e53c33bb2148e354132"
+    },
+    {
+      "command": [
+        "go",
+        "run",
+        "github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.1.6",
+        "run",
+        "--new-from-rev=0084501",
+        "./shortcuts/apps/...",
+        "./tests/next_sections/apps"
+      ],
+      "exit_code": 0,
+      "focused_tests": [],
+      "independently_counted_test_events": {},
+      "path": ".tmp/apps-put-confirmation-checks.json",
+      "sha256": "22524732d275e05652aad2faa2ed14a600848a2d6e893e53c33bb2148e354132"
+    }
+  ],
+  "method": "Read exact committed blobs at the candidate revision. No registration exporter rerun: only three frozen Apps implementation paths changed; code review found no registration or schema edits. All other 174 changed-reference hashes retain their prior ledger entries. Unchanged files continue to match the frozen snapshot.",
+  "new_nonreference_paths_since_checkpoint": [
+    "docs/IMPLEMENTATION.md",
+    "docs/reference/P3.md",
+    "docs/reference/p3-next-reconciliation.json",
+    "docs/reference/p3-source-review.json",
+    "docs/sections/apps-evidence.json",
+    "docs/sections/apps.md",
+    "docs/sections/base-evidence.json",
+    "evaluation/README.md",
+    "evaluation/codex_runner.py",
+    "evaluation/concise/application/SKILL.md",
+    "evaluation/concise/apps/SKILL.md",
+    "evaluation/concise/im/SKILL.md",
+    "evaluation/concise/minutes/SKILL.md",
+    "evaluation/concise/note/SKILL.md",
+    "evaluation/concise/slides/SKILL.md",
+    "evaluation/concise/vc/SKILL.md",
+    "evaluation/concise/whiteboard/SKILL.md",
+    "evaluation/concise/wiki/SKILL.md",
+    "evaluation/contracts/extensions.json",
+    "evaluation/contracts/index.json",
+    "evaluation/read_fixture.py",
+    "evaluation/read_verifier.py",
+    "evaluation/run_read_batch.py",
+    "evaluation/runtime/FORMAT.md",
+    "evaluation/runtime/application.json",
+    "evaluation/runtime/apps.json",
+    "evaluation/runtime/im.json",
+    "evaluation/runtime/minutes.json",
+    "evaluation/runtime/note.json",
+    "evaluation/runtime/slides.json",
+    "evaluation/runtime/vc.json",
+    "evaluation/runtime/whiteboard.json",
+    "evaluation/runtime/wiki.json",
+    "evaluation/section_fixture.py",
+    "evaluation/tasks.read-sections.json",
+    "tests/next_evaluation/test_codex_runner.py",
+    "tests/next_evaluation/test_read_fixture.py",
+    "tests/next_sections/apps/apps_files_e2e_test.go"
+  ],
+  "previous_registration_checkpoint": "0084501742edb1ee87bdf9623adf7da37267f142",
+  "registration_report": "docs/reference/p3-next-reconciliation.json",
+  "schema_version": 1,
+  "source_changes": [
+    {
+      "candidate_sha256": "eca259d21ecce615cbc6e2c1adf3bfa7c153cabbdb0bffd834ccc4b8958b436d",
+      "changed_hunks": [
+        "@@ -133 +133 @@ func putFileBytes(rctx *common.RuntimeContext, url string, content []byte, conte",
+        "@@ -150,0 +151,3 @@ func putFileBytes(rctx *common.RuntimeContext, url string, content []byte, conte"
+      ],
+      "checkpoint_diff_sha256": "40be58504b2220b9aa8f6bd893b24fb8e56f101348e61565df7538902eb325e2",
+      "evidence": "docs/sections/apps-evidence.json#/storage_confirmation_follow_up",
+      "explanation": "Upload PUT cannot advance to dependent registration/release after provisional or redirected storage response. Accept only final 200/201/204; upload-only external client clone refuses redirects so 303 cannot alter the method and 307 cannot replay bytes. Downloads retain redirect behavior.",
+      "owner": "apps",
+      "owner_report": "docs/sections/apps.md",
+      "path": "shortcuts/apps/apps_file_upload.go",
+      "previous_checkpoint_sha256": "828983d3577a178268778454e8b8914c407e6d71ef61fb1f51591939fdef346c",
+      "process_test_file": "tests/next_sections/apps/apps_files_e2e_test.go",
+      "reference_sha256": "743c2db8c240457112d71c8130286c01edd341c0da0b78ad6602ac92726c08ec",
+      "review_status": "pending_explicit_hash_bound_review"
+    },
+    {
+      "candidate_sha256": "4fde2a4c14d2a00d239d10243cd443dd44dde1ed4f6fca7959e9eb5c35615b92",
+      "changed_hunks": [
+        "@@ -365 +365 @@ func runHTMLPublishTOS(ctx context.Context, rctx *common.RuntimeContext, spec ap",
+        "@@ -380,0 +381,4 @@ func runHTMLPublishTOS(ctx context.Context, rctx *common.RuntimeContext, spec ap"
+      ],
+      "checkpoint_diff_sha256": "a75d6939a560e1fdc664d1f31e8888464f7a1e0ddcad1fbe458a5612dc7500c1",
+      "evidence": "docs/sections/apps-evidence.json#/storage_confirmation_follow_up",
+      "explanation": "Upload PUT cannot advance to dependent registration/release after provisional or redirected storage response. Accept only final 200/201/204; upload-only external client clone refuses redirects so 303 cannot alter the method and 307 cannot replay bytes. Downloads retain redirect behavior.",
+      "owner": "apps",
+      "owner_report": "docs/sections/apps.md",
+      "path": "shortcuts/apps/apps_html_publish.go",
+      "previous_checkpoint_sha256": "9222c7593439dd57004428517fcb556025b942c2b43152535b650bdc9b3af44e",
+      "process_test_file": "tests/next_sections/apps/apps_files_e2e_test.go",
+      "reference_sha256": "d79876efbf54afc46c2cddc6b8d2f235b1af9c75f3cf3993b9e42e7c85ef3f6f",
+      "review_status": "pending_explicit_hash_bound_review"
+    },
+    {
+      "candidate_sha256": "d97f09278e7df486ab81709ae38e198c48aaafba47972ce1cd37bd9d89e440d2",
+      "changed_hunks": [
+        "@@ -88,0 +89,10 @@ func newFileTransferClient(rctx *common.RuntimeContext) (*http.Client, error) {"
+      ],
+      "checkpoint_diff_sha256": "88aaf04d37bf6db8cbad63840e6038a9222497f9319bdb47e3eee791bf23e0c0",
+      "evidence": "docs/sections/apps-evidence.json#/storage_confirmation_follow_up",
+      "explanation": "Upload PUT cannot advance to dependent registration/release after provisional or redirected storage response. Accept only final 200/201/204; upload-only external client clone refuses redirects so 303 cannot alter the method and 307 cannot replay bytes. Downloads retain redirect behavior.",
+      "owner": "apps",
+      "owner_report": "docs/sections/apps.md",
+      "path": "shortcuts/apps/file_common.go",
+      "previous_checkpoint_sha256": "a1d3fbec3edc54e3dcc9576db5439f45b097938c5507b4c1157f1701a8da1497",
+      "process_test_file": "tests/next_sections/apps/apps_files_e2e_test.go",
+      "reference_sha256": "d5c5f68cf36fc5b9df357178ec8377ee88d9bc25cfb6fb10c867a0cd21a3bfa2",
+      "review_status": "pending_explicit_hash_bound_review"
+    }
+  ],
+  "source_review_ledger": "docs/reference/p3-source-review.json",
+  "status": "review_required",
+  "working_scope_when_written": "M evaluation/codex_runner.py\n M scripts/next_test.py\n M tests/cli_e2e/core.go\n M tests/cli_e2e/core_test.go\n M tests/next_evaluation/test_codex_runner.py\n M tests/nextfixture/fixture.go\n M tests/plugin_e2e/harness.go\n?? evaluation/evidence/read-312af93/\n?? tests/next_evaluation/python_fixture_entry.py"
+}
