@@ -19,11 +19,18 @@ import (
 )
 
 func TestAppsFileTransferAndCallbackPartial(t *testing.T) {
-	for _, mode := range []string{"complete", "callback-denied", "lost-put"} {
+	for _, mode := range []string{"complete", "callback-denied", "lost-put", "accepted-put", "redirect-put", "see-other-put", "temporary-redirect-put"} {
 		t.Run(mode, func(t *testing.T) {
+			uncertainPut := mode == "lost-put" || mode == "accepted-put" || mode == "redirect-put" || mode == "see-other-put" || mode == "temporary-redirect-put"
 			var bytesReceived []byte
-			var uploads, callbacks atomic.Int32
+			var uploads, callbacks, redirected atomic.Int32
 			storage := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				if r.URL.Path == "/redirected" {
+					redirected.Add(1)
+					w.Header().Set("ETag", "fixture-etag")
+					w.WriteHeader(http.StatusOK)
+					return
+				}
 				if r.Method == "PUT" {
 					uploads.Add(1)
 					bytesReceived, _ = io.ReadAll(r.Body)
@@ -45,9 +52,25 @@ func TestAppsFileTransferAndCallbackPartial(t *testing.T) {
 						return
 					}
 					w.Header().Set("ETag", "fixture-etag")
+					if mode == "accepted-put" {
+						w.WriteHeader(http.StatusAccepted)
+					} else if mode == "redirect-put" {
+						w.WriteHeader(http.StatusFound) // No Location: the PUT is not redirected.
+					} else if mode == "see-other-put" || mode == "temporary-redirect-put" {
+						w.Header().Set("Location", "/redirected")
+						status := http.StatusSeeOther
+						if mode == "temporary-redirect-put" {
+							status = http.StatusTemporaryRedirect
+						}
+						w.WriteHeader(status)
+					}
 					return
 				}
 				if r.Method == "GET" {
+					if r.URL.Path == "/download-redirect" {
+						http.Redirect(w, r, "/object", http.StatusFound)
+						return
+					}
 					_, _ = w.Write(bytesReceived)
 					return
 				}
@@ -72,7 +95,7 @@ func TestAppsFileTransferAndCallbackPartial(t *testing.T) {
 					}
 					reply(w, map[string]interface{}{"file_name": "source.txt", "path": "/object", "size": len(bytesReceived)})
 				case strings.HasSuffix(r.URL.Path, "/storage/file_sign"):
-					reply(w, map[string]interface{}{"signed_url": storage.URL + "/object?signature=synthetic-storage-signature"})
+					reply(w, map[string]interface{}{"signed_url": storage.URL + "/download-redirect?signature=synthetic-storage-signature"})
 				case strings.HasSuffix(r.URL.Path, "/storage/file_batch_remove"):
 					bytesReceived = nil
 					reply(w, map[string]interface{}{"results": []interface{}{map[string]interface{}{"status": "ok"}}})
@@ -85,10 +108,10 @@ func TestAppsFileTransferAndCallbackPartial(t *testing.T) {
 			path := filepath.Join(f.WorkDir, "source.txt")
 			writeFile(t, path, content)
 			result := run(f, "+file-upload", "--app-id", "app_fixture", "--file", path)
-			if mode == "lost-put" {
+			if uncertainPut {
 				expect(t, result, 22, "", "")
-				if string(bytesReceived) != content || uploads.Load() != 1 || callbacks.Load() != 0 {
-					t.Fatal("lost PUT replayed or callback ran")
+				if string(bytesReceived) != content || uploads.Load() != 1 || callbacks.Load() != 0 || redirected.Load() != 0 {
+					t.Fatal("uncertain PUT replayed or callback ran")
 				}
 				receipts, err := filepath.Glob(filepath.Join(f.ConfigDir, "next/receipts/*.json"))
 				if err != nil {
@@ -108,7 +131,7 @@ func TestAppsFileTransferAndCallbackPartial(t *testing.T) {
 					}
 				}
 				if !unknown {
-					t.Fatal("lost PUT lacked durable unknown receipt")
+					t.Fatal("uncertain PUT lacked durable unknown receipt")
 				}
 				return
 			}
@@ -208,10 +231,17 @@ func TestAppsDataImportRejectsArtifactBeforeDispatch(t *testing.T) {
 }
 
 func TestAppsHTMLStorageAndReleaseRemainSeparateEffects(t *testing.T) {
-	for _, mode := range []string{"complete", "lost-put", "release-denied"} {
+	for _, mode := range []string{"complete", "lost-put", "release-denied", "accepted-put", "redirect-put", "see-other-put", "temporary-redirect-put"} {
 		t.Run(mode, func(t *testing.T) {
-			var uploads, releases atomic.Int32
+			uncertainPut := mode == "lost-put" || mode == "accepted-put" || mode == "redirect-put" || mode == "see-other-put" || mode == "temporary-redirect-put"
+			var uploads, releases, redirected atomic.Int32
 			storage := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				if r.URL.Path == "/redirected" {
+					redirected.Add(1)
+					w.Header().Set("ETag", "fixture-etag")
+					w.WriteHeader(http.StatusOK)
+					return
+				}
 				uploads.Add(1)
 				body, _ := io.ReadAll(r.Body)
 				if r.Method != "PUT" || len(body) < 2 || body[0] != 0x1f || body[1] != 0x8b {
@@ -227,7 +257,20 @@ func TestAppsHTMLStorageAndReleaseRemainSeparateEffects(t *testing.T) {
 					}
 					return
 				}
-				w.WriteHeader(204)
+				if mode == "accepted-put" {
+					w.WriteHeader(http.StatusAccepted)
+				} else if mode == "redirect-put" {
+					w.WriteHeader(http.StatusFound) // No Location: the PUT is not redirected.
+				} else if mode == "see-other-put" || mode == "temporary-redirect-put" {
+					w.Header().Set("Location", "/redirected")
+					status := http.StatusSeeOther
+					if mode == "temporary-redirect-put" {
+						status = http.StatusTemporaryRedirect
+					}
+					w.WriteHeader(status)
+				} else {
+					w.WriteHeader(http.StatusNoContent)
+				}
 			}))
 			defer storage.Close()
 			f := nextfixture.NewFixture(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -260,16 +303,16 @@ func TestAppsHTMLStorageAndReleaseRemainSeparateEffects(t *testing.T) {
 			switch mode {
 			case "complete":
 				expect(t, result, 0, "data.release_id", "release_fixture")
-			case "lost-put":
+			case "lost-put", "accepted-put", "redirect-put", "see-other-put", "temporary-redirect-put":
 				expect(t, result, 22, "", "")
 			case "release-denied":
 				expect(t, result, 21, "", "")
 			}
 			expectedReleases := int32(1)
-			if mode == "lost-put" {
+			if uncertainPut {
 				expectedReleases = 0
 			}
-			if uploads.Load() != 1 || releases.Load() != expectedReleases {
+			if uploads.Load() != 1 || releases.Load() != expectedReleases || redirected.Load() != 0 {
 				t.Fatalf("effects uploads=%d releases=%d", uploads.Load(), releases.Load())
 			}
 			files, _ := filepath.Glob(filepath.Join(f.ConfigDir, "next/receipts/*.json"))
@@ -284,8 +327,8 @@ func TestAppsHTMLStorageAndReleaseRemainSeparateEffects(t *testing.T) {
 				}
 				if gjson.GetBytes(b, "method").String() == "PUT" {
 					found = true
-					if mode == "lost-put" && !strings.Contains(string(b), "unknown") {
-						t.Fatal("lost PUT not unknown")
+					if uncertainPut && !strings.Contains(string(b), "unknown") {
+						t.Fatal("uncertain PUT not unknown")
 					}
 				}
 			}

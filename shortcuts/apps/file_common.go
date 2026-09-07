@@ -86,6 +86,16 @@ func newFileTransferClient(rctx *common.RuntimeContext) (*http.Client, error) {
 	return client, nil
 }
 
+//nolint:forbidigo // Presigned storage PUTs use the Factory external clone; redirects could change the method or replay bytes before a dependent callback/release.
+func newFileUploadClient(rctx *common.RuntimeContext) (*http.Client, error) {
+	client, err := newFileTransferClient(rctx)
+	if err != nil {
+		return nil, err
+	}
+	client.CheckRedirect = func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }
+	return client, nil
+}
+
 // URL helpers for the file (storage) CLI commands.
 //
 // 全部走 spark OpenAPI，path 形如 /open-apis/spark/v1/apps/{app_id}/storage/<name>。

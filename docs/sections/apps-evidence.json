@@ -293,5 +293,99 @@
       "default": "TestAppsMetadataWriteOnlyPathAndOptionalReadPreview observes zero app GETs and one PATCH while GET would be denied; both dry-runs add zero requests.",
       "opt_in": "TestAppsMetadataReplacementAndUnknown covers same/change/missing/wrong-target/denied/lost using --skip-unchanged, preserving exact app-ID checks and no replay."
     }
+  },
+  "storage_confirmation_follow_up": {
+    "reason": "Only final200/201/204 permit callback/release. Upload-only Factory clones refuse redirects, preserving original PUT evidence and preventing method changes/replay. File ETag forwarding and download redirects remain intact.",
+    "checks": [
+      {
+        "command": [
+          "go",
+          "test",
+          "-json",
+          "-count=1",
+          "-timeout=10m",
+          "./shortcuts/apps/..."
+        ],
+        "exit_code": 0,
+        "test_events": {
+          "pass": 1542
+        },
+        "skipped_tests": [],
+        "raw_local_report": ".tmp/apps-put-confirmation.json",
+        "raw_report_sha256": "4f5d5a8ec17e20c948d50a3240677e48a5da8327579ee085b3e9839d80477d20"
+      },
+      {
+        "command": [
+          "go",
+          "test",
+          "-json",
+          "-count=1",
+          "-timeout=10m",
+          "./tests/cli_e2e/apps",
+          "-run",
+          "DryRun|Regression"
+        ],
+        "exit_code": 0,
+        "test_events": {
+          "pass": 123
+        },
+        "skipped_tests": [],
+        "raw_local_report": ".tmp/apps-put-confirmation.json",
+        "raw_report_sha256": "4f5d5a8ec17e20c948d50a3240677e48a5da8327579ee085b3e9839d80477d20"
+      },
+      {
+        "command": [
+          "go",
+          "test",
+          "-json",
+          "-count=1",
+          "-timeout=10m",
+          "./tests/next_sections/apps"
+        ],
+        "exit_code": 0,
+        "test_events": {
+          "pass": 249,
+          "skip": 1
+        },
+        "skipped_tests": [
+          "TestAppsLivePrivateLifecycle"
+        ],
+        "raw_local_report": ".tmp/apps-put-confirmation.json",
+        "raw_report_sha256": "4f5d5a8ec17e20c948d50a3240677e48a5da8327579ee085b3e9839d80477d20"
+      },
+      {
+        "command": [
+          "go",
+          "vet",
+          "./shortcuts/apps/...",
+          "./tests/next_sections/apps"
+        ],
+        "exit_code": 0,
+        "test_events": {},
+        "skipped_tests": [],
+        "raw_local_report": ".tmp/apps-put-confirmation-checks.json",
+        "raw_report_sha256": "22524732d275e05652aad2faa2ed14a600848a2d6e893e53c33bb2148e354132"
+      },
+      {
+        "command": [
+          "go",
+          "run",
+          "github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.1.6",
+          "run",
+          "--new-from-rev=0084501",
+          "./shortcuts/apps/...",
+          "./tests/next_sections/apps"
+        ],
+        "exit_code": 0,
+        "test_events": {},
+        "skipped_tests": [],
+        "raw_local_report": ".tmp/apps-put-confirmation-checks.json",
+        "raw_report_sha256": "22524732d275e05652aad2faa2ed14a600848a2d6e893e53c33bb2148e354132"
+      }
+    ],
+    "request_evidence": {
+      "file": "TestAppsFileTransferAndCallbackPartial covers202,302withoutLocation,303and307: sourcePUT1,redirecttarget0,callback0,exit22,durableunknown. Complete flow downloads through302 and preservesbytes.",
+      "html": "TestAppsHTMLStorageAndReleaseRemainSeparateEffects covers202,302withoutLocation,303and307: sourcePUT1,redirecttarget0,release0,exit22,durableunknown."
+    }
   }
 }

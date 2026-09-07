@@ -130,7 +130,7 @@ func putFileBytes(rctx *common.RuntimeContext, url string, content []byte, conte
 	}
 	req.Header.Set("Content-Disposition", disposition)
 	req = req.WithContext(common.WithStoragePutRequest(req.Context(), req.URL.Path))
-	client, err := newFileTransferClient(rctx)
+	client, err := newFileUploadClient(rctx)
 	if err != nil {
 		return "", err
 	}
@@ -147,6 +147,9 @@ func putFileBytes(rctx *common.RuntimeContext, url string, content []byte, conte
 			return "", errs.NewNetworkError(errs.SubtypeNetworkServer, "upload failed: HTTP %d", resp.StatusCode).WithRetryable()
 		}
 		return "", errs.NewNetworkError(errs.SubtypeNetworkTransport, "upload failed: HTTP %d", resp.StatusCode)
+	}
+	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated && resp.StatusCode != http.StatusNoContent {
+		return "", errs.NewInternalError(errs.SubtypeInvalidResponse, "upload did not confirm stored bytes: HTTP %d", resp.StatusCode).WithHint("inspect app storage before retrying; file registration was not attempted")
 	}
 	return resp.Header.Get("ETag"), nil
 }

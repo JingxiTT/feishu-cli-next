@@ -362,7 +362,7 @@ func runHTMLPublishTOS(ctx context.Context, rctx *common.RuntimeContext, spec ap
 	req.ContentLength = tarball.Size
 	req.Header.Set("Content-Type", "application/gzip")
 	req = req.WithContext(common.WithStoragePutRequest(req.Context(), req.URL.Path))
-	client, err := newFileTransferClient(rctx)
+	client, err := newFileUploadClient(rctx)
 	if err != nil {
 		return nil, err
 	}
@@ -376,6 +376,10 @@ func runHTMLPublishTOS(ctx context.Context, rctx *common.RuntimeContext, spec ap
 			return nil, errs.NewNetworkError(errs.SubtypeNetworkServer, "TOS upload failed: HTTP %d", resp.StatusCode).WithRetryable()
 		}
 		return nil, errs.NewNetworkError(errs.SubtypeNetworkTransport, "TOS upload failed: HTTP %d", resp.StatusCode)
+	}
+
+	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated && resp.StatusCode != http.StatusNoContent {
+		return nil, errs.NewInternalError(errs.SubtypeInvalidResponse, "TOS upload did not confirm stored bytes: HTTP %d", resp.StatusCode).WithHint("inspect app storage before retrying; release creation was not attempted")
 	}
 
 	// Step 3: call release-create with tos_path to trigger deployment.
