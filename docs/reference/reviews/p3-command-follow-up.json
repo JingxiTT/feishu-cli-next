@@ -1,0 +1,272 @@
+{
+  "schema_version": 1,
+  "assignment_id": "command_recovery",
+  "reviewer": "/root/p2_contact",
+  "report_kind": "hash_bound_follow_up",
+  "review_revision": "94e4afc032b803ad17a6efbcdb2573361ed2b38a",
+  "verdict": "approved_offline",
+  "prior_report": {
+    "path": "docs/reference/reviews/p3-command-review.json",
+    "commit": "6063b8a5695d02b2a49c03a42396d535faa583d7",
+    "sha256": "58064cdd7786c14dcf11c10898705f99b04e5402287ac2b3f5b84b6fb3b43b38",
+    "preserved": true
+  },
+  "review_method": "Read exact a3f6040/8f2bc3f/928ffdb fix deltas and complete relevant command callsites/tests at immutable 94e4afc; checked startup brand and strict-mode dependencies. Executed only two narrowly selected checks in a temporary git-archive snapshot, restoring its frozen catalog through scripts/next_meta.py and using its scripts/next_test.py isolated_env. Temporary source/config/build output removed. No product edits, developer credentials, live or model runs.",
+  "fix_commits": [
+    "a3f60404624fe2bdd925b7fc3b858632a93eff8f",
+    "8f2bc3f96dafc09c3c59c307442f38135963c9ae",
+    "928ffdb53836258b59b19f4a2a37023810960d88"
+  ],
+  "checks": [
+    {
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-count=1",
+        "-timeout=5m",
+        "./cmd",
+        "./cmd/auth",
+        "./shortcuts",
+        "-run",
+        "^(TestBuildAuthHelpUsesStartupBrandSnapshot|TestLoginHelpBrandDoesNotResolveCredentialConfig|TestRegisterBrandGuardDoesNotResolveCredentialConfig)$"
+      ],
+      "tested_revision": "94e4afc032b803ad17a6efbcdb2573361ed2b38a",
+      "status": "pass",
+      "exit_code": 0,
+      "tests": {
+        "pass": 7,
+        "fail": 0,
+        "skip": 0
+      },
+      "stderr_empty": true
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-count=1",
+        "-timeout=5m",
+        "./tests/next_foundation",
+        "-run",
+        "^TestLocalDiscoveryDoesNotResolveUserOrTenantIdentity$"
+      ],
+      "tested_revision": "94e4afc032b803ad17a6efbcdb2573361ed2b38a",
+      "status": "pass",
+      "exit_code": 0,
+      "tests": {
+        "pass": 9,
+        "fail": 0,
+        "skip": 0
+      },
+      "stderr_empty": true
+    }
+  ],
+  "process_observation": {
+    "case_count": 8,
+    "cases": [
+      "guide",
+      "discover",
+      "root_help",
+      "domain_help",
+      "auth_help",
+      "schema",
+      "invalid_discovery_flag",
+      "invalid_domain_flag"
+    ],
+    "user_identity_requests_per_case": 0,
+    "tenant_identity_requests_per_case": 0,
+    "business_requests_per_case": 0,
+    "source": "All eight successful child test log records report fixture identity requests: user=0 tenant=0. NewFixture nil business handler fails on any unexpected business request. Nine Go pass events include one parent test."
+  },
+  "paths": [
+    {
+      "path": "cmd/auth/login.go",
+      "review_revision": "94e4afc032b803ad17a6efbcdb2573361ed2b38a",
+      "review_sha256": "0a4d225bd571d8f5cd8cafd1f9c532fa99c113ef9e387d47c4a859eb61c4b7a0",
+      "verdict": "approved_offline",
+      "review_scope": "CR-1 closure plus complete delta from original reviewed file; unchanged prior review retained outside this fix scope.",
+      "prior_review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+      "prior_review_sha256": "dfc4df50a2ed954b3c447860bf73dce22e97db94a66ddd694665320be8e2a7c3",
+      "unchanged_from_prior": false,
+      "evidence": [
+        {
+          "path": "cmd/auth/login_brand_filter_test.go",
+          "sha256": "5d2c7e902513bd31e15b712663fb0e47ba3503ba64180b8965cc2702dbae9ae5",
+          "source_revision": "94e4afc032b803ad17a6efbcdb2573361ed2b38a",
+          "tested_revision": "94e4afc032b803ad17a6efbcdb2573361ed2b38a",
+          "scope": "Executed TestLoginHelpBrandDoesNotResolveCredentialConfig including both brands: Config hook is fatal, help and completion preserve brand-specific domain availability."
+        },
+        {
+          "path": "cmd/agent_startup_brand_test.go",
+          "sha256": "f5152967497160b0a0801a39ef0a02d818e867a11dc4a2a71fa52e19a8d02012",
+          "source_revision": "94e4afc032b803ad17a6efbcdb2573361ed2b38a",
+          "tested_revision": "94e4afc032b803ad17a6efbcdb2573361ed2b38a",
+          "scope": "Executed TestBuildAuthHelpUsesStartupBrandSnapshot: build-local Factory and auth domain help retain Feishu/Lark startup brand."
+        },
+        {
+          "path": "tests/next_foundation/local_discovery_e2e_test.go",
+          "sha256": "f43a485ff0b92ff6cfc54a7d92e8b8ed8e8e3110385eb0d9c6f274d6dc2df4f1",
+          "source_revision": "94e4afc032b803ad17a6efbcdb2573361ed2b38a",
+          "tested_revision": "94e4afc032b803ad17a6efbcdb2573361ed2b38a",
+          "scope": "Executed all eight real CLI cases: guide, discover, root/domain/auth help, schema, invalid discover flag and invalid domain flag. Each asserts user=0 and tenant=0; unexpected business requests fail the fixture. Success stdout/stderr and typed validation stderr/exit are asserted."
+        }
+      ],
+      "findings": [
+        {
+          "id": "CR-1",
+          "status": "closed_at_review_revision",
+          "resolution": "Startup brand metadata replaces help/registration Config resolution; strict-mode assembly uses identity-support metadata without enrichment. Eight local process cases have zero user, tenant and business requests."
+        }
+      ],
+      "assessment": "The entire post-review diff replaces eager Config lookup with Factory.StartupBrand in construction. Help and completion share that snapshot. authLoginRun retains credential-backed Config at execution; authorization, scope selection and token handling are unchanged.",
+      "limitations": [
+        "No live, model, release, host/platform or unrelated changed-source approval is inferred."
+      ]
+    },
+    {
+      "path": "cmd/build.go",
+      "review_revision": "94e4afc032b803ad17a6efbcdb2573361ed2b38a",
+      "review_sha256": "52cc1661c2352b230143f60ac5ef4fe2e48074ee75ddeade08e09f25f8e8f245",
+      "verdict": "approved_offline",
+      "review_scope": "CR-1 closure plus complete delta from original reviewed file; unchanged prior review retained outside this fix scope.",
+      "prior_review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+      "prior_review_sha256": "126c665f54d2b24e7718a74bd7d487055abb20f91bd7b6777c29117a744c8b66",
+      "unchanged_from_prior": false,
+      "evidence": [
+        {
+          "path": "cmd/agent_startup_brand_test.go",
+          "sha256": "f5152967497160b0a0801a39ef0a02d818e867a11dc4a2a71fa52e19a8d02012",
+          "source_revision": "94e4afc032b803ad17a6efbcdb2573361ed2b38a",
+          "tested_revision": "94e4afc032b803ad17a6efbcdb2573361ed2b38a",
+          "scope": "Executed TestBuildAuthHelpUsesStartupBrandSnapshot: build-local Factory and auth domain help retain Feishu/Lark startup brand."
+        },
+        {
+          "path": "tests/next_foundation/local_discovery_e2e_test.go",
+          "sha256": "f43a485ff0b92ff6cfc54a7d92e8b8ed8e8e3110385eb0d9c6f274d6dc2df4f1",
+          "source_revision": "94e4afc032b803ad17a6efbcdb2573361ed2b38a",
+          "tested_revision": "94e4afc032b803ad17a6efbcdb2573361ed2b38a",
+          "scope": "Executed all eight real CLI cases: guide, discover, root/domain/auth help, schema, invalid discover flag and invalid domain flag. Each asserts user=0 and tenant=0; unexpected business requests fail the fixture. Success stdout/stderr and typed validation stderr/exit are asserted."
+        }
+      ],
+      "findings": [
+        {
+          "id": "CR-1",
+          "status": "closed_at_review_revision",
+          "resolution": "Startup brand metadata replaces help/registration Config resolution; strict-mode assembly uses identity-support metadata without enrichment. Eight local process cases have zero user, tenant and business requests."
+        }
+      ],
+      "assessment": "The entire post-review diff copies cfg.startupBrand into the new invocation Factory before command registration. The unchanged Execute caller selects startup brand by environment/profile metadata before build. The unchanged strict-mode assembly call now reaches the independently reviewed metadata-only factory method, so local assembly retains pruning without user/tenant enrichment.",
+      "limitations": [
+        "No live, model, release, host/platform or unrelated changed-source approval is inferred."
+      ]
+    },
+    {
+      "path": "cmd/discover/discover.go",
+      "review_revision": "94e4afc032b803ad17a6efbcdb2573361ed2b38a",
+      "review_sha256": "154ef22cc6ee9102e00c65d36241988169fd7fc69093880835f2d63298eafad6",
+      "verdict": "approved_offline",
+      "review_scope": "CR-1 closure plus complete delta from original reviewed file; unchanged prior review retained outside this fix scope.",
+      "prior_review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+      "prior_review_sha256": "154ef22cc6ee9102e00c65d36241988169fd7fc69093880835f2d63298eafad6",
+      "unchanged_from_prior": true,
+      "evidence": [
+        {
+          "path": "tests/next_foundation/local_discovery_e2e_test.go",
+          "sha256": "f43a485ff0b92ff6cfc54a7d92e8b8ed8e8e3110385eb0d9c6f274d6dc2df4f1",
+          "source_revision": "94e4afc032b803ad17a6efbcdb2573361ed2b38a",
+          "tested_revision": "94e4afc032b803ad17a6efbcdb2573361ed2b38a",
+          "scope": "Executed all eight real CLI cases: guide, discover, root/domain/auth help, schema, invalid discover flag and invalid domain flag. Each asserts user=0 and tenant=0; unexpected business requests fail the fixture. Success stdout/stderr and typed validation stderr/exit are asserted."
+        }
+      ],
+      "findings": [
+        {
+          "id": "CR-1",
+          "status": "closed_at_review_revision",
+          "resolution": "Startup brand metadata replaces help/registration Config resolution; strict-mode assembly uses identity-support metadata without enrichment. Eight local process cases have zero user, tenant and business requests."
+        }
+      ],
+      "assessment": "This file is byte-identical to the original reviewed blob. Original CR-1 was an assembly dependency, not a defect in discover matching. Exact-revision process evidence now satisfies that dependency: discover no longer performs user/tenant identity requests. Prior matching/flag/pagination review remains applicable to the identical file.",
+      "limitations": [
+        "No live, model, release, host/platform or unrelated changed-source approval is inferred."
+      ]
+    }
+  ],
+  "cross_assignment_dependencies": [
+    {
+      "assignment_id": "invocation_identity",
+      "review_report": "docs/reference/reviews/p3-foundation-follow-up.json",
+      "review_commit": "0feef87ca54f8beabd8f548737da6ea2c4484e9f",
+      "review_report_sha256": "a2eb3b84f8290f2c91efd5015a184ebeb5c83fa512a37d71b967e153f183821e",
+      "scope": "Uses independent narrow approval of ResolveSupportedIdentities metadata caching/enrichment separation at 928ffdb. No new general credential-provider concurrency claim.",
+      "evidence": [
+        {
+          "path": "internal/cmdutil/factory.go",
+          "sha256": "e009b60f60919758f8ba5902776933081791cc520f2a3effc95de68ec7176d64",
+          "source_revision": "94e4afc032b803ad17a6efbcdb2573361ed2b38a",
+          "tested_revision": "not executed by this review; immutable source inspected",
+          "scope": "Callsite dependency: ResolveStrictMode delegates to ResolveSupportedIdentities and retains BotOnly/UserOnly/error fallback semantics."
+        },
+        {
+          "path": "cmd/root.go",
+          "sha256": "3f94fbc1936414bb865e4acd16c9c59af82c523f08d97bc60c34a06122d52e41",
+          "source_revision": "94e4afc032b803ad17a6efbcdb2573361ed2b38a",
+          "tested_revision": "not executed by this review; immutable source inspected",
+          "scope": "Startup caller dependency: ResolveStartupBrand(inv.Profile) populates build option before command assembly."
+        },
+        {
+          "path": "cmd/startup_brand.go",
+          "sha256": "4a4db1cb8c63d67f894efef9ddc8662bccc4c406688c0d44e3779afbf5e12d63",
+          "source_revision": "94e4afc032b803ad17a6efbcdb2573361ed2b38a",
+          "tested_revision": "not executed by this review; immutable source inspected",
+          "scope": "Startup brand dependency: environment then selected raw profile metadata; no keychain/network resolution."
+        }
+      ]
+    },
+    {
+      "scope": "Shortcut registration startup brand change is a necessary CR-1 dependency; independently inspected exact diff and executed brand-guard regression. No whole-file shortcut registration approval is claimed.",
+      "evidence": [
+        {
+          "path": "shortcuts/register.go",
+          "sha256": "896319f0e1e3702187952feee5ac8f8623f88e52c0241bc79c60feff8648a152",
+          "source_revision": "94e4afc032b803ad17a6efbcdb2573361ed2b38a",
+          "tested_revision": "not executed by this review; immutable source inspected",
+          "scope": "The registration brand lookup consumes Factory.StartupBrand instead of Config."
+        },
+        {
+          "path": "shortcuts/register_brand_guard_test.go",
+          "sha256": "cb6b95789644f9e862bb9a2afac1b4f7774b9528dd873e69b30d2a43f9a62746",
+          "source_revision": "94e4afc032b803ad17a6efbcdb2573361ed2b38a",
+          "tested_revision": "94e4afc032b803ad17a6efbcdb2573361ed2b38a",
+          "scope": "Executed TestRegisterBrandGuardDoesNotResolveCredentialConfig including both brands: registration never invokes Config; apps visibility follows startup brand."
+        },
+        {
+          "path": "docs/contracts/discovery.md",
+          "sha256": "2f1c8494658f9c2071052b5c86214b234120f928212948061845bdd9e037f38b",
+          "source_revision": "94e4afc032b803ad17a6efbcdb2573361ed2b38a",
+          "tested_revision": "not executed by this review; immutable source inspected",
+          "scope": "Contract now separates local metadata reads from execution-time identity verification."
+        }
+      ],
+      "implementation_owner": "/root/foundation_skill"
+    }
+  ],
+  "historical_findings_preserved": {
+    "CR-1": "Original finding at 0084501 remains in prior immutable report. This report closes it only at the named fixed hashes and dependency snapshot.",
+    "cmd/agent.go": {
+      "prior_verdict": "approved_offline",
+      "prior_review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+      "prior_review_sha256": "7758a555428d4b08426905f7db0316946a021f4d04acd16aa2c62f98cbf2f5aa",
+      "unchanged_at_review_revision": true,
+      "original_findings": [],
+      "note": "Original assessment explicitly carries the CR-1 assembly dependency; its empty findings array is preserved. Any separate reviewer finding is outside this closure. No unrelated cmd/agent.go verdict is changed."
+    },
+    "packaging_limit": "Original cross-assignment observation about inherited bare-TTY cached-upstream upgrade prompting remains untested; CR-1 closure does not resolve or dismiss it."
+  },
+  "limitations": [
+    "This is a scoped three-path follow-up, not a replacement of the original 18-path report. Other changed paths require their owners\u2019 exact-hash follow-up.",
+    "The eight process cases use the synthetic authsidecar fixture and frozen service catalog; they prove local behavior for that setup, not every third-party credential provider or plugin.",
+    "Only 16 focused Go test pass events were rerun: seven constructor/brand events and nine process events. No broad suite, live account, model evaluation or packaging gate was rerun."
+  ]
+}
