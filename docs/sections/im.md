@@ -154,5 +154,12 @@ checks passed (275 events), as did scoped `go vet ./shortcuts/im/...
 
 The one reference deterministic regression change replaces a whitespace-dependent
 JSON assertion with explicit field existence and boolean false, preserving the
-contract under compact output. Full repository formatting/lint/license/release
+contract under compact output. The post-commit quality gate passed using
+`make quality-gate QUALITY_GATE_CHANGED_FROM=73c4ef3^ QUALITY_GATE_DIR=.tmp/im-quality`
+in `isolated_env`; machine-readable execution evidence is
+`.tmp/im-quality-result.json`. Its IM warning is the retained
+`+feed-shortcut-list` server-sized one-page interface: it performs exactly one
+list GET, preserves the continuation token and does not walk automatically.
+The endpoint exposes no page-size control. Additional warnings concerned Sheets
+commands changed concurrently. Full repository formatting/lint/license/release
 gates remain coordinator-owned. Live and comparative work above remain open.
