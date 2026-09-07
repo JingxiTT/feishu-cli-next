@@ -11,6 +11,11 @@ Hidden commands/subtrees and hidden flag names/descriptions are excluded. Flag
 default values are not search text. `--flags` retains its existing optional
 output shape; matching adds no output fields, rankings, or inferred synonyms.
 
+Local command registration uses the startup brand, and strict-mode discovery
+uses provider identity-support metadata without verifying user or tenant identity.
+Actual authorization and platform requests retain their normal credential and
+identity verification paths.
+
 A synthetic regression query such as `contact union_id` now reaches `+get-user`
 through the supported values in its `--user-id-type` usage. This addresses a
 search-surface gap identified while reviewing Contact evaluation friction; it

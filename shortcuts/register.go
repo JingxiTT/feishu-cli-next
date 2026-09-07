@@ -133,12 +133,11 @@ func RegisterShortcutsWithContext(ctx context.Context, program *cobra.Command, f
 
 // RegisterShortcutSnapshotWithContext mounts one build-local shortcut snapshot.
 func RegisterShortcutSnapshotWithContext(ctx context.Context, program *cobra.Command, f *cmdutil.Factory, registered []common.Shortcut) {
-	// Factory.Config may be nil in tests that pass a zero-value factory.
+	// Registration uses non-secret startup metadata; resolving Config here
+	// would verify credentials even for help or local discovery commands.
 	var brand core.LarkBrand
-	if f != nil && f.Config != nil {
-		if cfg, err := f.Config(); err == nil && cfg != nil {
-			brand = cfg.Brand
-		}
+	if f != nil {
+		brand = f.StartupBrand
 	}
 
 	// Group by service

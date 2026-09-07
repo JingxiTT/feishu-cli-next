@@ -18,6 +18,7 @@ import (
 
 func newFactoryWithBrand(brand core.LarkBrand) *cmdutil.Factory {
 	return &cmdutil.Factory{
+		StartupBrand: brand,
 		Config: func() (*core.CliConfig, error) {
 			return &core.CliConfig{Brand: brand}, nil
 		},
@@ -119,5 +120,20 @@ func TestBrandGuard_DispatchHitsStubViaCobra(t *testing.T) {
 	}
 	if !strings.Contains(validationErr.Error(), "lark") {
 		t.Errorf("dispatched error should mention lark brand, got: %s", validationErr.Error())
+	}
+}
+
+func TestRegisterBrandGuardDoesNotResolveCredentialConfig(t *testing.T) {
+	for _, brand := range []core.LarkBrand{core.BrandFeishu, core.BrandLark} {
+		t.Run(string(brand), func(t *testing.T) {
+			factory := newFactoryWithBrand(brand)
+			factory.Config = func() (*core.CliConfig, error) { t.Fatal("registration resolved credential config"); return nil, nil }
+			program := &cobra.Command{Use: "root"}
+			RegisterShortcuts(program, factory)
+			apps := findChild(program, "apps")
+			if apps == nil || apps.Hidden != (brand == core.BrandLark) {
+				t.Fatalf("startup brand restriction not preserved for %s", brand)
+			}
+		})
 	}
 }
