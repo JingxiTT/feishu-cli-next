@@ -1,0 +1,169 @@
+# Generated business API section
+
+Status: offline section boundary failed on an exposed shared pagination defect;
+live verification and comparative agent trials remain blocked/pending. This
+section is not release accepted.
+
+## Scope and ownership
+
+This supplement owns the 17 frozen generated methods under `approval`,
+`attendance`, and `mindnotes`, plus their eight routing nodes. The original
+`docs/reference/coverage.json` classified these as foundation because their Cobra
+domain annotation was empty. The frozen capture is unchanged; the coordinator's
+supplemental reconciliation ledger assigns the business process suite.
+
+Reference: sibling `feishu-cli-review` at
+`7fd6ef3c07182257ce776cdc5a614e122d5bd4b3`, frozen
+`registrations.json.gz`, `meta_data.json.gz`, and `sources.json`. The sibling has
+no approval, attendance, or mindnotes shortcut directories/registrations. These
+are intentionally one-to-one supported OpenAPI commands assembled by
+`cmd/service`; adding endpoint wrapper shortcuts would duplicate the reference
+surface. Existing typed parameter flags, JSON body/file input, and raw `--params`
+escape hatch are retained. No frozen metadata or product implementation was
+edited by this section.
+
+Owned files: `tests/next_sections/business/business_e2e_test.go` and this report.
+The coordinator owns shared fixes, runner/CI registration, and inventory.
+Dependencies: accepted P1 `ce68188`, generic service registry/schema/parameter
+binder, input FileIO, sidecar fixture, result artifacts, and mutation receipts.
+
+## Complete command mapping
+
+Every row has an explicit independent HTTP method/path, all documented request
+body fields and typed URL/query fields, `--data @file` for body methods, identity,
+scope rejection, lost response, domain rejection, validation, and dry-run process
+test. Schema checks recursively compare all frozen input/output field names and
+types, input requirements, and all enum options, including nested objects/arrays.
+Response required markers are not emitted by the inherited public output schema.
+
+| Public command | Wire operation | Extra contract coverage |
+| --- | --- | --- |
+| `approval approvals get` | GET `/approval/v4/approvals/{approval_code}/detail` | locale, definition/form schema, read artifact |
+| `approval approvals search` | POST `/approval/v4/approvals/search_launchable` | keyword/locale, integer page size, explicit body cursor continuation |
+| `approval instances get` | GET `/approval/v4/instances/detail` | required query instance code, locale, all ID-type options in schema, read artifact |
+| `approval instances create` | POST `/approval/v4/instances/initiate` | escaped JSON-string form, uuid, node approver and cc arrays |
+| `approval instances cancel` | POST `/approval/v4/instances/recall` | instance code; explicit high-risk confirmation |
+| `approval instances cc` | POST `/approval/v4/instances/add_cc` | recipient array, empty comment, ID type |
+| `approval instances initiated` | GET `/approval/v4/instances/initiated` | every filter, leading-zero timestamps, bounded/all pages, second-page failure, artifact |
+| `approval tasks approve` | POST `/approval/v4/tasks/pass` | leading-zero task ID, escaped form, Unicode/multiline comment |
+| `approval tasks reject` | POST `/approval/v4/tasks/refuse` | instance/task IDs and comment |
+| `approval tasks transfer` | POST `/approval/v4/tasks/forward` | target ID preserved with matching typed ID-type query |
+| `approval tasks query` | GET `/approval/v4/tasks` | every filter/topic, bounded/all pages, second-page failure, artifact |
+| `approval tasks add_sign` | POST `/approval/v4/tasks/add_sign` | integer add-sign/approval-method enums including value 3, recipient list |
+| `approval tasks rollback` | POST `/approval/v4/tasks/rollback` | multiple node IDs including `START` |
+| `approval tasks remind` | POST `/approval/v4/instances/remind` | multiple task IDs and comment; notification action remains explicit |
+| `attendance user_tasks query` | POST `/attendance/v1/user_tasks/query` | both identities, employee ID type, explicit false/true query booleans, numeric dates, false overtime flag, partial result lists, raw/typed overlay |
+| `mindnotes nodes create` | POST `/mindnote/v1/mindnotes/{mindnote_id}/nodes` | both identities, client token, node/parent IDs, completion boolean, highlight, images, all four text/note element types, styles, readback and explicit replay |
+| `mindnotes nodes list` | GET `/mindnote/v1/mindnotes/{mindnote_id}/nodes` | user identity, ID type, full nested content readback and artifact |
+
+Wire paths above omit the common `/open-apis` prefix. Routing nodes are
+`approval`, `approval approvals`, `approval instances`, `approval tasks`,
+`attendance`, `attendance user_tasks`, `mindnotes`, and `mindnotes nodes`.
+All eight help routes and discovery reachability of all 17 leaves are executed.
+
+## Behavior and limits
+
+- Approval methods accept user identity only. Attendance query and mindnotes
+  create accept both bot and user; mindnotes list accepts user only. Process
+  tests reject unsupported bot identities before business dispatch.
+- Frozen approval search and attendance query risks are `write`, despite being
+  query operations; this section preserves the advertised risk. Approval's nine
+  high-risk operations require `--yes`, including cancellation, cc, initiation,
+  signing, approval, rejection, reminder, rollback, and transfer.
+- All bodies remain schema-guided JSON through `--data`, including `@file`.
+  None of these 17 methods declares a multipart file field. Image tokens and
+  attachment-like rich objects are JSON values, not local upload operations.
+  Referenced mindnote `plain_text`, `text_style`, `link`, `mention_user`, and
+  `mention_doc` definitions are absent from the frozen catalog. They remain
+  arbitrary objects and are forwarded without normalization; fixture members
+  demonstrate preservation, not undocumented backend field acceptance.
+- Body cursors for approval search remain explicit. Auto pagination applies to
+  the documented URL `page_token` methods (initiated instances and task query).
+  Tests inspect each request cursor and ensure a bounded result retains its
+  continuation and a second-page error does not report successful completion.
+- Read artifacts preserve full nested content, escaped forms, identity, and
+  continuation despite projected stdout. Large numeric results, leading-zero
+  strings, null, empty strings, false, and Unicode are distinct.
+- Lost POST responses and arbitrary domain errors are unknown, exit 22, with
+  one observed request and no automatic replay. Scope rejection is confirmed
+  unapplied, exit 20. GET transport may reconnect once after a lost response;
+  this inherited read behavior never creates a mutation receipt.
+- Identical mindnote create/update input is still an explicit request. The CLI
+  does not claim a no-op or concurrency guarantee. `client_token` and approval
+  `uuid` are preserved; fixture readback is not proof of backend idempotency,
+  atomicity, collision behavior, notification delivery, or conditional writes.
+- Attendance's successful response can contain `invalid_user_ids` and
+  `unauthorized_user_ids`. Those native partial coverage fields remain visible;
+  a response acknowledgement cannot imply every requested employee was returned.
+
+## Executable evidence
+
+The suite uses `nextfixture.RunMain(m, "../../..")` to build the production
+`authsidecar` binary and `nextfixture.NewFixture` for isolated config/workspace
+and loopback synthetic backends. Request handlers independently inspect real
+paths, methods, query values and request bodies. They never forward requests.
+The test parent uses `scripts/next_test.py`'s `isolated_env`, excludes personal
+credentials, and sets an unreachable external proxy. All fixture data is synthetic.
+
+Full section commands (once coordinator runner registration is present):
+
+```sh
+python3 scripts/next_test.py --section business --suite all --report .tmp/next-tests/business.json
+python3 scripts/next_test.py --section business --suite live --allow-live --report .tmp/next-tests/business-live.json
+```
+
+Current execution (2026-09-07): used `scripts/next_test.py.isolated_env` and
+`run_command` directly while the coordinator registers the new section label.
+The authsidecar build is performed by `TestMain` for the process suite.
+
+| Isolated command | Result |
+| --- | --- |
+| `go test -json -count=1 -timeout=10m ./cmd/service/... ./internal/apicatalog/... ./internal/schema/... ./internal/client/... ./internal/nextattempt/...` | PASS: 392 test/subtest pass records, zero fails/skips |
+| `go test -json -count=1 -timeout=10m ./tests/next_sections/business` | FAIL: 161 pass records, seven fail records (four later-page regression cases plus their parents), 17 blocked live skips |
+
+Machine-readable command output is in
+`.tmp/next-tests/business-unit-development.json` and
+`.tmp/next-tests/business-development.json`. Failure cases are
+`TestApprovalPageFailureDoesNotClaimComplete/{instances,tasks}/{scope,lost_response}`.
+All other written process tests pass, including independent approval lifecycle
+readback, exact body/form preservation, nested attachment sizes, and mindnote
+readback. The shared generic unit selection includes inherited reference
+regressions; no legacy domain E2E package exists for these three services.
+No product source was changed by this section; broader root CI/static checks
+and comparative evaluations remain coordinator-owned and were not run here.
+
+The live selector is deliberately blocked until authorized fixtures exist.
+`TestBusinessLive` contains a separately named blocked scenario for each of the
+17 leaves and never accesses personal configuration. These skips are not passes.
+
+## Shared findings under coordination
+
+The new `TestApprovalPageFailureDoesNotClaimComplete` exposes an inherited
+pagination defect: a later API error is merged with the first successful page
+and exits zero; later transport failure is also swallowed. The merged response
+can falsely clear `has_more` and save a successful artifact. Both approval list
+methods have failing process regressions covering later scope rejection and
+lost response. The coordinator owns the fix in `internal/client`; the section
+must rerun these before recording an offline pass.
+
+Mindnote create/update response `ids` describes created nodes and does not prove
+all mixed create/update items applied. A naive requested-node count would be
+incorrect. The coordinator is reviewing conservative endpoint receipt evidence.
+Attendance's native partial-user arrays likewise require careful interpretation
+under the inherited write-risk classification. No domain-specific applied-item
+count is inferred here.
+
+## Outstanding acceptance
+
+No live request was made. Approval lifecycle actions can notify/assign or expose
+content to workflow participants. There is no verified private, run-owned
+workflow with current account/tenant binding, unambiguously resolved Ying Wu-only
+other participants, and complete cleanup. Attendance lacks a verified
+current-account employee fixture. Mindnotes lacks a verified private, run-owned
+mindnote with established visibility before creation/update. Reads that depend
+on those fixtures also remain unverified.
+
+Required live semantics, backend rich-text field validation, notification
+outcomes, atomicity/idempotency, and live cleanup remain open. Comparative
+development tasks and all three-arm model/token measurements are owned by the
+coordinator/evaluator and were not run here. Held-out tasks were not accessed.
