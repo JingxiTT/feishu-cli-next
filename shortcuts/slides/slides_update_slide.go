@@ -47,7 +47,7 @@ var SlidesUpdateSlide = common.Shortcut{
 	// Both extras are path-dependent, so they stay conditional rather than
 	// gating every call: wiki:node:read only when --presentation is a wiki URL,
 	// docs:document.media:upload only when --content carries @-placeholders.
-	ConditionalScopes: []string{"wiki:node:read", "docs:document.media:upload"},
+	ConditionalScopes: []string{"wiki:node:read", "docs:document.media:upload", "slides:presentation:read"},
 	AuthTypes:         []string{"user", "bot"},
 	Tips: []string{
 		"Read the page first with `slides +xml-get --slide-id <id>`, edit that XML, hand it back whole",
@@ -100,6 +100,7 @@ var updateSlideFlags = []common.Flag{
 	{Name: "revision-id", Type: "int", Default: "-1", Desc: "revision to apply against; -1 (default) means latest. Pinning an older revision rebuilds the page from that snapshot and discards newer edits to it"},
 	{Name: "tid", Desc: "transaction id for concurrent-edit locking (usually empty)"},
 	noLintFlag(),
+	{Name: "skip-unchanged", Type: "bool", Desc: "read the current page and skip an identical full replacement; requires slides read scope; only applies to latest revision without image uploads or tid"},
 }
 
 func updateSlideValidate(_ context.Context, runtime *common.RuntimeContext) error {
@@ -109,6 +110,11 @@ func updateSlideValidate(_ context.Context, runtime *common.RuntimeContext) erro
 	}
 	if ref.Kind == "wiki" {
 		if err := runtime.EnsureScopes([]string{"wiki:node:read"}); err != nil {
+			return err
+		}
+	}
+	if runtime.Bool("skip-unchanged") {
+		if err := runtime.EnsureScopes([]string{"slides:presentation:read"}); err != nil {
 			return err
 		}
 	}
@@ -185,6 +191,10 @@ func updateSlideDryRun(_ context.Context, runtime *common.RuntimeContext) *commo
 	if len(placeholders) > 0 {
 		descSuffix = " (img placeholders auto-replaced)"
 	}
+	if runtime.Bool("skip-unchanged") && runtime.Int("revision-id") == -1 && runtime.Str("tid") == "" && len(placeholders) == 0 {
+		dry.GET(fmt.Sprintf("/open-apis/slides_ai/v1/xml_presentations/%s/slide", validate.EncodePathSegment(presentationID))).
+			Params(map[string]interface{}{"slide_id": slideID, "revision_id": -1}).Desc("Read current page; skip replacement only when target and complete content match")
+	}
 	dry.POST(slideReplaceAPIPath(presentationID)).
 		Desc(fmt.Sprintf("[%d/%d] Replace slide%s", step, total, descSuffix)).
 		Params(updateSlideQuery(runtime, slideID)).
@@ -215,6 +225,19 @@ func updateSlideExecute(_ context.Context, runtime *common.RuntimeContext) error
 	result := map[string]interface{}{
 		"xml_presentation_id": presentationID,
 		"slide_id":            slideID,
+	}
+
+	if runtime.Bool("skip-unchanged") && runtime.Int("revision-id") == -1 && runtime.Str("tid") == "" && len(extractImagePlaceholderPaths([]string{content})) == 0 {
+		revision, unchanged, err := unchangedSlide(runtime, presentationID, slideID, content)
+		if err != nil {
+			return err
+		}
+		if unchanged {
+			result["unchanged"] = true
+			result["revision_id"] = revision
+			runtime.Out(result, nil)
+			return nil
+		}
 	}
 
 	// Uploads run against the target presentation, so they can only happen

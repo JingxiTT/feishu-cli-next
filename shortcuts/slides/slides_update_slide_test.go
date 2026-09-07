@@ -34,7 +34,7 @@ func TestUpdateSlideDeclaredScopes(t *testing.T) {
 		}
 	}
 	got := SlidesUpdateSlide.DeclaredScopesForIdentity("user")
-	wantDeclared := []string{"slides:presentation:update", "slides:presentation:write_only", "wiki:node:read", "docs:document.media:upload"}
+	wantDeclared := []string{"slides:presentation:update", "slides:presentation:write_only", "wiki:node:read", "docs:document.media:upload", "slides:presentation:read"}
 	if !reflect.DeepEqual(got, wantDeclared) {
 		t.Fatalf("declared scopes = %#v, want %#v", got, wantDeclared)
 	}
