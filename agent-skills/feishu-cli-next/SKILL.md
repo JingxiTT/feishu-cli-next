@@ -9,7 +9,7 @@ Use `feishu-cli-next` for Feishu/Lark workspace operations. It includes workflow
 
 `feishu-cli-next discover "search documents" --limit 8` finds commands from the executable's current command definitions. Command `--help` describes flags and operation-specific guidance; `schema` exposes API input shapes. Names beginning with `+` are workflow shortcuts. `api` provides raw OpenAPI access when custom requests are useful.
 
-For deeper domain concepts or format limitations, `skills list` and `skills read <name> [path]` expose the inherited upstream documentation on demand. Examples in those documents use `lark-cli`; invoke this binary as `feishu-cli-next`.
+For deeper domain concepts or format limitations, `skills list` and `skills read <name> [path]` expose the inherited upstream documentation on demand. Examples in those documents use `lark-cli`; invoke this binary as `feishu-cli-next`. Base formula and lookup field definitions have a guide acknowledgement flag; their syntax and flag contract are available through `feishu-cli-next skills read lark-base references/lark-base-field-formula.md` and `feishu-cli-next skills read lark-base references/lark-base-field-lookup.md`.
 
 Authentication and profiles select the account and Feishu/Lark environment. `auth status` reports the current login; `auth login` handles user authorization. `--as user` and `--as bot` select distinct identities with distinct permissions. A browser authorization step needs the user's participation; follow the concrete recovery hint when authentication or scopes are missing.
 

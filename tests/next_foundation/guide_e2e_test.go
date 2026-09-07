@@ -143,3 +143,41 @@ func TestGuideProcessLifecycle(t *testing.T) {
 		t.Fatalf("unrelated file modified: %v", err)
 	}
 }
+
+func TestInstalledGuideBaseReferencesReadableFromBinary(t *testing.T) {
+	fixture := NewFixture(t, nil)
+	installed := fixture.Run("guide", "install", "--project", fixture.WorkDir)
+	if installed.ExitCode != 0 {
+		t.Fatalf("install: %s %s", installed.Stdout, installed.Stderr)
+	}
+	target := filepath.Join(fixture.WorkDir, ".agents", "skills", "feishu-cli-next", "SKILL.md")
+	entry, err := os.ReadFile(target)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, fieldType := range []string{"formula", "lookup"} {
+		path := "references/lark-base-field-" + fieldType + ".md"
+		command := "feishu-cli-next skills read lark-base " + path
+		if !bytes.Contains(entry, []byte("`"+command+"`")) {
+			t.Fatalf("installed entry cannot discover %s", command)
+		}
+		read := fixture.Run("skills", "read", "lark-base", path)
+		if read.ExitCode != 0 || read.Stderr != "" {
+			t.Fatalf("read %s: %d %s", path, read.ExitCode, read.Stderr)
+		}
+		source, err := os.ReadFile(filepath.Join("..", "..", "skills", "lark-base", filepath.FromSlash(path)))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if !bytes.Equal([]byte(read.Stdout), source) {
+			t.Fatalf("binary guide differs from complete source: %s", path)
+		}
+	}
+	removed := fixture.Run("guide", "uninstall", "--project", fixture.WorkDir)
+	if removed.ExitCode != 0 {
+		t.Fatalf("uninstall: %s %s", removed.Stdout, removed.Stderr)
+	}
+	if _, err := os.Stat(target); !errors.Is(err, fs.ErrNotExist) {
+		t.Fatalf("installed skill remains: %v", err)
+	}
+}

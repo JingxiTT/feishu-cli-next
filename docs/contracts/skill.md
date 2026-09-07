@@ -3,7 +3,12 @@
 `agent-skills/feishu-cli-next/SKILL.md` is the concise English entry skill.
 `guide` and `guide show` print its embedded bytes as Markdown on stdout without
 requiring authentication. Existing `skills list/read` commands retain the
-upstream documentation for compatibility and optional domain detail.
+upstream documentation for compatibility and optional domain detail. The entry
+skill routes Base formula and lookup field guidance through executable
+`feishu-cli-next skills read lark-base references/lark-base-field-formula.md`
+and `feishu-cli-next skills read lark-base references/lark-base-field-lookup.md`.
+These complete English references remain embedded in the binary; the installed
+entry does not depend on repository-relative files or a second skill install.
 
 `guide install|update|uninstall --project PATH` manages only
 `PATH/.agents/skills/feishu-cli-next/SKILL.md`. The default project is the current
