@@ -98,6 +98,16 @@ The container used UID 10001, no mounts, network none, dropped capabilities and
 no-new-privileges. The existing npm/prefix suite was not repeated. Exact hashes,
 limits, commands and local evidence paths are recorded in the packaging JSON.
 
+The existing VM also has an enabled `qemu-x86_64` binfmt handler (QEMU 9.2.2).
+Both delivered Linux amd64 archives passed the same eleven process checks per
+variant under that translation, in a separate container with identical isolation
+and limits. This establishes the listed archive lifecycle behaviors; it does not
+claim execution of the broader Linux amd64 runtime suites. No riscv64 user-mode
+emulator or binfmt handler was available, and one checksum-verified normal
+riscv64 archive launch returned `ENOEXEC` (exec format error). Host system-QEMU
+executables exist but require a guest environment; no OS/emulator was installed.
+The unsupported riscv64 lifecycle was not attempted, and the container is stopped.
+
 The completed source export was moved outside the repository after build/smoke
 to prevent source guards discovering a second source tree. All 3,663 tracked file
 hashes were verified before and after the move, and the full tree's bytes, modes
@@ -107,8 +117,8 @@ The exact old/new source paths and unchanged archive hash are recorded in
 `.tmp/source-location.json` and [packaging-evidence.json](packaging-evidence.json).
 Historical logs may refer to the old source path.
 
-Linux amd64/riscv64 and Windows runtime behavior and the public-release/channel
-checks below remain unverified. This section is locally implemented and testable; final
+Linux riscv64 and Windows runtime behavior, broader Linux amd64 runtime suites,
+and the public-release/channel checks below remain unverified. This section is locally implemented and testable; final
 release acceptance remains open. No publishing, external push, global installation
 or real credential use was performed. Comparative/held-out evaluation is recorded
 by its own owner and is not inferred from packaging tests.
@@ -135,7 +145,8 @@ the execution mode and checked scenarios are stated accurately.
 
 Cross-compilation verifies conditional source selection, not OS behavior. Linux
 arm64 source-built runtime and delivered-archive lifecycle evidence are now
-recorded above; Linux amd64/riscv64 execution remains unverified. Windows named pipes, LockFileEx, path semantics,
+recorded above. Linux amd64 has the bounded translated archive evidence above;
+Linux riscv64 remains unexecuted. Windows named pipes, LockFileEx, path semantics,
 extraction fallback and `.old` recovery/rollback still need Windows execution
 evidence. The remaining target/OS gaps cannot be closed by macOS Rosetta
 or inferred from Linux arm64 execution. The successful Rosetta smoke establishes only its listed

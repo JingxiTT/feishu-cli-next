@@ -68,7 +68,8 @@ foreign architecture does not establish runtime behavior. Acceptance requires
 applicable OS and lifecycle evidence, not physical hardware per architecture.
 Both macOS amd64 variants passed startup and project guide smoke under Rosetta on
 macOS arm64. Both Linux arm64 archives also passed project guide lifecycle checks
-in an isolated Linux container; Linux amd64/riscv64 and Windows execution remain
-unverified. The retained
+in an isolated Linux container, and both Linux amd64 archives passed the same
+checks under existing QEMU translation. Linux riscv64 and Windows execution remain
+unverified; broader Linux amd64 suites were not run. The retained
 automated public release channel also requires macOS signing/notarization
 verification. See the [packaging evidence](sections/packaging.md) for exact scope.
