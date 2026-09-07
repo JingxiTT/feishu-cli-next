@@ -242,3 +242,45 @@ discovery without retaining document text or user identifiers.
 The foundation batches predate this instrumentation. Their raw output was
 discarded, and no command choices can be recovered from their retained evidence.
 They were not rerun merely to obtain traces.
+
+### Synthetic Contact development task
+
+`tasks.contact.json` instantiates the predeclared `contact-dev-01` task. Its
+abstract person IDs map to API-valid `ou_fixture_1` and `ou_fixture_2`; both are
+named Alex and have distinct synthetic `.invalid` email addresses. This avoids
+penalizing exact-ID search through its required `ou_` client validation. The task
+asks for the second person's ID/name/email without prescribing discovery or a
+command sequence. The expected answer is withheld from the runner.
+
+`section_fixture.py` is a loopback HTTP sidecar with no outbound forwarding code.
+It validates the CLI's signed sidecar requests and implements user batch lookup,
+bot lookup, user search, and caller identity reads against the same two records.
+All other methods/routes and invalid signatures fail. Authsidecar-tagged binaries
+are built from clean Git archives with the same pinned metadata, not working-tree
+snapshots. They use sentinel credentials and isolated empty Feishu configuration.
+The official Contact skill and its references are supplied intact; its shared
+skill dependency is copied alongside. Arm 2 uses concise English Contact guidance;
+Arm 3 uses the new product entry skill and discovers further guidance itself.
+
+Codex0.153.4 uses a named workspace permission profile, managed network proxy,
+allow rule for127.0.0.1, and `allow_local_binding=true`. The latter is necessary
+because Go's HTTP transport connects directly to loopback without its HTTP proxy.
+The controlled native-sandbox test checks actual signed CLI reads succeed and
+an external direct socket is denied by the OS. This permits local communication,
+not arbitrary external networking; do not enable it for live credentials.
+
+The fixture keeps its request ledger outside the agent workspace during the run
+and writes its receipt only after the model process ends. `contact_verifier.py`
+requires the exact profile answer, a successful signed read exposing that ID,
+no rejected requests, and no created Feishu configuration files. It does not
+trust an answer or a success claim without backend observation. Published evidence
+retains request counts and sanitized command choices, never raw model/tool text.
+Each completed harness attempt is checkpointed before the next billed attempt.
+
+Run all unit/process tests with `python3 -m unittest discover -s tests/next_evaluation -v`.
+To include the optional real CLI and OS-sandbox controlled checks (no model calls),
+set `EVAL_CONTACT_BINARIES` to a JSON array of the two archived binary paths and
+`EVAL_NATIVE_CODEX` to the pinned native Codex executable. The Contact evidence
+configuration template specifies a three-repeat balanced real batch; resolve
+its local path placeholders in a temporary file, including the existing Codex
+auth home without reading or copying its credentials. Held-out tasks stay closed.

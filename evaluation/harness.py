@@ -262,16 +262,24 @@ def main():
         if not selected or args.section and set(args.section) - {task["section"] for task in selected}:
             raise ValueError("unknown or empty section selection")
         planned = schedule(selected, args.repeats, args.seed)
-        runs = [run_one(config, *run) for run in planned]
+        runs = []
         evidence = {"protocol": 1, "mode": config["mode"], "split": manifest["split"],
-                    "performance_claims_supported": config["mode"] == "real" and all(run["usage"] for run in runs),
+                    "performance_claims_supported": False, "completed": False, "planned_runs": len(planned),
                     "seed": args.seed, "repeats": args.repeats, "fresh_context": True,
                     "task_manifest_sha256": digest(args.tasks), "config_sha256": digest(args.config),
                     "environment": {key: config[key] for key in ("backend", "model", "tokenizer", "reasoning", "tools", "permissions", "budget", "accounting_method")},
                     "arms": {arm: {key + "_sha256": digest(config["arms"][arm][key]) for key in ("cli", "skill")} for arm in ARMS},
                     "runs": runs, **aggregate(runs)}
         args.output.parent.mkdir(parents=True, exist_ok=True)
-        args.output.write_text(json.dumps(evidence, indent=2) + "\n", encoding="utf-8")
+        # Checkpoint each finished attempt before launching another billed model run.
+        for planned_run in planned:
+            runs.append(run_one(config, *planned_run))
+            evidence.update({"runs": runs, **aggregate(runs), "completed": len(runs) == len(planned),
+                             "performance_claims_supported": config["mode"] == "real" and len(runs) == len(planned)
+                             and all(run["usage"] for run in runs)})
+            checkpoint = args.output.with_suffix(args.output.suffix + ".tmp")
+            checkpoint.write_text(json.dumps(evidence, indent=2) + "\n", encoding="utf-8")
+            checkpoint.replace(args.output)
         print(json.dumps({"status": "pass" if all(run["success"] and run["usage"] for run in runs) else "fail",
                           "mode": config["mode"], "runs": len(runs), "output": str(args.output)}))
         return 0 if all(run["success"] and run["usage"] for run in runs) else 1

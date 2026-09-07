@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "section": "contact",
+  "task": "contact-dev-01",
+  "split": "development",
+  "model": "gpt-6-astra",
+  "reasoning": "high",
+  "codex_version": "codex-cli 0.153.4",
+  "seed": 20260908,
+  "repeats": 3,
+  "planned_attempts": 9,
+  "build_command": "go build -mod=readonly -tags authsidecar -o <binary> .",
+  "builds": [
+    {
+      "label": "official",
+      "revision": "7fd6ef3c07182257ce776cdc5a614e122d5bd4b3",
+      "exit": 0,
+      "binary": "<BUILD_ROOT>/official-cli",
+      "source": "<BUILD_ROOT>/official",
+      "metadata_sha256": "b5375251ff1f0a5939925587b0d514669a748135cde36c56f1c8ab5f5fe266c8",
+      "binary_sha256": "ab8b101b5f68418c8df02752a5ef19947d311d2e9a91fd685c0e5be24f723020"
+    },
+    {
+      "label": "next",
+      "revision": "4ce36daeb08567ff30761d63798a5d4647955ac6",
+      "exit": 0,
+      "binary": "<BUILD_ROOT>/next-cli",
+      "source": "<BUILD_ROOT>/next",
+      "metadata_sha256": "b5375251ff1f0a5939925587b0d514669a748135cde36c56f1c8ab5f5fe266c8",
+      "binary_sha256": "9610c610f58cbb5f85b68345a78514522fb31b1a1442f05213e20e5be80f0e56"
+    }
+  ],
+  "candidate_contains_contact_commits": {
+    "288f099": true,
+    "65fb7ce": true
+  },
+  "metadata_remote": "off",
+  "credentials": "synthetic sentinel sidecar only; empty isolated Feishu config",
+  "network": "managed Codex proxy; localhost allowed with local binding enabled; external direct sockets denied",
+  "guidance": "official Contact skill plus own references and shared dependency; concise equivalent English; next product entry skill",
+  "held_out": "untouched",
+  "controlled_initial_defects": [
+    {
+      "condition": "literal fixture_2 ID",
+      "observed": "both binaries reject +search-user ID without ou_ prefix",
+      "resolution": "map predeclared IDs to API-valid ou_fixture_ IDs before model trials"
+    },
+    {
+      "condition": "local binding disabled",
+      "observed": "Go bypasses HTTP proxy for loopback; direct fixture dial is OS-denied",
+      "resolution": "enable local binding; recheck positive loopback and external denial before model trials"
+    }
+  ]
+}

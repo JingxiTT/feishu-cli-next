@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Codex 0.146 JSONL adapter for offline foundation development tasks."""
+"""Codex JSONL adapter for offline and loopback synthetic development tasks."""
 import argparse
 import functools
 import gzip
@@ -92,16 +92,21 @@ def cli_environment(workspace):
             "LARKSUITE_CLI_NO_SKILLS_NOTIFIER": "1"}
 
 
-def configuration(auth_home, workspace, reasoning):
+def configuration(auth_home, workspace, reasoning, fixture_env=None):
     # Inspect skill path names only. Never read config.toml, auth files, or skill contents.
     skill_paths = sorted(path.parent for path in (auth_home / "skills").rglob("SKILL.md"))
     disabled_skills = ",".join("{path=" + json.dumps(str(path)) + ",enabled=false}" for path in skill_paths)
-    shell_env = ",".join(json.dumps(key) + "=" + json.dumps(value) for key, value in cli_environment(workspace).items())
+    environment = {**cli_environment(workspace), **(fixture_env or {})}
+    shell_env = ",".join(json.dumps(key) + "=" + json.dumps(value) for key, value in environment.items())
+    network = (['default_permissions="evaluation"',
+                'permissions.evaluation={extends=":workspace",network={enabled=true,allow_local_binding=true,domains={"127.0.0.1"="allow"}}}',
+                'features.network_proxy={enabled=true,allow_upstream_proxy=false}']
+               if fixture_env else ["sandbox_workspace_write.network_access=false"])
     return ["model_reasoning_effort=" + json.dumps(reasoning), "approval_policy=\"never\"",
-            "sandbox_workspace_write.network_access=false", "web_search=\"disabled\"",
+            "web_search=\"disabled\"",
             "project_doc_max_bytes=0", "shell_environment_policy.inherit=\"none\"",
             "shell_environment_policy.set={" + shell_env + "}", "skills.config=[" + disabled_skills + "]",
-            "mcp_servers={}", "tools.view_image=false"] + ["features." + feature + "=false" for feature in DISABLED_FEATURES]
+            "mcp_servers={}", "tools.view_image=false"] + network + ["features." + feature + "=false" for feature in DISABLED_FEATURES]
 
 
 def parse_events(stdout, returncode):
@@ -156,8 +161,22 @@ def parse_events(stdout, returncode):
 
 
 def run(request, codex, auth_home, expected_version):
-    if request["settings"]["backend"] != "offline-foundation-v1":
-        raise ValueError("this adapter supports offline foundation fixtures only")
+    backend = request["settings"]["backend"]
+    if backend == "synthetic-contact-v1":
+        from section_fixture import SectionFixture
+        with SectionFixture(request["fixture"]["scenario"]) as fixture:
+            try:
+                response, code = run_agent(request, codex, auth_home, expected_version, fixture.environment())
+                response["api_calls"] = len(fixture.receipt()["requests"])
+                return response, code
+            finally:
+                fixture.write_receipt(request["workspace"])
+    if backend != "offline-foundation-v1":
+        raise ValueError("unsupported evaluation backend")
+    return run_agent(request, codex, auth_home, expected_version)
+
+
+def run_agent(request, codex, auth_home, expected_version, fixture_env=None):
     workspace = Path(request["workspace"]).resolve()
     for directory in ("bin", "home", "tmp", "feishu-config"):
         (workspace / directory).mkdir(exist_ok=True)
@@ -165,7 +184,10 @@ def run(request, codex, auth_home, expected_version):
     for name in ("lark-cli", "feishu-cli-next"):
         (workspace / "bin" / name).symlink_to(request["cli"])
     shutil.copytree(Path(request["skill"]).parent, workspace / "guidance")
-    env = cli_environment(workspace)
+    shared = Path(request["skill"]).parent.parent / "lark-shared"
+    if Path(request["skill"]).parent.name == "lark-contact" and shared.is_dir():
+        shutil.copytree(shared, workspace / "lark-shared")
+    env = {**cli_environment(workspace), **(fixture_env or {})}
     env["CODEX_HOME"] = str(auth_home)
     # Auth is consumed by Codex itself. This adapter neither reads nor copies credentials.
     version = subprocess.run([str(codex), "--version"], env=env, capture_output=True, text=True, timeout=10, check=True)
@@ -174,16 +196,21 @@ def run(request, codex, auth_home, expected_version):
     schema = workspace / "answer.schema.json"
     schema.write_text(json.dumps(request["fixture"]["answer_schema"]), encoding="utf-8")
     command = [str(codex), "exec", "--json", "--ephemeral", "--ignore-user-config", "--ignore-rules",
-               "--skip-git-repo-check", "--sandbox", "workspace-write", "--model", request["settings"]["model"],
+               "--skip-git-repo-check", "--model", request["settings"]["model"],
                "--cd", str(workspace), "--color", "never", "--output-schema", str(schema),
                "--output-last-message", str(workspace / "answer.json")]
-    for value in configuration(auth_home, workspace, request["settings"]["reasoning"]):
+    if not fixture_env:
+        command.extend(["--sandbox", "workspace-write"])
+    for value in configuration(auth_home, workspace, request["settings"]["reasoning"], fixture_env):
         command.extend(["--config", value])
     command.append("-")
     skill = (workspace / "guidance" / Path(request["skill"]).name).read_text(encoding="utf-8")
-    prompt = ("Complete this offline CLI task using the selected binary on PATH. The project has an empty "
-              "Feishu configuration. Network access for shell commands is disabled; do not log in, "
-              "initialize an app, access credentials, or change any backend resources. Work only in this "
+    environment_note = ("All Feishu API calls use a local synthetic read-only fixture through the preconfigured "
+                        "auth sidecar; user and bot identities are available with sentinel credentials. Only "
+                        "loopback HTTP is permitted. Do not inspect or change auth/proxy settings. " if fixture_env else
+                        "The project has an empty Feishu configuration. Network access for shell commands is disabled. ")
+    prompt = ("Complete this CLI task using the selected binary on PATH. " + environment_note +
+              "Do not log in, initialize an app, access other credentials, or change any backend resources. Work only in this "
               "temporary workspace. Return the requested JSON answer. You may use the shell and files "
               "and choose your approach. The supplied CLI skill follows; its relative references are "
               "under ./guidance/.\n\n" + skill + "\n\nTask:\n" + request["prompt"])

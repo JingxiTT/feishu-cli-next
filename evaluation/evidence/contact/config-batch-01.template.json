@@ -1,0 +1,45 @@
+{
+  "mode": "real",
+  "backend": "synthetic-contact-v1",
+  "model": "gpt-6-astra",
+  "tokenizer": "provider-undisclosed",
+  "reasoning": "high",
+  "tools": [
+    "shell",
+    "files"
+  ],
+  "permissions": "workspace-write; managed proxy loopback-only with local binding enabled; isolated sentinel Feishu authsidecar",
+  "budget": {
+    "timeout_seconds": 180
+  },
+  "accounting_method": "codex-cli 0.153.4 turn.completed provider usage, aggregate per user turn",
+  "timeout_seconds": 210,
+  "runner": [
+    "/ABSOLUTE/python3",
+    "/ABSOLUTE/REPOSITORY/evaluation/codex_runner.py",
+    "--codex",
+    "/ABSOLUTE/native/codex",
+    "--auth-home",
+    "/ABSOLUTE/CODEX_AUTH_HOME",
+    "--codex-version",
+    "codex-cli 0.153.4"
+  ],
+  "verifier": [
+    "/ABSOLUTE/python3",
+    "/ABSOLUTE/REPOSITORY/evaluation/contact_verifier.py"
+  ],
+  "arms": {
+    "official": {
+      "cli": "/ABSOLUTE/BUILD_ROOT/official-cli",
+      "skill": "/ABSOLUTE/BUILD_ROOT/official/skills/lark-contact/SKILL.md"
+    },
+    "official_concise": {
+      "cli": "/ABSOLUTE/BUILD_ROOT/official-cli",
+      "skill": "/ABSOLUTE/REPOSITORY/evaluation/official-contact-concise/SKILL.md"
+    },
+    "next": {
+      "cli": "/ABSOLUTE/BUILD_ROOT/next-cli",
+      "skill": "/ABSOLUTE/BUILD_ROOT/next/agent-skills/feishu-cli-next/SKILL.md"
+    }
+  }
+}
