@@ -14,7 +14,11 @@ python3 scripts/next_test.py --section all --suite all --binary ./feishu-cli-nex
 
 `--section` selects the manifest's domain names, `foundation`, or `extensions`.
 `events` maps to the reference `event` packages; `docs` maps to `shortcuts/doc`.
-`--suite unit` and `--suite e2e` run separately. `--timeout` bounds each process
+`--suite unit` and `--suite e2e` run separately. Each existing
+`tests/next_sections/<section>` package runs in full alongside the inherited
+regressions; it has no test-name filter. The `all` selection includes every
+existing section package. Reports list missing section suites explicitly and
+return blocked (exit 2) even if the available inherited regressions passed. `--timeout` bounds each process
 (default 1,200 seconds, plus Go's 10-minute test timeout). Run each section's
 E2E suite at its acceptance boundary. Packaging remains blocked until its
 complete suite exists.
@@ -37,8 +41,9 @@ pass/fail/skip counts. Child failures retain their exit code; timeout returns
 recorded separately and is not evidence that its behavior passed.
 
 The all-offline suite runs the upstream unit packages, foundation process
-checks, the upstream root/config E2E packages, plugin E2E, and domain tests
-selected by the official CI's `DryRun|Regression` expression. The report lists
+checks, the upstream root/config E2E packages, plugin E2E, domain tests
+selected by the official CI's `DryRun|Regression` expression, and the complete
+existing `tests/next_sections` packages. The report lists
 every selected and excluded domain test. **This is the inherited deterministic
 regression subset, not a complete section acceptance or full live suite.**
 Unclassified tests, live scenarios, platform-specific builds, packaging, and

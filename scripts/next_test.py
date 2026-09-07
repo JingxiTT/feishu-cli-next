@@ -63,6 +63,20 @@ def isolated_env(directory, parent, proxy):
     return env
 
 
+def section_suites(section):
+    """List next-interface suites separately from inherited CI regressions."""
+    if section == "foundation":
+        return []
+    root = ROOT / "tests/next_sections"
+    sections = {section}
+    if section == "all":
+        sections = set(DOMAINS) | {"extensions", "packaging"}
+        sections.update(path.name for path in root.glob("*") if path.is_dir() and not path.name.startswith("."))
+    return [{"section": name, "package": "./tests/next_sections/" + name,
+             "status": "present" if any((root / name).glob("*_test.go")) else "missing"}
+            for name in sorted(sections)]
+
+
 def commands_for(section, suite):
     commands = []
     go_test = ["go", "test", "-json", "-count=1", "-timeout=10m"]
@@ -73,13 +87,16 @@ def commands_for(section, suite):
             packages = ["./cmd/...", "./internal/...", "./shortcuts/common/...", "./extension/...", "./errs/..."]
         elif section == "extensions":
             packages = ["./extension/..."]
+        elif section == "packaging":
+            packages = []
         else:
             packages = ["./shortcuts/" + DOMAIN_DIRS.get(section, section) + "/..."]
             if section == "events":
                 packages.append("./events/...")
             elif (ROOT / "events" / section).is_dir():
                 packages.append("./events/" + section + "/...")
-        commands.append(go_test + packages)
+        if packages:
+            commands.append(go_test + packages)
     if suite in ("e2e", "all"):
         if section in ("foundation", "all"):
             commands.append([sys.executable, "-m", "unittest", "discover", "-s", "tests/next_foundation", "-p", "*_test.py", "-v"])
@@ -95,6 +112,9 @@ def commands_for(section, suite):
             packages.append("./tests/cli_e2e/dryrun")
         if packages:
             commands.append(go_test + packages + ["-run", "DryRun|Regression"])
+        next_packages = [item["package"] for item in section_suites(section) if item["status"] == "present"]
+        if next_packages:
+            commands.append(go_test + next_packages)
     return commands
 
 
@@ -158,6 +178,9 @@ def main(argv=None):
     args = parser.parse_args(argv)
     report = {"schema_version": 1, "section": args.section, "suite": args.suite,
               "evidence": "offline", "status": "pass", "commands": []}
+    if args.suite in ("e2e", "all"):
+        report["section_suites"] = section_suites(args.section)
+        report["coverage_note"] = "Offline suite results do not establish live behavior or full capability reconciliation."
     code = 0
     if args.timeout <= 0:
         parser.error("--timeout must be positive")
@@ -167,8 +190,8 @@ def main(argv=None):
             "No verified fixture harness binds the effective account and tenant, private visibility, "
             "Ying Wu's unambiguous identity when applicable, and run-owned cleanup. Legacy live tests are not authorized fixtures."))
         code = 2
-    elif args.section == "packaging":
-        report.update(status="blocked", reason="The complete packaging section suite has not been implemented.")
+    elif args.section == "packaging" and args.suite == "unit":
+        report.update(status="blocked", reason="No packaging unit suite is defined; use the section E2E suite when available.")
         code = 2
     elif args.suite in ("e2e", "all") and not args.binary.resolve().is_file():
         report.update(status="blocked", reason="Build the CLI and pass its path with --binary before E2E tests.")
@@ -192,6 +215,9 @@ def main(argv=None):
                     report["status"] = "fail"
                     code = result["exit_code"] if result["exit_code"] > 0 else 128 - result["exit_code"]
                     break
+        if report["status"] == "pass" and any(item["status"] == "missing" for item in report.get("section_suites", [])):
+            report.update(status="blocked", reason="Missing next section E2E suites remain unverified; inherited regressions are only a subset.")
+            code = 2
     args.report.parent.mkdir(parents=True, exist_ok=True)
     args.report.write_text(json.dumps(report, indent=2) + "\n")
     print(json.dumps({"status": report["status"], "evidence": report["evidence"],

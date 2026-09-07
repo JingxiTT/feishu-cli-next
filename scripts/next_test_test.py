@@ -128,6 +128,74 @@ urllib.request.urlopen('http://must-not-resolve.invalid',timeout=0.2)
         self.assertEqual(code, 0)
 
 
+    def make_section_suite(self, root, section):
+        path = root / "tests/next_sections" / section
+        path.mkdir(parents=True)
+        (path / "workflow_test.go").write_text("package section\n")
+
+    def test_section_includes_its_next_package_without_name_filter(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            self.make_section_suite(root, "docs")
+            self.make_section_suite(root, "sheets")
+            (root / "tests/cli_e2e/docs").mkdir(parents=True)
+            with patch.object(next_test, "ROOT", root):
+                for suite in ("e2e", "all"):
+                    commands = next_test.commands_for("docs", suite)
+                    own = [command for command in commands if "./tests/next_sections/docs" in command]
+                    self.assertEqual(len(own), 1)
+                    self.assertNotIn("-run", own[0])
+                    self.assertFalse(any("./tests/next_sections/sheets" in command for command in commands))
+                    self.assertTrue(any(command[-2:] == ["-run", "DryRun|Regression"] for command in commands))
+
+    def test_all_discovers_existing_sections_and_foundation_stays_separate(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            for section in ("docs", "sheets", "events", "extensions", "packaging"):
+                self.make_section_suite(root, section)
+            with patch.object(next_test, "ROOT", root):
+                commands = next_test.commands_for("all", "e2e")
+                for section in ("docs", "sheets", "events", "extensions", "packaging"):
+                    self.assertTrue(any("./tests/next_sections/" + section in command and "-run" not in command for command in commands))
+                foundation = next_test.commands_for("foundation", "e2e")
+                self.assertFalse(any(any("next_sections" in arg for arg in command) for command in foundation))
+                self.assertEqual(next_test.section_suites("foundation"), [])
+
+    def test_missing_section_suite_blocks_despite_passing_inherited_subset(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            report_path = root / "report.json"
+            (root / "tests/cli_e2e/docs").mkdir(parents=True)
+            (root / "tests/next_sections/docs").mkdir(parents=True)
+            def passed(command, *_args):
+                return {"command": command, "status": "pass", "exit_code": 0,
+                        "stdout": "", "stderr": "", "tests": {"pass": 1, "fail": 0, "skip": 0}}
+            with patch.object(next_test, "ROOT", root), patch.object(next_test, "run_command", side_effect=passed), contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+                code = next_test.main(["--section", "docs", "--suite", "e2e", "--binary", str(Path(__file__).resolve()), "--report", str(report_path)])
+            self.assertEqual(code, 2)
+            report = json.loads(report_path.read_text())
+            self.assertEqual(report["status"], "blocked")
+            self.assertEqual(report["commands"][0]["status"], "pass")
+            self.assertEqual(report["section_suites"], [{"section": "docs", "package": "./tests/next_sections/docs", "status": "missing"}])
+
+    def test_present_section_suite_runs_and_is_reported(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            self.make_section_suite(root, "docs")
+            report_path = root / "report.json"
+            def passed(command, *_args):
+                return {"command": command, "status": "pass", "exit_code": 0,
+                        "stdout": "", "stderr": "", "tests": {"pass": 1, "fail": 0, "skip": 0}}
+            with patch.object(next_test, "ROOT", root), patch.object(next_test, "run_command", side_effect=passed) as run, contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+                code = next_test.main(["--section", "docs", "--suite", "e2e", "--binary", str(Path(__file__).resolve()), "--report", str(report_path)])
+            self.assertEqual(code, 0)
+            self.assertEqual(run.call_count, 1)
+            self.assertIn("./tests/next_sections/docs", run.call_args.args[0])
+            report = json.loads(report_path.read_text())
+            self.assertEqual(report["section_suites"][0]["status"], "present")
+            self.assertEqual(report["status"], "pass")
+
+
 
 if __name__ == "__main__":
     unittest.main()
