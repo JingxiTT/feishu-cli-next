@@ -652,3 +652,92 @@ func TestAgentProjectionRetainsUnchangedNoopMetadata(t *testing.T) {
 		}
 	}
 }
+
+func TestAgentProjectionPreservesCalendarNoopIdentity(t *testing.T) {
+	for _, marker := range []string{"no_op", "noop"} {
+		raw := json.RawMessage(`{"ok":true,"data":{"calendar_id":"calendar_fixture","` + marker + `":true,"updated_event":{"event_id":"event_fixture","summary":"same","attendees_added_count":0,"attendees_removed_count":0},"unused":"drop"}}`)
+		var stdout bytes.Buffer
+		if err := output.WriteJSON(output.WithAgentOptions(&stdout, &output.AgentOptions{Fields: "summary"}), raw); err != nil {
+			t.Fatal(err)
+		}
+		for _, fact := range []string{`"` + marker + `":true`, `"calendar_id":"calendar_fixture"`, `"event_id":"event_fixture"`, `"attendees_added_count":0`, `"attendees_removed_count":0`} {
+			if !strings.Contains(stdout.String(), fact) {
+				t.Fatalf("lost calendar evidence %s: %s", fact, stdout.String())
+			}
+		}
+		if strings.Contains(stdout.String(), "unused") {
+			t.Fatalf("projection ignored: %s", stdout.String())
+		}
+	}
+}
+
+func TestAgentProjectionPreservesTaskCollectionIdentitiesAndConfirmation(t *testing.T) {
+	raw := json.RawMessage(`{"ok":true,"data":{"tasklist_guid":"tasklist_fixture","updated_fields":["description"],"tasks":[{"guid":"updated_task","summary":"updated","confirmed":{"description":"server-confirmed"},"unchanged":false,"unused":"drop"}],"created_tasks":[{"guid":"created_task","url":"https://example.invalid/created","summary":"created","unused":"drop"}],"successful_tasks":[{"guid":"added_task","summary":"added","unused":"drop"}],"failed_tasks":[]}}`)
+	var stdout bytes.Buffer
+	if err := output.WriteJSON(output.WithAgentOptions(&stdout, &output.AgentOptions{Fields: "summary"}), raw); err != nil {
+		t.Fatal(err)
+	}
+	var envelope struct {
+		Data struct {
+			TasklistGUID  string   `json:"tasklist_guid"`
+			UpdatedFields []string `json:"updated_fields"`
+			Tasks         []struct {
+				GUID      string            `json:"guid"`
+				Confirmed map[string]string `json:"confirmed"`
+				Unchanged *bool             `json:"unchanged"`
+			} `json:"tasks"`
+			CreatedTasks []struct {
+				GUID string `json:"guid"`
+				URL  string `json:"url"`
+			} `json:"created_tasks"`
+			SuccessfulTasks []struct {
+				GUID string `json:"guid"`
+			} `json:"successful_tasks"`
+			FailedTasks json.RawMessage `json:"failed_tasks"`
+		} `json:"data"`
+	}
+	if err := json.Unmarshal(stdout.Bytes(), &envelope); err != nil {
+		t.Fatal(err)
+	}
+	data := envelope.Data
+	if data.TasklistGUID != "tasklist_fixture" || !reflect.DeepEqual(data.UpdatedFields, []string{"description"}) || len(data.Tasks) != 1 || data.Tasks[0].GUID != "updated_task" || data.Tasks[0].Confirmed["description"] != "server-confirmed" || data.Tasks[0].Unchanged == nil || *data.Tasks[0].Unchanged || len(data.CreatedTasks) != 1 || data.CreatedTasks[0].GUID != "created_task" || data.CreatedTasks[0].URL != "https://example.invalid/created" || len(data.SuccessfulTasks) != 1 || data.SuccessfulTasks[0].GUID != "added_task" || string(data.FailedTasks) != "[]" {
+		t.Fatalf("lost task outcome identity/evidence: %s", stdout.String())
+	}
+	if strings.Contains(stdout.String(), "unused") {
+		t.Fatalf("collection projection ignored: %s", stdout.String())
+	}
+}
+
+func TestAgentProjectionPreservesWholePartialTaskOutcome(t *testing.T) {
+	raw := json.RawMessage(`{"ok":false,"data":{"tasklist_guid":"tasklist_fixture","created_tasks":[{"guid":"created_task","description":"retained"}],"failed_tasks":[{"index":1,"summary":"failed","type":"permission_denied","message":"synthetic denial","hint":"request access"}]}}`)
+	var stdout bytes.Buffer
+	if err := output.WriteJSON(output.WithAgentOptions(&stdout, &output.AgentOptions{Fields: "summary"}), raw); err != nil {
+		t.Fatal(err)
+	}
+	if strings.TrimSpace(stdout.String()) != string(raw) {
+		t.Fatalf("partial task outcome reduced: %s", stdout.String())
+	}
+}
+
+func TestAgentArtifactCountsKnownTaskCollections(t *testing.T) {
+	for _, collection := range []string{"tasks", "created_tasks", "successful_tasks"} {
+		opts := artifactOptions(t)
+		var stdout bytes.Buffer
+		raw := json.RawMessage(`{"ok":true,"data":{"` + collection + `":[{"guid":"task_1"},{"guid":"task_2"}]}}`)
+		if err := output.WriteJSON(output.WithAgentOptions(&stdout, opts), raw); err != nil {
+			t.Fatal(err)
+		}
+		var response struct {
+			Artifact output.ArtifactReference `json:"artifact"`
+		}
+		if err := json.Unmarshal(stdout.Bytes(), &response); err != nil {
+			t.Fatal(err)
+		}
+		if response.Artifact.Count == nil || *response.Artifact.Count != 2 || response.Artifact.Complete != nil {
+			t.Fatalf("task artifact extent incorrect: %s", stdout.String())
+		}
+		if strings.Contains(stdout.String(), "task_1") {
+			t.Fatalf("task payload copied into reference: %s", stdout.String())
+		}
+	}
+}

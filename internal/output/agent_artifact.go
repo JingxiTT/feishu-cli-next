@@ -190,20 +190,23 @@ func artifactExtent(result json.RawMessage) (*int, *bool) {
 		return &n, nil
 	}
 	var page struct {
-		Items    []json.RawMessage `json:"items"`
-		Records  []json.RawMessage `json:"records"`
-		Rows     []json.RawMessage `json:"rows"`
-		Files    []json.RawMessage `json:"files"`
-		Messages []json.RawMessage `json:"messages"`
-		Count    *int              `json:"count"`
-		HasMore  *bool             `json:"has_more"`
-		Complete *bool             `json:"complete"`
+		Items           []json.RawMessage `json:"items"`
+		Records         []json.RawMessage `json:"records"`
+		Rows            []json.RawMessage `json:"rows"`
+		Files           []json.RawMessage `json:"files"`
+		Messages        []json.RawMessage `json:"messages"`
+		Tasks           []json.RawMessage `json:"tasks"`
+		CreatedTasks    []json.RawMessage `json:"created_tasks"`
+		SuccessfulTasks []json.RawMessage `json:"successful_tasks"`
+		Count           *int              `json:"count"`
+		HasMore         *bool             `json:"has_more"`
+		Complete        *bool             `json:"complete"`
 	}
 	_ = json.Unmarshal(data, &page)
 	if page.Count != nil {
 		count = page.Count
 	}
-	for _, records := range [][]json.RawMessage{page.Items, page.Records, page.Rows, page.Files, page.Messages} {
+	for _, records := range [][]json.RawMessage{page.Items, page.Records, page.Rows, page.Files, page.Messages, page.Tasks, page.CreatedTasks, page.SuccessfulTasks} {
 		if records != nil {
 			n := len(records)
 			count = &n

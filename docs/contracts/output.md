@@ -13,15 +13,18 @@ with `--result-fields`. Existing domain flags named `--fields` and `--detail`
 keep their original semantics.
 
 `--result-fields title,owner.name` selects business data fields. Selection applies
-to `data`, or to each item in an array or an `items`, `records`, `rows`, `files`, or `messages`
+to `data`, or to each item in an array or an `items`, `records`, `rows`, `files`, `messages`, `tasks`, `created_tasks`, or `successful_tasks`
 collection. Dotted paths preserve nested structure; arrays need no `[]` syntax.
 Names may contain letters, digits, `_`, or `-`; wildcard, jq, and bracket syntax
 are rejected before execution. Missing fields are omitted, not manufactured as
 null. A missing field cannot be schema-validated generically before a response.
 
 The complete envelope, resource IDs (`id`, `guid`, `token`, `*_id`, `*_ids`, `*_token`),
-URLs, types, identity, status, `unchanged` no-op markers, pagination, counts, errors, warnings, recovery,
-notices and safety alerts remain visible. Results containing failed, partial,
+URLs, types, identity, status, `unchanged`/`no_op`/`noop` no-op markers, pagination, counts, errors, warnings, recovery,
+notices and safety alerts remain visible. Task collections retain native GUIDs
+and tasklist identity, `confirmed` fields, `updated_fields` and failed-task details.
+Calendar's `updated_event` effect object retains the event identity and attendee
+change counts. Other nested resource objects use explicit dotted paths. Results containing failed, partial,
 unknown or unsupported outcomes retain their full data. This conservative shared
 projection must not replace a domain-specific schema that has more outcome fields.
 Projection never mutates caller data. JSON numbers use their serialized decimal
