@@ -58,18 +58,37 @@ now preserve read/artifact behavior (`1058824`) while raw and neighboring writes
 retain conservative mutation handling. Independent source reviews and affected
 section checks record their specific revision boundaries.
 
+Drive import now reconciles a pending receipt only from an exact, successful
+native task response for the captured invocation (`032b922`, `68126ee`).
+Contradictory, redirected, non-200 or unpersisted completion evidence cannot
+authorize the dependent bot grant. The independent
+[Drive receipt review](reference/reviews/p3-drive-import-receipt-review.json)
+closed all three findings. Full affected suites recorded 1,748 Drive and 1,903
+Sheets pass events; seven Sheets live blockers remain. A fresh combined gate is
+running against immutable `8d92e52`; earlier full-suite results do not cover these
+new changes automatically.
+
 The [Contact comparison](../evaluation/evidence/contact/REPORT.md) records nine
 successful trials and complete usage accounting, but a regression: Next used
 66,811 tokens per success versus 59,485 for the official arm and 41,233 for its
 concise-guidance arm. The small sample and sanitized queries limit causal claims.
 Commit `ced4030` makes public flag descriptions searchable and clarifies literal
-keyword discovery; it has no measured improvement claim yet. A frozen 81-trial
-development batch across nine additional read-only sections
-is running separately; remaining section adapters are undergoing controlled
-verification. Its candidate is recorded independently of newer product fixes.
-Held-out trials have not run. A coordinator file search exposed fragments of the
-Base and Sheets held-out prompts and one size field; the evaluation owner must
-record that exposure and arrange independent replacements before final testing.
+keyword discovery; it has no measured improvement claim yet. The frozen
+[nine-section comparison](../evaluation/evidence/read-312af93/REPORT.md)
+completed 75/81 verified successes with 8,419,135 provider tokens, retaining all
+failed costs. Among its eight fully successful sections, Next used fewer tokens
+than the official arm in seven, but fewer than concise official guidance only in
+IM. A separately versioned
+[corrected Wiki comparison](../evaluation/evidence/wiki-native-74/REPORT.md)
+passed 9/9 after a demonstrated fixture gap was fixed; historical failures and
+diagnostic costs remain separate. The guide clarification in `43bdff2` has no
+measured improvement claim. Remaining development comparisons and controlled
+100/1,000/10,000-row scaling experiments use separately frozen candidates.
+Held-out trials have not run. A coordinator search exposed fragments of the Base
+and Sheets held-out prompts and one size field. The
+[exposure record](../evaluation/evidence/held-out-exposure.json) quarantines those
+examples for independent replacement after product freeze; full coordinator
+blinding is not claimed.
 
 [Live Contact evidence](sections/contact-live-evidence.json) verifies the current
 account and the sequential user reads. The full test failed on bot search; a
@@ -85,8 +104,9 @@ exposed cross-batch duplicate IDs being accepted by the importer; `f080e43` and
 evidence. This is separate from Base's earlier import-only test and does not
 establish live conversion behavior.
 
-The [complete isolated race gate](sections/p3-unit-evidence.json) at `32183054`
-passes 18,499 tests with no failures or races and 12 explained skips. Later fixes
+The [complete isolated race gate](sections/p3-unit-evidence.json) at `72fc5e4`
+passes 18,604 tests with no failures or races and 12 explained skips, including
+the root package. Earlier failed checkpoints remain in the report. Later fixes
 have their own focused unit/process checks. Vet, formatting, dependency/license
 checks, quality gate, source guards and pinned Go lint have passed at their
 recorded development boundaries; final release verification still needs an
@@ -106,9 +126,11 @@ not establish public release readiness.
 ## Outstanding release evidence
 
 P2 domain acceptance, verified private live fixtures, final source reconciliation,
-remaining cross-section workflows, native platform and remote lifecycle checks,
-full release checks and held-out evaluation remain open. The completed offline
-10,000-row transfer and local packaging checks above are recorded milestones.
-Blocked or unverified
-checks remain outstanding; offline or scoped foundation success does not count
-as full live parity or satisfy the complete goal.
+remaining development comparisons and provider-token scaling measurements,
+native platform and remote lifecycle checks, full release checks and held-out
+evaluation remain open. The concrete cross-section workflow audit and 18-event
+transfer/binding follow-up close the previously identified offline composition
+gap; they do not establish live guarantees. Completed offline transfer and local
+packaging checks remain milestones. Blocked or unverified checks remain
+outstanding; offline success does not establish full live parity or satisfy the
+complete goal.
