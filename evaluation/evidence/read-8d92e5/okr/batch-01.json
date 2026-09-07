@@ -1,0 +1,2370 @@
+{
+  "protocol": 1,
+  "mode": "real",
+  "split": "development",
+  "performance_claims_supported": true,
+  "completed": true,
+  "planned_runs": 9,
+  "seed": 20260921,
+  "repeats": 3,
+  "fresh_context": true,
+  "task_manifest_sha256": "fe3d9af975b3e9d98b1c9092c2d87c1618628aa7e98f3f76a50bb76d992b950d",
+  "config_sha256": "0a3e934aa49c115e6e1c896f6e471c0cf49cb9079efc2ffd93b5349bf00bf8c2",
+  "environment": {
+    "backend": "synthetic-read-v1",
+    "model": "gpt-6-astra",
+    "tokenizer": "provider-undisclosed",
+    "reasoning": "high",
+    "tools": [
+      "shell",
+      "files"
+    ],
+    "permissions": "workspace-write; managed proxy loopback-only with local binding; isolated synthetic sidecar",
+    "budget": {
+      "timeout_seconds": 180
+    },
+    "accounting_method": "codex-cli 0.153.4 provider turn.completed; cached input included in full"
+  },
+  "arms": {
+    "official": {
+      "cli_sha256": "ab8b101b5f68418c8df02752a5ef19947d311d2e9a91fd685c0e5be24f723020",
+      "skill_sha256": "898fc8886d9c095a1a690e6606860d6073b76d374a0343993ab632813d81b187"
+    },
+    "official_concise": {
+      "cli_sha256": "ab8b101b5f68418c8df02752a5ef19947d311d2e9a91fd685c0e5be24f723020",
+      "skill_sha256": "eb891de2792ff8fc09809dd33ab7b2a775c1800824121b3d6d2a46713976c9ed"
+    },
+    "next": {
+      "cli_sha256": "b2e848a3c9c0742a416a3b72d042f2166cec694bc35c06bbf748139f69e3e263",
+      "skill_sha256": "c0de66cb47e62ca389a691ca7c9549d68e262702cb692d45dd2a5965779c9f1b"
+    }
+  },
+  "runs": [
+    {
+      "task_id": "okr-dev-01",
+      "section": "okr",
+      "trial": 1,
+      "arm": "official_concise",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 90466,
+        "cached_input_tokens": 70656,
+        "output_tokens": 460,
+        "total_tokens": 90926
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 90466,
+        "cached_input_tokens": 70656,
+        "output_tokens": 460,
+        "total_tokens": 90926
+      },
+      "verification_failures": [],
+      "api_request_trace": [
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "key_results_all",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "objective",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "progress_72001",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "progress_72002",
+          "status": 200
+        }
+      ],
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr",
+                "objectives",
+                "get"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr",
+                "objective.key_results",
+                "list"
+              ],
+              "flags": [
+                "--as",
+                "--objective-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr",
+                "objectives",
+                "get"
+              ],
+              "flags": [
+                "--as",
+                "--objective-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr",
+                "+progress-list"
+              ],
+              "flags": [
+                "--as",
+                "--target-id",
+                "--target-type"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr",
+                "+progress-list"
+              ],
+              "flags": [
+                "--as",
+                "--target-id",
+                "--target-type"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 40.988401291979244,
+      "verification_seconds": 0.03589837497565895,
+      "api_calls": 9,
+      "retries": null,
+      "command_executions": 10
+    },
+    {
+      "task_id": "okr-dev-01",
+      "section": "okr",
+      "trial": 0,
+      "arm": "next",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 83887,
+        "cached_input_tokens": 67456,
+        "output_tokens": 406,
+        "total_tokens": 84293
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 83887,
+        "cached_input_tokens": 67456,
+        "output_tokens": 406,
+        "total_tokens": 84293
+      },
+      "verification_failures": [],
+      "api_request_trace": [
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "objective",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "key_results_all",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "progress_72002",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "progress_72001",
+          "status": 200
+        }
+      ],
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr",
+                "+progress-list"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr",
+                "objectives",
+                "get"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr",
+                "objective.key_results",
+                "list"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr",
+                "objectives",
+                "get"
+              ],
+              "flags": [
+                "--as",
+                "--objective-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr",
+                "objective.key_results",
+                "list"
+              ],
+              "flags": [
+                "--as",
+                "--objective-id",
+                "--page-size"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr",
+                "+progress-list"
+              ],
+              "flags": [
+                "--as",
+                "--target-id",
+                "--target-type"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr",
+                "+progress-list"
+              ],
+              "flags": [
+                "--as",
+                "--target-id",
+                "--target-type"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 37.636050208006054,
+      "verification_seconds": 0.028078500006813556,
+      "api_calls": 8,
+      "retries": null,
+      "command_executions": 9
+    },
+    {
+      "task_id": "okr-dev-01",
+      "section": "okr",
+      "trial": 2,
+      "arm": "next",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 83544,
+        "cached_input_tokens": 52608,
+        "output_tokens": 431,
+        "total_tokens": 83975
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 83544,
+        "cached_input_tokens": 52608,
+        "output_tokens": 431,
+        "total_tokens": 83975
+      },
+      "verification_failures": [],
+      "api_request_trace": [
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "key_results_all",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "objective",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "progress_72001",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "progress_72002",
+          "status": 200
+        }
+      ],
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr",
+                "+progress-list"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr",
+                "objectives",
+                "get"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr",
+                "objective.key_results",
+                "list"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr",
+                "objectives",
+                "get"
+              ],
+              "flags": [
+                "--as",
+                "--objective-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr",
+                "objective.key_results",
+                "list"
+              ],
+              "flags": [
+                "--as",
+                "--objective-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr",
+                "+progress-list"
+              ],
+              "flags": [
+                "--as",
+                "--target-id",
+                "--target-type"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr",
+                "+progress-list"
+              ],
+              "flags": [
+                "--as",
+                "--target-id",
+                "--target-type"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 41.044359166000504,
+      "verification_seconds": 0.035390624980209395,
+      "api_calls": 8,
+      "retries": null,
+      "command_executions": 9
+    },
+    {
+      "task_id": "okr-dev-01",
+      "section": "okr",
+      "trial": 2,
+      "arm": "official",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 161597,
+        "cached_input_tokens": 133632,
+        "output_tokens": 512,
+        "total_tokens": 162109
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 161597,
+        "cached_input_tokens": 133632,
+        "output_tokens": 512,
+        "total_tokens": 162109
+      },
+      "verification_failures": [],
+      "api_request_trace": [
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "objective",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "key_results_all",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "progress_72002",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "progress_72001",
+          "status": 200
+        }
+      ],
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 127
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr",
+                "objective.key_results",
+                "list"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr",
+                "objectives",
+                "get"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr",
+                "objectives",
+                "get"
+              ],
+              "flags": [
+                "--as",
+                "--objective-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr",
+                "objective.key_results",
+                "list"
+              ],
+              "flags": [
+                "--as",
+                "--objective-id",
+                "--page-size"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr",
+                "+progress-list"
+              ],
+              "flags": [
+                "--as",
+                "--target-id",
+                "--target-type"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr",
+                "+progress-list"
+              ],
+              "flags": [
+                "--as",
+                "--target-id",
+                "--target-type"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 77.02030958401156,
+      "verification_seconds": 0.04417895898222923,
+      "api_calls": 10,
+      "retries": null,
+      "command_executions": 11
+    },
+    {
+      "task_id": "okr-dev-01",
+      "section": "okr",
+      "trial": 1,
+      "arm": "next",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 83925,
+        "cached_input_tokens": 67456,
+        "output_tokens": 388,
+        "total_tokens": 84313
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 83925,
+        "cached_input_tokens": 67456,
+        "output_tokens": 388,
+        "total_tokens": 84313
+      },
+      "verification_failures": [],
+      "api_request_trace": [
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "key_results_all",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "objective",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "progress_72002",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "progress_72001",
+          "status": 200
+        }
+      ],
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr",
+                "+progress-list"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr",
+                "objectives",
+                "get"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr",
+                "objective.key_results",
+                "list"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr",
+                "objectives",
+                "get"
+              ],
+              "flags": [
+                "--as",
+                "--objective-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr",
+                "objective.key_results",
+                "list"
+              ],
+              "flags": [
+                "--as",
+                "--objective-id",
+                "--page-size"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr",
+                "+progress-list"
+              ],
+              "flags": [
+                "--as",
+                "--target-id",
+                "--target-type"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr",
+                "+progress-list"
+              ],
+              "flags": [
+                "--as",
+                "--target-id",
+                "--target-type"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 51.4742038330005,
+      "verification_seconds": 0.037525666994042695,
+      "api_calls": 8,
+      "retries": null,
+      "command_executions": 9
+    },
+    {
+      "task_id": "okr-dev-01",
+      "section": "okr",
+      "trial": 2,
+      "arm": "official_concise",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 134675,
+        "cached_input_tokens": 112512,
+        "output_tokens": 574,
+        "total_tokens": 135249
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 134675,
+        "cached_input_tokens": 112512,
+        "output_tokens": 574,
+        "total_tokens": 135249
+      },
+      "verification_failures": [],
+      "api_request_trace": [
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "objective",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "key_results_all",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "progress_72001",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "progress_72002",
+          "status": 200
+        }
+      ],
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 127
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr",
+                "objectives",
+                "get"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr",
+                "objective.key_results",
+                "list"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr",
+                "+progress-list"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr",
+                "objectives",
+                "get"
+              ],
+              "flags": [
+                "--as",
+                "--objective-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr",
+                "objective.key_results",
+                "list"
+              ],
+              "flags": [
+                "--as",
+                "--objective-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr",
+                "+progress-list"
+              ],
+              "flags": [
+                "--as",
+                "--target-id",
+                "--target-type"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr",
+                "+progress-list"
+              ],
+              "flags": [
+                "--as",
+                "--target-id",
+                "--target-type"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 57.25428337499034,
+      "verification_seconds": 0.04634212498785928,
+      "api_calls": 11,
+      "retries": null,
+      "command_executions": 14
+    },
+    {
+      "task_id": "okr-dev-01",
+      "section": "okr",
+      "trial": 0,
+      "arm": "official_concise",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 134079,
+        "cached_input_tokens": 112384,
+        "output_tokens": 523,
+        "total_tokens": 134602
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 134079,
+        "cached_input_tokens": 112384,
+        "output_tokens": 523,
+        "total_tokens": 134602
+      },
+      "verification_failures": [],
+      "api_request_trace": [
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "objective",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "key_results_all",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "progress_72002",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "progress_72001",
+          "status": 200
+        }
+      ],
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr",
+                "objectives",
+                "get"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "okr",
+                "objective.key_results",
+                "list"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "okr",
+                "+progress-list"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr",
+                "objectives",
+                "get"
+              ],
+              "flags": [
+                "--as",
+                "--objective-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr",
+                "objective.key_results",
+                "list"
+              ],
+              "flags": [
+                "--as",
+                "--objective-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr",
+                "+progress-list"
+              ],
+              "flags": [
+                "--as",
+                "--target-id",
+                "--target-type"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr",
+                "+progress-list"
+              ],
+              "flags": [
+                "--as",
+                "--target-id",
+                "--target-type"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 52.99507233398617,
+      "verification_seconds": 0.11389012497966178,
+      "api_calls": 11,
+      "retries": null,
+      "command_executions": 10
+    },
+    {
+      "task_id": "okr-dev-01",
+      "section": "okr",
+      "trial": 0,
+      "arm": "official",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 170150,
+        "cached_input_tokens": 141056,
+        "output_tokens": 531,
+        "total_tokens": 170681
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 170150,
+        "cached_input_tokens": 141056,
+        "output_tokens": 531,
+        "total_tokens": 170681
+      },
+      "verification_failures": [],
+      "api_request_trace": [
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "key_results_all",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "objective",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "progress_72002",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "progress_72001",
+          "status": 200
+        }
+      ],
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 127
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr",
+                "objectives",
+                "get"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr",
+                "objective.key_results",
+                "list"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr",
+                "objective.key_results",
+                "list"
+              ],
+              "flags": [
+                "--as",
+                "--objective-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr",
+                "objectives",
+                "get"
+              ],
+              "flags": [
+                "--as",
+                "--objective-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr",
+                "+progress-list"
+              ],
+              "flags": [
+                "--as",
+                "--target-id",
+                "--target-type"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr",
+                "+progress-list"
+              ],
+              "flags": [
+                "--as",
+                "--target-id",
+                "--target-type"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 54.56703637499595,
+      "verification_seconds": 0.049175583000760525,
+      "api_calls": 10,
+      "retries": null,
+      "command_executions": 12
+    },
+    {
+      "task_id": "okr-dev-01",
+      "section": "okr",
+      "trial": 1,
+      "arm": "official",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 175039,
+        "cached_input_tokens": 144896,
+        "output_tokens": 542,
+        "total_tokens": 175581
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 175039,
+        "cached_input_tokens": 144896,
+        "output_tokens": 542,
+        "total_tokens": 175581
+      },
+      "verification_failures": [],
+      "api_request_trace": [
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "key_results_all",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "objective",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "progress_72002",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "progress_72001",
+          "status": 200
+        }
+      ],
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 127
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr",
+                "objectives",
+                "get"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr",
+                "objective.key_results",
+                "list"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr",
+                "objective.key_results",
+                "list"
+              ],
+              "flags": [
+                "--as",
+                "--objective-id",
+                "--page-size"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr",
+                "objectives",
+                "get"
+              ],
+              "flags": [
+                "--as",
+                "--objective-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr",
+                "+progress-list"
+              ],
+              "flags": [
+                "--as",
+                "--target-id",
+                "--target-type"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "okr",
+                "+progress-list"
+              ],
+              "flags": [
+                "--as",
+                "--target-id",
+                "--target-type"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 55.39827249999507,
+      "verification_seconds": 0.040442541998345405,
+      "api_calls": 10,
+      "retries": null,
+      "command_executions": 13
+    }
+  ],
+  "groups": [
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 252581,
+      "tokens_per_success": 84193.66666666667,
+      "token_distribution": {
+        "min": 83975,
+        "median": 84293,
+        "max": 84313,
+        "stdev": 189.6347366210456
+      },
+      "latency_median_seconds": 41.044359166000504,
+      "api_calls": 24,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 508371,
+      "tokens_per_success": 169457.0,
+      "token_distribution": {
+        "min": 162109,
+        "median": 170681,
+        "max": 175581,
+        "stdev": 6818.894925132664
+      },
+      "latency_median_seconds": 55.39827249999507,
+      "api_calls": 30,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "official_concise",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 360777,
+      "tokens_per_success": 120259.0,
+      "token_distribution": {
+        "min": 90926,
+        "median": 134602,
+        "max": 135249,
+        "stdev": 25405.182916090173
+      },
+      "latency_median_seconds": 52.99507233398617,
+      "api_calls": 31,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "section",
+      "name": "okr",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 252581,
+      "tokens_per_success": 84193.66666666667,
+      "token_distribution": {
+        "min": 83975,
+        "median": 84293,
+        "max": 84313,
+        "stdev": 189.6347366210456
+      },
+      "latency_median_seconds": 41.044359166000504,
+      "api_calls": 24,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "section",
+      "name": "okr",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 508371,
+      "tokens_per_success": 169457.0,
+      "token_distribution": {
+        "min": 162109,
+        "median": 170681,
+        "max": 175581,
+        "stdev": 6818.894925132664
+      },
+      "latency_median_seconds": 55.39827249999507,
+      "api_calls": 30,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "section",
+      "name": "okr",
+      "arm": "official_concise",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 360777,
+      "tokens_per_success": 120259.0,
+      "token_distribution": {
+        "min": 90926,
+        "median": 134602,
+        "max": 135249,
+        "stdev": 25405.182916090173
+      },
+      "latency_median_seconds": 52.99507233398617,
+      "api_calls": 31,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "task_id",
+      "name": "okr-dev-01",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 252581,
+      "tokens_per_success": 84193.66666666667,
+      "token_distribution": {
+        "min": 83975,
+        "median": 84293,
+        "max": 84313,
+        "stdev": 189.6347366210456
+      },
+      "latency_median_seconds": 41.044359166000504,
+      "api_calls": 24,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "task_id",
+      "name": "okr-dev-01",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 508371,
+      "tokens_per_success": 169457.0,
+      "token_distribution": {
+        "min": 162109,
+        "median": 170681,
+        "max": 175581,
+        "stdev": 6818.894925132664
+      },
+      "latency_median_seconds": 55.39827249999507,
+      "api_calls": 30,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "task_id",
+      "name": "okr-dev-01",
+      "arm": "official_concise",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 360777,
+      "tokens_per_success": 120259.0,
+      "token_distribution": {
+        "min": 90926,
+        "median": 134602,
+        "max": 135249,
+        "stdev": 25405.182916090173
+      },
+      "latency_median_seconds": 52.99507233398617,
+      "api_calls": 31,
+      "retries": null,
+      "failure_categories": {}
+    }
+  ],
+  "matched_success": [
+    {
+      "baseline": "official",
+      "pairs": [
+        {
+          "task_id": "okr-dev-01",
+          "trial": 0,
+          "baseline_tokens": 170681,
+          "next_tokens": 84293
+        },
+        {
+          "task_id": "okr-dev-01",
+          "trial": 2,
+          "baseline_tokens": 162109,
+          "next_tokens": 83975
+        },
+        {
+          "task_id": "okr-dev-01",
+          "trial": 1,
+          "baseline_tokens": 175581,
+          "next_tokens": 84313
+        }
+      ]
+    },
+    {
+      "baseline": "official_concise",
+      "pairs": [
+        {
+          "task_id": "okr-dev-01",
+          "trial": 0,
+          "baseline_tokens": 134602,
+          "next_tokens": 84293
+        },
+        {
+          "task_id": "okr-dev-01",
+          "trial": 2,
+          "baseline_tokens": 135249,
+          "next_tokens": 83975
+        },
+        {
+          "task_id": "okr-dev-01",
+          "trial": 1,
+          "baseline_tokens": 90926,
+          "next_tokens": 84313
+        }
+      ]
+    }
+  ]
+}
