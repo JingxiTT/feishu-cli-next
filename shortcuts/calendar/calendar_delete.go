@@ -405,6 +405,7 @@ func resolveCalendarEventOrMaster(runtime *common.RuntimeContext, calendarID, ev
 	// than a master. ensureMasterEvent still does the real master GET when
 	// downstream needs the master's stored recurrence.
 	shadow := *master
+	shadow.inferred = true
 	shadow.EventID = eventID
 	// 根据eventID的originalTime对齐shadow的StartTime和EndTime
 	if originalTime, ok := parseInstanceOriginalTime(eventID); ok &&

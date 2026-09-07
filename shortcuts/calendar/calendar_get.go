@@ -76,6 +76,8 @@ type calendarEventCheckIn struct {
 
 // calendarEvent mirrors the event object inside the API response.
 type calendarEvent struct {
+	// inferred marks a master-derived instance, not an observed occurrence.
+	inferred            bool
 	EventID             string                    `json:"event_id,omitempty"`
 	OrganizerCalendarID string                    `json:"organizer_calendar_id,omitempty"`
 	Summary             string                    `json:"summary,omitempty"`

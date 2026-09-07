@@ -392,6 +392,20 @@ func executeCalendarUpdate(ctx context.Context, runtime *common.RuntimeContext) 
 	}
 	switch scope {
 	case applyToSingle:
+		if calendarUpdateUnchanged(runtime, current, eventID) {
+			event, err := buildCalendarEventOutput(current)
+			if err != nil {
+				return err
+			}
+			result := map[string]interface{}{
+				"calendar_id": calendarID, "apply_to": applyToSingle,
+				"no_op": true, "updated_event": calendarUpdateResult(eventID, event, 0, 0),
+			}
+			runtime.OutFormat(result, nil, func(w io.Writer) {
+				fmt.Fprintln(w, "Event already matches requested fields; no update sent")
+			})
+			return nil
+		}
 		return executeCalendarUpdateSingle(ctx, runtime, calendarID, eventID)
 	case applyToAll:
 		return executeCalendarUpdateAll(ctx, runtime, calendarID, current, eventID)
@@ -492,4 +506,49 @@ func eventTimeAsMap(t *calendarEventTime) map[string]interface{} {
 		m["timezone"] = t.Timezone
 	}
 	return m
+}
+
+// calendarUpdateUnchanged compares only exact replacements against the already
+// fetched occurrence. Explicit clears, attendee effects and explicit notification
+// requests retain their own semantics. A master fallback is not occurrence proof.
+// This read does not provide a conditional-write or concurrency guarantee.
+func calendarUpdateUnchanged(runtime *common.RuntimeContext, current *calendarEvent, eventID string) bool {
+	if current == nil || current.inferred || current.EventID != eventID ||
+		strings.TrimSpace(runtime.Str("add-attendee-ids")) != "" ||
+		strings.TrimSpace(runtime.Str("remove-attendee-ids")) != "" ||
+		(runtime.Cmd.Flags().Changed("notify") && runtime.Bool("notify")) {
+		return false
+	}
+	body, fields, err := buildCalendarUpdateEventData(runtime)
+	if err != nil || !fields {
+		return false
+	}
+	for key, value := range body {
+		switch key {
+		case "need_notification":
+		case "summary":
+			if value == "" || value != current.Summary {
+				return false
+			}
+		case "description_rich":
+			if value == "" || value != current.DescriptionRich {
+				return false
+			}
+		case "recurrence":
+			if value == "" || value != current.Recurrence {
+				return false
+			}
+		case "start_time":
+			if current.StartTime == nil || current.StartTime.Date != "" || value.(map[string]string)["timestamp"] != current.StartTime.Timestamp {
+				return false
+			}
+		case "end_time":
+			if current.EndTime == nil || current.EndTime.Date != "" || value.(map[string]string)["timestamp"] != current.EndTime.Timestamp {
+				return false
+			}
+		default:
+			return false
+		}
+	}
+	return true
 }
