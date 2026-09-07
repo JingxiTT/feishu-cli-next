@@ -355,7 +355,11 @@ func buildMethodCommand(ctx context.Context, f *cmdutil.Factory, spec methodComm
 	applyGroupedUsage(cmd)
 
 	cmdutil.SetTips(cmd, m.Tips)
-	cmdutil.SetRisk(cmd, spec.risk)
+	risk := spec.risk
+	if f.EnableAgentAttempts && knownGeneratedRead(spec.servicePath, m) {
+		risk = cmdutil.RiskRead
+	}
+	cmdutil.SetRisk(cmd, risk)
 	if spec.restricts {
 		cmdutil.SetSupportedIdentities(cmd, spec.identities)
 	}
@@ -434,12 +438,8 @@ func serviceMethodRun(opts *ServiceMethodOptions) error {
 	// These frozen POST methods carry write risk, but their domain contracts
 	// only query records. Keep the catalog intact and declare
 	// only the exact generated request, never arbitrary raw API input.
-	if f.EnableAgentAttempts && request.Method == "POST" {
-		attendanceRead := opts.Method.ID == "user_task.query" && opts.ServicePath == "/open-apis/attendance/v1" && request.URL == "/open-apis/attendance/v1/user_tasks/query"
-		approvalRead := opts.Method.ID == "approvals.search" && opts.ServicePath == "/open-apis/approval/v4" && request.URL == "/open-apis/approval/v4/approvals/search_launchable"
-		if attendanceRead || approvalRead {
-			callCtx = cmdutil.WithReadOnlyRequest(callCtx, request.Method, request.URL)
-		}
+	if f.EnableAgentAttempts && knownGeneratedRead(opts.ServicePath, opts.Method) && request.Method == opts.Method.HTTPMethod && request.URL == opts.ServicePath+"/"+opts.Method.Path {
+		callCtx = cmdutil.WithReadOnlyRequest(callCtx, request.Method, request.URL)
 	}
 
 	if opts.PageAll {

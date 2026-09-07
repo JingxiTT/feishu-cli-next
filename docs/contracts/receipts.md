@@ -119,8 +119,10 @@ mark an individual domain-known read with
 only the exact method and URL path; other requests retain normal journaling.
 Generated Attendance `user_tasks query` and Approval `approvals search` declare
 their exact POST reads this way: their scopes and endpoint schemas establish
-query-only semantics despite the frozen catalog's write risk. The catalog stays
-unchanged; partial Attendance employee coverage fields remain native read data.
+query-only semantics despite the frozen catalog's write risk. In agent mode,
+their command risk annotations are read, enabling the verified read-artifact
+pipeline. The catalog and legacy command annotations stay unchanged; partial
+Attendance employee coverage fields remain native read data.
 It preserves cancellation and command risk, and must never be derived from
 arbitrary raw API input or request content. Conversely,
 `common.WithMutationRequest(ctx, method, apiPath)` identifies an exact known
