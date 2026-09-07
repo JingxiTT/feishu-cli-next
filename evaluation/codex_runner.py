@@ -189,7 +189,11 @@ def run_agent(request, codex, auth_home, expected_version, fixture_env=None):
         (workspace / directory).mkdir(exist_ok=True)
     # Both conventional names point to the selected arm, so embedded official examples work.
     for name in ("lark-cli", "feishu-cli-next"):
-        (workspace / "bin" / name).symlink_to(request["cli"])
+        if os.name == "nt":
+            # Native Windows aliases must not require Developer Mode symlink rights.
+            shutil.copyfile(request["cli"], workspace / "bin" / (name + ".exe"))
+        else:
+            (workspace / "bin" / name).symlink_to(request["cli"])
     shutil.copytree(Path(request["skill"]).parent, workspace / "guidance")
     # Frozen official distributions use cross-skill relative references (including
     # compatibility entries). Make those files available without injecting them.

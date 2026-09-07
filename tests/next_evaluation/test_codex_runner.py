@@ -1,5 +1,6 @@
 import importlib.util
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -87,21 +88,20 @@ class CodexAdapterProcessTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root / "feishu-config").mkdir()
-            fake_cli = root / "cli"
-            fake_cli.write_text('''#!/usr/bin/python3
-import json, sys
+            fake_cli = root / "cli.py"
+            fake_cli.write_text('''import json, sys
 assert sys.argv[1:] == ['auth','status','--json']
 print(json.dumps({'ok':False,'error':{'subtype':'not_configured'}}),file=sys.stderr)
 sys.exit(3)
 ''')
-            fake_cli.chmod(0o755)
             task = json.loads((ROOT / "evaluation/tasks.foundation.json").read_text())["tasks"][0]
             request = {"workspace": str(root), "cli": str(fake_cli), "expected": task["expected"], "claimed_success": True}
             for correct_answer, mutation, expected in ((True, False, True), (False, False, False), (True, True, False)):
                 (root / "answer.json").write_text(json.dumps(task["expected"]["answer"] if correct_answer else {"configured": True}))
                 if mutation:
                     (root / "feishu-config/profile.json").write_text('{}')
-                result = subprocess.run([sys.executable, str(ROOT / "evaluation/foundation_verifier.py")],
+                result = subprocess.run([sys.executable, str(ROOT / "tests/next_evaluation/python_fixture_entry.py"),
+                                         "--entry", str(ROOT / "evaluation/foundation_verifier.py"), "--fixture", str(fake_cli)],
                                         input=json.dumps(request), capture_output=True, text=True, timeout=10)
                 self.assertEqual(json.loads(result.stdout)["success"], expected)
 
@@ -113,9 +113,8 @@ sys.exit(3)
             guidance = root / "skill"
             guidance.mkdir()
             (guidance / "SKILL.md").write_text("Synthetic test guidance")
-            fake = root / "codex"
-            fake.write_text('''#!/usr/bin/python3
-import json, pathlib, sys, os
+            fake = root / "codex.py"
+            fake.write_text('''import json, pathlib, sys, os
 if '--version' in sys.argv:
  print('codex-cli 0.146.0'); sys.exit(0)
 assert '--ignore-user-config' in sys.argv
@@ -129,12 +128,12 @@ pathlib.Path(sys.argv[sys.argv.index('--output-last-message')+1]).write_text('{"
 print(json.dumps({'type':'turn.started'}))
 print(json.dumps({'type':'turn.completed','usage':{'input_tokens':200,'cached_input_tokens':80,'output_tokens':30}}))
 ''')
-            fake.chmod(0o755)
             request = {"workspace": str(workspace), "cli": str(fake), "skill": str(guidance / "SKILL.md"),
                        "prompt": "Inspect the synthetic config.", "settings": {"backend": "offline-foundation-v1",
                        "model": "synthetic-model", "tokenizer": "provider-undisclosed", "reasoning": "high",
                        "budget": {"timeout_seconds": 5}}, "fixture": {"answer_schema": {"type": "object"}}}
-            process = subprocess.run([sys.executable, str(ROOT / "evaluation/codex_runner.py"),
+            process = subprocess.run([sys.executable, str(ROOT / "tests/next_evaluation/python_fixture_entry.py"),
+                                      "--entry", str(ROOT / "evaluation/codex_runner.py"), "--fixture", str(fake), "--",
                                       "--codex", str(fake), "--auth-home", str(root / "auth")],
                                      input=json.dumps(request), capture_output=True, text=True, timeout=15)
             self.assertEqual(process.returncode, 0, process.stderr)
@@ -142,8 +141,11 @@ print(json.dumps({'type':'turn.completed','usage':{'input_tokens':200,'cached_in
             self.assertTrue(result["accounting_complete"])
             self.assertEqual(result["turns"][0]["cached_input_tokens"], 80)
             self.assertTrue((workspace / "answer.json").is_file())
-            self.assertEqual((workspace / "bin/lark-cli").resolve(), fake.resolve())
-            self.assertEqual((workspace / "bin/feishu-cli-next").resolve(), fake.resolve())
+            for name in ("lark-cli", "feishu-cli-next"):
+                alias = workspace / "bin" / (name + ".exe" if os.name == "nt" else name)
+                self.assertEqual(alias.read_bytes(), fake.read_bytes())
+                if os.name != "nt":
+                    self.assertEqual(alias.resolve(), fake.resolve())
             self.assertNotIn("Synthetic test guidance", process.stdout)
 
 
