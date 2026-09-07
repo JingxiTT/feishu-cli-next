@@ -176,11 +176,39 @@ def run_one(config, task, trial, arm):
         return {"task_id": task["id"], "section": task["section"], "trial": trial, "arm": arm,
                 "success": verified and code == 0, "outcome_inconclusive": inconclusive, "usage": usage, "categories": categories,
                 "known_usage": known_usage,
+                "verification_failures": sanitized_verification_failures(verification.get("verification_failures")),
+                "api_request_trace": sanitized_api_trace(payload.get("api_request_trace"), task),
                 "control_trace": sanitized_trace(payload.get("control_trace")),
                 "usage_granularity": payload.get("usage_granularity") if payload.get("usage_granularity") in ("model_turn", "codex_user_turn") else None,
                 "runner_exit": code, "verifier_exit": verify_code,
                 "latency_seconds": elapsed, "verification_seconds": verify_elapsed, **metrics}
 
+
+
+def sanitized_verification_failures(values):
+    allowed = {"answer_mismatch", "scenario_mismatch", "missing_request_evidence", "request_outside_fixture",
+               "required_reads_missing", "config_changed", "invalid_verification_input"}
+    return values if isinstance(values, list) and all(isinstance(value, str) and value in allowed for value in values) else None
+
+
+def sanitized_api_trace(values, task):
+    section = task.get("fixture", {}).get("runtime_section")
+    if section is None or not isinstance(values, list):
+        return None
+    from read_fixture import load_runtime
+    try:
+        allowed = {route["id"] for route in load_runtime(section)["routes"]} | {"rejected", "fixture_error"}
+    except (OSError, ValueError, KeyError, TypeError):
+        return None
+    result = []
+    for value in values:
+        if not isinstance(value, dict) or value.get("route") not in allowed or value.get("method") not in ("GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"):
+            return None
+        status = value.get("status")
+        if type(status) is not int or not 100 <= status <= 599:
+            return None
+        result.append({"method": value["method"], "route": value["route"], "status": status})
+    return result
 
 def sanitized_trace(trace):
     """Validate even adapter-provided trace strings against the public vocabulary."""

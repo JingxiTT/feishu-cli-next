@@ -48,7 +48,9 @@ class ReadFixtureTests(unittest.TestCase):
             answer = runtime['task']['expected']['answer']
             (workspace / 'answer.json').write_text(json.dumps(answer))
             fixture.write_receipt(workspace)
-            self.assertFalse(verify(request))
+            failures = []
+            self.assertFalse(verify(request, failures))
+            self.assertEqual(failures, ["missing_request_evidence"])
             fixture.records.append({'route': 'application_slash_command_list', 'status': 200, 'returned_ids': []})
             fixture.write_receipt(workspace)
             self.assertTrue(verify(request))
@@ -58,10 +60,20 @@ class ReadFixtureTests(unittest.TestCase):
             self.assertTrue(verify(request), 'local attempt receipt is not auth configuration')
             config = workspace / 'feishu-config/profile.json'
             config.write_text('{}')
-            self.assertFalse(verify(request), 'actual config changes stay forbidden')
+            failures = []
+            self.assertFalse(verify(request, failures), 'actual config changes stay forbidden')
+            self.assertEqual(failures, ['config_changed'])
             config.unlink()
             (workspace / 'answer.json').write_text(json.dumps(dict(answer, enabled_command='wrong')))
-            self.assertFalse(verify(request))
+            failures = []
+            self.assertFalse(verify(request, failures))
+            self.assertEqual(failures, ['answer_mismatch'])
+            (workspace / 'answer.json').write_text(json.dumps(answer))
+            fixture.records.append({'route': 'rejected', 'status': 403})
+            fixture.write_receipt(workspace)
+            failures = []
+            self.assertFalse(verify(request, failures))
+            self.assertEqual(failures, ['request_outside_fixture'])
             (workspace / 'answer.json').write_text(json.dumps(answer))
             fixture.records.append({'route': 'rejected', 'status': 403, 'returned_ids': []})
             fixture.write_receipt(workspace)

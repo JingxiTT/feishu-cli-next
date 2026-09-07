@@ -373,3 +373,10 @@ scaling-coverage review. Files remain unchanged and no held-out trial ran, but
 complete blinding can no longer be claimed for the affected examples. See
 [evidence/held-out-exposure.json](evidence/held-out-exposure.json). They require
 independent blind replacement after product freeze before release evaluation.
+
+Future read-only runs retain only allowlisted route IDs, HTTP methods/statuses and
+fixed verifier failure codes. These distinguish answer mismatch, missing read
+proof, a request outside the fixture, and forbidden configuration changes without
+retaining paths, queries, payloads or content. The earlier frozen `cc745f5` runs
+lack these diagnostics; failed raw-API attempts there cannot be attributed to a
+specific route or product defect retrospectively.

@@ -75,6 +75,14 @@ class AccountingTests(unittest.TestCase):
         self.assertFalse(result["usage_complete"])
         self.assertIsNone(result["tokens_per_success"])
 
+    def test_verifier_diagnostics_never_publish_free_form_content(self):
+        self.assertEqual(harness.sanitized_verification_failures(["answer_mismatch"]), ["answer_mismatch"])
+        self.assertIsNone(harness.sanitized_verification_failures(["private answer text"]))
+        task = {"fixture": {"runtime_section": "wiki"}}
+        event = {"method": "GET", "route": "rejected", "status": 403, "payload": "private"}
+        self.assertEqual(harness.sanitized_api_trace([event], task), [{"method": "GET", "route": "rejected", "status": 403}])
+        self.assertIsNone(harness.sanitized_api_trace([{**event, "route": "private path"}], task))
+
     def test_trace_revalidates_all_persisted_names(self):
         trace = [{"choices": [{"kind": "cli", "command": ["docs", "+fetch"], "flags": ["--doc", "--help"]}], "exit_code": 0, "private_extra": "not retained"}]
         result = harness.sanitized_trace(trace)

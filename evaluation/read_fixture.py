@@ -62,7 +62,11 @@ def dispatcher(runtime):
     return dispatch
 
 
-def verify(request):
+def verify(request, failures=None):
+    def fail(reason):
+        if failures is not None:
+            failures.append(reason)
+        return False
     runtime = load_runtime(request["fixture"]["runtime_section"])
     workspace = Path(request["workspace"])
     expected = request["expected"]
@@ -70,26 +74,28 @@ def verify(request):
     desired = json.loads(json.dumps(expected["answer"]))
     for key in expected.get("unordered_answer_paths", []):
         if not isinstance(answer.get(key), list):
-            return False
+            return fail("answer_mismatch")
         answer[key] = sorted(answer[key], key=lambda item: json.dumps(item, sort_keys=True))
         desired[key] = sorted(desired[key], key=lambda item: json.dumps(item, sort_keys=True))
     if not typed_equal(answer, desired):
-        return False
+        return fail("answer_mismatch")
     receipt = json.loads((workspace / "backend-receipt.json").read_text(encoding="utf-8"))
     if receipt.get("scenario") != runtime["task"]["fixture"]["scenario"]:
-        return False
+        return fail("scenario_mismatch")
     records = receipt.get("requests")
     if not isinstance(records, list) or not records:
-        return False
+        return fail("missing_request_evidence")
     allowed = {route["id"] for route in runtime["routes"]}
     if any(record.get("status") != 200 or record.get("route") not in allowed for record in records):
-        return False
+        return fail("request_outside_fixture")
     seen = {record["route"] for record in records}
     if not all(seen.intersection(group) for group in expected["required_reads"]):
-        return False
+        return fail("required_reads_missing")
     # Read-oriented raw POSTs can create conservative local attempt journals.
     # These are not auth/profile changes or remote mutations; route receipts decide
     # remote behavior. Keep every other configuration write forbidden.
     config = workspace / "feishu-config"
-    return all(re.fullmatch(r"next/receipts/[0-9a-f]{32}\.json(?:\.lock)?", path.relative_to(config).as_posix())
+    unchanged = all(re.fullmatch(r"next/receipts/[0-9a-f]{32}\.json(?:\.lock)?", path.relative_to(config).as_posix())
                for path in config.rglob("*") if path.is_file())
+
+    return unchanged or fail("config_changed")

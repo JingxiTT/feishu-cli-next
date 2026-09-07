@@ -5,8 +5,10 @@ import sys
 from read_fixture import verify
 
 if __name__ == "__main__":
+    failures = []
     try:
-        success = verify(json.load(sys.stdin))
+        success = verify(json.load(sys.stdin), failures)
     except (ValueError, KeyError, TypeError, AttributeError, OSError):
         success = False
-    print(json.dumps({"success": success}))
+        failures.append("invalid_verification_input")
+    print(json.dumps({"success": success, "verification_failures": failures}))

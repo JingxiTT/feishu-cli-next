@@ -185,13 +185,24 @@ def run(request, codex, auth_home, expected_version):
             if runtime["task"]["fixture"]["scenario"] != request["fixture"]["scenario"]:
                 raise ValueError("runtime scenario mismatch")
             dispatch = dispatcher(runtime)
-        with SectionFixture(request["fixture"]["scenario"], dispatch) as fixture:
-            try:
+        fixture = SectionFixture(request["fixture"]["scenario"], dispatch)
+        response, code = None, 1
+        try:
+            with fixture:
                 response, code = run_agent(request, codex, auth_home, expected_version, fixture.environment())
-                response["api_calls"] = len(fixture.receipt()["requests"])
-                return response, code
-            finally:
-                fixture.write_receipt(request["workspace"])
+        except Exception:
+            if response is None:
+                raise
+            code = 1
+        try:
+            records = fixture.receipt()["requests"]
+            response["api_calls"] = len(records)
+            if backend == "synthetic-read-v1":
+                response["api_request_trace"] = [{key: record.get(key) for key in ("method", "route", "status")} for record in records]
+            fixture.write_receipt(request["workspace"])
+        except Exception:
+            code = 1
+        return response, code
     if backend != "offline-foundation-v1":
         raise ValueError("unsupported evaluation backend")
     return run_agent(request, codex, auth_home, expected_version)
