@@ -35,7 +35,7 @@ quality gate pass, with explicit skips and revision boundaries. Read-only live
 checks verified the current user; private content fixtures are not yet verified.
 The [foundation model report](../evaluation/evidence/foundation/REPORT.md)
 records 18/18 compatible trials, actual token usage, a task-level regression,
-earlier unknown-cost failures and trace limitations. Held-out tasks are untouched.
+earlier unknown-cost failures and trace limitations. Held-out trials have not run.
 
 P2 developed every independent inventory section concurrently under
 [section ownership](sections/OWNERSHIP.md). All original domain offline suites
@@ -62,7 +62,9 @@ keyword discovery; it has no measured improvement claim yet. A frozen 81-trial
 development batch across nine additional read-only sections
 is running separately; remaining section adapters are undergoing controlled
 verification. Its candidate is recorded independently of newer product fixes.
-Held-out tasks remain untouched.
+Held-out trials have not run. A coordinator file search exposed fragments of the
+Base and Sheets held-out prompts and one size field; the evaluation owner must
+record that exposure and arrange independent replacements before final testing.
 
 [Live Contact evidence](sections/contact-live-evidence.json) verifies the current
 account and the sequential user reads. The full test failed on bot search; a
