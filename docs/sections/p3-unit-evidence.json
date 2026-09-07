@@ -1,31 +1,109 @@
 {
   "schema_version": 1,
+  "section": "integration",
+  "revision": "74b6b5346ca4efbd03564045f4f3e01746f18878",
+  "source": "immutable detached local clone with real Git metadata; no origin; no dirty/untracked files copied",
+  "environment": "Committed scripts.next_test.isolated_env with independent isolated HOME/config/temp per check, no customer credentials, cached Go modules/build cache. Public Go module metadata enabled only for pinned golangci and go-licenses commands.",
+  "metadata_sha256": "b5375251ff1f0a5939925587b0d514669a748135cde36c56f1c8ab5f5fe266c8",
+  "binary_sha256": "8bf537f33aa2e3870bdd34f6e03fffb2ce04c37d7beef63132dab4425432364d",
+  "release_accepted": false,
   "gate": "P3 complete unit race regression",
-  "revision": "32183054b4cf47e3a42aee1960e2c5ccb951f95c",
-  "source": "git archive of the exact committed revision; no dirty or untracked files copied; empty isolated git init only for repo-root discovery",
-  "environment": "committed scripts.next_test.isolated_env; isolated HOME/config/temp, external proxies blocked, cached Go modules/build cache only",
+  "status": "fail",
   "race_enabled": true,
   "commands": [
     {
-      "name": "make",
+      "name": "build",
       "command": [
         "make",
-        "unit-test",
-        "RACE_FLAG=-race -json"
+        "build"
       ],
       "exit_code": 0,
-      "duration_seconds": 150.597,
+      "status": "pass",
+      "duration_seconds": 2.11,
+      "public_module_metadata_enabled": false,
       "tests": {
-        "pass": 18175,
+        "pass": 0,
         "fail": 0,
+        "skip": 0
+      },
+      "packages": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "failures": [],
+      "skipped_tests": [],
+      "race_detected": false,
+      "log": ".tmp/next-evidence/p3-final-74b6b53-build.log",
+      "log_sha256": "634bbf8fb155e50b237a6319186d942507c20efe656ec01ea6ae1b2e25d300df"
+    },
+    {
+      "name": "unit",
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-race",
+        "-gcflags=all=-N -l",
+        "-count=1",
+        ".",
+        "./cmd/...",
+        "./internal/...",
+        "./shortcuts/...",
+        "./extension/...",
+        "./errs/...",
+        "./events/..."
+      ],
+      "exit_code": 1,
+      "status": "fail",
+      "duration_seconds": 258.534,
+      "public_module_metadata_enabled": false,
+      "tests": {
+        "pass": 18597,
+        "fail": 7,
         "skip": 12
       },
       "packages": {
-        "pass": 133,
-        "fail": 0,
+        "pass": 142,
+        "fail": 2,
         "skip": 13
       },
-      "failures": [],
+      "failures": [
+        {
+          "package": "github.com/larksuite/cli",
+          "test": "TestEmbeddedDocsAffordanceComplementsShortcutMetadata/+create"
+        },
+        {
+          "package": "github.com/larksuite/cli",
+          "test": "TestEmbeddedDocsAffordanceComplementsShortcutMetadata/+fetch"
+        },
+        {
+          "package": "github.com/larksuite/cli",
+          "test": "TestEmbeddedDocsAffordanceComplementsShortcutMetadata/+update"
+        },
+        {
+          "package": "github.com/larksuite/cli",
+          "test": "TestEmbeddedDocsAffordanceComplementsShortcutMetadata/+history-revert"
+        },
+        {
+          "package": "github.com/larksuite/cli",
+          "test": "TestEmbeddedDocsAffordanceComplementsShortcutMetadata"
+        },
+        {
+          "package": "github.com/larksuite/cli",
+          "test": "TestInstallWizardUsesRegularSkillsRoute"
+        },
+        {
+          "package": "github.com/larksuite/cli"
+        },
+        {
+          "package": "github.com/larksuite/cli/internal/binding",
+          "test": "TestResolveExecRef_EmptyStdout"
+        },
+        {
+          "package": "github.com/larksuite/cli/internal/binding"
+        }
+      ],
       "skipped_tests": [
         {
           "package": "github.com/larksuite/cli/cmd/update",
@@ -89,57 +167,93 @@
         }
       ],
       "race_detected": false,
-      "log": ".tmp/next-evidence/p3-full-unit-rerun-make.log",
-      "log_sha256": "4aeeb60b297ce0dd0aa8b82731e0f549bef0e7a52ef422d20e60e820f61abf27"
-    },
-    {
-      "name": "errs-events",
-      "command": [
-        "go",
-        "test",
-        "-json",
-        "-race",
-        "-gcflags=all=-N -l",
-        "-count=1",
-        "./errs/...",
-        "./events/..."
-      ],
-      "exit_code": 0,
-      "duration_seconds": 18.375,
-      "tests": {
-        "pass": 324,
-        "fail": 0,
-        "skip": 0
-      },
-      "packages": {
-        "pass": 10,
-        "fail": 0,
-        "skip": 0
-      },
-      "failures": [],
-      "skipped_tests": [],
-      "race_detected": false,
-      "log": ".tmp/next-evidence/p3-full-unit-rerun-errs-events.log",
-      "log_sha256": "f23ae94dc9c927d29fb4c51b90fc5eeb8eff6c99232125f1748c3b7daab2f4f9"
+      "log": ".tmp/next-evidence/p3-final-74b6b53-unit.log",
+      "log_sha256": "196ca158d7e4a6737e8c84dfae14ac275c1e8b654cceb83b1fc8614481cf3696"
     }
   ],
-  "metadata_sha256": "b5375251ff1f0a5939925587b0d514669a748135cde36c56f1c8ab5f5fe266c8",
-  "status": "pass",
-  "coverage_note": "The Makefile gate retains default race and gcflags; -json only adds machine-readable test evidence. errs/events are tested separately because the Makefile does not include them. This report establishes isolated unit regression only, not live or release acceptance.",
-  "section": "integration",
-  "release_accepted": false,
-  "counting_note": "Test counts include Go subtests. Package skip events identify packages without test files; the12 explicitly skipped tests are listed with reasons.",
-  "prior_attempt": {
-    "report": ".tmp/next-evidence/p3-full-unit-report.json",
-    "status": "fail",
-    "reason": "The source archive initially had no .git directory; two qualitygate/deptest tests require git rev-parse --show-toplevel. The rerun uses the same committed source plus an empty git init, without remotes, templates, inherited configuration, hooks, or a synthetic commit."
-  },
   "totals": {
-    "passed_tests": 18499,
-    "failed_tests": 0,
+    "passed_tests": 18597,
+    "failed_tests": 7,
     "skipped_tests": 12,
-    "passed_packages": 143,
-    "failed_packages": 0,
+    "passed_packages": 142,
+    "failed_packages": 2,
     "packages_without_tests": 13
-  }
+  },
+  "coverage_note": "Explicit race/gcflags/count=1 package list includes root ., all Makefile unit packages, and errs/events. Source restored frozen metadata through canonical make build. The failed single broad run is retained even when an affected package passes a diagnostic rerun.",
+  "counting_note": "Counts include Go subtests and their parent tests. Skips are never counted as passes; package skip events identify packages without test files.",
+  "failure_analysis": [
+    {
+      "package": "github.com/larksuite/cli",
+      "cause": "Root Docs affordance expected tips differ from the committed guidance for +create, +fetch, +update, and +history-revert (four subtests and parent). Installer asset test still expects a hardcoded production regular skills URL."
+    },
+    {
+      "package": "github.com/larksuite/cli/internal/binding",
+      "cause": "TestResolveExecRef_EmptyStdout exceeded the existing 10000ms provider timeout during concurrent broad race/static checks; isolated diagnostic rerun is separate evidence."
+    }
+  ],
+  "report": ".tmp/next-evidence/p3-final-74b6b53-report.json",
+  "history": [
+    {
+      "revision": "32183054b4cf47e3a42aee1960e2c5ccb951f95c",
+      "status": "pass",
+      "totals": {
+        "passed_tests": 18499,
+        "failed_tests": 0,
+        "skipped_tests": 12,
+        "passed_packages": 143,
+        "failed_packages": 0,
+        "packages_without_tests": 13
+      },
+      "evidence_commit": "319f91f",
+      "reports": [
+        ".tmp/next-evidence/p3-full-unit-rerun-report.json"
+      ],
+      "coverage_note": "Earlier Makefile plus errs/events race gate omitted root .; no longer represents the complete current candidate.",
+      "prior_attempt": {
+        "report": ".tmp/next-evidence/p3-full-unit-report.json",
+        "status": "fail",
+        "reason": "The source archive initially had no .git directory; two qualitygate/deptest tests require git rev-parse --show-toplevel. The rerun uses the same committed source plus an empty git init, without remotes, templates, inherited configuration, hooks, or a synthetic commit."
+      }
+    }
+  ],
+  "diagnostic_reruns": [
+    {
+      "revision": "74b6b5346ca4efbd03564045f4f3e01746f18878",
+      "report": ".tmp/next-evidence/p3-final-74b6b53-binding-rerun-report.json",
+      "checks": [
+        {
+          "name": "binding",
+          "command": [
+            "go",
+            "test",
+            "-json",
+            "-race",
+            "-gcflags=all=-N -l",
+            "-count=1",
+            "./internal/binding/..."
+          ],
+          "exit_code": 0,
+          "status": "pass",
+          "duration_seconds": 10.603,
+          "public_module_metadata_enabled": false,
+          "tests": {
+            "pass": 141,
+            "fail": 0,
+            "skip": 0
+          },
+          "packages": {
+            "pass": 1,
+            "fail": 0,
+            "skip": 0
+          },
+          "failures": [],
+          "skipped_tests": [],
+          "race_detected": false,
+          "log": ".tmp/next-evidence/p3-final-74b6b53-binding-rerun-binding.log",
+          "log_sha256": "35704d69b0a7d98a605c787fe8566a6f04ed06c96d8eb5d3a8a251c087d6fa08"
+        }
+      ],
+      "note": "Does not change or replace the failed broad gate."
+    }
+  ]
 }

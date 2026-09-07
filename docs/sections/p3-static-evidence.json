@@ -1,0 +1,302 @@
+{
+  "schema_version": 1,
+  "section": "integration",
+  "revision": "74b6b5346ca4efbd03564045f4f3e01746f18878",
+  "source": "immutable detached local clone with real Git metadata; no origin; no dirty/untracked files copied",
+  "environment": "Committed scripts.next_test.isolated_env with independent isolated HOME/config/temp per check, no customer credentials, cached Go modules/build cache. Public Go module metadata enabled only for pinned golangci and go-licenses commands.",
+  "metadata_sha256": "b5375251ff1f0a5939925587b0d514669a748135cde36c56f1c8ab5f5fe266c8",
+  "binary_sha256": "8bf537f33aa2e3870bdd34f6e03fffb2ce04c37d7beef63132dab4425432364d",
+  "release_accepted": false,
+  "gate": "P3 immutable candidate static checks",
+  "status": "pass",
+  "changed_from": "0c1ac75",
+  "commands": [
+    {
+      "name": "tidy",
+      "command": [
+        "go",
+        "mod",
+        "tidy"
+      ],
+      "exit_code": 0,
+      "status": "pass",
+      "duration_seconds": 0.18,
+      "public_module_metadata_enabled": false,
+      "tests": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "packages": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "failures": [],
+      "skipped_tests": [],
+      "race_detected": false,
+      "log": ".tmp/next-evidence/p3-final-74b6b53-tidy.log",
+      "log_sha256": "a310ec980e1dd1f6721096ff3b541e12fdebe0eb86364826dd1131893d959dd9"
+    },
+    {
+      "name": "module-diff",
+      "command": [
+        "git",
+        "diff",
+        "--exit-code",
+        "--",
+        "go.mod",
+        "go.sum"
+      ],
+      "exit_code": 0,
+      "status": "pass",
+      "duration_seconds": 0.071,
+      "public_module_metadata_enabled": false,
+      "tests": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "packages": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "failures": [],
+      "skipped_tests": [],
+      "race_detected": false,
+      "log": ".tmp/next-evidence/p3-final-74b6b53-module-diff.log",
+      "log_sha256": "685f4c353b47726f1b14ef6e88d8674d653fdf62fc98067d6c2087834b19f49e"
+    },
+    {
+      "name": "build",
+      "command": [
+        "make",
+        "build"
+      ],
+      "exit_code": 0,
+      "status": "pass",
+      "duration_seconds": 2.11,
+      "public_module_metadata_enabled": false,
+      "tests": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "packages": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "failures": [],
+      "skipped_tests": [],
+      "race_detected": false,
+      "log": ".tmp/next-evidence/p3-final-74b6b53-build.log",
+      "log_sha256": "634bbf8fb155e50b237a6319186d942507c20efe656ec01ea6ae1b2e25d300df"
+    },
+    {
+      "name": "quality-gate",
+      "command": [
+        "make",
+        "quality-gate",
+        "QUALITY_GATE_CHANGED_FROM=0c1ac75"
+      ],
+      "exit_code": 0,
+      "status": "pass",
+      "duration_seconds": 90.956,
+      "public_module_metadata_enabled": false,
+      "tests": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "packages": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "failures": [],
+      "skipped_tests": [],
+      "race_detected": false,
+      "log": ".tmp/next-evidence/p3-final-74b6b53-quality-gate.log",
+      "log_sha256": "4403df34c903b55445a054c8be501223cd3528fd883353e6ef9e3bb91691b52f"
+    },
+    {
+      "name": "vet",
+      "command": [
+        "make",
+        "vet"
+      ],
+      "exit_code": 0,
+      "status": "pass",
+      "duration_seconds": 21.992,
+      "public_module_metadata_enabled": false,
+      "tests": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "packages": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "failures": [],
+      "skipped_tests": [],
+      "race_detected": false,
+      "log": ".tmp/next-evidence/p3-final-74b6b53-vet.log",
+      "log_sha256": "a4fa2c6fa60dc01356578f479e70e0c8e7044539b1070e8b7e6d198f1d97140e"
+    },
+    {
+      "name": "fmt",
+      "command": [
+        "make",
+        "fmt-check"
+      ],
+      "exit_code": 0,
+      "status": "pass",
+      "duration_seconds": 1.878,
+      "public_module_metadata_enabled": false,
+      "tests": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "packages": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "failures": [],
+      "skipped_tests": [],
+      "race_detected": false,
+      "log": ".tmp/next-evidence/p3-final-74b6b53-fmt.log",
+      "log_sha256": "6dce0fc788bffb78a4b265efd13b1dc2eec9a2f39dfd2cdd4f576aa24ef71c7e"
+    },
+    {
+      "name": "golangci",
+      "command": [
+        "go",
+        "run",
+        "github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.1.6",
+        "run",
+        "--new-from-rev=0c1ac75"
+      ],
+      "exit_code": 0,
+      "status": "pass",
+      "duration_seconds": 106.687,
+      "public_module_metadata_enabled": true,
+      "tests": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "packages": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "failures": [],
+      "skipped_tests": [],
+      "race_detected": false,
+      "log": ".tmp/next-evidence/p3-final-74b6b53-golangci.log",
+      "log_sha256": "d52a09ba559b67324856a8f36d882027449b4e9a924558af304212ba665995cb"
+    },
+    {
+      "name": "sourceguard",
+      "command": [
+        "go",
+        "run",
+        "-C",
+        "lint",
+        ".",
+        "--changed-from",
+        "0c1ac75",
+        ".."
+      ],
+      "exit_code": 0,
+      "status": "pass",
+      "duration_seconds": 65.811,
+      "public_module_metadata_enabled": false,
+      "tests": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "packages": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "failures": [],
+      "skipped_tests": [],
+      "race_detected": false,
+      "log": ".tmp/next-evidence/p3-final-74b6b53-sourceguard.log",
+      "log_sha256": "44fad64af06ce2c9bd473682fadded8868febfedfb19c13e85a98dfcd957846a"
+    },
+    {
+      "name": "lint-unit",
+      "command": [
+        "go",
+        "test",
+        "-C",
+        "lint",
+        "-json",
+        "./...",
+        "-count=1"
+      ],
+      "exit_code": 0,
+      "status": "pass",
+      "duration_seconds": 53.129,
+      "public_module_metadata_enabled": false,
+      "tests": {
+        "pass": 369,
+        "fail": 0,
+        "skip": 0
+      },
+      "packages": {
+        "pass": 3,
+        "fail": 0,
+        "skip": 2
+      },
+      "failures": [],
+      "skipped_tests": [],
+      "race_detected": false,
+      "log": ".tmp/next-evidence/p3-final-74b6b53-lint-unit.log",
+      "log_sha256": "12512498773541032b70c1a24f10a82e94f6ccc47f33cb0e774ba775f91a1e0b"
+    },
+    {
+      "name": "licenses",
+      "command": [
+        "go",
+        "run",
+        "github.com/google/go-licenses/v2@v2.0.1",
+        "check",
+        "./...",
+        "--disallowed_types=forbidden,restricted,reciprocal,unknown"
+      ],
+      "exit_code": 0,
+      "status": "pass",
+      "duration_seconds": 4.527,
+      "public_module_metadata_enabled": true,
+      "tests": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "packages": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "failures": [],
+      "skipped_tests": [],
+      "race_detected": false,
+      "log": ".tmp/next-evidence/p3-final-74b6b53-licenses.log",
+      "log_sha256": "207de927bc423cf014f6aab6c44345ebce9a3b29e811ab09fcd7b28ad632da64"
+    }
+  ],
+  "quality_gate_artifacts": ".tmp/next-evidence/p3-final-74b6b53-quality-artifacts",
+  "coverage_note": "All requested static checks passed at this exact committed revision. Static success does not override the failed root/binding broad unit gate or establish live/model/native platform acceptance.",
+  "report": ".tmp/next-evidence/p3-final-74b6b53-report.json"
+}
