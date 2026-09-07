@@ -14,6 +14,8 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
+	"strconv"
 	"strings"
 	"sync/atomic"
 	"testing"
@@ -42,7 +44,7 @@ func buildHost(t *testing.T) string {
 			t.Fatal(err)
 		}
 		if name == "go.mod" {
-			content = []byte(strings.Replace(string(content), "module github.com/larksuite/cli", "module hostfixture", 1) + "\nrequire github.com/larksuite/cli v0.0.0\nreplace github.com/larksuite/cli => " + root + "\n")
+			content = []byte(strings.Replace(string(content), "module github.com/larksuite/cli", "module hostfixture", 1) + "\nrequire github.com/larksuite/cli v0.0.0\nreplace github.com/larksuite/cli => " + strconv.Quote(filepath.ToSlash(root)) + "\n")
 		}
 		if err := os.WriteFile(filepath.Join(directory, name), content, 0600); err != nil {
 			t.Fatal(err)
@@ -56,6 +58,9 @@ func buildHost(t *testing.T) string {
 		t.Fatal(err)
 	}
 	hostBinary := filepath.Join(directory, "host-cli")
+	if runtime.GOOS == "windows" {
+		hostBinary += ".exe"
+	}
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
 	defer cancel()
 	build := exec.CommandContext(ctx, "go", "build", "-mod=mod", "-o", hostBinary, ".")
