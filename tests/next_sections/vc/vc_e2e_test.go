@@ -141,6 +141,12 @@ func TestVCMutatingWorkflows(t *testing.T) {
 			args := append([]string{"vc"}, tc.args...)
 			args = append(args, "--as", "bot")
 			r := fixture.Run(args...)
+			if tc.name == "invite suggested" {
+				if r.ExitCode != 22 || calls.Load() != 1 || !strings.Contains(r.Stderr, "unknown") || !strings.Contains(r.Stdout, `"ok":false`) || !strings.Contains(r.Stdout, "ou_fixture") {
+					t.Fatalf("unbounded invite coverage calls %d %+v", calls.Load(), r)
+				}
+				return
+			}
 			resultData(t, r)
 			if calls.Load() != 1 || !strings.Contains(r.Stderr, "confirmed_applied") {
 				t.Fatalf("calls %d %+v", calls.Load(), r)
@@ -482,5 +488,17 @@ func TestVCReadIdentityScopeFailure(t *testing.T) {
 	r := f.Run("vc", "+meeting-list-active", "--as", "user")
 	if r.ExitCode != 3 || r.Stdout != "" || calls.Load() != 1 || !strings.Contains(r.Stderr, "vc:meeting.meetingevent:read") || !strings.Contains(r.Stderr, `"missing_scope"`) || strings.Contains(r.Stderr, `"mutation"`) {
 		t.Fatalf("scope %+v calls %d", r, calls.Load())
+	}
+}
+
+func TestVCInviteMissingTargetCannotConfirm(t *testing.T) {
+	var calls atomic.Int32
+	f := nextfixture.NewFixture(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		calls.Add(1)
+		reply(w, map[string]any{"failed_count": 0, "invited_count": 1, "has_more": false, "invite_results": []any{map[string]any{"id": "ou_one", "status": 1}}})
+	}))
+	r := f.Run("vc", "+meeting-invite", "--meeting-id", meetingID, "--type", "SELECTED", "--open-ids", "ou_one,ou_two", "--as", "bot")
+	if r.ExitCode != 22 || calls.Load() != 1 || !strings.Contains(r.Stderr, "unknown") || !strings.Contains(r.Stdout, `"ok":false`) || !strings.Contains(r.Stdout, "ou_one") {
+		t.Fatalf("missing requested invitee calls %d %+v", calls.Load(), r)
 	}
 }

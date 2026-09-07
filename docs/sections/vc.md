@@ -76,7 +76,9 @@ not participant delivery, invitation acceptance or complete workflow success.
 Lost/malformed/202 responses are never automatically replayed; UUID remains the
 caller's optional server idempotency key. VC invitation per-item failure evidence
 requires the shared receipt classifier and remains unknown rather than a claim
-that every recipient was invited. No automatic reconcile or replay was added.
+that every recipient was invited. SELECTED success additionally requires exact
+request/response recipient coverage; ALL_SUGGESTED stays unknown because its
+request does not enumerate the complete target set. No automatic reconcile or replay was added.
 Read batches keep the reference partial-result contract: some per-item errors may
 coexist with `ok:true`; all recording failures return `ok:false` with full results.
 Consumers inspect per-item errors and hints, not only process success.
@@ -99,13 +101,13 @@ The separately selectable `TestVCLivePrivateLifecycle` records a blocked live
 case; a skip never counts as live success.
 
 The completed 2026-09-07 boundary run passed (exit 0), recorded in
-`.tmp/vc-section-final.json`:
+`.tmp/vc-section-invite-proof-final.json`:
 
 | Exact selected command | Passed test events | Failed | Skipped |
 | --- | ---: | ---: | ---: |
 | `go test -json -count=1 -timeout=10m ./shortcuts/vc/... ./events/vc/...` | 482 | 0 | 0 |
 | `go test -json -count=1 -timeout=10m ./tests/cli_e2e/vc -run 'DryRun|Regression'` | 22 | 0 | 0 |
-| `go test -json -count=1 -timeout=10m ./tests/next_sections/vc` | 68 | 0 | 1 live blocker |
+| `go test -json -count=1 -timeout=10m ./tests/next_sections/vc` | 69 | 0 | 1 live blocker |
 
 Additionally, `go test -json -count=1 -timeout=10m ./tests/cli_e2e/vc`
 ran through `scripts/next_test.py`'s `isolated_env`/`run_command` helpers and
@@ -119,7 +121,10 @@ checks remain the coordinator's gate.
 The new per-item invitation regression initially failed with a false
 `confirmed_applied` outcome. The shared receipt owner's narrow typed
 `/vc/v1/bots/invite` classifier makes that regression pass; this section's
-process evidence depends on that shared change. Source reuse leaves domain
+process evidence depends on that shared change. The follow-up proof gate uses
+`1bcdb68` recipient matching and the shared synthetic tenant-query fixture for
+bot artifact binding; an intermediate run exposed that missing fixture route
+before it was supplied. Source reuse leaves domain
 implementation and its existing unit tests unchanged. Owned changes are this
 report, `tests/next_sections/vc/vc_e2e_test.go` and the next-distribution addendum
 to `tests/cli_e2e/vc/coverage.md`.
