@@ -45,17 +45,18 @@ at the decision point.
 
 ## Build
 
-Run `make build` for the canonical local build; it writes `./lark-cli` with
+Run `make build` for the canonical local build; it writes `./feishu-cli-next` with
 version metadata and the embedded service catalog. It, `make vet`,
 `make unit-test`, `make live-skills-test`, and dependent targets first run
-`python3 scripts/fetch_meta.py`, so Python 3 is required. On a clean checkout,
-the ignored `internal/registry/meta_data.json` is absent and the first run needs
-access to `open.feishu.cn`; a valid existing file is reused.
-`LARKSUITE_CLI_REMOTE_META=off` does not disable this build-time fetch.
+`python3 scripts/next_meta.py`, so Python 3 is required. It verifies and restores
+the frozen catalog from `docs/reference/meta_data.json.gz` into the ignored
+`internal/registry/meta_data.json`; this step requires no network. Go dependencies
+may need downloading on the first build. `scripts/fetch_meta.py` remains an
+explicit upstream refresh tool, not the canonical build path.
 `make live-skills-test` requires working `npx` and network access.
 
-If the fetch fails before Go starts, report the missing Python or network
-prerequisite instead of changing product code or generated metadata. `go build .`
+If catalog restoration fails before Go starts, report the missing Python or
+checksum/archive error instead of changing product code or generated metadata. `go build .`
 may compile against the tracked empty fallback metadata, but that is only a
 degraded compile check without the full service catalog.
 
@@ -78,7 +79,8 @@ the domain's `Shortcuts()`; declare risk, identities/scopes, flags, and dry-run.
 
 ## Hard Contracts
 
-Read the [JSON output contract](README.md#json-output-contract) before changing
+Read the [agent output contract](docs/contracts/output.md) and
+[upstream JSON output contract](README.upstream.md#json-output-contract) before changing
 wire output. Read the [source guard guide](lint/README.md) and `.golangci.yml`
 before changing or waiving enforcement.
 
