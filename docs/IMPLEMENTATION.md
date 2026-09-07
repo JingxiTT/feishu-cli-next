@@ -147,7 +147,11 @@ platform/variant archives, local installation/update/removal, and actual Node 16
 runtime tests. The final `8ce0688` refresh also verifies both darwin/amd64 variants
 under existing Rosetta, including startup and project guide installation. That
 is translated execution, not an additional physical-hardware requirement.
-Linux runtime evidence is recorded separately above. Windows OS-specific behavior,
+Both delivered Linux arm64 variants also pass startup and project guide
+install/update/removal checks, including edited-file refusal and preservation of
+unrelated files (`6dda7c0`). Their archive, raw-report and harness hashes were
+independently verified. Linux runtime evidence is recorded separately above.
+Other Linux architectures have cross-build evidence only. Windows OS-specific behavior,
 signed public-release checks and a trusted remote Next release channel remain
 unverified or unavailable. Local evidence does not establish public release readiness.
 
@@ -171,6 +175,6 @@ complete goal.
 | --- | --- |
 | Private live fixtures | Verify current-account and tenant binding plus account-only creation visibility before writing; run the owning live suites and clean up only their resources. |
 | Contact bot search | Current-user authorization for `search:bot`, followed by the failed live scenario and bot binding checks. |
-| OS-specific runtime coverage | Linux runtime suites and platform capability comparison pass; delivered Linux archive lifecycle verification is a separate follow-up. Execute the retained Windows behavior checks and native reference capture on an appropriate OS runner or VM; cross-built archives do not substitute. Darwin/amd64 smoke checks already ran under Rosetta. Additional gaps must name the unverified scenario, not require physical hardware absent from PLAN. |
+| OS-specific runtime coverage | Linux arm64 runtime suites, platform comparison and both delivered archive lifecycles pass; other Linux architectures retain cross-build-only evidence. Execute the retained Windows behavior checks and native reference capture on an appropriate OS runner or VM; cross-built archives do not substitute. Darwin/amd64 smoke checks already ran under Rosetta. Additional gaps must name the unverified scenario, not require physical hardware absent from PLAN. |
 | Remote release ownership | An owned Next repository/download destination and package identity, then the documented updater identity integration and remote install/update checks. Public signing/notarization and publication retain their separate prerequisites. |
 | Comparative release evidence | Finish the serialized development/scaling comparisons, review their tradeoffs, and perform independently replaced held-out tasks only at the final release gate. |
