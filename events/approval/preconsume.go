@@ -96,7 +96,7 @@ func approvalSubscriptionRegistrationError(eventType string, registered []string
 		failed,
 	)
 	hint := fmt.Sprintf(
-		"no approval subscription relation was registered for EventKey %s; fix the cause and retry",
+		"no approval subscription relation was confirmed for EventKey %s; the failed request may have applied; verify server-side state before retrying",
 		eventType,
 	)
 	if len(registered) > 0 {
@@ -107,7 +107,7 @@ func approvalSubscriptionRegistrationError(eventType string, registered []string
 			failed,
 		)
 		hint = fmt.Sprintf(
-			"server-side approval subscription relation(s) already registered for EventKey %s: %s; after fixing the cause, retry with --param subscription_type=%s to register the failed relation",
+			"server-side approval subscription relation(s) already registered for EventKey %s: %s; the failed request may also have applied; verify server-side state before retrying; only after confirmed non-application use --param subscription_type=%s to register the failed relation",
 			eventType,
 			strings.Join(registered, ", "),
 			failed,

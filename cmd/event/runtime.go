@@ -6,9 +6,12 @@ package event
 import (
 	"context"
 	"encoding/json"
+	"net/url"
+	"strings"
 
 	"github.com/larksuite/cli/errs"
 	"github.com/larksuite/cli/internal/client"
+	"github.com/larksuite/cli/internal/cmdutil"
 	"github.com/larksuite/cli/internal/core"
 	eventlib "github.com/larksuite/cli/internal/event"
 )
@@ -20,6 +23,17 @@ type consumeRuntime struct {
 }
 
 func (r *consumeRuntime) CallAPI(ctx context.Context, method, path string, body interface{}) (json.RawMessage, error) {
+	// Event consumption is read-risk, but lifecycle registrations are writes.
+	// The exact request marker preserves the shared journal without journaling
+	// per-event enrichment reads or creating a parallel streaming log.
+	if method == "POST" {
+		apiPath, _, _ := strings.Cut(path, "?")
+		// net/http compares URL.Path, whose path segments are already decoded.
+		if decoded, err := url.PathUnescape(apiPath); err == nil {
+			apiPath = decoded
+		}
+		ctx = cmdutil.WithMutationRequest(ctx, method, apiPath)
+	}
 	resp, err := r.client.DoAPI(ctx, client.RawApiRequest{
 		Method: method,
 		URL:    path,

@@ -107,11 +107,14 @@ func runStop(f *cmdutil.Factory, o stopCmdOpts) error {
 	}
 
 	if o.asJSON {
-		return writeStopJSON(f.IOStreams.Out, results)
+		if err := writeStopJSON(f.IOStreams.Out, results); err != nil {
+			return err
+		}
+	} else {
+		writeStopText(f.IOStreams.Out, f.IOStreams.ErrOut, results)
 	}
-	writeStopText(f.IOStreams.Out, f.IOStreams.ErrOut, results)
 
-	// Non-zero exit for refused/errored so non-JSON callers still get a signal.
+	// Both renderers preserve the documented non-zero exit for refused/errored targets.
 	for _, r := range results {
 		if r.Status == stopRefused || r.Status == stopErrored {
 			return output.ErrBare(output.ExitValidation)

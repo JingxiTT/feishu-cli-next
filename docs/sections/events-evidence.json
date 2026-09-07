@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "section": "events",
+  "reference": "7fd6ef3",
+  "status": "offline_pass_live_and_comparative_open",
+  "mapped_event_keys": 25,
+  "processed_output_baselines": 13,
+  "native_lossless_process_cases": 12,
+  "checks": [
+    {
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-count=1",
+        "-timeout=10m",
+        "./shortcuts/event/...",
+        "./events/..."
+      ],
+      "status": "pass",
+      "exit_code": 0,
+      "tests": {
+        "pass": 248,
+        "fail": 0,
+        "skip": 0
+      }
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-count=1",
+        "-timeout=10m",
+        "./tests/cli_e2e/event",
+        "-run",
+        "DryRun|Regression"
+      ],
+      "status": "pass",
+      "exit_code": 0,
+      "tests": {
+        "pass": 3,
+        "fail": 0,
+        "skip": 0
+      }
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-count=1",
+        "-timeout=10m",
+        "./tests/next_sections/events"
+      ],
+      "status": "pass",
+      "exit_code": 0,
+      "tests": {
+        "pass": 67,
+        "fail": 0,
+        "skip": 0
+      }
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-count=1",
+        "-timeout=10m",
+        "./cmd/event/...",
+        "./internal/event/..."
+      ],
+      "status": "pass",
+      "exit_code": 0,
+      "tests": {
+        "pass": 492,
+        "fail": 0,
+        "skip": 0
+      }
+    }
+  ],
+  "additional_checks": [
+    "go vet ./cmd/event/... ./events/... ./shortcuts/event/... ./tests/next_sections/events/...",
+    "gofmt -l owned files (empty)",
+    "git diff --check (pass)"
+  ],
+  "live": {
+    "command": "python3 scripts/next_test.py --section events --suite live --allow-live --report .tmp/p2-events-live.json",
+    "status": "blocked",
+    "exit_code": 2,
+    "reason": "No verified current-account/tenant/private fixture and subscription scope ownership; no live requests performed."
+  },
+  "comparative_evaluation": "coordinator scheduled; not performed; held-out untouched"
+}

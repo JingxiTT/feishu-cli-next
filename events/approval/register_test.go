@@ -363,6 +363,8 @@ func TestApprovalPreConsumeValidationErrors(t *testing.T) {
 		}
 		for _, want := range []string{
 			"already registered",
+			"the failed request may also have applied",
+			"only after confirmed non-application",
 			"--param subscription_type=MANAGED_APPROVAL",
 		} {
 			if !strings.Contains(p.Hint, want) {
@@ -397,7 +399,7 @@ func TestApprovalSubscriptionRegistrationErrorVariants(t *testing.T) {
 		if !strings.Contains(p.Message, "failed subscription_type INVOLVED_APPROVAL") {
 			t.Errorf("message missing failed relation: %q", p.Message)
 		}
-		for _, want := range []string{"retry later", "no approval subscription relation was registered"} {
+		for _, want := range []string{"retry later", "no approval subscription relation was confirmed", "the failed request may have applied", "verify server-side state before retrying"} {
 			if !strings.Contains(p.Hint, want) {
 				t.Errorf("hint missing %q: %q", want, p.Hint)
 			}
@@ -422,7 +424,7 @@ func TestApprovalSubscriptionRegistrationErrorVariants(t *testing.T) {
 		if p.Category != errs.CategoryInternal || p.Subtype != errs.SubtypeSDKError {
 			t.Fatalf("category/subtype = %s/%s, want internal/sdk_error", p.Category, p.Subtype)
 		}
-		if !strings.Contains(p.Hint, "no approval subscription relation was registered") {
+		if !strings.Contains(p.Hint, "no approval subscription relation was confirmed") {
 			t.Errorf("hint missing no-registration context: %q", p.Hint)
 		}
 	})

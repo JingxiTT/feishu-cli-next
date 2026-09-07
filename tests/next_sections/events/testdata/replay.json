@@ -1,0 +1,207 @@
+{
+  "events": {
+    "application.bot.menu_v6": {
+      "event_key": "baseline_menu_key",
+      "timestamp": 1700000000,
+      "operator": {
+        "operator_id": {
+          "open_id": "ou-baseline-operator",
+          "union_id": "on-baseline-operator",
+          "user_id": "user-baseline-operator"
+        },
+        "operator_name": "Baseline Operator"
+      }
+    },
+    "approval.instance.status_changed_v4": {
+      "approval_code": "approval-code-baseline",
+      "instance_code": "instance-code-baseline",
+      "external_id": "external-id-baseline",
+      "status": "APPROVED",
+      "operate_time": "1700000000000",
+      "start_user": {
+        "open_id": "ou-baseline-starter",
+        "union_id": "on-baseline-starter",
+        "user_id": "user-baseline-starter"
+      }
+    },
+    "approval.task.status_changed_v4": {
+      "approval_code": "approval-code-baseline",
+      "instance_code": "instance-code-baseline",
+      "task_id": "task-id-baseline",
+      "external_id": "external-id-baseline",
+      "task_external_id": "task-external-id-baseline",
+      "status": "APPROVED",
+      "operate_time": "1700000000000",
+      "assigned_user": {
+        "open_id": "ou-baseline-assignee",
+        "union_id": "on-baseline-assignee",
+        "user_id": "user-baseline-assignee"
+      }
+    },
+    "card.action.trigger": {
+      "operator": {
+        "open_id": "ou-baseline-operator"
+      },
+      "token": "card-token-baseline",
+      "host": "im_message",
+      "action": {
+        "tag": "button",
+        "value": {
+          "key": "baseline"
+        },
+        "name": "baseline_button",
+        "form_value": {
+          "field": "value"
+        },
+        "input_value": "baseline input",
+        "option": "opt-1",
+        "options": [
+          "opt-1",
+          "opt-2"
+        ],
+        "checked": true,
+        "timezone": "Asia/Shanghai"
+      },
+      "context": {
+        "open_message_id": "om-baseline-card",
+        "open_chat_id": "oc-baseline-chat"
+      }
+    },
+    "im.message.receive_v1": {
+      "sender": {
+        "sender_type": "user",
+        "sender_id": {
+          "open_id": "ou-baseline-sender"
+        }
+      },
+      "message": {
+        "message_id": "om-baseline-msg",
+        "root_id": "om-baseline-root",
+        "parent_id": "om-baseline-parent",
+        "thread_id": "omt-baseline-thread",
+        "chat_id": "oc-baseline-chat",
+        "chat_type": "p2p",
+        "message_type": "text",
+        "create_time": "1699999999000",
+        "update_time": "1700000000500",
+        "content": "{\"text\":\"hello @_user_1\"}",
+        "mentions": [
+          {
+            "key": "@_user_1",
+            "id": {
+              "open_id": "ou-baseline-mention"
+            },
+            "name": "Baseline User"
+          }
+        ]
+      }
+    },
+    "minutes.minute.generated_v1": {
+      "minute_token": "minute-token-baseline",
+      "minute_source": {
+        "source_type": "meeting",
+        "source_entity_id": "meeting-entity-baseline"
+      }
+    },
+    "vc.meeting.participant_meeting_started_v1": {
+      "meeting": {
+        "id": "meeting-id-baseline",
+        "topic": "Baseline meeting",
+        "meeting_no": "123456789",
+        "start_time": "1700000000",
+        "calendar_event_id": "calendar-event-baseline"
+      }
+    },
+    "vc.meeting.participant_meeting_joined_v1": {
+      "meeting": {
+        "id": "meeting-id-baseline",
+        "topic": "Baseline meeting",
+        "meeting_no": "123456789",
+        "start_time": "1700000000",
+        "calendar_event_id": "calendar-event-baseline"
+      }
+    },
+    "vc.meeting.participant_meeting_ended_v1": {
+      "meeting": {
+        "id": "meeting-id-baseline",
+        "topic": "Baseline meeting",
+        "meeting_no": "123456789",
+        "start_time": "1700000000",
+        "end_time": "1700000600",
+        "calendar_event_id": "calendar-event-baseline"
+      }
+    },
+    "vc.note.generated_v1": {
+      "note_id": "note-id-baseline"
+    },
+    "vc.recording.recording_started_v1": {
+      "unique_key": "recording-key-baseline",
+      "source": "recording_bean"
+    },
+    "vc.recording.recording_transcript_generated_v1": {
+      "unique_key": "recording-key-baseline",
+      "source": "recording_bean",
+      "transcript_items": [
+        {
+          "speaker": {
+            "user_name": "Baseline Speaker"
+          },
+          "text": "baseline transcript text",
+          "start_time_ms": "1700000000000",
+          "end_time_ms": "1700000001000",
+          "sentence_id": "sentence-baseline-1"
+        }
+      ]
+    },
+    "vc.recording.recording_ended_v1": {
+      "unique_key": "recording-key-baseline",
+      "source": "recording_bean"
+    }
+  },
+  "responses": {
+    "/open-apis/im/v1/messages/om-baseline-card?card_msg_content_type=user_card_content": {
+      "code": 0,
+      "msg": "success",
+      "data": {
+        "items": [
+          {
+            "body": {
+              "content": "{\"header\":{\"title\":{\"tag\":\"plain_text\",\"content\":\"Baseline card\"}}}"
+            }
+          }
+        ]
+      }
+    },
+    "/open-apis/vc/v1/notes/note-id-baseline": {
+      "code": 0,
+      "msg": "success",
+      "data": {
+        "note": {
+          "artifacts": [
+            {
+              "artifact_type": 1,
+              "doc_token": "note-doc-token-baseline"
+            },
+            {
+              "artifact_type": 2,
+              "doc_token": "verbatim-doc-token-baseline"
+            }
+          ],
+          "note_source": {
+            "source_type": "meeting",
+            "source_entity_id": "meeting-entity-baseline"
+          }
+        }
+      }
+    },
+    "/open-apis/minutes/v1/minutes/minute-token-baseline": {
+      "code": 0,
+      "msg": "success",
+      "data": {
+        "minute": {
+          "title": "Baseline minute title"
+        }
+      }
+    }
+  }
+}
