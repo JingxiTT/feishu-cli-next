@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "kind": "controlled_backend_and_process_checks",
+  "model_calls": 0,
+  "held_out_runs": 0,
+  "implementation": "enclosing git commit",
+  "official_revision": "7fd6ef3c07182257ce776cdc5a614e122d5bd4b3",
+  "candidate_revision": "312af93804a44fe38cbaf1fb7ffea36a24b60357",
+  "native_codex_version": "codex-cli 0.153.4",
+  "checks": [
+    {
+      "suite": "python3 -m unittest discover -s tests/next_evaluation -v",
+      "tests": 145,
+      "passed": 136,
+      "optional_skips": 9
+    },
+    {
+      "suite": "python3 -m unittest discover -s tests/next_evaluation -p test_scenario*.py -v with clean binary and native sandbox options",
+      "tests": 109,
+      "passed": 109,
+      "optional_skips": 0
+    },
+    {
+      "suite": "run_read_batch.py --task-kind scenario --prepare-only with clean archived sources",
+      "sections": 9,
+      "status": "pass"
+    }
+  ],
+  "controlled_product_findings": [
+    {
+      "section": "mail",
+      "command": "mail user_mailbox.messages batch_get",
+      "operation": "read metadata",
+      "reference_exit": 0,
+      "candidate_exit": 22,
+      "candidate_error": "mutation_outcome unknown",
+      "status": "requires newer candidate correction and controlled recheck; no Mail model trials"
+    }
+  ],
+  "limits": [
+    "Controlled fixture success is not provider token usage or live backend correctness.",
+    "New remaining-task model trials have not run.",
+    "Scenario limitations are recorded in contracts, runtime selectors and modules.",
+    "Initial all-suite optional invocation supplied the wrong Sheets test environment shape; corrected invocation passed and was not a product failure."
+  ]
+}

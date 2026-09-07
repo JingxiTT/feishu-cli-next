@@ -322,3 +322,48 @@ all reviewed CLI examples and independent proofs as controlled tests. No provide
 calls occur during this test. Native loopback/external-denial checks use the
 same sandbox profile as Contact. A completed small read task does not establish
 section-wide safety, mutation fidelity, live privacy or held-out generalization.
+
+## Executable development fixtures
+
+`tasks.read-sections.json` now instantiates twelve read-only sections;
+`tasks.scenarios.json` instantiates the nine state, artifact, event and installation
+sections. Together with Foundation and Contact they retain all 23 predeclared
+sections. They instantiate development tasks only; held-out tasks are unchanged.
+The reviewed contracts and concise guidance remain section-specific.
+
+`run_read_batch.py --task-kind read|scenario` stages the same frozen official
+reference distribution for both official arms, substitutes only the concise
+entry for Arm 2, and runs sections serially with three trials per arm. Use its
+`--prepare-only` flag to validate all supplied clean sources and build the small
+Extensions host before billing a model. Extensions has no official skill; its
+Arm 1 source is the frozen extension and platform READMEs plus the public
+chat-brief example. Application uses its frozen affordance fallback. Packaging
+installs the unchanged selected distribution as data; its two official arms
+receive identical original `lark-shared` installation inputs.
+
+`scenario_protocol.py` is a small interface, not a general backend emulator.
+Scenarios validate signed requests, record independent native state/effects and
+check actual files after execution. Binary responses preserve bytes. Transport
+shutdown drains bounded handlers before final evidence capture. Events bind
+kernel peer observations to the selected executable and require defensible
+provider-reported command exit evidence. Extensions likewise accepts only command
+forms whose execution and artifact capture it can establish. The Drive output
+audit recognizes common large binary dumps, not every possible encoding.
+Packaging probes the actual native sandbox before model execution: project
+writes succeed while protected home/config writes and external sockets fail.
+
+Trusted observation hooks consume raw provider events transiently; raw commands,
+payloads, private paths and content are not published. Hook or cleanup errors
+retain already reported model usage. An explicitly recognized valid strategy
+outside a fixture's implementation is inconclusive, retains all billed cost and
+suppresses success-rate/efficiency claims for its affected group. Unsupported
+strategies require adapter expansion before a product conclusion. These fixtures
+do not establish live backend behavior, complete workflow fidelity or arbitrary
+filesystem-read auditing.
+
+The first controlled integration against candidate `312af93` found a Mail
+`user_mailbox.messages batch_get` metadata read returning exit 22 as an unknown
+mutation; the original reference returned 0. This occurred before any Mail model
+trial. It remains a version-specific product defect pending the corrected clean
+candidate's controlled acceptance. The existing 81-trial nine-section read batch
+keeps its original candidate and evaluator snapshots.

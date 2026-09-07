@@ -27,7 +27,7 @@ def trace_vocabulary():
     snapshot = Path(__file__).resolve().parents[1] / "docs/reference/registrations.json.gz"
     with gzip.open(snapshot, "rt", encoding="utf-8") as stream:
         registrations = json.load(stream)
-    paths = {("discover",), ("guide",)} | {("guide", action) for action in ("show", "install", "update", "uninstall")}
+    paths = {("discover",), ("guide",), ("im", "+fixture-host")} | {("guide", action) for action in ("show", "install", "update", "uninstall")}
     flags = {"--help", "-h", "--flags", "--project", "--result-detail", "--result-fields", "--save-result"}
     for variant in registrations.values():
         for command, descriptor in variant["commands"].items():
@@ -92,16 +92,27 @@ def cli_environment(workspace):
             "LARKSUITE_CLI_NO_SKILLS_NOTIFIER": "1"}
 
 
-def configuration(auth_home, workspace, reasoning, fixture_env=None):
+def configuration(auth_home, workspace, reasoning, fixture_env=None, *, unix_sockets=(), protect_home=False):
     # Inspect skill path names only. Never read config.toml, auth files, or skill contents.
     skill_paths = sorted(path.parent for path in (auth_home / "skills").rglob("SKILL.md"))
     disabled_skills = ",".join("{path=" + json.dumps(str(path)) + ",enabled=false}" for path in skill_paths)
     environment = {**cli_environment(workspace), **(fixture_env or {})}
     shell_env = ",".join(json.dumps(key) + "=" + json.dumps(value) for key, value in environment.items())
-    network = (['default_permissions="evaluation"',
-                'permissions.evaluation={extends=":workspace",network={enabled=true,allow_local_binding=true,domains={"127.0.0.1"="allow"}}}',
-                'features.network_proxy={enabled=true,allow_upstream_proxy=false}']
-               if fixture_env else ["sandbox_workspace_write.network_access=false"])
+    allow_http = bool(fixture_env and fixture_env.get("LARKSUITE_CLI_AUTH_PROXY"))
+    if fixture_env or unix_sockets or protect_home:
+        net = 'enabled=' + ('true' if allow_http else 'false')
+        if allow_http:
+            net += ',allow_local_binding=true,domains={"127.0.0.1"="allow"}'
+        if unix_sockets:
+            net += ',unix_sockets={' + ','.join(json.dumps(str(path)) + '="allow"' for path in unix_sockets) + '}'
+        profile = 'extends=":workspace",network={' + net + '}'
+        if protect_home:
+            profile += ',filesystem={' + ','.join(json.dumps(str(workspace / name)) + '="read"' for name in ('home', 'feishu-config', 'inputs', 'bin', 'guidance')) + '}'
+        network = ['default_permissions="evaluation"', 'permissions.evaluation={' + profile + '}']
+        if allow_http:
+            network += ['features.network_proxy={enabled=true,allow_upstream_proxy=false}']
+    else:
+        network = ["sandbox_workspace_write.network_access=false"]
     return ["model_reasoning_effort=" + json.dumps(reasoning), "approval_policy=\"never\"",
             "web_search=\"disabled\"",
             "project_doc_max_bytes=0", "shell_environment_policy.inherit=\"none\"",
@@ -162,6 +173,9 @@ def parse_events(stdout, returncode):
 
 def run(request, codex, auth_home, expected_version):
     backend = request["settings"]["backend"]
+    if backend == "synthetic-scenario-v1":
+        from scenario_fixture import run_scenario
+        return run_scenario(request, codex, auth_home, expected_version, run_agent)
     if backend in ("synthetic-contact-v1", "synthetic-read-v1"):
         from section_fixture import SectionFixture
         dispatch = None
@@ -183,7 +197,7 @@ def run(request, codex, auth_home, expected_version):
     return run_agent(request, codex, auth_home, expected_version)
 
 
-def run_agent(request, codex, auth_home, expected_version, fixture_env=None):
+def run_agent(request, codex, auth_home, expected_version, fixture_env=None, *, scenario=None, protect_home=False):
     workspace = Path(request["workspace"]).resolve()
     for directory in ("bin", "home", "tmp", "feishu-config"):
         (workspace / directory).mkdir(exist_ok=True)
@@ -202,6 +216,16 @@ def run_agent(request, codex, auth_home, expected_version, fixture_env=None):
         for dependency in distribution.iterdir():
             if dependency.is_dir() and dependency.name.startswith("lark-"):
                 shutil.copytree(dependency, workspace / dependency.name)
+    if scenario is not None:
+        scenario.selected_cli = request["cli"]
+        if "selected_skill_source" in request:
+            scenario.selected_skill_source = request["selected_skill_source"]
+        if protect_home:
+            from scenario_fixture import probe_isolation
+            scenario.isolation_proof = probe_isolation(codex, auth_home, workspace, request["settings"]["reasoning"])
+        scenario.setup(workspace)
+        fixture_env = {**(fixture_env or {}), **scenario.environment()}
+    sockets = scenario.unix_sockets() if scenario is not None else ()
     env = {**cli_environment(workspace), **(fixture_env or {})}
     env["CODEX_HOME"] = str(auth_home)
     # Auth is consumed by Codex itself. This adapter neither reads nor copies credentials.
@@ -214,18 +238,23 @@ def run_agent(request, codex, auth_home, expected_version, fixture_env=None):
                "--skip-git-repo-check", "--model", request["settings"]["model"],
                "--cd", str(workspace), "--color", "never", "--output-schema", str(schema),
                "--output-last-message", str(workspace / "answer.json")]
-    if not fixture_env:
+    if not (fixture_env or sockets or protect_home):
         command.extend(["--sandbox", "workspace-write"])
-    for value in configuration(auth_home, workspace, request["settings"]["reasoning"], fixture_env):
+    for value in configuration(auth_home, workspace, request["settings"]["reasoning"], fixture_env, unix_sockets=sockets, protect_home=protect_home):
         command.extend(["--config", value])
     command.append("-")
     skill = (workspace / "guidance" / Path(request["skill"]).name).read_text(encoding="utf-8")
     environment_note = ("All Feishu API calls use a local synthetic read-only fixture through the preconfigured "
                         "auth sidecar; user and bot identities are available with sentinel credentials. Only "
-                        "loopback HTTP is permitted. Do not inspect or change auth/proxy settings. " if fixture_env else
+                        "loopback HTTP is permitted. Do not inspect or change auth/proxy settings. " if fixture_env and fixture_env.get("LARKSUITE_CLI_AUTH_PROXY") else
                         "The project has an empty Feishu configuration. Network access for shell commands is disabled. ")
+    mutation_rule = ("Perform only the synthetic changes explicitly authorized in this task. "
+                     if scenario is not None and request["fixture"].get("allow_synthetic_mutations") is True else
+                     "Do not change any backend resources. ")
+    if scenario is not None and request["fixture"].get("allow_synthetic_mutations") is True:
+        environment_note = environment_note.replace("synthetic read-only fixture", "synthetic fixture")
     prompt = ("Complete this CLI task using the selected binary on PATH. " + environment_note +
-              "Do not log in, initialize an app, access other credentials, or change any backend resources. Work only in this "
+              "Do not log in, initialize an app, or access other credentials. " + mutation_rule + "Work only in this "
               "temporary workspace. Return the requested JSON answer. You may use the shell and files "
               "and choose your approach. The supplied CLI skill follows; its relative references are "
               "under ./guidance/.\n\n" + skill + "\n\nTask:\n" + request["prompt"])
@@ -240,11 +269,15 @@ def run_agent(request, codex, auth_home, expected_version, fixture_env=None):
         os.killpg(child.pid, signal.SIGKILL)
         stdout, _ = child.communicate()
     accounting = parse_events(stdout, child.returncode)
+    hook_failed = False
+    if scenario is not None:
+        from scenario_fixture import observe
+        hook_failed = not observe(scenario, stdout)
     # Raw model/tool output is intentionally discarded; only numeric metadata is emitted.
     response = {"claimed_success": (workspace / "answer.json").is_file(), "usage_source": "provider",
                 "model": request["settings"]["model"], "tokenizer": request["settings"]["tokenizer"],
                 **accounting}
-    return response, 0 if child.returncode == 0 and not accounting["unexpected_tools"] else 1
+    return response, 0 if child.returncode == 0 and not accounting["unexpected_tools"] and not hook_failed else 1
 
 
 def main():

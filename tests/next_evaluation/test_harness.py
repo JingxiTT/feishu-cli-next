@@ -44,6 +44,23 @@ class AccountingTests(unittest.TestCase):
         self.assertIsNone(harness.aggregate([base])["groups"][0]["tokens_per_success"])
         self.assertIsNone(harness.aggregate([{**base, "success": True, "usage": None}])["groups"][0]["tokens_per_success"])
 
+    def test_inconclusive_fixture_retains_cost_without_product_rate(self):
+        base = {"task_id": "a", "section": "docs", "trial": 0, "arm": "next",
+                "success": False, "outcome_inconclusive": True, "usage": {"total_tokens": 10},
+                "categories": ["fixture_unsupported"], "latency_seconds": 1, "api_calls": 0, "retries": 0}
+        group = harness.aggregate([base])["groups"][0]
+        self.assertEqual(group["known_total_tokens"], 10)
+        self.assertEqual(group["inconclusive"], 1)
+        self.assertIsNone(group["success_rate"])
+        self.assertIsNone(group["tokens_per_success"])
+
+    def test_executable_development_manifests_keep_every_predeclared_section(self):
+        expected = {task["section"] for task in harness.tasks_from(ROOT / "evaluation/tasks.development.json")["tasks"]}
+        actual = set()
+        for name in ('foundation', 'contact', 'read-sections', 'scenarios'):
+            actual.update(task['section'] for task in harness.tasks_from(ROOT / ('evaluation/tasks.' + name + '.json'))['tasks'])
+        self.assertEqual(actual, expected)
+
     def test_development_manifest_covers_inventory_sections(self):
         manifest = harness.tasks_from(ROOT / "evaluation/tasks.development.json")
         inventory = json.loads((ROOT / "docs/reference/coverage.json").read_text())

@@ -134,6 +134,8 @@ def run_one(config, task, trial, arm):
                    "cli": config["arms"][arm]["cli"], "skill": config["arms"][arm]["skill"],
                    "settings": {key: config[key] for key in
                                 ("backend", "model", "tokenizer", "reasoning", "tools", "permissions", "budget", "mode")}}
+        if "selected_skill_source" in config["arms"][arm]:
+            request["selected_skill_source"] = config["arms"][arm]["selected_skill_source"]
         payload, code, elapsed = process(config["runner"], request, workspace, config.get("timeout_seconds", 120))
         categories = []
         if code != 0:
@@ -158,9 +160,12 @@ def run_one(config, task, trial, arm):
             "claimed_success": payload.get("claimed_success")},
             workspace, config.get("timeout_seconds", 120))
         verified = verify_code == 0 and verification.get("success") is True
-        if not verified:
+        inconclusive = verification.get("fixture_unsupported") is True
+        if inconclusive:
+            categories.append("fixture_unsupported")
+        if not verified and not inconclusive:
             categories.append("outcome_failure" if verify_code == 0 else "verifier_failure")
-        misleading = payload.get("claimed_success") is True and not verified
+        misleading = payload.get("claimed_success") is True and not verified and not inconclusive
         if misleading:
             categories.append("misleading_success_claim")
         # Whitelist numeric measurements only; raw content and free-form traces stay out of evidence.
@@ -169,7 +174,7 @@ def run_one(config, task, trial, arm):
             value = payload.get(key)
             metrics[key] = value if type(value) is int and value >= 0 else None
         return {"task_id": task["id"], "section": task["section"], "trial": trial, "arm": arm,
-                "success": verified and code == 0, "usage": usage, "categories": categories,
+                "success": verified and code == 0, "outcome_inconclusive": inconclusive, "usage": usage, "categories": categories,
                 "known_usage": known_usage,
                 "control_trace": sanitized_trace(payload.get("control_trace")),
                 "usage_granularity": payload.get("usage_granularity") if payload.get("usage_granularity") in ("model_turn", "codex_user_turn") else None,
@@ -220,10 +225,12 @@ def aggregate(runs):
         tokens = [run["usage"]["total_tokens"] for run in values if run["usage"] is not None]
         known_tokens = [observed["total_tokens"] for run in values if (observed := run["usage"] or run.get("known_usage")) is not None]
         complete = len(tokens) == len(values)
+        inconclusive = sum(bool(run.get("outcome_inconclusive")) for run in values)
         rows.append({"scope": scope, "name": name, "arm": arm, "attempts": len(values),
-                     "successes": successes, "success_rate": successes / len(values),
+                     "successes": successes, "inconclusive": inconclusive,
+                     "success_rate": successes / len(values) if not inconclusive else None,
                      "usage_complete": complete, "known_total_tokens": sum(known_tokens),
-                     "tokens_per_success": sum(tokens) / successes if complete and successes else None,
+                     "tokens_per_success": sum(tokens) / successes if complete and successes and not inconclusive else None,
                      "token_distribution": {"min": min(tokens), "median": statistics.median(tokens),
                                             "max": max(tokens), "stdev": statistics.stdev(tokens) if len(tokens) > 1 else 0} if tokens else None,
                      "latency_median_seconds": statistics.median(run["latency_seconds"] for run in values),
@@ -276,7 +283,7 @@ def main():
             runs.append(run_one(config, *planned_run))
             evidence.update({"runs": runs, **aggregate(runs), "completed": len(runs) == len(planned),
                              "performance_claims_supported": config["mode"] == "real" and len(runs) == len(planned)
-                             and all(run["usage"] for run in runs)})
+                             and all(run["usage"] and not run.get("outcome_inconclusive") for run in runs)})
             checkpoint = args.output.with_suffix(args.output.suffix + ".tmp")
             checkpoint.write_text(json.dumps(evidence, indent=2) + "\n", encoding="utf-8")
             checkpoint.replace(args.output)

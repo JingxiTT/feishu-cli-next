@@ -1,0 +1,2520 @@
+{
+  "schema_version": 1,
+  "section": "mail",
+  "source_contract": "evaluation/contracts/mail.json",
+  "task": {
+    "id": "mail-dev-01",
+    "section": "mail",
+    "prompt": "List at most two messages from the INBOX of the synthetic mailbox mail-fixture@example.invalid in its returned mailbox order, and explicitly state whether more messages exist. Return JSON with exactly messages and has_more; each message must contain exactly message_id and subject. Keep the mailbox unchanged: do not send, mark read, move, delete, subscribe or otherwise modify anything.",
+    "fixture": {
+      "scenario": "mail-bounded-list-v1",
+      "answer_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "messages",
+          "has_more"
+        ],
+        "properties": {
+          "messages": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "message_id",
+                "subject"
+              ],
+              "properties": {
+                "message_id": {
+                  "type": "string"
+                },
+                "subject": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "has_more": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "expected": {
+      "answer": {
+        "messages": [
+          {
+            "message_id": "0123456789abcdef0000000000000001",
+            "subject": "Budget review 预算"
+          },
+          {
+            "message_id": "0123456789abcdef0000000000000002",
+            "subject": "Fixture update"
+          }
+        ],
+        "has_more": true
+      },
+      "required_reads": [
+        [
+          "mail_list_two",
+          "mail_list_one_first"
+        ],
+        [
+          "mail_list_two",
+          "mail_list_one_second"
+        ],
+        [
+          "mail_batch_both",
+          "mail_batch_first",
+          "mail_get_first"
+        ],
+        [
+          "mail_batch_both",
+          "mail_batch_second",
+          "mail_get_second"
+        ]
+      ]
+    }
+  },
+  "routes": [
+    {
+      "id": "identity",
+      "method": "GET",
+      "path": "/open-apis/authen/v1/user_info",
+      "request": {
+        "query_keys": []
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "msg": "success",
+          "data": {
+            "open_id": "ou_mail_fixture_self",
+            "name": "Synthetic Mail Fixture",
+            "tenant_key": "mail-fixture-tenant"
+          }
+        }
+      }
+    },
+    {
+      "id": "mailbox_profile",
+      "method": "GET",
+      "path": "/open-apis/mail/v1/user_mailboxes/mail-fixture@example.invalid/profile",
+      "request": {
+        "identities": [
+          "user",
+          "bot"
+        ],
+        "query_keys": []
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "msg": "success",
+          "data": {
+            "primary_email_address": "mail-fixture@example.invalid"
+          }
+        }
+      }
+    },
+    {
+      "id": "mail_list_two",
+      "method": "GET",
+      "path": "/open-apis/mail/v1/user_mailboxes/mail-fixture@example.invalid/messages",
+      "request": {
+        "identities": [
+          "user",
+          "bot"
+        ],
+        "query": {
+          "folder_id": "INBOX",
+          "page_size": "2"
+        },
+        "query_keys": [
+          "folder_id",
+          "page_size",
+          "page_token"
+        ],
+        "optional_query": {
+          "page_token": [
+            ""
+          ]
+        }
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "msg": "success",
+          "data": {
+            "items": [
+              "0123456789abcdef0000000000000001",
+              "0123456789abcdef0000000000000002"
+            ],
+            "has_more": true,
+            "page_token": "mail-offset-2"
+          }
+        }
+      }
+    },
+    {
+      "id": "mail_list_one_first",
+      "method": "GET",
+      "path": "/open-apis/mail/v1/user_mailboxes/mail-fixture@example.invalid/messages",
+      "request": {
+        "identities": [
+          "user",
+          "bot"
+        ],
+        "query": {
+          "folder_id": "INBOX",
+          "page_size": "1"
+        },
+        "query_keys": [
+          "folder_id",
+          "page_size",
+          "page_token"
+        ],
+        "optional_query": {
+          "page_token": [
+            ""
+          ]
+        }
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "msg": "success",
+          "data": {
+            "items": [
+              "0123456789abcdef0000000000000001"
+            ],
+            "has_more": true,
+            "page_token": "mail-offset-1"
+          }
+        }
+      }
+    },
+    {
+      "id": "mail_list_one_second",
+      "method": "GET",
+      "path": "/open-apis/mail/v1/user_mailboxes/mail-fixture@example.invalid/messages",
+      "request": {
+        "identities": [
+          "user",
+          "bot"
+        ],
+        "query": {
+          "folder_id": "INBOX",
+          "page_size": "1",
+          "page_token": "mail-offset-1"
+        },
+        "query_keys": [
+          "folder_id",
+          "page_size",
+          "page_token"
+        ]
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "msg": "success",
+          "data": {
+            "items": [
+              "0123456789abcdef0000000000000002"
+            ],
+            "has_more": true,
+            "page_token": "mail-offset-2"
+          }
+        }
+      }
+    },
+    {
+      "id": "mail_batch_both",
+      "method": "POST",
+      "path": "/open-apis/mail/v1/user_mailboxes/mail-fixture@example.invalid/messages/batch_get",
+      "request": {
+        "identities": [
+          "user",
+          "bot"
+        ],
+        "query_keys": [],
+        "body_contains": {
+          "message_ids": [
+            "0123456789abcdef0000000000000001",
+            "0123456789abcdef0000000000000002"
+          ]
+        },
+        "optional_body": {
+          "format": [
+            "full"
+          ]
+        }
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "msg": "success",
+          "data": {
+            "messages": [
+              {
+                "message_id": "0123456789abcdef0000000000000001",
+                "subject": "Budget review 预算",
+                "folder_id": "INBOX",
+                "internal_date": "1893549600",
+                "to": [
+                  {
+                    "mail_address": "mail-fixture@example.invalid",
+                    "name": "Synthetic Mail Fixture"
+                  }
+                ],
+                "cc": [],
+                "bcc": [],
+                "label_ids": [],
+                "body_plain_text": "Synthetic fixture message 1",
+                "body_html": "<p>Synthetic fixture message 1</p>",
+                "attachments": [],
+                "head_from": {
+                  "mail_address": "mail-fixture@example.invalid",
+                  "name": "Synthetic Mail Fixture"
+                }
+              },
+              {
+                "message_id": "0123456789abcdef0000000000000002",
+                "subject": "Fixture update",
+                "folder_id": "INBOX",
+                "internal_date": "1893549540",
+                "to": [
+                  {
+                    "mail_address": "mail-fixture@example.invalid",
+                    "name": "Synthetic Mail Fixture"
+                  }
+                ],
+                "cc": [],
+                "bcc": [],
+                "label_ids": [],
+                "body_plain_text": "Synthetic fixture message 2",
+                "body_html": "<p>Synthetic fixture message 2</p>",
+                "attachments": [],
+                "head_from": {
+                  "mail_address": "mail-fixture@example.invalid",
+                  "name": "Synthetic Mail Fixture"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "mail_batch_both",
+      "method": "POST",
+      "path": "/open-apis/mail/v1/user_mailboxes/mail-fixture@example.invalid/messages/batch_get",
+      "request": {
+        "identities": [
+          "user",
+          "bot"
+        ],
+        "query_keys": [],
+        "body_contains": {
+          "message_ids": [
+            "0123456789abcdef0000000000000002",
+            "0123456789abcdef0000000000000001"
+          ]
+        },
+        "optional_body": {
+          "format": [
+            "full"
+          ]
+        }
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "msg": "success",
+          "data": {
+            "messages": [
+              {
+                "message_id": "0123456789abcdef0000000000000002",
+                "subject": "Fixture update",
+                "folder_id": "INBOX",
+                "internal_date": "1893549540",
+                "to": [
+                  {
+                    "mail_address": "mail-fixture@example.invalid",
+                    "name": "Synthetic Mail Fixture"
+                  }
+                ],
+                "cc": [],
+                "bcc": [],
+                "label_ids": [],
+                "body_plain_text": "Synthetic fixture message 2",
+                "body_html": "<p>Synthetic fixture message 2</p>",
+                "attachments": [],
+                "head_from": {
+                  "mail_address": "mail-fixture@example.invalid",
+                  "name": "Synthetic Mail Fixture"
+                }
+              },
+              {
+                "message_id": "0123456789abcdef0000000000000001",
+                "subject": "Budget review 预算",
+                "folder_id": "INBOX",
+                "internal_date": "1893549600",
+                "to": [
+                  {
+                    "mail_address": "mail-fixture@example.invalid",
+                    "name": "Synthetic Mail Fixture"
+                  }
+                ],
+                "cc": [],
+                "bcc": [],
+                "label_ids": [],
+                "body_plain_text": "Synthetic fixture message 1",
+                "body_html": "<p>Synthetic fixture message 1</p>",
+                "attachments": [],
+                "head_from": {
+                  "mail_address": "mail-fixture@example.invalid",
+                  "name": "Synthetic Mail Fixture"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "mail_batch_first",
+      "method": "POST",
+      "path": "/open-apis/mail/v1/user_mailboxes/mail-fixture@example.invalid/messages/batch_get",
+      "request": {
+        "identities": [
+          "user",
+          "bot"
+        ],
+        "query_keys": [],
+        "body_contains": {
+          "message_ids": [
+            "0123456789abcdef0000000000000001"
+          ]
+        },
+        "optional_body": {
+          "format": [
+            "full"
+          ]
+        }
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "msg": "success",
+          "data": {
+            "messages": [
+              {
+                "message_id": "0123456789abcdef0000000000000001",
+                "subject": "Budget review 预算",
+                "folder_id": "INBOX",
+                "internal_date": "1893549600",
+                "to": [
+                  {
+                    "mail_address": "mail-fixture@example.invalid",
+                    "name": "Synthetic Mail Fixture"
+                  }
+                ],
+                "cc": [],
+                "bcc": [],
+                "label_ids": [],
+                "body_plain_text": "Synthetic fixture message 1",
+                "body_html": "<p>Synthetic fixture message 1</p>",
+                "attachments": [],
+                "head_from": {
+                  "mail_address": "mail-fixture@example.invalid",
+                  "name": "Synthetic Mail Fixture"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "mail_batch_second",
+      "method": "POST",
+      "path": "/open-apis/mail/v1/user_mailboxes/mail-fixture@example.invalid/messages/batch_get",
+      "request": {
+        "identities": [
+          "user",
+          "bot"
+        ],
+        "query_keys": [],
+        "body_contains": {
+          "message_ids": [
+            "0123456789abcdef0000000000000002"
+          ]
+        },
+        "optional_body": {
+          "format": [
+            "full"
+          ]
+        }
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "msg": "success",
+          "data": {
+            "messages": [
+              {
+                "message_id": "0123456789abcdef0000000000000002",
+                "subject": "Fixture update",
+                "folder_id": "INBOX",
+                "internal_date": "1893549540",
+                "to": [
+                  {
+                    "mail_address": "mail-fixture@example.invalid",
+                    "name": "Synthetic Mail Fixture"
+                  }
+                ],
+                "cc": [],
+                "bcc": [],
+                "label_ids": [],
+                "body_plain_text": "Synthetic fixture message 2",
+                "body_html": "<p>Synthetic fixture message 2</p>",
+                "attachments": [],
+                "head_from": {
+                  "mail_address": "mail-fixture@example.invalid",
+                  "name": "Synthetic Mail Fixture"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "mail_get_first",
+      "method": "GET",
+      "path": "/open-apis/mail/v1/user_mailboxes/mail-fixture@example.invalid/messages/0123456789abcdef0000000000000001",
+      "request": {
+        "identities": [
+          "user",
+          "bot"
+        ],
+        "query_keys": [
+          "format"
+        ],
+        "optional_query": {
+          "format": [
+            "full"
+          ]
+        }
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "msg": "success",
+          "data": {
+            "message": {
+              "message_id": "0123456789abcdef0000000000000001",
+              "subject": "Budget review 预算",
+              "folder_id": "INBOX",
+              "internal_date": "1893549600",
+              "to": [
+                {
+                  "mail_address": "mail-fixture@example.invalid",
+                  "name": "Synthetic Mail Fixture"
+                }
+              ],
+              "cc": [],
+              "bcc": [],
+              "label_ids": [],
+              "body_plain_text": "Synthetic fixture message 1",
+              "body_html": "<p>Synthetic fixture message 1</p>",
+              "attachments": [],
+              "head_from": {
+                "mail_address": "mail-fixture@example.invalid",
+                "name": "Synthetic Mail Fixture"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "mail_get_second",
+      "method": "GET",
+      "path": "/open-apis/mail/v1/user_mailboxes/mail-fixture@example.invalid/messages/0123456789abcdef0000000000000002",
+      "request": {
+        "identities": [
+          "user",
+          "bot"
+        ],
+        "query_keys": [
+          "format"
+        ],
+        "optional_query": {
+          "format": [
+            "full"
+          ]
+        }
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "msg": "success",
+          "data": {
+            "message": {
+              "message_id": "0123456789abcdef0000000000000002",
+              "subject": "Fixture update",
+              "folder_id": "INBOX",
+              "internal_date": "1893549540",
+              "to": [
+                {
+                  "mail_address": "mail-fixture@example.invalid",
+                  "name": "Synthetic Mail Fixture"
+                }
+              ],
+              "cc": [],
+              "bcc": [],
+              "label_ids": [],
+              "body_plain_text": "Synthetic fixture message 2",
+              "body_html": "<p>Synthetic fixture message 2</p>",
+              "attachments": [],
+              "head_from": {
+                "mail_address": "mail-fixture@example.invalid",
+                "name": "Synthetic Mail Fixture"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "mail_batch_both",
+      "method": "POST",
+      "path": "/open-apis/mail/v1/user_mailboxes/mail-fixture@example.invalid/messages/batch_get",
+      "request": {
+        "identities": [
+          "user",
+          "bot"
+        ],
+        "query_keys": [],
+        "body_contains": {
+          "message_ids": [
+            "0123456789abcdef0000000000000001",
+            "0123456789abcdef0000000000000002"
+          ],
+          "format": "plain_text_full"
+        }
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "msg": "success",
+          "data": {
+            "messages": [
+              {
+                "message_id": "0123456789abcdef0000000000000001",
+                "subject": "Budget review 预算",
+                "folder_id": "INBOX",
+                "internal_date": "1893549600",
+                "to": [
+                  {
+                    "mail_address": "mail-fixture@example.invalid",
+                    "name": "Synthetic Mail Fixture"
+                  }
+                ],
+                "cc": [],
+                "bcc": [],
+                "label_ids": [],
+                "body_plain_text": "Synthetic fixture message 1",
+                "attachments": [],
+                "head_from": {
+                  "mail_address": "mail-fixture@example.invalid",
+                  "name": "Synthetic Mail Fixture"
+                }
+              },
+              {
+                "message_id": "0123456789abcdef0000000000000002",
+                "subject": "Fixture update",
+                "folder_id": "INBOX",
+                "internal_date": "1893549540",
+                "to": [
+                  {
+                    "mail_address": "mail-fixture@example.invalid",
+                    "name": "Synthetic Mail Fixture"
+                  }
+                ],
+                "cc": [],
+                "bcc": [],
+                "label_ids": [],
+                "body_plain_text": "Synthetic fixture message 2",
+                "attachments": [],
+                "head_from": {
+                  "mail_address": "mail-fixture@example.invalid",
+                  "name": "Synthetic Mail Fixture"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "mail_batch_both",
+      "method": "POST",
+      "path": "/open-apis/mail/v1/user_mailboxes/mail-fixture@example.invalid/messages/batch_get",
+      "request": {
+        "identities": [
+          "user",
+          "bot"
+        ],
+        "query_keys": [],
+        "body_contains": {
+          "message_ids": [
+            "0123456789abcdef0000000000000002",
+            "0123456789abcdef0000000000000001"
+          ],
+          "format": "plain_text_full"
+        }
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "msg": "success",
+          "data": {
+            "messages": [
+              {
+                "message_id": "0123456789abcdef0000000000000002",
+                "subject": "Fixture update",
+                "folder_id": "INBOX",
+                "internal_date": "1893549540",
+                "to": [
+                  {
+                    "mail_address": "mail-fixture@example.invalid",
+                    "name": "Synthetic Mail Fixture"
+                  }
+                ],
+                "cc": [],
+                "bcc": [],
+                "label_ids": [],
+                "body_plain_text": "Synthetic fixture message 2",
+                "attachments": [],
+                "head_from": {
+                  "mail_address": "mail-fixture@example.invalid",
+                  "name": "Synthetic Mail Fixture"
+                }
+              },
+              {
+                "message_id": "0123456789abcdef0000000000000001",
+                "subject": "Budget review 预算",
+                "folder_id": "INBOX",
+                "internal_date": "1893549600",
+                "to": [
+                  {
+                    "mail_address": "mail-fixture@example.invalid",
+                    "name": "Synthetic Mail Fixture"
+                  }
+                ],
+                "cc": [],
+                "bcc": [],
+                "label_ids": [],
+                "body_plain_text": "Synthetic fixture message 1",
+                "attachments": [],
+                "head_from": {
+                  "mail_address": "mail-fixture@example.invalid",
+                  "name": "Synthetic Mail Fixture"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "mail_batch_first",
+      "method": "POST",
+      "path": "/open-apis/mail/v1/user_mailboxes/mail-fixture@example.invalid/messages/batch_get",
+      "request": {
+        "identities": [
+          "user",
+          "bot"
+        ],
+        "query_keys": [],
+        "body_contains": {
+          "message_ids": [
+            "0123456789abcdef0000000000000001"
+          ],
+          "format": "plain_text_full"
+        }
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "msg": "success",
+          "data": {
+            "messages": [
+              {
+                "message_id": "0123456789abcdef0000000000000001",
+                "subject": "Budget review 预算",
+                "folder_id": "INBOX",
+                "internal_date": "1893549600",
+                "to": [
+                  {
+                    "mail_address": "mail-fixture@example.invalid",
+                    "name": "Synthetic Mail Fixture"
+                  }
+                ],
+                "cc": [],
+                "bcc": [],
+                "label_ids": [],
+                "body_plain_text": "Synthetic fixture message 1",
+                "attachments": [],
+                "head_from": {
+                  "mail_address": "mail-fixture@example.invalid",
+                  "name": "Synthetic Mail Fixture"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "mail_batch_second",
+      "method": "POST",
+      "path": "/open-apis/mail/v1/user_mailboxes/mail-fixture@example.invalid/messages/batch_get",
+      "request": {
+        "identities": [
+          "user",
+          "bot"
+        ],
+        "query_keys": [],
+        "body_contains": {
+          "message_ids": [
+            "0123456789abcdef0000000000000002"
+          ],
+          "format": "plain_text_full"
+        }
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "msg": "success",
+          "data": {
+            "messages": [
+              {
+                "message_id": "0123456789abcdef0000000000000002",
+                "subject": "Fixture update",
+                "folder_id": "INBOX",
+                "internal_date": "1893549540",
+                "to": [
+                  {
+                    "mail_address": "mail-fixture@example.invalid",
+                    "name": "Synthetic Mail Fixture"
+                  }
+                ],
+                "cc": [],
+                "bcc": [],
+                "label_ids": [],
+                "body_plain_text": "Synthetic fixture message 2",
+                "attachments": [],
+                "head_from": {
+                  "mail_address": "mail-fixture@example.invalid",
+                  "name": "Synthetic Mail Fixture"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "mail_get_first",
+      "method": "GET",
+      "path": "/open-apis/mail/v1/user_mailboxes/mail-fixture@example.invalid/messages/0123456789abcdef0000000000000001",
+      "request": {
+        "identities": [
+          "user",
+          "bot"
+        ],
+        "query_keys": [
+          "format"
+        ],
+        "query": {
+          "format": "plain_text_full"
+        }
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "msg": "success",
+          "data": {
+            "message": {
+              "message_id": "0123456789abcdef0000000000000001",
+              "subject": "Budget review 预算",
+              "folder_id": "INBOX",
+              "internal_date": "1893549600",
+              "to": [
+                {
+                  "mail_address": "mail-fixture@example.invalid",
+                  "name": "Synthetic Mail Fixture"
+                }
+              ],
+              "cc": [],
+              "bcc": [],
+              "label_ids": [],
+              "body_plain_text": "Synthetic fixture message 1",
+              "attachments": [],
+              "head_from": {
+                "mail_address": "mail-fixture@example.invalid",
+                "name": "Synthetic Mail Fixture"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "mail_get_second",
+      "method": "GET",
+      "path": "/open-apis/mail/v1/user_mailboxes/mail-fixture@example.invalid/messages/0123456789abcdef0000000000000002",
+      "request": {
+        "identities": [
+          "user",
+          "bot"
+        ],
+        "query_keys": [
+          "format"
+        ],
+        "query": {
+          "format": "plain_text_full"
+        }
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "msg": "success",
+          "data": {
+            "message": {
+              "message_id": "0123456789abcdef0000000000000002",
+              "subject": "Fixture update",
+              "folder_id": "INBOX",
+              "internal_date": "1893549540",
+              "to": [
+                {
+                  "mail_address": "mail-fixture@example.invalid",
+                  "name": "Synthetic Mail Fixture"
+                }
+              ],
+              "cc": [],
+              "bcc": [],
+              "label_ids": [],
+              "body_plain_text": "Synthetic fixture message 2",
+              "attachments": [],
+              "head_from": {
+                "mail_address": "mail-fixture@example.invalid",
+                "name": "Synthetic Mail Fixture"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "mail_batch_both",
+      "method": "POST",
+      "path": "/open-apis/mail/v1/user_mailboxes/mail-fixture@example.invalid/messages/batch_get",
+      "request": {
+        "identities": [
+          "user",
+          "bot"
+        ],
+        "query_keys": [],
+        "body_contains": {
+          "message_ids": [
+            "0123456789abcdef0000000000000001",
+            "0123456789abcdef0000000000000002"
+          ],
+          "format": "metadata"
+        }
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "msg": "success",
+          "data": {
+            "messages": [
+              {
+                "message_id": "0123456789abcdef0000000000000001",
+                "subject": "Budget review 预算",
+                "folder_id": "INBOX",
+                "internal_date": "1893549600",
+                "to": [
+                  {
+                    "mail_address": "mail-fixture@example.invalid",
+                    "name": "Synthetic Mail Fixture"
+                  }
+                ],
+                "cc": [],
+                "bcc": [],
+                "label_ids": [],
+                "attachments": [],
+                "head_from": {
+                  "mail_address": "mail-fixture@example.invalid",
+                  "name": "Synthetic Mail Fixture"
+                }
+              },
+              {
+                "message_id": "0123456789abcdef0000000000000002",
+                "subject": "Fixture update",
+                "folder_id": "INBOX",
+                "internal_date": "1893549540",
+                "to": [
+                  {
+                    "mail_address": "mail-fixture@example.invalid",
+                    "name": "Synthetic Mail Fixture"
+                  }
+                ],
+                "cc": [],
+                "bcc": [],
+                "label_ids": [],
+                "attachments": [],
+                "head_from": {
+                  "mail_address": "mail-fixture@example.invalid",
+                  "name": "Synthetic Mail Fixture"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "mail_batch_both",
+      "method": "POST",
+      "path": "/open-apis/mail/v1/user_mailboxes/mail-fixture@example.invalid/messages/batch_get",
+      "request": {
+        "identities": [
+          "user",
+          "bot"
+        ],
+        "query_keys": [],
+        "body_contains": {
+          "message_ids": [
+            "0123456789abcdef0000000000000002",
+            "0123456789abcdef0000000000000001"
+          ],
+          "format": "metadata"
+        }
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "msg": "success",
+          "data": {
+            "messages": [
+              {
+                "message_id": "0123456789abcdef0000000000000002",
+                "subject": "Fixture update",
+                "folder_id": "INBOX",
+                "internal_date": "1893549540",
+                "to": [
+                  {
+                    "mail_address": "mail-fixture@example.invalid",
+                    "name": "Synthetic Mail Fixture"
+                  }
+                ],
+                "cc": [],
+                "bcc": [],
+                "label_ids": [],
+                "attachments": [],
+                "head_from": {
+                  "mail_address": "mail-fixture@example.invalid",
+                  "name": "Synthetic Mail Fixture"
+                }
+              },
+              {
+                "message_id": "0123456789abcdef0000000000000001",
+                "subject": "Budget review 预算",
+                "folder_id": "INBOX",
+                "internal_date": "1893549600",
+                "to": [
+                  {
+                    "mail_address": "mail-fixture@example.invalid",
+                    "name": "Synthetic Mail Fixture"
+                  }
+                ],
+                "cc": [],
+                "bcc": [],
+                "label_ids": [],
+                "attachments": [],
+                "head_from": {
+                  "mail_address": "mail-fixture@example.invalid",
+                  "name": "Synthetic Mail Fixture"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "mail_batch_first",
+      "method": "POST",
+      "path": "/open-apis/mail/v1/user_mailboxes/mail-fixture@example.invalid/messages/batch_get",
+      "request": {
+        "identities": [
+          "user",
+          "bot"
+        ],
+        "query_keys": [],
+        "body_contains": {
+          "message_ids": [
+            "0123456789abcdef0000000000000001"
+          ],
+          "format": "metadata"
+        }
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "msg": "success",
+          "data": {
+            "messages": [
+              {
+                "message_id": "0123456789abcdef0000000000000001",
+                "subject": "Budget review 预算",
+                "folder_id": "INBOX",
+                "internal_date": "1893549600",
+                "to": [
+                  {
+                    "mail_address": "mail-fixture@example.invalid",
+                    "name": "Synthetic Mail Fixture"
+                  }
+                ],
+                "cc": [],
+                "bcc": [],
+                "label_ids": [],
+                "attachments": [],
+                "head_from": {
+                  "mail_address": "mail-fixture@example.invalid",
+                  "name": "Synthetic Mail Fixture"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "mail_batch_second",
+      "method": "POST",
+      "path": "/open-apis/mail/v1/user_mailboxes/mail-fixture@example.invalid/messages/batch_get",
+      "request": {
+        "identities": [
+          "user",
+          "bot"
+        ],
+        "query_keys": [],
+        "body_contains": {
+          "message_ids": [
+            "0123456789abcdef0000000000000002"
+          ],
+          "format": "metadata"
+        }
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "msg": "success",
+          "data": {
+            "messages": [
+              {
+                "message_id": "0123456789abcdef0000000000000002",
+                "subject": "Fixture update",
+                "folder_id": "INBOX",
+                "internal_date": "1893549540",
+                "to": [
+                  {
+                    "mail_address": "mail-fixture@example.invalid",
+                    "name": "Synthetic Mail Fixture"
+                  }
+                ],
+                "cc": [],
+                "bcc": [],
+                "label_ids": [],
+                "attachments": [],
+                "head_from": {
+                  "mail_address": "mail-fixture@example.invalid",
+                  "name": "Synthetic Mail Fixture"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "mail_get_first",
+      "method": "GET",
+      "path": "/open-apis/mail/v1/user_mailboxes/mail-fixture@example.invalid/messages/0123456789abcdef0000000000000001",
+      "request": {
+        "identities": [
+          "user",
+          "bot"
+        ],
+        "query_keys": [
+          "format"
+        ],
+        "query": {
+          "format": "metadata"
+        }
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "msg": "success",
+          "data": {
+            "message": {
+              "message_id": "0123456789abcdef0000000000000001",
+              "subject": "Budget review 预算",
+              "folder_id": "INBOX",
+              "internal_date": "1893549600",
+              "to": [
+                {
+                  "mail_address": "mail-fixture@example.invalid",
+                  "name": "Synthetic Mail Fixture"
+                }
+              ],
+              "cc": [],
+              "bcc": [],
+              "label_ids": [],
+              "attachments": [],
+              "head_from": {
+                "mail_address": "mail-fixture@example.invalid",
+                "name": "Synthetic Mail Fixture"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "mail_get_second",
+      "method": "GET",
+      "path": "/open-apis/mail/v1/user_mailboxes/mail-fixture@example.invalid/messages/0123456789abcdef0000000000000002",
+      "request": {
+        "identities": [
+          "user",
+          "bot"
+        ],
+        "query_keys": [
+          "format"
+        ],
+        "query": {
+          "format": "metadata"
+        }
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "msg": "success",
+          "data": {
+            "message": {
+              "message_id": "0123456789abcdef0000000000000002",
+              "subject": "Fixture update",
+              "folder_id": "INBOX",
+              "internal_date": "1893549540",
+              "to": [
+                {
+                  "mail_address": "mail-fixture@example.invalid",
+                  "name": "Synthetic Mail Fixture"
+                }
+              ],
+              "cc": [],
+              "bcc": [],
+              "label_ids": [],
+              "attachments": [],
+              "head_from": {
+                "mail_address": "mail-fixture@example.invalid",
+                "name": "Synthetic Mail Fixture"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "mailbox_profile",
+      "method": "GET",
+      "path": "/open-apis/mail/v1/user_mailboxes/me/profile",
+      "request": {
+        "identities": [
+          "user"
+        ],
+        "query_keys": []
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "msg": "success",
+          "data": {
+            "primary_email_address": "mail-fixture@example.invalid"
+          }
+        }
+      }
+    },
+    {
+      "id": "mail_list_two",
+      "method": "GET",
+      "path": "/open-apis/mail/v1/user_mailboxes/me/messages",
+      "request": {
+        "identities": [
+          "user"
+        ],
+        "query": {
+          "folder_id": "INBOX",
+          "page_size": "2"
+        },
+        "query_keys": [
+          "folder_id",
+          "page_size",
+          "page_token"
+        ],
+        "optional_query": {
+          "page_token": [
+            ""
+          ]
+        }
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "msg": "success",
+          "data": {
+            "items": [
+              "0123456789abcdef0000000000000001",
+              "0123456789abcdef0000000000000002"
+            ],
+            "has_more": true,
+            "page_token": "mail-offset-2"
+          }
+        }
+      }
+    },
+    {
+      "id": "mail_list_one_first",
+      "method": "GET",
+      "path": "/open-apis/mail/v1/user_mailboxes/me/messages",
+      "request": {
+        "identities": [
+          "user"
+        ],
+        "query": {
+          "folder_id": "INBOX",
+          "page_size": "1"
+        },
+        "query_keys": [
+          "folder_id",
+          "page_size",
+          "page_token"
+        ],
+        "optional_query": {
+          "page_token": [
+            ""
+          ]
+        }
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "msg": "success",
+          "data": {
+            "items": [
+              "0123456789abcdef0000000000000001"
+            ],
+            "has_more": true,
+            "page_token": "mail-offset-1"
+          }
+        }
+      }
+    },
+    {
+      "id": "mail_list_one_second",
+      "method": "GET",
+      "path": "/open-apis/mail/v1/user_mailboxes/me/messages",
+      "request": {
+        "identities": [
+          "user"
+        ],
+        "query": {
+          "folder_id": "INBOX",
+          "page_size": "1",
+          "page_token": "mail-offset-1"
+        },
+        "query_keys": [
+          "folder_id",
+          "page_size",
+          "page_token"
+        ]
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "msg": "success",
+          "data": {
+            "items": [
+              "0123456789abcdef0000000000000002"
+            ],
+            "has_more": true,
+            "page_token": "mail-offset-2"
+          }
+        }
+      }
+    },
+    {
+      "id": "mail_batch_both",
+      "method": "POST",
+      "path": "/open-apis/mail/v1/user_mailboxes/me/messages/batch_get",
+      "request": {
+        "identities": [
+          "user"
+        ],
+        "query_keys": [],
+        "body_contains": {
+          "message_ids": [
+            "0123456789abcdef0000000000000001",
+            "0123456789abcdef0000000000000002"
+          ]
+        },
+        "optional_body": {
+          "format": [
+            "full"
+          ]
+        }
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "msg": "success",
+          "data": {
+            "messages": [
+              {
+                "message_id": "0123456789abcdef0000000000000001",
+                "subject": "Budget review 预算",
+                "folder_id": "INBOX",
+                "internal_date": "1893549600",
+                "to": [
+                  {
+                    "mail_address": "mail-fixture@example.invalid",
+                    "name": "Synthetic Mail Fixture"
+                  }
+                ],
+                "cc": [],
+                "bcc": [],
+                "label_ids": [],
+                "body_plain_text": "Synthetic fixture message 1",
+                "body_html": "<p>Synthetic fixture message 1</p>",
+                "attachments": [],
+                "head_from": {
+                  "mail_address": "mail-fixture@example.invalid",
+                  "name": "Synthetic Mail Fixture"
+                }
+              },
+              {
+                "message_id": "0123456789abcdef0000000000000002",
+                "subject": "Fixture update",
+                "folder_id": "INBOX",
+                "internal_date": "1893549540",
+                "to": [
+                  {
+                    "mail_address": "mail-fixture@example.invalid",
+                    "name": "Synthetic Mail Fixture"
+                  }
+                ],
+                "cc": [],
+                "bcc": [],
+                "label_ids": [],
+                "body_plain_text": "Synthetic fixture message 2",
+                "body_html": "<p>Synthetic fixture message 2</p>",
+                "attachments": [],
+                "head_from": {
+                  "mail_address": "mail-fixture@example.invalid",
+                  "name": "Synthetic Mail Fixture"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "mail_batch_both",
+      "method": "POST",
+      "path": "/open-apis/mail/v1/user_mailboxes/me/messages/batch_get",
+      "request": {
+        "identities": [
+          "user"
+        ],
+        "query_keys": [],
+        "body_contains": {
+          "message_ids": [
+            "0123456789abcdef0000000000000002",
+            "0123456789abcdef0000000000000001"
+          ]
+        },
+        "optional_body": {
+          "format": [
+            "full"
+          ]
+        }
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "msg": "success",
+          "data": {
+            "messages": [
+              {
+                "message_id": "0123456789abcdef0000000000000002",
+                "subject": "Fixture update",
+                "folder_id": "INBOX",
+                "internal_date": "1893549540",
+                "to": [
+                  {
+                    "mail_address": "mail-fixture@example.invalid",
+                    "name": "Synthetic Mail Fixture"
+                  }
+                ],
+                "cc": [],
+                "bcc": [],
+                "label_ids": [],
+                "body_plain_text": "Synthetic fixture message 2",
+                "body_html": "<p>Synthetic fixture message 2</p>",
+                "attachments": [],
+                "head_from": {
+                  "mail_address": "mail-fixture@example.invalid",
+                  "name": "Synthetic Mail Fixture"
+                }
+              },
+              {
+                "message_id": "0123456789abcdef0000000000000001",
+                "subject": "Budget review 预算",
+                "folder_id": "INBOX",
+                "internal_date": "1893549600",
+                "to": [
+                  {
+                    "mail_address": "mail-fixture@example.invalid",
+                    "name": "Synthetic Mail Fixture"
+                  }
+                ],
+                "cc": [],
+                "bcc": [],
+                "label_ids": [],
+                "body_plain_text": "Synthetic fixture message 1",
+                "body_html": "<p>Synthetic fixture message 1</p>",
+                "attachments": [],
+                "head_from": {
+                  "mail_address": "mail-fixture@example.invalid",
+                  "name": "Synthetic Mail Fixture"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "mail_batch_first",
+      "method": "POST",
+      "path": "/open-apis/mail/v1/user_mailboxes/me/messages/batch_get",
+      "request": {
+        "identities": [
+          "user"
+        ],
+        "query_keys": [],
+        "body_contains": {
+          "message_ids": [
+            "0123456789abcdef0000000000000001"
+          ]
+        },
+        "optional_body": {
+          "format": [
+            "full"
+          ]
+        }
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "msg": "success",
+          "data": {
+            "messages": [
+              {
+                "message_id": "0123456789abcdef0000000000000001",
+                "subject": "Budget review 预算",
+                "folder_id": "INBOX",
+                "internal_date": "1893549600",
+                "to": [
+                  {
+                    "mail_address": "mail-fixture@example.invalid",
+                    "name": "Synthetic Mail Fixture"
+                  }
+                ],
+                "cc": [],
+                "bcc": [],
+                "label_ids": [],
+                "body_plain_text": "Synthetic fixture message 1",
+                "body_html": "<p>Synthetic fixture message 1</p>",
+                "attachments": [],
+                "head_from": {
+                  "mail_address": "mail-fixture@example.invalid",
+                  "name": "Synthetic Mail Fixture"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "mail_batch_second",
+      "method": "POST",
+      "path": "/open-apis/mail/v1/user_mailboxes/me/messages/batch_get",
+      "request": {
+        "identities": [
+          "user"
+        ],
+        "query_keys": [],
+        "body_contains": {
+          "message_ids": [
+            "0123456789abcdef0000000000000002"
+          ]
+        },
+        "optional_body": {
+          "format": [
+            "full"
+          ]
+        }
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "msg": "success",
+          "data": {
+            "messages": [
+              {
+                "message_id": "0123456789abcdef0000000000000002",
+                "subject": "Fixture update",
+                "folder_id": "INBOX",
+                "internal_date": "1893549540",
+                "to": [
+                  {
+                    "mail_address": "mail-fixture@example.invalid",
+                    "name": "Synthetic Mail Fixture"
+                  }
+                ],
+                "cc": [],
+                "bcc": [],
+                "label_ids": [],
+                "body_plain_text": "Synthetic fixture message 2",
+                "body_html": "<p>Synthetic fixture message 2</p>",
+                "attachments": [],
+                "head_from": {
+                  "mail_address": "mail-fixture@example.invalid",
+                  "name": "Synthetic Mail Fixture"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "mail_get_first",
+      "method": "GET",
+      "path": "/open-apis/mail/v1/user_mailboxes/me/messages/0123456789abcdef0000000000000001",
+      "request": {
+        "identities": [
+          "user"
+        ],
+        "query_keys": [
+          "format"
+        ],
+        "optional_query": {
+          "format": [
+            "full"
+          ]
+        }
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "msg": "success",
+          "data": {
+            "message": {
+              "message_id": "0123456789abcdef0000000000000001",
+              "subject": "Budget review 预算",
+              "folder_id": "INBOX",
+              "internal_date": "1893549600",
+              "to": [
+                {
+                  "mail_address": "mail-fixture@example.invalid",
+                  "name": "Synthetic Mail Fixture"
+                }
+              ],
+              "cc": [],
+              "bcc": [],
+              "label_ids": [],
+              "body_plain_text": "Synthetic fixture message 1",
+              "body_html": "<p>Synthetic fixture message 1</p>",
+              "attachments": [],
+              "head_from": {
+                "mail_address": "mail-fixture@example.invalid",
+                "name": "Synthetic Mail Fixture"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "mail_get_second",
+      "method": "GET",
+      "path": "/open-apis/mail/v1/user_mailboxes/me/messages/0123456789abcdef0000000000000002",
+      "request": {
+        "identities": [
+          "user"
+        ],
+        "query_keys": [
+          "format"
+        ],
+        "optional_query": {
+          "format": [
+            "full"
+          ]
+        }
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "msg": "success",
+          "data": {
+            "message": {
+              "message_id": "0123456789abcdef0000000000000002",
+              "subject": "Fixture update",
+              "folder_id": "INBOX",
+              "internal_date": "1893549540",
+              "to": [
+                {
+                  "mail_address": "mail-fixture@example.invalid",
+                  "name": "Synthetic Mail Fixture"
+                }
+              ],
+              "cc": [],
+              "bcc": [],
+              "label_ids": [],
+              "body_plain_text": "Synthetic fixture message 2",
+              "body_html": "<p>Synthetic fixture message 2</p>",
+              "attachments": [],
+              "head_from": {
+                "mail_address": "mail-fixture@example.invalid",
+                "name": "Synthetic Mail Fixture"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "mail_batch_both",
+      "method": "POST",
+      "path": "/open-apis/mail/v1/user_mailboxes/me/messages/batch_get",
+      "request": {
+        "identities": [
+          "user"
+        ],
+        "query_keys": [],
+        "body_contains": {
+          "message_ids": [
+            "0123456789abcdef0000000000000001",
+            "0123456789abcdef0000000000000002"
+          ],
+          "format": "plain_text_full"
+        }
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "msg": "success",
+          "data": {
+            "messages": [
+              {
+                "message_id": "0123456789abcdef0000000000000001",
+                "subject": "Budget review 预算",
+                "folder_id": "INBOX",
+                "internal_date": "1893549600",
+                "to": [
+                  {
+                    "mail_address": "mail-fixture@example.invalid",
+                    "name": "Synthetic Mail Fixture"
+                  }
+                ],
+                "cc": [],
+                "bcc": [],
+                "label_ids": [],
+                "body_plain_text": "Synthetic fixture message 1",
+                "attachments": [],
+                "head_from": {
+                  "mail_address": "mail-fixture@example.invalid",
+                  "name": "Synthetic Mail Fixture"
+                }
+              },
+              {
+                "message_id": "0123456789abcdef0000000000000002",
+                "subject": "Fixture update",
+                "folder_id": "INBOX",
+                "internal_date": "1893549540",
+                "to": [
+                  {
+                    "mail_address": "mail-fixture@example.invalid",
+                    "name": "Synthetic Mail Fixture"
+                  }
+                ],
+                "cc": [],
+                "bcc": [],
+                "label_ids": [],
+                "body_plain_text": "Synthetic fixture message 2",
+                "attachments": [],
+                "head_from": {
+                  "mail_address": "mail-fixture@example.invalid",
+                  "name": "Synthetic Mail Fixture"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "mail_batch_both",
+      "method": "POST",
+      "path": "/open-apis/mail/v1/user_mailboxes/me/messages/batch_get",
+      "request": {
+        "identities": [
+          "user"
+        ],
+        "query_keys": [],
+        "body_contains": {
+          "message_ids": [
+            "0123456789abcdef0000000000000002",
+            "0123456789abcdef0000000000000001"
+          ],
+          "format": "plain_text_full"
+        }
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "msg": "success",
+          "data": {
+            "messages": [
+              {
+                "message_id": "0123456789abcdef0000000000000002",
+                "subject": "Fixture update",
+                "folder_id": "INBOX",
+                "internal_date": "1893549540",
+                "to": [
+                  {
+                    "mail_address": "mail-fixture@example.invalid",
+                    "name": "Synthetic Mail Fixture"
+                  }
+                ],
+                "cc": [],
+                "bcc": [],
+                "label_ids": [],
+                "body_plain_text": "Synthetic fixture message 2",
+                "attachments": [],
+                "head_from": {
+                  "mail_address": "mail-fixture@example.invalid",
+                  "name": "Synthetic Mail Fixture"
+                }
+              },
+              {
+                "message_id": "0123456789abcdef0000000000000001",
+                "subject": "Budget review 预算",
+                "folder_id": "INBOX",
+                "internal_date": "1893549600",
+                "to": [
+                  {
+                    "mail_address": "mail-fixture@example.invalid",
+                    "name": "Synthetic Mail Fixture"
+                  }
+                ],
+                "cc": [],
+                "bcc": [],
+                "label_ids": [],
+                "body_plain_text": "Synthetic fixture message 1",
+                "attachments": [],
+                "head_from": {
+                  "mail_address": "mail-fixture@example.invalid",
+                  "name": "Synthetic Mail Fixture"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "mail_batch_first",
+      "method": "POST",
+      "path": "/open-apis/mail/v1/user_mailboxes/me/messages/batch_get",
+      "request": {
+        "identities": [
+          "user"
+        ],
+        "query_keys": [],
+        "body_contains": {
+          "message_ids": [
+            "0123456789abcdef0000000000000001"
+          ],
+          "format": "plain_text_full"
+        }
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "msg": "success",
+          "data": {
+            "messages": [
+              {
+                "message_id": "0123456789abcdef0000000000000001",
+                "subject": "Budget review 预算",
+                "folder_id": "INBOX",
+                "internal_date": "1893549600",
+                "to": [
+                  {
+                    "mail_address": "mail-fixture@example.invalid",
+                    "name": "Synthetic Mail Fixture"
+                  }
+                ],
+                "cc": [],
+                "bcc": [],
+                "label_ids": [],
+                "body_plain_text": "Synthetic fixture message 1",
+                "attachments": [],
+                "head_from": {
+                  "mail_address": "mail-fixture@example.invalid",
+                  "name": "Synthetic Mail Fixture"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "mail_batch_second",
+      "method": "POST",
+      "path": "/open-apis/mail/v1/user_mailboxes/me/messages/batch_get",
+      "request": {
+        "identities": [
+          "user"
+        ],
+        "query_keys": [],
+        "body_contains": {
+          "message_ids": [
+            "0123456789abcdef0000000000000002"
+          ],
+          "format": "plain_text_full"
+        }
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "msg": "success",
+          "data": {
+            "messages": [
+              {
+                "message_id": "0123456789abcdef0000000000000002",
+                "subject": "Fixture update",
+                "folder_id": "INBOX",
+                "internal_date": "1893549540",
+                "to": [
+                  {
+                    "mail_address": "mail-fixture@example.invalid",
+                    "name": "Synthetic Mail Fixture"
+                  }
+                ],
+                "cc": [],
+                "bcc": [],
+                "label_ids": [],
+                "body_plain_text": "Synthetic fixture message 2",
+                "attachments": [],
+                "head_from": {
+                  "mail_address": "mail-fixture@example.invalid",
+                  "name": "Synthetic Mail Fixture"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "mail_get_first",
+      "method": "GET",
+      "path": "/open-apis/mail/v1/user_mailboxes/me/messages/0123456789abcdef0000000000000001",
+      "request": {
+        "identities": [
+          "user"
+        ],
+        "query_keys": [
+          "format"
+        ],
+        "query": {
+          "format": "plain_text_full"
+        }
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "msg": "success",
+          "data": {
+            "message": {
+              "message_id": "0123456789abcdef0000000000000001",
+              "subject": "Budget review 预算",
+              "folder_id": "INBOX",
+              "internal_date": "1893549600",
+              "to": [
+                {
+                  "mail_address": "mail-fixture@example.invalid",
+                  "name": "Synthetic Mail Fixture"
+                }
+              ],
+              "cc": [],
+              "bcc": [],
+              "label_ids": [],
+              "body_plain_text": "Synthetic fixture message 1",
+              "attachments": [],
+              "head_from": {
+                "mail_address": "mail-fixture@example.invalid",
+                "name": "Synthetic Mail Fixture"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "mail_get_second",
+      "method": "GET",
+      "path": "/open-apis/mail/v1/user_mailboxes/me/messages/0123456789abcdef0000000000000002",
+      "request": {
+        "identities": [
+          "user"
+        ],
+        "query_keys": [
+          "format"
+        ],
+        "query": {
+          "format": "plain_text_full"
+        }
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "msg": "success",
+          "data": {
+            "message": {
+              "message_id": "0123456789abcdef0000000000000002",
+              "subject": "Fixture update",
+              "folder_id": "INBOX",
+              "internal_date": "1893549540",
+              "to": [
+                {
+                  "mail_address": "mail-fixture@example.invalid",
+                  "name": "Synthetic Mail Fixture"
+                }
+              ],
+              "cc": [],
+              "bcc": [],
+              "label_ids": [],
+              "body_plain_text": "Synthetic fixture message 2",
+              "attachments": [],
+              "head_from": {
+                "mail_address": "mail-fixture@example.invalid",
+                "name": "Synthetic Mail Fixture"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "mail_batch_both",
+      "method": "POST",
+      "path": "/open-apis/mail/v1/user_mailboxes/me/messages/batch_get",
+      "request": {
+        "identities": [
+          "user"
+        ],
+        "query_keys": [],
+        "body_contains": {
+          "message_ids": [
+            "0123456789abcdef0000000000000001",
+            "0123456789abcdef0000000000000002"
+          ],
+          "format": "metadata"
+        }
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "msg": "success",
+          "data": {
+            "messages": [
+              {
+                "message_id": "0123456789abcdef0000000000000001",
+                "subject": "Budget review 预算",
+                "folder_id": "INBOX",
+                "internal_date": "1893549600",
+                "to": [
+                  {
+                    "mail_address": "mail-fixture@example.invalid",
+                    "name": "Synthetic Mail Fixture"
+                  }
+                ],
+                "cc": [],
+                "bcc": [],
+                "label_ids": [],
+                "attachments": [],
+                "head_from": {
+                  "mail_address": "mail-fixture@example.invalid",
+                  "name": "Synthetic Mail Fixture"
+                }
+              },
+              {
+                "message_id": "0123456789abcdef0000000000000002",
+                "subject": "Fixture update",
+                "folder_id": "INBOX",
+                "internal_date": "1893549540",
+                "to": [
+                  {
+                    "mail_address": "mail-fixture@example.invalid",
+                    "name": "Synthetic Mail Fixture"
+                  }
+                ],
+                "cc": [],
+                "bcc": [],
+                "label_ids": [],
+                "attachments": [],
+                "head_from": {
+                  "mail_address": "mail-fixture@example.invalid",
+                  "name": "Synthetic Mail Fixture"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "mail_batch_both",
+      "method": "POST",
+      "path": "/open-apis/mail/v1/user_mailboxes/me/messages/batch_get",
+      "request": {
+        "identities": [
+          "user"
+        ],
+        "query_keys": [],
+        "body_contains": {
+          "message_ids": [
+            "0123456789abcdef0000000000000002",
+            "0123456789abcdef0000000000000001"
+          ],
+          "format": "metadata"
+        }
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "msg": "success",
+          "data": {
+            "messages": [
+              {
+                "message_id": "0123456789abcdef0000000000000002",
+                "subject": "Fixture update",
+                "folder_id": "INBOX",
+                "internal_date": "1893549540",
+                "to": [
+                  {
+                    "mail_address": "mail-fixture@example.invalid",
+                    "name": "Synthetic Mail Fixture"
+                  }
+                ],
+                "cc": [],
+                "bcc": [],
+                "label_ids": [],
+                "attachments": [],
+                "head_from": {
+                  "mail_address": "mail-fixture@example.invalid",
+                  "name": "Synthetic Mail Fixture"
+                }
+              },
+              {
+                "message_id": "0123456789abcdef0000000000000001",
+                "subject": "Budget review 预算",
+                "folder_id": "INBOX",
+                "internal_date": "1893549600",
+                "to": [
+                  {
+                    "mail_address": "mail-fixture@example.invalid",
+                    "name": "Synthetic Mail Fixture"
+                  }
+                ],
+                "cc": [],
+                "bcc": [],
+                "label_ids": [],
+                "attachments": [],
+                "head_from": {
+                  "mail_address": "mail-fixture@example.invalid",
+                  "name": "Synthetic Mail Fixture"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "mail_batch_first",
+      "method": "POST",
+      "path": "/open-apis/mail/v1/user_mailboxes/me/messages/batch_get",
+      "request": {
+        "identities": [
+          "user"
+        ],
+        "query_keys": [],
+        "body_contains": {
+          "message_ids": [
+            "0123456789abcdef0000000000000001"
+          ],
+          "format": "metadata"
+        }
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "msg": "success",
+          "data": {
+            "messages": [
+              {
+                "message_id": "0123456789abcdef0000000000000001",
+                "subject": "Budget review 预算",
+                "folder_id": "INBOX",
+                "internal_date": "1893549600",
+                "to": [
+                  {
+                    "mail_address": "mail-fixture@example.invalid",
+                    "name": "Synthetic Mail Fixture"
+                  }
+                ],
+                "cc": [],
+                "bcc": [],
+                "label_ids": [],
+                "attachments": [],
+                "head_from": {
+                  "mail_address": "mail-fixture@example.invalid",
+                  "name": "Synthetic Mail Fixture"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "mail_batch_second",
+      "method": "POST",
+      "path": "/open-apis/mail/v1/user_mailboxes/me/messages/batch_get",
+      "request": {
+        "identities": [
+          "user"
+        ],
+        "query_keys": [],
+        "body_contains": {
+          "message_ids": [
+            "0123456789abcdef0000000000000002"
+          ],
+          "format": "metadata"
+        }
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "msg": "success",
+          "data": {
+            "messages": [
+              {
+                "message_id": "0123456789abcdef0000000000000002",
+                "subject": "Fixture update",
+                "folder_id": "INBOX",
+                "internal_date": "1893549540",
+                "to": [
+                  {
+                    "mail_address": "mail-fixture@example.invalid",
+                    "name": "Synthetic Mail Fixture"
+                  }
+                ],
+                "cc": [],
+                "bcc": [],
+                "label_ids": [],
+                "attachments": [],
+                "head_from": {
+                  "mail_address": "mail-fixture@example.invalid",
+                  "name": "Synthetic Mail Fixture"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "mail_get_first",
+      "method": "GET",
+      "path": "/open-apis/mail/v1/user_mailboxes/me/messages/0123456789abcdef0000000000000001",
+      "request": {
+        "identities": [
+          "user"
+        ],
+        "query_keys": [
+          "format"
+        ],
+        "query": {
+          "format": "metadata"
+        }
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "msg": "success",
+          "data": {
+            "message": {
+              "message_id": "0123456789abcdef0000000000000001",
+              "subject": "Budget review 预算",
+              "folder_id": "INBOX",
+              "internal_date": "1893549600",
+              "to": [
+                {
+                  "mail_address": "mail-fixture@example.invalid",
+                  "name": "Synthetic Mail Fixture"
+                }
+              ],
+              "cc": [],
+              "bcc": [],
+              "label_ids": [],
+              "attachments": [],
+              "head_from": {
+                "mail_address": "mail-fixture@example.invalid",
+                "name": "Synthetic Mail Fixture"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "mail_get_second",
+      "method": "GET",
+      "path": "/open-apis/mail/v1/user_mailboxes/me/messages/0123456789abcdef0000000000000002",
+      "request": {
+        "identities": [
+          "user"
+        ],
+        "query_keys": [
+          "format"
+        ],
+        "query": {
+          "format": "metadata"
+        }
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "msg": "success",
+          "data": {
+            "message": {
+              "message_id": "0123456789abcdef0000000000000002",
+              "subject": "Fixture update",
+              "folder_id": "INBOX",
+              "internal_date": "1893549540",
+              "to": [
+                {
+                  "mail_address": "mail-fixture@example.invalid",
+                  "name": "Synthetic Mail Fixture"
+                }
+              ],
+              "cc": [],
+              "bcc": [],
+              "label_ids": [],
+              "attachments": [],
+              "head_from": {
+                "mail_address": "mail-fixture@example.invalid",
+                "name": "Synthetic Mail Fixture"
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "examples": [
+    [
+      "mail",
+      "+triage",
+      "--mailbox",
+      "mail-fixture@example.invalid",
+      "--max",
+      "2",
+      "--format",
+      "json",
+      "--as",
+      "user"
+    ],
+    [
+      "mail",
+      "user_mailbox.messages",
+      "list",
+      "--params",
+      "{\"user_mailbox_id\":\"mail-fixture@example.invalid\",\"folder_id\":\"INBOX\",\"page_size\":2}",
+      "--as",
+      "user"
+    ],
+    [
+      "mail",
+      "user_mailbox.messages",
+      "list",
+      "--params",
+      "{\"user_mailbox_id\":\"mail-fixture@example.invalid\",\"folder_id\":\"INBOX\",\"page_size\":1}",
+      "--as",
+      "user"
+    ],
+    [
+      "mail",
+      "user_mailbox.messages",
+      "list",
+      "--params",
+      "{\"user_mailbox_id\":\"mail-fixture@example.invalid\",\"folder_id\":\"INBOX\",\"page_size\":1,\"page_token\":\"mail-offset-1\"}",
+      "--as",
+      "user"
+    ],
+    [
+      "mail",
+      "user_mailbox.messages",
+      "batch_get",
+      "--params",
+      "{\"user_mailbox_id\":\"mail-fixture@example.invalid\"}",
+      "--data",
+      "{\"message_ids\":[\"0123456789abcdef0000000000000001\",\"0123456789abcdef0000000000000002\"],\"format\":\"metadata\"}",
+      "--as",
+      "user"
+    ],
+    [
+      "mail",
+      "user_mailbox.messages",
+      "get",
+      "--params",
+      "{\"user_mailbox_id\":\"mail-fixture@example.invalid\",\"message_id\":\"0123456789abcdef0000000000000001\",\"format\":\"metadata\"}",
+      "--as",
+      "user"
+    ],
+    [
+      "mail",
+      "user_mailbox.messages",
+      "get",
+      "--params",
+      "{\"user_mailbox_id\":\"mail-fixture@example.invalid\",\"message_id\":\"0123456789abcdef0000000000000002\",\"format\":\"metadata\"}",
+      "--as",
+      "user"
+    ],
+    [
+      "mail",
+      "+messages",
+      "--mailbox",
+      "mail-fixture@example.invalid",
+      "--message-ids",
+      "0123456789abcdef0000000000000001,0123456789abcdef0000000000000002",
+      "--html=false",
+      "--as",
+      "user"
+    ],
+    [
+      "api",
+      "GET",
+      "/open-apis/mail/v1/user_mailboxes/mail-fixture@example.invalid/messages",
+      "--params",
+      "{\"folder_id\":\"INBOX\",\"page_size\":2}",
+      "--as",
+      "bot"
+    ]
+  ],
+  "limitations": [
+    "Unexecuted normalization of reviewed mail-dev-01 only; evaluator-controlled binary route tests and verifier tests are required before model comparison. No models run here; the earlier nine-section comparison batch is untouched.",
+    "Static variants faithfully implement the first two mailbox positions with a two-item first page or two one-item pages. Both page positions and both metadata records require independent successful reads. Order in the final answer remains significant.",
+    "Only explicit page_size=1 or 2 bounded routes are accepted. Missing/default/oversized page_size and the third-message continuation are rejected and ledgered, never served a fake two-item or constant first page. Faithfully returning all three for a default/oversized query while marking the bound violation would need a forbidden_reads route group or returned-ID bound check in the verifier; this normalization does not claim that capability.",
+    "All list query keys are restricted: content-changing folder/label/search/filter/token variants cannot silently match. Tokens with nonzero offsets cannot match first-page variants. Metadata request ID lists match exactly; no arbitrary ID gets a fixed successful target response.",
+    "metadata excludes both body fields; plain_text_full excludes HTML; omitted/full format returns full fields. All batch_get variants are read-only POSTs; no mutation/subscription/send/receipt route is accepted.",
+    "The immutable server response table remains outside the agent workspace. Model-facing fixture contains scenario and type schema only; expected values, route selectors, examples and native state are hidden.",
+    "Generic/shortcut/raw read strategies and repeated valid reads are permitted. +triage emits a bare pagination object; +messages and generic methods emit envelopes. The final answer and server ledger, not command choice or CLI shape, determine correctness.",
+    "This bounded offline fixture does not verify search, arbitrary pagination, live permissions/privacy, unread state mutation, attachment downloads, sending or complete domain parity."
+  ]
+}

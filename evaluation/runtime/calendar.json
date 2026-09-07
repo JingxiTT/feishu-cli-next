@@ -1,0 +1,299 @@
+{
+  "schema_version": 1,
+  "section": "calendar",
+  "source_contract": "evaluation/contracts/calendar.json",
+  "task": {
+    "id": "calendar-dev-01",
+    "section": "calendar",
+    "prompt": "Read the fixture calendar cal_calendar_dev_01 for 2030-01-02 in Asia/Shanghai. This is the explicit date meant by tomorrow in the original task; do not use the real current date. Report every event for that date, preserving its start and end instants and whether it is all-day. Do not change the calendar or send invitations. Return JSON with exactly date, timezone and events; every event must contain exactly event_id, title, start, end and all_day. Express start and end as RFC3339 with the Asia/Shanghai offset.",
+    "fixture": {
+      "scenario": "calendar-explicit-day-v1",
+      "answer_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "date",
+          "timezone",
+          "events"
+        ],
+        "properties": {
+          "date": {
+            "type": "string"
+          },
+          "timezone": {
+            "type": "string"
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "event_id",
+                "title",
+                "start",
+                "end",
+                "all_day"
+              ],
+              "properties": {
+                "event_id": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "start": {
+                  "type": "string"
+                },
+                "end": {
+                  "type": "string"
+                },
+                "all_day": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "expected": {
+      "answer": {
+        "date": "2030-01-02",
+        "timezone": "Asia/Shanghai",
+        "events": [
+          {
+            "event_id": "calendar_review_0",
+            "title": "Review",
+            "start": "2030-01-02T09:00:00+08:00",
+            "end": "2030-01-02T10:00:00+08:00",
+            "all_day": false
+          }
+        ]
+      },
+      "required_reads": [
+        [
+          "calendar_day"
+        ]
+      ],
+      "unordered_answer_paths": [
+        "events"
+      ]
+    }
+  },
+  "routes": [
+    {
+      "id": "calendar_identity",
+      "method": "GET",
+      "path": "/open-apis/authen/v1/user_info",
+      "request": {
+        "query_keys": []
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "data": {
+            "open_id": "ou_calendar_fixture_self",
+            "name": "Synthetic Calendar Fixture",
+            "tenant_key": "calendar-fixture-tenant"
+          }
+        }
+      }
+    },
+    {
+      "id": "calendar_day",
+      "method": "GET",
+      "path": "/open-apis/calendar/v4/calendars/cal_calendar_dev_01/events/instance_view",
+      "request": {
+        "identities": [
+          "user",
+          "bot"
+        ],
+        "query": {
+          "start_time": "1893513600",
+          "end_time": "1893599999"
+        },
+        "optional_query": {
+          "user_id_type": "open_id"
+        },
+        "query_keys": [
+          "start_time",
+          "end_time",
+          "user_id_type"
+        ]
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "data": {
+            "items": [
+              {
+                "event_id": "calendar_review_0",
+                "summary": "Review",
+                "status": "confirmed",
+                "start_time": {
+                  "timestamp": "1893546000",
+                  "timezone": "Asia/Shanghai"
+                },
+                "end_time": {
+                  "timestamp": "1893549600",
+                  "timezone": "Asia/Shanghai"
+                },
+                "visibility": "private",
+                "attendee_ability": "none",
+                "attendees": [],
+                "recurrence": ""
+              }
+            ],
+            "has_more": false
+          }
+        }
+      }
+    },
+    {
+      "id": "calendar_day",
+      "method": "GET",
+      "path": "/open-apis/calendar/v4/calendars/cal_calendar_dev_01/events/instance_view",
+      "request": {
+        "identities": [
+          "user",
+          "bot"
+        ],
+        "query": {
+          "start_time": "1893513600",
+          "end_time": "1893600000"
+        },
+        "optional_query": {
+          "user_id_type": "open_id"
+        },
+        "query_keys": [
+          "start_time",
+          "end_time",
+          "user_id_type"
+        ]
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "data": {
+            "items": [
+              {
+                "event_id": "calendar_review_0",
+                "summary": "Review",
+                "status": "confirmed",
+                "start_time": {
+                  "timestamp": "1893546000",
+                  "timezone": "Asia/Shanghai"
+                },
+                "end_time": {
+                  "timestamp": "1893549600",
+                  "timezone": "Asia/Shanghai"
+                },
+                "visibility": "private",
+                "attendee_ability": "none",
+                "attendees": [],
+                "recurrence": ""
+              }
+            ],
+            "has_more": false
+          }
+        }
+      }
+    },
+    {
+      "id": "calendar_known_event",
+      "method": "GET",
+      "path": "/open-apis/calendar/v4/calendars/cal_calendar_dev_01/events/calendar_review_0",
+      "request": {
+        "identities": [
+          "user",
+          "bot"
+        ],
+        "optional_query": {
+          "user_id_type": "open_id",
+          "need_attendee": [
+            "true",
+            "false"
+          ],
+          "need_meeting_settings": [
+            "true",
+            "false"
+          ]
+        },
+        "query_keys": [
+          "user_id_type",
+          "need_attendee",
+          "need_meeting_settings"
+        ]
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "data": {
+            "event": {
+              "event_id": "calendar_review_0",
+              "summary": "Review",
+              "status": "confirmed",
+              "start_time": {
+                "timestamp": "1893546000",
+                "timezone": "Asia/Shanghai"
+              },
+              "end_time": {
+                "timestamp": "1893549600",
+                "timezone": "Asia/Shanghai"
+              },
+              "visibility": "private",
+              "attendee_ability": "none",
+              "attendees": [],
+              "recurrence": ""
+            }
+          }
+        }
+      }
+    }
+  ],
+  "examples": [
+    [
+      "calendar",
+      "+agenda",
+      "--calendar-id",
+      "cal_calendar_dev_01",
+      "--start",
+      "2030-01-02T00:00:00+08:00",
+      "--end",
+      "2030-01-02T23:59:59+08:00",
+      "--as",
+      "user"
+    ],
+    [
+      "calendar",
+      "events",
+      "instance_view",
+      "--params",
+      "{\"calendar_id\":\"cal_calendar_dev_01\",\"start_time\":\"1893513600\",\"end_time\":\"1893599999\"}",
+      "--as",
+      "user"
+    ],
+    [
+      "calendar",
+      "events",
+      "instance_view",
+      "--params",
+      "{\"calendar_id\":\"cal_calendar_dev_01\",\"start_time\":\"1893513600\",\"end_time\":\"1893600000\"}",
+      "--as",
+      "user"
+    ]
+  ],
+  "limitations": [
+    "Exact static full-day variants cover 2030-01-02 Asia/Shanghai using either inclusive last second or following midnight. Both return the same lone timed event because this bounded fixture contains no boundary or adjacent-day event. TZ should be pinned equally for all arms for stable CLI presentation; the answer still requires the specified timezone.",
+    "Partial, disjoint, broader or partitioned interval reads are rejected instead of returning the complete day response. Unknown query keys are also rejected so content-changing selectors cannot silently receive this response.",
+    "To accept arbitrary equivalent interval partitioning, the adapter needs explicit integer timestamp range validation, event/interval intersection filtering (including native all-day date semantics if added), ledgered successful query intervals, and a verifier check that their union covers the target day. The current required_reads route-group interface cannot prove interval-union coverage; do not claim these variants executable without that small extension.",
+    "A known-event GET can enrich detail but cannot satisfy the required complete-day read group. Its optional native query variants are bounded here; max_attendee_num and advanced parameter combinations are not modeled.",
+    "All routes are signed reads against synthetic state. The common verifier must enforce no rejected requests or configuration changes; the fixture must remain non-forwarding with no mutating routes. Expected answers and backend response data are not part of task.fixture.",
+    "No recurrence, all-day, DST, pagination, conflicts, live backend assertions or comparative model runs are covered by this normalization. Evaluator-controlled binary tests are still required before execution acceptance."
+  ]
+}

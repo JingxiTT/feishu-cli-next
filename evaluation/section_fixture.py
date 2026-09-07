@@ -7,6 +7,7 @@ import json
 from pathlib import Path
 import threading
 import time
+from scenario_protocol import Reply
 from urllib.parse import parse_qs, urlsplit
 
 PROXY_KEY = "synthetic-evaluation-proxy-key"
@@ -90,48 +91,80 @@ def contact_read(method, uri, body):
 
 
 class SectionFixture:
-    def __init__(self, scenario, dispatch=None):
+    def __init__(self, scenario, dispatch=None, snapshot=None):
         if scenario != "contact-exact-id-v1" and dispatch is None:
             raise ValueError("unsupported fixture scenario")
         self.scenario = scenario
         self.dispatch = dispatch
+        self.snapshot = snapshot
         self.records = []
         self.lock = threading.Lock()
         fixture = self
 
         class Handler(BaseHTTPRequestHandler):
+            def setup(self):
+                self.request.settimeout(2)
+                super().setup()
+
             def log_message(self, *_):
                 pass
 
             def handle_request(self):
-                status, route, ids = 403, "rejected", []
-                try:
-                    length = int(self.headers.get("Content-Length", "0"))
-                    if length < 0 or length > 65536 or self.headers.get("Transfer-Encoding"):
-                        raise ValueError("invalid length")
-                    body = self.rfile.read(length)
-                    if not valid_signature(self.command, self.path, body, self.headers):
-                        raise ValueError("invalid signature")
-                    if fixture.dispatch is None:
-                        route, data, ids = contact_read(self.command, self.path, body)
-                        response = {"code": 0, "msg": "success", "data": data}
-                    else:
-                        route, response, ids = fixture.dispatch(self.command, self.path, body, self.headers)
-                    status = 200
-                except (ValueError, KeyError, TypeError):
-                    response = {"code": 403, "msg": "synthetic fixture rejected request"}
+                status, route, ids, proof = 403, "rejected", [], {}
+                signature_valid, rejection = False, None
+                content_type, extra_headers, encoded = "application/json", {}, None
                 with fixture.lock:
-                    fixture.records.append({"route": route, "status": status, "returned_ids": ids})
-                encoded = json.dumps(response).encode()
+                    try:
+                        length = int(self.headers.get("Content-Length", "0"))
+                        if length < 0 or length > 65536 or self.headers.get("Transfer-Encoding"):
+                            raise ValueError("invalid length")
+                        body = self.rfile.read(length)
+                        signature_valid = valid_signature(self.command, self.path, body, self.headers)
+                        if not signature_valid:
+                            raise ValueError("invalid signature")
+                        if fixture.dispatch is None:
+                            route, data, ids = contact_read(self.command, self.path, body)
+                            response = {"code": 0, "msg": "success", "data": data}
+                            status = 200
+                        else:
+                            result = fixture.dispatch(self.command, self.path, body, self.headers)
+                            if isinstance(result, Reply):
+                                route, response, status, proof = result.route, result.json, result.status, result.proof
+                                encoded, content_type, extra_headers = result.body, result.content_type, result.headers
+                            else:
+                                route, response, ids = result
+                                status = 200
+                    except (ValueError, KeyError, TypeError) as error:
+                        rejection = "unsupported_strategy" if str(error).startswith("unsupported strategy:") else "rejected_request"
+                        status, route = 403, "rejected"
+                        response = {"code": 403, "msg": "synthetic fixture rejected request"}
+                    except Exception:
+                        status, route = 500, "fixture_error"
+                        response = {"code": 500, "msg": "synthetic fixture implementation error"}
+                    record = {"route": route, "status": status, "returned_ids": ids,
+                              "method": self.command, "uri": urlsplit(self.path).path,
+                              "signature_valid": signature_valid}
+                    if rejection:
+                        record["rejection"] = rejection
+                    if proof:
+                        record["proof"] = proof
+                    fixture.records.append(record)
+                if encoded is None:
+                    encoded = json.dumps(response, allow_nan=False).encode()
                 self.send_response(status)
-                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Type", content_type)
                 self.send_header("Content-Length", str(len(encoded)))
+                for name, value in extra_headers.items():
+                    if name.lower() not in ("content-type", "content-length"):
+                        self.send_header(name, str(value))
                 self.end_headers()
                 self.wfile.write(encoded)
 
             do_GET = do_POST = do_PUT = do_PATCH = do_DELETE = do_HEAD = do_OPTIONS = handle_request
 
         self.server = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
+        # Drain bounded in-flight handlers before taking a final state snapshot.
+        self.server.daemon_threads = False
         self.thread = threading.Thread(target=self.server.serve_forever, daemon=True)
 
     def __enter__(self):
@@ -150,10 +183,13 @@ class SectionFixture:
 
     def receipt(self):
         with self.lock:
-            return {"scenario": self.scenario, "requests": list(self.records)}
+            result = {"scenario": self.scenario, "requests": list(self.records)}
+            if self.snapshot is not None:
+                result["state"] = self.snapshot()
+            return result
 
-    def write_receipt(self, workspace):
+    def write_receipt(self, workspace, extra=None):
         # Called only after the agent process has ended. Never trust an agent-written ledger.
         path = Path(workspace) / "backend-receipt.json"
         path.unlink(missing_ok=True)
-        path.write_text(json.dumps(self.receipt()), encoding="utf-8")
+        path.write_text(json.dumps({**self.receipt(), **(extra or {})}), encoding="utf-8")

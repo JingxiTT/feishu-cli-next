@@ -1,0 +1,945 @@
+{
+  "schema_version": 1,
+  "section": "okr",
+  "source_contract": "evaluation/contracts/okr.json",
+  "task": {
+    "id": "okr-dev-01",
+    "section": "okr",
+    "prompt": "Read fixture objective 71001 (Quality) and report the current progress percentage of each of its two key results. The fixture contains exactly one progress record per key result, so no latest-record inference is needed. Do not update, create, delete or comment on anything. Return only JSON with exactly objective and key_results. objective must be the objective title; each key_results item must contain exactly key_result_id and progress. Keep progress as a JSON number, including zero.",
+    "fixture": {
+      "scenario": "okr-two-key-result-progress-v1",
+      "answer_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "objective",
+          "key_results"
+        ],
+        "properties": {
+          "objective": {
+            "type": "string"
+          },
+          "key_results": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "key_result_id",
+                "progress"
+              ],
+              "properties": {
+                "key_result_id": {
+                  "type": "string"
+                },
+                "progress": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "expected": {
+      "answer": {
+        "objective": "Quality",
+        "key_results": [
+          {
+            "key_result_id": "72001",
+            "progress": 0
+          },
+          {
+            "key_result_id": "72002",
+            "progress": 75
+          }
+        ]
+      },
+      "required_reads": [
+        [
+          "objective"
+        ],
+        [
+          "key_results_all",
+          "key_results_page_1"
+        ],
+        [
+          "key_results_all",
+          "key_results_page_2"
+        ],
+        [
+          "progress_72001"
+        ],
+        [
+          "progress_72002"
+        ]
+      ],
+      "unordered_answer_paths": [
+        "key_results"
+      ]
+    }
+  },
+  "routes": [
+    {
+      "id": "identity",
+      "method": "GET",
+      "path": "/open-apis/authen/v1/user_info",
+      "request": {
+        "identities": [
+          "user",
+          "bot"
+        ],
+        "query_keys": []
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "data": {
+            "open_id": "fixture_self",
+            "name": "Synthetic Fixture",
+            "tenant_key": "fixture-tenant"
+          }
+        }
+      }
+    },
+    {
+      "id": "objective",
+      "method": "GET",
+      "path": "/open-apis/okr/v2/objectives/71001",
+      "request": {
+        "identities": [
+          "user",
+          "bot"
+        ],
+        "optional_query": {
+          "user_id_type": [
+            "open_id"
+          ],
+          "department_id_type": [
+            "open_department_id",
+            "department_id"
+          ]
+        },
+        "query_keys": [
+          "user_id_type",
+          "department_id_type"
+        ]
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "data": {
+            "objective": {
+              "id": "71001",
+              "cycle_id": "73001",
+              "content": {
+                "blocks": [
+                  {
+                    "block_element_type": "paragraph",
+                    "paragraph": {
+                      "elements": [
+                        {
+                          "paragraph_element_type": "textRun",
+                          "text_run": {
+                            "text": "Quality"
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "key_results_all",
+      "method": "GET",
+      "path": "/open-apis/okr/v2/objectives/71001/key_results",
+      "request": {
+        "identities": [
+          "user",
+          "bot"
+        ],
+        "optional_query": {
+          "user_id_type": [
+            "open_id"
+          ],
+          "department_id_type": [
+            "open_department_id",
+            "department_id"
+          ],
+          "page_size": [
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12",
+            "13",
+            "14",
+            "15",
+            "16",
+            "17",
+            "18",
+            "19",
+            "20",
+            "21",
+            "22",
+            "23",
+            "24",
+            "25",
+            "26",
+            "27",
+            "28",
+            "29",
+            "30",
+            "31",
+            "32",
+            "33",
+            "34",
+            "35",
+            "36",
+            "37",
+            "38",
+            "39",
+            "40",
+            "41",
+            "42",
+            "43",
+            "44",
+            "45",
+            "46",
+            "47",
+            "48",
+            "49",
+            "50",
+            "51",
+            "52",
+            "53",
+            "54",
+            "55",
+            "56",
+            "57",
+            "58",
+            "59",
+            "60",
+            "61",
+            "62",
+            "63",
+            "64",
+            "65",
+            "66",
+            "67",
+            "68",
+            "69",
+            "70",
+            "71",
+            "72",
+            "73",
+            "74",
+            "75",
+            "76",
+            "77",
+            "78",
+            "79",
+            "80",
+            "81",
+            "82",
+            "83",
+            "84",
+            "85",
+            "86",
+            "87",
+            "88",
+            "89",
+            "90",
+            "91",
+            "92",
+            "93",
+            "94",
+            "95",
+            "96",
+            "97",
+            "98",
+            "99",
+            "100"
+          ],
+          "page_token": [
+            ""
+          ]
+        },
+        "query_keys": [
+          "user_id_type",
+          "department_id_type",
+          "page_size",
+          "page_token"
+        ]
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "data": {
+            "items": [
+              {
+                "id": "72001",
+                "objective_id": "71001",
+                "position": 1,
+                "content": {
+                  "blocks": [
+                    {
+                      "block_element_type": "paragraph",
+                      "paragraph": {
+                        "elements": [
+                          {
+                            "paragraph_element_type": "textRun",
+                            "text_run": {
+                              "text": "KR 1"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "72002",
+                "objective_id": "71001",
+                "position": 2,
+                "content": {
+                  "blocks": [
+                    {
+                      "block_element_type": "paragraph",
+                      "paragraph": {
+                        "elements": [
+                          {
+                            "paragraph_element_type": "textRun",
+                            "text_run": {
+                              "text": "KR 2"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              }
+            ],
+            "has_more": false
+          }
+        }
+      }
+    },
+    {
+      "id": "key_results_page_1",
+      "method": "GET",
+      "path": "/open-apis/okr/v2/objectives/71001/key_results",
+      "request": {
+        "identities": [
+          "user",
+          "bot"
+        ],
+        "optional_query": {
+          "user_id_type": [
+            "open_id"
+          ],
+          "department_id_type": [
+            "open_department_id",
+            "department_id"
+          ],
+          "page_token": [
+            ""
+          ]
+        },
+        "query_keys": [
+          "user_id_type",
+          "department_id_type",
+          "page_size",
+          "page_token"
+        ],
+        "query": {
+          "page_size": "1"
+        }
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "data": {
+            "items": [
+              {
+                "id": "72001",
+                "objective_id": "71001",
+                "position": 1,
+                "content": {
+                  "blocks": [
+                    {
+                      "block_element_type": "paragraph",
+                      "paragraph": {
+                        "elements": [
+                          {
+                            "paragraph_element_type": "textRun",
+                            "text_run": {
+                              "text": "KR 1"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              }
+            ],
+            "has_more": true,
+            "page_token": "okr-kr-page-2"
+          }
+        }
+      }
+    },
+    {
+      "id": "key_results_page_2",
+      "method": "GET",
+      "path": "/open-apis/okr/v2/objectives/71001/key_results",
+      "request": {
+        "identities": [
+          "user",
+          "bot"
+        ],
+        "optional_query": {
+          "user_id_type": [
+            "open_id"
+          ],
+          "department_id_type": [
+            "open_department_id",
+            "department_id"
+          ],
+          "page_size": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12",
+            "13",
+            "14",
+            "15",
+            "16",
+            "17",
+            "18",
+            "19",
+            "20",
+            "21",
+            "22",
+            "23",
+            "24",
+            "25",
+            "26",
+            "27",
+            "28",
+            "29",
+            "30",
+            "31",
+            "32",
+            "33",
+            "34",
+            "35",
+            "36",
+            "37",
+            "38",
+            "39",
+            "40",
+            "41",
+            "42",
+            "43",
+            "44",
+            "45",
+            "46",
+            "47",
+            "48",
+            "49",
+            "50",
+            "51",
+            "52",
+            "53",
+            "54",
+            "55",
+            "56",
+            "57",
+            "58",
+            "59",
+            "60",
+            "61",
+            "62",
+            "63",
+            "64",
+            "65",
+            "66",
+            "67",
+            "68",
+            "69",
+            "70",
+            "71",
+            "72",
+            "73",
+            "74",
+            "75",
+            "76",
+            "77",
+            "78",
+            "79",
+            "80",
+            "81",
+            "82",
+            "83",
+            "84",
+            "85",
+            "86",
+            "87",
+            "88",
+            "89",
+            "90",
+            "91",
+            "92",
+            "93",
+            "94",
+            "95",
+            "96",
+            "97",
+            "98",
+            "99",
+            "100"
+          ]
+        },
+        "query_keys": [
+          "user_id_type",
+          "department_id_type",
+          "page_size",
+          "page_token"
+        ],
+        "query": {
+          "page_token": "okr-kr-page-2"
+        }
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "data": {
+            "items": [
+              {
+                "id": "72002",
+                "objective_id": "71001",
+                "position": 2,
+                "content": {
+                  "blocks": [
+                    {
+                      "block_element_type": "paragraph",
+                      "paragraph": {
+                        "elements": [
+                          {
+                            "paragraph_element_type": "textRun",
+                            "text_run": {
+                              "text": "KR 2"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              }
+            ],
+            "has_more": false
+          }
+        }
+      }
+    },
+    {
+      "id": "progress_72001",
+      "method": "GET",
+      "path": "/open-apis/okr/v2/key_results/72001/progresses",
+      "request": {
+        "identities": [
+          "user",
+          "bot"
+        ],
+        "optional_query": {
+          "user_id_type": [
+            "open_id"
+          ],
+          "department_id_type": [
+            "open_department_id",
+            "department_id"
+          ],
+          "page_size": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12",
+            "13",
+            "14",
+            "15",
+            "16",
+            "17",
+            "18",
+            "19",
+            "20",
+            "21",
+            "22",
+            "23",
+            "24",
+            "25",
+            "26",
+            "27",
+            "28",
+            "29",
+            "30",
+            "31",
+            "32",
+            "33",
+            "34",
+            "35",
+            "36",
+            "37",
+            "38",
+            "39",
+            "40",
+            "41",
+            "42",
+            "43",
+            "44",
+            "45",
+            "46",
+            "47",
+            "48",
+            "49",
+            "50",
+            "51",
+            "52",
+            "53",
+            "54",
+            "55",
+            "56",
+            "57",
+            "58",
+            "59",
+            "60",
+            "61",
+            "62",
+            "63",
+            "64",
+            "65",
+            "66",
+            "67",
+            "68",
+            "69",
+            "70",
+            "71",
+            "72",
+            "73",
+            "74",
+            "75",
+            "76",
+            "77",
+            "78",
+            "79",
+            "80",
+            "81",
+            "82",
+            "83",
+            "84",
+            "85",
+            "86",
+            "87",
+            "88",
+            "89",
+            "90",
+            "91",
+            "92",
+            "93",
+            "94",
+            "95",
+            "96",
+            "97",
+            "98",
+            "99",
+            "100"
+          ],
+          "page_token": [
+            ""
+          ]
+        },
+        "query_keys": [
+          "user_id_type",
+          "department_id_type",
+          "page_size",
+          "page_token"
+        ]
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "data": {
+            "items": [
+              {
+                "id": "74001",
+                "entity_id": "72001",
+                "progress_rate": {
+                  "progress_percent": 0,
+                  "progress_status": 0
+                }
+              }
+            ],
+            "has_more": false
+          }
+        }
+      }
+    },
+    {
+      "id": "progress_72002",
+      "method": "GET",
+      "path": "/open-apis/okr/v2/key_results/72002/progresses",
+      "request": {
+        "identities": [
+          "user",
+          "bot"
+        ],
+        "optional_query": {
+          "user_id_type": [
+            "open_id"
+          ],
+          "department_id_type": [
+            "open_department_id",
+            "department_id"
+          ],
+          "page_size": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12",
+            "13",
+            "14",
+            "15",
+            "16",
+            "17",
+            "18",
+            "19",
+            "20",
+            "21",
+            "22",
+            "23",
+            "24",
+            "25",
+            "26",
+            "27",
+            "28",
+            "29",
+            "30",
+            "31",
+            "32",
+            "33",
+            "34",
+            "35",
+            "36",
+            "37",
+            "38",
+            "39",
+            "40",
+            "41",
+            "42",
+            "43",
+            "44",
+            "45",
+            "46",
+            "47",
+            "48",
+            "49",
+            "50",
+            "51",
+            "52",
+            "53",
+            "54",
+            "55",
+            "56",
+            "57",
+            "58",
+            "59",
+            "60",
+            "61",
+            "62",
+            "63",
+            "64",
+            "65",
+            "66",
+            "67",
+            "68",
+            "69",
+            "70",
+            "71",
+            "72",
+            "73",
+            "74",
+            "75",
+            "76",
+            "77",
+            "78",
+            "79",
+            "80",
+            "81",
+            "82",
+            "83",
+            "84",
+            "85",
+            "86",
+            "87",
+            "88",
+            "89",
+            "90",
+            "91",
+            "92",
+            "93",
+            "94",
+            "95",
+            "96",
+            "97",
+            "98",
+            "99",
+            "100"
+          ],
+          "page_token": [
+            ""
+          ]
+        },
+        "query_keys": [
+          "user_id_type",
+          "department_id_type",
+          "page_size",
+          "page_token"
+        ]
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "data": {
+            "items": [
+              {
+                "id": "74002",
+                "entity_id": "72002",
+                "progress_rate": {
+                  "progress_percent": 75,
+                  "progress_status": 0
+                }
+              }
+            ],
+            "has_more": false
+          }
+        }
+      }
+    }
+  ],
+  "examples": [
+    [
+      "okr",
+      "objectives",
+      "get",
+      "--objective-id",
+      "71001",
+      "--as",
+      "user"
+    ],
+    [
+      "okr",
+      "objective.key_results",
+      "list",
+      "--objective-id",
+      "71001",
+      "--as",
+      "user"
+    ],
+    [
+      "okr",
+      "+progress-list",
+      "--target-type",
+      "key_result",
+      "--target-id",
+      "72001",
+      "--as",
+      "user"
+    ],
+    [
+      "okr",
+      "+progress-list",
+      "--target-type",
+      "key_result",
+      "--target-id",
+      "72002",
+      "--as",
+      "user"
+    ],
+    [
+      "okr",
+      "objective.key_results",
+      "list",
+      "--objective-id",
+      "71001",
+      "--page-size",
+      "1",
+      "--page-all",
+      "--as",
+      "user"
+    ],
+    [
+      "api",
+      "GET",
+      "/open-apis/okr/v2/key_results/72001/progresses",
+      "--params",
+      "{\"page_size\":100}",
+      "--as",
+      "user"
+    ]
+  ],
+  "limitations": [
+    "Normalization only: evaluator-controlled actual CLI tests are still required before declaring this runtime executable; no models, server changes or live calls were run for this file.",
+    "Progress values come from the single v2 progress-history record bound to each KR, not a fictional current-progress field on Objective or KeyResult. Multiple-history ordering/latest selection is not evaluated.",
+    "All decimal page_size strings 1..100 are represented faithfully. KR page_size=1 returns only the first row and a real continuation; only that continuation returns the second row. A full read satisfies both KR proof groups; split reads must satisfy both distinct page proof IDs. Omitted page_size follows the real generic default of 10. Progress lists have one item, so every valid size returns that one complete item.",
+    "Required reads also prove objective title access and each KR-bound progress value. Order and repeat reads are unrestricted; any CLI or raw GET strategy reaching the same signed routes is accepted. A model answer or receipt alone is not read proof.",
+    "Only open_id user-ID representation is included. Both real read identities and either department-ID representation are supported for these fixtures; other identifier representations need coherent identifier fixtures before inclusion. Strict query_keys and page-token selectors reject unrepresented selectors rather than returning unrelated content.",
+    "Source responses are immutable. The shared verifier must reject and count all rejected/mutating requests and configuration changes, enforce the type schema and exact ID-to-number mapping including zero, and independently inspect the signed ledger. Synthetic privacy is not evidence of live visibility or notification guarantees.",
+    "Cycle search/detail, indicators, rich conversion, writes, live scope behavior and arbitrary malformed query encodings remain outside this small predeclared progress read task. No static selector extension is needed for the represented one/two-row pages."
+  ]
+}
