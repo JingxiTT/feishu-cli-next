@@ -4,6 +4,7 @@
 package output
 
 import (
+	"bytes"
 	"encoding/json"
 	"io"
 	"strings"
@@ -177,9 +178,12 @@ func projectValue(raw json.RawMessage, fields fieldSelection) (json.RawMessage, 
 		}
 		return json.Marshal(array)
 	}
+	if !bytes.HasPrefix(bytes.TrimSpace(raw), []byte("{")) {
+		return raw, nil // Scalar values and null are valid, unprojected results.
+	}
 	var object map[string]json.RawMessage
-	if json.Unmarshal(raw, &object) != nil || object == nil {
-		return raw, nil
+	if err := json.Unmarshal(raw, &object); err != nil {
+		return nil, &outputMarshalError{err: err}
 	}
 	projected := map[string]json.RawMessage{}
 	for key, value := range object {
@@ -360,9 +364,12 @@ func (o *AgentOptions) mutation() *mutationResult {
 }
 
 func (o *AgentOptions) annotateMutation(raw json.RawMessage) (json.RawMessage, error) {
+	if !bytes.HasPrefix(bytes.TrimSpace(raw), []byte("{")) {
+		return raw, nil // Only object envelopes can carry mutation metadata.
+	}
 	var envelope map[string]json.RawMessage
-	if json.Unmarshal(raw, &envelope) != nil || envelope == nil {
-		return raw, nil
+	if err := json.Unmarshal(raw, &envelope); err != nil {
+		return nil, &outputMarshalError{err: err}
 	}
 	if _, exists := envelope["ok"]; !exists {
 		return raw, nil

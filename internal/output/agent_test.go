@@ -543,3 +543,21 @@ func TestAgentArtifactRejectsUnobservedVerifiedTenant(t *testing.T) {
 		t.Fatalf("unbound artifact created: %v", err)
 	}
 }
+
+func TestAgentScalarResultsRemainUnprojected(t *testing.T) {
+	for _, raw := range []json.RawMessage{
+		json.RawMessage(`null`), json.RawMessage(`"你好 😀"`), json.RawMessage(`900719925474099312345`), json.RawMessage(`true`), json.RawMessage(`[]`), json.RawMessage(`[null,"你好",900719925474099312345]`),
+	} {
+		var stdout bytes.Buffer
+		opts := &output.AgentOptions{Fields: "missing", ResolveMutation: func() (string, []string, bool) {
+			t.Fatal("scalar result is not a mutation envelope")
+			return "", nil, false
+		}}
+		if err := output.WriteJSON(output.WithAgentOptions(&stdout, opts), raw); err != nil {
+			t.Fatal(err)
+		}
+		if strings.TrimSpace(stdout.String()) != string(raw) {
+			t.Fatalf("scalar/array changed: %s != %s", stdout.String(), raw)
+		}
+	}
+}
