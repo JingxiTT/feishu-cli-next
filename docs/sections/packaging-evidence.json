@@ -722,6 +722,110 @@
       "raw_report_sha256": "73665d436ffa2f4f7703429ab0b870b2f40124f53d0d55b091668da027064aed",
       "vm_probe_log": ".tmp/packaging-translation-8ce0688/vm-binfmt.log",
       "harness_sha256": "36531575fd417ed468225d64175d147ae6969583230604529c8f24bc45b2719c"
+    },
+    "linux_riscv64_archive_lifecycle": {
+      "source_revision": "8ce0688b303eb646e1b79a329002dddcb6403be4",
+      "status": "pass",
+      "execution": "Explicit /usr/bin/qemu-riscv64 invocation for both unchanged Linux riscv64 archives in a Linux aarch64 container. Translated ABI evidence, not full riscv64 suite or physical hardware evidence.",
+      "container": {
+        "id": "baeb01632193f1c80015b4c3b4b4a07104ccdbaedd84924ed84497ded907c098",
+        "image_id": "sha256:4afd0169be622ac2407b7b03daaae354de75feae50ea4b824d5bfbe4b889dcd7",
+        "parent_image_id": "sha256:342d42770f458569d2327f681b2365aa675aed2b9f80d2c5bdbc664530b10557",
+        "user": "10001:10001",
+        "network": "none",
+        "mounts": [],
+        "nano_cpus": 2000000000,
+        "memory_bytes": 4294967296,
+        "memory_swap_bytes": 4294967296,
+        "pids_limit": 512,
+        "cap_drop": [
+          "ALL"
+        ],
+        "security_options": [
+          "no-new-privileges"
+        ],
+        "stopped_after_checks": true,
+        "oom_killed": false
+      },
+      "runtime": {
+        "qemu_version": "qemu-riscv64 version 7.2.22 (Debian 1:7.2+dfsg-7+deb12u18+b3)",
+        "qemu_sha256": "c66057899c11a01758872148b5445474d4366247fe7efe9e8f5ace73e82ebb85",
+        "packages": "libcapstone4:arm64\t4.0.2-5\nlibglib2.0-0:arm64\t2.74.6-2+deb12u9\nlibnuma1:arm64\t2.0.16-1\nliburing2:arm64\t2.3-3\nqemu-user\t1:7.2+dfsg-7+deb12u18+b3\n",
+        "sources": {
+          "/etc/apt/sources.list.d/debian.sources": "Types: deb\n# http://snapshot.debian.org/archive/debian/20260623T000000Z\nURIs: http://deb.debian.org/debian\nSuites: bookworm bookworm-updates\nComponents: main\nSigned-By: /usr/share/keyrings/debian-archive-keyring.gpg\n\nTypes: deb\n# http://snapshot.debian.org/archive/debian-security/20260623T000000Z\nURIs: http://deb.debian.org/debian-security\nSuites: bookworm-security\nComponents: main\nSigned-By: /usr/share/keyrings/debian-archive-keyring.gpg\n"
+        },
+        "qemu_user_binfmt_installed": false,
+        "dpkg_status": "ii  qemu-user 1:7.2+dfsg-7+deb12u18+b3\nun  qemu-user-binfmt \n",
+        "dpkg_probe_note": "Installation status checked explicitly; a dpkg-query name match alone includes known but uninstalled package records."
+      },
+      "bootstrap": {
+        "container_id": "bad64668258105b0700eae7618b5b1db17d65a1eacceb7ccecf69d2107c9ca91",
+        "exit_code": 0,
+        "network": "bridge; public Debian dependency bootstrap only",
+        "user": "0:0 inside task-owned container",
+        "mounts": [],
+        "command_record": ".tmp/packaging-riscv64-8ce0688/bootstrap-command.json",
+        "package": "qemu-user",
+        "version": "1:7.2+dfsg-7+deb12u18+b3",
+        "install_options": "--no-install-recommends; APT::Get::AllowUnauthenticated=false; Acquire::AllowInsecureRepositories=false; Acquire::AllowDowngradeToInsecureRepositories=false",
+        "trust": "Existing Debian bookworm/bookworm-updates/bookworm-security sources use Signed-By /usr/share/keyrings/debian-archive-keyring.gpg. apt update and install succeeded with authentication required.",
+        "log": ".tmp/packaging-riscv64-8ce0688/bootstrap.log",
+        "log_sha256": "0898e35bb2f6951d4084ffc0f63a7ca23fe0c296fedfbcc885eaed0a73c83232"
+      },
+      "cases": [
+        {
+          "variant": "normal",
+          "archive": "feishu-cli-next-0.1.0-beta.1-linux-riscv64.tar.gz",
+          "archive_sha256": "da62293407cce23ace3dcb44dd697fc44a597a91fda24a96df5e48aa40a2dc11",
+          "binary_sha256": "697ed9d217813cbfc3c5a732d5361b3ec0c04a1f8145e3cad3fb1d6278a420fd",
+          "guide_sha256": "c0de66cb47e62ca389a691ca7c9549d68e262702cb692d45dd2a5965779c9f1b",
+          "status": "pass",
+          "checks": [
+            "archive and binary hashes",
+            "startup/version",
+            "exact guide",
+            "normal/sidecar startup distinction",
+            "project install and repeated install",
+            "same-version update no-op",
+            "intact older managed fixture update",
+            "edited guide update/uninstall refusal",
+            "uninstall and repeated uninstall",
+            "unrelated project/home/config preservation",
+            "Unix installed mode 0600"
+          ],
+          "process_invocations": 11
+        },
+        {
+          "variant": "authsidecar",
+          "archive": "feishu-cli-next-0.1.0-beta.1-linux-riscv64-authsidecar.tar.gz",
+          "archive_sha256": "a498b1da58f3e18234bb786619fb789c37899269a81e89430f312a8d585e6e88",
+          "binary_sha256": "7060c6e06ae7bc2f9ee6dae09886810457436247bfc035aea18484ba8baf2fbd",
+          "guide_sha256": "c0de66cb47e62ca389a691ca7c9549d68e262702cb692d45dd2a5965779c9f1b",
+          "status": "pass",
+          "checks": [
+            "archive and binary hashes",
+            "startup/version",
+            "exact guide",
+            "normal/sidecar startup distinction",
+            "project install and repeated install",
+            "same-version update no-op",
+            "intact older managed fixture update",
+            "edited guide update/uninstall refusal",
+            "uninstall and repeated uninstall",
+            "unrelated project/home/config preservation",
+            "Unix installed mode 0600"
+          ],
+          "process_invocations": 11
+        }
+      ],
+      "isolation": "Dependency bootstrap and execution were separate task-owned containers. Checks used user10001, network none, no mounts/host credentials, caps dropped, no-new-privileges and the recorded limits. Both long-lived containers are stopped; no host/global install, new VM/guest OS or binfmt registration changes.",
+      "historical_absence": "linux_translation_archive_lifecycle.riscv64_probe preserves the earlier ENOEXEC before the authorized test-only qemu-user bootstrap. It is historical availability evidence, not the current lifecycle outcome.",
+      "scope": "Same eleven checks per variant as Linux arm64/amd64; only invocation prefix changed to explicit qemu-riscv64. The changed guide update uses an intact synthetic older managed payload. No npm/prefix/full suites, live credentials, model calls or releases.",
+      "raw_report": ".tmp/packaging-riscv64-8ce0688/stdout.json",
+      "raw_report_sha256": "918c6ff46988eedecbe30307a9b3139a0878b7d7e92659556adbb0fb28931269",
+      "harness": ".tmp/packaging-riscv64-8ce0688/payload/check.py",
+      "harness_sha256": "bd2e12781d9c1f7adc03a37de2266d244fa7a3fb703ab6d7245f9f6be4a829ed",
+      "vm_binfmt_after": ".tmp/packaging-riscv64-8ce0688/vm-binfmt-after.log"
     }
   },
   "latest_artifact_refresh": "immutable_refresh_8ce0688",
@@ -731,15 +835,16 @@
     "darwin_amd64": "Both immutable 8ce0688 variants executed under Rosetta on macOS arm64: startup/version, exact guide, build-mode distinction, project guide install and unrelated README preservation passed. This is actual translated amd64 execution; it does not cover every lifecycle or signing check.",
     "historical_status": "Earlier native/unexecuted entries describe the time and execution environment recorded. They are preserved, but do not impose a physical Intel gate.",
     "remaining_platform_scenarios": [
-      "Linux riscv64 execution remains unavailable: no installed user-mode emulator/binfmt handler and a direct archive startup returned ENOEXEC. Linux amd64 archive guide lifecycle passed under QEMU; broader OS-specific runtime suites were not run for amd64. Linux arm64 source-built runtime and delivered archive lifecycle evidence remain separately recorded.",
+      "Linux amd64 and riscv64 delivered archive guide lifecycles passed under recorded QEMU translation; broader OS-specific runtime suites were not run for these architectures. Linux arm64 source-built runtime and delivered archive lifecycle evidence remain separately recorded.",
       "Windows runtime on shipped architectures, including named pipes, LockFileEx, path semantics, ZIP extraction fallbacks and updater .old recovery/rollback; cross-compilation alone does not verify these OS paths.",
       "The Rosetta smoke did not run amd64 npm/prefix collision, upgrade and uninstall scenarios. Existing shared lifecycle evidence must be mapped when assessing coverage; absence of physical Intel hardware is not itself a missing scenario."
     ],
     "public_release_checks": "Owned next channel and publisher credentials; candidate checksum/extraction, Developer ID/team, hardened runtime, timestamp, notarization and version verification on both macOS architectures in the retained release workflow. Signing is optional for local source/unsigned archive use.",
     "execution_environment_rule": "Use an appropriate OS runner, VM or translation environment and label it accurately. macOS Rosetta does not establish Linux or Windows behavior.",
     "remote_update": "Trusted next repository/package and matching artifact/update identities remain unconfigured.",
-    "audit_validation": "Append-only runtime follow-ups now include delivered Linux arm64 and QEMU-translated Linux amd64 archive lifecycles. No artifact rebuilds, full-suite reruns or new runtime infrastructure.",
+    "audit_validation": "Delivered Linux arm64 plus QEMU-translated Linux amd64/riscv64 archive lifecycles passed. Riscv64 required an explicitly authorized test-only Debian qemu-user package in a disposable derivative image; no product rebuilds, full-suite reruns, host installs, guest OS or binfmt changes.",
     "linux_arm64": "Source-built Linux unit/race and packaging suite execution is recorded in linux-runtime-evidence.json; both delivered immutable normal/authsidecar archives now pass checksum-bound startup, guide install/update/uninstall, edited-file refusal and unrelated home/config/project preservation. Execution is Linux aarch64 within the existing VM.",
-    "linux_amd64": "Both delivered immutable normal/authsidecar archives passed the bounded guide lifecycle under existing QEMU9.2.2 translation in Linux. This does not establish the broader source-built Linux amd64 runtime suite."
+    "linux_amd64": "Both delivered immutable normal/authsidecar archives passed the bounded guide lifecycle under existing QEMU9.2.2 translation in Linux. This does not establish the broader source-built Linux amd64 runtime suite.",
+    "linux_riscv64": "Both delivered immutable normal/authsidecar archives passed the bounded guide lifecycle through explicit QEMU7.2.22 in a separate nonroot network-none container, after authorized signed Debian qemu-user bootstrap. Earlier absence/ENOEXEC remains historical; broader riscv64 runtime suites were not run."
   }
 }

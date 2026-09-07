@@ -108,6 +108,17 @@ riscv64 archive launch returned `ENOEXEC` (exec format error). Host system-QEMU
 executables exist but require a guest environment; no OS/emulator was installed.
 The unsupported riscv64 lifecycle was not attempted, and the container is stopped.
 
+After that availability probe, a separately authorized test-only bootstrap added
+Debian's signed-repository `qemu-user` package to a disposable derivative of the
+verified image. QEMU riscv64 7.2.22 (Debian `1:7.2+dfsg-7+deb12u18+b3`) then passed
+the same eleven checks per variant against both unchanged riscv64 archives using
+explicit `/usr/bin/qemu-riscv64` invocation. Checks ran in a separate nonroot,
+network-none, no-mount container with the same resource/security limits. No host
+installation, guest OS or binfmt change occurred; `qemu-user-binfmt` is uninstalled.
+The earlier `ENOEXEC` remains historical evidence. Image/package/binary hashes,
+repository signing configuration and bootstrap logs are recorded in the JSON.
+This adds the listed riscv64 lifecycle evidence, not broader runtime-suite coverage.
+
 The completed source export was moved outside the repository after build/smoke
 to prevent source guards discovering a second source tree. All 3,663 tracked file
 hashes were verified before and after the move, and the full tree's bytes, modes
@@ -117,8 +128,8 @@ The exact old/new source paths and unchanged archive hash are recorded in
 `.tmp/source-location.json` and [packaging-evidence.json](packaging-evidence.json).
 Historical logs may refer to the old source path.
 
-Linux riscv64 and Windows runtime behavior, broader Linux amd64 runtime suites,
-and the public-release/channel checks below remain unverified. This section is locally implemented and testable; final
+Windows runtime behavior, broader Linux amd64/riscv64 runtime suites, and the
+public-release/channel checks below remain unverified. This section is locally implemented and testable; final
 release acceptance remains open. No publishing, external push, global installation
 or real credential use was performed. Comparative/held-out evaluation is recorded
 by its own owner and is not inferred from packaging tests.
@@ -145,8 +156,8 @@ the execution mode and checked scenarios are stated accurately.
 
 Cross-compilation verifies conditional source selection, not OS behavior. Linux
 arm64 source-built runtime and delivered-archive lifecycle evidence are now
-recorded above. Linux amd64 has the bounded translated archive evidence above;
-Linux riscv64 remains unexecuted. Windows named pipes, LockFileEx, path semantics,
+recorded above. Linux amd64 and riscv64 have the bounded translated archive
+evidence above. Windows named pipes, LockFileEx, path semantics,
 extraction fallback and `.old` recovery/rollback still need Windows execution
 evidence. The remaining target/OS gaps cannot be closed by macOS Rosetta
 or inferred from Linux arm64 execution. The successful Rosetta smoke establishes only its listed
