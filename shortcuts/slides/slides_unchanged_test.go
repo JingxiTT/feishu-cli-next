@@ -40,3 +40,13 @@ func TestUpdateSlideSkipUnchangedRejectsMismatchedRead(t *testing.T) {
 		t.Fatalf("error = %v", err)
 	}
 }
+
+func TestUpdateSlideSkipUnchangedRequiresObservedRevision(t *testing.T) {
+	f, out, _, reg := cmdutil.TestFactory(t, slidesTestConfig(t, ""))
+	reg.Register(&httpmock.Stub{Method: "GET", URL: "/open-apis/slides_ai/v1/xml_presentations/pres_abc/slide", Body: map[string]interface{}{"code": 0, "data": map[string]interface{}{"slide": map[string]interface{}{"slide_id": "p1", "content": `<slide id="p1"/>`}}}})
+	err := runSlidesShortcut(t, f, out, SlidesUpdateSlide, []string{"+update-slide", "--presentation", "pres_abc", "--slide-id", "p1", "--content", `<slide id="p1"/>`, "--skip-unchanged", "--as", "user"})
+	p, ok := errs.ProblemOf(err)
+	if !ok || p.Subtype != errs.SubtypeInvalidResponse {
+		t.Fatalf("error=%v", err)
+	}
+}

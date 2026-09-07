@@ -27,7 +27,7 @@ func unchangedSlide(runtime *common.RuntimeContext, presentationID, slideID, con
 		return 0, false, errs.NewInternalError(errs.SubtypeInvalidResponse, "invalid slide preflight response").WithCause(err)
 	}
 	var current struct {
-		RevisionID int `json:"revision_id"`
+		RevisionID *int `json:"revision_id"`
 		Slide      struct {
 			SlideID string `json:"slide_id"`
 			Content string `json:"content"`
@@ -37,8 +37,8 @@ func unchangedSlide(runtime *common.RuntimeContext, presentationID, slideID, con
 		return 0, false, errs.NewInternalError(errs.SubtypeInvalidResponse, "invalid slide preflight response").WithCause(err)
 	}
 	rootID, xmlErr := checkSlideRoot(current.Slide.Content)
-	if current.Slide.SlideID != slideID || rootID != slideID || xmlErr != nil {
+	if current.RevisionID == nil || *current.RevisionID < 0 || current.Slide.SlideID != slideID || rootID != slideID || xmlErr != nil {
 		return 0, false, errs.NewInternalError(errs.SubtypeInvalidResponse, "slide preflight did not return the requested complete page")
 	}
-	return current.RevisionID, stripSlideNoteID(strings.TrimSpace(current.Slide.Content)) == content, nil
+	return *current.RevisionID, stripSlideNoteID(strings.TrimSpace(current.Slide.Content)) == content, nil
 }

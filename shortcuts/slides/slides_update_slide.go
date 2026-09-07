@@ -44,9 +44,8 @@ var SlidesUpdateSlide = common.Shortcut{
 	Description: "Apply a full <slide> XML to an existing slide, replacing the page in one request (keeps slide_id and page order)",
 	Risk:        "write",
 	Scopes:      []string{"slides:presentation:update", "slides:presentation:write_only"},
-	// Both extras are path-dependent, so they stay conditional rather than
-	// gating every call: wiki:node:read only when --presentation is a wiki URL,
-	// docs:document.media:upload only when --content carries @-placeholders.
+	// Extra scopes are conditional: wiki resolution, image placeholders, and
+	// the explicit unchanged-page read must not gate ordinary write-only calls.
 	ConditionalScopes: []string{"wiki:node:read", "docs:document.media:upload", "slides:presentation:read"},
 	AuthTypes:         []string{"user", "bot"},
 	Tips: []string{
