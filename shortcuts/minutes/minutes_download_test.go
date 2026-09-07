@@ -18,6 +18,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/larksuite/cli/errs"
+	exttransport "github.com/larksuite/cli/extension/transport"
 	"github.com/larksuite/cli/internal/cmdutil"
 	"github.com/larksuite/cli/internal/core"
 	"github.com/larksuite/cli/internal/httpmock"
@@ -28,6 +29,9 @@ import (
 
 // ---------------------------------------------------------------------------
 // helpers
+//
+// Download fixtures use an RFC 5737 address so URL safety validation needs no DNS.
+// All requests to this address are intercepted by the test transport.
 // ---------------------------------------------------------------------------
 
 var warmOnce sync.Once
@@ -200,9 +204,9 @@ func TestDownload_ServerFilenameTraversalStaysInOutputDir(t *testing.T) {
 	chdir(t, t.TempDir())
 
 	f, _, _, reg := cmdutil.TestFactory(t, defaultConfig())
-	reg.Register(mediaStub("tok001", "https://example.com/presigned/download"))
+	reg.Register(mediaStub("tok001", "https://203.0.113.10/presigned/download"))
 	reg.Register(&httpmock.Stub{
-		URL:     "example.com/presigned/download",
+		URL:     "203.0.113.10/presigned/download",
 		RawBody: []byte("content"),
 		Headers: http.Header{
 			"Content-Type":        []string{"video/mp4"},
@@ -227,7 +231,7 @@ func TestDownload_ServerFilenameTraversalStaysInOutputDir(t *testing.T) {
 func TestDownloadUsesExternalRequestClass(t *testing.T) {
 	chdir(t, t.TempDir())
 
-	const downloadURL = "https://open.feishu.cn/presigned/download"
+	const downloadURL = "https://203.0.113.10/presigned/download"
 	f, _, _, reg := cmdutil.TestFactory(t, defaultConfig())
 	reg.Register(mediaStub("tok001", downloadURL))
 
@@ -250,9 +254,10 @@ func TestDownloadUsesExternalRequestClass(t *testing.T) {
 		}, nil
 	})
 	f.HttpClient = func() (*http.Client, error) {
-		return &http.Client{
+		// Downloads must override platform intent, independent of the fixture host.
+		return internaltransport.ClientForRequestClass(&http.Client{
 			Transport: internaltransport.NewHTTPPolicyRouter(platform, external),
-		}, nil
+		}, exttransport.RequestClassPlatform), nil
 	}
 
 	err := mountAndRun(t, MinutesDownload, []string{
@@ -351,7 +356,7 @@ func TestDownload_DryRun(t *testing.T) {
 
 func TestDownload_UrlOnly(t *testing.T) {
 	f, stdout, _, reg := cmdutil.TestFactory(t, defaultConfig())
-	reg.Register(mediaStub("tok001", "https://example.com/presigned/download"))
+	reg.Register(mediaStub("tok001", "https://203.0.113.10/presigned/download"))
 
 	err := mountAndRun(t, MinutesDownload, []string{
 		"+download", "--minute-tokens", "tok001", "--url-only", "--as", "bot",
@@ -359,7 +364,7 @@ func TestDownload_UrlOnly(t *testing.T) {
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	if !strings.Contains(stdout.String(), "https://example.com/presigned/download") {
+	if !strings.Contains(stdout.String(), "https://203.0.113.10/presigned/download") {
 		t.Errorf("url-only should output download URL, got: %s", stdout.String())
 	}
 }
@@ -368,8 +373,8 @@ func TestDownload_FullDownload(t *testing.T) {
 	chdir(t, t.TempDir())
 
 	f, stdout, _, reg := cmdutil.TestFactory(t, defaultConfig())
-	reg.Register(mediaStub("tok001", "https://example.com/presigned/download"))
-	reg.Register(downloadStub("example.com/presigned/download", []byte("fake-video-content"), "video/mp4"))
+	reg.Register(mediaStub("tok001", "https://203.0.113.10/presigned/download"))
+	reg.Register(downloadStub("203.0.113.10/presigned/download", []byte("fake-video-content"), "video/mp4"))
 
 	err := mountAndRun(t, MinutesDownload, []string{
 		"+download", "--minute-tokens", "tok001", "--output", "output.mp4", "--as", "bot",
@@ -394,8 +399,8 @@ func TestDownload_OverwriteProtection(t *testing.T) {
 	}
 
 	f, _, _, reg := cmdutil.TestFactory(t, defaultConfig())
-	reg.Register(mediaStub("tok001", "https://example.com/presigned/download"))
-	reg.Register(downloadStub("example.com/presigned/download", []byte("new-content"), "video/mp4"))
+	reg.Register(mediaStub("tok001", "https://203.0.113.10/presigned/download"))
+	reg.Register(downloadStub("203.0.113.10/presigned/download", []byte("new-content"), "video/mp4"))
 
 	err := mountAndRun(t, MinutesDownload, []string{
 		"+download", "--minute-tokens", "tok001", "--output", "existing.mp4", "--as", "bot",
@@ -417,9 +422,9 @@ func TestDownload_HttpError(t *testing.T) {
 	chdir(t, t.TempDir())
 
 	f, _, _, reg := cmdutil.TestFactory(t, defaultConfig())
-	reg.Register(mediaStub("tok001", "https://example.com/presigned/download"))
+	reg.Register(mediaStub("tok001", "https://203.0.113.10/presigned/download"))
 	reg.Register(&httpmock.Stub{
-		URL:     "example.com/presigned/download",
+		URL:     "203.0.113.10/presigned/download",
 		Status:  403,
 		RawBody: []byte("Forbidden"),
 	})
@@ -441,8 +446,8 @@ func TestDownload_HttpError(t *testing.T) {
 
 func TestDownload_Batch_UrlOnly(t *testing.T) {
 	f, stdout, _, reg := cmdutil.TestFactory(t, defaultConfig())
-	reg.Register(mediaStub("tok001", "https://example.com/download/1"))
-	reg.Register(mediaStub("tok002", "https://example.com/download/2"))
+	reg.Register(mediaStub("tok001", "https://203.0.113.10/download/1"))
+	reg.Register(mediaStub("tok002", "https://203.0.113.10/download/2"))
 
 	err := mountAndRun(t, MinutesDownload, []string{
 		"+download", "--minute-tokens", "tok001,tok002", "--url-only", "--as", "bot",
@@ -460,10 +465,10 @@ func TestDownload_Batch_Download(t *testing.T) {
 	chdir(t, t.TempDir())
 
 	f, stdout, _, reg := cmdutil.TestFactory(t, defaultConfig())
-	reg.Register(mediaStub("tok001", "https://example.com/download/1"))
-	reg.Register(mediaStub("tok002", "https://example.com/download/2"))
-	reg.Register(downloadStub("example.com/download/1", []byte("content-1"), "video/mp4"))
-	reg.Register(downloadStub("example.com/download/2", []byte("content-2"), "video/mp4"))
+	reg.Register(mediaStub("tok001", "https://203.0.113.10/download/1"))
+	reg.Register(mediaStub("tok002", "https://203.0.113.10/download/2"))
+	reg.Register(downloadStub("203.0.113.10/download/1", []byte("content-1"), "video/mp4"))
+	reg.Register(downloadStub("203.0.113.10/download/2", []byte("content-2"), "video/mp4"))
 
 	err := mountAndRun(t, MinutesDownload, []string{
 		"+download", "--minute-tokens", "tok001,tok002", "--as", "bot",
@@ -502,8 +507,8 @@ func TestDownload_Batch_PartialFailure(t *testing.T) {
 	chdir(t, t.TempDir())
 
 	f, stdout, _, reg := cmdutil.TestFactory(t, defaultConfig())
-	reg.Register(mediaStub("tok001", "https://example.com/download/1"))
-	reg.Register(downloadStub("example.com/download/1", []byte("content-1"), "video/mp4"))
+	reg.Register(mediaStub("tok001", "https://203.0.113.10/download/1"))
+	reg.Register(downloadStub("203.0.113.10/download/1", []byte("content-1"), "video/mp4"))
 	reg.Register(&httpmock.Stub{
 		Method: "GET",
 		URL:    "/open-apis/minutes/v1/minutes/tok002/media",
@@ -530,7 +535,7 @@ func TestDownload_Batch_PartialFailure(t *testing.T) {
 func TestDownload_Batch_DuplicateToken(t *testing.T) {
 	f, stdout, _, reg := cmdutil.TestFactory(t, defaultConfig())
 	// register media stub only once — dedup means only one API call
-	reg.Register(mediaStub("tok001", "https://example.com/download/1"))
+	reg.Register(mediaStub("tok001", "https://203.0.113.10/download/1"))
 
 	err := mountAndRun(t, MinutesDownload, []string{
 		"+download", "--minute-tokens", "tok001,tok001", "--url-only", "--as", "bot",
@@ -552,8 +557,8 @@ func TestDownload_DefaultLayout_Single(t *testing.T) {
 	chdir(t, t.TempDir())
 
 	f, stdout, _, reg := cmdutil.TestFactory(t, defaultConfig())
-	reg.Register(mediaStub("tok001", "https://example.com/presigned/download"))
-	reg.Register(downloadStub("example.com/presigned/download", []byte("fake-video"), "video/mp4"))
+	reg.Register(mediaStub("tok001", "https://203.0.113.10/presigned/download"))
+	reg.Register(downloadStub("203.0.113.10/presigned/download", []byte("fake-video"), "video/mp4"))
 
 	err := mountAndRun(t, MinutesDownload, []string{
 		"+download", "--minute-tokens", "tok001", "--as", "bot",
@@ -598,10 +603,10 @@ func TestDownload_DefaultLayout_Batch(t *testing.T) {
 	chdir(t, t.TempDir())
 
 	f, stdout, _, reg := cmdutil.TestFactory(t, defaultConfig())
-	reg.Register(mediaStub("tok001", "https://example.com/download/1"))
-	reg.Register(mediaStub("tok002", "https://example.com/download/2"))
-	reg.Register(downloadStub("example.com/download/1", []byte("content-1"), "video/mp4"))
-	reg.Register(downloadStub("example.com/download/2", []byte("content-2"), "video/mp4"))
+	reg.Register(mediaStub("tok001", "https://203.0.113.10/download/1"))
+	reg.Register(mediaStub("tok002", "https://203.0.113.10/download/2"))
+	reg.Register(downloadStub("203.0.113.10/download/1", []byte("content-1"), "video/mp4"))
+	reg.Register(downloadStub("203.0.113.10/download/2", []byte("content-2"), "video/mp4"))
 
 	err := mountAndRun(t, MinutesDownload, []string{
 		"+download", "--minute-tokens", "tok001,tok002", "--as", "bot",
@@ -625,8 +630,8 @@ func TestDownload_OutputDirFlag_SingleToken(t *testing.T) {
 	}
 
 	f, _, _, reg := cmdutil.TestFactory(t, defaultConfig())
-	reg.Register(mediaStub("tok001", "https://example.com/download/1"))
-	reg.Register(downloadStub("example.com/download/1", []byte("content-1"), "video/mp4"))
+	reg.Register(mediaStub("tok001", "https://203.0.113.10/download/1"))
+	reg.Register(downloadStub("203.0.113.10/download/1", []byte("content-1"), "video/mp4"))
 
 	err := mountAndRun(t, MinutesDownload, []string{
 		"+download", "--minute-tokens", "tok001", "--output-dir", "dl", "--as", "bot",
@@ -648,10 +653,10 @@ func TestDownload_Batch_OutputNonExistentPath(t *testing.T) {
 	chdir(t, t.TempDir())
 
 	f, stdout, _, reg := cmdutil.TestFactory(t, defaultConfig())
-	reg.Register(mediaStub("tok001", "https://example.com/download/1"))
-	reg.Register(mediaStub("tok002", "https://example.com/download/2"))
-	reg.Register(downloadStub("example.com/download/1", []byte("c1"), "video/mp4"))
-	reg.Register(downloadStub("example.com/download/2", []byte("c2"), "video/mp4"))
+	reg.Register(mediaStub("tok001", "https://203.0.113.10/download/1"))
+	reg.Register(mediaStub("tok002", "https://203.0.113.10/download/2"))
+	reg.Register(downloadStub("203.0.113.10/download/1", []byte("c1"), "video/mp4"))
+	reg.Register(downloadStub("203.0.113.10/download/2", []byte("c2"), "video/mp4"))
 
 	err := mountAndRun(t, MinutesDownload, []string{
 		"+download", "--minute-tokens", "tok001,tok002", "--output", "new_dir", "--as", "bot",
@@ -690,8 +695,8 @@ func TestDownload_Bug_OutputIsExistingDir(t *testing.T) {
 	}
 
 	f, _, _, reg := cmdutil.TestFactory(t, defaultConfig())
-	reg.Register(mediaStub("tok001", "https://example.com/download/1"))
-	reg.Register(downloadStub("example.com/download/1", []byte("x"), "video/mp4"))
+	reg.Register(mediaStub("tok001", "https://203.0.113.10/download/1"))
+	reg.Register(downloadStub("203.0.113.10/download/1", []byte("x"), "video/mp4"))
 
 	err := mountAndRun(t, MinutesDownload, []string{
 		"+download", "--minute-tokens", "tok001", "--output", "existing", "--as", "bot",
@@ -721,8 +726,8 @@ func TestDownload_ExplicitOutputFile_PreservesPath(t *testing.T) {
 	chdir(t, t.TempDir())
 
 	f, _, _, reg := cmdutil.TestFactory(t, defaultConfig())
-	reg.Register(mediaStub("tok001", "https://example.com/download/1"))
-	reg.Register(downloadStub("example.com/download/1", []byte("x"), "video/mp4"))
+	reg.Register(mediaStub("tok001", "https://203.0.113.10/download/1"))
+	reg.Register(downloadStub("203.0.113.10/download/1", []byte("x"), "video/mp4"))
 
 	err := mountAndRun(t, MinutesDownload, []string{
 		"+download", "--minute-tokens", "tok001", "--output", "my.mp4", "--as", "bot",
@@ -801,7 +806,7 @@ func TestDownload_TypedErr_NetworkTransport_HttpError(t *testing.T) {
 				return err
 			}
 			_, capturedErr = downloadMediaFile(ctx, client,
-				"https://example.com/presigned/download", "tok001",
+				"https://203.0.113.10/presigned/download", "tok001",
 				downloadOpts{fio: rctx.FileIO(), outputPath: "out.mp4"})
 			return nil
 		},
@@ -809,7 +814,7 @@ func TestDownload_TypedErr_NetworkTransport_HttpError(t *testing.T) {
 
 	f, _, _, reg := cmdutil.TestFactory(t, defaultConfig())
 	reg.Register(&httpmock.Stub{
-		URL:     "example.com/presigned/download",
+		URL:     "203.0.113.10/presigned/download",
 		Status:  503,
 		RawBody: []byte("Service Unavailable"),
 	})
@@ -904,14 +909,14 @@ func TestDownload_TypedErr_OverwriteProtection(t *testing.T) {
 				return err
 			}
 			_, capturedErr = downloadMediaFile(ctx, client,
-				"https://example.com/presigned/download", "tok001",
+				"https://203.0.113.10/presigned/download", "tok001",
 				downloadOpts{fio: rctx.FileIO(), outputPath: "existing.mp4", overwrite: false})
 			return nil
 		},
 	}
 
 	f, _, _, reg := cmdutil.TestFactory(t, defaultConfig())
-	reg.Register(downloadStub("example.com/presigned/download", []byte("new-content"), "video/mp4"))
+	reg.Register(downloadStub("203.0.113.10/presigned/download", []byte("new-content"), "video/mp4"))
 
 	if err := mountAndRun(t, probe, []string{"+probe-overwrite", "--as", "bot"}, f, nil); err != nil {
 		t.Fatalf("probe shortcut should not error: %v", err)

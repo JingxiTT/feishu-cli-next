@@ -23,6 +23,7 @@ import (
 
 	"github.com/larksuite/cli/errs"
 	"github.com/larksuite/cli/extension/fileio"
+	exttransport "github.com/larksuite/cli/extension/transport"
 	"github.com/larksuite/cli/internal/cmdutil"
 	"github.com/larksuite/cli/internal/core"
 	"github.com/larksuite/cli/internal/credential"
@@ -819,9 +820,10 @@ func TestStartURLDownloadUsesExternalRequestClass(t *testing.T) {
 	runtime := &common.RuntimeContext{
 		Factory: &cmdutil.Factory{
 			HttpClient: func() (*http.Client, error) {
-				return &http.Client{
+				// Downloads must override platform intent, independent of the fixture host.
+				return internaltransport.ClientForRequestClass(&http.Client{
 					Transport: internaltransport.NewHTTPPolicyRouter(platform, external),
-				}, nil
+				}, exttransport.RequestClassPlatform), nil
 			},
 		},
 	}
@@ -829,7 +831,8 @@ func TestStartURLDownloadUsesExternalRequestClass(t *testing.T) {
 	resp, _, err := startURLDownload(
 		context.Background(),
 		runtime,
-		"https://open.feishu.cn/presigned/image.png",
+		// RFC 5737 address avoids DNS; the test transport intercepts the request.
+		"https://203.0.113.10/presigned/image.png",
 		"--image",
 	)
 	if err != nil {
