@@ -157,8 +157,14 @@ and affected efficiency scores remain null. Independent recount verifies all
 API totals. The exported all-attempt plot passed visual inspection after correcting
 overlapping labels. Next improves Base tokens at 10,000 rows but regresses at
 smaller sizes; Sheets token savings coexist with more Next API requests at 10,000
-rows. No uniform scaling claim follows. Representative business 18 trials remain
-in progress under the same immutable evaluator; runtime and guide remain frozen.
+rows. No uniform scaling claim follows.
+The [representative business comparison](../evaluation/evidence/business-8d-archive03/REPORT.md)
+completed 18/18 verified attempts with complete provider accounting: 2,741,785
+tokens under the same immutable evaluator. Independent recount verifies all
+12 groups and 12 matched-success pairs, distributions, cached-input accounting
+and API totals. Next used fewer tokens and API requests than both baselines on
+the approval and Mindnote tasks. These sampled synthetic workflows do not close
+full generated-command or live acceptance. Runtime and guide remain frozen.
 Held-out trials have not run. A coordinator search exposed fragments of the Base
 and Sheets held-out prompts and one size field. The
 [exposure record](../evaluation/evidence/held-out-exposure.json) quarantines those
@@ -238,7 +244,6 @@ unverified or unavailable. Local evidence does not establish public release read
 ## Outstanding release evidence
 
 P2 domain acceptance, verified private live fixtures,
-remaining development comparisons,
 remaining OS-specific and remote lifecycle checks, full release checks and held-out
 evaluation remain open. The [source review aggregate](reference/p3-effective-review-current.json)
 records exact-hash offline approvals for all runtime/build paths; it grants no
@@ -257,7 +262,7 @@ complete goal.
 | Contact bot search | Current-user authorization for `search:bot`, followed by the failed live scenario and bot binding checks. |
 | OS-specific runtime coverage | Linux arm64 runtime suites and platform comparison pass; delivered archive lifecycles pass on arm64 and under amd64/riscv64 translation. Broader amd64/riscv64 runtime suites have not run. Execute the retained Windows behavior checks and native reference capture on an appropriate OS runner or VM; cross-built archives do not substitute. Darwin/amd64 smoke checks already ran under Rosetta. Additional gaps must name the unverified scenario, not require physical hardware absent from PLAN. |
 | Remote release ownership | An owned Next repository/download destination and package identity, then the documented updater identity integration and remote install/update checks. Public signing/notarization and publication retain their separate prerequisites. |
-| Comparative release evidence | Finish the representative business comparison, review measured tradeoffs including the completed size series, and perform independently replaced held-out tasks only at the final release gate. |
+| Comparative release evidence | Development size and representative business comparisons are complete and assessed with their tradeoffs. Retain older product conditions and the inconclusive Events baseline separately; perform independently replaced held-out tasks only at the final release gate. |
 
 The read-only Windows-environment check found VirtualBox `7.1.6r167084`, but
 `VBoxManage list vms` and `VBoxManage list runningvms` both returned empty lists

@@ -31,6 +31,8 @@ reports.
 | [Docs, corrected fixture](evidence/scenarios-8d-corrected03/REPORT.md) | 161,107.00 | 76,104.33 | 206,796.33 | Higher than both baselines |
 | [Extensions, corrected observer](evidence/scenarios-8d-corrected03/REPORT.md) | 199,107.33 | 305,044.00 | 94,401.67 | Lower than both in this synthetic host task |
 | [Packaging, corrected path verification](evidence/scenarios-8d-corrected03/REPORT.md) | 58,075.33 | 73,169.00 | 60,292.00 | Slightly higher than official; lower than concise |
+| [Generated approval workflow](evidence/business-8d-archive03/REPORT.md) | 196,014.67 | 182,855.33 | 120,166.00 | Lower than both baselines |
+| [Generated Mindnote edit](evidence/business-8d-archive03/REPORT.md) | 158,449.67 | 150,169.33 | 106,273.33 | Lower than both baselines |
 
 Events remains separate: its three official outcomes lack sufficient execution
 proof and are inconclusive. Its verified concise/Next results do not establish a
@@ -126,9 +128,16 @@ are unavailable in several conditions. Concurrent correctness work limits some
 latency comparisons. Unknown accounting prevents a finite efficiency score;
 early failure is not evidence of efficiency.
 
-The representative business comparison remains pending under the repaired,
-immutable evaluator condition. Its results must retain ordinary nonverified
-attempts, variability and failed-run costs. Held-out evaluation remains
+The [representative business comparison](evidence/business-8d-archive03/REPORT.md)
+completed all 18 attempts with verified outcomes and complete accounting under
+evaluator `4b3abc6`: 2,741,785 provider tokens. Next also made fewer API requests
+on both tasks: approval 24 versus official 50 and concise official 42; Mindnote
+18 versus 39 and 35. These two synthetic workflows support the measured
+comparisons, not acceptance of every generated business operation. The
+[business trace review](evidence/business-8d-archive03/trace-notes.md) records
+readback after an uncertain Mindnote mutation rather than blind write replay,
+alongside discovery and schema choices. Route-level request traces and
+per-command token attribution are unavailable. Held-out evaluation remains
 reserved for the final release gate, with independently replaced examples for the
 previously disclosed limited exposure. No live backend claims or complete
 capability acceptance follow from these development measurements.
