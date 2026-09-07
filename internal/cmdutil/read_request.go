@@ -6,6 +6,8 @@ package cmdutil
 import (
 	"context"
 	"net/http"
+
+	"github.com/larksuite/cli/internal/nextattempt"
 )
 
 type requestEffectKey struct{}
@@ -28,6 +30,13 @@ func WithReadOnlyRequest(ctx context.Context, method, apiPath string) context.Co
 // remain excluded by the transport. Never infer this from arbitrary user input.
 func WithMutationRequest(ctx context.Context, method, apiPath string) context.Context {
 	return context.WithValue(ctx, requestEffectKey{}, requestEffect{method: method, path: apiPath, mutation: true})
+}
+
+// WithStoragePutRequest identifies a domain-known presigned object upload whose
+// final HTTP 200/201/204 response confirms storage. apiPath is the exact decoded
+// URL path without its query. Use only with an authoritative storage protocol.
+func WithStoragePutRequest(ctx context.Context, apiPath string) context.Context {
+	return nextattempt.WithStoragePutRequest(ctx, apiPath)
 }
 
 func declaredRequestEffect(req *http.Request) (mutation, known bool) {

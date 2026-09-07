@@ -121,6 +121,16 @@ receipt. Auth/config lifecycle effects are preserved from the reference and are
 not content mutation receipts. This is a documented foundation ceiling, not
 proof that all domain mutations or raw endpoint semantics have been verified.
 
+Known presigned object uploads can use
+`common.WithStoragePutRequest(ctx, apiPath)` with the invocation's
+`Factory.ExternalHTTPClient`. This declaration matches only PUT and the exact
+decoded URL path, including inside read workflows. The storage protocol's final
+HTTP 200, 201 or 204 acknowledgement confirms the object write without requiring
+an OpenAPI JSON envelope. HTTP 202, server failures and lost responses remain
+unknown; the declaration never adds retries. Upload bytes, signed URL queries,
+headers and paths are not persisted. Later callback or publication requests keep
+their own receipts, so a stored object does not establish successful publication.
+
 CLI-owned state lives at `<effective-config-dir>/next/receipts`. Directories use
 0700 and files 0600; Unix refuses permissive state and symlinks at the receipt
 storage boundary. Writes sync a temporary file, atomically commit it, and sync

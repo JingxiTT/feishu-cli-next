@@ -37,6 +37,9 @@ func (f *Factory) agentAttemptTransport(base http.RoundTripper) http.RoundTrippe
 			if strings.HasPrefix(path, "/open-apis/auth/") || strings.HasPrefix(path, "/open-apis/authen/") || strings.HasPrefix(path, "/open-apis/oauth/") {
 				return false
 			}
+			if nextattempt.IsStoragePutRequest(req) {
+				return true
+			}
 			if mutation, declared := declaredRequestEffect(req); declared {
 				return mutation
 			}

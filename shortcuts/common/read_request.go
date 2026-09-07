@@ -28,6 +28,12 @@ func WithMutationRequest(ctx context.Context, method, apiPath string) context.Co
 	return cmdutil.WithMutationRequest(ctx, method, apiPath)
 }
 
+// WithStoragePutRequest marks an exact decoded URL path for a domain-known
+// presigned PUT whose final HTTP 200/201/204 response confirms object storage.
+func WithStoragePutRequest(ctx context.Context, apiPath string) context.Context {
+	return cmdutil.WithStoragePutRequest(ctx, apiPath)
+}
+
 // CallMutationAPITyped performs a domain-known lifecycle mutation inside a read
 // workflow while preserving the usual authentication and typed error behavior.
 func (ctx *RuntimeContext) CallMutationAPITyped(method, apiPath string, params map[string]interface{}, data interface{}) (map[string]interface{}, error) {

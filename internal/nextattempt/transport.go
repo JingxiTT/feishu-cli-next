@@ -149,6 +149,17 @@ func classifyResponse(r *Receipt, resp *http.Response, requestErr error, req *ht
 		r.Outcome, r.Evidence = Unapplied, "http_rejected"
 		return
 	}
+	if IsStoragePutRequest(req) {
+		// This domain-owned protocol acknowledges the object with final response
+		// headers, without an OpenAPI JSON envelope. Accepted work is not final.
+		switch resp.StatusCode {
+		case http.StatusOK, http.StatusCreated, http.StatusNoContent:
+			r.Outcome, r.Evidence = Applied, "storage_put_success_response"
+		default:
+			r.Evidence = "storage_put_requires_reconciliation"
+		}
+		return
+	}
 	if resp.Body == nil {
 		return
 	}
