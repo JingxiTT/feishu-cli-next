@@ -189,3 +189,9 @@ complete goal.
 | OS-specific runtime coverage | Linux arm64 runtime suites, platform comparison and delivered archive lifecycles pass; Linux amd64 archive lifecycles pass under existing translation. Riscv64 retains cross-build-only evidence. Execute the retained Windows behavior checks and native reference capture on an appropriate OS runner or VM; cross-built archives do not substitute. Darwin/amd64 smoke checks already ran under Rosetta. Additional gaps must name the unverified scenario, not require physical hardware absent from PLAN. |
 | Remote release ownership | An owned Next repository/download destination and package identity, then the documented updater identity integration and remote install/update checks. Public signing/notarization and publication retain their separate prerequisites. |
 | Comparative release evidence | Finish the serialized development/scaling comparisons, review their tradeoffs, and perform independently replaced held-out tasks only at the final release gate. |
+
+The read-only Windows-environment check found VirtualBox `7.1.6r167084`, but
+`VBoxManage list vms` and `VBoxManage list runningvms` both returned empty lists
+with exit 0. No Parallels, VMware Fusion or UTM installation was found in the two
+standard Applications directories. A Windows runner or VM is still needed;
+the user has been asked for an available target while independent comparisons run.
