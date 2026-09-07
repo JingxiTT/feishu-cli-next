@@ -103,8 +103,17 @@ accounting. Of the five fully verified tasks, Next improves over both baselines
 on Drive, Sheets and Tasks, regresses against both on Base, and regresses against
 concise guidance on Markdown. Fixture corrections for Docs, Extensions and
 Packaging will receive separate balanced comparisons. Events retains an explicit
-missing-exit-proof limitation. Real data-size and generated-business comparisons
-are still running; no full-product efficiency claim follows from these results.
+missing-exit-proof limitation. Data-size and generated-business comparisons
+remain outstanding; no full-product efficiency claim follows from these results.
+The first [size-series condition](../evaluation/evidence/scaling-8d-schema02/REPORT.md)
+stopped after seven Base attempts exposed missing valid metadata reads and an
+unstated optional-report convention. One recorded outcome is verified; all
+1,258,267 provider tokens, including 1,112,364 from non-verified attempts, remain
+counted and were independently recounted. The partial series is unbalanced and
+supports no size curve or success-rate claim. Twenty unstarted Base slots and
+27 untouched Sheets slots were canceled without model calls. A preflight audit
+found analogous Sheets preview-read gaps before its first trial. Source-backed
+fixture corrections and new balanced size comparisons remain required.
 Held-out trials have not run. A coordinator search exposed fragments of the Base
 and Sheets held-out prompts and one size field. The
 [exposure record](../evaluation/evidence/held-out-exposure.json) quarantines those
