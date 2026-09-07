@@ -574,5 +574,83 @@
       ],
       "reason": "Each branch returns nil after a non-nil error; pinned golangci reports four issues. No waiver or source fix applied by verification."
     }
+  ],
+  "failure_followups": [
+    {
+      "revision": "8ce0688b303eb646e1b79a329002dddcb6403be4",
+      "source": "immutable detached local clone with real Git metadata; no origin; no dirty/untracked files copied",
+      "changed_from": "0c1ac75",
+      "status": "pass",
+      "report": ".tmp/next-evidence/p3-static-8ce0688-report.json",
+      "metadata_sha256": "b5375251ff1f0a5939925587b0d514669a748135cde36c56f1c8ab5f5fe266c8",
+      "commands": [
+        {
+          "name": "metadata",
+          "command": [
+            "python3",
+            "scripts/next_meta.py"
+          ],
+          "exit_code": 0,
+          "status": "pass",
+          "duration_seconds": 0.042,
+          "public_module_metadata_enabled": false,
+          "tests": {
+            "pass": 0,
+            "fail": 0,
+            "skip": 0
+          },
+          "packages": {
+            "pass": 0,
+            "fail": 0,
+            "skip": 0
+          },
+          "failures": [],
+          "skipped_tests": [],
+          "race_detected": false,
+          "log": ".tmp/next-evidence/p3-static-8ce0688-metadata.log",
+          "log_sha256": "c10a76ce37deef0cc9f565fbbabc115b904b216bce80b3958503b14a3de6c634"
+        },
+        {
+          "name": "golangci",
+          "command": [
+            "go",
+            "run",
+            "github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.1.6",
+            "run",
+            "--new-from-rev=0c1ac75"
+          ],
+          "exit_code": 0,
+          "status": "pass",
+          "duration_seconds": 91.294,
+          "public_module_metadata_enabled": true,
+          "tests": {
+            "pass": 0,
+            "fail": 0,
+            "skip": 0
+          },
+          "packages": {
+            "pass": 0,
+            "fail": 0,
+            "skip": 0
+          },
+          "failures": [],
+          "skipped_tests": [],
+          "race_detected": false,
+          "log": ".tmp/next-evidence/p3-static-8ce0688-golangci.log",
+          "log_sha256": "a656cb68749c75f8475eca53c86d559e23f978fcae6f458ff512521411da2aa5"
+        }
+      ],
+      "production_diff": {
+        "base": "8d92e5253aa9d0582314180d51cdec1b10778897",
+        "path": "internal/cmdutil/drive_import_receipts.go",
+        "added_lines": 5,
+        "removed_lines": 0,
+        "only_added_comment_lines": true,
+        "patch": ".tmp/next-evidence/p3-static-8ce0688-production.patch",
+        "sha256": "c99a470f5b60c84ef1d3e193d77c8842df3cb60f6fcf45f64bc38d72e2583daa"
+      },
+      "review_commit": "0fb6f3b",
+      "scope_note": "Reran only the previously failed full pinned golangci command after offline frozen metadata restoration. The five added product comment lines explain the existing proof-rejection contract and narrow nilerr waiver; separate branch regressions are covered by owner evidence. Other nine original checks were not rerun. Original8d92e52 status remains fail; this followup closes its four nilerr findings at8ce0688."
+    }
   ]
 }
