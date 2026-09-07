@@ -252,7 +252,7 @@ func TestTodoBatchSpeakerUploadAndPermission(t *testing.T) {
 		{"todo", "POST", "/tok001/todo", []string{"+todo", "--minute-token", "tok001", "--todos", `[{"operation":"add","content":" 新 ","is_done":false},{"operation":"update","todo_id":"001","content":" 完成 ","is_done":true},{"operation":"delete","todo_id":"002"}]`}, map[string]any{"todo_items": []any{map[string]any{"operation": "add", "content": " 新 ", "is_done": false}, map[string]any{"operation": "update", "todo_id": "001", "content": " 完成 ", "is_done": true}, map[string]any{"operation": "delete", "todo_id": "002"}}}, map[string]any{}},
 		{"speaker", "PUT", "/tok001/transcript/speaker", []string{"+speaker-replace", "--minute-token", "tok001", "--from-speaker-id", "speaker001", "--to-user-id", "ou_target"}, map[string]any{"from_speaker_id": "speaker001", "to_user_id": "ou_target"}, map[string]any{}},
 		{"legacy-speaker", "PUT", "/tok001/transcript/speaker", []string{"+speaker-replace", "--minute-token", "tok001", "--from-user-id", "ou_source", "--to-user-id", "ou_target"}, map[string]any{"from_user_id": "ou_source", "to_user_id": "ou_target"}, map[string]any{}},
-		{"upload", "POST", "/upload", []string{"+upload", "--file-token", "file001"}, map[string]any{"file_token": "file001"}, map[string]any{"minute_url": "https://tenant.feishu.cn/minutes/tok001"}},
+		{"upload", "POST", "/upload", []string{"+upload", "--file-token", "file001"}, map[string]any{"file_token": "file001"}, map[string]any{"minute_url": "https://minutes.example.test/minutes/tok001"}},
 		{"permission-view", "POST", "/tok001/permissions/apply", []string{"+apply-permission", "--minute-token", "tok001", "--perm", "view"}, map[string]any{"perm": "view"}, map[string]any{}},
 		{"permission-edit", "POST", "/tok001/permissions/apply", []string{"+apply-permission", "--minute-token", "tok001", "--perm", "edit"}, map[string]any{"perm": "edit"}, map[string]any{}},
 	} {
@@ -362,7 +362,7 @@ func TestGenericMetadata(t *testing.T) {
 		require.Equal(t, "GET", r.Method)
 		require.Equal(t, "/open-apis/minutes/v1/minutes/tok001", r.URL.Path)
 		require.Equal(t, "union_id", r.URL.Query().Get("user_id_type"))
-		reply(w, map[string]any{"minute": map[string]any{"token": "tok001", "title": "会议", "owner_id": "on_owner", "create_time": "0001", "duration": "9007199254740993", "url": "https://tenant.feishu.cn/minutes/tok001"}})
+		reply(w, map[string]any{"minute": map[string]any{"token": "tok001", "title": "会议", "owner_id": "on_owner", "create_time": "0001", "duration": "9007199254740993", "url": "https://minutes.example.test/minutes/tok001"}})
 	}))
 	result := success(t, f.Run("minutes", "minutes", "get", "--minute-token", "tok001", "--user-id-type", "union_id", "--as", "bot"))
 	require.Contains(t, fmt.Sprint(result), "9007199254740993")
