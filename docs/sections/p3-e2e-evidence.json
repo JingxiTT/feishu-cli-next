@@ -2,7 +2,7 @@
   "schema_version": 1,
   "section": "integration",
   "gate": "P3 complete offline E2E regression",
-  "revision": "94e4afc032b803ad17a6efbcdb2573361ed2b38a",
+  "revision": "8d92e5253aa9d0582314180d51cdec1b10778897",
   "status": "pass",
   "release_accepted": false,
   "native_platform": {
@@ -10,16 +10,16 @@
     "architecture": "arm64"
   },
   "source": "isolated local clone checked out at exact committed revision; origin removed; no dirty/untracked input copied",
-  "environment": "Committed isolated_env; private HOME/config/temp, blocked external proxy, cached dependencies only. No dirty evaluation or Windows harness input copied. No model runs or live account calls.",
+  "environment": "Committed isolated_env; private HOME/config/temp, blocked external proxy, cached dependencies only. No dirty input copied. Controlled evaluation tests use test doubles; no model runs or live account calls.",
   "build": {
     "command": [
       "make",
       "build"
     ],
     "exit_code": 0,
-    "duration_seconds": 2.944
+    "duration_seconds": 2.012
   },
-  "binary_sha256": "521c24dbd8a24c136f2c838b5dce6e3a6484ff82db11ef8ea84d828e6afb0a4a",
+  "binary_sha256": "1494165f4c326cbf1c0d85df03fa06659ebb68dd853bee484e79ba3934d9ae71",
   "metadata_sha256": "b5375251ff1f0a5939925587b0d514669a748135cde36c56f1c8ab5f5fe266c8",
   "section_suites": [
     {
@@ -155,7 +155,7 @@
       ],
       "status": "pass",
       "exit_code": 0,
-      "duration_seconds": 3.777,
+      "duration_seconds": 1.731,
       "tests": {
         "pass": 13,
         "fail": 0,
@@ -165,7 +165,7 @@
         "policy": "all tests in the listed packages"
       },
       "group": "all",
-      "source_report": ".tmp/next-evidence/p3-e2e-94e4afc-all.json",
+      "source_report": ".tmp/next-evidence/p3-e2e-8d92e52-all.json",
       "failures": [],
       "skipped_tests": []
     },
@@ -182,7 +182,7 @@
       ],
       "status": "pass",
       "exit_code": 0,
-      "duration_seconds": 30.636,
+      "duration_seconds": 12.744,
       "tests": {
         "pass": 105,
         "fail": 0,
@@ -192,7 +192,7 @@
         "policy": "all tests in the listed packages"
       },
       "group": "all",
-      "source_report": ".tmp/next-evidence/p3-e2e-94e4afc-all.json",
+      "source_report": ".tmp/next-evidence/p3-e2e-8d92e52-all.json",
       "failures": [],
       "skipped_tests": [
         {
@@ -228,7 +228,7 @@
       ],
       "status": "pass",
       "exit_code": 0,
-      "duration_seconds": 120.097,
+      "duration_seconds": 92.729,
       "tests": {
         "pass": 54,
         "fail": 0,
@@ -238,7 +238,7 @@
         "policy": "all tests in the listed packages"
       },
       "group": "all",
-      "source_report": ".tmp/next-evidence/p3-e2e-94e4afc-all.json",
+      "source_report": ".tmp/next-evidence/p3-e2e-8d92e52-all.json",
       "failures": [],
       "skipped_tests": []
     },
@@ -275,7 +275,7 @@
       ],
       "status": "pass",
       "exit_code": 0,
-      "duration_seconds": 131.946,
+      "duration_seconds": 122.105,
       "tests": {
         "pass": 922,
         "fail": 0,
@@ -288,7 +288,7 @@
         "excluded_tests_count": 174
       },
       "group": "all",
-      "source_report": ".tmp/next-evidence/p3-e2e-94e4afc-all.json",
+      "source_report": ".tmp/next-evidence/p3-e2e-8d92e52-all.json",
       "failures": [],
       "skipped_tests": []
     },
@@ -325,9 +325,9 @@
       ],
       "status": "pass",
       "exit_code": 0,
-      "duration_seconds": 59.876,
+      "duration_seconds": 47.346,
       "tests": {
-        "pass": 2126,
+        "pass": 2193,
         "fail": 0,
         "skip": 38
       },
@@ -335,7 +335,7 @@
         "policy": "all tests in the listed packages"
       },
       "group": "all",
-      "source_report": ".tmp/next-evidence/p3-e2e-94e4afc-all.json",
+      "source_report": ".tmp/next-evidence/p3-e2e-8d92e52-all.json",
       "failures": [],
       "skipped_tests": [
         {
@@ -361,87 +361,87 @@
         {
           "package": "github.com/larksuite/cli/tests/next_sections/business",
           "test": "TestBusinessLive/approval_approvals_get",
-          "reason": "business_e2e_test.go:471: BLOCKED live: no verified current-account/tenant-bound, run-owned fixture with private visibility and cleanup"
+          "reason": "business_e2e_test.go:473: BLOCKED live: no verified current-account/tenant-bound, run-owned fixture with private visibility and cleanup"
         },
         {
           "package": "github.com/larksuite/cli/tests/next_sections/business",
           "test": "TestBusinessLive/approval_approvals_search",
-          "reason": "business_e2e_test.go:471: BLOCKED live: no verified current-account/tenant-bound, run-owned fixture with private visibility and cleanup"
+          "reason": "business_e2e_test.go:473: BLOCKED live: no verified current-account/tenant-bound, run-owned fixture with private visibility and cleanup"
         },
         {
           "package": "github.com/larksuite/cli/tests/next_sections/business",
           "test": "TestBusinessLive/approval_instances_get",
-          "reason": "business_e2e_test.go:471: BLOCKED live: no verified current-account/tenant-bound, run-owned fixture with private visibility and cleanup"
+          "reason": "business_e2e_test.go:473: BLOCKED live: no verified current-account/tenant-bound, run-owned fixture with private visibility and cleanup"
         },
         {
           "package": "github.com/larksuite/cli/tests/next_sections/business",
           "test": "TestBusinessLive/approval_instances_create",
-          "reason": "business_e2e_test.go:471: BLOCKED live: approval workflow may notify/assign other people; no verified Ying Wu-only participants, private workflow, and owned cleanup"
+          "reason": "business_e2e_test.go:473: BLOCKED live: approval workflow may notify/assign other people; no verified Ying Wu-only participants, private workflow, and owned cleanup"
         },
         {
           "package": "github.com/larksuite/cli/tests/next_sections/business",
           "test": "TestBusinessLive/approval_instances_cancel",
-          "reason": "business_e2e_test.go:471: BLOCKED live: approval workflow may notify/assign other people; no verified Ying Wu-only participants, private workflow, and owned cleanup"
+          "reason": "business_e2e_test.go:473: BLOCKED live: approval workflow may notify/assign other people; no verified Ying Wu-only participants, private workflow, and owned cleanup"
         },
         {
           "package": "github.com/larksuite/cli/tests/next_sections/business",
           "test": "TestBusinessLive/approval_instances_cc",
-          "reason": "business_e2e_test.go:471: BLOCKED live: approval workflow may notify/assign other people; no verified Ying Wu-only participants, private workflow, and owned cleanup"
+          "reason": "business_e2e_test.go:473: BLOCKED live: approval workflow may notify/assign other people; no verified Ying Wu-only participants, private workflow, and owned cleanup"
         },
         {
           "package": "github.com/larksuite/cli/tests/next_sections/business",
           "test": "TestBusinessLive/approval_instances_initiated",
-          "reason": "business_e2e_test.go:471: BLOCKED live: no verified current-account/tenant-bound, run-owned fixture with private visibility and cleanup"
+          "reason": "business_e2e_test.go:473: BLOCKED live: no verified current-account/tenant-bound, run-owned fixture with private visibility and cleanup"
         },
         {
           "package": "github.com/larksuite/cli/tests/next_sections/business",
           "test": "TestBusinessLive/approval_tasks_approve",
-          "reason": "business_e2e_test.go:471: BLOCKED live: approval workflow may notify/assign other people; no verified Ying Wu-only participants, private workflow, and owned cleanup"
+          "reason": "business_e2e_test.go:473: BLOCKED live: approval workflow may notify/assign other people; no verified Ying Wu-only participants, private workflow, and owned cleanup"
         },
         {
           "package": "github.com/larksuite/cli/tests/next_sections/business",
           "test": "TestBusinessLive/approval_tasks_reject",
-          "reason": "business_e2e_test.go:471: BLOCKED live: approval workflow may notify/assign other people; no verified Ying Wu-only participants, private workflow, and owned cleanup"
+          "reason": "business_e2e_test.go:473: BLOCKED live: approval workflow may notify/assign other people; no verified Ying Wu-only participants, private workflow, and owned cleanup"
         },
         {
           "package": "github.com/larksuite/cli/tests/next_sections/business",
           "test": "TestBusinessLive/approval_tasks_transfer",
-          "reason": "business_e2e_test.go:471: BLOCKED live: approval workflow may notify/assign other people; no verified Ying Wu-only participants, private workflow, and owned cleanup"
+          "reason": "business_e2e_test.go:473: BLOCKED live: approval workflow may notify/assign other people; no verified Ying Wu-only participants, private workflow, and owned cleanup"
         },
         {
           "package": "github.com/larksuite/cli/tests/next_sections/business",
           "test": "TestBusinessLive/approval_tasks_query",
-          "reason": "business_e2e_test.go:471: BLOCKED live: no verified current-account/tenant-bound, run-owned fixture with private visibility and cleanup"
+          "reason": "business_e2e_test.go:473: BLOCKED live: no verified current-account/tenant-bound, run-owned fixture with private visibility and cleanup"
         },
         {
           "package": "github.com/larksuite/cli/tests/next_sections/business",
           "test": "TestBusinessLive/approval_tasks_add_sign",
-          "reason": "business_e2e_test.go:471: BLOCKED live: approval workflow may notify/assign other people; no verified Ying Wu-only participants, private workflow, and owned cleanup"
+          "reason": "business_e2e_test.go:473: BLOCKED live: approval workflow may notify/assign other people; no verified Ying Wu-only participants, private workflow, and owned cleanup"
         },
         {
           "package": "github.com/larksuite/cli/tests/next_sections/business",
           "test": "TestBusinessLive/approval_tasks_rollback",
-          "reason": "business_e2e_test.go:471: BLOCKED live: approval workflow may notify/assign other people; no verified Ying Wu-only participants, private workflow, and owned cleanup"
+          "reason": "business_e2e_test.go:473: BLOCKED live: approval workflow may notify/assign other people; no verified Ying Wu-only participants, private workflow, and owned cleanup"
         },
         {
           "package": "github.com/larksuite/cli/tests/next_sections/business",
           "test": "TestBusinessLive/approval_tasks_remind",
-          "reason": "business_e2e_test.go:471: BLOCKED live: approval workflow may notify/assign other people; no verified Ying Wu-only participants, private workflow, and owned cleanup"
+          "reason": "business_e2e_test.go:473: BLOCKED live: approval workflow may notify/assign other people; no verified Ying Wu-only participants, private workflow, and owned cleanup"
         },
         {
           "package": "github.com/larksuite/cli/tests/next_sections/business",
           "test": "TestBusinessLive/attendance_user_tasks_query",
-          "reason": "business_e2e_test.go:471: BLOCKED live: no account-bound synthetic workforce fixture or verified current employee ID; other employee records are outside the test fixture"
+          "reason": "business_e2e_test.go:473: BLOCKED live: no account-bound synthetic workforce fixture or verified current employee ID; other employee records are outside the test fixture"
         },
         {
           "package": "github.com/larksuite/cli/tests/next_sections/business",
           "test": "TestBusinessLive/mindnotes_nodes_create",
-          "reason": "business_e2e_test.go:471: BLOCKED live: no verified current-account/tenant-bound, run-owned fixture with private visibility and cleanup"
+          "reason": "business_e2e_test.go:473: BLOCKED live: no verified current-account/tenant-bound, run-owned fixture with private visibility and cleanup"
         },
         {
           "package": "github.com/larksuite/cli/tests/next_sections/business",
           "test": "TestBusinessLive/mindnotes_nodes_list",
-          "reason": "business_e2e_test.go:471: BLOCKED live: no verified current-account/tenant-bound, run-owned fixture with private visibility and cleanup"
+          "reason": "business_e2e_test.go:473: BLOCKED live: no verified current-account/tenant-bound, run-owned fixture with private visibility and cleanup"
         },
         {
           "package": "github.com/larksuite/cli/tests/next_sections/apps",
@@ -449,9 +449,9 @@
           "reason": "apps_workflows_e2e_test.go:228: blocked: no verified fixture proves current account and tenant, private app creation visibility, run-owned deletion, or downstream automation recipient scope; legacy live fixtures are unauthorized here"
         },
         {
-          "package": "github.com/larksuite/cli/tests/next_sections/im",
-          "test": "TestLiveIMBoundary",
-          "reason": "im_e2e_test.go:212: blocked live: current account/tenant, private destination and unambiguous Ying Wu-only delivery have not been verified; no live content dispatched"
+          "package": "github.com/larksuite/cli/tests/next_sections/minutes",
+          "test": "TestLiveMinutesPrivateLifecycle",
+          "reason": "minutes_e2e_test.go:374: blocked: no verified run-owned private Drive media plus Minutes creation visibility/current-account tenant fixture; permission requests and speaker rebinding may notify unrelated users. No live requests are dispatched. See docs/sections/minutes.md"
         },
         {
           "package": "github.com/larksuite/cli/tests/next_sections/mail",
@@ -459,14 +459,9 @@
           "reason": "mail_e2e_test.go:252: BLOCKED: no verified live harness binds current account/tenant, run-owned private drafts and self-only recipients (including CC/BCC, reply-all, calendar attendees and receipt/share destinations); legacy credentialed mail workflows are not authorized substitutes"
         },
         {
-          "package": "github.com/larksuite/cli/tests/next_sections/minutes",
-          "test": "TestLiveMinutesPrivateLifecycle",
-          "reason": "minutes_e2e_test.go:374: blocked: no verified run-owned private Drive media plus Minutes creation visibility/current-account tenant fixture; permission requests and speaker rebinding may notify unrelated users. No live requests are dispatched. See docs/sections/minutes.md"
-        },
-        {
-          "package": "github.com/larksuite/cli/tests/next_sections/base",
-          "test": "TestBaseLivePrivateLifecycle",
-          "reason": "recovery_test.go:191: BLOCKED: no verified pre-creation visibility fixture binds the effective account and tenant, prevents inherited workspace/group/link access, resolves Ying Wu by stable identity for any intentional share, and guarantees cleanup only of run-owned Base/Drive resources; legacy live suites are not authorized substitutes. See docs/sections/base-process.md"
+          "package": "github.com/larksuite/cli/tests/next_sections/im",
+          "test": "TestLiveIMBoundary",
+          "reason": "im_e2e_test.go:212: blocked live: current account/tenant, private destination and unambiguous Ying Wu-only delivery have not been verified; no live content dispatched"
         },
         {
           "package": "github.com/larksuite/cli/tests/next_sections/sheets",
@@ -509,6 +504,11 @@
           "reason": "slides_e2e_test.go:315: BLOCKED: selectable live scenario requires verified current account and tenant plus private creation visibility BEFORE any content write; no verified private fixture/cleanup harness is available. Then create owned deck, upload image, add/update/no-op/replace/read/screenshot/history/delete and clean up only run-owned resources; any other recipient must be unambiguous Ying Wu."
         },
         {
+          "package": "github.com/larksuite/cli/tests/next_sections/base",
+          "test": "TestBaseLivePrivateLifecycle",
+          "reason": "recovery_test.go:191: BLOCKED: no verified pre-creation visibility fixture binds the effective account and tenant, prevents inherited workspace/group/link access, resolves Ying Wu by stable identity for any intentional share, and guarantees cleanup only of run-owned Base/Drive resources; legacy live suites are not authorized substitutes. See docs/sections/base-process.md"
+        },
+        {
           "package": "github.com/larksuite/cli/tests/next_sections/vc",
           "test": "TestVCLivePrivateLifecycle",
           "reason": "vc_e2e_test.go:410: BLOCKED: no live harness verifies current account and tenant, private Agent Calendar creation visibility, app-bot host ownership, self-only or unambiguously Ying Wu-only participants/eligible invitees, and run-owned cleanup; do not use unrelated existing meetings"
@@ -541,9 +541,9 @@
       ],
       "status": "pass",
       "exit_code": 0,
-      "duration_seconds": 35.771,
+      "duration_seconds": 5.728,
       "tests": {
-        "pass": 11,
+        "pass": 18,
         "fail": 0,
         "skip": 0
       },
@@ -551,7 +551,7 @@
         "policy": "all tests in the listed packages"
       },
       "group": "integration",
-      "source_report": ".tmp/next-evidence/p3-e2e-94e4afc-integration.json",
+      "source_report": ".tmp/next-evidence/p3-e2e-8d92e52-integration.json",
       "failures": [],
       "skipped_tests": []
     },
@@ -569,9 +569,9 @@
       ],
       "status": "pass",
       "exit_code": 0,
-      "duration_seconds": 0.911,
+      "duration_seconds": 2.389,
       "tests": {
-        "pass": 34,
+        "pass": 52,
         "fail": 0,
         "skip": 0
       },
@@ -579,7 +579,7 @@
         "policy": "all tests in the listed packages"
       },
       "group": "scripts",
-      "source_report": ".tmp/next-evidence/p3-e2e-94e4afc-scripts.json",
+      "source_report": ".tmp/next-evidence/p3-e2e-8d92e52-scripts.json",
       "failures": [],
       "skipped_tests": []
     },
@@ -597,22 +597,58 @@
       ],
       "status": "pass",
       "exit_code": 0,
-      "duration_seconds": 8.175,
+      "duration_seconds": 17.634,
       "tests": {
-        "pass": 31,
+        "pass": 168,
         "fail": 0,
-        "skip": 3
+        "skip": 13
       },
       "selection": {
         "policy": "all tests in the listed packages"
       },
       "group": "evaluation",
-      "source_report": ".tmp/next-evidence/p3-e2e-94e4afc-evaluation.json",
+      "source_report": ".tmp/next-evidence/p3-e2e-8d92e52-evaluation.json",
       "failures": [],
       "skipped_tests": [
         {
           "test": "test_all_runtime_examples_and_independent_proofs (test_read_fixture.ReadBinaryProcessTests.test_all_runtime_examples_and_independent_proofs)",
           "reason": "'set archived authsidecar binary paths in EVAL_READ_BINARIES'"
+        },
+        {
+          "test": "test_clean_official_and_next_complete_each_size (test_scaling_base.BaseScalingBinaryTests.test_clean_official_and_next_complete_each_size)",
+          "reason": "'set EVAL_SCALING_BASE_CLI=1 for supplied clean archive binary checks'"
+        },
+        {
+          "test": "test_all_sizes_from_clean_official_and_next_cli (test_scaling_sheets.ScalingSheetsBinaryTests.test_all_sizes_from_clean_official_and_next_cli)",
+          "reason": "'set EVAL_SCALING_SHEETS_BINARIES to clean archive binary paths'"
+        },
+        {
+          "test": "test_each_binary_updates_native_state (test_scenario_base.BaseBinaryTests.test_each_binary_updates_native_state)",
+          "reason": "'set EVAL_BASE_BINARIES to clean archived authsidecar binaries'"
+        },
+        {
+          "test": "test_official_and_next_equivalent_strategies (test_scenario_docs.DocsBinaryTests.test_official_and_next_equivalent_strategies)",
+          "reason": "'set EVAL_DOCS_BINARIES to clean archived authsidecar binaries'"
+        },
+        {
+          "test": "test_real_download_strategies (test_scenario_drive.DriveArchivedCLITests.test_real_download_strategies)",
+          "reason": "'optional clean archived CLI paths unavailable'"
+        },
+        {
+          "test": "test_selected_cli_two_native_events_and_exit (test_scenario_events.CleanCLIProcessTests.test_selected_cli_two_native_events_and_exit)",
+          "reason": "'set EVAL_EVENTS_BINARIES to clean archived authsidecar CLI paths'"
+        },
+        {
+          "test": "test_native_packaging_permissions_reject_home_and_network_writes (test_scenario_fixture.ScenarioIntegrationTests.test_native_packaging_permissions_reject_home_and_network_writes)",
+          "reason": "'set EVAL_NATIVE_CODEX for native protected-home enforcement'"
+        },
+        {
+          "test": "test_real_clean_candidate_guide_install (test_scenario_packaging.PackagingScenarioTests.test_real_clean_candidate_guide_install)",
+          "reason": "'optional native check requires explicit clean-archive binary and skill source'"
+        },
+        {
+          "test": "test_native_artifacts_from_clean_binaries (test_scenario_sheets.SheetsBinaryTests.test_native_artifacts_from_clean_binaries)",
+          "reason": "'set EVAL_SHEETS_BINARIES to clean archive binary paths'"
         },
         {
           "test": "test_each_binary_reads_same_fixture_through_signed_transport (test_section_fixture.ContactBinaryProcessTests.test_each_binary_reads_same_fixture_through_signed_transport)",
@@ -621,16 +657,20 @@
         {
           "test": "test_native_sandbox_allows_fixture_and_denies_external_socket (test_section_fixture.ContactBinaryProcessTests.test_native_sandbox_allows_fixture_and_denies_external_socket)",
           "reason": "'set EVAL_CONTACT_BINARIES to archived authsidecar binary paths'"
+        },
+        {
+          "test": "test_pinned_official_and_candidate_native_read_proof (test_wiki_native_fixture.WikiNativeBinaryTests.test_pinned_official_and_candidate_native_read_proof)",
+          "reason": "'set EVAL_WIKI_BINARY_PATHS to the archived evaluation paths JSON'"
         }
       ]
     }
   ],
   "totals": {
-    "pass": 3296,
+    "pass": 3525,
     "fail": 0,
-    "skip": 45
+    "skip": 55
   },
-  "execution_note": "The complete all-section runner passed all five groups in one invocation, including the entire23-package next-section selection. Sheets-to-Base integration, scripts harness and controlled evaluation harness passed separately against the identical committed clone. Test counts include Go subtests. Explicit skips and inherited-selector exclusions remain unverified.",
+  "execution_note": "The complete all-section runner passed all five groups in one invocation, including the entire 23-package next-section selection. Sheets-to-Base integration, scripts harness and controlled evaluation harness passed separately against the identical committed clone. Test counts include Go subtests. Explicit skips and inherited-selector exclusions remain unverified.",
   "prior_failed_checkpoint": {
     "revision": "052357e22479f4ad0d9fc6b62215353dc68dd8cb",
     "evidence_commit": "0aac8e5",
@@ -646,11 +686,29 @@
       ".tmp/next-evidence/p3-e2e-integration.json"
     ]
   },
-  "post_checkpoint_requirement": "A pending Mail POST batch_get read-intent change and any other commits after94e4afc require their own affected regression; this report does not claim coverage of later source.",
+  "history": [
+    {
+      "revision": "94e4afc032b803ad17a6efbcdb2573361ed2b38a",
+      "status": "pass",
+      "totals": {
+        "pass": 3296,
+        "fail": 0,
+        "skip": 45
+      },
+      "evidence_commit": "7de9bf4",
+      "evidence_hashes": {
+        ".tmp/next-evidence/p3-e2e-94e4afc-all.json": "fbaffe6705d2453adffad4ed520cbb25ab83d6df47740bd284fb79db6941fdee",
+        ".tmp/next-evidence/p3-e2e-94e4afc-integration.json": "fcaad21ea0ab4ce89ac1f3c75c22a5a25d5f7bf17152c897efd62565b1ad3822",
+        ".tmp/next-evidence/p3-e2e-94e4afc-scripts.json": "759e420177ca3622b2c577b5e6bc57ca9f45de310fb3e031eb4a07c4f8948d07",
+        ".tmp/next-evidence/p3-e2e-94e4afc-evaluation.json": "6ee90a9f2d9d6861a9ff4ecb3b65992d52a3e1742827cc43e66763e944e76302"
+      }
+    }
+  ],
+  "post_checkpoint_requirement": "Commits after this exact checkpoint require their own affected regression; this report does not claim live or model acceptance.",
   "evidence_hashes": {
-    ".tmp/next-evidence/p3-e2e-94e4afc-all.json": "fbaffe6705d2453adffad4ed520cbb25ab83d6df47740bd284fb79db6941fdee",
-    ".tmp/next-evidence/p3-e2e-94e4afc-integration.json": "fcaad21ea0ab4ce89ac1f3c75c22a5a25d5f7bf17152c897efd62565b1ad3822",
-    ".tmp/next-evidence/p3-e2e-94e4afc-scripts.json": "759e420177ca3622b2c577b5e6bc57ca9f45de310fb3e031eb4a07c4f8948d07",
-    ".tmp/next-evidence/p3-e2e-94e4afc-evaluation.json": "6ee90a9f2d9d6861a9ff4ecb3b65992d52a3e1742827cc43e66763e944e76302"
+    ".tmp/next-evidence/p3-e2e-8d92e52-all.json": "06a21e07ea0e0477bf57a602c36931e7363a05cdbeec338e1b45a34f71694611",
+    ".tmp/next-evidence/p3-e2e-8d92e52-integration.json": "63581e4f9ac592df8969d33c5555e9e8663637d98313bb7dd9447dca334d2ce8",
+    ".tmp/next-evidence/p3-e2e-8d92e52-scripts.json": "5e8c4c2453273bb4ae856c757347ef4b3ee892b882ea3fc74f3a223f6e703d4e",
+    ".tmp/next-evidence/p3-e2e-8d92e52-evaluation.json": "d8dfa1b50dc1160f089acf238f77cbd772086d46a7346ddf7fe29283c278eaad"
   }
 }
