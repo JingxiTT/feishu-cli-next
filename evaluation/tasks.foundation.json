@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "split": "development",
+  "backend": "offline-foundation-v1",
+  "tasks": [
+    {
+      "id": "foundation-unconfigured-status",
+      "section": "foundation",
+      "prompt": "Inspect this isolated CLI setup without logging in or initializing an application. Return JSON with configured (boolean), error_type (string), error_subtype (string), and status_exit_code (integer) describing the actual current authentication status.",
+      "fixture": {
+        "answer_schema": {
+          "type": "object",
+          "properties": {"configured": {"type": "boolean"}, "error_type": {"type": "string"}, "error_subtype": {"type": "string"}, "status_exit_code": {"type": "integer"}},
+          "required": ["configured", "error_type", "error_subtype", "status_exit_code"],
+          "additionalProperties": false
+        }
+      },
+      "expected": {
+        "answer": {"configured": false, "error_type": "config", "error_subtype": "not_configured", "status_exit_code": 3},
+        "observe": ["auth", "status", "--json"],
+        "exit_code": 3
+      }
+    },
+    {
+      "id": "foundation-document-discovery",
+      "section": "foundation",
+      "prompt": "Determine how this CLI fetches a document without fetching any actual document. Return JSON with fetch_command (string array excluding binary name), identity_flag (string), default_detail (string), and scopes (alphabetically sorted string array of all supported read scopes). Use any local discovery approach you find useful.",
+      "fixture": {
+        "answer_schema": {
+          "type": "object",
+          "properties": {"fetch_command": {"type": "array", "items": {"type": "string"}}, "identity_flag": {"type": "string"}, "default_detail": {"type": "string"}, "scopes": {"type": "array", "items": {"type": "string"}}},
+          "required": ["fetch_command", "identity_flag", "default_detail", "scopes"],
+          "additionalProperties": false
+        }
+      },
+      "expected": {
+        "answer": {"fetch_command": ["docs", "+fetch"], "identity_flag": "--as", "default_detail": "simple", "scopes": ["full", "keyword", "outline", "range", "section"]},
+        "observe": ["docs", "+fetch", "--help"],
+        "exit_code": 0,
+        "help_contains": ["--as", "simple", "with-ids", "full|outline|range|keyword|section"]
+      }
+    }
+  ]
+}

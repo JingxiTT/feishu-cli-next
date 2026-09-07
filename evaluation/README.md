@@ -20,9 +20,11 @@ for interface tuning. The release flag is intentionally required to execute them
 
 ## Real comparison prerequisite
 
-No real model runner, controlled Feishu backend adapter, or real comparative
-results are bundled. This remains a release blocker. Use an external agent
-runner and an independently implemented verifier with the protocol below; model
+`codex_runner.py` and `foundation_verifier.py` implement real Codex execution
+and independent checks for two offline foundation tasks described below.
+Other sections still need controlled Feishu backend adapters, and real comparative
+results remain pending. Use the runner and independently implemented verifier
+with the protocol below; model
 usage must come from the provider across every turn. A CLI output byte count,
 locally estimated tokenizer count, or synthetic runner is not a substitute.
 
@@ -143,3 +145,74 @@ a speedup, representative sampling, or release acceptance.
 Exit status is 0 when all outcomes and usage checks pass, 1 for failed trials,
 and 2 for invalid configuration/manifests. Stdout gives machine-readable status;
 configuration failures go to stderr without echoing potentially private values.
+
+## Codex adapter: offline foundation development
+
+The installed native `codex-cli 0.146.0` provides `exec --json`, `--ephemeral`,
+`--ignore-user-config`, and `--ignore-rules`. The adapter checks its version before
+execution. Supply the native executable, not the npm Node shim, because child
+PATH intentionally excludes user-installed executables. Keep its binary hash
+with release evidence. The [official non-interactive documentation](https://learn.chatgpt.com/docs/non-interactive-mode)
+documents the JSONL `turn.completed.usage` fields. Each such usage object covers
+an entire Codex **user turn**, including its internal model/tool loop; the adapter
+labels `usage_granularity: codex_user_turn`. It does not claim unavailable
+individual model-turn counts. Incomplete runs retain known usage spans while
+their complete total and efficiency score remain unknown.
+
+Use `tasks.foundation.json` only at the completed foundation section boundary.
+It asks the model to inspect unconfigured auth state and discover document-read
+flags without any backend operation. `foundation_verifier.py` independently runs
+the selected CLI, checks the factual JSON answer against predefined criteria,
+and ensures the isolated Feishu configuration stayed empty. No live Feishu
+credential is provided. This narrow suite is not evidence for authenticated
+setup, login, permission recovery, or backend workflows.
+
+Start from the config above with these changes:
+
+- Set `backend` to `offline-foundation-v1`, `model` to the explicitly selected
+  model, `reasoning` to its pinned effort, and `budget` to
+  `{"timeout_seconds": 180}`. Set outer `timeout_seconds` above that budget, for
+  example 210. The adapter enforces wall time; it does not claim to enforce a
+  turn-count budget.
+- Set `tokenizer` to `provider-undisclosed` if Codex does not disclose its version;
+  never invent a tokenizer version. Set `accounting_method` to
+  `codex-cli 0.146.0 turn.completed provider usage, aggregate per user turn`.
+- Set `runner` to `["/absolute/python3", "/absolute/evaluation/codex_runner.py",
+  "--codex", "/absolute/native/codex", "--auth-home", "/absolute/codex/auth-home"]`.
+  Codex consumes its existing login internally. The adapter does not read,
+  copy, or publish credentials. Do not put secret values in any argument.
+- Set `verifier` to `["/absolute/python3", "/absolute/evaluation/foundation_verifier.py"]`.
+- Use the captured reference binary and `skills/lark-shared/SKILL.md` for
+  `official`; the same binary and `evaluation/official-concise/SKILL.md` for
+  `official_concise`; and the next binary and
+  `agent-skills/feishu-cli-next/SKILL.md` for `next`.
+
+The current local model/effort selected by the coordinator is `gpt-6-astra` /
+`high`; neither value is an adapter default. Pin both explicitly for all arms.
+Provider alias changes cannot be excluded without an immutable provider model
+identifier. Report that limit alongside measured results.
+
+Each run uses fresh context and a fresh temporary workspace, HOME, TMPDIR and
+Feishu configuration. It disables metadata fetching, update/skill notices,
+agent shell network access, plugins, apps, browser/computer tools, memories,
+subagents, and skill search. `--ignore-user-config` suppresses installed user
+configuration; `project_doc_max_bytes=0` suppresses unrelated AGENTS guidance.
+Skill path names under the existing auth home's skills directory are enumerated
+and disabled without reading their contents. Only the selected skill directory
+is copied, and its entry is injected equally for each arm. Relative references
+remain available under `guidance/`. Selected binaries are exposed under both
+conventional CLI names so reference examples remain runnable.
+
+The isolated settings were accepted by a local `codex debug prompt-input` check
+with an empty temporary Codex home; no model was called and the full prompt was
+not published. Managed/system-level host policy may still affect tools. Preserve
+the pinned host/CLI environment for all arms and audit unexpected tool events;
+the adapter rejects observed MCP, web-search, or collaboration tool use. This is
+controlled fresh-context evaluation, not an adversarial filesystem sandbox.
+
+The concise official guidance covers the shared setup/identity/output/safety
+semantics with shorter English prose. The official shared skill is Chinese and
+mandates more reference reading. Arm 1 versus 3 is therefore a product comparison,
+not a language-specific result. Arm 2 versus 3 narrows the guidance difference,
+but differing domain detail still limits interface-only attribution. No forced
+help lookup, planning sequence, or model-token ceiling is part of the task.

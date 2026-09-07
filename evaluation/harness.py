@@ -138,11 +138,14 @@ def run_one(config, task, trial, arm):
         categories = []
         if code != 0:
             categories.append("runner_failure")
+        known_usage = None
         try:
             if payload.get("usage_source") != ("synthetic" if config["mode"] == "controlled" else "provider"):
                 raise ValueError("usage source mismatch")
             if payload.get("model") != config["model"] or payload.get("tokenizer") != config["tokenizer"]:
                 raise ValueError("usage provenance mismatch")
+            # Preserve completed spans from an interrupted run, but never call them its total.
+            known_usage = token_usage({**payload, "accounting_complete": True})
             usage = token_usage(payload)
         except (ValueError, TypeError, AttributeError):
             usage = None
@@ -151,7 +154,8 @@ def run_one(config, task, trial, arm):
         verification, verify_code, verify_elapsed = process(config["verifier"], {
             "protocol": 1, "workspace": directory, "task_id": task["id"],
             "fixture": task["fixture"], "expected": task["expected"],
-            "backend": config["backend"], "claimed_success": payload.get("claimed_success")},
+            "backend": config["backend"], "cli": config["arms"][arm]["cli"],
+            "claimed_success": payload.get("claimed_success")},
             workspace, config.get("timeout_seconds", 120))
         verified = verify_code == 0 and verification.get("success") is True
         if not verified:
@@ -166,6 +170,8 @@ def run_one(config, task, trial, arm):
             metrics[key] = value if type(value) is int and value >= 0 else None
         return {"task_id": task["id"], "section": task["section"], "trial": trial, "arm": arm,
                 "success": verified and code == 0, "usage": usage, "categories": categories,
+                "known_usage": known_usage,
+                "usage_granularity": payload.get("usage_granularity") if payload.get("usage_granularity") in ("model_turn", "codex_user_turn") else None,
                 "runner_exit": code, "verifier_exit": verify_code,
                 "latency_seconds": elapsed, "verification_seconds": verify_elapsed, **metrics}
 
@@ -180,10 +186,11 @@ def aggregate(runs):
     for (scope, name, arm), values in sorted(groups.items()):
         successes = sum(run["success"] for run in values)
         tokens = [run["usage"]["total_tokens"] for run in values if run["usage"] is not None]
+        known_tokens = [observed["total_tokens"] for run in values if (observed := run["usage"] or run.get("known_usage")) is not None]
         complete = len(tokens) == len(values)
         rows.append({"scope": scope, "name": name, "arm": arm, "attempts": len(values),
                      "successes": successes, "success_rate": successes / len(values),
-                     "usage_complete": complete, "known_total_tokens": sum(tokens),
+                     "usage_complete": complete, "known_total_tokens": sum(known_tokens),
                      "tokens_per_success": sum(tokens) / successes if complete and successes else None,
                      "token_distribution": {"min": min(tokens), "median": statistics.median(tokens),
                                             "max": max(tokens), "stdev": statistics.stdev(tokens) if len(tokens) > 1 else 0} if tokens else None,

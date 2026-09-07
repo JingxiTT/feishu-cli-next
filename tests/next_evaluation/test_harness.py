@@ -48,6 +48,15 @@ class AccountingTests(unittest.TestCase):
         inventory = json.loads((ROOT / "docs/reference/coverage.json").read_text())
         self.assertEqual({task["section"] for task in manifest["tasks"]}, set(inventory["sections"]))
 
+    def test_incomplete_runs_keep_known_cost_without_finite_efficiency(self):
+        run = {"task_id": "a", "section": "foundation", "trial": 0, "arm": "next",
+               "success": False, "usage": None, "known_usage": {"total_tokens": 250},
+               "categories": ["usage_unavailable"], "latency_seconds": 1, "api_calls": None, "retries": None}
+        result = harness.aggregate([run])["groups"][0]
+        self.assertEqual(result["known_total_tokens"], 250)
+        self.assertFalse(result["usage_complete"])
+        self.assertIsNone(result["tokens_per_success"])
+
 
 class ProcessE2ETests(unittest.TestCase):
     def invoke(self, fixture=None, split="controlled", extra_args=()):
