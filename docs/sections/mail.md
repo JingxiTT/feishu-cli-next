@@ -80,6 +80,19 @@ ID, rich HTML retained in the artifact and no receipt on the POST read. Triage
 exposes its returned count, mailbox and continuation rather than claiming a
 complete mailbox snapshot. Generic artifacts are not draft/template patch files.
 
+The generated `user_mailbox.messages batch_get`, `multi_entity search`, and
+`user_mailboxes search` methods are also reads. Their frozen metadata declares
+POST/write despite read-only native requests and scopes. The shared generated
+dispatcher corrects only their exact service/method/path tuples
+in next mode, marks the concrete mailbox request as read-only, and preserves
+the frozen metadata and legacy command risk. Ordinary reads exit successfully
+without mutation receipts, and `--save-result` preserves the full response.
+Neighboring `batch_modify` and raw `api POST` retain conservative mutation
+classification. `generated_read_e2e_test.go` proves both user and bot identities,
+a substituted mailbox address, projected output/full typed artifacts, both
+user-only search methods and their filters/pagination, no read receipts, and
+receipts for the two negative controls.
+
 Send operations are never deduplicated from equal content. Process fault
 injection checks one dispatch for accepted, scope-rejected, malformed and lost
 responses, plus partial send and account-level abort. Shared receipts describe
@@ -91,7 +104,7 @@ retains the foundation's conservative classification and never authorizes replay
 Run the complete section boundary with:
 
 ```bash
-python3 scripts/next_test.py --section mail --suite all --report .tmp/mail-all.json
+python3 scripts/next_test.py --section mail --suite all --report .tmp/mail-generated-read-boundary.json
 ```
 
 This strips developer credentials, isolates config/home, prevents ordinary
@@ -109,18 +122,30 @@ broader uncommon input/type and reference MIME golden matrix.
 ## Recorded offline evidence
 
 Final boundary command above passed on 2026-09-07. Machine-readable execution
-and selection evidence is in `.tmp/mail-all.json` (regenerate with that command).
+and selection evidence is in `.tmp/mail-generated-read-boundary.json`
+(regenerate with that command). This includes the generated POST read correction.
 
 | Suite | Passing test events | Failures | Skips |
 | --- | ---: | ---: | ---: |
 | All Mail units and MIME/ICS/signature/lint subpackages | 1643 | 0 | 0 |
 | Inherited deterministic process regressions | 14 | 0 | 0 |
-| Next process suite (all 102 nodes, 57 APIs and 29 shortcut surfaces) | 202 | 0 | 1 |
+| Next process suite (all 102 nodes, 57 APIs and 29 shortcut surfaces) | 215 | 0 | 1 |
 
 Counts include Go subtests. The next process skip is the explicitly blocked
 live fixture. The runner deliberately excludes the three inherited live tests
 `TestMail_DraftLifecycleWorkflowAsUser`, `TestMail_DraftSendWorkflowAsUser`, and
 `TestMail_SendWorkflowAsUser`; none was run with personal credentials.
+
+A later controlled development evaluation exposed generated `batch_get`
+returning data with exit 22 and an unknown mutation receipt. The new public
+process regression reproduced both identities and the separate artifact
+preflight rejection (exit 2) before the fix; `.tmp/mail-generated-read-before.json`
+records 7 failing and 3 passing test events, including parent subtests.
+Both native searches also reproduced exit 22 before the fix;
+`.tmp/mail-search-reads-before.json` records their 3 failing test events.
+The previous catalog dispatch test accepted exit 22 for asynchronous mutations
+and therefore did not establish the read classification of every POST method.
+The dedicated regression closes that gap without relaxing mutation outcomes.
 
 `go vet ./shortcuts/mail/...` passed in `isolated_env`; changed Go files pass
 `gofmt -l`, and owned paths pass `git diff --check`. A full no-index comparison
@@ -130,8 +155,10 @@ are unchanged; expected diff exit 1 reports only the owned changes listed here.
 Changed implementation: `draft/patch.go`, `mail_draft_edit.go`,
 `mail_template_update.go`, `mail_watch.go`. Nearby regression tests:
 `draft/patch_noop_test.go`, `mail_draft_noop_test.go`. Written process suite:
-`tests/next_sections/mail/mail_e2e_test.go` and its frozen synthetic
-`catalog_requests.json`; this section report records mapping and acceptance.
+`tests/next_sections/mail/mail_e2e_test.go`, `generated_read_e2e_test.go`, and
+the frozen synthetic `catalog_requests.json`; this section report records mapping
+and acceptance. The generated read correction is implemented in the
+foundation-owned `cmd/service/request_effect.go` and `cmd/service/service.go`.
 
 ## Outstanding acceptance
 
