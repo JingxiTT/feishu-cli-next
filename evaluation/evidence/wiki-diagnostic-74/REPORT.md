@@ -1,0 +1,9 @@
+# Wiki mechanism probe
+
+This diagnostic series stopped after six completed model attempts once it established a concrete fixture coverage gap. It is **not a balanced performance comparison**. All six attempts and their **1,091,185 provider tokens** are retained; three planned slots were cancelled before any model started and are not failed product trials. The active attempt finished and checkpointed before the queue stopped.
+
+Candidate `74b6b53`, evaluator `06786be`, Codex CLI `0.153.4`, model `gpt-6-astra`, reasoning `high`; task, prompt and runtime were unchanged from the original Wiki batch. The fixed verifier code `request_outside_fixture` and sanitized `docx_raw_content` GET labels identify a supported native-document read endpoint rejected by this bounded server. Three observations report request_outside_fixture after exact answer comparison had passed; another reports answer_mismatch and also contains a rejected native read. Two observations succeeded. This diagnoses a fixture gap, not a product bug. It does not retrospectively establish the cause of every original frozen failure.
+
+The corrected fixture adds this source-backed equivalent read, keeps Wiki identity resolution mandatory and preserves the same prompt, expected text, identities and no-change intent. Controlled tests cover both original/candidate binaries, user/bot identity, omitted or documented example lang=0, exact Unicode text, read proof and invalid selectors. Other language selectors remain a declared bound. A fresh balanced nine-attempt Wiki follow-up must use the new fixture version; these costs and the original six failed-attempt costs remain separate and are not replaced.
+
+No held-out task ran or changed. The coordinator's limited accidental exposure quarantine is documented separately in `../held-out-exposure.json`. No raw paths, query values, payloads, credentials or content were retained in this probe.

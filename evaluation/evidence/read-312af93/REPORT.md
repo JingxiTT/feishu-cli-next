@@ -45,3 +45,8 @@ The runtime supports Wiki resolution and DocsAI XML/Markdown fetch, not every na
 Application has no frozen matching skill and uses its unchanged official affordance fallback, disclosed in environment.json. Both official arms have the same original reference bundle available. The model has only synthetic data and an empty isolated Feishu configuration; no live forwarding or user credential content was retained. Independent verifiers run locally without a second model. Retry counts are unavailable; total API counts include identity/bootstrap reads and are not equivalent to business operations.
 
 Held-out files were neither executed nor modified. The coordinator reported accidental limited search snippets during later scaling review; affected examples are quarantined pending independent blind replacement after product freeze. See `../held-out-exposure.json`; complete coordinator blinding is not claimed.
+
+A later [mechanism probe](../wiki-diagnostic-74/REPORT.md) demonstrated a missing
+native Docx raw-content route in the fixture. It does not establish the cause of
+every earlier frozen failure. Original attempts and costs remain unchanged; a
+corrected, separately versioned balanced Wiki follow-up is required.

@@ -1,0 +1,1640 @@
+{
+  "protocol": 1,
+  "mode": "real",
+  "split": "development",
+  "performance_claims_supported": false,
+  "completed": false,
+  "planned_runs": 9,
+  "seed": 20260918,
+  "repeats": 3,
+  "fresh_context": true,
+  "task_manifest_sha256": "df93bbc7e58ae5f182ef16d21c8d803b509b8541c2c03508b1fccbfa23420f51",
+  "config_sha256": "d48971e0f051b1abb4139e3afd225425a4c337b3a559f04436c2f1fb38aa6593",
+  "environment": {
+    "backend": "synthetic-read-v1",
+    "model": "gpt-6-astra",
+    "tokenizer": "provider-undisclosed",
+    "reasoning": "high",
+    "tools": [
+      "shell",
+      "files"
+    ],
+    "permissions": "workspace-write; managed proxy loopback-only with local binding; isolated synthetic sidecar",
+    "budget": {
+      "timeout_seconds": 180
+    },
+    "accounting_method": "codex-cli 0.153.4 provider turn.completed; cached input included in full"
+  },
+  "arms": {
+    "official": {
+      "cli_sha256": "ab8b101b5f68418c8df02752a5ef19947d311d2e9a91fd685c0e5be24f723020",
+      "skill_sha256": "d77b966ab246078b7ef050e4fbdf3f8dfa74ed76e03dab1e4f793c1a0a7bf2c2"
+    },
+    "official_concise": {
+      "cli_sha256": "ab8b101b5f68418c8df02752a5ef19947d311d2e9a91fd685c0e5be24f723020",
+      "skill_sha256": "1d92246d87e3a89a4d9f789f47fba7f2ffe1d1b0c415e9b9b84e50dd8586d649"
+    },
+    "next": {
+      "cli_sha256": "e2fba4e2936013c14cc4c0a69b746508059e04e6d334ab9f79d274c99254cdc9",
+      "skill_sha256": "e8de6468a3b3eb65754b66961bc7037dceddb1e9f61f6b64d63539afe62a2ea0"
+    }
+  },
+  "runs": [
+    {
+      "task_id": "wiki-dev-01",
+      "section": "wiki",
+      "trial": 1,
+      "arm": "next",
+      "success": false,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 158575,
+        "cached_input_tokens": 140800,
+        "output_tokens": 607,
+        "total_tokens": 159182
+      },
+      "categories": [
+        "outcome_failure",
+        "misleading_success_claim"
+      ],
+      "known_usage": {
+        "input_tokens": 158575,
+        "cached_input_tokens": 140800,
+        "output_tokens": 607,
+        "total_tokens": 159182
+      },
+      "verification_failures": [
+        "request_outside_fixture"
+      ],
+      "api_request_trace": [
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "wiki_resolve",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "rejected",
+          "status": 403,
+          "native_read": "docx_raw_content"
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "rejected",
+          "status": 403,
+          "native_read": "docx_raw_content"
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "POST",
+          "route": "docs_fetch_xml",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "POST",
+          "route": "docs_fetch_markdown",
+          "status": 200
+        }
+      ],
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "wiki"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 2
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "wiki",
+                "+node-get"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "wiki",
+                "+node-get"
+              ],
+              "flags": [
+                "--as",
+                "--node-token"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "docs"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "docs",
+                "+fetch"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "api"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "api"
+              ],
+              "flags": [
+                "--as"
+              ]
+            }
+          ],
+          "exit_code": 1
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "api"
+              ],
+              "flags": [
+                "--as"
+              ]
+            }
+          ],
+          "exit_code": 1
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "docs",
+                "+fetch"
+              ],
+              "flags": [
+                "--as",
+                "--doc"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "docs",
+                "+fetch"
+              ],
+              "flags": [
+                "--as",
+                "--doc",
+                "--doc-format"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 62.554112124984385,
+      "verification_seconds": 0.04503320800722577,
+      "api_calls": 10,
+      "retries": null,
+      "command_executions": 12
+    },
+    {
+      "task_id": "wiki-dev-01",
+      "section": "wiki",
+      "trial": 2,
+      "arm": "official_concise",
+      "success": false,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 192236,
+        "cached_input_tokens": 167680,
+        "output_tokens": 597,
+        "total_tokens": 192833
+      },
+      "categories": [
+        "outcome_failure",
+        "misleading_success_claim"
+      ],
+      "known_usage": {
+        "input_tokens": 192236,
+        "cached_input_tokens": 167680,
+        "output_tokens": 597,
+        "total_tokens": 192833
+      },
+      "verification_failures": [
+        "request_outside_fixture"
+      ],
+      "api_request_trace": [
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "wiki_resolve",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "POST",
+          "route": "docs_fetch_xml",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "rejected",
+          "status": 403,
+          "native_read": "docx_raw_content"
+        }
+      ],
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 127
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "wiki",
+                "+node-get"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "wiki",
+                "+node-get"
+              ],
+              "flags": [
+                "--as",
+                "--node-token"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "docs",
+                "+fetch"
+              ],
+              "flags": [
+                "--as",
+                "--doc"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "docs"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 2
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "api"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "api"
+              ],
+              "flags": [
+                "--as"
+              ]
+            }
+          ],
+          "exit_code": 1
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 173.82273520799936,
+      "verification_seconds": 0.03155358400545083,
+      "api_calls": 10,
+      "retries": null,
+      "command_executions": 11
+    },
+    {
+      "task_id": "wiki-dev-01",
+      "section": "wiki",
+      "trial": 0,
+      "arm": "official_concise",
+      "success": false,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 188577,
+        "cached_input_tokens": 163968,
+        "output_tokens": 619,
+        "total_tokens": 189196
+      },
+      "categories": [
+        "outcome_failure",
+        "misleading_success_claim"
+      ],
+      "known_usage": {
+        "input_tokens": 188577,
+        "cached_input_tokens": 163968,
+        "output_tokens": 619,
+        "total_tokens": 189196
+      },
+      "verification_failures": [
+        "answer_mismatch"
+      ],
+      "api_request_trace": [
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "wiki_resolve",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "rejected",
+          "status": 403,
+          "native_read": "docx_raw_content"
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "POST",
+          "route": "docs_fetch_xml",
+          "status": 200
+        }
+      ],
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 127
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "wiki",
+                "+node-get"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "wiki",
+                "+node-get"
+              ],
+              "flags": [
+                "--as",
+                "--node-token"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "docs"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 2
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "api"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "api"
+              ],
+              "flags": [
+                "--as"
+              ]
+            }
+          ],
+          "exit_code": 1
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "docs",
+                "+fetch"
+              ],
+              "flags": [
+                "--as",
+                "--doc"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 55.31257345798076,
+      "verification_seconds": 0.07425366598181427,
+      "api_calls": 10,
+      "retries": null,
+      "command_executions": 10
+    },
+    {
+      "task_id": "wiki-dev-01",
+      "section": "wiki",
+      "trial": 1,
+      "arm": "official",
+      "success": false,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 228779,
+        "cached_input_tokens": 210688,
+        "output_tokens": 723,
+        "total_tokens": 229502
+      },
+      "categories": [
+        "outcome_failure",
+        "misleading_success_claim"
+      ],
+      "known_usage": {
+        "input_tokens": 228779,
+        "cached_input_tokens": 210688,
+        "output_tokens": 723,
+        "total_tokens": 229502
+      },
+      "verification_failures": [
+        "request_outside_fixture"
+      ],
+      "api_request_trace": [
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "wiki_resolve",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "POST",
+          "route": "docs_fetch_xml",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "rejected",
+          "status": 403,
+          "native_read": "docx_raw_content"
+        }
+      ],
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 127
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "wiki",
+                "+node-get"
+              ],
+              "flags": [
+                "--as",
+                "--format",
+                "--node-token"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "docs"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 2
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "docs",
+                "+fetch"
+              ],
+              "flags": [
+                "--as",
+                "--doc",
+                "--format"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "api"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "api"
+              ],
+              "flags": [
+                "--as",
+                "--format"
+              ]
+            }
+          ],
+          "exit_code": 1
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 64.64385187500739,
+      "verification_seconds": 0.05005162497400306,
+      "api_calls": 9,
+      "retries": null,
+      "command_executions": 11
+    },
+    {
+      "task_id": "wiki-dev-01",
+      "section": "wiki",
+      "trial": 2,
+      "arm": "official",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 139015,
+        "cached_input_tokens": 118144,
+        "output_tokens": 413,
+        "total_tokens": 139428
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 139015,
+        "cached_input_tokens": 118144,
+        "output_tokens": 413,
+        "total_tokens": 139428
+      },
+      "verification_failures": [],
+      "api_request_trace": [
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "wiki_resolve",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "POST",
+          "route": "docs_fetch_markdown",
+          "status": 200
+        }
+      ],
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 127
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 2
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "wiki",
+                "+node-get"
+              ],
+              "flags": [
+                "--as",
+                "--format",
+                "--node-token"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "docs"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "docs",
+                "+fetch"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "docs",
+                "+fetch"
+              ],
+              "flags": [
+                "--as",
+                "--doc",
+                "--doc-format"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 40.16825224997592,
+      "verification_seconds": 0.03637979199993424,
+      "api_calls": 7,
+      "retries": null,
+      "command_executions": 9
+    },
+    {
+      "task_id": "wiki-dev-01",
+      "section": "wiki",
+      "trial": 0,
+      "arm": "official",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 180487,
+        "cached_input_tokens": 154496,
+        "output_tokens": 557,
+        "total_tokens": 181044
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 180487,
+        "cached_input_tokens": 154496,
+        "output_tokens": 557,
+        "total_tokens": 181044
+      },
+      "verification_failures": [],
+      "api_request_trace": [
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "wiki_resolve",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "POST",
+          "route": "docs_fetch_markdown",
+          "status": 200
+        }
+      ],
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 127
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_search"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "wiki",
+                "+node-get"
+              ],
+              "flags": [
+                "--as",
+                "--format",
+                "--node-token"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "docs"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 2
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "docs",
+                "+fetch"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "api"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "docs",
+                "+fetch"
+              ],
+              "flags": [
+                "--as",
+                "--doc",
+                "--doc-format"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 158.12862962498912,
+      "verification_seconds": 0.023391124996123835,
+      "api_calls": 8,
+      "retries": null,
+      "command_executions": 9
+    }
+  ],
+  "groups": [
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "next",
+      "attempts": 1,
+      "successes": 0,
+      "inconclusive": 0,
+      "success_rate": 0.0,
+      "usage_complete": true,
+      "known_total_tokens": 159182,
+      "tokens_per_success": null,
+      "token_distribution": {
+        "min": 159182,
+        "median": 159182,
+        "max": 159182,
+        "stdev": 0
+      },
+      "latency_median_seconds": 62.554112124984385,
+      "api_calls": 10,
+      "retries": null,
+      "failure_categories": {
+        "misleading_success_claim": 1,
+        "outcome_failure": 1
+      }
+    },
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 2,
+      "inconclusive": 0,
+      "success_rate": 0.6666666666666666,
+      "usage_complete": true,
+      "known_total_tokens": 549974,
+      "tokens_per_success": 274987.0,
+      "token_distribution": {
+        "min": 139428,
+        "median": 181044,
+        "max": 229502,
+        "stdev": 45080.288922469575
+      },
+      "latency_median_seconds": 64.64385187500739,
+      "api_calls": 24,
+      "retries": null,
+      "failure_categories": {
+        "misleading_success_claim": 1,
+        "outcome_failure": 1
+      }
+    },
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "official_concise",
+      "attempts": 2,
+      "successes": 0,
+      "inconclusive": 0,
+      "success_rate": 0.0,
+      "usage_complete": true,
+      "known_total_tokens": 382029,
+      "tokens_per_success": null,
+      "token_distribution": {
+        "min": 189196,
+        "median": 191014.5,
+        "max": 192833,
+        "stdev": 2571.7473631754733
+      },
+      "latency_median_seconds": 114.56765433299006,
+      "api_calls": 20,
+      "retries": null,
+      "failure_categories": {
+        "misleading_success_claim": 2,
+        "outcome_failure": 2
+      }
+    },
+    {
+      "scope": "section",
+      "name": "wiki",
+      "arm": "next",
+      "attempts": 1,
+      "successes": 0,
+      "inconclusive": 0,
+      "success_rate": 0.0,
+      "usage_complete": true,
+      "known_total_tokens": 159182,
+      "tokens_per_success": null,
+      "token_distribution": {
+        "min": 159182,
+        "median": 159182,
+        "max": 159182,
+        "stdev": 0
+      },
+      "latency_median_seconds": 62.554112124984385,
+      "api_calls": 10,
+      "retries": null,
+      "failure_categories": {
+        "misleading_success_claim": 1,
+        "outcome_failure": 1
+      }
+    },
+    {
+      "scope": "section",
+      "name": "wiki",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 2,
+      "inconclusive": 0,
+      "success_rate": 0.6666666666666666,
+      "usage_complete": true,
+      "known_total_tokens": 549974,
+      "tokens_per_success": 274987.0,
+      "token_distribution": {
+        "min": 139428,
+        "median": 181044,
+        "max": 229502,
+        "stdev": 45080.288922469575
+      },
+      "latency_median_seconds": 64.64385187500739,
+      "api_calls": 24,
+      "retries": null,
+      "failure_categories": {
+        "misleading_success_claim": 1,
+        "outcome_failure": 1
+      }
+    },
+    {
+      "scope": "section",
+      "name": "wiki",
+      "arm": "official_concise",
+      "attempts": 2,
+      "successes": 0,
+      "inconclusive": 0,
+      "success_rate": 0.0,
+      "usage_complete": true,
+      "known_total_tokens": 382029,
+      "tokens_per_success": null,
+      "token_distribution": {
+        "min": 189196,
+        "median": 191014.5,
+        "max": 192833,
+        "stdev": 2571.7473631754733
+      },
+      "latency_median_seconds": 114.56765433299006,
+      "api_calls": 20,
+      "retries": null,
+      "failure_categories": {
+        "misleading_success_claim": 2,
+        "outcome_failure": 2
+      }
+    },
+    {
+      "scope": "task_id",
+      "name": "wiki-dev-01",
+      "arm": "next",
+      "attempts": 1,
+      "successes": 0,
+      "inconclusive": 0,
+      "success_rate": 0.0,
+      "usage_complete": true,
+      "known_total_tokens": 159182,
+      "tokens_per_success": null,
+      "token_distribution": {
+        "min": 159182,
+        "median": 159182,
+        "max": 159182,
+        "stdev": 0
+      },
+      "latency_median_seconds": 62.554112124984385,
+      "api_calls": 10,
+      "retries": null,
+      "failure_categories": {
+        "misleading_success_claim": 1,
+        "outcome_failure": 1
+      }
+    },
+    {
+      "scope": "task_id",
+      "name": "wiki-dev-01",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 2,
+      "inconclusive": 0,
+      "success_rate": 0.6666666666666666,
+      "usage_complete": true,
+      "known_total_tokens": 549974,
+      "tokens_per_success": 274987.0,
+      "token_distribution": {
+        "min": 139428,
+        "median": 181044,
+        "max": 229502,
+        "stdev": 45080.288922469575
+      },
+      "latency_median_seconds": 64.64385187500739,
+      "api_calls": 24,
+      "retries": null,
+      "failure_categories": {
+        "misleading_success_claim": 1,
+        "outcome_failure": 1
+      }
+    },
+    {
+      "scope": "task_id",
+      "name": "wiki-dev-01",
+      "arm": "official_concise",
+      "attempts": 2,
+      "successes": 0,
+      "inconclusive": 0,
+      "success_rate": 0.0,
+      "usage_complete": true,
+      "known_total_tokens": 382029,
+      "tokens_per_success": null,
+      "token_distribution": {
+        "min": 189196,
+        "median": 191014.5,
+        "max": 192833,
+        "stdev": 2571.7473631754733
+      },
+      "latency_median_seconds": 114.56765433299006,
+      "api_calls": 20,
+      "retries": null,
+      "failure_categories": {
+        "misleading_success_claim": 2,
+        "outcome_failure": 2
+      }
+    }
+  ],
+  "matched_success": [
+    {
+      "baseline": "official",
+      "pairs": []
+    },
+    {
+      "baseline": "official_concise",
+      "pairs": []
+    }
+  ]
+}
