@@ -1,0 +1,623 @@
+[
+  {
+    "name": "chat.nickname get",
+    "method": "GET",
+    "path": "/open-apis/im/v1/chats/oc_fixture/nickname",
+    "params": {
+      "chat_id": "oc_fixture"
+    },
+    "body": null,
+    "identity": "user",
+    "risk": "read"
+  },
+  {
+    "name": "chat.nickname update",
+    "method": "PUT",
+    "path": "/open-apis/im/v1/chats/oc_fixture/nickname",
+    "params": {
+      "chat_id": "oc_fixture"
+    },
+    "body": {
+      "nickname": "昵称 α"
+    },
+    "identity": "user",
+    "risk": "write"
+  },
+  {
+    "name": "chat.nickname delete",
+    "method": "DELETE",
+    "path": "/open-apis/im/v1/chats/oc_fixture/nickname",
+    "params": {
+      "chat_id": "oc_fixture"
+    },
+    "body": null,
+    "identity": "user",
+    "risk": "write"
+  },
+  {
+    "name": "chat.join_requests list",
+    "method": "GET",
+    "path": "/open-apis/im/v1/chats/oc_fixture/membership_applications",
+    "params": {
+      "chat_id": "oc_fixture",
+      "member_id_type": "open_id"
+    },
+    "body": null,
+    "identity": "user",
+    "risk": "read"
+  },
+  {
+    "name": "chat.join_requests handle",
+    "method": "POST",
+    "path": "/open-apis/im/v1/chats/oc_fixture/membership_applications/handle",
+    "params": {
+      "member_id_type": "open_id",
+      "chat_id": "oc_fixture"
+    },
+    "body": {
+      "items": [
+        {
+          "member_id": "ou_fixture",
+          "action": "approve"
+        }
+      ]
+    },
+    "identity": "user",
+    "risk": "write"
+  },
+  {
+    "name": "threads forward",
+    "method": "POST",
+    "path": "/open-apis/im/v1/threads/omt_fixture/forward",
+    "params": {
+      "thread_id": "omt_fixture",
+      "receive_id_type": "open_id"
+    },
+    "body": {
+      "receive_id": "ou_fixture"
+    },
+    "identity": "bot",
+    "risk": "write"
+  },
+  {
+    "name": "pins create",
+    "method": "POST",
+    "path": "/open-apis/im/v1/pins",
+    "params": {},
+    "body": {
+      "message_id": "om_fixture"
+    },
+    "identity": "bot",
+    "risk": "write"
+  },
+  {
+    "name": "pins delete",
+    "method": "DELETE",
+    "path": "/open-apis/im/v1/pins/om_fixture",
+    "params": {
+      "message_id": "om_fixture"
+    },
+    "body": null,
+    "identity": "bot",
+    "risk": "high-risk-write"
+  },
+  {
+    "name": "pins list",
+    "method": "GET",
+    "path": "/open-apis/im/v1/pins",
+    "params": {
+      "chat_id": "oc_fixture"
+    },
+    "body": null,
+    "identity": "bot",
+    "risk": "read"
+  },
+  {
+    "name": "chat.user_setting batch_query",
+    "method": "POST",
+    "path": "/open-apis/im/v1/chat_user_setting/batch_query",
+    "params": {},
+    "body": {
+      "chat_ids": [
+        "oc_fixture"
+      ]
+    },
+    "identity": "user",
+    "risk": "read"
+  },
+  {
+    "name": "chat.user_setting batch_update",
+    "method": "POST",
+    "path": "/open-apis/im/v1/chat_user_setting/batch_update",
+    "params": {},
+    "body": {
+      "chat_settings": [
+        {
+          "chat_id": "oc_fixture",
+          "is_muted": false,
+          "is_mute_at_all": true
+        }
+      ]
+    },
+    "identity": "user",
+    "risk": "write"
+  },
+  {
+    "name": "chat.managers add_managers",
+    "method": "POST",
+    "path": "/open-apis/im/v1/chats/oc_fixture/managers/add_managers",
+    "params": {
+      "member_id_type": "open_id",
+      "chat_id": "oc_fixture"
+    },
+    "body": {
+      "manager_ids": [
+        "ou_fixture"
+      ]
+    },
+    "identity": "bot",
+    "risk": "write"
+  },
+  {
+    "name": "chat.managers delete_managers",
+    "method": "POST",
+    "path": "/open-apis/im/v1/chats/oc_fixture/managers/delete_managers",
+    "params": {
+      "chat_id": "oc_fixture",
+      "member_id_type": "open_id"
+    },
+    "body": {
+      "manager_ids": [
+        "ou_fixture"
+      ]
+    },
+    "identity": "bot",
+    "risk": "write"
+  },
+  {
+    "name": "chat.moderation get",
+    "method": "GET",
+    "path": "/open-apis/im/v1/chats/oc_fixture/moderation",
+    "params": {
+      "chat_id": "oc_fixture",
+      "user_id_type": "open_id"
+    },
+    "body": null,
+    "identity": "bot",
+    "risk": "read"
+  },
+  {
+    "name": "chat.moderation update",
+    "method": "PUT",
+    "path": "/open-apis/im/v1/chats/oc_fixture/moderation",
+    "params": {
+      "chat_id": "oc_fixture",
+      "user_id_type": "open_id"
+    },
+    "body": {
+      "moderation_setting": "moderator_list",
+      "moderator_added_list": [
+        "ou_fixture"
+      ],
+      "moderator_removed_list": []
+    },
+    "identity": "bot",
+    "risk": "write"
+  },
+  {
+    "name": "files folder",
+    "method": "GET",
+    "path": "/open-apis/im/v1/files/file_fixture/folder",
+    "params": {
+      "file_key": "file_fixture",
+      "srctype": "message",
+      "srcid": "om_fixture"
+    },
+    "body": null,
+    "identity": "bot",
+    "risk": "read"
+  },
+  {
+    "name": "feed.groups batch_remove_item",
+    "method": "POST",
+    "path": "/open-apis/im/v1/groups/group_fixture/batch_remove_item",
+    "params": {
+      "feed_group_id": "group_fixture"
+    },
+    "body": {
+      "items": [
+        {
+          "feed_id": "oc_fixture",
+          "feed_type": "chat"
+        }
+      ]
+    },
+    "identity": "user",
+    "risk": "write"
+  },
+  {
+    "name": "feed.groups create",
+    "method": "POST",
+    "path": "/open-apis/im/v1/groups",
+    "params": {
+      "user_id_type": "open_id"
+    },
+    "body": {
+      "feed_group_creator": {
+        "name": "Synthetic private",
+        "type": "user"
+      }
+    },
+    "identity": "user",
+    "risk": "write"
+  },
+  {
+    "name": "feed.groups delete",
+    "method": "DELETE",
+    "path": "/open-apis/im/v1/groups/group_fixture",
+    "params": {
+      "feed_group_id": "group_fixture"
+    },
+    "body": null,
+    "identity": "user",
+    "risk": "write"
+  },
+  {
+    "name": "feed.groups update",
+    "method": "PUT",
+    "path": "/open-apis/im/v1/groups/group_fixture",
+    "params": {
+      "feed_group_id": "group_fixture",
+      "user_id_type": "open_id"
+    },
+    "body": {
+      "feed_group_updater": {
+        "name": "Updated α"
+      }
+    },
+    "identity": "user",
+    "risk": "write"
+  },
+  {
+    "name": "feed.groups batch_add_item",
+    "method": "POST",
+    "path": "/open-apis/im/v1/groups/group_fixture/batch_add_item",
+    "params": {
+      "feed_group_id": "group_fixture"
+    },
+    "body": {
+      "items": [
+        {
+          "feed_id": "oc_fixture",
+          "feed_type": "chat"
+        }
+      ]
+    },
+    "identity": "user",
+    "risk": "write"
+  },
+  {
+    "name": "feed.groups batch_query",
+    "method": "POST",
+    "path": "/open-apis/im/v1/groups/batch_query",
+    "params": {
+      "user_id_type": "open_id"
+    },
+    "body": {
+      "group_ids": [
+        "group_fixture"
+      ]
+    },
+    "identity": "user",
+    "risk": "read"
+  },
+  {
+    "name": "chats create",
+    "method": "POST",
+    "path": "/open-apis/im/v1/chats",
+    "params": {
+      "user_id_type": "open_id"
+    },
+    "body": {
+      "name": "Synthetic private",
+      "chat_type": "private",
+      "chat_mode": "topic",
+      "user_id_list": [
+        "ou_fixture"
+      ],
+      "bot_id_list": [
+        "cli_fixture"
+      ],
+      "owner_id": "ou_fixture",
+      "join_message_visibility": "only_owner",
+      "leave_message_visibility": "only_owner"
+    },
+    "identity": "bot",
+    "risk": "write"
+  },
+  {
+    "name": "chats get",
+    "method": "GET",
+    "path": "/open-apis/im/v1/chats/oc_fixture",
+    "params": {
+      "chat_id": "oc_fixture",
+      "user_id_type": "open_id"
+    },
+    "body": null,
+    "identity": "bot",
+    "risk": "read"
+  },
+  {
+    "name": "chats link",
+    "method": "POST",
+    "path": "/open-apis/im/v1/chats/oc_fixture/link",
+    "params": {
+      "chat_id": "oc_fixture"
+    },
+    "body": {
+      "validity_period": "week"
+    },
+    "identity": "bot",
+    "risk": "write"
+  },
+  {
+    "name": "chats update",
+    "method": "PUT",
+    "path": "/open-apis/im/v1/chats/oc_fixture",
+    "params": {
+      "chat_id": "oc_fixture",
+      "user_id_type": "open_id"
+    },
+    "body": {
+      "name": "Updated α",
+      "description": "",
+      "add_member_permission": "only_owner",
+      "share_card_permission": "not_allowed"
+    },
+    "identity": "bot",
+    "risk": "high-risk-write"
+  },
+  {
+    "name": "chat.members create",
+    "method": "POST",
+    "path": "/open-apis/im/v1/chats/oc_fixture/members",
+    "params": {
+      "chat_id": "oc_fixture",
+      "member_id_type": "open_id"
+    },
+    "body": {
+      "id_list": [
+        "ou_fixture"
+      ]
+    },
+    "identity": "bot",
+    "risk": "write"
+  },
+  {
+    "name": "chat.members delete",
+    "method": "DELETE",
+    "path": "/open-apis/im/v1/chats/oc_fixture/members",
+    "params": {
+      "chat_id": "oc_fixture",
+      "member_id_type": "open_id"
+    },
+    "body": {
+      "id_list": [
+        "ou_fixture"
+      ]
+    },
+    "identity": "bot",
+    "risk": "high-risk-write"
+  },
+  {
+    "name": "chat.members get",
+    "method": "GET",
+    "path": "/open-apis/im/v1/chats/oc_fixture/members",
+    "params": {
+      "member_id_type": "open_id",
+      "chat_id": "oc_fixture"
+    },
+    "body": null,
+    "identity": "bot",
+    "risk": "read"
+  },
+  {
+    "name": "chat.members bots",
+    "method": "GET",
+    "path": "/open-apis/im/v1/chats/oc_fixture/members/bots",
+    "params": {
+      "chat_id": "oc_fixture"
+    },
+    "body": null,
+    "identity": "bot",
+    "risk": "read"
+  },
+  {
+    "name": "messages patch",
+    "method": "PATCH",
+    "path": "/open-apis/im/v1/messages/om_fixture",
+    "params": {
+      "message_id": "om_fixture"
+    },
+    "body": {
+      "content": "{\"elements\": [{\"tag\": \"markdown\", \"content\": \"updated α\"}]}"
+    },
+    "identity": "bot",
+    "risk": "write"
+  },
+  {
+    "name": "messages urgent_sms",
+    "method": "PATCH",
+    "path": "/open-apis/im/v1/messages/om_fixture/urgent_sms",
+    "params": {
+      "message_id": "om_fixture",
+      "user_id_type": "open_id"
+    },
+    "body": {
+      "user_id_list": [
+        "ou_fixture",
+        "ou_second_fixture"
+      ]
+    },
+    "identity": "bot",
+    "risk": "write"
+  },
+  {
+    "name": "messages delete",
+    "method": "DELETE",
+    "path": "/open-apis/im/v1/messages/om_fixture",
+    "params": {
+      "message_id": "om_fixture"
+    },
+    "body": null,
+    "identity": "bot",
+    "risk": "high-risk-write"
+  },
+  {
+    "name": "messages forward",
+    "method": "POST",
+    "path": "/open-apis/im/v1/messages/om_fixture/forward",
+    "params": {
+      "message_id": "om_fixture",
+      "receive_id_type": "open_id"
+    },
+    "body": {
+      "receive_id": "ou_fixture"
+    },
+    "identity": "bot",
+    "risk": "write"
+  },
+  {
+    "name": "messages read_users",
+    "method": "GET",
+    "path": "/open-apis/im/v1/messages/om_fixture/read_users",
+    "params": {
+      "user_id_type": "open_id",
+      "message_id": "om_fixture"
+    },
+    "body": null,
+    "identity": "bot",
+    "risk": "read"
+  },
+  {
+    "name": "messages urgent_app",
+    "method": "PATCH",
+    "path": "/open-apis/im/v1/messages/om_fixture/urgent_app",
+    "params": {
+      "message_id": "om_fixture",
+      "user_id_type": "open_id"
+    },
+    "body": {
+      "user_id_list": [
+        "ou_fixture",
+        "ou_second_fixture"
+      ]
+    },
+    "identity": "bot",
+    "risk": "write"
+  },
+  {
+    "name": "messages urgent_phone",
+    "method": "PATCH",
+    "path": "/open-apis/im/v1/messages/om_fixture/urgent_phone",
+    "params": {
+      "message_id": "om_fixture",
+      "user_id_type": "open_id"
+    },
+    "body": {
+      "user_id_list": [
+        "ou_fixture",
+        "ou_second_fixture"
+      ]
+    },
+    "identity": "bot",
+    "risk": "write"
+  },
+  {
+    "name": "messages read_status",
+    "method": "POST",
+    "path": "/open-apis/im/v1/messages/read_status",
+    "params": {},
+    "body": {
+      "message_ids": [
+        "om_fixture"
+      ]
+    },
+    "identity": "user",
+    "risk": "read"
+  },
+  {
+    "name": "messages merge_forward",
+    "method": "POST",
+    "path": "/open-apis/im/v1/messages/merge_forward",
+    "params": {
+      "receive_id_type": "open_id"
+    },
+    "body": {
+      "receive_id": "ou_fixture",
+      "message_id_list": [
+        "om_fixture",
+        "om_second"
+      ]
+    },
+    "identity": "bot",
+    "risk": "write"
+  },
+  {
+    "name": "reactions batch_query",
+    "method": "POST",
+    "path": "/open-apis/im/v1/messages/reactions/batch_query",
+    "params": {
+      "user_id_type": "open_id"
+    },
+    "body": {
+      "queries": [
+        {
+          "message_id": "om_fixture",
+          "page_token": ""
+        }
+      ]
+    },
+    "identity": "bot",
+    "risk": "read"
+  },
+  {
+    "name": "reactions create",
+    "method": "POST",
+    "path": "/open-apis/im/v1/messages/om_fixture/reactions",
+    "params": {
+      "message_id": "om_fixture"
+    },
+    "body": {
+      "reaction_type": {
+        "emoji_type": "SMILE"
+      }
+    },
+    "identity": "bot",
+    "risk": "write"
+  },
+  {
+    "name": "reactions delete",
+    "method": "DELETE",
+    "path": "/open-apis/im/v1/messages/om_fixture/reactions/reaction_fixture",
+    "params": {
+      "message_id": "om_fixture",
+      "reaction_id": "reaction_fixture"
+    },
+    "body": null,
+    "identity": "bot",
+    "risk": "write"
+  },
+  {
+    "name": "reactions list",
+    "method": "GET",
+    "path": "/open-apis/im/v1/messages/om_fixture/reactions",
+    "params": {
+      "user_id_type": "open_id",
+      "message_id": "om_fixture"
+    },
+    "body": null,
+    "identity": "bot",
+    "risk": "read"
+  }
+]

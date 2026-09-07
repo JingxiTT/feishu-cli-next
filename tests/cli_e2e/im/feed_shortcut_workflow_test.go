@@ -357,7 +357,8 @@ func TestIM_FeedShortcutDryRun(t *testing.T) {
 		})
 		require.NoError(t, err)
 		result.AssertExitCode(t, 0)
-		require.Contains(t, result.Stdout, `"is_header": false`)
+		require.True(t, gjson.Get(result.Stdout, "data.api.0.body.is_header").Exists())
+		require.False(t, gjson.Get(result.Stdout, "data.api.0.body.is_header").Bool())
 	})
 
 	t.Run("create dry-run rejects --head + --tail", func(t *testing.T) {

@@ -85,6 +85,10 @@ lark-cli im +chat-search --query "project"
 ## +chat-update
 Use this for name or description changes after identifying the group and an owner/admin-capable identity.
 
+### Tips
+- `--description ""` explicitly clears the description; omitting it preserves it.
+- `--skip-unchanged` reads the supplied fields first and avoids an identical update. It requires chat read permission and stops if the read fails. The comparison does not prevent concurrent edits.
+
 ### Examples
 
 **Rename a group**
@@ -120,6 +124,7 @@ Use this to edit an already-sent **text or rich-text (post)** message, including
 - Confirm the target message id, the new content, and that the calling identity (bot) is the original sender before editing.
 
 ### Tips
+- `--skip-unchanged` reads the current message and skips only an identical complete JSON replacement. It requires message read permission and stops if the read fails; it does not prevent concurrent edits.
 - Omit attachment flags to preserve the current attachment zone.
 - `--set-attachments` replaces the attachment set; `--clear-attachments` removes it.
 - `--content` that already carries a `files` array cannot be combined with the attachment flags.

@@ -5,6 +5,7 @@ package im
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -26,12 +27,19 @@ var ImChatUpdate = common.Shortcut{
 	Flags: []common.Flag{
 		{Name: "chat-id", Desc: "chat ID (oc_xxx)", Required: true},
 		{Name: "name", Desc: "group name (max 60 chars)"},
-		{Name: "description", Desc: "group description (max 100 chars)"},
+		{Name: "description", Desc: "group description (max 100 chars); an explicit empty value clears it"},
+		{Name: "skip-unchanged", Type: "bool", Desc: "read current chat fields and skip an identical update; requires chat read permission"},
 	},
 	DryRun: func(ctx context.Context, runtime *common.RuntimeContext) *common.DryRunAPI {
 		chatID := runtime.Str("chat-id")
 		body := buildUpdateChatBody(runtime)
-		return common.NewDryRunAPI().
+		d := common.NewDryRunAPI()
+		if runtime.Bool("skip-unchanged") {
+			d.GET(fmt.Sprintf("/open-apis/im/v1/chats/%s", validate.EncodePathSegment(chatID))).
+				Params(map[string]interface{}{"user_id_type": "open_id"}).
+				Desc("Read current fields; skip PUT when every supplied value is unchanged")
+		}
+		return d.
 			PUT(fmt.Sprintf("/open-apis/im/v1/chats/%s", validate.EncodePathSegment(chatID))).
 			Params(map[string]interface{}{"user_id_type": "open_id"}).
 			Body(body)
@@ -65,6 +73,45 @@ var ImChatUpdate = common.Shortcut{
 		chatID := runtime.Str("chat-id")
 		body := buildUpdateChatBody(runtime)
 
+		if runtime.Bool("skip-unchanged") {
+			data, err := runtime.DoAPIJSONTyped(http.MethodGet,
+				fmt.Sprintf("/open-apis/im/v1/chats/%s", validate.EncodePathSegment(chatID)),
+				larkcore.QueryParams{"user_id_type": []string{"open_id"}}, nil)
+			if err != nil {
+				return err
+			}
+			encoded, err := json.Marshal(data)
+			if err != nil {
+				return errs.NewInternalError(errs.SubtypeInvalidResponse, "cannot decode chat preflight").WithCause(err)
+			}
+			var current struct {
+				Name        *string `json:"name"`
+				Description *string `json:"description"`
+			}
+			if err := json.Unmarshal(encoded, &current); err != nil {
+				return errs.NewInternalError(errs.SubtypeInvalidResponse, "cannot decode chat preflight").WithCause(err)
+			}
+			same := true
+			for key, value := range body {
+				field := current.Name
+				if key == "description" {
+					field = current.Description
+				}
+				if field == nil {
+					return errs.NewInternalError(errs.SubtypeInvalidResponse, "chat preflight omitted requested field %s", key)
+				}
+				if *field != value {
+					same = false
+				}
+			}
+			if same {
+				runtime.OutFormat(map[string]interface{}{"chat_id": chatID, "unchanged": true}, nil, func(w io.Writer) {
+					fmt.Fprintf(w, "Group unchanged (chat_id: %s)\n", chatID)
+				})
+				return nil
+			}
+		}
+
 		_, err := runtime.DoAPIJSONTyped(http.MethodPut,
 			fmt.Sprintf("/open-apis/im/v1/chats/%s", validate.EncodePathSegment(chatID)),
 			larkcore.QueryParams{"user_id_type": []string{"open_id"}},
@@ -85,7 +132,7 @@ func buildUpdateChatBody(runtime *common.RuntimeContext) map[string]interface{} 
 	body := map[string]interface{}{}
 
 	setStr := func(flag, key string) {
-		if v := runtime.Str(flag); v != "" {
+		if v := runtime.Str(flag); v != "" || (runtime.Cmd != nil && runtime.Cmd.Flags().Changed(flag)) {
 			body[key] = v
 		}
 	}

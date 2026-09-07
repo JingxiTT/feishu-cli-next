@@ -29,6 +29,7 @@ var ImMessagesEdit = common.Shortcut{
 		{Name: "text", Desc: "plain text message (auto-wrapped as JSON)"},
 		{Name: "markdown", Desc: "markdown text (auto-wrapped as post format with style optimization; image URLs auto-resolved)"},
 		{Name: "set-attachments", Type: "string_slice", Desc: "file/folder key (file_xxx), repeatable; sets the post message's attachment zone (requires --markdown or --msg-type post)"},
+		{Name: "skip-unchanged", Type: "bool", Desc: "read the current message and skip an identical replacement; requires message read permission"},
 		{Name: "clear-attachments", Type: "bool", Desc: "clear the post message attachment zone (sets files:[]); cannot be used with --set-attachments"},
 	},
 	DryRun: func(ctx context.Context, runtime *common.RuntimeContext) *common.DryRunAPI {
@@ -86,6 +87,9 @@ var ImMessagesEdit = common.Shortcut{
 
 		body := map[string]interface{}{"msg_type": msgType, "content": content}
 		d := common.NewDryRunAPI()
+		if runtime.Bool("skip-unchanged") {
+			d.GET(fmt.Sprintf("/open-apis/im/v1/messages/%s", validate.EncodePathSegment(messageId))).Desc("Read current message; skip PUT only for the same complete replacement content")
+		}
 		if desc != "" {
 			d.Desc(desc)
 		}
@@ -184,6 +188,20 @@ var ImMessagesEdit = common.Shortcut{
 		normalizedContent := content
 		if msgType == "text" || msgType == "post" {
 			normalizedContent = normalizeAtMentions(content)
+		}
+
+		if runtime.Bool("skip-unchanged") {
+			current, unchanged, err := unchangedMessage(runtime, messageId, msgType, normalizedContent)
+			if err != nil {
+				return err
+			}
+			if unchanged {
+				runtime.Out(map[string]interface{}{
+					"message_id": messageId, "chat_id": current.ChatID,
+					"update_time": common.FormatTimeWithSeconds(current.UpdateTime), "unchanged": true,
+				}, nil)
+				return nil
+			}
 		}
 
 		data := map[string]interface{}{
