@@ -27,8 +27,7 @@ func TestAppsGitCredentialInitDryRun(t *testing.T) {
 			"--app-id", "app_xxx",
 			"--dry-run",
 		},
-		BinaryPath: "../../../lark-cli",
-		DefaultAs:  "user",
+		DefaultAs: "user",
 	})
 	require.NoError(t, err)
 	result.AssertExitCode(t, 0)
@@ -54,9 +53,8 @@ func TestAppsGitCredentialListDryRun(t *testing.T) {
 	t.Cleanup(cancel)
 
 	result, err := clie2e.RunCmd(ctx, clie2e.Request{
-		Args:       []string{"apps", "+git-credential-list", "--dry-run"},
-		BinaryPath: "../../../lark-cli",
-		DefaultAs:  "user",
+		Args:      []string{"apps", "+git-credential-list", "--dry-run"},
+		DefaultAs: "user",
 	})
 	require.NoError(t, err)
 	result.AssertExitCode(t, 0)
@@ -76,9 +74,8 @@ func TestAppsGitCredentialRemoveDryRun(t *testing.T) {
 	t.Cleanup(cancel)
 
 	result, err := clie2e.RunCmd(ctx, clie2e.Request{
-		Args:       []string{"apps", "+git-credential-remove", "--app-id", "app_xxx", "--dry-run"},
-		BinaryPath: "../../../lark-cli",
-		DefaultAs:  "user",
+		Args:      []string{"apps", "+git-credential-remove", "--app-id", "app_xxx", "--dry-run"},
+		DefaultAs: "user",
 	})
 	require.NoError(t, err)
 	result.AssertExitCode(t, 0)
