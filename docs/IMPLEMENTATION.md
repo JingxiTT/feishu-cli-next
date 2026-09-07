@@ -147,3 +147,11 @@ gap; they do not establish live guarantees. Completed offline transfer and local
 packaging checks remain milestones. Blocked or unverified checks remain
 outstanding; offline success does not establish full live parity or satisfy the
 complete goal.
+
+| Remaining prerequisite | Evidence needed to close it |
+| --- | --- |
+| Private live fixtures | Verify current-account and tenant binding plus account-only creation visibility before writing; run the owning live suites and clean up only their resources. |
+| Contact bot search | Current-user authorization for `search:bot`, followed by the failed live scenario and bot binding checks. |
+| Native runtime coverage | Execute the retained platform-specific installation, recovery and runtime suites on native Linux, Windows and macOS Intel; cross-built archives do not substitute. |
+| Remote release ownership | An owned Next repository/download destination and package identity, then the documented updater identity integration and remote install/update checks. Public signing/notarization and publication retain their separate prerequisites. |
+| Comparative release evidence | Finish the serialized development/scaling comparisons, review their tradeoffs, and perform independently replaced held-out tasks only at the final release gate. |
