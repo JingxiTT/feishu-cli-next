@@ -4,6 +4,7 @@
 package calendar
 
 import (
+	"github.com/larksuite/cli/errs"
 	"net/http"
 	"testing"
 
@@ -40,4 +41,15 @@ func TestCalendarUpdateExactReplacementNoOp(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestCalendarUpdateScopeBeforeDescriptionUpload(t *testing.T) {
+	t.Setenv("LARKSUITE_CLI_CONFIG_DIR", t.TempDir())
+	f, stdout, _, reg := cmdutil.TestFactory(t, defaultConfig())
+	reg.Register(&httpmock.Stub{Method: "GET", URL: "/open-apis/calendar/v4/calendars/cal_fixture/events/evt_fixture_0", Body: map[string]any{"code": 0, "data": map[string]any{"event": map[string]any{"event_id": "evt_fixture_0", "recurrence": "FREQ=DAILY;COUNT=3"}}}})
+	err := mountAndRun(t, CalendarUpdate, []string{"+update", "--as", "bot", "--calendar-id", "cal_fixture", "--event-id", "evt_fixture_0", "--description", "![fixture](missing-image.png)"}, f, stdout)
+	var validation *errs.ValidationError
+	require.ErrorAs(t, err, &validation)
+	require.Equal(t, "--apply-to", validation.Param)
+	require.Empty(t, stdout.String())
 }

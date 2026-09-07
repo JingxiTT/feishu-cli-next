@@ -375,12 +375,6 @@ func executeCalendarUpdate(ctx context.Context, runtime *common.RuntimeContext) 
 		return errs.NewValidationError(errs.SubtypeInvalidArgument, "specify --event-id").WithParam("--event-id")
 	}
 
-	if runtime.Cmd.Flags().Changed("description") {
-		if err := resolveDescriptionImages(runtime, calendarID); err != nil {
-			return err
-		}
-	}
-
 	current, err := resolveCalendarEventOrMaster(runtime, calendarID, eventID)
 	if err != nil {
 		return err
@@ -390,6 +384,13 @@ func executeCalendarUpdate(ctx context.Context, runtime *common.RuntimeContext) 
 	if err != nil {
 		return err
 	}
+	// Target/scope validation must precede description image uploads.
+	if runtime.Cmd.Flags().Changed("description") {
+		if err := resolveDescriptionImages(runtime, calendarID); err != nil {
+			return err
+		}
+	}
+
 	switch scope {
 	case applyToSingle:
 		if calendarUpdateUnchanged(runtime, current, eventID) {
