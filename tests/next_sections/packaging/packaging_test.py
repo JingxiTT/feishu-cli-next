@@ -32,7 +32,15 @@ class PackagingTests(unittest.TestCase):
         self.binary_name = 'feishu-cli-next' + ('.exe' if os.name == 'nt' else '')
 
     def run_cmd(self, *args, success=True, cwd=None):
-        result = subprocess.run(list(map(str, args)), env=self.env, cwd=cwd or self.base, capture_output=True, text=True, timeout=90)
+        command = list(map(str, args))
+        # Windows npm is npm.cmd; resolve its actual launcher before CreateProcess.
+        # All command arguments here are synthetic fixture paths and fixed flags.
+        if not Path(command[0]).is_absolute():
+            resolved = shutil.which(command[0], path=self.env['PATH'])
+            if resolved is None:
+                self.fail('Required packaging test executable unavailable: ' + command[0])
+            command[0] = resolved
+        result = subprocess.run(command, env=self.env, cwd=cwd or self.base, capture_output=True, text=True, timeout=90)
         if success:
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         else:
@@ -160,7 +168,7 @@ class PackagingTests(unittest.TestCase):
         source = self.base / 'source-binary'
         source.write_bytes(b'first executable fixture')
         def invoke(action, success=True):
-            return self.run_cmd('python3', script, action, '--prefix', prefix, '--source', source, success=success)
+            return self.run_cmd(sys.executable, script, action, '--prefix', prefix, '--source', source, success=success)
         binary.write_text('collision')
         invoke('install', success=False)
         self.assertEqual(binary.read_text(), 'collision')
@@ -200,7 +208,7 @@ class PackagingTests(unittest.TestCase):
         lock = directory / ('.' + self.binary_name + '.install.lock')
         script = ROOT / 'scripts/next_binary.py'
         def invoke(action, success=True):
-            return self.run_cmd('python3', script, action, '--prefix', prefix,
+            return self.run_cmd(sys.executable, script, action, '--prefix', prefix,
                                 '--source', self.binary, success=success)
         marker.write_text('0' * 64 + '\n')
         invoke('install', success=False)
@@ -226,7 +234,7 @@ class PackagingTests(unittest.TestCase):
         self.assertTrue(package['private'])
         self.assertEqual(list(package['bin']), ['feishu-cli-next'])
         self.assertNotIn('dependencies', package)
-        result = self.run_cmd('bash', ROOT / 'scripts/tag-release.sh', success=False)
+        result = self.run_cmd('bash', 'scripts/tag-release.sh', success=False, cwd=ROOT)
         self.assertIn('Release publication is disabled', result.stderr)
 
 

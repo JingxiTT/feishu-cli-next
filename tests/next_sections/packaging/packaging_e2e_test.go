@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"testing"
 )
 
@@ -18,7 +19,11 @@ func TestPackagingOfflineLifecycle(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	cmd := exec.Command("python3", "-m", "unittest", "discover", "-s", "tests/next_sections/packaging", "-p", "*_test.py", "-v")
+	python := "python3"
+	if runtime.GOOS == "windows" {
+		python = "python"
+	}
+	cmd := exec.Command(python, "-m", "unittest", "discover", "-s", "tests/next_sections/packaging", "-p", "*_test.py", "-v")
 	cmd.Dir = root
 	output, err := cmd.CombinedOutput()
 	t.Log(string(output))
