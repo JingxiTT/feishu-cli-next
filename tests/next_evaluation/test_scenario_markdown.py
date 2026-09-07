@@ -142,16 +142,87 @@ class MarkdownScenarioTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.dispatch("POST", scenario.FETCH_PATH, {"format": "xml"})
 
-    def test_documented_drive_import_routes_are_an_adapter_gap(self):
-        routes = [("POST", path) for path in scenario.DRIVE_IMPORT_POST_PATHS]
-        routes.append(("GET", "/open-apis/drive/v1/import_tasks/tk_import"))
-        for method, path in routes:
-            with self.subTest(method=method, path=path):
-                # Real upload routes must classify before parsing multipart as JSON.
-                raw = b"--synthetic-boundary\r\nContent-Disposition: form-data\r\n"
-                with self.assertRaisesRegex(ValueError, "^unsupported strategy: Drive import not modeled$"):
-                    self.backend.dispatch(method, path, raw, signed_headers(method, path, raw))
-        self.assertEqual(0, self.backend.snapshot()["final"]["create_attempts"])
+    def upload(self, overrides=None):
+        fields = {"file_name": "input.md", "parent_type": "ccm_import_open",
+                  "size": str(len(scenario.SOURCE.encode())),
+                  "extra": json.dumps({"obj_type": "docx", "file_extension": "md"}),
+                  "file": scenario.SOURCE.encode()}
+        fields.update(overrides or {})
+        chunks = []
+        for name, value in fields.items():
+            filename = '; filename="input.md"' if name == "file" else ""
+            chunks.append(('Content-Disposition: form-data; name="' + name + '"' + filename +
+                           '\r\n\r\n').encode() + (value if isinstance(value, bytes) else value.encode()))
+        raw = b"--boundary\r\n" + b"\r\n--boundary\r\n".join(chunks) + b"\r\n--boundary--\r\n"
+        headers = signed_headers("POST", scenario.UPLOAD_PATH, raw)
+        headers["Content-Type"] = "multipart/form-data; boundary=boundary"
+        reply = self.backend.dispatch("POST", scenario.UPLOAD_PATH, raw, headers)
+        self.requests.append({"route": reply.route, "status": reply.status, "returned_ids": [], "proof": reply.proof})
+        return reply
+
+    def import_body(self, **changes):
+        return {"file_extension": "md", "file_token": scenario.MEDIA_TOKEN, "type": "docx",
+                "file_name": "input", "point": {"mount_type": 1, "mount_key": ""}, **changes}
+
+    def test_drive_import_create_poll_and_native_xml_artifact(self):
+        self.assertEqual(scenario.MEDIA_TOKEN, self.upload().json["data"]["file_token"])
+        report = {"file_scene": "lark-cli", "scene": "upload", "operation": "upload", "tags": {
+            "code": "", "api_path": scenario.UPLOAD_PATH, "command": "drive +import",
+            "resource_type": "media", "status": "success", "mount_point": "ccm_import_open",
+            "file_token": scenario.MEDIA_TOKEN}}
+        self.dispatch("POST", scenario.REPORT_PATH, report)
+        self.assertEqual(scenario.IMPORT_TICKET, self.dispatch("POST", scenario.IMPORT_PATH,
+                         self.import_body()).json["data"]["ticket"])
+        polled = self.dispatch("GET", scenario.IMPORT_PATH + "/" + scenario.IMPORT_TICKET)
+        self.assertEqual(0, polled.json["data"]["result"]["job_status"])
+        self.assertEqual(scenario.DOCUMENT_ID, polled.json["data"]["result"]["token"])
+        fetched = self.dispatch("POST", scenario.FETCH_PATH, {"format": "xml", "export_option": {"export_block_id": True}})
+        (self.workspace / "converted.xml").write_text(fetched.json["data"]["document"]["content"], encoding="utf-8")
+        receipt = {"scenario": scenario.SCENARIO, "state": self.backend.snapshot(), "requests": self.requests}
+        self.assertTrue(self.check(receipt))
+        for route in ("markdown_import_upload", "markdown_import_status"):
+            tampered = copy.deepcopy(receipt)
+            next(r for r in tampered["requests"] if r["route"] == route)["proof"] = {}
+            self.assertFalse(self.check(tampered))
+        with self.assertRaises(ValueError):
+            self.dispatch("POST", scenario.IMPORT_PATH, self.import_body())
+        with self.assertRaises(ValueError):
+            self.dispatch("POST", scenario.CREATE_PATH, {"format": "markdown", "content": scenario.SOURCE})
+        with self.assertRaises(ValueError):
+            self.upload()
+
+    def test_drive_import_rejects_changed_bytes_mounts_and_tokens(self):
+        for override in ({"file": scenario.SOURCE.encode() + b" "}, {"size": "1"},
+                         {"parent_type": "docx_image"}, {"parent_node": "foreign"},
+                         {"extra": '{"obj_type":"sheet","file_extension":"md"}'}, {"file_name": "../input.md"}):
+            with self.subTest(override=override), self.assertRaises(ValueError):
+                self.upload(override)
+        with self.assertRaises(ValueError):
+            self.dispatch("POST", scenario.IMPORT_PATH, self.import_body())
+        self.upload()
+        for changes in ({"type": "sheet"}, {"file_token": "foreign"}, {"file_extension": "html"},
+                        {"point": {"mount_type": 1, "mount_key": "foreign"}},
+                        {"point": {"mount_type": True, "mount_key": ""}}, {"token": "existing"}):
+            with self.subTest(changes=changes), self.assertRaises(ValueError):
+                self.dispatch("POST", scenario.IMPORT_PATH, self.import_body(**changes))
+        with self.assertRaises(ValueError):
+            self.dispatch("GET", scenario.IMPORT_PATH + "/foreign")
+        self.assertFalse(self.backend.snapshot()["final"]["created"])
+
+    def test_drive_import_unsupported_job_is_not_success(self):
+        self.backend = scenario.Scenario(unsupported=True)
+        self.upload()
+        self.dispatch("POST", scenario.IMPORT_PATH, self.import_body())
+        result = self.dispatch("GET", scenario.IMPORT_PATH + "/" + scenario.IMPORT_TICKET).json["data"]["result"]
+        self.assertEqual(3, result["job_status"])
+        self.assertIn("unsupported", result["job_error_msg"])
+        self.assertNotIn("token", result)
+        self.assertFalse(self.backend.snapshot()["final"]["created"])
+
+    def test_multipart_beyond_small_authored_input_remains_explicit_gap(self):
+        for path in scenario.DRIVE_MULTIPART_PATHS:
+            with self.subTest(path=path), self.assertRaisesRegex(ValueError, "^unsupported strategy:"):
+                self.dispatch("POST", path)
 
     def test_foreign_and_malformed_mutation_paths_are_not_strategy_gaps(self):
         routes = [

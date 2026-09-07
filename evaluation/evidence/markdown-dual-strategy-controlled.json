@@ -1,0 +1,198 @@
+{
+  "kind": "controlled_process_checks_not_model_trials",
+  "reference_revision": "7fd6ef3c07182257ce776cdc5a614e122d5bd4b3",
+  "candidate_revision": "74b6b5346ca4efbd03564045f4f3e01746f18878",
+  "checks": [
+    {
+      "arm": "official",
+      "revision": "7fd6ef3c07182257ce776cdc5a614e122d5bd4b3",
+      "strategy": "docs_ai",
+      "create_exit": 0,
+      "fetch_exit": 0,
+      "artifact_bytes": 285,
+      "verified_backend_outcome": true,
+      "create_count": 1,
+      "native_sha256": "03b3da9d44828fb409e013f0cbdcb24b3add327a8c2091bc5f3769c7c850208f",
+      "requests": [
+        {
+          "route": "identity",
+          "status": 200,
+          "method": "GET",
+          "signature_valid": true
+        },
+        {
+          "route": "markdown_create",
+          "status": 200,
+          "method": "POST",
+          "signature_valid": true
+        },
+        {
+          "route": "identity",
+          "status": 200,
+          "method": "GET",
+          "signature_valid": true
+        },
+        {
+          "route": "markdown_fetch",
+          "status": 200,
+          "method": "POST",
+          "signature_valid": true
+        }
+      ]
+    },
+    {
+      "arm": "official",
+      "revision": "7fd6ef3c07182257ce776cdc5a614e122d5bd4b3",
+      "strategy": "drive_import",
+      "create_exit": 0,
+      "fetch_exit": 0,
+      "artifact_bytes": 285,
+      "verified_backend_outcome": true,
+      "create_count": 1,
+      "native_sha256": "03b3da9d44828fb409e013f0cbdcb24b3add327a8c2091bc5f3769c7c850208f",
+      "requests": [
+        {
+          "route": "identity",
+          "status": 200,
+          "method": "GET",
+          "signature_valid": true
+        },
+        {
+          "route": "markdown_import_upload",
+          "status": 200,
+          "method": "POST",
+          "signature_valid": true
+        },
+        {
+          "route": "markdown_import_report",
+          "status": 200,
+          "method": "POST",
+          "signature_valid": true
+        },
+        {
+          "route": "markdown_create",
+          "status": 200,
+          "method": "POST",
+          "signature_valid": true
+        },
+        {
+          "route": "markdown_import_status",
+          "status": 200,
+          "method": "GET",
+          "signature_valid": true
+        },
+        {
+          "route": "identity",
+          "status": 200,
+          "method": "GET",
+          "signature_valid": true
+        },
+        {
+          "route": "markdown_fetch",
+          "status": 200,
+          "method": "POST",
+          "signature_valid": true
+        }
+      ]
+    },
+    {
+      "arm": "next",
+      "revision": "74b6b5346ca4efbd03564045f4f3e01746f18878",
+      "strategy": "docs_ai",
+      "create_exit": 0,
+      "fetch_exit": 0,
+      "artifact_bytes": 285,
+      "verified_backend_outcome": true,
+      "create_count": 1,
+      "native_sha256": "03b3da9d44828fb409e013f0cbdcb24b3add327a8c2091bc5f3769c7c850208f",
+      "requests": [
+        {
+          "route": "identity",
+          "status": 200,
+          "method": "GET",
+          "signature_valid": true
+        },
+        {
+          "route": "markdown_create",
+          "status": 200,
+          "method": "POST",
+          "signature_valid": true
+        },
+        {
+          "route": "identity",
+          "status": 200,
+          "method": "GET",
+          "signature_valid": true
+        },
+        {
+          "route": "markdown_fetch",
+          "status": 200,
+          "method": "POST",
+          "signature_valid": true
+        }
+      ]
+    },
+    {
+      "arm": "next",
+      "revision": "74b6b5346ca4efbd03564045f4f3e01746f18878",
+      "strategy": "drive_import",
+      "create_exit": 22,
+      "fetch_exit": 0,
+      "artifact_bytes": 285,
+      "verified_backend_outcome": true,
+      "create_count": 1,
+      "native_sha256": "03b3da9d44828fb409e013f0cbdcb24b3add327a8c2091bc5f3769c7c850208f",
+      "requests": [
+        {
+          "route": "identity",
+          "status": 200,
+          "method": "GET",
+          "signature_valid": true
+        },
+        {
+          "route": "markdown_import_upload",
+          "status": 200,
+          "method": "POST",
+          "signature_valid": true
+        },
+        {
+          "route": "markdown_import_report",
+          "status": 200,
+          "method": "POST",
+          "signature_valid": true
+        },
+        {
+          "route": "markdown_create",
+          "status": 200,
+          "method": "POST",
+          "signature_valid": true
+        },
+        {
+          "route": "markdown_import_status",
+          "status": 200,
+          "method": "GET",
+          "signature_valid": true
+        },
+        {
+          "route": "identity",
+          "status": 200,
+          "method": "GET",
+          "signature_valid": true
+        },
+        {
+          "route": "markdown_fetch",
+          "status": 200,
+          "method": "POST",
+          "signature_valid": true
+        }
+      ]
+    }
+  ],
+  "unit_tests": 14,
+  "finding": "Candidate74 Drive import returns exit22 and unknown mutation despite ready poll; read-only fetch proves native result, one creation and no replay. Product owner is repairing this independently. Backend verification does not erase the CLI failure.",
+  "limits": [
+    "Synthetic conversion interface/representation only, not live Markdown conversion fidelity.",
+    "Tiny source uses native upload_all; larger multipart upload is not modeled.",
+    "No provider tokens consumed or inferred."
+  ]
+}
