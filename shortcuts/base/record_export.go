@@ -360,7 +360,7 @@ func finalizeRecordExport(
 		output.WriteAlertWarning(runtime.IO().ErrOut, scanResult.Alert)
 	}
 
-	recordFileSizeBytes, err := saveRecordNDJSON(fio, paths.recordRelative, accumulator.dataset)
+	recordFileSizeBytes, err := saveRecordNDJSON(fio, paths.recordAbsolute, accumulator.dataset, runtime.Bool("overwrite"))
 	if err != nil {
 		return err
 	}
@@ -379,8 +379,10 @@ func finalizeRecordExport(
 		IgnoredFields:       accumulator.ignoredFields,
 		RecordNotFound:      accumulator.recordNotFound,
 	})
-	if err := saveRecordManifest(fio, paths.manifestRelative, manifest); err != nil {
-		return err
+	if err := saveRecordManifest(fio, paths.manifestAbsolute, manifest, runtime.Bool("overwrite")); err != nil {
+		return errs.NewInternalError(errs.SubtypeFileIO,
+			"record export partially published locally: records were saved to %q, but manifest publication at %q failed; retain the records file and inspect the manifest destination",
+			paths.recordAbsolute, paths.manifestAbsolute).WithCause(err)
 	}
 	return outputRecordExportResult(runtime, accumulator.dataset, manifest)
 }
@@ -424,7 +426,11 @@ func ensureRecordExportTargets(fio fileio.FileIO, paths recordExportPaths, overw
 	if overwrite {
 		return nil
 	}
-	for _, path := range []string{paths.recordRelative, paths.manifestRelative} {
+	if _, ok := fio.(fileio.ExclusiveFileIO); !ok {
+		return errs.NewValidationError(errs.SubtypeFailedPrecondition,
+			"record export without --overwrite requires an atomic exclusive FileIO provider")
+	}
+	for _, path := range []string{paths.recordAbsolute, paths.manifestAbsolute} {
 		if _, err := fio.Stat(path); err == nil {
 			validationErr := errs.NewValidationError(
 				errs.SubtypeFailedPrecondition, "output file already exists: %s", path,
@@ -440,7 +446,7 @@ func ensureRecordExportTargets(fio fileio.FileIO, paths recordExportPaths, overw
 	return nil
 }
 
-func saveRecordNDJSON(fio fileio.FileIO, path string, dataset recordexport.Dataset) (int64, error) {
+func saveRecordNDJSON(fio fileio.FileIO, path string, dataset recordexport.Dataset, overwrite bool) (int64, error) {
 	reader, writer := io.Pipe()
 	writeDone := make(chan error, 1)
 	go func() {
@@ -448,9 +454,9 @@ func saveRecordNDJSON(fio fileio.FileIO, path string, dataset recordexport.Datas
 		_ = writer.CloseWithError(err)
 		writeDone <- err
 	}()
-	saveResult, saveErr := fio.Save(path, fileio.SaveOptions{
+	saveResult, saveErr := saveRecordExportFile(fio, path, fileio.SaveOptions{
 		ContentType: "application/x-ndjson", ContentLength: -1,
-	}, reader)
+	}, reader, overwrite)
 	_ = reader.CloseWithError(saveErr)
 	writeErr := <-writeDone
 	if saveErr != nil {
@@ -465,17 +471,35 @@ func saveRecordNDJSON(fio fileio.FileIO, path string, dataset recordexport.Datas
 	return saveResult.Size(), nil
 }
 
-func saveRecordManifest(fio fileio.FileIO, path string, manifest recordexport.Manifest) error {
+func saveRecordManifest(fio fileio.FileIO, path string, manifest recordexport.Manifest, overwrite bool) error {
 	var buffer bytes.Buffer
 	if err := recordexport.WriteManifest(&buffer, manifest); err != nil {
 		return errs.NewInternalError(errs.SubtypeInvalidResponse, "cannot encode record manifest: %v", err).WithCause(err)
 	}
-	if _, err := fio.Save(path, fileio.SaveOptions{
+	result, err := saveRecordExportFile(fio, path, fileio.SaveOptions{
 		ContentType: "application/json", ContentLength: int64(buffer.Len()),
-	}, &buffer); err != nil {
+	}, &buffer, overwrite)
+	if err != nil {
 		return baseSaveError(err)
 	}
+	if result == nil {
+		return errs.NewInternalError(errs.SubtypeFileIO, "record export did not confirm manifest publication")
+	}
 	return nil
+}
+
+// Existence checks are preflight only; the provider must enforce no-clobber at
+// commit time so a concurrent writer cannot lose its destination file.
+func saveRecordExportFile(fio fileio.FileIO, path string, opts fileio.SaveOptions, body io.Reader, overwrite bool) (fileio.SaveResult, error) {
+	if overwrite {
+		return fio.Save(path, opts, body)
+	}
+	exclusive, ok := fio.(fileio.ExclusiveFileIO)
+	if !ok {
+		return nil, errs.NewValidationError(errs.SubtypeFailedPrecondition,
+			"record export without --overwrite requires an atomic exclusive FileIO provider")
+	}
+	return exclusive.SaveExclusive(path, opts, body)
 }
 
 func outputRecordExportResult(
