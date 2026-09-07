@@ -195,7 +195,7 @@ def sanitized_api_trace(values, task):
     section = task.get("fixture", {}).get("runtime_section")
     if section is None or not isinstance(values, list):
         return None
-    from read_fixture import load_runtime
+    from read_fixture import load_runtime, NATIVE_READS
     try:
         allowed = {route["id"] for route in load_runtime(section)["routes"]} | {"rejected", "fixture_error"}
     except (OSError, ValueError, KeyError, TypeError):
@@ -207,7 +207,10 @@ def sanitized_api_trace(values, task):
         status = value.get("status")
         if type(status) is not int or not 100 <= status <= 599:
             return None
-        result.append({"method": value["method"], "route": value["route"], "status": status})
+        record = {"method": value["method"], "route": value["route"], "status": status}
+        if isinstance(value.get("native_read"), str) and value["native_read"] in NATIVE_READS:
+            record["native_read"] = value["native_read"]
+        result.append(record)
     return result
 
 def sanitized_trace(trace):

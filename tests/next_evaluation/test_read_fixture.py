@@ -9,7 +9,7 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / 'evaluation'))
-from read_fixture import dispatcher, load_runtime, matches, subset, typed_equal, verify
+from read_fixture import dispatcher, load_runtime, matches, subset, typed_equal, verify, native_read_label
 from section_fixture import SectionFixture
 from codex_runner import cli_environment
 
@@ -29,6 +29,12 @@ class ReadFixtureTests(unittest.TestCase):
                                       ({'kind': ['one']}, dict(body, revision=True), 'user'),
                                       ({'kind': ['one']}, body, 'bot')]:
             self.assertFalse(matches(rule, query, data, identity))
+
+    def test_native_diagnostic_labels_discard_ids_queries_and_unrecognized_paths(self):
+        uri = '/open-apis/docx/v1/documents/private-id/raw_content?private=value'
+        self.assertEqual(native_read_label('GET', uri), 'docx_raw_content')
+        self.assertIsNone(native_read_label('POST', uri))
+        self.assertIsNone(native_read_label('GET', '/private/path'))
 
     def test_models_receive_only_public_fixture_and_type_schema(self):
         for path in (ROOT / 'evaluation/runtime').glob('*.json'):

@@ -8,6 +8,7 @@ from pathlib import Path
 import threading
 import time
 from scenario_protocol import Reply
+from read_fixture import native_read_label
 from urllib.parse import parse_qs, urlsplit
 
 PROXY_KEY = "synthetic-evaluation-proxy-key"
@@ -144,6 +145,9 @@ class SectionFixture:
                     record = {"route": route, "status": status, "returned_ids": ids,
                               "method": self.command, "uri": urlsplit(self.path).path,
                               "signature_valid": signature_valid}
+                    native_route = native_read_label(self.command, self.path)
+                    if native_route:
+                        record["native_read"] = native_route
                     if rejection:
                         record["rejection"] = rejection
                     if proof:

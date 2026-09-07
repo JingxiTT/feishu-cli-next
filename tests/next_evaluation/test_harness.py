@@ -82,6 +82,9 @@ class AccountingTests(unittest.TestCase):
         event = {"method": "GET", "route": "rejected", "status": 403, "payload": "private"}
         self.assertEqual(harness.sanitized_api_trace([event], task), [{"method": "GET", "route": "rejected", "status": 403}])
         self.assertIsNone(harness.sanitized_api_trace([{**event, "route": "private path"}], task))
+        result = harness.sanitized_api_trace([{**event, "native_read": "docx_raw_content"}], task)
+        self.assertEqual(result[0]["native_read"], "docx_raw_content")
+        self.assertNotIn("native_read", harness.sanitized_api_trace([{**event, "native_read": "private-id"}], task)[0])
 
     def test_trace_revalidates_all_persisted_names(self):
         trace = [{"choices": [{"kind": "cli", "command": ["docs", "+fetch"], "flags": ["--doc", "--help"]}], "exit_code": 0, "private_extra": "not retained"}]

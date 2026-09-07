@@ -7,6 +7,22 @@ from urllib.parse import parse_qs, urlsplit
 RUNTIME = Path(__file__).resolve().parent / "runtime"
 
 
+# Source-backed native reads also used by scenarios/docs.py. Only labels survive;
+# identifiers/query values remain private even for an unmodeled valid endpoint.
+NATIVE_READS = {
+    "docx_raw_content": r"/open-apis/docx/v1/documents/[^/]+/raw_content",
+    "docx_document_get": r"/open-apis/docx/v1/documents/[^/]+",
+    "docx_blocks_list": r"/open-apis/docx/v1/documents/[^/]+/blocks",
+    "docx_block_get": r"/open-apis/docx/v1/documents/[^/]+/blocks/[^/]+",
+}
+
+
+def native_read_label(method, uri):
+    if method == "GET":
+        path = urlsplit(uri).path
+        return next((label for label, pattern in NATIVE_READS.items() if re.fullmatch(pattern, path)), None)
+    return None
+
 def typed_equal(left, right):
     return json.dumps(left, sort_keys=True, ensure_ascii=False) == json.dumps(right, sort_keys=True, ensure_ascii=False)
 

@@ -198,7 +198,7 @@ def run(request, codex, auth_home, expected_version):
             records = fixture.receipt()["requests"]
             response["api_calls"] = len(records)
             if backend == "synthetic-read-v1":
-                response["api_request_trace"] = [{key: record.get(key) for key in ("method", "route", "status")} for record in records]
+                response["api_request_trace"] = [{key: record.get(key) for key in ("method", "route", "status", "native_read")} for record in records]
             fixture.write_receipt(request["workspace"])
         except Exception:
             code = 1
