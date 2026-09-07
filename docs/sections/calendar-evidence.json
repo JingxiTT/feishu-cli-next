@@ -1,0 +1,343 @@
+{
+  "schema_version": 1,
+  "section": "calendar",
+  "reference_revision": "7fd6ef3c07182257ce776cdc5a614e122d5bd4b3",
+  "offline_status": "pass",
+  "acceptance_status": "open",
+  "commands": [
+    {
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-count=1",
+        "-timeout=10m",
+        "./shortcuts/calendar/..."
+      ],
+      "status": "pass",
+      "exit_code": 0,
+      "duration_seconds": 4.779,
+      "tests": {
+        "pass": 390,
+        "fail": 0,
+        "skip": 0
+      },
+      "selection": {
+        "policy": "all tests in the listed packages"
+      }
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-count=1",
+        "-timeout=10m",
+        "./tests/cli_e2e/calendar",
+        "-run",
+        "DryRun|Regression"
+      ],
+      "status": "pass",
+      "exit_code": 0,
+      "duration_seconds": 4.665,
+      "tests": {
+        "pass": 13,
+        "fail": 0,
+        "skip": 0
+      },
+      "selection": {
+        "policy": "official CI deterministic name selector; excluded tests remain unverified",
+        "selector": "DryRun|Regression",
+        "selected_tests": [
+          {
+            "file": "tests/cli_e2e/calendar/calendar_description_rich_dryrun_test.go",
+            "test": "TestCalendar_CreateDescriptionRichDryRun"
+          },
+          {
+            "file": "tests/cli_e2e/calendar/calendar_description_rich_dryrun_test.go",
+            "test": "TestCalendar_CreateDescriptionRichOnlyDryRun"
+          },
+          {
+            "file": "tests/cli_e2e/calendar/calendar_description_rich_dryrun_test.go",
+            "test": "TestCalendar_UpdateDescriptionRichDryRun"
+          },
+          {
+            "file": "tests/cli_e2e/calendar/calendar_freebusy_test.go",
+            "test": "TestCalendar_FreebusyDryRun"
+          },
+          {
+            "file": "tests/cli_e2e/calendar/calendar_freebusy_test.go",
+            "test": "TestCalendar_FreebusyDryRun_BotWithoutUserIDsFails"
+          },
+          {
+            "file": "tests/cli_e2e/calendar/calendar_transfer_dryrun_test.go",
+            "test": "TestCalendar_TransferDryRun"
+          },
+          {
+            "file": "tests/cli_e2e/calendar/calendar_transfer_dryrun_test.go",
+            "test": "TestCalendar_TransferKeepOrganizerDryRun_ReadsNoCalendar"
+          },
+          {
+            "file": "tests/cli_e2e/calendar/calendar_transfer_dryrun_test.go",
+            "test": "TestCalendar_TransferSeriesDryRun_SkipsPreRead"
+          },
+          {
+            "file": "tests/cli_e2e/calendar/calendar_update_dryrun_test.go",
+            "test": "TestCalendar_UpdateDryRun"
+          }
+        ],
+        "excluded_tests": [
+          {
+            "file": "tests/cli_e2e/calendar/calendar_create_event_test.go",
+            "test": "TestCalendar_CreateEvent"
+          },
+          {
+            "file": "tests/cli_e2e/calendar/calendar_freebusy_test.go",
+            "test": "TestCalendar_Freebusy"
+          },
+          {
+            "file": "tests/cli_e2e/calendar/calendar_manage_calendar_test.go",
+            "test": "TestCalendar_ManageCalendar"
+          },
+          {
+            "file": "tests/cli_e2e/calendar/calendar_personal_event_workflow_test.go",
+            "test": "TestCalendar_PersonalEventWorkflowAsUser"
+          },
+          {
+            "file": "tests/cli_e2e/calendar/calendar_rsvp_workflow_test.go",
+            "test": "TestCalendar_RSVPWorkflowAsUser"
+          },
+          {
+            "file": "tests/cli_e2e/calendar/calendar_update_event_test.go",
+            "test": "TestCalendar_UpdateEventWorkflow"
+          },
+          {
+            "file": "tests/cli_e2e/calendar/calendar_view_agenda_test.go",
+            "test": "TestCalendar_ViewAgenda"
+          }
+        ]
+      }
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-count=1",
+        "-timeout=10m",
+        "./tests/next_sections/calendar"
+      ],
+      "status": "pass",
+      "exit_code": 0,
+      "duration_seconds": 12.479,
+      "tests": {
+        "pass": 76,
+        "fail": 0,
+        "skip": 1
+      },
+      "selection": {
+        "policy": "all tests in the listed packages"
+      }
+    }
+  ],
+  "source_comparison": [
+    {
+      "path": "shortcuts/calendar/calendar_agenda.go",
+      "reference_sha256": "2f4454e3300b9d78b99cbdedc1da3e56dd8183bef8004e90a3b483f629b28935",
+      "current_sha256": "2f4454e3300b9d78b99cbdedc1da3e56dd8183bef8004e90a3b483f629b28935",
+      "status": "unchanged"
+    },
+    {
+      "path": "shortcuts/calendar/calendar_create.go",
+      "reference_sha256": "a8168aad2aa829d96ff107a90b90469181c86728405037b651206cfbca7308e9",
+      "current_sha256": "a8168aad2aa829d96ff107a90b90469181c86728405037b651206cfbca7308e9",
+      "status": "unchanged"
+    },
+    {
+      "path": "shortcuts/calendar/calendar_delete.go",
+      "reference_sha256": "b80a6943bb73c029b42194a836797bf3eea91bc2e2b49aa145e97b86215bda64",
+      "current_sha256": "a1b5cc84c595a541d8e4b8b72f4de25d99c733a049e565b8ff39b58e897507f3",
+      "status": "adapted"
+    },
+    {
+      "path": "shortcuts/calendar/calendar_freebusy.go",
+      "reference_sha256": "aadf26821cea32a942c2020a7b65fa43a26d489798f6476cca9c402aebf0a0d3",
+      "current_sha256": "aadf26821cea32a942c2020a7b65fa43a26d489798f6476cca9c402aebf0a0d3",
+      "status": "unchanged"
+    },
+    {
+      "path": "shortcuts/calendar/calendar_freebusy_test.go",
+      "reference_sha256": "be071cbca7e5359776e0fc7bc7ddaee8813d594638603f91f91756b9baf45264",
+      "current_sha256": "be071cbca7e5359776e0fc7bc7ddaee8813d594638603f91f91756b9baf45264",
+      "status": "unchanged"
+    },
+    {
+      "path": "shortcuts/calendar/calendar_get.go",
+      "reference_sha256": "3ceb0c07509033e7406d11747c1bf6fb36bb58575b5b86001e0ef273806101ce",
+      "current_sha256": "01a8b44fed4714dfc7f1d895714094a47f7bb7f4d463c8450f0aeb359af6e615",
+      "status": "adapted"
+    },
+    {
+      "path": "shortcuts/calendar/calendar_join_event.go",
+      "reference_sha256": "89fd1dba0599f817bbec1b56baee2c027d447ffe30d315848544a8e8283dab72",
+      "current_sha256": "89fd1dba0599f817bbec1b56baee2c027d447ffe30d315848544a8e8283dab72",
+      "status": "unchanged"
+    },
+    {
+      "path": "shortcuts/calendar/calendar_list_attendees.go",
+      "reference_sha256": "64b5e2df7b53f95a8daf24a9c6354c30ac15c99ac52f57f75f2a1cced7a928aa",
+      "current_sha256": "64b5e2df7b53f95a8daf24a9c6354c30ac15c99ac52f57f75f2a1cced7a928aa",
+      "status": "unchanged"
+    },
+    {
+      "path": "shortcuts/calendar/calendar_list_attendees_test.go",
+      "reference_sha256": "c1f6bd9bf0bc6c0de2bdc9ea458df9ddd27ce790cd036d7aff9c6d55eef11303",
+      "current_sha256": "c1f6bd9bf0bc6c0de2bdc9ea458df9ddd27ce790cd036d7aff9c6d55eef11303",
+      "status": "unchanged"
+    },
+    {
+      "path": "shortcuts/calendar/calendar_meeting.go",
+      "reference_sha256": "5378daed815581a6b4330ce0a7af50b83be6a441af769094ba5d3d10f5efdc07",
+      "current_sha256": "5378daed815581a6b4330ce0a7af50b83be6a441af769094ba5d3d10f5efdc07",
+      "status": "unchanged"
+    },
+    {
+      "path": "shortcuts/calendar/calendar_meeting_test.go",
+      "reference_sha256": "bf4779d21eb10bcf2794751805f0664a252072ab454dea29c4c8654fad008344",
+      "current_sha256": "bf4779d21eb10bcf2794751805f0664a252072ab454dea29c4c8654fad008344",
+      "status": "unchanged"
+    },
+    {
+      "path": "shortcuts/calendar/calendar_recurring.go",
+      "reference_sha256": "8b5ebd29c2b960d899711075b5ecd65d6641b7122668cbfa4b8f7a69d2ffc444",
+      "current_sha256": "8b5ebd29c2b960d899711075b5ecd65d6641b7122668cbfa4b8f7a69d2ffc444",
+      "status": "unchanged"
+    },
+    {
+      "path": "shortcuts/calendar/calendar_recurring_test.go",
+      "reference_sha256": "0bfb554d750e56253fff01b405dc9f810b2908ae5c2c25b8252893289894bddf",
+      "current_sha256": "0bfb554d750e56253fff01b405dc9f810b2908ae5c2c25b8252893289894bddf",
+      "status": "unchanged"
+    },
+    {
+      "path": "shortcuts/calendar/calendar_room_check.go",
+      "reference_sha256": "fd2316f70efdccb82dfa244da76a7ed07d2f8df09ad4e0c2462f4bc184d13d41",
+      "current_sha256": "fd2316f70efdccb82dfa244da76a7ed07d2f8df09ad4e0c2462f4bc184d13d41",
+      "status": "unchanged"
+    },
+    {
+      "path": "shortcuts/calendar/calendar_room_find.go",
+      "reference_sha256": "7efb5285e9eed0db9afe335e8a7fd2303d623ced5ffe77a9022beae1677c20f4",
+      "current_sha256": "7efb5285e9eed0db9afe335e8a7fd2303d623ced5ffe77a9022beae1677c20f4",
+      "status": "unchanged"
+    },
+    {
+      "path": "shortcuts/calendar/calendar_room_find_test.go",
+      "reference_sha256": "f476b9c37539d2a5f23b403adfd521bbb0daa4af50fa25b13f0dd5228e30a4b7",
+      "current_sha256": "f476b9c37539d2a5f23b403adfd521bbb0daa4af50fa25b13f0dd5228e30a4b7",
+      "status": "unchanged"
+    },
+    {
+      "path": "shortcuts/calendar/calendar_rsvp.go",
+      "reference_sha256": "e1eb13fa935aa61f577954047eafe4f76bd1dfa34b53e8bcfb74d1d40f9dd1f4",
+      "current_sha256": "e1eb13fa935aa61f577954047eafe4f76bd1dfa34b53e8bcfb74d1d40f9dd1f4",
+      "status": "unchanged"
+    },
+    {
+      "path": "shortcuts/calendar/calendar_search_event.go",
+      "reference_sha256": "a1afd658f587e73a1450dccd5550f2d845b4756225f8ee20f92ebea195853764",
+      "current_sha256": "a1afd658f587e73a1450dccd5550f2d845b4756225f8ee20f92ebea195853764",
+      "status": "unchanged"
+    },
+    {
+      "path": "shortcuts/calendar/calendar_suggestion.go",
+      "reference_sha256": "6d8cf1f876747e71b7acd57efca0355ccca459d7937b7d8298c07aaa14b96a66",
+      "current_sha256": "6d8cf1f876747e71b7acd57efca0355ccca459d7937b7d8298c07aaa14b96a66",
+      "status": "unchanged"
+    },
+    {
+      "path": "shortcuts/calendar/calendar_test.go",
+      "reference_sha256": "401c74be7563a9f852a209018d6f8fa9913ebacb3a02a4698490db0db03aa0ae",
+      "current_sha256": "401c74be7563a9f852a209018d6f8fa9913ebacb3a02a4698490db0db03aa0ae",
+      "status": "unchanged"
+    },
+    {
+      "path": "shortcuts/calendar/calendar_transfer.go",
+      "reference_sha256": "539c1b716f2abbe1328b31e64fd8a750de5d26ac430e041734e4b64783409e87",
+      "current_sha256": "539c1b716f2abbe1328b31e64fd8a750de5d26ac430e041734e4b64783409e87",
+      "status": "unchanged"
+    },
+    {
+      "path": "shortcuts/calendar/calendar_transfer_test.go",
+      "reference_sha256": "ee1a3fb3f18b73c98030cfa6ad1b0e59f96e93bab13d6f502a92d865726608ec",
+      "current_sha256": "ee1a3fb3f18b73c98030cfa6ad1b0e59f96e93bab13d6f502a92d865726608ec",
+      "status": "unchanged"
+    },
+    {
+      "path": "shortcuts/calendar/calendar_update.go",
+      "reference_sha256": "ba28745864612579a5c78535043e949eba7d2a33081fa65ec4d86cb78729ddca",
+      "current_sha256": "34d156d2075f353b50d6383c5dbef1d14925ac0d83a7ea49b6d8ca153ffd047b",
+      "status": "adapted"
+    },
+    {
+      "path": "shortcuts/calendar/calendar_update_recurring.go",
+      "reference_sha256": "4af274a264fd95fdfc6b4f42235929111aff66feaf7ff5d1eceae3fe21ba9735",
+      "current_sha256": "4af274a264fd95fdfc6b4f42235929111aff66feaf7ff5d1eceae3fe21ba9735",
+      "status": "unchanged"
+    },
+    {
+      "path": "shortcuts/calendar/calendar_update_recurring_test.go",
+      "reference_sha256": "ca1ac101b103cf7527cae26fd6c4bb5ba2b9c2e0733b9452568177de277703c4",
+      "current_sha256": "ca1ac101b103cf7527cae26fd6c4bb5ba2b9c2e0733b9452568177de277703c4",
+      "status": "unchanged"
+    },
+    {
+      "path": "shortcuts/calendar/description_rich_images.go",
+      "reference_sha256": "ecfd4c5ad682ec22b58a4cd5aefcf6afb40d17e90b308f3d240d28dc631e04fe",
+      "current_sha256": "ecfd4c5ad682ec22b58a4cd5aefcf6afb40d17e90b308f3d240d28dc631e04fe",
+      "status": "unchanged"
+    },
+    {
+      "path": "shortcuts/calendar/description_rich_images_test.go",
+      "reference_sha256": "ab0825c703ed4e9bfdc3bd88acb092b457ce5fa4e77782d0a3c33b1864ee8a09",
+      "current_sha256": "ab0825c703ed4e9bfdc3bd88acb092b457ce5fa4e77782d0a3c33b1864ee8a09",
+      "status": "unchanged"
+    },
+    {
+      "path": "shortcuts/calendar/errors.go",
+      "reference_sha256": "9682d02d3a4f1b150420b3fb9204e5e6775dfd1ab3d309a53f801ff7a9c51d7e",
+      "current_sha256": "9682d02d3a4f1b150420b3fb9204e5e6775dfd1ab3d309a53f801ff7a9c51d7e",
+      "status": "unchanged"
+    },
+    {
+      "path": "shortcuts/calendar/errors_attribution_test.go",
+      "reference_sha256": "c200506bf536ef9f6f1a900b609833a8a58a5c8dd67e8199062ddf3d26b9a57f",
+      "current_sha256": "c200506bf536ef9f6f1a900b609833a8a58a5c8dd67e8199062ddf3d26b9a57f",
+      "status": "unchanged"
+    },
+    {
+      "path": "shortcuts/calendar/helpers.go",
+      "reference_sha256": "8cf47d67550440c47ba232841a96dd8fdf3376e8221966c8ecae5b71b5d8003e",
+      "current_sha256": "8cf47d67550440c47ba232841a96dd8fdf3376e8221966c8ecae5b71b5d8003e",
+      "status": "unchanged"
+    },
+    {
+      "path": "shortcuts/calendar/helpers_test.go",
+      "reference_sha256": "4a0037f7ebe8dfbe2a1d42efc93756a607f6c716f45e6054b2c5f1c45be52805",
+      "current_sha256": "4a0037f7ebe8dfbe2a1d42efc93756a607f6c716f45e6054b2c5f1c45be52805",
+      "status": "unchanged"
+    },
+    {
+      "path": "shortcuts/calendar/shortcuts.go",
+      "reference_sha256": "d640b6bdaf0e8fb184b35d38e67a68bf87adc2acc34a40181e2b042dd594f08c",
+      "current_sha256": "d640b6bdaf0e8fb184b35d38e67a68bf87adc2acc34a40181e2b042dd594f08c",
+      "status": "unchanged"
+    }
+  ],
+  "remaining": [
+    "verified authorized live fixture and execution",
+    "Calendar abrupt process interruption scenario",
+    "whole-series per-exception no-op evidence",
+    "coordinator comparative development tasks"
+  ]
+}
