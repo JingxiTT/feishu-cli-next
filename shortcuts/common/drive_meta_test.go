@@ -167,7 +167,7 @@ func TestFetchDriveMetaMissingMetasIsEmpty(t *testing.T) {
 }
 
 func TestFetchDriveMetaSelectsExactDocument(t *testing.T) {
-	matching := map[string]interface{}{"doc_token": "target", "doc_type": "file", "title": "Bound title", "url": "https://tenant.example.com/file/target"}
+	matching := map[string]interface{}{"doc_token": "target", "doc_type": "file", "title": "Bound title", "url": "https://tenant.invalid/file/target"}
 	tests := []struct {
 		name    string
 		metas   interface{}
