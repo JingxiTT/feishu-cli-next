@@ -61,7 +61,10 @@ write may be overwritten. Receipts do not provide concurrency protection.
 
 `schema` remains the reference generated-API catalog interface and excludes
 shortcuts; `discover markdown` and each shortcut's `--help` expose all five
-operations. Tests do not invent an unsupported shortcut-schema contract.
+operations. Discovery coverage follows `meta.next_offset` until `meta.complete`
+and asserts exact command membership; public flag matches can place Markdown
+commands beyond the first page. Tests do not invent an unsupported
+shortcut-schema contract.
 
 ## Verification and remaining gates
 
@@ -94,3 +97,10 @@ live and evaluation gaps keep P2 acceptance open despite offline parity evidence
 Whole-repository pre-PR checks (`make unit-test`, vet, formatting, module tidy,
 license policy and committed quality gate) are coordinated by the root owner;
 these section results do not stand in for those release checks.
+
+P3 discovery follow-up: the full isolated Markdown boundary passed again with
+124 unit passes (one architecture-only skip), 11 inherited dry-run passes and
+15 process passes after discovery began matching public flags. Evidence:
+`.tmp/markdown-discovery-boundary.json`. The process test follows continuation
+metadata and checks exact command membership without assuming first-page
+completeness or a particular ranking. No product behavior changed.

@@ -258,12 +258,24 @@ func TestMarkdownUnknownWriteIsNotReplayed(t *testing.T) {
 
 func TestMarkdownValidationAndDiscovery(t *testing.T) {
 	f := nextfixture.NewFixture(t, nil)
-	discovery := f.Run("discover", "markdown")
-	success(t, discovery)
+	commands := map[string]bool{}
+	for offset := 0; ; {
+		discovery := f.Run("discover", "markdown", "--offset", strconv.Itoa(offset))
+		success(t, discovery)
+		for _, entry := range gjson.Get(discovery.Stdout, "data").Array() {
+			commands[entry.Get("command").String()] = true
+		}
+		if gjson.Get(discovery.Stdout, "meta.complete").Bool() {
+			break
+		}
+		next := gjson.Get(discovery.Stdout, "meta.next_offset")
+		require.True(t, next.Exists(), discovery.Stdout)
+		require.Greater(t, int(next.Int()), offset, discovery.Stdout)
+		offset = int(next.Int())
+	}
 	for _, command := range []string{"+create", "+fetch", "+diff", "+patch", "+overwrite"} {
-		require.Contains(t, discovery.Stdout, "markdown "+command)
+		require.Contains(t, commands, "markdown "+command)
 		success(t, f.Run("markdown", command, "--help"))
-
 	}
 	for i, args := range [][]string{
 		{"+create", "--name", "a.md", "--content", ""},
