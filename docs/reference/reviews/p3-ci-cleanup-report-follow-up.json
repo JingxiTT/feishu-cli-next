@@ -1,0 +1,168 @@
+{
+  "schema_version": 1,
+  "reviewer": "/root/foundation_skill",
+  "report_kind": "hash_bound_ci_cleanup_report_follow_up",
+  "review_revision": "2dcd561c987179e5ee36d2aab803be0dc81eddef",
+  "verdict": "approved_offline",
+  "prior_report": {
+    "path": "docs/reference/reviews/p3-ci-cleanup-report-review.json",
+    "commit": "975bbedc3687747dfca3504388b5d5444035e08f",
+    "sha256": "c474702b6beff1f0ddf1c35ab36c146342a0e09444de4b32c835557370c23741",
+    "preserved": true
+  },
+  "scope": {
+    "assignment_ids": [
+      "ci_portability_follow_up"
+    ],
+    "path_count": 3,
+    "method": "Exact committed fix and surrounding reporting path read; two focused source-bound tests independently executed; existing owner source/report binding hashes verified.",
+    "product_files_modified": false,
+    "independence": "Reviewer authored CI4 finding, not its implementation or tests. Only this follow-up artifact is changed."
+  },
+  "assignments": [
+    {
+      "assignment_id": "ci_portability_follow_up",
+      "verdict": "approved_offline",
+      "paths": [
+        {
+          "path": "scripts/next_test.py",
+          "review_revision": "2dcd561c987179e5ee36d2aab803be0dc81eddef",
+          "review_sha256": "2a8222b60269ae4250dabc1e44efb9a3d3af9fb4108adf77f3044b533e906a8d",
+          "verdict": "approved_offline",
+          "review_scope": "Narrow CI4 closure: flag marks completion of the with-body; teardown-only OSError becomes explicit failed report while original nonzero command code remains. Setup/body OSError is rethrown. Report write follows handled teardown.",
+          "findings": [
+            {
+              "id": "CI4",
+              "status": "closed_at_review_revision",
+              "closure_kind": "source_fix"
+            }
+          ],
+          "prior_review_revision": "72fc5e4467494e158216de16b6d3e451a31d0757",
+          "prior_review_sha256": "5e377a5c8ed786003bc6e43fb7eb99fb6ea7e57933c1895ced507ed409eff47e",
+          "unchanged_hash_dependency_closure": false
+        },
+        {
+          "path": "scripts/next_test_test.py",
+          "review_revision": "2dcd561c987179e5ee36d2aab803be0dc81eddef",
+          "review_sha256": "950a8a42140ad1526c4c9ec647fcae79955fd6595d65f3427265a67a22598630",
+          "verdict": "approved_offline",
+          "review_scope": "Read and independently execute both added regressions: three actual finite command cases preserve pass/failure/timeout evidence after injected teardown error; setup OSError remains visible.",
+          "findings": []
+        },
+        {
+          "path": ".github/workflows/next-offline.yml",
+          "review_revision": "2dcd561c987179e5ee36d2aab803be0dc81eddef",
+          "review_sha256": "be90e82e603065ff7736df3bd20b201eb15cb11f8a304b67edde6fa47a265736",
+          "verdict": "approved_offline",
+          "review_scope": "Unchanged workflow dependency closure only: corrected runner now publishes completed command reports after handled environment teardown errors when report destination is writable. No native CI execution claim.",
+          "findings": [
+            {
+              "id": "CI4",
+              "status": "closed_at_review_revision",
+              "closure_kind": "unchanged_hash_runner_dependency"
+            }
+          ],
+          "prior_review_revision": "72fc5e4467494e158216de16b6d3e451a31d0757",
+          "prior_review_sha256": "be90e82e603065ff7736df3bd20b201eb15cb11f8a304b67edde6fa47a265736",
+          "unchanged_hash_dependency_closure": true
+        }
+      ],
+      "closed_findings": [
+        {
+          "id": "CI4",
+          "status": "closed_at_review_revision",
+          "fix_revision": "2dcd561c987179e5ee36d2aab803be0dc81eddef",
+          "closure": "After the body completes, environment teardown OSError is retained as sanitized top-level cleanup_errors and report status fail. A prior successful command produces overall1; failed command7 and timeout124 retain their codes. Completed command status/output remains in the written JSON. Errors before teardown are not misclassified or swallowed."
+        }
+      ],
+      "open_findings": []
+    }
+  ],
+  "independent_execution": {
+    "source_revision": "2dcd561c987179e5ee36d2aab803be0dc81eddef",
+    "sources": [
+      {
+        "path": "scripts/next_test.py",
+        "sha256": "2a8222b60269ae4250dabc1e44efb9a3d3af9fb4108adf77f3044b533e906a8d"
+      },
+      {
+        "path": "scripts/next_test_test.py",
+        "sha256": "950a8a42140ad1526c4c9ec647fcae79955fd6595d65f3427265a67a22598630"
+      }
+    ],
+    "method": "Compile exact git-show module bytes under module names; run only the two named unittest cases. Teardown test contains three subtests with actual finite child processes and a cleanup-only PermissionError injection.",
+    "tests": [
+      "test_environment_cleanup_failure_keeps_completed_command_evidence",
+      "test_setup_oserror_is_not_mislabeled_as_cleanup"
+    ],
+    "test_methods_pass": 2,
+    "test_methods_fail": 0,
+    "test_methods_skip": 0,
+    "teardown_subtest_cases": 3,
+    "exit_code": 0,
+    "platform": "Darwin arm64",
+    "observed_teardown_results": [
+      {
+        "command_status": "pass",
+        "command_code": 0,
+        "overall_code": 1,
+        "report_status": "fail",
+        "report_written": true
+      },
+      {
+        "command_status": "fail",
+        "command_code": 7,
+        "overall_code": 7,
+        "report_status": "fail",
+        "report_written": true
+      },
+      {
+        "command_status": "timeout",
+        "command_code": 124,
+        "overall_code": 124,
+        "report_status": "fail",
+        "report_written": true
+      }
+    ],
+    "setup_error": "Propagates PermissionError with original setup diagnostic; not labeled teardown."
+  },
+  "owner_execution_evidence": {
+    "binding_path": ".tmp/next-evidence/ci-teardown-binding.json",
+    "binding_sha256": "3dfaffcd0926be3c9b6c4459a55e879a0e9cf8b3224a47a41c868c0488d65cb2",
+    "binding_revision": "2dcd561c987179e5ee36d2aab803be0dc81eddef",
+    "source_hashes": {
+      "scripts/next_test.py": "2a8222b60269ae4250dabc1e44efb9a3d3af9fb4108adf77f3044b533e906a8d",
+      "scripts/next_test_test.py": "950a8a42140ad1526c4c9ec647fcae79955fd6595d65f3427265a67a22598630"
+    },
+    "report_path": ".tmp/next-evidence/ci-teardown-scripts.json",
+    "report_sha256": "596d13a1bd3929b9e8f7d62d1a7927d7695536fd3527a7c4cb247dd6ffd6b2a2",
+    "verified_report_hash_matches_binding": true,
+    "verified_source_hashes_match_commit": true,
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "scripts",
+      "-p",
+      "next_*test.py",
+      "-v"
+    ],
+    "exit_code": 0,
+    "tests": {
+      "pass": 52,
+      "fail": 0,
+      "skip": 0
+    },
+    "evidence": "offline",
+    "scope_note": "Existing owner52-pass scripts run, with explicit binding for the two changed runner/test sources and report bytes, inspected but not independently rerun in full. Other sources selected by script discovery are not individually bound by that owner sidecar."
+  },
+  "limitations": [
+    "No broad suite, native Windows fault, live request or GitHub matrix run was performed by this review. Finite fault injection verifies the exception/report path on macOS.",
+    "This closure assumes the report destination itself is writable. It does not guarantee report publication after report I/O failures, abrupt process termination, or unbounded OS filesystem cleanup.",
+    "A cleanup diagnostic records incomplete environment cleanup; it is not a claim that residual files or descendants were removed. Existing CI3 process-tree cleanup limits remain explicit.",
+    "The fix intentionally handles only OSError after body completion. Setup/execution errors before that point retain their original exception behavior; this review does not expand the reporting contract for unrelated exceptions.",
+    "Prior CI1\u2013CI3 closure and CI4 finding artifacts are preserved unchanged. Release readiness, live behavior and native platform acceptance remain outside this source/offline closure."
+  ]
+}
