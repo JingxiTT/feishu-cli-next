@@ -1,0 +1,2084 @@
+{
+  "schema_version": 1,
+  "reviewer": "/root/p3_domain_review",
+  "checkpoint": "0084501742edb1ee87bdf9623adf7da37267f142",
+  "import_revision": "0c1ac7570543db3117ba5bdc6a66b69f87c4a62e",
+  "verdict": "changes_requested",
+  "assignments": [
+    {
+      "schema_version": 1,
+      "assignment_id": "docs_markdown",
+      "reviewer": "/root/p3_domain_review/docs_drive_review",
+      "verdict": "approved_offline",
+      "paths": [
+        {
+          "path": "shortcuts/doc/docs_fetch_v2.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "2dac96a39f1fbf7b9cd657595702cd8f330ccd9ea18900d19abc53eaed1e9ca2",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "shortcuts/doc/docs_fetch_v2.go",
+              "sha256": "2dac96a39f1fbf7b9cd657595702cd8f330ccd9ea18900d19abc53eaed1e9ca2",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Explicit revision zero and -1 pass through while <-1 fails typed validation; explicitly supplied full-read bounds now reject instead of being ignored. Existing range/section fragment handling and export detail options remain intact.",
+              "import_to_review_diff_sha256": "12c649e9ff6941f1da681fa1e744b657a8b85e6cd9b6514f85bea927a6f14f98"
+            },
+            {
+              "path": "shortcuts/doc/docs_input_test.go",
+              "sha256": "207ca5811dfc65d6b1ee9c20483b520574ba835b1e7304fd8000956eec350157",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): TestDocsExplicitZeroRevisionIsPreserved and TestDocsFetchRejectsIgnoredFullReadBounds assert explicit presence and typed validation."
+            },
+            {
+              "path": "shortcuts/doc/docs_fetch_v2_test.go",
+              "sha256": "25ba16ec8ea4abeaf92df1d52b60e3b4f73d617f218d3f638975f52fb2094af9",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Revision/full detail, read-option modes, valid scopes and comment scope assertions inspected."
+            }
+          ],
+          "findings": [],
+          "limitations": [
+            "Static source and test-assertion inspection only; no tests, live/model runs, platform acceptance or broad gates executed by this reviewer."
+          ]
+        },
+        {
+          "path": "shortcuts/doc/docs_search.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "d0f7628e4c505a4c16b77d2228e6f2645082cb4bcf2a3586b202813ca41fb396",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "shortcuts/doc/docs_search.go",
+              "sha256": "d0f7628e4c505a4c16b77d2228e6f2645082cb4bcf2a3586b202813ca41fb396",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Pre-dry-run Validate uses the same request builder as execution. UseNumber preserves extensible filters; time-range conversion clones existing keys so numeric/null/empty values survive. Existing folder/wiki exclusivity and ISO conversion remain.",
+              "import_to_review_diff_sha256": "2b669c86a5ce73f1b86715c2a5da8262ee19591ac7c1f9c43276fc8c8dca3290"
+            },
+            {
+              "path": "shortcuts/doc/docs_input_test.go",
+              "sha256": "207ca5811dfc65d6b1ee9c20483b520574ba835b1e7304fd8000956eec350157",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): TestDocsSearchPreservesNumericTimeRanges asserts large opaque integer, numeric start, null end, empty start and cursor."
+            },
+            {
+              "path": "shortcuts/doc/docs_search_test.go",
+              "sha256": "a157bd6686558a0ac9c2d967cb09f56cc2a12c5fc1f7fd8ee5c9292d745e6d47",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): ISO start/end conversion and folder/space exclusivity and opposite-scope removal assertions inspected."
+            }
+          ],
+          "findings": [],
+          "limitations": [
+            "Static source and test-assertion inspection only; no tests, live/model runs, platform acceptance or broad gates executed by this reviewer."
+          ]
+        },
+        {
+          "path": "shortcuts/doc/docs_update_v2.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "7b2fe87075d07cc9e19c1cebb10f3228d14ae6373ac454f61f12b3227d7a9d3d",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "shortcuts/doc/docs_update_v2.go",
+              "sha256": "7b2fe87075d07cc9e19c1cebb10f3228d14ae6373ac454f61f12b3227d7a9d3d",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): XML overwrite without local resources reads native full XML before comparing. Markdown and resource writes retain PUT behavior. Read/compare failures stop before PUT; false comparison preserves original revision and write body. Revision zero is forwarded. Existing declared readonly/write_only scopes are unchanged from import.",
+              "import_to_review_diff_sha256": "b190485042b8f0e948879b5508e72f2c8e06b7dfee891e30bf4dae91319e1c86"
+            },
+            {
+              "path": "shortcuts/doc/docs_update_noop_test.go",
+              "sha256": "475ff648d10ba09f44d71d1c7e0065fdf25567e7ba307c11dbeed7b49a365e1f",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Exact snapshot and mounted identical XML test assert no PUT stub is used, XML format and absence of bounded read options."
+            },
+            {
+              "path": "tests/next_sections/docs/docs_e2e_test.go",
+              "sha256": "acdc70269db06ab3c6839465e75c53a22e8e4cf52da0c97f075114fe18834ee1",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): TestDocsUnchangedXMLOverwriteNoop asserts one fetch, revision zero, unchanged result and zero persisted mutation receipts."
+            },
+            {
+              "path": "shortcuts/doc/docs_update.go",
+              "sha256": "a018b18037449fb2665c5760eaeb48c98fbc9c24d3a99b6c77818d86e6c99030",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Scopes compared with import; both docx readonly and write_only already declared."
+            }
+          ],
+          "findings": [],
+          "limitations": [
+            "Static source and test-assertion inspection only; no tests, live/model runs, platform acceptance or broad gates executed by this reviewer.",
+            "Live native full-fetch representation, XML fidelity, revision race semantics and backend permission compatibility are not established by synthetic snapshots. Explicit read failure propagation is inspected; no tenant request was made."
+          ]
+        },
+        {
+          "path": "shortcuts/doc/html5_block_resources.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "1fcc85e8b43c819e85b6c1df183432ec5a0e55d3df8c2482535c4dfc564b7e0f",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "shortcuts/doc/html5_block_resources.go",
+              "sha256": "1fcc85e8b43c819e85b6c1df183432ec5a0e55d3df8c2482535c4dfc564b7e0f",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Reference-map parser delegates to strict UseNumber object parser while keeping existing empty/null compatibility at this helper boundary. Generic sidecar values remain shallow-copied without float64 conversion; HTML5 preparation and local resource ownership unchanged.",
+              "import_to_review_diff_sha256": "adf5b7e1ffc24833360d5f112f4507ceae1397bf403f53077583907b464f0b39"
+            },
+            {
+              "path": "shortcuts/doc/docs_input_test.go",
+              "sha256": "207ca5811dfc65d6b1ee9c20483b520574ba835b1e7304fd8000956eec350157",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Create and update prepared-body tests assert high precision decimals, >2^53 integers, Unicode, null, empty and leading-zero strings."
+            },
+            {
+              "path": "shortcuts/doc/html5_block_resources_test.go",
+              "sha256": "2cb715edcfe89a0a0464ed8829b5b65872d6289812b96448bf7580ad1d6ab500",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): TestDocsUpdateV2HTML5BlockReferenceMapFromPath asserts prepared content, HTML source sidecar and returned new block preservation."
+            }
+          ],
+          "findings": [],
+          "limitations": [
+            "Static source and test-assertion inspection only; no tests, live/model runs, platform acceptance or broad gates executed by this reviewer."
+          ]
+        },
+        {
+          "path": "shortcuts/markdown/helpers.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "53a46b39a9caddc2981750687bc1e644f40ec2c9e79259f4de11683111055912",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "shortcuts/markdown/helpers.go",
+              "sha256": "53a46b39a9caddc2981750687bc1e644f40ec2c9e79259f4de11683111055912",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Metadata lookup now uses token/type-bound shared owner and retains bounded retries for read failures. Upload retries narrow to known explicit rate-limit rejection, leaving uncertain transport/server outcomes unreplayed and preserving typed error/cause. No new permissions or duplicate write on uncertain outcome is introduced by these changes.",
+              "import_to_review_diff_sha256": "c696e14afcc1186d55119689ff44e7abae96e2360460f886f93f5623d924b65e"
+            },
+            {
+              "path": "shortcuts/markdown/markdown_integrity_test.go",
+              "sha256": "6457e46836387d98e53c4a9eec13ed63907e116b283b1ca1cdbe96dfc19a7c08",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): TestMarkdownUnknownUploadOutcomeDoesNotRetry asserts same typed error and one attempt for all/prepare/part."
+            },
+            {
+              "path": "tests/next_sections/markdown/markdown_e2e_test.go",
+              "sha256": "5e7dae813eed3bebf24e470d36a229258a2ec594e64e7491c7d9765b09f369ed",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): TestMarkdownUnknownWriteIsNotReplayed asserts one request, unknown outcome and exit 22 for lost reply, 502 and 503; lifecycle checks metadata POST receipt count."
+            },
+            {
+              "path": "shortcuts/common/drive_meta.go",
+              "sha256": "a057aa2736234214ed6be7637cd9d728a0b8a8af539bd4b282e07e48fe8c90f9",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Shared metadata selection checks requested token/type and duplicates; empty metas retains established empty-title fallback."
+            }
+          ],
+          "findings": [],
+          "limitations": [
+            "Static source and test-assertion inspection only; no tests, live/model runs, platform acceptance or broad gates executed by this reviewer."
+          ]
+        },
+        {
+          "path": "shortcuts/markdown/markdown_patch.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "d960dbfefa35ae436c7cef70ea581e143517427ace03baac230cf51ccc245800",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "shortcuts/markdown/markdown_patch.go",
+              "sha256": "d960dbfefa35ae436c7cef70ea581e143517427ace03baac230cf51ccc245800",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Exact patched-byte equality suppresses upload even when literal/regex matches exist; match_count and byte sizes remain truthful. Changed content follows existing file-token/name resolution and upload/version path. Explicit overwrite remains version-producing.",
+              "import_to_review_diff_sha256": "60d800a2e42bfb8c13b1e7448eff6c322e94223b8d0c1a1486d785ab74290b1a"
+            },
+            {
+              "path": "shortcuts/markdown/markdown_integrity_test.go",
+              "sha256": "6457e46836387d98e53c4a9eec13ed63907e116b283b1ca1cdbe96dfc19a7c08",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Identical literal, capture replacement and zero-width tests preserve Unicode and CRLF and have no upload stub."
+            },
+            {
+              "path": "tests/next_sections/markdown/markdown_e2e_test.go",
+              "sha256": "5e7dae813eed3bebf24e470d36a229258a2ec594e64e7491c7d9765b09f369ed",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Lifecycle asserts unchanged patch upload count, literal $1 preservation and explicit overwrite version/effect semantics."
+            }
+          ],
+          "findings": [],
+          "limitations": [
+            "Static source and test-assertion inspection only; no tests, live/model runs, platform acceptance or broad gates executed by this reviewer."
+          ]
+        },
+        {
+          "path": "shortcuts/markdown/markdown_patch_test.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "30d9079ea4a79ded4a7f1ba49b9cc6d67aa92e3ffd914b9e25ecc21b58585fac",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "shortcuts/markdown/markdown_patch_test.go",
+              "sha256": "30d9079ea4a79ded4a7f1ba49b9cc6d67aa92e3ffd914b9e25ecc21b58585fac",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Four fixtures add requested document identity for stricter metadata selection. Multipart token/name, exact uploaded bytes, match counts, versions and empty replacement assertions remain.",
+              "import_to_review_diff_sha256": "3625e4f433982a4139b6a995076b465d17574d1aae84ed671fb0540854f0ff47"
+            },
+            {
+              "path": "shortcuts/markdown/markdown_patch_test.go",
+              "sha256": "30d9079ea4a79ded4a7f1ba49b9cc6d67aa92e3ffd914b9e25ecc21b58585fac",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Literal overwrite captured multipart body and empty replacement exact uploaded content assertions inspected."
+            }
+          ],
+          "findings": [],
+          "limitations": [
+            "Static source and test-assertion inspection only; no tests, live/model runs, platform acceptance or broad gates executed by this reviewer."
+          ]
+        },
+        {
+          "path": "shortcuts/markdown/markdown_test.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "c735986be138ee4a320982181679068c2e252720b620ba9ca4cf87d4540f7a5b",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "shortcuts/markdown/markdown_test.go",
+              "sha256": "c735986be138ee4a320982181679068c2e252720b620ba9ca4cf87d4540f7a5b",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Retry assertions now require known API rate-limit code and reject unknown 502 replay. Metadata fixtures carry matching token/type; upload content, token, title, version and no-version failure checks remain.",
+              "import_to_review_diff_sha256": "5f9f20cf7ba28e5d77537ea18de310bc3e5081c61103e47753bc38149f2d336c"
+            },
+            {
+              "path": "shortcuts/markdown/markdown_test.go",
+              "sha256": "c735986be138ee4a320982181679068c2e252720b620ba9ca4cf87d4540f7a5b",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): TestMarkdownUploadShouldRetryBranches, TestMarkdownOverwriteUploadAllIncludesFileTokenAndVersion and TestMarkdownOverwriteFailsWithoutVersion nearby assertions inspected."
+            }
+          ],
+          "findings": [],
+          "limitations": [
+            "Static source and test-assertion inspection only; no tests, live/model runs, platform acceptance or broad gates executed by this reviewer."
+          ]
+        },
+        {
+          "path": "tests/cli_e2e/docs/coverage.md",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "b86c6a4ea021259618df728b492b928fa7ae82ae44550a039f36fb35338fdd4f",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "tests/cli_e2e/docs/coverage.md",
+              "sha256": "b86c6a4ea021259618df728b492b928fa7ae82ae44550a039f36fb35338fdd4f",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Replaces incomplete 12-command percentage with 16 frozen capabilities and separates imported legacy references from authorized next/live evidence; links resolve relative to coverage file. Does not claim live acceptance.",
+              "import_to_review_diff_sha256": "207ad2ef55860505600e4ac774585bfef6642145c1dc81940022ea169eb28e08"
+            },
+            {
+              "path": "tests/cli_e2e/docs/coverage.md",
+              "sha256": "b86c6a4ea021259618df728b492b928fa7ae82ae44550a039f36fb35338fdd4f",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Complete changed prose and adjacent upstream capability table inspected; no listed legacy/live test executed."
+            }
+          ],
+          "findings": [],
+          "limitations": [
+            "Static source and test-assertion inspection only; no tests, live/model runs, platform acceptance or broad gates executed by this reviewer."
+          ]
+        },
+        {
+          "path": "tests/cli_e2e/markdown/markdown_dryrun_test.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "b04cc9ad58e2d3e80d362900b11fddecf911a1dcb432fc6d1470f57570dd8cb1",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "tests/cli_e2e/markdown/markdown_dryrun_test.go",
+              "sha256": "b04cc9ad58e2d3e80d362900b11fddecf911a1dcb432fc6d1470f57570dd8cb1",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Whitespace-sensitive string assertions replaced with concrete JSON-path comparisons preserving expected names, parents, sizes, preview type, mode and output paths. Target API step indices match existing dry-run sequence.",
+              "import_to_review_diff_sha256": "53aecad6afee7e653ab97c13a138f7184e35850957d7188c09c956dbf39f061d"
+            },
+            {
+              "path": "tests/cli_e2e/markdown/markdown_dryrun_test.go",
+              "sha256": "b04cc9ad58e2d3e80d362900b11fddecf911a1dcb432fc6d1470f57570dd8cb1",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): All 21 replacement assertion lines inspected against create/fetch/diff/overwrite/patch dry-run request plans."
+            }
+          ],
+          "findings": [],
+          "limitations": [
+            "Static source and test-assertion inspection only; no tests, live/model runs, platform acceptance or broad gates executed by this reviewer."
+          ]
+        },
+        {
+          "path": "shortcuts/doc/docs_input.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "49cbd704215a6af7b322d4f4b9a15750407c2a28868c320d5190e115335149a0",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "shortcuts/doc/docs_input.go",
+              "sha256": "49cbd704215a6af7b322d4f4b9a15750407c2a28868c320d5190e115335149a0",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Entire new implementation inspected: decoder.UseNumber, non-null object requirement and exactly-one-object EOF check preserve rich JSON number/string/null types and reject arrays/scalars/trailing payloads through typed validation.",
+              "import_to_review_diff_sha256": "f77d00dfb0ce25b6ca538cbcd7d833b21aed9d71e272533be374b7d8da9e7408"
+            },
+            {
+              "path": "shortcuts/doc/docs_input_test.go",
+              "sha256": "207ca5811dfc65d6b1ee9c20483b520574ba835b1e7304fd8000956eec350157",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Strict object/trailing JSON and both prepared-write number/presence assertions inspected."
+            }
+          ],
+          "findings": [],
+          "limitations": [
+            "Static source and test-assertion inspection only; no tests, live/model runs, platform acceptance or broad gates executed by this reviewer."
+          ]
+        },
+        {
+          "path": "shortcuts/doc/docs_update_noop.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "b6e0622e00a4d3df3f362fce11acf390e5f5d5c88985d5ee0d9d5582430ca8f6",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "shortcuts/doc/docs_update_noop.go",
+              "sha256": "b6e0622e00a4d3df3f362fce11acf390e5f5d5c88985d5ee0d9d5582430ca8f6",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Entire new implementation inspected: XML-only eligibility without resources, typed snapshot with UseNumber, exact content/sidecar comparison, document and explicit revision guard, and refusal on warnings or explicit incomplete/truncated/paginated results. No XML canonicalization or sidecar dropping is used.",
+              "import_to_review_diff_sha256": "efa6d238ebca75b91e4d34282a8eb3e92f7efbfa1aeb190a5c858cfb64806104"
+            },
+            {
+              "path": "shortcuts/doc/docs_update_noop_test.go",
+              "sha256": "475ff648d10ba09f44d71d1c7e0065fdf25567e7ba307c11dbeed7b49a365e1f",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Table covers exact match, matching/different revision, wrong document, missing content/sidecar, lossy text, false completeness, truncation and warnings."
+            }
+          ],
+          "findings": [],
+          "limitations": [
+            "Static source and test-assertion inspection only; no tests, live/model runs, platform acceptance or broad gates executed by this reviewer.",
+            "Live native full-fetch representation, XML fidelity, revision race semantics and backend permission compatibility are not established by synthetic snapshots. Explicit read failure propagation is inspected; no tenant request was made."
+          ]
+        }
+      ],
+      "cross_assignment_dependencies": [
+        "Shared common.FetchDriveMetaTitle/FetchDriveMeta token/type selection and CallReadOnlyAPITyped context, authentication, JSON decoding and mutation classification remain owned by common/foundation review. Their integration is inspected here, not whole-owner approval."
+      ],
+      "limitations": [
+        "Static source and test-assertion inspection only; no tests, live/model runs, platform acceptance or broad gates executed by this reviewer.",
+        "Required live/platform/release/evaluation gates remain separate. Review binds only to the checkpoint blobs, not later worktree or follow-up changes."
+      ]
+    },
+    {
+      "schema_version": 1,
+      "assignment_id": "drive",
+      "reviewer": "/root/p3_domain_review/docs_drive_review",
+      "verdict": "approved_offline",
+      "paths": [
+        {
+          "path": "shortcuts/drive/drive_export_test.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "8376ed88d533f21039c778cb3ddbdf37ff564d5ec9c8e570fda2bb1cc68f0705",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "shortcuts/drive/drive_export_test.go",
+              "sha256": "8376ed88d533f21039c778cb3ddbdf37ff564d5ec9c8e570fda2bb1cc68f0705",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Single metadata fixture now includes matching doc_token/doc_type; original Markdown fetch format, no comment extra_param, named output file and exact saved bytes assertions remain unchanged.",
+              "import_to_review_diff_sha256": "f74f2928279731fc54d217a1aadadfcffb876974684a123da2491f135d10e12a"
+            },
+            {
+              "path": "shortcuts/drive/drive_export_test.go",
+              "sha256": "8376ed88d533f21039c778cb3ddbdf37ff564d5ec9c8e570fda2bb1cc68f0705",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): TestDriveExportMarkdownWritesFile captured fetch-body and Weekly Notes.md exact content checks inspected."
+            }
+          ],
+          "findings": [],
+          "limitations": [
+            "Static source and test-assertion inspection only; no tests, live/model runs, platform acceptance or broad gates executed by this reviewer."
+          ]
+        },
+        {
+          "path": "shortcuts/drive/drive_update_title.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "028783179a7f23c9c704179b9f65a4c2a8f5e8c27f3e0757c87ba34051aa03c4",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "shortcuts/drive/drive_update_title.go",
+              "sha256": "028783179a7f23c9c704179b9f65a4c2a8f5e8c27f3e0757c87ba34051aa03c4",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): No-op uses only title already fetched by existing extension guard. File allow policy and non-file renames continue without metadata lookup. Unchanged output retains identity/title/extension facts and marks updated=false, unchanged=true.",
+              "import_to_review_diff_sha256": "a741f5358e57933ed44462b6f426b344d94cac87e860104feb0ddfa1c49a6d2d"
+            },
+            {
+              "path": "shortcuts/drive/drive_update_title_noop_test.go",
+              "sha256": "6df46927c3ee9fa4bd0e840fdb6fb184b00e7cbeee825e055478dfec4762db30",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Both full and extensionless Unicode titles assert exact resolved title and no PATCH stub."
+            },
+            {
+              "path": "shortcuts/drive/drive_update_title_test.go",
+              "sha256": "0ffc07377bccb9bc89d20d2f587c3014115180d0b93c99eddb574b002e52cc46",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Allow-policy test prohibits metadata read and verifies new_title; guard read failure preserves API code and allow recovery hint."
+            },
+            {
+              "path": "tests/next_sections/drive/workflows_test.go",
+              "sha256": "ebd526d8f0286f5bc664712f9d84ecec3994404ccde548e603b3eb2d9e949a17",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): TestWikiCopyMoveAndGuardedRename asserts one copy/move and zero rename PATCH for unchanged guarded name."
+            }
+          ],
+          "findings": [],
+          "limitations": [
+            "Static source and test-assertion inspection only; no tests, live/model runs, platform acceptance or broad gates executed by this reviewer."
+          ]
+        },
+        {
+          "path": "shortcuts/drive/list_remote.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "8aa2f0671954f3695f9722801ba83c330ba3e4a0b74209e47b029f67ff0e7cdc",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "shortcuts/drive/list_remote.go",
+              "sha256": "8aa2f0671954f3695f9722801ba83c330ba3e4a0b74209e47b029f67ff0e7cdc",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): All changed diff and consuming mirror path inspected: ancestor stack detects cycles without treating sibling revisits as cycles; per-folder cursor history bounds repeated pages; malformed present arrays/items/pagination fail before mirror effects. All Drive kinds and both cursor spellings remain. Optional files/has_more omissions remain compatible with frozen catalog.",
+              "import_to_review_diff_sha256": "d78e490233a3e9f00a84714ad9a887d2e063f605d9a077f1f53a5bd5a64e11ed"
+            },
+            {
+              "path": "shortcuts/drive/drive_listing_integrity_test.go",
+              "sha256": "9fb5780a876ce7b31abf9addf4e899cde49f73df481a6a9b2ba974c34f8acb00",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): TestDriveMirrorRejectsIncompleteListing asserts typed invalid_response, bounded reads and no success for missing/repeated cursor, malformed shape and cycles."
+            },
+            {
+              "path": "tests/next_sections/drive/workflows_test.go",
+              "sha256": "ebd526d8f0286f5bc664712f9d84ecec3994404ccde548e603b3eb2d9e949a17",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): TestMirrorExactHashNoopAndIncompleteListing asserts at most two reads, zero writes and unchanged local bytes."
+            },
+            {
+              "path": "shortcuts/drive/drive_pull.go",
+              "sha256": "90aee0aa82574fe14e35563e3caa0ee7694fac00f5cae6c64ac3e44a01bf4689",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Listing completes and errors return before download/delete-local loops; remotePaths includes all Drive kinds."
+            },
+            {
+              "path": "shortcuts/drive/drive_pull_test.go",
+              "sha256": "4cc794566d71286d13ad734b0069d656f354b57c12638fb372b97f98efd7b10c",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Two-page page_token (not next_page_token) fixture and both file download requests inspected."
+            },
+            {
+              "path": "docs/reference/meta_data.json.gz",
+              "sha256": "c3717197efc20093b4b9eb737bbe3f5f5e6acb75c19b86071ccf5acf62f588d7",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Frozen drive v1 files.list responseBody marks files and has_more required:false, with name/token/type required for present entries. Gzip catalog parsed statically."
+            }
+          ],
+          "findings": [],
+          "limitations": [
+            "Static source and test-assertion inspection only; no tests, live/model runs, platform acceptance or broad gates executed by this reviewer.",
+            "Missing/null files and absent has_more are accepted as empty/terminal. Catalog marks these fields optional, so omission alone is not a confirmed defect. A successful but semantically incomplete backend listing could still mislead delete-local; static review does not establish snapshot completeness or real empty-folder null behavior. A stricter follow-up must reconcile optional-field compatibility instead of inventing required fields."
+          ]
+        },
+        {
+          "path": "tests/cli_e2e/drive/drive_upload_dryrun_test.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "deebaeded812bca4913beba71a4a8c34d0a6d6019d22a2c56c0c9a2b608cc6b2",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "tests/cli_e2e/drive/drive_upload_dryrun_test.go",
+              "sha256": "deebaeded812bca4913beba71a4a8c34d0a6d6019d22a2c56c0c9a2b608cc6b2",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Four whitespace-sensitive assertions replaced with concrete JSON-path values for metadata with_url, wiki parent_type and folder parent_node. Existing overwrite file_token and report plan assertions retained.",
+              "import_to_review_diff_sha256": "4d20715269b12f87d95279bfef53d73a802fb8d38d143ae7d01d9d1cee2a1bf5"
+            },
+            {
+              "path": "tests/cli_e2e/drive/drive_upload_dryrun_test.go",
+              "sha256": "deebaeded812bca4913beba71a4a8c34d0a6d6019d22a2c56c0c9a2b608cc6b2",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Full changed diff inspected; api.0 upload and api.2 metadata steps preserve asserted meanings."
+            }
+          ],
+          "findings": [],
+          "limitations": [
+            "Static source and test-assertion inspection only; no tests, live/model runs, platform acceptance or broad gates executed by this reviewer."
+          ]
+        }
+      ],
+      "cross_assignment_dependencies": [
+        "Shared common.FetchDriveMetaTitle/FetchDriveMeta token/type selection and CallReadOnlyAPITyped context, authentication, JSON decoding and mutation classification remain owned by common/foundation review. Their integration is inspected here, not whole-owner approval."
+      ],
+      "limitations": [
+        "Static source and test-assertion inspection only; no tests, live/model runs, platform acceptance or broad gates executed by this reviewer.",
+        "Required live/platform/release/evaluation gates remain separate. Review binds only to the checkpoint blobs, not later worktree or follow-up changes."
+      ]
+    },
+    {
+      "schema_version": 1,
+      "assignment_id": "events_calendar_contact",
+      "reviewer": "/root/p3_domain_review",
+      "verdict": "approved_offline",
+      "cross_assignment_dependencies": [
+        "Shared internal/cmdutil mutation transport and internal/nextattempt persistence are independently reviewed by foundation assignment.",
+        "Shared common RuntimeContext and internal/output result projection retain independent owning gates."
+      ],
+      "limitations": [
+        "Static semantic review only: no tests executed by this reviewer; test assertions were inspected at exact immutable revision.",
+        "Required live/platform/release/evaluation gates remain separate.",
+        "Approval covers assigned changed diffs and full new implementation, not all inherited domain implementation."
+      ],
+      "paths": [
+        {
+          "path": "cmd/event/runtime.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "6882bd6bfdfc709fbf6633b5ccc5c828722d7ac83dcb4c43647ce1bea93cd1fe",
+          "verdict": "approved_offline",
+          "findings": [],
+          "semantic_assessment": "Lifecycle POST marking matches decoded URL.Path, leaves GET enrichment read-only, and returns original raw body without content projection. POST lifecycle set verified against all events CallAPI callers.",
+          "evidence": [
+            {
+              "path": "tests/next_sections/events/events_e2e_test.go",
+              "scope": "Static inspection (not executed): TestLifecycleMutationFailureEvidence checks exact failed-call counts, exit20/21/22 and receipts; TestEscapedBoardSubscriptionReceipts checks escaped paths and two receipts; TestStreamInterruptPerformsCleanup checks subscribe/unsubscribe ordering.",
+              "sha256": "c81ef3125ab77456af59da9bcc621d14eeebe72051e1c585aee636722cce5c86",
+              "tested_revision": "not executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            }
+          ]
+        },
+        {
+          "path": "cmd/event/stop.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "65c786e70b25d9a4cc79393fea8f06a436f89445ae19b4611be0ad8b09c06232",
+          "verdict": "approved_offline",
+          "findings": [],
+          "semantic_assessment": "JSON output is written before the same refused/error ExitValidation decision used by text; no extra failure envelope is fabricated. Existing stop status fields and force gates are unchanged.",
+          "evidence": [
+            {
+              "path": "tests/next_sections/events/events_e2e_test.go",
+              "scope": "Static inspection (not executed): TestEventBusStatusAndSafeStop checks no_bus/running/refused and JSON refusal exit2.",
+              "sha256": "c81ef3125ab77456af59da9bcc621d14eeebe72051e1c585aee636722cce5c86",
+              "tested_revision": "not executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            }
+          ]
+        },
+        {
+          "path": "events/approval/preconsume.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "08e02dacc69e4d304da9130937f01a71be4dce52478726b42605985041fdda95",
+          "verdict": "approved_offline",
+          "findings": [],
+          "semantic_assessment": "Only recovery wording changes: confirmed registrations remain explicit and failed request application remains uncertain; conditional retry advice avoids claiming failed means unapplied. Existing typed error propagation/cause path is retained.",
+          "evidence": [
+            {
+              "path": "events/approval/register_test.go",
+              "scope": "Static inspection (not executed): TestApprovalPreConsumeValidationErrors and TestApprovalSubscriptionRegistrationErrorVariants assert registered relation, unknown application, verify-before-retry hints, and typed error category.",
+              "sha256": "5ac1f5b03042330b4e74e85b6bae6a3b4a3201ac5f33accd0698ecf98ad051eb",
+              "tested_revision": "not executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            }
+          ]
+        },
+        {
+          "path": "events/approval/register_test.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "5ac1f5b03042330b4e74e85b6bae6a3b4a3201ac5f33accd0698ecf98ad051eb",
+          "verdict": "approved_offline",
+          "findings": [],
+          "semantic_assessment": "Strengthens recovery assertions without deleting typed error checks; replaces an incorrect nonapplication claim.",
+          "evidence": [
+            {
+              "path": "events/approval/register_test.go",
+              "scope": "Static inspection (not executed): Changed assertions require failed request may have applied and only after confirmed nonapplication advice.",
+              "sha256": "5ac1f5b03042330b4e74e85b6bae6a3b4a3201ac5f33accd0698ecf98ad051eb",
+              "tested_revision": "not executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/calendar/calendar_delete.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "a1b5cc84c595a541d8e4b8b72f4de25d99c733a049e565b8ff39b58e897507f3",
+          "verdict": "approved_offline",
+          "findings": [],
+          "semantic_assessment": "One new unexported inferred marker on synthetic master fallback prevents treating a reconstructed occurrence as observed state; deletion routing and external JSON shape are unchanged.",
+          "evidence": [
+            {
+              "path": "shortcuts/calendar/calendar_test.go",
+              "scope": "Static inspection (not executed): TestUpdate_RoomCheck_EventNotFound_FallsBackToMaster exercises fallback and dispatched PATCH; direct same-value inferred no-op rejection is established by inspected guard, not a dedicated test.",
+              "sha256": "401c74be7563a9f852a209018d6f8fa9913ebacb3a02a4698490db0db03aa0ae",
+              "tested_revision": "not executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/calendar/calendar_get.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "01a8b44fed4714dfc7f1d895714094a47f7bb7f4d463c8450f0aeb359af6e615",
+          "verdict": "approved_offline",
+          "findings": [],
+          "semantic_assessment": "Unexported inferred flag is intentionally excluded from JSON and only gates observed-state no-op evidence. Public event fields preserve existing tags/types.",
+          "evidence": [
+            {
+              "path": "shortcuts/calendar/calendar_noop_test.go",
+              "scope": "Static inspection (not executed): TestCalendarUpdateExactReplacementNoOp asserts equal summary/description/times skip PATCH while changed/clear/explicit notify dispatch; no dedicated inferred-flag wire test found.",
+              "sha256": "e03c2c6cba524ff8721e5ac2977aed8ebaac84799ed4d29b878ea1aeb3546bd2",
+              "tested_revision": "not executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/calendar/calendar_update.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "34d156d2075f353b50d6383c5dbef1d14925ac0d83a7ea49b6d8ca153ffd047b",
+          "verdict": "approved_offline",
+          "findings": [],
+          "semantic_assessment": "Reuses already-required target GET, preserving baseline read permission needs. Scope rejection precedes description image effects. Only observed matching single target with supported exact nonempty replacements can skip; explicit clears, notification=true, attendee effects, all/following scopes retain mutation paths. No atomic concurrency guarantee.",
+          "evidence": [
+            {
+              "path": "shortcuts/calendar/calendar_noop_test.go",
+              "scope": "Static inspection (not executed): TestCalendarUpdateExactReplacementNoOp asserts request presence/absence for summary, description, timestamps, difference, clear and explicit notify; TestCalendarUpdateScopeBeforeDescriptionUpload checks apply-to error before image resolution. Also inspected next calendar lifecycle, ambiguity and recurring/unknown tests.",
+              "sha256": "e03c2c6cba524ff8721e5ac2977aed8ebaac84799ed4d29b878ea1aeb3546bd2",
+              "tested_revision": "not executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/contact/contact_errors.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "c5ef9ddfe3aded90c8222a999fd648593f5d4b3cc26987373d3f9cdadd891d32",
+          "verdict": "approved_offline",
+          "findings": [],
+          "semantic_assessment": "Copies concrete permission/authentication errors, retaining embedded problem metadata, extension fields and original error cause without mutating representative failure. No read route/content/pagination change.",
+          "evidence": [
+            {
+              "path": "shortcuts/contact/contact_errors_test.go",
+              "scope": "Static inspection (not executed): TestContactFanoutAllFailedError_PreservesIdentityFailures asserts category/subtype/code/logID/missing scopes, cause identity and original message immutability. Process TestContactUserFanoutPreservesMissingScopeFailure asserts exit3, typed stderr and exactly two requests.",
+              "sha256": "15aab349772cec93e730120dd8ecac8caa585899174fe9cbec36621c349d3295",
+              "tested_revision": "not executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/contact/contact_errors_test.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "15aab349772cec93e730120dd8ecac8caa585899174fe9cbec36621c349d3295",
+          "verdict": "approved_offline",
+          "findings": [],
+          "semantic_assessment": "New tests assert typed metadata and causes, not merely messages or existence; both authentication and authorization are covered.",
+          "evidence": [
+            {
+              "path": "shortcuts/contact/contact_errors_test.go",
+              "scope": "Static inspection (not executed): TestContactFanoutAllFailedError_PreservesIdentityFailures checks both error classes plus permission scope extension.",
+              "sha256": "15aab349772cec93e730120dd8ecac8caa585899174fe9cbec36621c349d3295",
+              "tested_revision": "not executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            }
+          ]
+        },
+        {
+          "path": "tests/cli_e2e/contact/coverage.md",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "245410feeb2ab87eee312e2aeeb0032d4ade1ce350bc2d76ea244ae1268a8f92",
+          "verdict": "approved_offline",
+          "findings": [],
+          "semantic_assessment": "Added text separates frozen next executable coverage from inherited live snapshot and explicitly does not count failed/skipped live coverage as successful. Source tests and section contract were inspected; historical live result was not re-executed.",
+          "evidence": [
+            {
+              "path": "tests/next_sections/contact/contact_e2e_test.go",
+              "scope": "Static inspection (not executed): Four read leaves are exercised by identity-route/search/profile/validation tests; TestContactLiveAccountBoundReads is separately routed. Coverage note is not live acceptance.",
+              "sha256": "ab14d3f89fce4b073c5db4edd0544cb6f478b6decef980209849072a45071d45",
+              "tested_revision": "not executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "schema_version": 1,
+      "assignment_id": "im",
+      "reviewer": "/root/p3_domain_review",
+      "verdict": "approved_offline",
+      "cross_assignment_dependencies": [
+        "Shared internal/cmdutil mutation transport and internal/nextattempt persistence are independently reviewed by foundation assignment.",
+        "Shared common RuntimeContext and internal/output result projection retain independent owning gates."
+      ],
+      "limitations": [
+        "Static semantic review only: no tests executed by this reviewer; test assertions were inspected at exact immutable revision.",
+        "Required live/platform/release/evaluation gates remain separate.",
+        "Approval covers assigned changed diffs and full new implementation, not all inherited domain implementation."
+      ],
+      "paths": [
+        {
+          "path": "shortcuts/im/helpers_network_test.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "538b2cd408ee59c9d6895ec21e5d99f9e379109f202f6f5f220f2181d7b565e1",
+          "verdict": "approved_offline",
+          "findings": [],
+          "semantic_assessment": "Transport fixture explicitly starts with platform intent and asserts external download returns image bytes; no live DNS dependence. Strengthens route override evidence without product change.",
+          "evidence": [
+            {
+              "path": "shortcuts/im/helpers_network_test.go",
+              "scope": "Static inspection (not executed): TestStartURLDownloadUsesExternalRequestClass returns 502 on platform route, image on external route, and asserts exact image response.",
+              "sha256": "538b2cd408ee59c9d6895ec21e5d99f9e379109f202f6f5f220f2181d7b565e1",
+              "tested_revision": "not executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/im/im_chat_update.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "982220f672c4f5d5e3d81bbda1e5e60d75f6d2953741e3b67e69f61321cc4404",
+          "verdict": "approved_offline",
+          "findings": [],
+          "semantic_assessment": "Read-before-write remains opt-in, retaining default write-only permission compatibility. Requested field pointer presence is required before equality; empty description is forwarded explicitly. No-op marker is additive and GET failure stops PUT.",
+          "evidence": [
+            {
+              "path": "tests/next_sections/im/im_e2e_test.go",
+              "scope": "Static inspection (not executed): TestChatUpdateNoopAndExplicitEmptyDescription checks no write for matching name and exact single-field empty-description PUT. Missing-field guard inspected statically; no dedicated missing chat field test found.",
+              "sha256": "7f338b58bfc6f2e44fb0f3a208cceef58146d048fd603b74142da64c1f5dbe92",
+              "tested_revision": "not executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/im/im_messages_edit.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "90957290083486bdb384d902d1ab91274aa324e210bb12b30157edb725fd9423",
+          "verdict": "approved_offline",
+          "findings": [],
+          "semantic_assessment": "Opt-in GET is previewed and only suppresses complete matching replacement; baseline normalization/attachment merging and send-only scopes remain unchanged. Read errors abort replacement. Existing markdown image resolution precedes optional GET, so this is not a guarantee of zero auxiliary upload effects.",
+          "evidence": [
+            {
+              "path": "tests/next_sections/im/im_e2e_test.go",
+              "scope": "Static inspection (not executed): TestEditPreflightPreservesRichReplacementAndClear checks reads/writes and exact changed text/clear; TestEditPreflightFailureDoesNotWrite checks permission denial prevents PUT; TestEditDryRunPreflightAndWriteOnlyCompatibility checks preview and default PUT-only behavior.",
+              "sha256": "7f338b58bfc6f2e44fb0f3a208cceef58146d048fd603b74142da64c1f5dbe92",
+              "tested_revision": "not executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            }
+          ]
+        },
+        {
+          "path": "tests/cli_e2e/im/coverage.md",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "b33b69cf1619771e2f012681078438f7fdd8c41b601ca5510adc6d9b8641f4b1",
+          "verdict": "approved_offline",
+          "findings": [],
+          "semantic_assessment": "Added disclaimer accurately separates inherited live snapshot from current frozen mapping and avoids making offline counts into live acceptance.",
+          "evidence": [
+            {
+              "path": "docs/sections/im.md",
+              "scope": "Static inspection (not executed): Section mapping and explicitly blocked live limitations inspected; no historical execution claim adopted.",
+              "sha256": "751ffd9413da7b415251bb7b8fa0bfe673f1d7c3c4cdfb847052ac73b114462c",
+              "tested_revision": "not executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            }
+          ]
+        },
+        {
+          "path": "tests/cli_e2e/im/feed_shortcut_workflow_test.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "6afe9b6045ecab90a3f68a1894a5893edd202b44f38216ab3d6b4a7d4de72d1f",
+          "verdict": "approved_offline",
+          "findings": [],
+          "semantic_assessment": "Whitespace-sensitive substring replaced with structural existence plus boolean false, preserving presence/false contract under compact output.",
+          "evidence": [
+            {
+              "path": "tests/cli_e2e/im/feed_shortcut_workflow_test.go",
+              "scope": "Static inspection (not executed): Tail dry-run scenario asserts data.api.0.body.is_header exists and is false; neighboring request and validation checks retained.",
+              "sha256": "6afe9b6045ecab90a3f68a1894a5893edd202b44f38216ab3d6b4a7d4de72d1f",
+              "tested_revision": "not executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/im/im_messages_unchanged.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "59b5d900735d74cedcaebfadd9cf6f046653dc6949381e55e3de2c3d40a957d5",
+          "verdict": "approved_offline",
+          "findings": [],
+          "semantic_assessment": "Entire new helper inspected. Validates one exact nondeleted readable target/type and complete valid JSON; UseNumber avoids float precision collapse, DeepEqual preserves absent/null/empty distinctions and array order while ignoring object key order. Different number lexemes conservatively cause writes.",
+          "evidence": [
+            {
+              "path": "tests/next_sections/im/im_e2e_test.go",
+              "scope": "Static inspection (not executed): TestEditPreflightPreservesRichReplacementAndClear and TestOptInPreflightRejectsUnusableTarget assert exact replacement no-op, changed/clear writes, empty/different/deleted targets rejected. No direct numeric/null-vs-absent equality test found; preservation assessed from UseNumber and DeepEqual.",
+              "sha256": "7f338b58bfc6f2e44fb0f3a208cceef58146d048fd603b74142da64c1f5dbe92",
+              "tested_revision": "not executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "schema_version": 1,
+      "assignment_id": "mail_okr_vc_whiteboard_wiki",
+      "reviewer": "/root/p3_domain_review/mail_misc_review",
+      "verdict": "changes_requested",
+      "paths": [
+        {
+          "path": "shortcuts/mail/draft/patch.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "f08e80890bc9f296b9edcc95b5ec111cf3c8615094975181947a859a9d5cfac0",
+          "review_scope": "Full import-to-checkpoint diff and affected implementation/caller context; entire new implementation where applicable.",
+          "analysis": "Encoded Subject comparison preserves a single matching encoded word and still replaces duplicates. Body Dirty flags change only on exact decoded-body differences; coupled summary repair updates only the changed part. Existing body selection, protected header checks, recipient normalization and post-processing remain.",
+          "evidence": [
+            {
+              "path": "shortcuts/mail/draft/patch_noop_test.go",
+              "scope": "Static source review only; NOT executed. Both coupled-body unchanged/repair/changed cases and encoded Subject duplicate handling assert exact values/Dirty flags.",
+              "sha256": "a4364a6a8caeb4b1e0c617c3ab657ecffdaff120e9265a002de20527ab7943b2",
+              "tested_revision": "not_executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            },
+            {
+              "path": "shortcuts/mail/draft/patch_body_test.go",
+              "scope": "Static source review only; NOT executed. TestApplyReplaceBodyPlainTextOnly asserts changed final body bytes.",
+              "sha256": "bf7417579cee22d1c69e7738c5f1a89715f27115a9359b3166008409cf0ee127",
+              "tested_revision": "not_executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            },
+            {
+              "path": "tests/next_sections/mail/mail_e2e_test.go",
+              "scope": "Static source review only; NOT executed. TestMailDraftNoOpAndMIMEPreservingReplacement checks no PUT for matching subject and preservation of attachment/base64/header/Unicode body after changed subject.",
+              "sha256": "cfefcc7f02add111474a29e07d501b284004f27b7ef2f906bff3d5dc1bb1c248",
+              "tested_revision": "not_executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            }
+          ],
+          "findings": [],
+          "verdict": "approved_offline",
+          "limitations": [
+            "Static source/test review only; no tests executed by this reviewer."
+          ]
+        },
+        {
+          "path": "shortcuts/mail/mail_draft_edit.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "fe34a131579500098ce8c40ebaced3116526a93f890082b85262ff851e6dc5d9",
+          "review_scope": "Full import-to-checkpoint diff and affected implementation/caller context; entire new implementation where applicable.",
+          "analysis": "Before/after use the same serializer; replacement-only allowlist excludes attachment, append, signature and calendar effects. No-op retains draft identity, projection and lint output. Mutating path still uses UpdateWithRaw and preserves returned reference.",
+          "evidence": [
+            {
+              "path": "tests/next_sections/mail/mail_e2e_test.go",
+              "scope": "Static source review only; NOT executed. TestMailDraftNoOpAndMIMEPreservingReplacement checks no-op/inspect write counts and changed MIME PUT.",
+              "sha256": "cfefcc7f02add111474a29e07d501b284004f27b7ef2f906bff3d5dc1bb1c248",
+              "tested_revision": "not_executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            },
+            {
+              "path": "shortcuts/mail/mail_draft_edit_reference_test.go",
+              "scope": "Static source review only; NOT executed. TestMailDraftEditOutputsReference asserts returned draft_id and reference after mutation.",
+              "sha256": "d9d20ce922e1312e69bb748ff0bf6ab9db413cc0f4e1215cc58e23184dc48b55",
+              "tested_revision": "not_executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            }
+          ],
+          "findings": [],
+          "verdict": "approved_offline",
+          "limitations": [
+            "Static source/test review only; no tests executed by this reviewer."
+          ]
+        },
+        {
+          "path": "shortcuts/mail/mail_template_update.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "13cf52bb40cc429dd76e8feab9fc124456d07de0d30f0b19adc7262075d8025c",
+          "review_scope": "Full import-to-checkpoint diff and affected implementation/caller context; entire new implementation where applicable.",
+          "analysis": "Template comparison happens after flags, patch, body transformation and attachment merging, before attachment-body transport fallback. newAtts prevents suppressing attachment effects. Omitted values remain from fetched template; patch pointer presence and explicit recipient clears remain inherited.",
+          "evidence": [
+            {
+              "path": "tests/next_sections/mail/mail_e2e_test.go",
+              "scope": "Static source review only; NOT executed. TestMailTemplateAndRuleNoOpPreserveOmittedValues supplies BCC and matching subject and rejects any non-GET request; asserts template no_op.",
+              "sha256": "cfefcc7f02add111474a29e07d501b284004f27b7ef2f906bff3d5dc1bb1c248",
+              "tested_revision": "not_executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            }
+          ],
+          "findings": [],
+          "verdict": "approved_offline",
+          "limitations": [
+            "Static source/test review only; no tests executed by this reviewer."
+          ]
+        },
+        {
+          "path": "shortcuts/mail/mail_watch.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "1ea29e22aa4d26f6e7473a11e02fbaba9d184c550b3e650cdd381d0c71e1b962",
+          "review_scope": "Full import-to-checkpoint diff and affected implementation/caller context; entire new implementation where applicable.",
+          "analysis": "Only subscribe/unsubscribe switch to exact method/path mutation context. Existing sync.Once and deferred cleanup remain, with normal auth and typed API classification delegated to common owner.",
+          "evidence": [
+            {
+              "path": "tests/next_sections/mail/mail_e2e_test.go",
+              "scope": "Static source review only; NOT executed. TestMailWatchLifecycleReceiptsAndCleanupOnSetupFailure asserts one subscribe and unsubscribe plus two applied receipts after profile rejection.",
+              "sha256": "cfefcc7f02add111474a29e07d501b284004f27b7ef2f906bff3d5dc1bb1c248",
+              "tested_revision": "not_executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            },
+            {
+              "path": "shortcuts/common/read_request.go",
+              "scope": "Static source review only; NOT executed. CallMutationAPITyped delegates normal typed API call with an exact mutation context marker.",
+              "sha256": "0cb242d12a3c021befeb269098a70e78b77f912023336428e7be7506a1cff9c5",
+              "tested_revision": "not_executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            }
+          ],
+          "findings": [],
+          "verdict": "approved_offline",
+          "limitations": [
+            "Static source/test review only; no tests executed by this reviewer."
+          ]
+        },
+        {
+          "path": "shortcuts/okr/okr_comment_detail.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "1bf96e75672a03816c02145430b97f62ae4231a134afe20e60e2b04922500915",
+          "review_scope": "Full import-to-checkpoint diff and affected implementation/caller context; entire new implementation where applicable.",
+          "analysis": "Each target read owns a fresh seen-token map; missing/repeated continuations return typed error before aggregate output. Concurrent group failure remains propagated; existing target/thread/richtext projections are unchanged.",
+          "evidence": [
+            {
+              "path": "tests/next_sections/okr/okr_e2e_test.go",
+              "scope": "Static source review only; NOT executed. TestOKRPaginationFailurePreventsReplacement checks typed invalid_response/no stdout for comment-detail, and TestOKRCycleAndCommentDetail checks hierarchy dispatch.",
+              "sha256": "d992b496c371eff10db1a4f0e32750ee83de2756eff4511c64909854a892aa24",
+              "tested_revision": "not_executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            }
+          ],
+          "findings": [],
+          "verdict": "approved_offline",
+          "limitations": [
+            "Static source/test review only; no tests executed by this reviewer."
+          ]
+        },
+        {
+          "path": "shortcuts/okr/okr_cycle_detail.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "58ca715ed347264befb10d7abdad6392c0556d1f6e4f901237f9cc18e5d26e3e",
+          "review_scope": "Full import-to-checkpoint diff and affected implementation/caller context; entire new implementation where applicable.",
+          "analysis": "Item JSON conversion errors now return typed invalid_response with cause rather than continue; missing/repeated continuation fails before final output. Existing simple/rich projections and key-result traversal remain.",
+          "evidence": [
+            {
+              "path": "tests/next_sections/okr/okr_e2e_test.go",
+              "scope": "Static source review only; NOT executed. TestOKRPaginationFailurePreventsReplacement rejects malformed item/missing/repeated token; TestOKRCompletePaginationKeepsOpaqueToken asserts both pages and exact opaque token.",
+              "sha256": "d992b496c371eff10db1a4f0e32750ee83de2756eff4511c64909854a892aa24",
+              "tested_revision": "not_executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            }
+          ],
+          "findings": [],
+          "verdict": "approved_offline",
+          "limitations": [
+            "Static source/test review only; no tests executed by this reviewer."
+          ]
+        },
+        {
+          "path": "shortcuts/okr/okr_cycle_list.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "729bbc98a7a70bc789ea18638b354cc17c7c666093d6ccadf7fda44587860cac",
+          "review_scope": "Full import-to-checkpoint diff and affected implementation/caller context; entire new implementation where applicable.",
+          "analysis": "Changed per-item marshal/unmarshal failures now propagate with typed cause; single-page time filtering and current-active-cycle projections preserve previous semantics and continuation.",
+          "evidence": [
+            {
+              "path": "shortcuts/okr/okr_cycle_list_test.go",
+              "scope": "Static source review only; NOT executed. TestCycleListExecute_Pagination asserts exact input page size/token and output count/has_more/page_token.",
+              "sha256": "ae89a6388ca8252c8ff94ec40c00f4f3a6b71c5d903f1dd528ecad35ae1327ba",
+              "tested_revision": "not_executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            }
+          ],
+          "findings": [],
+          "verdict": "approved_offline",
+          "limitations": [
+            "Static source/test review only; no tests executed by this reviewer."
+          ]
+        },
+        {
+          "path": "shortcuts/okr/okr_progress_list.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "492b77c773a37434448f63cd484787d2ef8d448630044b17124b141835eb028e",
+          "review_scope": "Full import-to-checkpoint diff and affected implementation/caller context; entire new implementation where applicable.",
+          "analysis": "Changed per-item marshal/unmarshal failures now propagate with typed cause; single-page progress conversion and output continuation remain unchanged.",
+          "evidence": [
+            {
+              "path": "shortcuts/okr/okr_progress_list_test.go",
+              "scope": "Static source review only; NOT executed. TestProgressListExecute_Success_Objective checks pagination request, one result, absence of invented total, and returned continuation.",
+              "sha256": "e4ede1a2a2f3df132b0d897af5da641dc28bdff0a447ff2179681c7f3445d995",
+              "tested_revision": "not_executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            }
+          ],
+          "findings": [],
+          "verdict": "approved_offline",
+          "limitations": [
+            "Static source/test review only; no tests executed by this reviewer."
+          ]
+        },
+        {
+          "path": "shortcuts/okr/okr_reorder.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "030127f1d8041a2ead4e378847bee35ec0703ed67e86a710b79f9ac0ef746d52",
+          "review_scope": "Full import-to-checkpoint diff and affected implementation/caller context; entire new implementation where applicable.",
+          "analysis": "Read helpers reject decode errors and incomplete continuation; changed no-op requires known contiguous positions and matching ordered IDs. However its unguarded index assumes fetched IDs are unique, which fetch helpers never establish.",
+          "evidence": [
+            {
+              "path": "tests/next_sections/okr/okr_e2e_test.go",
+              "scope": "Static source review only; NOT executed. TestOKRCompositionAndNoop covers both levels, equal and changed order; TestOKRPaginationFailurePreventsReplacement covers objective-level bad token/id, not duplicate fetched IDs.",
+              "sha256": "d992b496c371eff10db1a4f0e32750ee83de2756eff4511c64909854a892aa24",
+              "tested_revision": "not_executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            },
+            {
+              "path": "shortcuts/okr/okr_reorder_test.go",
+              "scope": "Static source review only; NOT executed. TestBuildReorderedIDs demonstrates map placement; fixtures use unique fetched IDs and do not cover the new panic.",
+              "sha256": "1bc7b399c96bc0186ca5572cac879996fd7fd977548eeb34228ad7bf2ef5dfe1",
+              "tested_revision": "not_executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            }
+          ],
+          "findings": [
+            {
+              "id": "P3-MAIL-MISC-001",
+              "priority": "P2",
+              "title": "Reject duplicate fetched IDs before indexing the no-op order",
+              "line_start": 400,
+              "line_end": 400,
+              "also_affected_lines": [
+                435
+              ],
+              "description": "The new no-op loops index reorderedIDs[i] for every fetched item without proving equal lengths. fetchObjectives/fetchKeyResults append duplicate IDs (including overlaps across otherwise advancing pages), but buildReorderedIDs puts specified IDs in a map and omits every fetched occurrence from unused. With fetched items [{\"id\":\"1\",\"position\":1},{\"id\":\"1\",\"position\":2}] and --ops [{\"id\":\"1\",\"position\":1}], buildReorderedIDs returns [\"1\"]; the first comparison matches and the second evaluates reorderedIDs[1], panicking. This replaces the typed error contract with a process panic before mutation and affects both objective and key-result branches.",
+              "evidence": "Static hand-trace of exact checkpoint buildReorderedIDs lines 201-255 and no-op loops 398-405 / 433-440. Existing tests cover duplicate user ops but not duplicate backend IDs. No reproducer executed.",
+              "requested_change": "Reject duplicate/invalid fetched identities with typed invalid_response before replacement/no-op evaluation, and add a regression for overlapping fetched IDs for both levels; ensure the no-op loop cannot index past the derived order."
+            }
+          ],
+          "verdict": "changes_requested",
+          "limitations": [
+            "Static source/test review only; no tests executed by this reviewer."
+          ]
+        },
+        {
+          "path": "shortcuts/okr/okr_weight.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "b4f144c0fc6c42bfb9ff6b7b43ed9865e3ed7d408ebbf5ad622688309a550dee",
+          "review_scope": "Full import-to-checkpoint diff and affected implementation/caller context; entire new implementation where applicable.",
+          "analysis": "No-op compares complete normalized cardinality and known current weights, and preserves numeric request values as json.Number from the existing fixed-point algorithm. Both level paths keep full replacement calls when unequal or weight evidence absent.",
+          "evidence": [
+            {
+              "path": "tests/next_sections/okr/okr_e2e_test.go",
+              "scope": "Static source review only; NOT executed. TestOKRCompositionAndNoop checks both level paths, changed weight dispatch and equal normalized no-op.",
+              "sha256": "d992b496c371eff10db1a4f0e32750ee83de2756eff4511c64909854a892aa24",
+              "tested_revision": "not_executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            },
+            {
+              "path": "shortcuts/okr/okr_weight_test.go",
+              "scope": "Static source review only; NOT executed. TestNormalizeWeights_AllSpecified and PartialSpecified_Proportional check exact result count, sum and assigned weight.",
+              "sha256": "403afb80ea5292a0580a1e6f6d9fcf3273d1528b6cfc1642200e5e86ce22e734",
+              "tested_revision": "not_executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            }
+          ],
+          "findings": [],
+          "verdict": "approved_offline",
+          "limitations": [
+            "Static source/test review only; no tests executed by this reviewer."
+          ]
+        },
+        {
+          "path": "shortcuts/whiteboard/whiteboard_update.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "0eeb5ebd79d9f88245d7f7cf374c4e9aed1056e02d99c70f613a1c0dd79ea583",
+          "review_scope": "Full import-to-checkpoint diff and affected implementation/caller context; entire new implementation where applicable.",
+          "analysis": "UseNumber preserves nested raw numeric tokens; second decode requires EOF and rejects trailing values/garbage. Both raw envelopes retain existing shape checks. Dry-run client_token matches execution for raw/code formats. Append/overwrite/clear action semantics and write-only scope remain.",
+          "evidence": [
+            {
+              "path": "tests/next_sections/whiteboard/whiteboard_e2e_test.go",
+              "scope": "Static source review only; NOT executed. TestUpdateEveryFormatAliasAndIdentity compares source/body/query across all formats, aliases and identities; raw export/import and state tests check fidelity, append, overwrite and explicit clear.",
+              "sha256": "b33947f061ebe20b705071521782d81631592eb5b94917d3146a8d02ca19cbbc",
+              "tested_revision": "not_executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            },
+            {
+              "path": "shortcuts/whiteboard/whiteboard_update_test.go",
+              "scope": "Static source review only; NOT executed. New tests assert large integer/decimal, Unicode/empty/null/opaque nested values, typed trailing-input rejection and dry-run client_token.",
+              "sha256": "5c3906f4f9f4c206bb24c8a6bbe05fc6071e21188884d56039b9220eb03c5123",
+              "tested_revision": "not_executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            }
+          ],
+          "findings": [],
+          "verdict": "approved_offline",
+          "limitations": [
+            "Static source/test review only; no tests executed by this reviewer."
+          ]
+        },
+        {
+          "path": "shortcuts/whiteboard/whiteboard_update_test.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "5c3906f4f9f4c206bb24c8a6bbe05fc6071e21188884d56039b9220eb03c5123",
+          "review_scope": "Full import-to-checkpoint diff and affected implementation/caller context; entire new implementation where applicable.",
+          "analysis": "New regressions assert observable decoded/serialized values, exact trailing-input error parameter and every format idempotency query. They do not replace or weaken old assertions.",
+          "evidence": [
+            {
+              "path": "shortcuts/whiteboard/whiteboard_update_test.go",
+              "scope": "Static source review only; NOT executed. TestParseWBcliNodesPreservesNumericAndRichValues, TestParseWBcliNodesRejectsTrailingInput and TestWBUpdateDryRunPreservesIdempotentToken inspected.",
+              "sha256": "5c3906f4f9f4c206bb24c8a6bbe05fc6071e21188884d56039b9220eb03c5123",
+              "tested_revision": "not_executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            },
+            {
+              "path": "tests/next_sections/whiteboard/whiteboard_e2e_test.go",
+              "scope": "Static source review only; NOT executed. Independent HTTP fixture body comparison and artifact/import rejection exercise the parser through command execution.",
+              "sha256": "b33947f061ebe20b705071521782d81631592eb5b94917d3146a8d02ca19cbbc",
+              "tested_revision": "not_executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            }
+          ],
+          "findings": [],
+          "verdict": "approved_offline",
+          "limitations": [
+            "Static source/test review only; no tests executed by this reviewer."
+          ]
+        },
+        {
+          "path": "shortcuts/wiki/wiki_member_list.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "37a18fa22b433ab285db7d5bcedd30b24d48e1840804c5e78b124662c5839a0b",
+          "review_scope": "Full import-to-checkpoint diff and affected implementation/caller context; entire new implementation where applicable.",
+          "analysis": "Visited-token set detects non-adjacent cycles in auto mode; preserves accumulated members and has_more/page_token with stderr warning. Existing one-page/page-limit behavior and selected member fields remain.",
+          "evidence": [
+            {
+              "path": "tests/next_sections/wiki/wiki_e2e_test.go",
+              "scope": "Static source review only; NOT executed. TestWikiPaginationArtifactAndCycle checks all three lists stop A/B/A in three calls, retain has_more in stdout and artifact, and ignore page-all with explicit start token.",
+              "sha256": "36096107fe48ab106f079101d40667fe8e6a47b56c3164bf70178473731b015f",
+              "tested_revision": "not_executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            }
+          ],
+          "findings": [],
+          "verdict": "approved_offline",
+          "limitations": [
+            "Static source/test review only; no tests executed by this reviewer."
+          ]
+        },
+        {
+          "path": "shortcuts/wiki/wiki_node_list.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "c7fb43b3284e06c9dd664acf74afbf5b3d1542296e8b77e27fe0b192408f86b1",
+          "review_scope": "Full import-to-checkpoint diff and affected implementation/caller context; entire new implementation where applicable.",
+          "analysis": "Visited-token set bounds repeated pagination in auto mode without changing node projection, scope, alias resolution or request parent token. The partial aggregate explicitly retains has_more and token.",
+          "evidence": [
+            {
+              "path": "tests/next_sections/wiki/wiki_e2e_test.go",
+              "scope": "Static source review only; NOT executed. TestWikiPaginationArtifactAndCycle verifies repeated-cycle stop, warning, artifact has_more and one-page explicit token behavior.",
+              "sha256": "36096107fe48ab106f079101d40667fe8e6a47b56c3164bf70178473731b015f",
+              "tested_revision": "not_executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            }
+          ],
+          "findings": [],
+          "verdict": "approved_offline",
+          "limitations": [
+            "Static source/test review only; no tests executed by this reviewer."
+          ]
+        },
+        {
+          "path": "shortcuts/wiki/wiki_space_list.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "3d2de4195a2496fe90e7530beb271ac21de100506592b03585e5dd6c127651da",
+          "review_scope": "Full import-to-checkpoint diff and affected implementation/caller context; entire new implementation where applicable.",
+          "analysis": "Visited-token set bounds non-adjacent cycles; successful bounded partial result retains has_more/page_token. Existing space projection and page-limit behavior unchanged.",
+          "evidence": [
+            {
+              "path": "tests/next_sections/wiki/wiki_e2e_test.go",
+              "scope": "Static source review only; NOT executed. TestWikiPaginationArtifactAndCycle verifies repeated-cycle stop, warning, artifact has_more and one-page explicit token behavior.",
+              "sha256": "36096107fe48ab106f079101d40667fe8e6a47b56c3164bf70178473731b015f",
+              "tested_revision": "not_executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            }
+          ],
+          "findings": [],
+          "verdict": "approved_offline",
+          "limitations": [
+            "Static source/test review only; no tests executed by this reviewer."
+          ]
+        },
+        {
+          "path": "tests/cli_e2e/okr/okr_shortcuts_test.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "d4285f31e7b618727191c85dbf6e191ed4efd5d019691cdf198e922a10d110ba",
+          "review_scope": "Full import-to-checkpoint diff and affected implementation/caller context; entire new implementation where applicable.",
+          "analysis": "Only two whitespace-dependent assertions change to exact gjson user_id_type path assertions; objective/key-result method/path and field tests are retained.",
+          "evidence": [
+            {
+              "path": "tests/cli_e2e/okr/okr_shortcuts_test.go",
+              "scope": "Static source review only; NOT executed. Changed Objective_AllFields and KeyResult dry-run assertions address data.api.0.params.user_id_type with exact expected ID type.",
+              "sha256": "d4285f31e7b618727191c85dbf6e191ed4efd5d019691cdf198e922a10d110ba",
+              "tested_revision": "not_executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            }
+          ],
+          "findings": [],
+          "verdict": "approved_offline",
+          "limitations": [
+            "Static source/test review only; no tests executed by this reviewer."
+          ]
+        },
+        {
+          "path": "tests/cli_e2e/vc/coverage.md",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "bb6896994b5500e50e8181f3f45d652ec6b2d0fae96e79752bf1b44e569410c4",
+          "review_scope": "Full import-to-checkpoint diff and affected implementation/caller context; entire new implementation where applicable.",
+          "analysis": "Documentation links synthetic process evidence and explicitly separates historical live evidence from current authorization. Blocked live prerequisites remain a skip, never passing acceptance.",
+          "evidence": [
+            {
+              "path": "tests/next_sections/vc/vc_e2e_test.go",
+              "scope": "Static source review only; NOT executed. Inspected request equality for mutating workflows, unknown/rejection single dispatch and receipts, screenshot exact bytes/collision, 200-page bound and explicit blocked-live skip.",
+              "sha256": "971ee574858811b6069bbb9e58983e3f1925ec08bd5c10effe0e19088533bdc1",
+              "tested_revision": "not_executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            }
+          ],
+          "findings": [],
+          "verdict": "approved_offline",
+          "limitations": [
+            "Static source/test review only; no tests executed by this reviewer."
+          ]
+        },
+        {
+          "path": "tests/cli_e2e/whiteboard/whiteboard_export_dryrun_test.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "2c3eb3c026d72c6f19cc36a5725c5d729257eb24f452287ef9b8ba031edd4c61",
+          "review_scope": "Full import-to-checkpoint diff and affected implementation/caller context; entire new implementation where applicable.",
+          "analysis": "Only Regression suffix changes selector discoverability; required output selector validation assertions stay intact and do not dispatch live work.",
+          "evidence": [
+            {
+              "path": "tests/cli_e2e/whiteboard/whiteboard_export_dryrun_test.go",
+              "scope": "Static source review only; NOT executed. Renamed test asserts validation exit 2 for missing export/legacy selectors before auth.",
+              "sha256": "2c3eb3c026d72c6f19cc36a5725c5d729257eb24f452287ef9b8ba031edd4c61",
+              "tested_revision": "not_executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            }
+          ],
+          "findings": [],
+          "verdict": "approved_offline",
+          "limitations": [
+            "Static source/test review only; no tests executed by this reviewer."
+          ]
+        },
+        {
+          "path": "tests/cli_e2e/wiki/helpers_test.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "acd61c32f1837fe0265806bd733788cd84790f198522c3dca380b773a5357bf9",
+          "review_scope": "Full import-to-checkpoint diff and affected implementation/caller context; entire new implementation where applicable.",
+          "analysis": "Four test names gain Regression suffix only; backing-object versus shortcut deletion targets, node identity uncertainty and transient/deleted error classification retain exact assertions.",
+          "evidence": [
+            {
+              "path": "tests/cli_e2e/wiki/helpers_test.go",
+              "scope": "Static source review only; NOT executed. Inspected four renamed tests and their target/identity/transient/deleted cases. No helper behavior changes in diff.",
+              "sha256": "acd61c32f1837fe0265806bd733788cd84790f198522c3dca380b773a5357bf9",
+              "tested_revision": "not_executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            }
+          ],
+          "findings": [],
+          "verdict": "approved_offline",
+          "limitations": [
+            "Static source/test review only; no tests executed by this reviewer."
+          ]
+        },
+        {
+          "path": "shortcuts/okr/okr_pagination.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "5b426ee2375fe80482f98639fd00119af492f8fe1b1c0e1c58ceb0d8a5dfaf63",
+          "review_scope": "Full import-to-checkpoint diff and affected implementation/caller context; entire new implementation where applicable.",
+          "analysis": "Entire new implementation inspected. Final pages return nil; ongoing pages require a nonempty unseen opaque token, store it unchanged and return typed invalid_response with recovery hint otherwise.",
+          "evidence": [
+            {
+              "path": "shortcuts/okr/okr_pagination_test.go",
+              "scope": "Static source review only; NOT executed. Direct missing/repeated/final/opaque-token tests and known-position/known-weight no-op tests inspected via exact diff.",
+              "sha256": "8bfa1a58b1d7db62720071c06b1338bbb3af78dfeae324439caf10328fcfd14a",
+              "tested_revision": "not_executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            },
+            {
+              "path": "tests/next_sections/okr/okr_e2e_test.go",
+              "scope": "Static source review only; NOT executed. TestOKRPaginationFailurePreventsReplacement and TestOKRCompletePaginationKeepsOpaqueToken cover caller propagation and opaque token preservation.",
+              "sha256": "d992b496c371eff10db1a4f0e32750ee83de2756eff4511c64909854a892aa24",
+              "tested_revision": "not_executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            }
+          ],
+          "findings": [],
+          "verdict": "approved_offline",
+          "limitations": [
+            "Static source/test review only; no tests executed by this reviewer."
+          ]
+        }
+      ],
+      "cross_assignment_dependencies": [
+        {
+          "owner": "shared runtime/output/mutation receipts",
+          "paths": [
+            "shortcuts/common/read_request.go",
+            "shortcuts/common/runner.go",
+            "internal/cmdutil"
+          ],
+          "scope": "Watch lifecycle mutation marker, typed classification, all mutation receipt outcomes, artifact binding and retained no-op fields depend on shared owners. Only direct context marker inspected; no whole shared-owner approval implied."
+        },
+        {
+          "owner": "docs",
+          "paths": [
+            "shortcuts/whiteboard/whiteboard_update.go"
+          ],
+          "scope": "Docs compatibility whiteboard-update uses this same parser and command implementation."
+        }
+      ],
+      "limitations": [
+        "Required live/platform/release/evaluation gates remain separate.",
+        "No Go tests, process scenarios, live APIs, models or broad checks executed. Evidence is hash-bound static source review, not passing test evidence.",
+        "Reviewed exactly 20 manifest paths (19 changed-reference and one new implementation) at checkpoint, not later working-tree changes or all repository code.",
+        "Inherited typed domain projections are preserved; arbitrary unknown fields and decimal precision in preexisting OKR float64 models are not claimed as raw lossless output.",
+        "Wiki intentionally retains bounded partial-success semantics with has_more:true and warning rather than generic page-all failure semantics; this is pinned by its domain process test.",
+        "Existing collection decoders still do not universally validate null/missing items or duplicate identities; the newly introduced reorder panic is recorded as actionable."
+      ]
+    },
+    {
+      "schema_version": 1,
+      "assignment_id": "minutes_slides",
+      "reviewer": "/root/p3_domain_review/minutes_task_review",
+      "verdict": "approved_offline",
+      "paths": [
+        {
+          "path": "shortcuts/minutes/minutes_detail.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "1275a3264d941df055d3efce6ba77b17e1fda4f1cc7c9f6f3cc0efbc0bb77b25",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "shortcuts/minutes/minutes_detail.go",
+              "sha256": "1275a3264d941df055d3efce6ba77b17e1fda4f1cc7c9f6f3cc0efbc0bb77b25",
+              "tested_revision": "unbound: not executed; static source inspected at 0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static semantic inspection of exact checkpoint blob and complete import-to-checkpoint diff (new files read in full). Transcript save failures now set per-item error and cause mixed batches to emit complete partial output; path validation precedes Stat/Save, existing files remain preserved, directories fail, and title truncation respects UTF-8. Empty token lists fail validation."
+            },
+            {
+              "path": "tests/next_sections/minutes/minutes_e2e_test.go",
+              "sha256": "26f1f9e4b0b655d4922931eead128eaa58516a3b17d504e749e696c67ad18f47",
+              "tested_revision": "unbound: not executed; static source inspected at 0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static test/document inspection only; not executed. TestDetailArtifactsFilesAndFailures asserts exact transcript bytes, collision/overwrite behavior, mixed ACL failure, readiness status and local save failure."
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "shortcuts/minutes/minutes_download.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "53bf0f26b769028ff81ca73d7432e4230ccdc24fedf69c8e9f44185bd32967b0",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "shortcuts/minutes/minutes_download.go",
+              "sha256": "53bf0f26b769028ff81ca73d7432e4230ccdc24fedf69c8e9f44185bd32967b0",
+              "tested_revision": "unbound: not executed; static source inspected at 0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static semantic inspection of exact checkpoint blob and complete import-to-checkpoint diff (new files read in full). Mixed download batches now retain every result with a nonzero partial result; single-download behavior and download bytes/path handling are unchanged."
+            },
+            {
+              "path": "shortcuts/minutes/minutes_download_test.go",
+              "sha256": "6167a29cd2053cccc0646ad33144964bfcf286eaaa98c8ffa10b315a64854882",
+              "tested_revision": "unbound: not executed; static source inspected at 0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static test/document inspection only; not executed. TestDownload_Batch_PartialFailure and DuplicateToken now require PartialFailureError; full-download and overwrite assertions remain."
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "shortcuts/minutes/minutes_download_test.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "6167a29cd2053cccc0646ad33144964bfcf286eaaa98c8ffa10b315a64854882",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "shortcuts/minutes/minutes_download_test.go",
+              "sha256": "6167a29cd2053cccc0646ad33144964bfcf286eaaa98c8ffa10b315a64854882",
+              "tested_revision": "unbound: not executed; static source inspected at 0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static semantic inspection of exact checkpoint blob and complete import-to-checkpoint diff (new files read in full). Read every changed test hunk: RFC5737 endpoints remove DNS dependence while the external request-class test explicitly starts with platform intent; mixed and duplicate batches assert partial failure."
+            },
+            {
+              "path": "tests/next_sections/minutes/minutes_e2e_test.go",
+              "sha256": "26f1f9e4b0b655d4922931eead128eaa58516a3b17d504e749e696c67ad18f47",
+              "tested_revision": "unbound: not executed; static source inspected at 0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static test/document inspection only; not executed. TestDownloadMediaAndBatch uses a local non-forwarding proxy sink and checks exact binary bytes, collisions, overwrite and complete mixed results."
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "shortcuts/minutes/minutes_speaker_replace.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "ddffc93abffeebf4f1745ac64bbc442d1e368abfcbfe9c640dd457492dce1423",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "shortcuts/minutes/minutes_speaker_replace.go",
+              "sha256": "ddffc93abffeebf4f1745ac64bbc442d1e368abfcbfe9c640dd457492dce1423",
+              "tested_revision": "unbound: not executed; static source inspected at 0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static semantic inspection of exact checkpoint blob and complete import-to-checkpoint diff (new files read in full). Recovery now requires the opaque transcript speaker ID instead of treating a display name as an identifier; existing error code/subtype and original typed error remain."
+            },
+            {
+              "path": "shortcuts/minutes/minutes_speaker_replace_test.go",
+              "sha256": "d6b600d1680736efa972d60153ca03b8a5c823121820f40c2f8a83743d381e50",
+              "tested_revision": "unbound: not executed; static source inspected at 0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static test/document inspection only; not executed. SpeakerNotFound checks typed not_found and recovery flag; Execute and dry-run tests retain legacy from-user-id and native speaker-ID request variants."
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "shortcuts/minutes/minutes_summary.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "ee617062a88ad8fee66e4057875eadce111c57ace97bdfa105c178866118b3e4",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "shortcuts/minutes/minutes_summary.go",
+              "sha256": "ee617062a88ad8fee66e4057875eadce111c57ace97bdfa105c178866118b3e4",
+              "tested_revision": "unbound: not executed; static source inspected at 0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static semantic inspection of exact checkpoint blob and complete import-to-checkpoint diff (new files read in full). Accepted summary bytes now survive execution and dry-run unchanged; opt-in equality requires artifact scope, absent comparison data fails before write, and ordinary writes retain scope/behavior."
+            },
+            {
+              "path": "tests/next_sections/minutes/minutes_e2e_test.go",
+              "sha256": "26f1f9e4b0b655d4922931eead128eaa58516a3b17d504e749e696c67ad18f47",
+              "tested_revision": "unbound: not executed; static source inspected at 0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static test/document inspection only; not executed. TestMutationBodiesAndNoop/summary checks file whitespace, zero writes/receipts for equality, default direct write; TestSkipUnchangedFailsClosedOnUnreadableContent checks failed reads."
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "shortcuts/minutes/minutes_todo.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "585e6a32c6cecb4b5611965b32f89486f03c02d2ae31b4f7d76fe86fd4d9d8c5",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "shortcuts/minutes/minutes_todo.go",
+              "sha256": "585e6a32c6cecb4b5611965b32f89486f03c02d2ae31b4f7d76fe86fd4d9d8c5",
+              "tested_revision": "unbound: not executed; static source inspected at 0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static semantic inspection of exact checkpoint blob and complete import-to-checkpoint diff (new files read in full). Content whitespace is preserved while nonempty validation remains; equality only accepts distinct update IDs with explicit boolean/content and never suppresses add/delete effects."
+            },
+            {
+              "path": "shortcuts/minutes/minutes_preservation_test.go",
+              "sha256": "354baf8b9e4b3e5822443088d5ee40216e20f5ff5fbe8d2912de6c17529e3f82",
+              "tested_revision": "unbound: not executed; static source inspected at 0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static test/document inspection only; not executed. TestMinutesReplacementPreservesContent checks exact strings and TestMinutesSkipUnchanged includes false completion and leading-zero todo ID; process tests additionally cover ordered add/update/delete."
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "shortcuts/minutes/minutes_update.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "31249860456c83b481f76b515000a4a2bf6da74948b2b2c988c4228b2c9bfede",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "shortcuts/minutes/minutes_update.go",
+              "sha256": "31249860456c83b481f76b515000a4a2bf6da74948b2b2c988c4228b2c9bfede",
+              "tested_revision": "unbound: not executed; static source inspected at 0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static semantic inspection of exact checkpoint blob and complete import-to-checkpoint diff (new files read in full). Optional title equality preserves exact topic bytes, leaves ordinary required write scope unchanged and emits observed unchanged status without write."
+            },
+            {
+              "path": "tests/next_sections/minutes/minutes_e2e_test.go",
+              "sha256": "26f1f9e4b0b655d4922931eead128eaa58516a3b17d504e749e696c67ad18f47",
+              "tested_revision": "unbound: not executed; static source inspected at 0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static test/document inspection only; not executed. TestReplacementReadback verifies changed title via a separate GET and then a no-write repeat; TestMutationBodiesAndNoop/update checks dry-run and optional read."
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "shortcuts/minutes/minutes_word_replace.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "f41820237887b9aa0c86b5f7b4eaa648038e60f3aa91c0ad020f5a22a9642cd8",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "shortcuts/minutes/minutes_word_replace.go",
+              "sha256": "f41820237887b9aa0c86b5f7b4eaa648038e60f3aa91c0ad020f5a22a9642cd8",
+              "tested_revision": "unbound: not executed; static source inspected at 0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static semantic inspection of exact checkpoint blob and complete import-to-checkpoint diff (new files read in full). Source spacing and empty target deletion intent are preserved; omitted/null target fails; typed count projection rejects absent/malformed/duplicate/negative outcomes and distinguishes unknown requested words from zero counts. Mixed outcomes emit full structured partial result with retry guidance."
+            },
+            {
+              "path": "shortcuts/minutes/minutes_preservation_test.go",
+              "sha256": "354baf8b9e4b3e5822443088d5ee40216e20f5ff5fbe8d2912de6c17529e3f82",
+              "tested_revision": "unbound: not executed; static source inspected at 0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static test/document inspection only; not executed. Tests cover omitted/null versus empty target, exact source spacing, malformed/duplicate counts and exact 9007199254740993 string count. Process TestWordReplaceOutcomes inspects applied/mixed/missing/incomplete/zero results and one dispatch."
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "shortcuts/minutes/minutes_word_replace_test.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "c50e428d300d7750c3f758f9029c9b17ad26e202e793470cc7445ccd54ca84bc",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "shortcuts/minutes/minutes_word_replace_test.go",
+              "sha256": "c50e428d300d7750c3f758f9029c9b17ad26e202e793470cc7445ccd54ca84bc",
+              "tested_revision": "unbound: not executed; static source inspected at 0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static semantic inspection of exact checkpoint blob and complete import-to-checkpoint diff (new files read in full). Changed partial-result test now asserts PartialFailureError and ok:false while retaining both requested word outcomes and the do-not-retry-succeeded message."
+            },
+            {
+              "path": "tests/next_sections/minutes/minutes_e2e_test.go",
+              "sha256": "26f1f9e4b0b655d4922931eead128eaa58516a3b17d504e749e696c67ad18f47",
+              "tested_revision": "unbound: not executed; static source inspected at 0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static test/document inspection only; not executed. TestWordReplaceOutcomes covers production receipt integration and no automatic replay for mixed, absent, incomplete and all-zero outcomes."
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "shortcuts/slides/slides_replace_pages.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "35507c387d5aa58749b6668c188302c4b36e69fb423cfda27984ea189dbd84e5",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "shortcuts/slides/slides_replace_pages.go",
+              "sha256": "35507c387d5aa58749b6668c188302c4b36e69fb423cfda27984ea189dbd84e5",
+              "tested_revision": "unbound: not executed; static source inspected at 0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static semantic inspection of exact checkpoint blob and complete import-to-checkpoint diff (new files read in full). Stop-on-error after observed effects now emits old/new IDs, page status and summary before returning the original typed failure. Output failure is checked separately. Create-before-delete ordering and continue-on-error behavior remain."
+            },
+            {
+              "path": "shortcuts/slides/slides_replace_pages_test.go",
+              "sha256": "4e03cf3f7073574406357dd20be016d8beb7c1335c0abee836d1fbc97a2de9b0",
+              "tested_revision": "unbound: not executed; static source inspected at 0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static test/document inspection only; not executed. Added StopAfterDeleteFailure tests assert original API code/recovery IDs and structured ok:false/delete_failed output; process TestReplacementDeleteFailureRecovery checks stop/continue dispatch ordering and partial exit."
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "shortcuts/slides/slides_replace_pages_test.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "4e03cf3f7073574406357dd20be016d8beb7c1335c0abee836d1fbc97a2de9b0",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "shortcuts/slides/slides_replace_pages_test.go",
+              "sha256": "4e03cf3f7073574406357dd20be016d8beb7c1335c0abee836d1fbc97a2de9b0",
+              "tested_revision": "unbound: not executed; static source inspected at 0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static semantic inspection of exact checkpoint blob and complete import-to-checkpoint diff (new files read in full). Both added tests establish created replacement identity survives delete failure in typed recovery metadata and structured stdout; existing fixtures isolate configuration."
+            },
+            {
+              "path": "tests/next_sections/slides/slides_e2e_test.go",
+              "sha256": "ceb5db61eeacc4c6fb0db70abfe0940df5d8ae1cfeebd5cf4bc4ce8b2aa13a8c",
+              "tested_revision": "unbound: not executed; static source inspected at 0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static test/document inspection only; not executed. TestReplacementDeleteFailureRecovery checks old1/new1/delete_failed outside hints and exact POST/DELETE sequence for both stop and continue."
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "shortcuts/slides/slides_update_slide.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "1c4832c26c1d42eae7cff13b66ea442f3f842f23267d20b64854858ee1f8bcd6",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "shortcuts/slides/slides_update_slide.go",
+              "sha256": "1c4832c26c1d42eae7cff13b66ea442f3f842f23267d20b64854858ee1f8bcd6",
+              "tested_revision": "unbound: not executed; static source inspected at 0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static semantic inspection of exact checkpoint blob and complete import-to-checkpoint diff (new files read in full). Opt-in latest-page comparison adds conditional read scope and GET preview; pinned revision, tid and local image placeholders remain explicit effects. New no-op path reuses existing full XML preparation and returns observed revision/resource identity."
+            },
+            {
+              "path": "shortcuts/slides/slides_unchanged_test.go",
+              "sha256": "c4de164fe6a451fb3fbde1b53fa958b308ff4dc6d3c688742837d13aecdafb16",
+              "tested_revision": "unbound: not executed; static source inspected at 0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static test/document inspection only; not executed. Three tests cover rich identical XML, wrong target and missing revision; process tests check changed rich XML, transaction bypass, read failure and zero dry-run dispatch."
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "shortcuts/slides/slides_update_slide_test.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "d1c7f2853620286db102a50a663504a2f3e0ce65280d417968c6df26befdf461",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "shortcuts/slides/slides_update_slide_test.go",
+              "sha256": "d1c7f2853620286db102a50a663504a2f3e0ce65280d417968c6df26befdf461",
+              "tested_revision": "unbound: not executed; static source inspected at 0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static semantic inspection of exact checkpoint blob and complete import-to-checkpoint diff (new files read in full). Declared-scope expectation adds only optional Slides read scope while ordinary required scopes remain pinned."
+            },
+            {
+              "path": "shortcuts/slides/slides_update_slide_test.go",
+              "sha256": "d1c7f2853620286db102a50a663504a2f3e0ce65280d417968c6df26befdf461",
+              "tested_revision": "unbound: not executed; static source inspected at 0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static test/document inspection only; not executed. TestUpdateSlideDeclaredScopes distinguishes required write alternatives from declared optional wiki/media/read scopes."
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "tests/cli_e2e/slides/coverage.md",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "9cea5634a5a395efeaebc14ccef4bdea73b8f7393e140ed8496ae748941bcb1d",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "tests/cli_e2e/slides/coverage.md",
+              "sha256": "9cea5634a5a395efeaebc14ccef4bdea73b8f7393e140ed8496ae748941bcb1d",
+              "tested_revision": "unbound: not executed; static source inspected at 0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static semantic inspection of exact checkpoint blob and complete import-to-checkpoint diff (new files read in full). Read complete changed prose: replaces misleading seven-command 100% coverage with explicit selected-workflow scope, 14 shortcuts/11 generated leaves, and no live-execution claim; corrected frozen delete-risk comparison."
+            },
+            {
+              "path": "docs/sections/slides.md",
+              "sha256": "e5879c591acdf404fda04326c3791727abff5e11de3f8bfcf40a2ea14729ef64",
+              "tested_revision": "unbound: not executed; static source inspected at 0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static test/document inspection only; not executed. Complete mapping enumerates 14 shortcuts (including hidden alias), 11 generated leaves, ordinary delete risk and outstanding live boundary."
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "shortcuts/minutes/minutes_unchanged.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "d9f0985fe2660dd8113ecd6f84ff8d636e81e9849812e876c40e834770fddb0b",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "shortcuts/minutes/minutes_unchanged.go",
+              "sha256": "d9f0985fe2660dd8113ecd6f84ff8d636e81e9849812e876c40e834770fddb0b",
+              "tested_revision": "unbound: not executed; static source inspected at 0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static semantic inspection of exact checkpoint blob and complete import-to-checkpoint diff (new files read in full). Read full new implementation. Title/summary require present string values; todo equality requires one matching ID and present content/boolean. Duplicate IDs and missing comparison shapes cannot produce a no-op. Reads use runtime and typed responses; comparison is an observation without concurrency protection."
+            },
+            {
+              "path": "shortcuts/minutes/minutes_preservation_test.go",
+              "sha256": "354baf8b9e4b3e5822443088d5ee40216e20f5ff5fbe8d2912de6c17529e3f82",
+              "tested_revision": "unbound: not executed; static source inspected at 0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static test/document inspection only; not executed. TestMinutesSkipUnchanged exercises each helper; process tests cover unreadable summary and changed-title readback. No test directly exercises duplicate todo response IDs or missing todo boolean; those guards were inspected statically."
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "shortcuts/slides/slides_unchanged.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "610d23b50f43ec405cdf1f3459d1d7080286fe99e10b74509ad1c84d16565dd4",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "shortcuts/slides/slides_unchanged.go",
+              "sha256": "610d23b50f43ec405cdf1f3459d1d7080286fe99e10b74509ad1c84d16565dd4",
+              "tested_revision": "unbound: not executed; static source inspected at 0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static semantic inspection of exact checkpoint blob and complete import-to-checkpoint diff (new files read in full). Read full new implementation. Latest GET must supply nonnegative revision, exact returned slide ID and matching XML root. Complete XML string comparison preserves rich content and uses only existing note-ID normalization."
+            },
+            {
+              "path": "shortcuts/slides/slides_unchanged_test.go",
+              "sha256": "c4de164fe6a451fb3fbde1b53fa958b308ff4dc6d3c688742837d13aecdafb16",
+              "tested_revision": "unbound: not executed; static source inspected at 0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static test/document inspection only; not executed. Rich XML equality, mismatched read identity and absent revision tests; process lifecycle checks element-rich content and changed replacement."
+            }
+          ],
+          "findings": []
+        }
+      ],
+      "cross_assignment_dependencies": [
+        {
+          "assignment_id": "mutation_receipts",
+          "scope": "Shared classification controls partial/unknown command exit and receipt recovery; domain source and written process assertions inspected, no independent execution or whole shared-owner approval here."
+        },
+        {
+          "assignment_id": "output_artifacts",
+          "scope": "Shared projection must retain identity, unchanged/partial status, counts and recovery; domain process assertions inspected. Common API response decoder UseNumber is required for numeric preservation."
+        },
+        {
+          "assignment_id": "invocation_identity",
+          "scope": "Runtime EnsureScopes, effective identity and invocation FileIO remain shared owners. Task GET write-scope compatibility is documented by frozen section contract; optional Minutes/Slides read scope declarations inspected."
+        }
+      ],
+      "limitations": [
+        "Exact base 0c1ac7570543db3117ba5bdc6a66b69f87c4a62e to checkpoint 0084501742edb1ee87bdf9623adf7da37267f142 review; all assigned manifest SHA-256 values verified from git show bytes. Later remediation is outside this immutable verdict.",
+        "All evidence from tests is STATIC SOURCE INSPECTION ONLY. No unit/process/broad tests, live API calls, model evaluation or acceptance gates executed. Owner report run claims were not independently reproduced.",
+        "Required live/platform/release/evaluation gates remain separate. Equality reads are observations, not concurrency guarantees.",
+        "Review covers 16 minutes_slides paths or 13 task_note paths assigned by manifest; cross-owner implementations and full repository are not approved by this report."
+      ]
+    },
+    {
+      "schema_version": 1,
+      "assignment_id": "task_note",
+      "reviewer": "/root/p3_domain_review/minutes_task_review",
+      "verdict": "changes_requested",
+      "paths": [
+        {
+          "path": "shortcuts/note/note_transcript.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "18fd0fe6e5a780131c1b683699d47c1ae11e8bf180777b252f91f1229ed28419",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "shortcuts/note/note_transcript.go",
+              "sha256": "18fd0fe6e5a780131c1b683699d47c1ae11e8bf180777b252f91f1229ed28419",
+              "tested_revision": "unbound: not executed; static source inspected at 0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static semantic inspection of exact checkpoint blob and complete import-to-checkpoint diff (new files read in full). Typed page projection preserves chunk bytes and empty intermediate chunks, rejects missing/non-string content and non-boolean present has_more; omitted has_more retains legacy terminal behavior. Existing bounded cursor loop saves only after complete success."
+            },
+            {
+              "path": "tests/next_sections/note/note_e2e_test.go",
+              "sha256": "bf547285f111d99bb639b0a5d31474bbd727eb355390cbcbf5b995419d17e12c",
+              "tested_revision": "unbound: not executed; static source inspected at 0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static test/document inspection only; not executed. FormatsPaginationAndOverwrite checks Unicode, spaces, empty middle page and 64-bit string cursor; FailuresDoNotSavePartialContent checks malformed second page, permission/cursor failures and preserved existing destination."
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "shortcuts/note/note_transcript_test.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "9199f1e45bbd2ea4bda89a6d6c27b2e82bb13bc72d65d53d69f9778507155fe0",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "shortcuts/note/note_transcript_test.go",
+              "sha256": "9199f1e45bbd2ea4bda89a6d6c27b2e82bb13bc72d65d53d69f9778507155fe0",
+              "tested_revision": "unbound: not executed; static source inspected at 0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static semantic inspection of exact checkpoint blob and complete import-to-checkpoint diff (new files read in full). Added unit matrix distinguishes empty from absent/null/non-string chunks and validates boolean pagination metadata while preserving the exact cursor string and omitted terminal behavior."
+            },
+            {
+              "path": "shortcuts/note/note_transcript_test.go",
+              "sha256": "9199f1e45bbd2ea4bda89a6d6c27b2e82bb13bc72d65d53d69f9778507155fe0",
+              "tested_revision": "unbound: not executed; static source inspected at 0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static test/document inspection only; not executed. TestParseTranscriptPagePreservesContentAndRejectsMalformedFields asserts typed internal/invalid_response for malformed values in both supported formats."
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "shortcuts/task/shortcuts.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "f9a4f3efcc17f8c5aff1f3af8be7c697146753de91aa17ae0b1e3304ec51fbfe",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "shortcuts/task/shortcuts.go",
+              "sha256": "f9a4f3efcc17f8c5aff1f3af8be7c697146753de91aa17ae0b1e3304ec51fbfe",
+              "tested_revision": "unbound: not executed; static source inspected at 0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static semantic inspection of exact checkpoint blob and complete import-to-checkpoint diff (new files read in full). Create now decodes generic object through UseNumber, rejects invalid object before dispatch, and explicit empty flags override generic data instead of silently retaining it. Existing member, due, list and idempotency assembly remains."
+            },
+            {
+              "path": "shortcuts/task/task_input_test.go",
+              "sha256": "5a983524f9a8f786209c74ecd0e07ea9f882f2b272dec32d83f2f081815c2c3a",
+              "tested_revision": "unbound: not executed; static source inspected at 0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static test/document inspection only; not executed. Object tests preserve exact large number/empty/null; CreateExplicitFlagsOverrideDataEvenWhenEmpty checks description clear and refusal of explicit empty summary."
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "shortcuts/task/task_output_test.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "9665660922b7811a591efda79548d76ebfaaa5367fc604195f42407d06cfe6b2",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "shortcuts/task/task_output_test.go",
+              "sha256": "9665660922b7811a591efda79548d76ebfaaa5367fc604195f42407d06cfe6b2",
+              "tested_revision": "unbound: not executed; static source inspected at 0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static semantic inspection of exact checkpoint blob and complete import-to-checkpoint diff (new files read in full). Added reopen GET fixture supplies a completed task so existing PATCH output assertions still reach the mutation branch after new preflight."
+            },
+            {
+              "path": "shortcuts/task/task_output_test.go",
+              "sha256": "9665660922b7811a591efda79548d76ebfaaa5367fc604195f42407d06cfe6b2",
+              "tested_revision": "unbound: not executed; static source inspected at 0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static test/document inspection only; not executed. TestTaskRootOutputFields/reopen continues asserting server-returned resource and standard task fields."
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "shortcuts/task/task_reminder.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "b26a9f45613369d7ccff71396b4c3f0a2cfe5d069413fab10834a5ad1949d86d",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "shortcuts/task/task_reminder.go",
+              "sha256": "b26a9f45613369d7ccff71396b4c3f0a2cfe5d069413fab10834a5ad1949d86d",
+              "tested_revision": "unbound: not executed; static source inspected at 0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static semantic inspection of exact checkpoint blob and complete import-to-checkpoint diff (new files read in full). Duration validation runs before GET and rejects negative/overflow input; exact single present matching reminder becomes a no-op, while changed sets retain remove-then-add effects. Existing GET accepts frozen write scope."
+            },
+            {
+              "path": "shortcuts/task/task_replacement_test.go",
+              "sha256": "cfe31e8592d6ea221005400f534cf9c8ebd9e6ef30033d66b5b52731dbade4a8",
+              "tested_revision": "unbound: not executed; static source inspected at 0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static test/document inspection only; not executed. TestTaskReplacementSkipsWriteWhenUnchanged includes one matching reminder and requires unchanged:true without mutation stub; process invalid-input test covers negative duration. Overflow branch inspected, not directly covered by identified tests."
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "shortcuts/task/task_reopen.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "7b9feb28d3a07977ad26b33cafefd5203c0866a09d861ac30479f18829ecbad3",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "shortcuts/task/task_reopen.go",
+              "sha256": "7b9feb28d3a07977ad26b33cafefd5203c0866a09d861ac30479f18829ecbad3",
+              "tested_revision": "unbound: not executed; static source inspected at 0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static semantic inspection of exact checkpoint blob and complete import-to-checkpoint diff (new files read in full). New current GET precedes PATCH; only explicitly present completed_at equal to string zero suppresses reopen. Output carries unchanged marker and original server identity/fields."
+            },
+            {
+              "path": "tests/next_sections/task/task_e2e_test.go",
+              "sha256": "5936e349ee730aae38548fb91e6b8e9a9f6210dff3b5a54f8dacb43f0c2c6e2d",
+              "tested_revision": "unbound: not executed; static source inspected at 0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static test/document inspection only; not executed. TestReplacementLifecycleAndClear checks repeated complete/reopen write counts and reopen dry-run; unit replacement test checks unchanged reopen."
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "shortcuts/task/task_update.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "92a3133eb38aef882004509e9ad915932f121cf6c639b1321487ff4f68db0ffe",
+          "verdict": "changes_requested",
+          "evidence": [
+            {
+              "path": "shortcuts/task/task_update.go",
+              "sha256": "92a3133eb38aef882004509e9ad915932f121cf6c639b1321487ff4f68db0ffe",
+              "tested_revision": "unbound: not executed; static source inspected at 0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static semantic inspection of exact checkpoint blob and complete import-to-checkpoint diff (new files read in full). Update now validates body before dispatch, sorts generic update fields, preserves generic numeric tokens and explicit description clear, then compares only known replacement fields before full PATCH. A newly added validation param loses summary input provenance (finding below)."
+            },
+            {
+              "path": "tests/next_sections/task/task_e2e_test.go",
+              "sha256": "5936e349ee730aae38548fb91e6b8e9a9f6210dff3b5a54f8dacb43f0c2c6e2d",
+              "tested_revision": "unbound: not executed; static source inspected at 0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static test/document inspection only; not executed. TestReplacementLifecycleAndClear checks clear versus omission, no second write, GUID/confirmed/unchanged under projection. InvalidTasksNeverDispatch covers null whole object, but does not cover invalid summary inside --data or its error.param."
+            }
+          ],
+          "findings": [
+            {
+              "id": "P3-TASK-INPUT-PARAM",
+              "priority": 3,
+              "title": "Report --data for an invalid summary supplied inside JSON",
+              "line": 219,
+              "body": "For task +update --task-id task-1 --data '{\"summary\":null}' (also empty, whitespace or non-string summary), --summary was not supplied, but the new validation returns param=\"--summary\". The invalid field came from --data. AGENTS.md and errs/ERROR_CONTRACT.md require param to name the failing user input; machine recovery is pointed at the wrong option. Preserve input provenance and report --data unless an explicit --summary override supplied the invalid value.",
+              "evidence": "Static deterministic trace: parseTaskObject populates taskObj at lines 178-183; absent --summary leaves it untouched at 191-196; validation at 216-219 unconditionally uses --summary. No command or test executed.",
+              "test_gap": "task_input_test.go tests create explicit empty summary and update empty description, and task_e2e_test.go tests null entire objects; neither asserts error.param for invalid summary inside update --data. Add both JSON-origin and explicit-override cases."
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/task/task_update_test.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "59fd2ca4b14368f9d185aae0869009d3b8812dfce57065e32039c42ce0ac7ff8",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "shortcuts/task/task_update_test.go",
+              "sha256": "59fd2ca4b14368f9d185aae0869009d3b8812dfce57065e32039c42ce0ac7ff8",
+              "tested_revision": "unbound: not executed; static source inspected at 0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static semantic inspection of exact checkpoint blob and complete import-to-checkpoint diff (new files read in full). Changed dry-run assertions require GET/PATCH for each normalized task ID; added GET stubs keep original batch update/confirmed output assertions on the changed-write branch."
+            },
+            {
+              "path": "shortcuts/task/task_update_test.go",
+              "sha256": "59fd2ca4b14368f9d185aae0869009d3b8812dfce57065e32039c42ce0ac7ff8",
+              "tested_revision": "unbound: not executed; static source inspected at 0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static test/document inspection only; not executed. DryRunPreviewsEveryTaskID checks methods, routes, params and per-method bodies; NormalizesAllIDsAndReturnsConfirmedFields verifies batch server-confirmed fields."
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "shortcuts/task/tasklist_create.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "d62cb96778bd13358cdd43f2a7f6fe7cc165227ea36fa9566b994f4baafc6e3e",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "shortcuts/task/tasklist_create.go",
+              "sha256": "d62cb96778bd13358cdd43f2a7f6fe7cc165227ea36fa9566b994f4baafc6e3e",
+              "tested_revision": "unbound: not executed; static source inspected at 0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static semantic inspection of exact checkpoint blob and complete import-to-checkpoint diff (new files read in full). Every child object and nonempty string summary is validated before creating list; UseNumber preserves child numbers and app assignee shorthand uses existing member classifier. Concurrent child workflow and partial recovery remain unchanged."
+            },
+            {
+              "path": "shortcuts/task/task_input_test.go",
+              "sha256": "5a983524f9a8f786209c74ecd0e07ea9f882f2b272dec32d83f2f081815c2c3a",
+              "tested_revision": "unbound: not executed; static source inspected at 0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static test/document inspection only; not executed. TasklistRejectsEveryInvalidTaskBeforeWrites covers null arrays/items, missing/blank summaries and exact large number; process list-create asserts app member type and full numeric token."
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "tests/cli_e2e/note/note_dryrun_test.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "0dcdbd415c5819da2503a28c6ccbbb870cef8bbdefa744afd7d9aa77c7c9e656",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "tests/cli_e2e/note/note_dryrun_test.go",
+              "sha256": "0dcdbd415c5819da2503a28c6ccbbb870cef8bbdefa744afd7d9aa77c7c9e656",
+              "tested_revision": "unbound: not executed; static source inspected at 0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static semantic inspection of exact checkpoint blob and complete import-to-checkpoint diff (new files read in full). New dry-run case checks locale/format propagation and excludes local output/overwrite options from API params."
+            },
+            {
+              "path": "tests/cli_e2e/note/note_dryrun_test.go",
+              "sha256": "0dcdbd415c5819da2503a28c6ccbbb870cef8bbdefa744afd7d9aa77c7c9e656",
+              "tested_revision": "unbound: not executed; static source inspected at 0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static test/document inspection only; not executed. TestNoteTranscriptOptionsDryRun checks second request endpoint and ja_jp/markdown query values through CLI harness."
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "tests/cli_e2e/task/task_id_handling_dryrun_test.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "8a91eebc0354a694c85503d2d85f5f5b2cc16c6795f9e4549e663e3a12538027",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "tests/cli_e2e/task/task_id_handling_dryrun_test.go",
+              "sha256": "8a91eebc0354a694c85503d2d85f5f5b2cc16c6795f9e4549e663e3a12538027",
+              "tested_revision": "unbound: not executed; static source inspected at 0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static semantic inspection of exact checkpoint blob and complete import-to-checkpoint diff (new files read in full). Batch update expectation moves from two PATCHes to four GET/PATCH entries while preserving normalized endpoint and equal mutation payload assertions."
+            },
+            {
+              "path": "shortcuts/task/task_update_test.go",
+              "sha256": "59fd2ca4b14368f9d185aae0869009d3b8812dfce57065e32039c42ce0ac7ff8",
+              "tested_revision": "unbound: not executed; static source inspected at 0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static test/document inspection only; not executed. Package dry-run test additionally asserts all four methods/routes and matching query fields; legacy process test asserts PATCH entries 1 and 3."
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "shortcuts/task/task_input.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "c4fe1a98933949a5adfbe8e1de95c282e81074c63089f1ba2f6b59545189b8c4",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "shortcuts/task/task_input.go",
+              "sha256": "c4fe1a98933949a5adfbe8e1de95c282e81074c63089f1ba2f6b59545189b8c4",
+              "tested_revision": "unbound: not executed; static source inspected at 0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static semantic inspection of exact checkpoint blob and complete import-to-checkpoint diff (new files read in full). Read full new parser. UseNumber avoids float64 rounding, non-object/null input fails, and a second decoder read must yield EOF to reject trailing values; typed validation retains parser cause."
+            },
+            {
+              "path": "shortcuts/task/task_input_test.go",
+              "sha256": "5a983524f9a8f786209c74ecd0e07ea9f882f2b272dec32d83f2f081815c2c3a",
+              "tested_revision": "unbound: not executed; static source inspected at 0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static test/document inspection only; not executed. TestTaskObjectRejectsNonObjectsAndPreservesNumbers covers malformed/nonobject/trailing JSON and exact number/empty/null values."
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "shortcuts/task/task_replacement.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "7ca7dd2dde2a013d7cc203c835e4c6c4d227d432fefed53e1a3c1532713f7ff5",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "shortcuts/task/task_replacement.go",
+              "sha256": "7ca7dd2dde2a013d7cc203c835e4c6c4d227d432fefed53e1a3c1532713f7ff5",
+              "tested_revision": "unbound: not executed; static source inspected at 0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static semantic inspection of exact checkpoint blob and complete import-to-checkpoint diff (new files read in full). Read full new comparator. Explicit allowlist avoids member/custom-field/workflow no-ops; RawMessage preserves absent versus null/empty and bytewise serialized equality over requested fields only; unknown fields always write."
+            },
+            {
+              "path": "shortcuts/task/task_replacement_test.go",
+              "sha256": "cfe31e8592d6ea221005400f534cf9c8ebd9e6ef30033d66b5b52731dbade4a8",
+              "tested_revision": "unbound: not executed; static source inspected at 0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static test/document inspection only; not executed. KnownPresentEqualFields covers empty description equality, absent/null distinction, unsupported members and changed field; command test checks update/reopen/reminder unchanged dispatch behavior."
+            }
+          ],
+          "findings": []
+        }
+      ],
+      "cross_assignment_dependencies": [
+        {
+          "assignment_id": "mutation_receipts",
+          "scope": "Shared classification controls partial/unknown command exit and receipt recovery; domain source and written process assertions inspected, no independent execution or whole shared-owner approval here."
+        },
+        {
+          "assignment_id": "output_artifacts",
+          "scope": "Shared projection must retain identity, unchanged/partial status, counts and recovery; domain process assertions inspected. Common API response decoder UseNumber is required for numeric preservation."
+        },
+        {
+          "assignment_id": "invocation_identity",
+          "scope": "Runtime EnsureScopes, effective identity and invocation FileIO remain shared owners. Task GET write-scope compatibility is documented by frozen section contract; optional Minutes/Slides read scope declarations inspected."
+        }
+      ],
+      "limitations": [
+        "Exact base 0c1ac7570543db3117ba5bdc6a66b69f87c4a62e to checkpoint 0084501742edb1ee87bdf9623adf7da37267f142 review; all assigned manifest SHA-256 values verified from git show bytes. Later remediation is outside this immutable verdict.",
+        "All evidence from tests is STATIC SOURCE INSPECTION ONLY. No unit/process/broad tests, live API calls, model evaluation or acceptance gates executed. Owner report run claims were not independently reproduced.",
+        "Required live/platform/release/evaluation gates remain separate. Equality reads are observations, not concurrency guarantees.",
+        "Review covers 16 minutes_slides paths or 13 task_note paths assigned by manifest; cross-owner implementations and full repository are not approved by this report."
+      ]
+    }
+  ],
+  "supplemental_evidence": [
+    {
+      "path": "tests/next_sections/calendar/interruption_e2e_test.go",
+      "sha256": "8b152b318ee0e4820f5077d5d05134ddadc15c209f482338fd4c1cbc593d047f",
+      "review_revision": "90c7b8ccbb4dac504a428ff216b696e3c5ddabf8",
+      "tested_revision": "not executed by reviewer; test source statically inspected",
+      "scope": "Later test-only evidence separately inspected: waits for exception PATCH, observes unknown dispatch_started receipt before synthetic application, kills process, compares durable receipt, independently reads applied exception and asserts no retries/master/attendee continuation. Does not supersede source checkpoint or establish live acceptance."
+    }
+  ],
+  "limitations": [
+    "Static semantic review only; no test execution, live acceptance, model evaluation or release approval is claimed.",
+    "Exact immutable source checkpoint remains 0084501742edb1ee87bdf9623adf7da37267f142; later owner fixes require separate hash-bound review.",
+    "Assigned changed-reference diffs and full new implementations were assessed. Inherited unrelated implementation, generated catalog completeness, foundation mechanisms and platform/release/evaluation gates retain separate owners."
+  ],
+  "delegated_review_reports": [
+    {
+      "path": "docs/reference/reviews/p3-docs-drive-review.json",
+      "sha256": "cf9d7bcdc2819d0cfba45b6299dd2db3228c6d69f9875d366989314aff660c32",
+      "commit": "daf39f844a1ce44bde3c77e0c4f2c09eafa96297",
+      "scope": "Independent bounded static semantic review; copied assignment verdicts retain their reviewer identity."
+    },
+    {
+      "path": "docs/reference/reviews/p3-mail-misc-review.json",
+      "sha256": "de2b8eb08fa6d7857971634b200dbf93c19ad5ccbeb68061e39822dc953adb2b",
+      "commit": "e5f17f172c6554a466072c569c4ec019ef93afd3",
+      "scope": "Independent bounded static semantic review; copied assignment verdicts retain their reviewer identity."
+    },
+    {
+      "path": "docs/reference/reviews/p3-minutes-task-review.json",
+      "sha256": "0fdc1b6ff5710f3b9dee58420967c35d422afdb9df5818dc4cbefbe5962d020f",
+      "commit": "42bf87c038c4c266abb2b52046911aaf2543c389",
+      "scope": "Independent bounded static semantic review; copied assignment verdicts retain their reviewer identity."
+    }
+  ],
+  "summary": {
+    "assignments": 7,
+    "paths": 81,
+    "approved_offline_paths": 79,
+    "changes_requested_paths": 2,
+    "incomplete_paths": 0,
+    "findings": [
+      "P3-MAIL-MISC-001: OKR reorder duplicate fetched IDs can panic in new no-op loops.",
+      "Task summary validation reports --summary even when invalid value was supplied through --data; see task_note per-path finding."
+    ]
+  }
+}
