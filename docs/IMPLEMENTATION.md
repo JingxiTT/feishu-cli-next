@@ -93,6 +93,18 @@ The following scenario queue stopped on a provider-rejected Base answer schema,
 before any Base CLI calls. Its nine starts retain unknown usage; the one completed
 Docs trial and its cost remain separately recorded in the
 [stopped-series report](../evaluation/evidence/scenarios-8d92e5/REPORT.md).
+The following [81-trial scenario series](../evaluation/evidence/scenarios-8d-schema02/REPORT.md)
+at `8d92e52` records 63 verified outcomes and 18 inconclusive outcomes after
+explicit interpretation reviews; frozen raw verdicts remain intact. Known usage
+is a lower bound of 12,201,326 tokens, including 2,282,405 from non-verified
+attempts; one attempt has incomplete accounting. Independent recount confirms
+three trials per arm/task, all 27 group token/API totals and full cached-input
+accounting. Of the five fully verified tasks, Next improves over both baselines
+on Drive, Sheets and Tasks, regresses against both on Base, and regresses against
+concise guidance on Markdown. Fixture corrections for Docs, Extensions and
+Packaging will receive separate balanced comparisons. Events retains an explicit
+missing-exit-proof limitation. Real data-size and generated-business comparisons
+are still running; no full-product efficiency claim follows from these results.
 Held-out trials have not run. A coordinator search exposed fragments of the Base
 and Sheets held-out prompts and one size field. The
 [exposure record](../evaluation/evidence/held-out-exposure.json) quarantines those
