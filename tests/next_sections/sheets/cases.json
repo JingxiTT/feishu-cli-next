@@ -1,0 +1,1494 @@
+[
+  {
+    "command": "+workbook-info",
+    "tool": "get_workbook_structure",
+    "args": [
+      "sheets",
+      "+workbook-info",
+      "--token",
+      "shtFixture"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+revision-get",
+    "tool": "get_workbook_structure",
+    "args": [
+      "sheets",
+      "+revision-get",
+      "--token",
+      "shtFixture"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+sheet-list",
+    "tool": "get_workbook_structure",
+    "args": [
+      "sheets",
+      "+sheet-list",
+      "--token",
+      "shtFixture"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+sheet-info",
+    "tool": "get_sheet_structure",
+    "args": [
+      "sheets",
+      "+sheet-info",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--include",
+      "all",
+      "--range",
+      "A1:C2"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+sheet-create",
+    "tool": "modify_workbook_structure",
+    "args": [
+      "sheets",
+      "+sheet-create",
+      "--token",
+      "shtFixture",
+      "--title",
+      "Synthetic 工作表",
+      "--row-count",
+      "100",
+      "--col-count",
+      "10",
+      "--index",
+      "0"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+sheet-copy",
+    "tool": "modify_workbook_structure",
+    "args": [
+      "sheets",
+      "+sheet-copy",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--title",
+      "Copied",
+      "--index",
+      "1"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+sheet-delete",
+    "tool": "modify_workbook_structure",
+    "args": [
+      "sheets",
+      "+sheet-delete",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+sheet-hide",
+    "tool": "modify_workbook_structure",
+    "args": [
+      "sheets",
+      "+sheet-hide",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+sheet-unhide",
+    "tool": "modify_workbook_structure",
+    "args": [
+      "sheets",
+      "+sheet-unhide",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+sheet-hide-gridline",
+    "tool": "modify_workbook_structure",
+    "args": [
+      "sheets",
+      "+sheet-hide-gridline",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+sheet-show-gridline",
+    "tool": "modify_workbook_structure",
+    "args": [
+      "sheets",
+      "+sheet-show-gridline",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+sheet-move",
+    "tool": "modify_workbook_structure",
+    "args": [
+      "sheets",
+      "+sheet-move",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--index",
+      "1",
+      "--source-index",
+      "0"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+sheet-rename",
+    "tool": "modify_workbook_structure",
+    "args": [
+      "sheets",
+      "+sheet-rename",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--title",
+      "Renamed 工作表"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+sheet-set-tab-color",
+    "tool": "modify_workbook_structure",
+    "args": [
+      "sheets",
+      "+sheet-set-tab-color",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--color",
+      "#112233"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+dim-insert",
+    "tool": "modify_sheet_structure",
+    "args": [
+      "sheets",
+      "+dim-insert",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--position",
+      "B",
+      "--count",
+      "2",
+      "--inherit-style",
+      "before"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+dim-delete",
+    "tool": "batch_update",
+    "args": [
+      "sheets",
+      "+dim-delete",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--ranges",
+      "[\"2:3\",\"7:8\"]"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+dim-freeze",
+    "tool": "modify_sheet_structure",
+    "args": [
+      "sheets",
+      "+dim-freeze",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--rows",
+      "1",
+      "--cols",
+      "2"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+dim-group",
+    "tool": "modify_sheet_structure",
+    "args": [
+      "sheets",
+      "+dim-group",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--range",
+      "2:4",
+      "--depth",
+      "1",
+      "--group-state",
+      "expand"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+dim-ungroup",
+    "tool": "modify_sheet_structure",
+    "args": [
+      "sheets",
+      "+dim-ungroup",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--range",
+      "2:4",
+      "--depth",
+      "1"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+dim-hide",
+    "tool": "modify_sheet_structure",
+    "args": [
+      "sheets",
+      "+dim-hide",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--range",
+      "B:D"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+dim-unhide",
+    "tool": "modify_sheet_structure",
+    "args": [
+      "sheets",
+      "+dim-unhide",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--range",
+      "B:D"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+dim-move",
+    "tool": "",
+    "args": [
+      "sheets",
+      "+dim-move",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--source-range",
+      "B:C",
+      "--target",
+      "F"
+    ],
+    "execute": false
+  },
+  {
+    "command": "+rows-resize",
+    "tool": "resize_range",
+    "args": [
+      "sheets",
+      "+rows-resize",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--range",
+      "1:3",
+      "--height",
+      "32"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+cols-resize",
+    "tool": "resize_range",
+    "args": [
+      "sheets",
+      "+cols-resize",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--range",
+      "A:C",
+      "--width",
+      "120"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+cells-get",
+    "tool": "get_cell_ranges",
+    "args": [
+      "sheets",
+      "+cells-get",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--range",
+      "A1:C2",
+      "--include",
+      "all",
+      "--max-chars",
+      "1000",
+      "--skip-hidden"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+csv-get",
+    "tool": "get_range_as_csv",
+    "args": [
+      "sheets",
+      "+csv-get",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--range",
+      "A1:C2",
+      "--max-chars",
+      "1000",
+      "--include-row-prefix",
+      "--skip-hidden"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+table-get",
+    "tool": "",
+    "args": [
+      "sheets",
+      "+table-get",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--range",
+      "A1:C2",
+      "--max-chars",
+      "1000"
+    ],
+    "execute": false
+  },
+  {
+    "command": "+dropdown-get",
+    "tool": "get_cell_ranges",
+    "args": [
+      "sheets",
+      "+dropdown-get",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--range",
+      "A1:C2"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+cond-format-result-get",
+    "tool": "get_cell_ranges",
+    "args": [
+      "sheets",
+      "+cond-format-result-get",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--range",
+      "A1:C2",
+      "--max-chars",
+      "1000"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+cells-set",
+    "tool": "set_cell_range",
+    "args": [
+      "sheets",
+      "+cells-set",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--range",
+      "A1:C2",
+      "--cells",
+      "[[\"原样\",0,false],[{},{\"formula\":\"=1+1\"},{\"value\":\"001\"}]]",
+      "--allow-overwrite"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+cells-clear",
+    "tool": "clear_cell_range",
+    "args": [
+      "sheets",
+      "+cells-clear",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--range",
+      "A1:C2",
+      "--scope",
+      "all"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+csv-put",
+    "tool": "set_range_from_csv",
+    "args": [
+      "sheets",
+      "+csv-put",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--start-cell",
+      "A1",
+      "--csv",
+      "name,value\n原样,001\n",
+      "--allow-overwrite"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+cells-merge",
+    "tool": "merge_cells",
+    "args": [
+      "sheets",
+      "+cells-merge",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--range",
+      "A1:B2",
+      "--merge-type",
+      "all"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+cells-unmerge",
+    "tool": "merge_cells",
+    "args": [
+      "sheets",
+      "+cells-unmerge",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--range",
+      "A1:B2"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+cells-set-style",
+    "tool": "set_cell_range",
+    "args": [
+      "sheets",
+      "+cells-set-style",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--range",
+      "A1:B1",
+      "--background-color",
+      "#112233",
+      "--font-weight",
+      "bold",
+      "--number-format",
+      "0.00"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+range-copy",
+    "tool": "transform_range",
+    "args": [
+      "sheets",
+      "+range-copy",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--source-range",
+      "A1:B2",
+      "--target-sheet-id",
+      "sh2",
+      "--target-range",
+      "C1:D2",
+      "--paste-type",
+      "all"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+range-move",
+    "tool": "transform_range",
+    "args": [
+      "sheets",
+      "+range-move",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--source-range",
+      "A1:B2",
+      "--target-sheet-id",
+      "sh2",
+      "--target-range",
+      "C1:D2"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+range-fill",
+    "tool": "transform_range",
+    "args": [
+      "sheets",
+      "+range-fill",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--source-range",
+      "A1:A2",
+      "--target-range",
+      "A1:A6",
+      "--series-type",
+      "auto"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+range-sort",
+    "tool": "transform_range",
+    "args": [
+      "sheets",
+      "+range-sort",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--range",
+      "A1:C10",
+      "--sort-keys",
+      "[{\"column\":\"B\",\"ascending\":false}]",
+      "--has-header"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+cells-search",
+    "tool": "search_data",
+    "args": [
+      "sheets",
+      "+cells-search",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--find",
+      "原.*",
+      "--range",
+      "A1:C10",
+      "--match-case",
+      "--regex",
+      "--include-formulas",
+      "--max-matches",
+      "5",
+      "--offset",
+      "2"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+cells-replace",
+    "tool": "replace_data",
+    "args": [
+      "sheets",
+      "+cells-replace",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--find",
+      "原样",
+      "--replacement",
+      "替换",
+      "--range",
+      "A1:C10",
+      "--match-entire-cell",
+      "--include-formulas"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+dropdown-set",
+    "tool": "set_cell_range",
+    "args": [
+      "sheets",
+      "+dropdown-set",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--range",
+      "A1:A2",
+      "--options",
+      "[\"一\",\"二\"]",
+      "--multiple",
+      "--highlight"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+dropdown-update",
+    "tool": "batch_update",
+    "args": [
+      "sheets",
+      "+dropdown-update",
+      "--token",
+      "shtFixture",
+      "--ranges",
+      "[\"sh1!A1:A2\"]",
+      "--options",
+      "[\"一\",\"二\"]"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+dropdown-delete",
+    "tool": "batch_update",
+    "args": [
+      "sheets",
+      "+dropdown-delete",
+      "--token",
+      "shtFixture",
+      "--ranges",
+      "[\"sh1!A1:A2\"]"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+cells-batch-clear",
+    "tool": "batch_update",
+    "args": [
+      "sheets",
+      "+cells-batch-clear",
+      "--token",
+      "shtFixture",
+      "--ranges",
+      "[\"sh1!A1:A2\",\"sh2!B1\"]",
+      "--scope",
+      "content"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+cells-batch-set-style",
+    "tool": "batch_update",
+    "args": [
+      "sheets",
+      "+cells-batch-set-style",
+      "--token",
+      "shtFixture",
+      "--ranges",
+      "[\"sh1!A1:A2\"]",
+      "--font-weight",
+      "bold"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+styles-put",
+    "tool": "batch_update",
+    "args": [
+      "sheets",
+      "+styles-put",
+      "--token",
+      "shtFixture",
+      "--styles",
+      "{\"styles\":[{\"name\":\"Sheet1\",\"freeze\":{\"rows\":1,\"cols\":2}}]}"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+batch-update",
+    "tool": "batch_update",
+    "args": [
+      "sheets",
+      "+batch-update",
+      "--token",
+      "shtFixture",
+      "--operations",
+      "[{\"shortcut\":\"+cells-set\",\"input\":{\"sheet_id\":\"sh1\",\"range\":\"A1\",\"cells\":[[42]]}},{\"shortcut\":\"+dim-freeze\",\"input\":{\"sheet_id\":\"sh1\",\"rows\":1,\"cols\":2}}]",
+      "--continue-on-error"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+batch-chart-create",
+    "tool": "batch_update",
+    "args": [
+      "sheets",
+      "+batch-chart-create",
+      "--token",
+      "shtFixture",
+      "--operations",
+      "[{\"sheet_id\":\"sh1\",\"chart_type\":\"line\",\"data_range\":\"A1:C10\",\"title\":\"趋势\"}]"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+batch-chart-update",
+    "tool": "batch_update",
+    "args": [
+      "sheets",
+      "+batch-chart-update",
+      "--token",
+      "shtFixture",
+      "--operations",
+      "[{\"shortcut\":\"+chart-config-update\",\"input\":{\"sheet_id\":\"sh1\",\"chart_id\":\"chart1\",\"title\":\"Updated\"}}]"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+chart-create",
+    "tool": "manage_chart_object",
+    "args": [
+      "sheets",
+      "+chart-create",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--properties",
+      "{\"type\":\"line\",\"position\":{\"row\":0,\"col\":\"A\"},\"size\":{\"width\":400,\"height\":300}}"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+chart-update",
+    "tool": "manage_chart_object",
+    "args": [
+      "sheets",
+      "+chart-update",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--chart-id",
+      "object1",
+      "--properties",
+      "{\"snapshot\":{\"plotArea\":{\"plot\":{\"labels\":{\"value\":true}}}}}"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+chart-delete",
+    "tool": "manage_chart_object",
+    "args": [
+      "sheets",
+      "+chart-delete",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--chart-id",
+      "object1"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+chart-list",
+    "tool": "get_chart_objects",
+    "args": [
+      "sheets",
+      "+chart-list",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--chart-id",
+      "object1"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+pivot-create",
+    "tool": "manage_pivot_table_object",
+    "args": [
+      "sheets",
+      "+pivot-create",
+      "--token",
+      "shtFixture",
+      "--properties",
+      "{\"rows\":[{\"field\":\"A\"}]}",
+      "--source",
+      "Sheet1!A1:C10",
+      "--target-sheet-id",
+      "sh2",
+      "--target-position",
+      "A1"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+pivot-update",
+    "tool": "manage_pivot_table_object",
+    "args": [
+      "sheets",
+      "+pivot-update",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--pivot-table-id",
+      "object1",
+      "--properties",
+      "{\"rows\":[{\"field\":\"A\"}]}"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+pivot-delete",
+    "tool": "manage_pivot_table_object",
+    "args": [
+      "sheets",
+      "+pivot-delete",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--pivot-table-id",
+      "object1"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+pivot-list",
+    "tool": "get_pivot_table_objects",
+    "args": [
+      "sheets",
+      "+pivot-list",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--pivot-table-id",
+      "object1"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+cond-format-create",
+    "tool": "manage_conditional_format_object",
+    "args": [
+      "sheets",
+      "+cond-format-create",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--properties",
+      "{\"attrs\":[{\"compare_type\":\"greaterThan\",\"value\":\"100\"}],\"style\":{\"back_color\":\"#FFD7D7\"}}",
+      "--rule-type",
+      "cellIs",
+      "--ranges",
+      "[\"A1:A10\"]"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+cond-format-update",
+    "tool": "manage_conditional_format_object",
+    "args": [
+      "sheets",
+      "+cond-format-update",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--rule-id",
+      "object1",
+      "--properties",
+      "{\"attrs\":[{\"compare_type\":\"greaterThan\",\"value\":\"100\"}],\"style\":{\"back_color\":\"#FFD7D7\"}}",
+      "--rule-type",
+      "cellIs",
+      "--ranges",
+      "[\"A1:A10\"]"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+cond-format-delete",
+    "tool": "manage_conditional_format_object",
+    "args": [
+      "sheets",
+      "+cond-format-delete",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--rule-id",
+      "object1"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+cond-format-list",
+    "tool": "get_conditional_format_objects",
+    "args": [
+      "sheets",
+      "+cond-format-list",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--rule-id",
+      "object1"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+filter-view-create",
+    "tool": "manage_filter_view_object",
+    "args": [
+      "sheets",
+      "+filter-view-create",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--properties",
+      "{\"view_name\":\"View\"}",
+      "--range",
+      "A1:C10"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+filter-view-update",
+    "tool": "manage_filter_view_object",
+    "args": [
+      "sheets",
+      "+filter-view-update",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--view-id",
+      "object1",
+      "--properties",
+      "{\"view_name\":\"Changed\"}"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+filter-view-delete",
+    "tool": "manage_filter_view_object",
+    "args": [
+      "sheets",
+      "+filter-view-delete",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--view-id",
+      "object1"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+filter-view-list",
+    "tool": "get_filter_view_objects",
+    "args": [
+      "sheets",
+      "+filter-view-list",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--view-id",
+      "object1"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+sparkline-create",
+    "tool": "manage_sparkline_object",
+    "args": [
+      "sheets",
+      "+sparkline-create",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--properties",
+      "{\"type\":\"line\",\"sparklines\":[{\"source\":\"Sheet1!A1:A10\",\"location\":\"B1\"}]}"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+sparkline-update",
+    "tool": "manage_sparkline_object",
+    "args": [
+      "sheets",
+      "+sparkline-update",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--group-id",
+      "object1",
+      "--properties",
+      "{\"type\":\"line\"}"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+sparkline-delete",
+    "tool": "manage_sparkline_object",
+    "args": [
+      "sheets",
+      "+sparkline-delete",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--group-id",
+      "object1"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+sparkline-list",
+    "tool": "get_sparkline_objects",
+    "args": [
+      "sheets",
+      "+sparkline-list",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--group-id",
+      "object1"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+filter-create",
+    "tool": "manage_filter_object",
+    "args": [
+      "sheets",
+      "+filter-create",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--range",
+      "A1:C10",
+      "--properties",
+      "{\"rules\":[]}"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+filter-update",
+    "tool": "manage_filter_object",
+    "args": [
+      "sheets",
+      "+filter-update",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--range",
+      "A1:C10",
+      "--properties",
+      "{\"rules\":[]}"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+filter-delete",
+    "tool": "manage_filter_object",
+    "args": [
+      "sheets",
+      "+filter-delete",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+filter-list",
+    "tool": "get_filter_objects",
+    "args": [
+      "sheets",
+      "+filter-list",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+float-image-create",
+    "tool": "manage_float_image_object",
+    "args": [
+      "sheets",
+      "+float-image-create",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--image-name",
+      "logo.png",
+      "--position-row",
+      "2",
+      "--position-col",
+      "D",
+      "--size-width",
+      "300",
+      "--size-height",
+      "200",
+      "--offset-row",
+      "1",
+      "--offset-col",
+      "2",
+      "--z-index",
+      "3",
+      "--image-token",
+      "synthetic-image"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+float-image-update",
+    "tool": "manage_float_image_object",
+    "args": [
+      "sheets",
+      "+float-image-update",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--float-image-id",
+      "image1",
+      "--image-name",
+      "logo.png",
+      "--position-row",
+      "2",
+      "--position-col",
+      "D",
+      "--size-width",
+      "300",
+      "--size-height",
+      "200",
+      "--offset-row",
+      "1",
+      "--offset-col",
+      "2",
+      "--z-index",
+      "3"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+float-image-delete",
+    "tool": "manage_float_image_object",
+    "args": [
+      "sheets",
+      "+float-image-delete",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--float-image-id",
+      "image1"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+float-image-list",
+    "tool": "get_float_image_objects",
+    "args": [
+      "sheets",
+      "+float-image-list",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--float-image-id",
+      "image1"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+chart-create-basic",
+    "tool": "manage_chart_object",
+    "args": [
+      "sheets",
+      "+chart-create-basic",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--chart-type",
+      "line",
+      "--data-range",
+      "A1:C10",
+      "--title",
+      "趋势",
+      "--smooth",
+      "--colors",
+      "#112233,#445566"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+chart-config-update",
+    "tool": "manage_chart_object",
+    "args": [
+      "sheets",
+      "+chart-config-update",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--chart-id",
+      "chart1",
+      "--title",
+      "Updated",
+      "--stacked=false",
+      "--smooth=false"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+chart-data-update",
+    "tool": "manage_chart_object",
+    "args": [
+      "sheets",
+      "+chart-data-update",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--chart-id",
+      "chart1",
+      "--data-range",
+      "A1:C10",
+      "--header-range",
+      "A1:C1"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+history-list",
+    "tool": "history_list",
+    "args": [
+      "sheets",
+      "+history-list",
+      "--token",
+      "shtFixture",
+      "--end-version",
+      "9"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+history-revert",
+    "tool": "history_revert",
+    "args": [
+      "sheets",
+      "+history-revert",
+      "--token",
+      "shtFixture",
+      "--history-version-id",
+      "history1"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+history-revert-status",
+    "tool": "history_revert_status",
+    "args": [
+      "sheets",
+      "+history-revert-status",
+      "--token",
+      "shtFixture",
+      "--transaction-id",
+      "transaction1"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+changeset-get",
+    "tool": "get_changeset",
+    "args": [
+      "sheets",
+      "+changeset-get",
+      "--token",
+      "shtFixture",
+      "--start-revision",
+      "1",
+      "--end-revision",
+      "3"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+formula-verify",
+    "tool": "verify_formula",
+    "args": [
+      "sheets",
+      "+formula-verify",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--range",
+      "A1:C10",
+      "--ai-only",
+      "--exit-on-error"
+    ],
+    "execute": true
+  },
+  {
+    "command": "+table-put",
+    "tool": "",
+    "args": [
+      "sheets",
+      "+table-put",
+      "--token",
+      "shtFixture",
+      "--sheets",
+      "{\"sheets\":[{\"name\":\"Sheet1\",\"columns\":[\"Header\"],\"data\":[[\"001\"]]}]}"
+    ],
+    "execute": false
+  },
+  {
+    "command": "+workbook-create",
+    "tool": "",
+    "args": [
+      "sheets",
+      "+workbook-create",
+      "--title",
+      "Private synthetic workbook",
+      "--values",
+      "[[\"A\",1]]"
+    ],
+    "execute": false
+  },
+  {
+    "command": "+workbook-export",
+    "tool": "",
+    "args": [
+      "sheets",
+      "+workbook-export",
+      "--token",
+      "shtFixture",
+      "--file-extension",
+      "xlsx",
+      "--output-path",
+      "export.xlsx"
+    ],
+    "execute": false
+  },
+  {
+    "command": "+workbook-import",
+    "tool": "",
+    "args": [
+      "sheets",
+      "+workbook-import",
+      "--file",
+      "input.csv",
+      "--name",
+      "Imported"
+    ],
+    "execute": false
+  },
+  {
+    "command": "+cells-set-image",
+    "tool": "",
+    "args": [
+      "sheets",
+      "+cells-set-image",
+      "--token",
+      "shtFixture",
+      "--sheet-id",
+      "sh1",
+      "--range",
+      "A1",
+      "--image",
+      "image.png",
+      "--name",
+      "logo"
+    ],
+    "execute": false
+  }
+]
