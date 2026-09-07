@@ -1,0 +1,274 @@
+{
+  "schema_version": 1,
+  "reviewer": "/root/foundation_skill",
+  "report_kind": "hash_bound_ci_portability_follow_up",
+  "verdict": "approved_offline",
+  "review_revision": "72fc5e4467494e158216de16b6d3e451a31d0757",
+  "prior_report": {
+    "path": "docs/reference/reviews/p3-ci-portability-review.json",
+    "commit": "77d512eca7e8fdc530a10267fa7aa6d28504c9c5",
+    "sha256": "817756427d3306b11148e907834fc63c54b6418aeea57e81ace480d28070c359",
+    "preserved": true
+  },
+  "scope": {
+    "assignment_ids": [
+      "ci_portability_follow_up"
+    ],
+    "path_count": 3,
+    "method": "Read exact committed diffs aa5d893/f563d46/72fc5e4 and the resulting runner, workflow dependency and regression bodies. Independently execute seven focused exact-source regressions; inspect existing owner report without inferring missing execution provenance.",
+    "product_files_modified": false,
+    "independence": "Reviewer authored the prior independent review and neither the runner fixes nor their tests. Only this new review artifact is changed."
+  },
+  "assignments": [
+    {
+      "assignment_id": "ci_portability_follow_up",
+      "verdict": "approved_offline",
+      "paths": [
+        {
+          "path": "scripts/next_test.py",
+          "review_revision": "72fc5e4467494e158216de16b6d3e451a31d0757",
+          "review_sha256": "5e377a5c8ed786003bc6e43fb7eb99fb6ea7e57933c1895ced507ed409eff47e",
+          "verdict": "approved_offline",
+          "review_scope": "Close CI1/CI2/CI3 through root unit selection, explicit UTF-8 child environment/source/report decoding, file-based output capture and bounded platform process-tree cleanup.",
+          "prior_review_revision": "ba2af28a39281e3d3229ac6200b5d6f52ccb12dd",
+          "prior_review_sha256": "6bd3343aa7929cdf09d09c5058dcbb9f1176b22437b877214dc394a0762dd914",
+          "unchanged_hash_dependency_closure": false,
+          "closed_finding_ids": [
+            "CI1",
+            "CI2",
+            "CI3"
+          ],
+          "findings": [
+            {
+              "id": "CI1",
+              "status": "closed_at_review_revision",
+              "closure_kind": "source_fix"
+            },
+            {
+              "id": "CI2",
+              "status": "closed_at_review_revision",
+              "closure_kind": "source_fix"
+            },
+            {
+              "id": "CI3",
+              "status": "closed_at_review_revision",
+              "closure_kind": "source_fix"
+            }
+          ]
+        },
+        {
+          "path": "scripts/next_test_test.py",
+          "review_revision": "72fc5e4467494e158216de16b6d3e451a31d0757",
+          "review_sha256": "23f2c36e00a83caadf4913808502b265e5c5905381f3df97c4ff878e4184b6e2",
+          "verdict": "approved_offline",
+          "review_scope": "Read all new regression bodies at the final fix revision and independently execute the seven focused selector/encoding/timeout tests listed below.",
+          "prior_review_revision": "ba2af28a39281e3d3229ac6200b5d6f52ccb12dd",
+          "prior_review_sha256": "c444a6a53af028b7354a52d2dc13c7f56ab99c320768163bb95b09d43a718bf3",
+          "unchanged_hash_dependency_closure": false,
+          "closed_finding_ids": [],
+          "findings": []
+        },
+        {
+          "path": ".github/workflows/next-offline.yml",
+          "review_revision": "72fc5e4467494e158216de16b6d3e451a31d0757",
+          "review_sha256": "be90e82e603065ff7736df3bd20b201eb15cb11f8a304b67edde6fa47a265736",
+          "verdict": "approved_offline",
+          "review_scope": "Unchanged workflow dependency closure only: its all-offline commands now invoke the corrected runner. Prior full workflow/source review is retained; native matrix execution is not asserted.",
+          "prior_review_revision": "ba2af28a39281e3d3229ac6200b5d6f52ccb12dd",
+          "prior_review_sha256": "be90e82e603065ff7736df3bd20b201eb15cb11f8a304b67edde6fa47a265736",
+          "unchanged_hash_dependency_closure": true,
+          "closed_finding_ids": [
+            "CI1",
+            "CI2",
+            "CI3"
+          ],
+          "findings": [
+            {
+              "id": "CI1",
+              "status": "closed_at_review_revision",
+              "closure_kind": "unchanged_hash_runner_dependency"
+            },
+            {
+              "id": "CI2",
+              "status": "closed_at_review_revision",
+              "closure_kind": "unchanged_hash_runner_dependency"
+            },
+            {
+              "id": "CI3",
+              "status": "closed_at_review_revision",
+              "closure_kind": "unchanged_hash_runner_dependency"
+            }
+          ]
+        }
+      ],
+      "closed_findings": [
+        {
+          "id": "CI1",
+          "status": "closed_offline",
+          "fix_revision": "aa5d893b31098c82d1513abfc1f1e5797b936382",
+          "closure": "All-unit/all selectors include root package exactly once without a name filter. E2E-only selector remains separate; portable root test coverage now participates in the native offline job. This closure verifies selection, not all root product test behavior."
+        },
+        {
+          "id": "CI2",
+          "status": "closed_offline",
+          "fix_revision": "f563d46dda4edf124ebdc8ce97412ee505a77876",
+          "closure": "Isolated Python children force UTF-8; inherited-source reads and report writes specify UTF-8. Final file captures decode UTF-8 explicitly with replacement for non-UTF-8 diagnostics. The cp1252 parent-locale and actual committed Apps source regressions pass."
+        },
+        {
+          "id": "CI3",
+          "status": "closed_offline",
+          "fix_revision": "72fc5e4467494e158216de16b6d3e451a31d0757",
+          "closure": "Temporary files remove descendant pipe EOF waits. POSIX retains process-group kill; non-POSIX attempts taskkill /T /F /PID with a two-second timeout, then kills/reaps the parent with a one-second wait. Timeout remains failure exit124. Failed/missing/timed-out taskkill and incomplete parent reaping are labeled cleanup_errors, not successful tree termination. Native-current-platform effect prevention and the finite non-POSIX failure/timeout probes pass."
+        }
+      ],
+      "open_findings": []
+    }
+  ],
+  "independent_execution": {
+    "source_revision": "72fc5e4467494e158216de16b6d3e451a31d0757",
+    "source_files": [
+      {
+        "path": "scripts/next_test.py",
+        "sha256": "5e377a5c8ed786003bc6e43fb7eb99fb6ea7e57933c1895ced507ed409eff47e"
+      },
+      {
+        "path": "scripts/next_test_test.py",
+        "sha256": "23f2c36e00a83caadf4913808502b265e5c5905381f3df97c4ff878e4184b6e2"
+      }
+    ],
+    "command_description": "Compile git-show bytes of next_test and next_test_test under their module names, then construct unittest.TestSuite for the seven named tests only. No broad suite or native CI job invoked.",
+    "tests": [
+      "test_all_unit_selection_includes_root_startup_and_embedded_content_tests",
+      "test_utf8_process_output_ignores_parent_locale_and_child_settings",
+      "test_selection_reads_committed_unicode_source_as_utf8",
+      "test_timeout_is_failure",
+      "test_nonposix_timeout_is_bounded_when_descendant_holds_output",
+      "test_native_timeout_stops_descendant_file_effect",
+      "test_nonposix_tree_cleanup_timeout_remains_reported"
+    ],
+    "pass": 7,
+    "fail": 0,
+    "skip": 0,
+    "exit_code": 0,
+    "platform": "Darwin arm64",
+    "python": "3.14.6",
+    "apps_source_read_fixture_binding": {
+      "method": "Compared every selected Apps *_test.go working-tree file byte-for-byte to the fixed commit before execution; all matched. These are source-read fixtures, not executed domain tests.",
+      "revision": "72fc5e4467494e158216de16b6d3e451a31d0757",
+      "files": [
+        {
+          "path": "tests/cli_e2e/apps/apps_access_scope_get_dryrun_test.go",
+          "sha256": "97e72df3a89a3894e6f99825562ea0162dc7b6fd5ae2d0e35e5986d9a7691b55"
+        },
+        {
+          "path": "tests/cli_e2e/apps/apps_access_scope_set_dryrun_test.go",
+          "sha256": "b9f4b2ac22f7c2eee55be2c5a60542110c27157697c64d63577feae7cc9593d2"
+        },
+        {
+          "path": "tests/cli_e2e/apps/apps_automation_dryrun_test.go",
+          "sha256": "ff266ef3bd857482b5fbcb6f23f1f94c4be11048e1363758b040d359bba53a31"
+        },
+        {
+          "path": "tests/cli_e2e/apps/apps_create_dryrun_test.go",
+          "sha256": "922ae536fe345b656baca0e2b30b5b22ad48ec7c5e4cf69dec85ba8694f15905"
+        },
+        {
+          "path": "tests/cli_e2e/apps/apps_db_env_create_dryrun_test.go",
+          "sha256": "49b1033fea02eb2764b06fabc156c6c9fbe014af34015527db56d72ce8bad6cc"
+        },
+        {
+          "path": "tests/cli_e2e/apps/apps_db_execute_dryrun_test.go",
+          "sha256": "574ebd580d5d7c5a4c258fbbc13c558b8441858c257caa5d24dbbbdf05bd7812"
+        },
+        {
+          "path": "tests/cli_e2e/apps/apps_db_sync_dryrun_test.go",
+          "sha256": "3f3ca5c2ae33d8dc298f091fb2e698412e30c05d7e0e87106b3f04c8caa60708"
+        },
+        {
+          "path": "tests/cli_e2e/apps/apps_db_table_get_dryrun_test.go",
+          "sha256": "f362a1ada2b60d177416158e35b94f0942743a848899218b2f2f4175e7ff4ca0"
+        },
+        {
+          "path": "tests/cli_e2e/apps/apps_db_table_list_dryrun_test.go",
+          "sha256": "8f34dd063f7bf431173991978a02dcec3f4fcb73614e91420acab37237235cb9"
+        },
+        {
+          "path": "tests/cli_e2e/apps/apps_env_pull_dryrun_test.go",
+          "sha256": "4756b9cb97d96a040ecabf28c52a2d280fe8394eb94d02d53f83a71af9a35b7d"
+        },
+        {
+          "path": "tests/cli_e2e/apps/apps_file_upload_dryrun_test.go",
+          "sha256": "e65f552e7c6602fcbb5b1f606437315995c86eb03e6faf184e768d5865fafa1b"
+        },
+        {
+          "path": "tests/cli_e2e/apps/apps_file_upload_live_test.go",
+          "sha256": "d2317f5dcddce62284a74eeace500425a33048b63698f232ed0dc08f0a67fad6"
+        },
+        {
+          "path": "tests/cli_e2e/apps/apps_git_credential_dryrun_test.go",
+          "sha256": "b524a6ca0be34629230ad03013e35efcdad1a869e64a735e617b7f22e655a409"
+        },
+        {
+          "path": "tests/cli_e2e/apps/apps_git_credential_local_test.go",
+          "sha256": "88f5abce7b8724904007ce4e6edd10e0fd8aa90f6b7ce89a6cddaee4960d8a4c"
+        },
+        {
+          "path": "tests/cli_e2e/apps/apps_html_publish_dryrun_test.go",
+          "sha256": "4cb32748fde5e242b3dc0b01ea7fa940f9c7d59f71964b66d72896cce757bdca"
+        },
+        {
+          "path": "tests/cli_e2e/apps/apps_list_dryrun_test.go",
+          "sha256": "570d249a54e6f3c7dca2148fe60d04e7914431bbb081a55c731748ceb2858879"
+        },
+        {
+          "path": "tests/cli_e2e/apps/apps_role_management_test.go",
+          "sha256": "21f128f5ec410563e6fad6efc232323506b242746abbeb3a2e6feaf96cb0b315"
+        },
+        {
+          "path": "tests/cli_e2e/apps/apps_update_dryrun_test.go",
+          "sha256": "ef2a20b3e851bdb6dd91a39c4f03066fc880b3942d5f174df0ec51da8c95a4ff"
+        },
+        {
+          "path": "tests/cli_e2e/apps/helpers_test.go",
+          "sha256": "6153d76703ff440cf2088610b3dc2e4cb7fc76c7c583f95355c7f9f565031417"
+        }
+      ]
+    }
+  },
+  "owner_execution_evidence": [
+    {
+      "path": ".tmp/next-evidence/ci-bounded-timeout-scripts.json",
+      "sha256": "ad0e7cab18292f0b2d7618cd8170f9699e07823cc8e7c2ce00e2a15779761e4a",
+      "reported_status": "pass",
+      "evidence": "offline",
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts",
+        "-p",
+        "next_*test.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "tests": {
+        "pass": 49,
+        "fail": 0,
+        "skip": 0
+      },
+      "tested_revision": null,
+      "execution_binding": "Existing owner report inspected and pinned by artifact hash. The report embeds no source revision or source hashes. Owner associates it with72fc5e4; this review does not retrospectively bind all49 tests to that revision."
+    }
+  ],
+  "limitations": [
+    "This closes CI1/CI2/CI3 source and bounded offline regression findings; it does not assert that any GitHub matrix job completed successfully.",
+    "The process-tree effect test ran natively on macOS. Non-POSIX tests simulate only the runner branch with finite descendants and mocked taskkill failure/timeout. Native Windows process-tree cleanup and launcher behavior remain unverified.",
+    "When native tree termination fails, timeout reporting is bounded but descendant termination remains explicitly unverified. Temporary file capture is a snapshot at reporting time and does not claim to collect later descendant output.",
+    "The two-second taskkill cleanup and one-second parent reaping allowance are additional to the command timeout. File capture avoids pipe drain hangs; OS process scheduling and file I/O do not imply a hard real-time deadline.",
+    "No broad unit, race, root-product, E2E, live or cross-platform suite was rerun by this review. Other root assertion fixes and parent-reported full-unit counts are outside this closure and are not used as evidence.",
+    "Prior approvals for unchanged reviewed paths remain at the previous exact hashes. The unchanged workflow finding is closed through its corrected runner dependency, with explicit prior hashes retained.",
+    "Offline environment isolation remains distinct from an OS network sandbox, and these results do not establish live APIs, held-out/model gains, signing or release readiness."
+  ]
+}
