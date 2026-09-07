@@ -1,14 +1,14 @@
 {
   "schema_version": 1,
   "section": "integration",
-  "revision": "74b6b5346ca4efbd03564045f4f3e01746f18878",
-  "source": "immutable detached local clone with real Git metadata; no origin; no dirty/untracked files copied",
-  "environment": "Committed scripts.next_test.isolated_env with independent isolated HOME/config/temp per check, no customer credentials, cached Go modules/build cache. Public Go module metadata enabled only for pinned golangci and go-licenses commands.",
-  "metadata_sha256": "b5375251ff1f0a5939925587b0d514669a748135cde36c56f1c8ab5f5fe266c8",
-  "binary_sha256": "8bf537f33aa2e3870bdd34f6e03fffb2ce04c37d7beef63132dab4425432364d",
-  "release_accepted": false,
   "gate": "P3 immutable candidate static checks",
-  "status": "pass",
+  "release_accepted": false,
+  "revision": "8d92e5253aa9d0582314180d51cdec1b10778897",
+  "status": "fail",
+  "source": "immutable detached local clone with real Git metadata; no origin; no dirty/untracked files copied",
+  "environment": "Committed scripts.next_test.isolated_env with independent isolated HOME/config/temp per check; no customer credentials; cached Go modules/build cache. Public Go module metadata enabled only for pinned golangci and go-licenses commands. All static checks ran sequentially after the complete race and E2E gates.",
+  "metadata_sha256": "b5375251ff1f0a5939925587b0d514669a748135cde36c56f1c8ab5f5fe266c8",
+  "binary_sha256": "1494165f4c326cbf1c0d85df03fa06659ebb68dd853bee484e79ba3934d9ae71",
   "changed_from": "0c1ac75",
   "commands": [
     {
@@ -35,8 +35,8 @@
       "failures": [],
       "skipped_tests": [],
       "race_detected": false,
-      "log": ".tmp/next-evidence/p3-final-74b6b53-tidy.log",
-      "log_sha256": "a310ec980e1dd1f6721096ff3b541e12fdebe0eb86364826dd1131893d959dd9"
+      "log": ".tmp/next-evidence/p3-static-8d92e52-tidy.log",
+      "log_sha256": "1f24f2a486de1413c5844c528ad6a533076ee82c73f4e4f8888479d44720d4c7"
     },
     {
       "name": "module-diff",
@@ -50,7 +50,7 @@
       ],
       "exit_code": 0,
       "status": "pass",
-      "duration_seconds": 0.071,
+      "duration_seconds": 0.075,
       "public_module_metadata_enabled": false,
       "tests": {
         "pass": 0,
@@ -65,8 +65,8 @@
       "failures": [],
       "skipped_tests": [],
       "race_detected": false,
-      "log": ".tmp/next-evidence/p3-final-74b6b53-module-diff.log",
-      "log_sha256": "685f4c353b47726f1b14ef6e88d8674d653fdf62fc98067d6c2087834b19f49e"
+      "log": ".tmp/next-evidence/p3-static-8d92e52-module-diff.log",
+      "log_sha256": "cc05446084ac9acdb29da67aacbfc99b9df669a9db615297d9131749b1683e6e"
     },
     {
       "name": "build",
@@ -76,7 +76,7 @@
       ],
       "exit_code": 0,
       "status": "pass",
-      "duration_seconds": 2.11,
+      "duration_seconds": 1.848,
       "public_module_metadata_enabled": false,
       "tests": {
         "pass": 0,
@@ -91,8 +91,8 @@
       "failures": [],
       "skipped_tests": [],
       "race_detected": false,
-      "log": ".tmp/next-evidence/p3-final-74b6b53-build.log",
-      "log_sha256": "634bbf8fb155e50b237a6319186d942507c20efe656ec01ea6ae1b2e25d300df"
+      "log": ".tmp/next-evidence/p3-static-8d92e52-build.log",
+      "log_sha256": "c09c528c47362d291cd55369ff043886ad78e381c06f0760ff673093431568b5"
     },
     {
       "name": "quality-gate",
@@ -103,7 +103,7 @@
       ],
       "exit_code": 0,
       "status": "pass",
-      "duration_seconds": 90.956,
+      "duration_seconds": 26.549,
       "public_module_metadata_enabled": false,
       "tests": {
         "pass": 0,
@@ -118,8 +118,8 @@
       "failures": [],
       "skipped_tests": [],
       "race_detected": false,
-      "log": ".tmp/next-evidence/p3-final-74b6b53-quality-gate.log",
-      "log_sha256": "4403df34c903b55445a054c8be501223cd3528fd883353e6ef9e3bb91691b52f"
+      "log": ".tmp/next-evidence/p3-static-8d92e52-quality-gate.log",
+      "log_sha256": "bdda1385359d520cc92364bf652f88ae8680b62fe6a86c96b5d408362a15c942"
     },
     {
       "name": "vet",
@@ -129,7 +129,7 @@
       ],
       "exit_code": 0,
       "status": "pass",
-      "duration_seconds": 21.992,
+      "duration_seconds": 4.565,
       "public_module_metadata_enabled": false,
       "tests": {
         "pass": 0,
@@ -144,8 +144,8 @@
       "failures": [],
       "skipped_tests": [],
       "race_detected": false,
-      "log": ".tmp/next-evidence/p3-final-74b6b53-vet.log",
-      "log_sha256": "a4fa2c6fa60dc01356578f479e70e0c8e7044539b1070e8b7e6d198f1d97140e"
+      "log": ".tmp/next-evidence/p3-static-8d92e52-vet.log",
+      "log_sha256": "2dfb6f0d64884fc321223753ab5f38f25862d11a6960cf57c506b485f7469694"
     },
     {
       "name": "fmt",
@@ -155,7 +155,7 @@
       ],
       "exit_code": 0,
       "status": "pass",
-      "duration_seconds": 1.878,
+      "duration_seconds": 0.394,
       "public_module_metadata_enabled": false,
       "tests": {
         "pass": 0,
@@ -170,8 +170,8 @@
       "failures": [],
       "skipped_tests": [],
       "race_detected": false,
-      "log": ".tmp/next-evidence/p3-final-74b6b53-fmt.log",
-      "log_sha256": "6dce0fc788bffb78a4b265efd13b1dc2eec9a2f39dfd2cdd4f576aa24ef71c7e"
+      "log": ".tmp/next-evidence/p3-static-8d92e52-fmt.log",
+      "log_sha256": "fcff962975dd16bf4273b341047fa9d95da15aa1e9adc2f390fa68e0c8c26de4"
     },
     {
       "name": "golangci",
@@ -182,9 +182,9 @@
         "run",
         "--new-from-rev=0c1ac75"
       ],
-      "exit_code": 0,
-      "status": "pass",
-      "duration_seconds": 106.687,
+      "exit_code": 1,
+      "status": "fail",
+      "duration_seconds": 75.284,
       "public_module_metadata_enabled": true,
       "tests": {
         "pass": 0,
@@ -199,8 +199,8 @@
       "failures": [],
       "skipped_tests": [],
       "race_detected": false,
-      "log": ".tmp/next-evidence/p3-final-74b6b53-golangci.log",
-      "log_sha256": "d52a09ba559b67324856a8f36d882027449b4e9a924558af304212ba665995cb"
+      "log": ".tmp/next-evidence/p3-static-8d92e52-golangci.log",
+      "log_sha256": "7309c53808d5a3f5bfdd86459c5d015d7c6f9ac61f0ec4d8f4d3ed7bb157c35e"
     },
     {
       "name": "sourceguard",
@@ -216,7 +216,7 @@
       ],
       "exit_code": 0,
       "status": "pass",
-      "duration_seconds": 65.811,
+      "duration_seconds": 12.921,
       "public_module_metadata_enabled": false,
       "tests": {
         "pass": 0,
@@ -231,8 +231,8 @@
       "failures": [],
       "skipped_tests": [],
       "race_detected": false,
-      "log": ".tmp/next-evidence/p3-final-74b6b53-sourceguard.log",
-      "log_sha256": "44fad64af06ce2c9bd473682fadded8868febfedfb19c13e85a98dfcd957846a"
+      "log": ".tmp/next-evidence/p3-static-8d92e52-sourceguard.log",
+      "log_sha256": "eac6ac2f98fc7febe74a9ce3ae9b9c5d939dc7fdbd80201efc7e899418170f30"
     },
     {
       "name": "lint-unit",
@@ -247,7 +247,7 @@
       ],
       "exit_code": 0,
       "status": "pass",
-      "duration_seconds": 53.129,
+      "duration_seconds": 14.4,
       "public_module_metadata_enabled": false,
       "tests": {
         "pass": 369,
@@ -262,8 +262,8 @@
       "failures": [],
       "skipped_tests": [],
       "race_detected": false,
-      "log": ".tmp/next-evidence/p3-final-74b6b53-lint-unit.log",
-      "log_sha256": "12512498773541032b70c1a24f10a82e94f6ccc47f33cb0e774ba775f91a1e0b"
+      "log": ".tmp/next-evidence/p3-static-8d92e52-lint-unit.log",
+      "log_sha256": "e33a761c392a987e717daa70d6c74016cda5bbb2b9f438492e59caf5004eed85"
     },
     {
       "name": "licenses",
@@ -277,7 +277,7 @@
       ],
       "exit_code": 0,
       "status": "pass",
-      "duration_seconds": 4.527,
+      "duration_seconds": 2.488,
       "public_module_metadata_enabled": true,
       "tests": {
         "pass": 0,
@@ -292,265 +292,287 @@
       "failures": [],
       "skipped_tests": [],
       "race_detected": false,
-      "log": ".tmp/next-evidence/p3-final-74b6b53-licenses.log",
-      "log_sha256": "207de927bc423cf014f6aab6c44345ebce9a3b29e811ab09fcd7b28ad632da64"
+      "log": ".tmp/next-evidence/p3-static-8d92e52-licenses.log",
+      "log_sha256": "61a34dceee73558c846c9dbd921ab2f13902375847d723ba1c43809acce972a5"
     }
   ],
-  "quality_gate_artifacts": ".tmp/next-evidence/p3-final-74b6b53-quality-artifacts",
-  "coverage_note": "All requested static checks passed at this exact committed revision. Static success does not override the failed root/binding broad unit gate or establish live/model/native platform acceptance.",
-  "report": ".tmp/next-evidence/p3-final-74b6b53-report.json",
-  "affected_followup": {
-    "revision": "72fc5e4467494e158216de16b6d3e451a31d0757",
-    "changed_from": "74b6b53",
-    "source": "immutable detached local clone with real Git metadata; no origin; no dirty/untracked files copied",
-    "metadata_sha256": "b5375251ff1f0a5939925587b0d514669a748135cde36c56f1c8ab5f5fe266c8",
-    "binary_sha256": "fc0e985f35b182a1b477201c063c9e3268bf66ff6a2a214d593435cbea37db7b",
-    "checks": [
-      {
-        "name": "root-vet",
-        "command": [
-          "go",
-          "vet",
-          "."
-        ],
-        "exit_code": 0,
-        "status": "pass",
-        "duration_seconds": 3.748,
-        "public_module_metadata_enabled": false,
-        "tests": {
-          "pass": 0,
-          "fail": 0,
-          "skip": 0
-        },
-        "packages": {
-          "pass": 0,
-          "fail": 0,
-          "skip": 0
-        },
-        "failures": [],
-        "skipped_tests": [],
-        "race_detected": false,
-        "log": ".tmp/next-evidence/p3-final-72fc5e4-root-vet.log",
-        "log_sha256": "055003f150929727f73037d088c460d86d006411ba1dc3cdeffb842570748376"
-      },
-      {
-        "name": "root-fmt",
-        "command": [
-          "python3",
-          "-c",
-          "import subprocess,sys; p=subprocess.run([\"gofmt\",\"-l\",\"content_embed_affordance_test.go\",\"lark_suite_assets_test.go\"],capture_output=True,text=True); print(p.stdout,end=\"\"); sys.exit(p.returncode or bool(p.stdout))"
-        ],
-        "exit_code": 0,
-        "status": "pass",
-        "duration_seconds": 0.079,
-        "public_module_metadata_enabled": false,
-        "tests": {
-          "pass": 0,
-          "fail": 0,
-          "skip": 0
-        },
-        "packages": {
-          "pass": 0,
-          "fail": 0,
-          "skip": 0
-        },
-        "failures": [],
-        "skipped_tests": [],
-        "race_detected": false,
-        "log": ".tmp/next-evidence/p3-final-72fc5e4-root-fmt.log",
-        "log_sha256": "c582dd88b346eb66529f27b351e68073522b3de78b3c7385c14706f5bf1e3f2c"
-      },
-      {
-        "name": "root-golangci",
-        "command": [
-          "go",
-          "run",
-          "github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.1.6",
-          "run",
-          "--new-from-rev=74b6b53",
-          "."
-        ],
-        "exit_code": 0,
-        "status": "pass",
-        "duration_seconds": 10.348,
-        "public_module_metadata_enabled": true,
-        "tests": {
-          "pass": 0,
-          "fail": 0,
-          "skip": 0
-        },
-        "packages": {
-          "pass": 0,
-          "fail": 0,
-          "skip": 0
-        },
-        "failures": [],
-        "skipped_tests": [],
-        "race_detected": false,
-        "log": ".tmp/next-evidence/p3-final-72fc5e4-root-golangci.log",
-        "log_sha256": "51458d82bcf9384beb96de626606dbca3aa0cb506ca6b8c537768c0d18fc8e15"
-      },
-      {
-        "name": "changed-sourceguard",
-        "command": [
-          "go",
-          "run",
-          "-C",
-          "lint",
-          ".",
-          "--changed-from",
-          "74b6b53",
-          ".."
-        ],
-        "exit_code": 0,
-        "status": "pass",
-        "duration_seconds": 23.761,
-        "public_module_metadata_enabled": false,
-        "tests": {
-          "pass": 0,
-          "fail": 0,
-          "skip": 0
-        },
-        "packages": {
-          "pass": 0,
-          "fail": 0,
-          "skip": 0
-        },
-        "failures": [],
-        "skipped_tests": [],
-        "race_detected": false,
-        "log": ".tmp/next-evidence/p3-final-72fc5e4-changed-sourceguard.log",
-        "log_sha256": "09b384d6a14e114a92b791812a614780298ceac6a13746e5d01a2a6cb0f2f14a"
-      }
-    ],
-    "note": "Only affected root/changed-source static checks repeated after test and CI followups; broad ten-check74b6b53 result above remains tied to its original revision."
-  },
-  "affected_followup_history": [
+  "quality_gate_artifacts": ".tmp/next-evidence/p3-static-8d92e52-quality-artifacts",
+  "coverage_note": "Static checks cover this exact committed revision and changed-from base. They do not establish live, model, or native cross-platform acceptance.",
+  "report": ".tmp/next-evidence/p3-static-8d92e52-report.json",
+  "history": [
     {
-      "revision": "f563d46dda4edf124ebdc8ce97412ee505a77876",
-      "changed_from": "74b6b53",
-      "source": "immutable detached local clone with real Git metadata; no origin; no dirty/untracked files copied",
-      "metadata_sha256": "b5375251ff1f0a5939925587b0d514669a748135cde36c56f1c8ab5f5fe266c8",
-      "binary_sha256": "8a7fafb7ed6ce8dc94234119e901ca80131de50856b9bd20d4ed1a64c7dc0170",
-      "checks": [
+      "revision": "74b6b5346ca4efbd03564045f4f3e01746f18878",
+      "status": "pass",
+      "report": ".tmp/next-evidence/p3-final-74b6b53-report.json",
+      "evidence_commit": "e17c899",
+      "affected_followup": {
+        "revision": "72fc5e4467494e158216de16b6d3e451a31d0757",
+        "changed_from": "74b6b53",
+        "source": "immutable detached local clone with real Git metadata; no origin; no dirty/untracked files copied",
+        "metadata_sha256": "b5375251ff1f0a5939925587b0d514669a748135cde36c56f1c8ab5f5fe266c8",
+        "binary_sha256": "fc0e985f35b182a1b477201c063c9e3268bf66ff6a2a214d593435cbea37db7b",
+        "checks": [
+          {
+            "name": "root-vet",
+            "command": [
+              "go",
+              "vet",
+              "."
+            ],
+            "exit_code": 0,
+            "status": "pass",
+            "duration_seconds": 3.748,
+            "public_module_metadata_enabled": false,
+            "tests": {
+              "pass": 0,
+              "fail": 0,
+              "skip": 0
+            },
+            "packages": {
+              "pass": 0,
+              "fail": 0,
+              "skip": 0
+            },
+            "failures": [],
+            "skipped_tests": [],
+            "race_detected": false,
+            "log": ".tmp/next-evidence/p3-final-72fc5e4-root-vet.log",
+            "log_sha256": "055003f150929727f73037d088c460d86d006411ba1dc3cdeffb842570748376"
+          },
+          {
+            "name": "root-fmt",
+            "command": [
+              "python3",
+              "-c",
+              "import subprocess,sys; p=subprocess.run([\"gofmt\",\"-l\",\"content_embed_affordance_test.go\",\"lark_suite_assets_test.go\"],capture_output=True,text=True); print(p.stdout,end=\"\"); sys.exit(p.returncode or bool(p.stdout))"
+            ],
+            "exit_code": 0,
+            "status": "pass",
+            "duration_seconds": 0.079,
+            "public_module_metadata_enabled": false,
+            "tests": {
+              "pass": 0,
+              "fail": 0,
+              "skip": 0
+            },
+            "packages": {
+              "pass": 0,
+              "fail": 0,
+              "skip": 0
+            },
+            "failures": [],
+            "skipped_tests": [],
+            "race_detected": false,
+            "log": ".tmp/next-evidence/p3-final-72fc5e4-root-fmt.log",
+            "log_sha256": "c582dd88b346eb66529f27b351e68073522b3de78b3c7385c14706f5bf1e3f2c"
+          },
+          {
+            "name": "root-golangci",
+            "command": [
+              "go",
+              "run",
+              "github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.1.6",
+              "run",
+              "--new-from-rev=74b6b53",
+              "."
+            ],
+            "exit_code": 0,
+            "status": "pass",
+            "duration_seconds": 10.348,
+            "public_module_metadata_enabled": true,
+            "tests": {
+              "pass": 0,
+              "fail": 0,
+              "skip": 0
+            },
+            "packages": {
+              "pass": 0,
+              "fail": 0,
+              "skip": 0
+            },
+            "failures": [],
+            "skipped_tests": [],
+            "race_detected": false,
+            "log": ".tmp/next-evidence/p3-final-72fc5e4-root-golangci.log",
+            "log_sha256": "51458d82bcf9384beb96de626606dbca3aa0cb506ca6b8c537768c0d18fc8e15"
+          },
+          {
+            "name": "changed-sourceguard",
+            "command": [
+              "go",
+              "run",
+              "-C",
+              "lint",
+              ".",
+              "--changed-from",
+              "74b6b53",
+              ".."
+            ],
+            "exit_code": 0,
+            "status": "pass",
+            "duration_seconds": 23.761,
+            "public_module_metadata_enabled": false,
+            "tests": {
+              "pass": 0,
+              "fail": 0,
+              "skip": 0
+            },
+            "packages": {
+              "pass": 0,
+              "fail": 0,
+              "skip": 0
+            },
+            "failures": [],
+            "skipped_tests": [],
+            "race_detected": false,
+            "log": ".tmp/next-evidence/p3-final-72fc5e4-changed-sourceguard.log",
+            "log_sha256": "09b384d6a14e114a92b791812a614780298ceac6a13746e5d01a2a6cb0f2f14a"
+          }
+        ],
+        "note": "Only affected root/changed-source static checks repeated after test and CI followups; broad ten-check74b6b53 result above remains tied to its original revision."
+      },
+      "affected_followup_history": [
         {
-          "name": "root-vet",
-          "command": [
-            "go",
-            "vet",
-            "."
+          "revision": "f563d46dda4edf124ebdc8ce97412ee505a77876",
+          "changed_from": "74b6b53",
+          "source": "immutable detached local clone with real Git metadata; no origin; no dirty/untracked files copied",
+          "metadata_sha256": "b5375251ff1f0a5939925587b0d514669a748135cde36c56f1c8ab5f5fe266c8",
+          "binary_sha256": "8a7fafb7ed6ce8dc94234119e901ca80131de50856b9bd20d4ed1a64c7dc0170",
+          "checks": [
+            {
+              "name": "root-vet",
+              "command": [
+                "go",
+                "vet",
+                "."
+              ],
+              "exit_code": 0,
+              "status": "pass",
+              "duration_seconds": 1.586,
+              "public_module_metadata_enabled": false,
+              "tests": {
+                "pass": 0,
+                "fail": 0,
+                "skip": 0
+              },
+              "packages": {
+                "pass": 0,
+                "fail": 0,
+                "skip": 0
+              },
+              "failures": [],
+              "skipped_tests": [],
+              "race_detected": false,
+              "log": ".tmp/next-evidence/p3-final-f563d46-root-vet.log",
+              "log_sha256": "ef7ee7d98409ac6b87ce38d74a9a0dd34086c5d4340f4f3ebf858aab193f0a3d"
+            },
+            {
+              "name": "root-fmt",
+              "command": [
+                "python3",
+                "-c",
+                "import subprocess,sys; p=subprocess.run([\"gofmt\",\"-l\",\"content_embed_affordance_test.go\",\"lark_suite_assets_test.go\"],capture_output=True,text=True); print(p.stdout,end=\"\"); sys.exit(p.returncode or bool(p.stdout))"
+              ],
+              "exit_code": 0,
+              "status": "pass",
+              "duration_seconds": 0.042,
+              "public_module_metadata_enabled": false,
+              "tests": {
+                "pass": 0,
+                "fail": 0,
+                "skip": 0
+              },
+              "packages": {
+                "pass": 0,
+                "fail": 0,
+                "skip": 0
+              },
+              "failures": [],
+              "skipped_tests": [],
+              "race_detected": false,
+              "log": ".tmp/next-evidence/p3-final-f563d46-root-fmt.log",
+              "log_sha256": "aff5ec2d266b1e110ddf64f3ec1b47eae1bb294482ffbc9e0cd2f7ca0002c3f5"
+            },
+            {
+              "name": "root-golangci",
+              "command": [
+                "go",
+                "run",
+                "github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.1.6",
+                "run",
+                "--new-from-rev=74b6b53",
+                "."
+              ],
+              "exit_code": 0,
+              "status": "pass",
+              "duration_seconds": 4.726,
+              "public_module_metadata_enabled": true,
+              "tests": {
+                "pass": 0,
+                "fail": 0,
+                "skip": 0
+              },
+              "packages": {
+                "pass": 0,
+                "fail": 0,
+                "skip": 0
+              },
+              "failures": [],
+              "skipped_tests": [],
+              "race_detected": false,
+              "log": ".tmp/next-evidence/p3-final-f563d46-root-golangci.log",
+              "log_sha256": "14c28afa41bb1f45a8e38c9c33399a8dad3d703aef60b325cdc6fca11f1c39f2"
+            },
+            {
+              "name": "changed-sourceguard",
+              "command": [
+                "go",
+                "run",
+                "-C",
+                "lint",
+                ".",
+                "--changed-from",
+                "74b6b53",
+                ".."
+              ],
+              "exit_code": 0,
+              "status": "pass",
+              "duration_seconds": 8.65,
+              "public_module_metadata_enabled": false,
+              "tests": {
+                "pass": 0,
+                "fail": 0,
+                "skip": 0
+              },
+              "packages": {
+                "pass": 0,
+                "fail": 0,
+                "skip": 0
+              },
+              "failures": [],
+              "skipped_tests": [],
+              "race_detected": false,
+              "log": ".tmp/next-evidence/p3-final-f563d46-changed-sourceguard.log",
+              "log_sha256": "4b20097018e396147f6c8bd1cf7b15b2b0e2f93827b03874289baafc6bf14379"
+            }
           ],
-          "exit_code": 0,
-          "status": "pass",
-          "duration_seconds": 1.586,
-          "public_module_metadata_enabled": false,
-          "tests": {
-            "pass": 0,
-            "fail": 0,
-            "skip": 0
-          },
-          "packages": {
-            "pass": 0,
-            "fail": 0,
-            "skip": 0
-          },
-          "failures": [],
-          "skipped_tests": [],
-          "race_detected": false,
-          "log": ".tmp/next-evidence/p3-final-f563d46-root-vet.log",
-          "log_sha256": "ef7ee7d98409ac6b87ce38d74a9a0dd34086c5d4340f4f3ebf858aab193f0a3d"
-        },
-        {
-          "name": "root-fmt",
-          "command": [
-            "python3",
-            "-c",
-            "import subprocess,sys; p=subprocess.run([\"gofmt\",\"-l\",\"content_embed_affordance_test.go\",\"lark_suite_assets_test.go\"],capture_output=True,text=True); print(p.stdout,end=\"\"); sys.exit(p.returncode or bool(p.stdout))"
-          ],
-          "exit_code": 0,
-          "status": "pass",
-          "duration_seconds": 0.042,
-          "public_module_metadata_enabled": false,
-          "tests": {
-            "pass": 0,
-            "fail": 0,
-            "skip": 0
-          },
-          "packages": {
-            "pass": 0,
-            "fail": 0,
-            "skip": 0
-          },
-          "failures": [],
-          "skipped_tests": [],
-          "race_detected": false,
-          "log": ".tmp/next-evidence/p3-final-f563d46-root-fmt.log",
-          "log_sha256": "aff5ec2d266b1e110ddf64f3ec1b47eae1bb294482ffbc9e0cd2f7ca0002c3f5"
-        },
-        {
-          "name": "root-golangci",
-          "command": [
-            "go",
-            "run",
-            "github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.1.6",
-            "run",
-            "--new-from-rev=74b6b53",
-            "."
-          ],
-          "exit_code": 0,
-          "status": "pass",
-          "duration_seconds": 4.726,
-          "public_module_metadata_enabled": true,
-          "tests": {
-            "pass": 0,
-            "fail": 0,
-            "skip": 0
-          },
-          "packages": {
-            "pass": 0,
-            "fail": 0,
-            "skip": 0
-          },
-          "failures": [],
-          "skipped_tests": [],
-          "race_detected": false,
-          "log": ".tmp/next-evidence/p3-final-f563d46-root-golangci.log",
-          "log_sha256": "14c28afa41bb1f45a8e38c9c33399a8dad3d703aef60b325cdc6fca11f1c39f2"
-        },
-        {
-          "name": "changed-sourceguard",
-          "command": [
-            "go",
-            "run",
-            "-C",
-            "lint",
-            ".",
-            "--changed-from",
-            "74b6b53",
-            ".."
-          ],
-          "exit_code": 0,
-          "status": "pass",
-          "duration_seconds": 8.65,
-          "public_module_metadata_enabled": false,
-          "tests": {
-            "pass": 0,
-            "fail": 0,
-            "skip": 0
-          },
-          "packages": {
-            "pass": 0,
-            "fail": 0,
-            "skip": 0
-          },
-          "failures": [],
-          "skipped_tests": [],
-          "race_detected": false,
-          "log": ".tmp/next-evidence/p3-final-f563d46-changed-sourceguard.log",
-          "log_sha256": "4b20097018e396147f6c8bd1cf7b15b2b0e2f93827b03874289baafc6bf14379"
+          "note": "Only affected root/changed-source static checks repeated after test and CI followups; broad ten-check74b6b53 result above remains tied to its original revision."
         }
+      ]
+    }
+  ],
+  "failure_analysis": [
+    {
+      "check": "golangci",
+      "rule": "nilerr",
+      "path": "internal/cmdutil/drive_import_receipts.go",
+      "lines": [
+        48,
+        53,
+        57,
+        61
       ],
-      "note": "Only affected root/changed-source static checks repeated after test and CI followups; broad ten-check74b6b53 result above remains tied to its original revision."
+      "reason": "Each branch returns nil after a non-nil error; pinned golangci reports four issues. No waiver or source fix applied by verification."
     }
   ]
 }
