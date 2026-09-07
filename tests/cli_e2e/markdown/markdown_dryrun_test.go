@@ -37,11 +37,11 @@ func TestMarkdownCreateDryRun_Content(t *testing.T) {
 	output := strings.TrimSpace(result.Stdout)
 	assert.Contains(t, output, "/open-apis/drive/v1/files/upload_all")
 	assert.Contains(t, output, "/open-apis/drive/v1/metas/batch_query")
-	assert.Contains(t, output, `"with_url": true`)
-	assert.Contains(t, output, `"file_name": "README.md"`)
-	assert.Contains(t, output, `"parent_node": "fldcnMarkdownDryRun"`)
-	assert.Contains(t, output, `"parent_type": "explorer"`)
-	assert.Contains(t, output, `"size": 7`)
+	assert.True(t, clie2e.DryRunGet(output, "api.1.body.with_url").Bool())
+	assert.Equal(t, "README.md", clie2e.DryRunGet(output, "api.0.body.file_name").String())
+	assert.Equal(t, "fldcnMarkdownDryRun", clie2e.DryRunGet(output, "api.0.body.parent_node").String())
+	assert.Equal(t, "explorer", clie2e.DryRunGet(output, "api.0.body.parent_type").String())
+	assert.Equal(t, int64(7), clie2e.DryRunGet(output, "api.0.body.size").Int())
 }
 
 func TestMarkdownCreateDryRun_WikiTarget(t *testing.T) {
@@ -66,11 +66,11 @@ func TestMarkdownCreateDryRun_WikiTarget(t *testing.T) {
 	output := strings.TrimSpace(result.Stdout)
 	assert.Contains(t, output, "/open-apis/drive/v1/files/upload_all")
 	assert.Contains(t, output, "/open-apis/drive/v1/metas/batch_query")
-	assert.Contains(t, output, `"with_url": true`)
-	assert.Contains(t, output, `"file_name": "README.md"`)
-	assert.Contains(t, output, `"parent_node": "wikcnMarkdownDryRun"`)
-	assert.Contains(t, output, `"parent_type": "wiki"`)
-	assert.Contains(t, output, `"size": 7`)
+	assert.True(t, clie2e.DryRunGet(output, "api.1.body.with_url").Bool())
+	assert.Equal(t, "README.md", clie2e.DryRunGet(output, "api.0.body.file_name").String())
+	assert.Equal(t, "wikcnMarkdownDryRun", clie2e.DryRunGet(output, "api.0.body.parent_node").String())
+	assert.Equal(t, "wiki", clie2e.DryRunGet(output, "api.0.body.parent_type").String())
+	assert.Equal(t, int64(7), clie2e.DryRunGet(output, "api.0.body.size").Int())
 }
 
 func TestMarkdownCreateDryRun_FileShowsConcreteSize(t *testing.T) {
@@ -98,9 +98,9 @@ func TestMarkdownCreateDryRun_FileShowsConcreteSize(t *testing.T) {
 	output := strings.TrimSpace(result.Stdout)
 	assert.Contains(t, output, "/open-apis/drive/v1/files/upload_all")
 	assert.Contains(t, output, "/open-apis/drive/v1/metas/batch_query")
-	assert.Contains(t, output, `"with_url": true`)
-	assert.Contains(t, output, `"file": "@note.md"`)
-	assert.Contains(t, output, `"size": 5`)
+	assert.True(t, clie2e.DryRunGet(output, "api.1.body.with_url").Bool())
+	assert.Equal(t, "@note.md", clie2e.DryRunGet(output, "api.0.body.file").String())
+	assert.Equal(t, int64(5), clie2e.DryRunGet(output, "api.0.body.size").Int())
 }
 
 func TestMarkdownCreateDryRun_RejectsEmptyContent(t *testing.T) {
@@ -183,9 +183,9 @@ func TestMarkdownDiffDryRun_RemoteVsLocal(t *testing.T) {
 
 	output := strings.TrimSpace(result.Stdout)
 	assert.Contains(t, output, "/open-apis/drive/v1/medias/boxcnMarkdownDryRun/preview_download")
-	assert.Contains(t, output, `"mode": "remote_vs_local"`)
-	assert.Contains(t, output, `"preview_type": "16"`)
-	assert.Contains(t, output, `"local_file": "./draft.md"`)
+	assert.Equal(t, "remote_vs_local", clie2e.DryRunGet(output, "mode").String())
+	assert.Equal(t, "16", clie2e.DryRunGet(output, "api.0.params.preview_type").String())
+	assert.Equal(t, "./draft.md", clie2e.DryRunGet(output, "local_file").String())
 }
 
 func TestMarkdownCreateDryRun_RejectsEmptyWikiToken(t *testing.T) {
@@ -229,8 +229,8 @@ func TestMarkdownFetchDryRun_OutputFile(t *testing.T) {
 
 	output := strings.TrimSpace(result.Stdout)
 	assert.Contains(t, output, "/open-apis/drive/v1/medias/boxcnMarkdownDryRun/preview_download")
-	assert.Contains(t, output, `"preview_type": "16"`)
-	assert.Contains(t, output, `"output": "./copy.md"`)
+	assert.Equal(t, "16", clie2e.DryRunGet(output, "api.0.params.preview_type").String())
+	assert.Equal(t, "./copy.md", clie2e.DryRunGet(output, "output").String())
 }
 
 func TestMarkdownOverwriteDryRun_ContentFile(t *testing.T) {
@@ -258,8 +258,8 @@ func TestMarkdownOverwriteDryRun_ContentFile(t *testing.T) {
 	output := strings.TrimSpace(result.Stdout)
 	assert.Contains(t, output, "/open-apis/drive/v1/metas/batch_query")
 	assert.Contains(t, output, "/open-apis/drive/v1/files/upload_all")
-	assert.Contains(t, output, `"file_token": "boxcnMarkdownDryRun"`)
-	assert.Contains(t, output, `"size": 17`)
+	assert.Equal(t, "boxcnMarkdownDryRun", clie2e.DryRunGet(output, "api.1.body.file_token").String())
+	assert.Equal(t, int64(17), clie2e.DryRunGet(output, "api.1.body.size").Int())
 }
 
 func TestMarkdownOverwriteDryRun_RejectsEmptyFile(t *testing.T) {
@@ -311,7 +311,7 @@ func TestMarkdownPatchDryRun_Content(t *testing.T) {
 
 	output := strings.TrimSpace(result.Stdout)
 	assert.Contains(t, output, "/open-apis/drive/v1/medias/boxcnMarkdownDryRun/preview_download")
-	assert.Contains(t, output, `"preview_type": "16"`)
+	assert.Equal(t, "16", clie2e.DryRunGet(output, "api.0.params.preview_type").String())
 	assert.Contains(t, output, "/open-apis/drive/v1/metas/batch_query")
 	assert.Contains(t, output, "/open-apis/drive/v1/files/upload_all")
 	assert.Contains(t, output, "/open-apis/drive/v1/files/upload_prepare")

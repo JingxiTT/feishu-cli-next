@@ -1389,11 +1389,11 @@ func TestMarkdownUploadShouldRetryBranches(t *testing.T) {
 	if markdownUploadShouldRetry(errors.New("plain")) {
 		t.Fatal("plain error should not be retryable")
 	}
-	if !markdownUploadShouldRetry(errs.NewAPIError(errs.SubtypeRateLimit, "slow down").WithRetryable()) {
+	if !markdownUploadShouldRetry(errs.NewAPIError(errs.SubtypeRateLimit, "slow down").WithCode(99991400).WithRetryable()) {
 		t.Fatal("retryable API error should be retryable")
 	}
-	if !markdownUploadShouldRetry(errs.NewNetworkError(errs.SubtypeNetworkServer, "gateway").WithCode(502)) {
-		t.Fatal("network error should be retryable by category")
+	if markdownUploadShouldRetry(errs.NewNetworkError(errs.SubtypeNetworkServer, "gateway").WithCode(502)) {
+		t.Fatal("unknown upload outcome must not be retried")
 	}
 }
 
@@ -1636,7 +1636,7 @@ func TestMarkdownOverwriteUploadAllIncludesFileTokenAndVersion(t *testing.T) {
 			"code": 0,
 			"data": map[string]interface{}{
 				"metas": []map[string]interface{}{
-					{"title": "README.md"},
+					{"doc_token": "box_md_existing", "doc_type": "file", "title": "README.md"},
 				},
 			},
 		},
@@ -1757,7 +1757,7 @@ func TestMarkdownOverwriteFailsWithoutVersion(t *testing.T) {
 			"code": 0,
 			"data": map[string]interface{}{
 				"metas": []map[string]interface{}{
-					{"title": "README.md"},
+					{"doc_token": "box_md_existing", "doc_type": "file", "title": "README.md"},
 				},
 			},
 		},

@@ -241,7 +241,7 @@ func TestMarkdownPatchLiteralOverwrite(t *testing.T) {
 			"code": 0,
 			"data": map[string]interface{}{
 				"metas": []map[string]interface{}{
-					{"title": "README.md"},
+					{"doc_token": "box_md_patch", "doc_type": "file", "title": "README.md"},
 				},
 			},
 		},
@@ -316,7 +316,7 @@ func TestMarkdownPatchPrettyOutputWhenUpdated(t *testing.T) {
 			"code": 0,
 			"data": map[string]interface{}{
 				"metas": []map[string]interface{}{
-					{"title": "README.md"},
+					{"doc_token": "box_md_patch", "doc_type": "file", "title": "README.md"},
 				},
 			},
 		},
@@ -374,7 +374,7 @@ func TestMarkdownPatchRegexOverwrite(t *testing.T) {
 			"code": 0,
 			"data": map[string]interface{}{
 				"metas": []map[string]interface{}{
-					{"title": "version.md"},
+					{"doc_token": "box_md_patch", "doc_type": "file", "title": "version.md"},
 				},
 			},
 		},
@@ -443,7 +443,7 @@ func TestMarkdownPatchAllowsEmptyReplacement(t *testing.T) {
 			"code": 0,
 			"data": map[string]interface{}{
 				"metas": []map[string]interface{}{
-					{"title": "hello.md"},
+					{"doc_token": "box_md_patch", "doc_type": "file", "title": "hello.md"},
 				},
 			},
 		},

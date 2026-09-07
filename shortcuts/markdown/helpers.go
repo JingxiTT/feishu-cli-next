@@ -673,35 +673,19 @@ func parseMarkdownUploadResult(data map[string]interface{}, requireVersion bool)
 }
 
 func fetchMarkdownFileName(runtime *common.RuntimeContext, fileToken string) (string, error) {
-	data, err := withMarkdownUploadRetryData(runtime, markdownFetchNameAction, func() (map[string]interface{}, error) {
-		data, err := runtime.CallAPITyped(
-			"POST",
-			"/open-apis/drive/v1/metas/batch_query",
-			nil,
-			map[string]interface{}{
-				"request_docs": []map[string]interface{}{
-					{
-						"doc_token": fileToken,
-						"doc_type":  "file",
-					},
-				},
-			},
-		)
-		if err != nil {
-			return nil, markdownUploadProblem(err, markdownFetchNameAction)
+	for attempt := 0; ; attempt++ {
+		title, err := common.FetchDriveMetaTitle(runtime, fileToken, "file")
+		if err == nil {
+			return title, nil
 		}
-		return data, nil
-	})
-	if err != nil {
-		return "", err
+		err = markdownUploadProblem(err, markdownFetchNameAction)
+		p, typed := errs.ProblemOf(err)
+		if !typed || !(p.Retryable || p.Category == errs.CategoryNetwork) || attempt >= len(markdownUploadRetryBackoffs) {
+			return "", markdownUploadRetryExhausted(err, markdownFetchNameAction, attempt)
+		}
+		fmt.Fprintf(runtime.IO().ErrOut, "%s; retrying (attempt %d/%d)\n", err.Error(), attempt+1, len(markdownUploadRetryBackoffs))
+		time.Sleep(markdownUploadRetryBackoffs[attempt])
 	}
-
-	metas := common.GetSlice(data, "metas")
-	if len(metas) == 0 {
-		return "", nil
-	}
-	meta, _ := metas[0].(map[string]interface{})
-	return common.GetString(meta, "title"), nil
 }
 
 func withMarkdownUploadRetryResult(runtime *common.RuntimeContext, action string, fn func() (markdownUploadResult, error)) (markdownUploadResult, error) {
@@ -752,7 +736,10 @@ func markdownUploadShouldRetry(err error) bool {
 	if !ok || p == nil {
 		return false
 	}
-	return p.Retryable || p.Category == errs.CategoryNetwork
+	// Uploads have no idempotency key. A lost response or server failure can
+	// follow a successful write; retry only an explicit rate-limit rejection.
+	return (p.Category == errs.CategoryAPI && p.Subtype == errs.SubtypeRateLimit && p.Code == 99991400) ||
+		(p.Category == errs.CategoryNetwork && p.Code == http.StatusTooManyRequests)
 }
 
 func markdownUploadRetryExhausted(err error, action string, retries int) error {

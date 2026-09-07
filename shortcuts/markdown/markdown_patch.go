@@ -61,7 +61,7 @@ var MarkdownPatch = common.Shortcut{
 		}
 		sizeThreshold := common.FormatSize(markdownSinglePartSizeLimit)
 		return common.NewDryRunAPI().
-			Desc("Download the current Markdown file, apply the replacement locally, and overwrite the file only when matches are found").
+			Desc("Download the current Markdown file, apply the replacement locally, and overwrite the file only when the replacement changes its content").
 			GET("/open-apis/drive/v1/medias/:file_token/preview_download").
 			Desc("[1] Download the current Markdown source file preview artifact").
 			Params(markdownSourceFilePreviewDryRunParamsForValidatedVersion("", "")).
@@ -143,7 +143,7 @@ var MarkdownPatch = common.Shortcut{
 			"size_bytes_before": len(payload),
 			"size_bytes_after":  len(payload),
 		}
-		if matchCount == 0 {
+		if patched == original {
 			runtime.OutFormat(out, nil, func(w io.Writer) {
 				prettyPrintMarkdownPatch(w, out)
 			})
