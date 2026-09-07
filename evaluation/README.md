@@ -365,8 +365,9 @@ filesystem-read auditing.
 The first controlled integration against candidate `312af93` found a Mail
 `user_mailbox.messages batch_get` metadata read returning exit 22 as an unknown
 mutation; the original reference returned 0. This occurred before any Mail model
-trial. It remains a version-specific product defect pending the corrected clean
-candidate's controlled acceptance. The existing 81-trial nine-section read batch
+trial. The corrected accepted candidate `8d92e5` passed controlled acceptance and
+the subsequent [Calendar/Mail/OKR comparison](evidence/read-8d92e5/REPORT.md), with
+all 27 independently verified trials. The earlier 81-trial nine-section read batch
 keeps its original candidate and evaluator snapshots.
 
 A coordinator search accidentally exposed limited held-out snippets during later
@@ -381,6 +382,33 @@ proof, a request outside the fixture, and forbidden configuration changes withou
 retaining paths, queries, payloads or content. The earlier frozen `cc745f5` runs
 lack these diagnostics; failed raw-API attempts there cannot be attributed to a
 specific route or product defect retrospectively.
+
+Docs fixture v2 (`57a2a9b`) keeps the task prompt and answer unchanged while
+checking native character-level bold, hyperlink URL and Unicode semantics instead
+of invented hidden inline GUIDs or a fixed edited-paragraph ID. Untouched blocks,
+resources and metadata remain exact. Bounded XML replacement and one-paragraph
+replacement have controlled coverage; general reconstruction remains unsupported.
+Historical v1 results are not rescored as successes.
+
+The Extensions observer accepts the native `--json`/`--json=true` shorthand after
+`121f405`; its earlier rejection was an evaluator defect. Composed-script execution
+still requires independent proof rather than trusting a model-written artifact.
+Events likewise retains its predeclared zero-exit requirement: kernel delivery and
+process disappearance alone cannot establish a child's zero exit status. Missing
+script-child exit evidence is a comparative limitation, not a demonstrated CLI bug.
+No process-supervision infrastructure was added to disguise this limit.
+
+Packaging fixture v2 (`4548e65`) accepts either the exact installed skill directory
+or its `SKILL.md`, because the unchanged prompt permits both interpretations of
+`installed_path`. Normalization permits only one leading `./` and one trailing
+slash on the exact directory. Artifact/reference, unrelated-file and protected-tree
+checks remain required. Earlier discarded answers cannot be recovered or declared
+successful from this correction.
+
+Future accounting diagnostics retain only four fixed reason codes for malformed
+provider events, failed or mismatched turns, and unexpected tools. They do not
+change accounting rules or recover reasons discarded by older evaluator versions;
+any completed spans remain known partial usage, never an invented complete total.
 
 For an operator stop request, create `STOP` under the batch output root. The
 launcher/harness checks it between complete attempts, checkpoints all active
