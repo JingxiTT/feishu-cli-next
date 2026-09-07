@@ -24,7 +24,7 @@ func (f *Factory) agentAttemptTransport(base http.RoundTripper) http.RoundTrippe
 	return &nextattempt.Transport{
 		Base: base, Store: f.AgentReceiptStore, Journal: &f.agentAttempts,
 		IsMutation: func(req *http.Request) bool {
-			if !f.EnableAgentAttempts || isDeclaredReadRequest(req) {
+			if !f.EnableAgentAttempts {
 				return false
 			}
 			switch req.Method {
@@ -36,6 +36,9 @@ func (f *Factory) agentAttemptTransport(base http.RoundTripper) http.RoundTrippe
 			path := req.URL.Path
 			if strings.HasPrefix(path, "/open-apis/auth/") || strings.HasPrefix(path, "/open-apis/authen/") || strings.HasPrefix(path, "/open-apis/oauth/") {
 				return false
+			}
+			if mutation, declared := declaredRequestEffect(req); declared {
+				return mutation
 			}
 			if f.CurrentCommand != nil {
 				if risk, ok := GetRisk(f.CurrentCommand); ok && risk == "read" {

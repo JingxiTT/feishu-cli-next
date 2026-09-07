@@ -72,7 +72,10 @@ mark an individual domain-known read with
 `runtime.CallReadOnlyAPITyped(method, apiPath, params, data)`. The marker matches
 only the exact method and URL path; other requests retain normal journaling.
 It preserves cancellation and command risk, and must never be derived from
-arbitrary raw API input or request content. Raw API POST/custom methods
+arbitrary raw API input or request content. Conversely,
+`common.WithMutationRequest(ctx, method, apiPath)` identifies an exact known
+lifecycle mutation inside a read workflow, such as subscription registration.
+Credential acquisition stays excluded; this never changes the command risk. Raw API POST/custom methods
 are conservatively potential mutations; an unclassified raw read may receive a
 receipt. Auth/config lifecycle effects are preserved from the reference and are
 not content mutation receipts. This is a documented foundation ceiling, not

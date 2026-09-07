@@ -21,3 +21,15 @@ func WithReadOnlyRequest(ctx context.Context, method, apiPath string) context.Co
 func (ctx *RuntimeContext) CallReadOnlyAPITyped(method, apiPath string, params map[string]interface{}, data interface{}) (map[string]interface{}, error) {
 	return ctx.callAPITypedWithContext(WithReadOnlyRequest(ctx.ctx, method, apiPath), method, apiPath, params, data)
 }
+
+// WithMutationRequest identifies one domain-known lifecycle mutation inside a
+// read workflow. Other method/path pairs and credential requests are unaffected.
+func WithMutationRequest(ctx context.Context, method, apiPath string) context.Context {
+	return cmdutil.WithMutationRequest(ctx, method, apiPath)
+}
+
+// CallMutationAPITyped performs a domain-known lifecycle mutation inside a read
+// workflow while preserving the usual authentication and typed error behavior.
+func (ctx *RuntimeContext) CallMutationAPITyped(method, apiPath string, params map[string]interface{}, data interface{}) (map[string]interface{}, error) {
+	return ctx.callAPITypedWithContext(WithMutationRequest(ctx.ctx, method, apiPath), method, apiPath, params, data)
+}

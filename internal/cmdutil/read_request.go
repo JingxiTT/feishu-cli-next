@@ -8,8 +8,11 @@ import (
 	"net/http"
 )
 
-type readOnlyRequestKey struct{}
-type readOnlyRequest struct{ method, path string }
+type requestEffectKey struct{}
+type requestEffect struct {
+	method, path string
+	mutation     bool
+}
 
 // WithReadOnlyRequest marks one method/path tuple as read-only according to
 // domain-owned operation semantics. apiPath is the exact URL path, without a
@@ -17,10 +20,20 @@ type readOnlyRequest struct{ method, path string }
 // Other method/path tuples retain normal mutation journaling, even when they
 // reuse the returned context. The command-wide context and risk are unchanged.
 func WithReadOnlyRequest(ctx context.Context, method, apiPath string) context.Context {
-	return context.WithValue(ctx, readOnlyRequestKey{}, readOnlyRequest{method: method, path: apiPath})
+	return context.WithValue(ctx, requestEffectKey{}, requestEffect{method: method, path: apiPath})
 }
 
-func isDeclaredReadRequest(req *http.Request) bool {
-	declared, ok := req.Context().Value(readOnlyRequestKey{}).(readOnlyRequest)
-	return ok && req.URL != nil && declared.method == req.Method && declared.path == req.URL.Path
+// WithMutationRequest identifies an exact domain-known lifecycle mutation
+// performed by a command otherwise classified as read-only. Credential requests
+// remain excluded by the transport. Never infer this from arbitrary user input.
+func WithMutationRequest(ctx context.Context, method, apiPath string) context.Context {
+	return context.WithValue(ctx, requestEffectKey{}, requestEffect{method: method, path: apiPath, mutation: true})
+}
+
+func declaredRequestEffect(req *http.Request) (mutation, known bool) {
+	declared, ok := req.Context().Value(requestEffectKey{}).(requestEffect)
+	if !ok || req.URL == nil || declared.method != req.Method || declared.path != req.URL.Path {
+		return false, false
+	}
+	return declared.mutation, true
 }

@@ -84,7 +84,48 @@ func TestDeclaredReadPreservesContextAndSkipsCredentialResolution(t *testing.T) 
 	if len(f.AgentAttemptSummary().Receipts) != 0 {
 		t.Fatal("read journaled")
 	}
-	if original.Value(readOnlyRequestKey{}) != nil {
+	if original.Value(requestEffectKey{}) != nil {
 		t.Fatal("original context changed")
+	}
+}
+
+func TestDeclaredMutationOverridesReadCommandExceptCredentials(t *testing.T) {
+	t.Setenv("LARKSUITE_CLI_CONFIG_DIR", t.TempDir())
+	f, _, _, _ := TestFactory(t, &core.CliConfig{AppID: "synthetic-app", Brand: core.BrandFeishu})
+	f.EnableAgentAttempts = true
+	f.ResolvedIdentity = core.AsBot
+	f.CurrentCommand = &cobra.Command{Use: "watch"}
+	SetRisk(f.CurrentCommand, "read")
+	tr := f.agentAttemptTransport(attemptRoundTrip(func(*http.Request) (*http.Response, error) {
+		return &http.Response{StatusCode: 200, Body: io.NopCloser(strings.NewReader(`{"code":0}`))}, nil
+	}))
+	base := context.Background()
+	cases := []struct {
+		ctx      context.Context
+		path     string
+		receipts int
+	}{
+		{WithMutationRequest(base, "POST", "/subscribe"), "/subscribe", 1},
+		{WithMutationRequest(base, "POST", "/subscribe"), "/fetch", 1},
+		{base, "/subscribe", 1},
+		{WithMutationRequest(base, "POST", "/open-apis/auth/v3/tenant_access_token/internal"), "/open-apis/auth/v3/tenant_access_token/internal", 1},
+	}
+	for _, tt := range cases {
+		req, err := http.NewRequestWithContext(tt.ctx, "POST", "https://fixture.invalid"+tt.path, nil)
+		if err != nil {
+			t.Fatal(err)
+		}
+		resp, err := tr.RoundTrip(req)
+		if err != nil {
+			t.Fatal(err)
+		}
+		resp.Body.Close()
+		receipts, err := f.AgentReceiptStore().List()
+		if err != nil || len(receipts) != tt.receipts {
+			t.Fatalf("%s: %v %v", tt.path, receipts, err)
+		}
+	}
+	if risk, _ := GetRisk(f.CurrentCommand); risk != "read" {
+		t.Fatal("changed workflow risk")
 	}
 }
