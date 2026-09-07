@@ -1,0 +1,106 @@
+{
+  "schema_version": 1,
+  "section": "base",
+  "reference_revision": "7fd6ef3c07182257ce776cdc5a614e122d5bd4b3",
+  "reference_shortcuts": 117,
+  "new_shortcuts": [
+    "base +record-import"
+  ],
+  "status": "offline_pass_release_open",
+  "gate_command": "python3 scripts/next_test.py --section base --suite all --binary .tmp/base-cli --report .tmp/base-section-gate.json",
+  "commands": [
+    {
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-count=1",
+        "-timeout=10m",
+        "./shortcuts/base/..."
+      ],
+      "status": "pass",
+      "exit_code": 0,
+      "duration_seconds": 3.669,
+      "tests": {
+        "pass": 1095,
+        "fail": 0,
+        "skip": 0
+      }
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-count=1",
+        "-timeout=10m",
+        "./tests/cli_e2e/base",
+        "-run",
+        "DryRun|Regression"
+      ],
+      "status": "pass",
+      "exit_code": 0,
+      "duration_seconds": 5.466,
+      "tests": {
+        "pass": 160,
+        "fail": 0,
+        "skip": 0
+      }
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-count=1",
+        "-timeout=10m",
+        "./tests/next_sections/base"
+      ],
+      "status": "pass",
+      "exit_code": 0,
+      "duration_seconds": 27.022,
+      "tests": {
+        "pass": 171,
+        "fail": 0,
+        "skip": 1
+      }
+    }
+  ],
+  "live": {
+    "status": "blocked",
+    "evidence": "live",
+    "reason": "No verified fixture harness binds the effective account and tenant, private visibility, Ying Wu's unambiguous identity when applicable, and run-owned cleanup. Legacy live tests are not authorized fixtures."
+  },
+  "static": {
+    "command": [
+      "go",
+      "vet",
+      "./shortcuts/base/...",
+      "./tests/next_sections/base"
+    ],
+    "status": "pass"
+  },
+  "scenario_evidence": {
+    "typed_import_rows": 10000,
+    "typed_import_batches": 50,
+    "native_field_definition_variants": 27,
+    "unexpected_mutations_on_noop": 0,
+    "stdout_row_payload": false
+  },
+  "comparative_evaluation": "not_run_coordinator_owned",
+  "cross_section_export_import": "pending_actual_sheets_producer_integration",
+  "held_out": "untouched",
+  "open": [
+    "verified private-at-creation live harness and live cases",
+    "comparative development trials",
+    "actual Sheets-to-Base cross-section gate",
+    "field formula/lookup on-demand guide routing in project skill",
+    "coordinator repository-wide release checks"
+  ],
+  "raw_logs": [
+    ".tmp/base-section-gate.json",
+    ".tmp/base-build.json",
+    ".tmp/base-vet.json",
+    ".tmp/base-live-gate.json"
+  ]
+}
