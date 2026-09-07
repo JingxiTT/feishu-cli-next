@@ -4,12 +4,14 @@
 package nextfoundation
 
 import (
+	"context"
 	"encoding/json"
 	"io"
 	"net/http"
 	"strings"
 	"sync/atomic"
 	"testing"
+	"time"
 )
 
 func TestFixtureRoutesToSyntheticBackend(t *testing.T) {
@@ -96,5 +98,51 @@ func TestFixtureTenantReadIsCountedSeparately(t *testing.T) {
 	}
 	if fixture.IdentityRequests.Load() != 1 || fixture.TenantIdentityRequests.Load() != 1 {
 		t.Fatalf("identity counts: user=%d tenant=%d", fixture.IdentityRequests.Load(), fixture.TenantIdentityRequests.Load())
+	}
+}
+
+func TestFixtureRunContextCancelsHangingProcessWithoutRetry(t *testing.T) {
+	started := make(chan struct{}, 1)
+	var requests atomic.Int32
+	fixture := NewFixture(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		requests.Add(1)
+		started <- struct{}{}
+		<-r.Context().Done()
+	}))
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	finished := make(chan Result, 1)
+	go func() {
+		finished <- fixture.RunContext(ctx, "api", "GET", "/open-apis/fixture/v1/hang", "--as", "bot")
+	}()
+	select {
+	case <-started:
+		cancel()
+	case <-ctx.Done():
+		t.Fatal("fixture backend did not receive the request")
+	}
+	select {
+	case result := <-finished:
+		if result.ExitCode == 0 || strings.Contains(result.Stdout, `"ok":true`) {
+			t.Fatalf("canceled process reported success: %+v", result)
+		}
+	case <-time.After(5 * time.Second):
+		t.Fatal("fixture process did not stop after cancellation")
+	}
+	if requests.Load() != 1 {
+		t.Fatalf("business requests=%d, want one attempt", requests.Load())
+	}
+}
+
+func TestFixtureRunContextCanceledBeforeStart(t *testing.T) {
+	fixture := NewFixture(t, nil)
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+	result := fixture.RunContext(ctx, "api", "GET", "/open-apis/fixture/v1/not-started")
+	if result.ExitCode != -1 || result.Stdout != "" || result.Stderr != "" {
+		t.Fatalf("canceled-before-start result=%+v", result)
+	}
+	if fixture.IdentityRequests.Load() != 0 || fixture.TenantIdentityRequests.Load() != 0 {
+		t.Fatal("canceled-before-start command reached identity backend")
 	}
 }

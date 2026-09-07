@@ -128,6 +128,13 @@ func (f *Fixture) Run(args ...string) Result {
 	f.t.Helper()
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
+	return f.RunContext(ctx, args...)
+}
+
+// RunContext executes once using the caller's deadline or cancellation. It
+// returns the real process exit code; cancellation before start returns -1.
+func (f *Fixture) RunContext(ctx context.Context, args ...string) Result {
+	f.t.Helper()
 	command := exec.CommandContext(ctx, fixtureBinary, args...)
 	command.Dir = f.WorkDir
 	for _, entry := range os.Environ() {
@@ -145,10 +152,14 @@ func (f *Fixture) Run(args ...string) Result {
 	result := Result{Stdout: stdout.String(), Stderr: stderr.String()}
 	if err != nil {
 		var exit *exec.ExitError
-		if !errors.As(err, &exit) {
+		switch {
+		case errors.As(err, &exit):
+			result.ExitCode = exit.ExitCode()
+		case ctx.Err() != nil:
+			result.ExitCode = -1
+		default:
 			f.t.Fatalf("start fixture CLI: %v", err)
 		}
-		result.ExitCode = exit.ExitCode()
 	}
 	return result
 }
