@@ -308,7 +308,7 @@ func wikiDeleteTarget(node gjson.Result, nodeToken, fallbackObjType string) (str
 	return nodeToken, fallbackObjType
 }
 
-func TestWikiDeleteTarget(t *testing.T) {
+func TestWikiDeleteTargetRegression(t *testing.T) {
 	tests := []struct {
 		name        string
 		nodeJSON    string
@@ -557,7 +557,7 @@ func isWikiVerifyTransientResult(result *clie2e.Result) bool {
 		strings.Contains(message, "http 504")
 }
 
-func TestWikiGetNodeIdentity(t *testing.T) {
+func TestWikiGetNodeIdentityRegression(t *testing.T) {
 	const nodeToken = "wikcnOriginalNode"
 	successPayload := func(returnedToken string) string {
 		return `{"code":0,"msg":"success","data":{"node":{"node_token":"` + returnedToken + `","obj_token":"doccnMovedDoc","obj_type":"docx","parent_node_token":"wikcnOtherParent","space_id":"7000000000000000001"}}}`
@@ -584,7 +584,7 @@ func TestWikiGetNodeIdentity(t *testing.T) {
 	})
 }
 
-func TestWikiVerifyTransientResult(t *testing.T) {
+func TestWikiVerifyTransientResultRegression(t *testing.T) {
 	t.Run("matches invalid response from transient http status", func(t *testing.T) {
 		result := &clie2e.Result{
 			ExitCode: 5,
@@ -613,7 +613,7 @@ func TestWikiVerifyTransientResult(t *testing.T) {
 	})
 }
 
-func TestIsWikiNodeDeletedResult(t *testing.T) {
+func TestIsWikiNodeDeletedResultRegression(t *testing.T) {
 	tests := []struct {
 		name   string
 		result *clie2e.Result
