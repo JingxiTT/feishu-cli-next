@@ -113,3 +113,60 @@ func TestNativeChangedImportPreservesNumericWireToken(t *testing.T) {
 	require.Equal(t, float64(1), data["acknowledged_pages"])
 	require.Equal(t, 1, writes)
 }
+
+func TestNativePlainImportReplacesStructuredIdentityThenNoops(t *testing.T) {
+	for key, content := range map[string]string{
+		"rich_text":       `[{"type":"link","text":"hello","link":"https://example.test"}]`,
+		"multiple_values": `[{"value":"hello"}]`,
+	} {
+		t.Run(key, func(t *testing.T) {
+			current := json.RawMessage(`{"value":"hello"}`)
+			writes := 0
+			f := nextfixture.NewFixture(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				require.Equal(t, "POST", r.Method)
+				var body struct {
+					Tool  string `json:"tool_name"`
+					Input string
+				}
+				require.NoError(t, json.NewDecoder(r.Body).Decode(&body))
+				if strings.HasSuffix(r.URL.Path, "invoke_write") {
+					writes++
+					require.Equal(t, "set_cell_range", body.Tool)
+					var input struct {
+						Cells [][]json.RawMessage `json:"cells"`
+					}
+					require.NoError(t, json.Unmarshal([]byte(body.Input), &input))
+					require.Len(t, input.Cells, 1)
+					require.Len(t, input.Cells[0], 1)
+					require.JSONEq(t, `{"value":"hello"}`, string(input.Cells[0][0]), "plain replacement must not retain structured content")
+					current = append(json.RawMessage(nil), input.Cells[0][0]...)
+					toolReply(w, map[string]any{"revision": 19})
+					return
+				}
+				require.Equal(t, "get_cell_ranges", body.Tool)
+				toolReply(w, map[string]any{"ranges": []any{map[string]any{"range": "A1:A1", "cells": [][]json.RawMessage{{current}}}}})
+			}))
+			success(t, f.Run("sheets", "+data-export", "--as", "user", "--spreadsheet-token", "shtFixture", "--sheet-id", "sh1", "--range", "A1:A1", "--save-result", "plain.json"))
+			current = json.RawMessage(`{"value":"hello","` + key + `":` + content + `}`)
+			args := []string{"sheets", "+data-import", "--as", "user", "--spreadsheet-token", "shtFixture", "--sheet-id", "sh1", "--range", "A1:A1", "--artifact", "@plain.json"}
+			out := success(t, f.Run(args...))
+			data := out["data"].(map[string]any)
+			require.Equal(t, false, data["noop"])
+			require.Equal(t, float64(1), data["changed_cells"])
+			require.Equal(t, float64(1), data["acknowledged_pages"])
+			require.Equal(t, "confirmed_applied", out["mutation"].(map[string]any)["outcome"])
+			require.JSONEq(t, `{"value":"hello"}`, string(current))
+			out = success(t, f.Run(args...))
+			data = out["data"].(map[string]any)
+			require.Equal(t, true, data["noop"])
+			require.Equal(t, float64(0), data["changed_cells"])
+			require.Equal(t, 1, writes, "second import must not repeat the replacement")
+			receipts, err := filepath.Glob(filepath.Join(f.ConfigDir, "next", "receipts", "*.json"))
+			require.NoError(t, err)
+			require.Len(t, receipts, 1, "only the actual replacement may create a receipt")
+			receipt, err := os.ReadFile(receipts[0])
+			require.NoError(t, err)
+			require.Equal(t, "confirmed_applied", decode(t, string(receipt))["outcome"])
+		})
+	}
+}

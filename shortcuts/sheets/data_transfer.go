@@ -214,6 +214,19 @@ func nativeCellUnchanged(want, current nativeCell) bool {
 		if raw, ok := current["formula"]; ok && string(raw) != "null" && string(raw) != `""` {
 			return false
 		}
+		_, rich := want["rich_text"]
+		_, multiple := want["multiple_values"]
+		if !rich && !multiple {
+			// Equal displayed text does not preserve a plain replacement's identity.
+			for _, key := range []string{"rich_text", "multiple_values"} {
+				if raw, present := current[key]; present {
+					var parts []json.RawMessage
+					if json.Unmarshal(raw, &parts) != nil || len(parts) > 0 {
+						return false
+					}
+				}
+			}
+		}
 	}
 	return true
 }

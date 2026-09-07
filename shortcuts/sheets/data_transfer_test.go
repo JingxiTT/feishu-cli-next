@@ -212,3 +212,23 @@ func TestNativeRichContentCacheDoesNotReplaceIdentity(t *testing.T) {
 	_, err = nativeWriteCell(cells[0][0])
 	requireProblem(t, err, errs.CategoryValidation, errs.SubtypeInvalidArgument, "")
 }
+
+func TestNativePlainValueReplacesStructuredContent(t *testing.T) {
+	want := nativeCells(t, `[[{"value":"hello"}]]`)
+	for key, content := range map[string]string{
+		"rich_text":       `[{"type":"link","text":"hello","link":"https://example.test"}]`,
+		"multiple_values": `[{"value":"hello"}]`,
+	} {
+		t.Run(key, func(t *testing.T) {
+			current := nativeCells(t, `[[{"value":"hello","`+key+`":`+content+`}]]`)
+			writes, changed, err := nativeWritePlan(want, current)
+			if err != nil || changed != 1 || len(writes[0][0]) != 1 || string(writes[0][0]["value"]) != `"hello"` {
+				t.Fatalf("cached structured text hid plain replacement: changed=%d writes=%v err=%v", changed, writes, err)
+			}
+			writes, changed, err = nativeWritePlan(current, current)
+			if err != nil || changed != 0 || nativePageChanged(writes) {
+				t.Fatalf("unchanged structured identity caused write: changed=%d err=%v", changed, err)
+			}
+		})
+	}
+}
