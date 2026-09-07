@@ -28,8 +28,8 @@ python3 -m unittest discover -s scripts -p next_inventory_test.py -v
 python3 scripts/next_inventory.py freeze \
   --reference ../feishu-cli-review \
   --metadata internal/registry/meta_data.json
-python3 scripts/next_inventory.py check --target ../feishu-cli-review
-python3 scripts/next_inventory.py check --target .
+python3 scripts/next_inventory.py check --surface legacy --target ../feishu-cli-review
+python3 scripts/next_inventory.py check --surface next --target .
 ```
 
 The canonical build fetched metadata from the public Feishu API because the
@@ -66,6 +66,15 @@ reconciliation; they must not silently redefine the frozen reference.
   self-reconciliation against the reference. Five synthetic tests additionally
   exercise nested metadata, missing flags/events/schemas/types, build conditions,
   source changes, deterministic compression, and malformed-input exit behavior.
+
+`check --surface next --target .` is the candidate/release inventory command.
+`next` is the default; it uses the same `WithAgentMode()` Build option as the
+product's `main.go`. Use `--surface legacy` explicitly for upstream reference
+self-reconciliation. The script inserts that option only into its temporary
+candidate exporter, so the shipped exporter remains compilable against the
+untouched upstream source, which has no `WithAgentMode` symbol. The report names
+the selected surface and candidate Git revision, reports command counts and new
+commands/root flags, and lists additions separately from compatibility failures.
 
 `check` exits 0 when frozen contracts and source files agree, 1 when review is
 required, and 2 for execution/input errors. Its JSON report distinguishes missing

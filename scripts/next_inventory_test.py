@@ -6,6 +6,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest import mock
 
 MODULE_PATH = Path(__file__).with_name('next_inventory.py')
 spec = importlib.util.spec_from_file_location('inventory', MODULE_PATH)
@@ -56,6 +57,42 @@ class InventoryTests(unittest.TestCase):
             inventory.save(b, fixture)
             self.assertEqual(a.read_bytes(), b.read_bytes())
             self.assertEqual(inventory.read(a), fixture)
+
+    def test_exporter_selects_next_only_when_requested(self):
+        legacy = inventory.exporter_source('legacy')
+        self.assertNotIn('rootcmd.WithAgentMode()', legacy)
+        self.assertEqual(inventory.exporter_source('next').count('rootcmd.WithAgentMode()'), 1)
+        with self.assertRaises(ValueError):
+            inventory.exporter_source('invalid')
+
+    def test_next_additions_do_not_hide_removed_legacy_flags(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            metadata = b'{"services": []}'
+            (root / 'meta_data.json.gz').write_bytes(inventory.gzip.compress(metadata))
+            inventory.save(root / 'coverage.json', {'reference': {'metadata_sha256': inventory.digest(metadata)}})
+            inventory.save(root / 'sources.json', {'files': {}})
+            legacy = {'commands': {'': {'flags': {'identity': {'type': 'string', 'default': 'user'}}}}}
+            next_surface = {'commands': {'': {'flags': {'result-fields': {'type': 'string', 'default': ''}}}, 'guide': {}}}
+            inventory.save(root / 'registrations.json.gz', {'feishu': legacy})
+            def fake_export(target, metadata, brand, surface):
+                return next_surface if surface == 'next' else legacy
+            with mock.patch.object(inventory, 'export', side_effect=fake_export) as export, mock.patch.object(inventory, 'git', return_value='fixture-revision'):
+                result = inventory.check(root, root)
+                self.assertEqual(export.call_args.args[-1], 'next')
+                self.assertEqual(result['surface'], 'next')
+                self.assertEqual(result['status'], 'review_required')
+                self.assertIn({'path': '/feishu/commands//flags/identity', 'kind': 'missing'}, result['differences'])
+                self.assertIn('/feishu/commands//flags/result-fields', result['additions'])
+                self.assertIn('/feishu/commands/guide', result['additions'])
+                self.assertEqual(inventory.check(root, root, 'legacy')['status'], 'pass')
+
+    def test_check_cli_defaults_next_and_reports_explicit_legacy(self):
+        for arguments, surface in (([], 'next'), (['--surface', 'legacy'], 'legacy')):
+            with mock.patch.object(inventory, 'check', return_value={'status': 'pass'}) as check:
+                with mock.patch('builtins.print'):
+                    self.assertEqual(inventory.main(['check', *arguments]), 0)
+                self.assertEqual(check.call_args.args[-1], surface)
 
     def test_process_reports_bad_metadata_to_stderr_with_exit_two(self):
         with tempfile.TemporaryDirectory() as temporary:

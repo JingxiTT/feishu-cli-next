@@ -75,7 +75,20 @@ def source_inventory(root):
             'test_files': [n for n in files if n.endswith(('_test.go', '.test.js', '.test.sh'))]}
 
 
-def export(root, metadata, brand):
+def exporter_source(surface):
+    """Select the real distribution surface without importing next into upstream."""
+    source = EXPORTER.read_text()
+    if surface == 'legacy':
+        return source
+    if surface != 'next':
+        raise ValueError('surface must be next or legacy')
+    anchor = 'rootcmd.WithoutPlugins(), rootcmd.WithoutStrictMode(),'
+    if source.count(anchor) != 1:
+        raise ValueError('inventory exporter Build options changed; update surface selection')
+    return source.replace(anchor, anchor + '\n\t\trootcmd.WithAgentMode(),')
+
+
+def export(root, metadata, brand, surface='legacy'):
     """Compile actual registrations in a temporary copy, never the reference."""
     with tempfile.TemporaryDirectory(prefix='next-inventory-') as temporary:
         work = Path(temporary) / 'source'
@@ -86,7 +99,7 @@ def export(root, metadata, brand):
                 target = work / name
                 target.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copyfile(source, target)
-        shutil.copyfile(EXPORTER, work / 'scripts/next_inventory_export.go')
+        (work / 'scripts/next_inventory_export.go').write_text(exporter_source(surface))
         (work / 'internal/registry/meta_data.json').write_bytes(metadata)
         env = {k: v for k, v in os.environ.items() if not k.startswith(('LARKSUITE_CLI_', 'FEISHU_'))}
         env.update(LARKSUITE_CLI_CONFIG_DIR=str(Path(temporary) / 'config'),
@@ -180,25 +193,48 @@ def compare_contract(reference, target, prefix=''):
     return errors
 
 
-def check(reference_dir, target):
+def additions(reference, target, prefix=''):
+    """List new dictionary contracts separately from compatibility failures."""
+    found = []
+    if isinstance(reference, dict) and isinstance(target, dict):
+        for key, value in target.items():
+            path = prefix + '/' + key
+            if key not in reference:
+                found.append(path)
+            else:
+                found.extend(additions(reference[key], value, path))
+    return sorted(found)
+
+
+def check(reference_dir, target, surface='next'):
     frozen = read(reference_dir / 'registrations.json.gz')
     metadata = gzip.decompress((reference_dir / 'meta_data.json.gz').read_bytes())
     coverage = read(reference_dir / 'coverage.json')
     if digest(metadata) != coverage['reference']['metadata_sha256']:
         raise ValueError('frozen metadata checksum does not match coverage.json')
-    errors = []
+    errors, added, counts, new_commands, new_root_flags = [], [], {}, {}, {}
     for brand, reference in frozen.items():
-        current = export(target, metadata, brand)
+        current = export(target, metadata, brand, surface)
         errors.extend(compare_contract(reference, current, '/' + brand))
+        added.extend(additions(reference, current, '/' + brand))
+        new_commands[brand] = {k: v for k, v in current['commands'].items() if k not in reference['commands']}
+        new_root_flags[brand] = {k: v for k, v in current['commands']['']['flags'].items()
+                                 if k not in reference['commands']['']['flags']}
+        counts[brand] = {'reference_commands': len(reference['commands']),
+                         'candidate_commands': len(current['commands'])}
     sources = read(reference_dir / 'sources.json')
     for name, expected in sources['files'].items():
         path = target / name
         if not path.is_file():
             errors.append({'path': name, 'kind': 'missing_source'})
         elif digest(path.read_bytes()) != expected:
-            errors.append({'path': name, 'kind': 'changed_source_requires_review'})
+            errors.append({'path': name, 'kind': 'changed_source_requires_review',
+                           'reference_sha256': expected, 'candidate_sha256': digest(path.read_bytes())})
     return {'schema_version': 1, 'status': 'pass' if not errors else 'review_required',
-            'differences': errors, 'live_verification': 'not_run'}
+            'surface': surface, 'reference_surface': 'legacy', 'counts': counts,
+            'candidate_revision': git(target, 'rev-parse', 'HEAD'),
+            'new_commands': new_commands, 'new_root_flags': new_root_flags,
+            'differences': errors, 'additions': sorted(added), 'live_verification': 'not_run'}
 
 
 def main(argv=None):
@@ -211,9 +247,11 @@ def main(argv=None):
     checker = sub.add_parser('check')
     checker.add_argument('--reference-dir', type=Path, default=ROOT / 'docs/reference')
     checker.add_argument('--target', type=Path, default=ROOT)
+    checker.add_argument('--surface', choices=('next', 'legacy'), default='next',
+                         help='candidate distribution Build options (default: next); use legacy for upstream self-reconciliation')
     args = parser.parse_args(argv)
     try:
-        result = freeze(args.reference.resolve(), args.metadata.resolve(), args.out.resolve()) if args.action == 'freeze' else check(args.reference_dir.resolve(), args.target.resolve())
+        result = freeze(args.reference.resolve(), args.metadata.resolve(), args.out.resolve()) if args.action == 'freeze' else check(args.reference_dir.resolve(), args.target.resolve(), args.surface)
         print(json.dumps(result, sort_keys=True))
         return 1 if result.get('status') == 'review_required' else 0
     except (OSError, ValueError, RuntimeError, subprocess.SubprocessError) as error:
