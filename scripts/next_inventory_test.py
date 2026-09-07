@@ -58,6 +58,11 @@ class InventoryTests(unittest.TestCase):
             self.assertEqual(a.read_bytes(), b.read_bytes())
             self.assertEqual(inventory.read(a), fixture)
 
+    def test_build_context_records_go_target_and_host(self):
+        values = {'GOOS': 'linux', 'GOARCH': 'arm64', 'GOHOSTOS': 'linux', 'GOHOSTARCH': 'arm64'}
+        with mock.patch.object(inventory.subprocess, 'check_output', side_effect=[json.dumps(values).encode(), b'go version fixture']):
+            self.assertEqual(inventory.build_context(), {**values, 'go_version': 'go version fixture'})
+
     def test_exporter_selects_next_only_when_requested(self):
         legacy = inventory.exporter_source('legacy')
         self.assertNotIn('rootcmd.WithAgentMode()', legacy)

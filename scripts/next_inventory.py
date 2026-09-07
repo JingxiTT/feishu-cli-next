@@ -88,6 +88,14 @@ def exporter_source(surface):
     return source.replace(anchor, anchor + '\n\t\trootcmd.WithAgentMode(),')
 
 
+def build_context():
+    """Record the actual Go target and host used for local registration execution."""
+    values = json.loads(subprocess.check_output(
+        ['go', 'env', '-json', 'GOOS', 'GOARCH', 'GOHOSTOS', 'GOHOSTARCH']))
+    values['go_version'] = subprocess.check_output(['go', 'version']).decode().strip()
+    return values
+
+
 def export(root, metadata, brand, surface='legacy'):
     """Compile actual registrations in a temporary copy, never the reference."""
     with tempfile.TemporaryDirectory(prefix='next-inventory-') as temporary:
@@ -343,6 +351,7 @@ def check(reference_dir, target, surface='next', reference_registrations=None):
         errors.append({'path': '/', 'kind': 'tracked_source_changed_during_check'})
     return {'schema_version': 1, 'status': 'pass' if not errors else 'review_required',
             'surface': surface, 'reference_surface': 'legacy', 'counts': counts,
+            'build_context': build_context(),
             'candidate_brand_context': 'explicit startup brand and isolated synthetic environment account',
             'reference_registrations': str(registration_path),
             'reference_context_notice': ('Explicit alternate registration supplement; inspect its capture context.' if reference_registrations else 'Original frozen bootstrap inventory; use the configured-brand supplement for runtime brand conditions.'),
@@ -382,7 +391,7 @@ def capture_brands(reference_dir, reference, output):
     for brand, values in variants.items():
         validate_brand_surface(brand, values)
     save(output, variants)
-    return {'schema_version': 1, 'status': 'captured',
+    return {'schema_version': 1, 'status': 'captured', 'build_context': build_context(),
             'reference_revision': coverage['reference']['revision'],
             'reference_local_changes': git(reference, 'status', '--porcelain=v1'),
             'metadata_sha256': digest(metadata), 'registrations': str(output),
