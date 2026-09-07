@@ -138,6 +138,16 @@ class ScenarioIntegrationTests(unittest.TestCase):
         finally:
             connection.close()
 
+    def test_scaling_loader_binds_only_declared_sizes_and_task_manifests(self):
+        manifest = json.loads((ROOT / 'evaluation/tasks.scaling.json').read_text())
+        self.assertEqual(len(manifest['tasks']), 6)
+        for task in manifest['tasks']:
+            module = load_scenario(task['fixture']['scenario'], task['fixture']['row_count'])
+            self.assertEqual(module.TASK, task)
+            self.assertEqual(module.TASK['fixture']['answer_schema']['type'], 'object')
+        for invalid in (None, True, '100', 0, 101):
+            with self.assertRaises(ValueError): load_scenario('scaling-base', invalid)
+
     def test_loader_and_protected_socket_profile_are_explicit(self):
         with self.assertRaises(ValueError): load_scenario('../arbitrary')
         with tempfile.TemporaryDirectory() as directory:

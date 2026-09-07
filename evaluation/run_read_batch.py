@@ -17,11 +17,11 @@ def main():
         parser.add_argument('--' + name, type=Path, required=True)
     parser.add_argument('--section', action='append')
     parser.add_argument('--prepare-only', action='store_true')
-    parser.add_argument('--task-kind', choices=('read', 'scenario'), default='read')
+    parser.add_argument('--task-kind', choices=('read', 'scenario', 'scaling'), default='read')
     args = parser.parse_args()
-    manifest_path = ROOT / 'evaluation' / ('tasks.read-sections.json' if args.task_kind == 'read' else 'tasks.scenarios.json')
+    manifest_path = ROOT / 'evaluation' / {'read': 'tasks.read-sections.json', 'scenario': 'tasks.scenarios.json', 'scaling': 'tasks.scaling.json'}[args.task_kind]
     manifest = json.loads(manifest_path.read_text())
-    sections = [task['section'] for task in manifest['tasks'] if not args.section or task['section'] in args.section]
+    sections = list(dict.fromkeys(task['section'] for task in manifest['tasks'] if not args.section or task['section'] in args.section))
     if not sections or args.section and set(args.section) - set(sections):
         raise ValueError('unknown section')
     failed = False
@@ -80,11 +80,12 @@ def main():
                 continue
             if (args.output_root / section / 'batch-01.json').exists():
                 raise ValueError('refusing to overwrite completed or partial model evidence')
-            print(json.dumps({'section': section, 'status': 'starting', 'planned_attempts': 9}), flush=True)
+            attempts = 9 * sum(task['section'] == section for task in manifest['tasks'])
+            print(json.dumps({'section': section, 'status': 'starting', 'planned_attempts': attempts}), flush=True)
             result = subprocess.run([sys.executable, str(ROOT / 'evaluation/harness.py'),
                                      '--tasks', str(manifest_path), '--section', section,
                                      '--config', str(path), '--output', str(args.output_root / section / 'batch-01.json'),
-                                     '--seed', str((20260910 if args.task_kind == 'read' else 20260930) + index), '--repeats', '3',
+                                     '--seed', str({'read': 20260910, 'scenario': 20260930, 'scaling': 20261020}[args.task_kind] + index), '--repeats', '3',
                                      '--stop-file', str(args.output_root / 'STOP')], check=False)
             failed |= result.returncode != 0
     print(json.dumps({'status': 'prepared' if args.prepare_only else 'complete_with_failures' if failed else 'complete',

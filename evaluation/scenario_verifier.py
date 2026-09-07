@@ -8,7 +8,7 @@ from scenario_fixture import load_scenario
 
 def verify(request):
     workspace = Path(request['workspace'])
-    module = load_scenario(request['fixture']['scenario_section'])
+    module = load_scenario(request['fixture'].get('scenario_section', request['fixture']['scenario']), request['fixture'].get('row_count'))
     if request['task_id'] != module.TASK['id']:
         return False
     receipt = json.loads((workspace / 'backend-receipt.json').read_text())

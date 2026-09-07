@@ -86,7 +86,7 @@ def command_choices(command, depth=0):
 def cli_environment(workspace):
     return {"PATH": str(workspace / "bin") + os.pathsep + os.defpath,
             "HOME": str(workspace / "home"), "TMPDIR": str(workspace / "tmp"),
-            "LANG": "C.UTF-8", "LC_ALL": "C.UTF-8",
+            "LANG": "C.UTF-8", "LC_ALL": "C.UTF-8", "PYTHONUTF8": "1", "PYTHONIOENCODING": "utf-8",
             "LARKSUITE_CLI_CONFIG_DIR": str(workspace / "feishu-config"),
             "LARKSUITE_CLI_REMOTE_META": "off", "LARKSUITE_CLI_NO_UPDATE_NOTIFIER": "1",
             "LARKSUITE_CLI_NO_SKILLS_NOTIFIER": "1"}
@@ -273,7 +273,7 @@ def run_agent(request, codex, auth_home, expected_version, fixture_env=None, *, 
     if type(timeout) not in (int, float) or timeout <= 0:
         raise ValueError("Codex adapter requires a positive timeout_seconds task budget")
     child = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                             text=True, cwd=workspace, env=env, start_new_session=True)
+                             text=True, encoding="utf-8", cwd=workspace, env=env, start_new_session=True)
     try:
         stdout, _ = child.communicate(prompt, timeout=timeout)
     except subprocess.TimeoutExpired:

@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "kind": "controlled_process_checks_not_model_measurements",
+  "reference_revision": "7fd6ef3c07182257ce776cdc5a614e122d5bd4b3",
+  "candidate_revision": "74b6b5346ca4efbd03564045f4f3e01746f18878",
+  "row_counts": [
+    100,
+    1000,
+    10000
+  ],
+  "tests_passed": 23,
+  "tests_skipped": 0,
+  "clean_binary_workflows": 15,
+  "base": {
+    "workflows": 6,
+    "strategies": [
+      "reference native bounded file batches",
+      "next native record-import"
+    ],
+    "max_10000_row_batch_requests": 50,
+    "typed_values_omissions_input_schema_and_sentinel_verified": true
+  },
+  "sheets": {
+    "workflows": 9,
+    "strategies": [
+      "reference cells-get file",
+      "next cells-get file",
+      "next data-export file"
+    ],
+    "legacy_artifact_bytes_by_size": [
+      108853,
+      1087609,
+      10902115
+    ],
+    "next_export_artifact_bytes_by_size": [
+      78875,
+      785378,
+      7859381
+    ],
+    "next_export_read_pages_by_size": [
+      1,
+      2,
+      16
+    ],
+    "typed_hash_agrees_across_strategies": true,
+    "artifact_limit_bytes": 33554432
+  },
+  "integration": {
+    "default_suite_tests": 181,
+    "default_suite_skipped_optional": 12,
+    "all_other_default_tests_passed": true,
+    "native_lifecycle_tests_passed": 8,
+    "scaling_prepare_only": "both domains passed without models"
+  },
+  "limits": [
+    "No scaling provider token trials have run; byte counts and requests cannot establish token savings.",
+    "Fixed synthetic prefix family limits variation across input distributions.",
+    "Base typed exchange file is identical across arms; this measures interoperability and guidance as well as CLI defaults.",
+    "Model artifacts are independently checked then discarded; per-trial raw artifact bytes/hashes are not retained.",
+    "Fresh public-plan development fixtures; quarantined held-out snippets are not reused."
+  ]
+}

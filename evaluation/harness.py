@@ -74,10 +74,10 @@ def token_usage(payload):
 def process(command, request, workspace, timeout):
     # No inherited profiles, tokens, tenant variables, proxy settings, or Python paths.
     env = {"PATH": os.defpath, "HOME": str(workspace), "TMPDIR": str(workspace),
-           "LANG": "C.UTF-8", "LC_ALL": "C.UTF-8"}
+           "LANG": "C.UTF-8", "LC_ALL": "C.UTF-8", "PYTHONUTF8": "1", "PYTHONIOENCODING": "utf-8"}
     started = time.monotonic()
     try:
-        completed = subprocess.run(command, input=json.dumps(request), text=True,
+        completed = subprocess.run(command, input=json.dumps(request), text=True, encoding="utf-8",
                                    stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                    cwd=workspace, env=env, timeout=timeout, check=False)
         elapsed = time.monotonic() - started

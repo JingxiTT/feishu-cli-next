@@ -23,8 +23,9 @@ for interface tuning. The release flag is intentionally required to execute them
 `codex_runner.py` and `foundation_verifier.py` implement real Codex execution
 and independent checks for two offline foundation tasks described below.
 The [foundation report](evidence/foundation/REPORT.md) records the completed
-18-trial compatible comparison and all earlier failed attempts. Other sections
-still need controlled Feishu backend adapters and broader comparative results.
+18-trial compatible comparison and all earlier failed attempts. All predeclared sections now have controlled adapters; broader comparative results
+remain incomplete. The corrected [Wiki comparison](evidence/wiki-native-74/REPORT.md)
+and [nine-section batch](evidence/read-312af93/REPORT.md) retain mixed results and failures.
 Use the runner and independently implemented verifier
 with the protocol below; model
 usage must come from the provider across every turn. A CLI output byte count,
@@ -386,3 +387,33 @@ launcher/harness checks it between complete attempts, checkpoints all active
 attempt usage first, and cancels unstarted slots without calling them product
 failures. A partial series is not a balanced performance comparison. Direct
 harness users may supply an explicit `--stop-file` path.
+
+## Development transfer-size experiment
+
+`tasks.scaling.json` declares separate Base import and Sheets export tasks at
+100, 1,000 and 10,000 rows. `run_read_batch.py --task-kind scaling` uses the same
+required source/binary/auth/Codex/output arguments as other batch kinds; add
+`--prepare-only` to validate setup without starting any model. Each domain runs
+27 balanced, seeded, serial fresh-context attempts (three sizes, three arms,
+three repetitions). Only the evaluator starts these workloads after the active
+batch finishes and the candidate and harness are frozen. The `STOP` file in the
+output root stops before the next model, retaining any active attempt's cost.
+
+The fixed synthetic source family is shared across arms and repetitions; smaller
+sources are prefixes of the 10,000-row source. This limits generalization across
+data distributions. The Base source is a typed exchange file with an explicit
+mapping, identical for every arm: the reference can parse it and submit bounded
+native batches; the candidate may use native import. That measures file
+interoperability and guidance as well as interface defaults, not an isolated
+formatting change. Sheets permits legacy file output and native bound export.
+No command sequence is prescribed to the model.
+
+The two adapters independently check actual complete artifacts/backend state,
+all supported scalar types and omissions, signed read/write coverage, immutable
+schema/sentinels and input bytes. Their controlled tests cover both clean
+binaries at all sizes. Artifact sizes and request counts are diagnostics only;
+provider token measurements are **not yet run** for this experiment. Future
+reports must retain failures, cached input, input/output totals, paired outcomes
+and size-dependent variation without a fixed improvement target. These fresh
+fixtures derive from the public plan's scaling requirement; they do not reuse
+quarantined held-out examples.
