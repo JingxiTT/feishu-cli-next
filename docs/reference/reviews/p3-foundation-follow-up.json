@@ -1,0 +1,262 @@
+{
+  "schema_version": 1,
+  "reviewer": "/root/foundation_review",
+  "report_kind": "hash_bound_follow_up",
+  "verdict": "approved_offline",
+  "prior_report": {
+    "path": "docs/reference/reviews/p3-foundation-review.json",
+    "commit": "fb792f3d81af8640b74b61cd4e7cb474334ae975",
+    "sha256": "aec2dceb705cd65d42e25cfc525685c2b607afd42ce60bddf2c73559deee8927",
+    "preserved": true
+  },
+  "scope": {
+    "assignment_ids": [
+      "generated_pagination",
+      "invocation_identity"
+    ],
+    "path_count": 4,
+    "method": "Exact committed fix diffs and cohesive surrounding source paths, complete new regression bodies, contract/dependency checks and existing process log inspection. Original 38-path immutable review is preserved.",
+    "product_files_modified": false,
+    "tests_executed_by_this_review": false
+  },
+  "assignments": [
+    {
+      "schema_version": 1,
+      "reviewer": "/root/foundation_review",
+      "assignment_id": "generated_pagination",
+      "verdict": "approved_offline",
+      "paths": [
+        {
+          "path": "internal/client/client.go",
+          "review_revision": "94e4afc032b803ad17a6efbcdb2573361ed2b38a",
+          "review_sha256": "6d880a3df59aff9e0f61e0597b59338103ac43ea028697cb04ef1f670fcfc182",
+          "verdict": "approved_offline",
+          "review_scope": "Narrow closure of F1: CallAPI HTTP failure is rejected before pagination can treat missing/zero business code as successful exhaustion. Structured nonzero business diagnostics take precedence. Prior whole-file review remains at its original hash.",
+          "prior_review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "prior_review_sha256": "42dcc57e3c66cde1b9a44c0290470b4ed7aadb43397dfd720854510c96345842",
+          "evidence": [
+            {
+              "path": "internal/client/pagination_failure_test.go",
+              "scope": "Full regression source: 16 leaves (403/500 x missing/zero/non-JSON/nonzero-business body x first/later page); nil aggregate and bounded calls, typed HTTP failure and preserved business-code/log-ID precedence.",
+              "sha256": "b102697e42a9b652d2cea6379d7a53e3b4049ec114f0be2c012400c63450481a",
+              "source_revision": "94e4afc032b803ad17a6efbcdb2573361ed2b38a",
+              "tested_revision": "unbound: immutable source inspected; not executed by this review"
+            },
+            {
+              "path": "tests/next_foundation/pagination_e2e_test.go",
+              "scope": "Full process regression source: failed generated aggregate does not publish stdout/artifact; raw JSON/NDJSON later business failures preserve nonzero exit and prior streaming data.",
+              "sha256": "853386e8da437d4f2286d4a63a591b11b3e631fdd8bf7e99428999ed6cad3fce",
+              "source_revision": "94e4afc032b803ad17a6efbcdb2573361ed2b38a",
+              "tested_revision": "unbound: immutable source inspected; not executed by this review"
+            },
+            {
+              "path": "docs/contracts/output.md",
+              "scope": "HTTP status precedence and incomplete pagination output contract.",
+              "sha256": "b93d97c0e909aec9b239d3095ce7d2a359933b7e38aaf5d4d078efac0a59ffe8",
+              "source_revision": "94e4afc032b803ad17a6efbcdb2573361ed2b38a",
+              "tested_revision": "unbound: immutable source inspected; not executed by this review"
+            },
+            {
+              "path": ".tmp/next-evidence/pagination-http-process.json",
+              "sha256": "eff591866ffeb848bfc3fd003a91d9dca4f7a4d1226281c3e1dff6a1f9286f9a",
+              "scope": "Existing isolated process output inspected: 403/500 failed second page publishes neither stdout nor artifact; raw JSON/NDJSON later business error remains nonzero. Six test pass events include two parent tests and four leaves.",
+              "command": [
+                "go",
+                "test",
+                "-json",
+                "./tests/next_foundation",
+                "-run",
+                "TestPaginationHTTPFailureDoesNotPublishArtifact|TestRawPaginationLaterErrorIsNotSuccess",
+                "-count=1"
+              ],
+              "status": "pass",
+              "exit_code": 0,
+              "test_pass_events": 6,
+              "package_pass_events": 1,
+              "failure_events": 0,
+              "skip_events": 0,
+              "tested_revision": "unbound: existing report does not embed a source revision or source hashes; root associates this run with the F1 fix, but this review does not infer immutable execution provenance"
+            }
+          ],
+          "findings": [
+            {
+              "id": "P3-FOUNDATION-F1",
+              "status": "closed_at_review_revision",
+              "resolution": "HTTP >=400 returns a typed HTTP error unless a structured nonzero business error supplies stronger diagnostics; no aggregate success can escape this failure branch."
+            }
+          ]
+        }
+      ],
+      "cross_assignment_dependencies": [],
+      "limitations": [
+        "Follow-up scope only; original immutable findings remain visible in the prior report."
+      ]
+    },
+    {
+      "schema_version": 1,
+      "reviewer": "/root/foundation_review",
+      "assignment_id": "invocation_identity",
+      "verdict": "approved_offline",
+      "paths": [
+        {
+          "path": "internal/cmdutil/agent_attempts.go",
+          "review_revision": "a2f26260f8a3c1b5687a302a012ba7356597fe28",
+          "review_sha256": "d4c74c18042ee7b3f11916c972c5669682c4b24a4be2e9c20506bafc828c081a",
+          "verdict": "approved_offline",
+          "review_scope": "Narrow closure of F2: exact native Accounts OAuth token POST bypass occurs before receipt binding; unrelated endpoint/method/port/path mutations remain classified. Prior whole-file review remains at its original hash.",
+          "prior_review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "prior_review_sha256": "ec35045ddaac36a7dc05ac98db67a1a0f29bf7b02594ea448bff021414bafb70",
+          "evidence": [
+            {
+              "path": "internal/cmdutil/agent_oauth_attempt_test.go",
+              "scope": "Full regression source: four real NewDefault cold-token-then-SDK-write leaves across Feishu/Lark and token envelope with/without code:0; no resolved global identity, zero token receipts, exactly one durable actual bot-write receipt, no credential leakage. Ten endpoint tuples test exact trusted bypass boundaries.",
+              "sha256": "aa6c99c047890f20f3d862a5e5e23afc240bee04f5581746ef34c1c25e40b140",
+              "source_revision": "a2f26260f8a3c1b5687a302a012ba7356597fe28",
+              "tested_revision": "unbound: immutable source inspected; not executed by this review"
+            },
+            {
+              "path": "internal/core/types.go",
+              "scope": "Dependency scope only: OAuthTokenV3Path, ResolveEndpoints and IsPlatformEndpointURL; HTTPS, exact known hostname and empty/443 port required.",
+              "sha256": "63a0e2ec91fffe19a6e98bd6c0d74c56589864064691a00f2c77f550cf0d298e",
+              "source_revision": "a2f26260f8a3c1b5687a302a012ba7356597fe28",
+              "tested_revision": "unbound: immutable source inspected; not executed by this review"
+            },
+            {
+              "path": "docs/contracts/receipts.md",
+              "scope": "Credential issuance exclusion remains distinct from content mutation evidence.",
+              "sha256": "eaf592b11f35cbeefa256a9931f4ea2e2d17ccf9f9cfdb120f1783998af6f26f",
+              "source_revision": "a2f26260f8a3c1b5687a302a012ba7356597fe28",
+              "tested_revision": "unbound: immutable source inspected; not executed by this review"
+            }
+          ],
+          "findings": [
+            {
+              "id": "P3-FOUNDATION-F2",
+              "status": "closed_at_review_revision",
+              "resolution": "Both trusted Accounts origins exclude native HTTPS standard-port POST /oauth/v3/token before credential/receipt resolution; actual bot content write retains exactly one receipt."
+            }
+          ]
+        },
+        {
+          "path": "internal/cmdutil/factory.go",
+          "review_revision": "928ffdb53836258b59b19f4a2a37023810960d88",
+          "review_sha256": "e009b60f60919758f8ba5902776933081791cc520f2a3effc95de68ec7176d64",
+          "verdict": "approved_offline",
+          "review_scope": "Narrow invocation-identity follow-up: ResolveStrictMode consumes SupportedIdentities metadata without enrichment; existing strict-mode selection and error fallback retained. StartupBrand metadata field observed as a prior additive dependency; no command-recovery file verdict inferred.",
+          "prior_review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "prior_review_sha256": "7e53e4402af55c1278687e0f37d82062a83833c19498c0de2ff217898199b26a",
+          "evidence": [
+            {
+              "path": "internal/credential/account_metadata_test.go",
+              "scope": "Full source: metadata performs no token/user_info work; full account enriches once and preserves original provider metadata; 32 concurrent metadata/full-account callers share one selection/enrichment; selected-provider error cached without fallback.",
+              "sha256": "631a9a425e72ea63e436bdd99a3fb41795cd0c915db546dbb77662da54a507f5",
+              "source_revision": "928ffdb53836258b59b19f4a2a37023810960d88",
+              "tested_revision": "unbound: immutable source inspected; not executed by this review"
+            },
+            {
+              "path": "internal/cmdutil/factory_metadata_test.go",
+              "scope": "Full source: repeated user-only/bot-only/both strict-mode metadata calls select once and prohibit token resolution or HTTP-client construction.",
+              "sha256": "fe75ad5b9694d6e3fc6a250c89567e0388515f2a262e91602657a53f5217ada2",
+              "source_revision": "928ffdb53836258b59b19f4a2a37023810960d88",
+              "tested_revision": "unbound: immutable source inspected; not executed by this review"
+            },
+            {
+              "path": "internal/credential/types.go",
+              "scope": "Dependency scope only: Account consists of scalar values; shallow-copy enrichment does not alias mutable metadata fields.",
+              "sha256": "a785d83ad80e761b1d181c1885d5dbb37a0aa79091396f42d8447aecc8e0ec29",
+              "source_revision": "928ffdb53836258b59b19f4a2a37023810960d88",
+              "tested_revision": "unbound: immutable source inspected; not executed by this review"
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "internal/credential/credential_provider.go",
+          "review_revision": "928ffdb53836258b59b19f4a2a37023810960d88",
+          "review_sha256": "4e70028580edaf4872c24db84dacab7293f87bc1006d0b4a4acf2ba3266e95d2",
+          "verdict": "approved_offline",
+          "review_scope": "Narrow invocation-identity follow-up: metadataOnce caches one account/source/error; full accountOnce reuses selection, clones scalar account metadata, then performs existing source-specific identity verification once. Concurrent metadata/full-account calls cannot observe enrichment writes to metadata. Existing token-only constructor fallback and all-token concurrency are outside this change and not claimed as newly validated.",
+          "prior_review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "prior_review_sha256": "82d4af42104cde4e225b0d3be6ec643c66c771fa30c07c65e9403dc9ee7a794f",
+          "evidence": [
+            {
+              "path": "internal/credential/account_metadata_test.go",
+              "scope": "Full source: metadata performs no token/user_info work; full account enriches once and preserves original provider metadata; 32 concurrent metadata/full-account callers share one selection/enrichment; selected-provider error cached without fallback.",
+              "sha256": "631a9a425e72ea63e436bdd99a3fb41795cd0c915db546dbb77662da54a507f5",
+              "source_revision": "928ffdb53836258b59b19f4a2a37023810960d88",
+              "tested_revision": "unbound: immutable source inspected; not executed by this review"
+            },
+            {
+              "path": "internal/cmdutil/factory_metadata_test.go",
+              "scope": "Full source: repeated user-only/bot-only/both strict-mode metadata calls select once and prohibit token resolution or HTTP-client construction.",
+              "sha256": "fe75ad5b9694d6e3fc6a250c89567e0388515f2a262e91602657a53f5217ada2",
+              "source_revision": "928ffdb53836258b59b19f4a2a37023810960d88",
+              "tested_revision": "unbound: immutable source inspected; not executed by this review"
+            },
+            {
+              "path": "internal/credential/types.go",
+              "scope": "Dependency scope only: Account consists of scalar values; shallow-copy enrichment does not alias mutable metadata fields.",
+              "sha256": "a785d83ad80e761b1d181c1885d5dbb37a0aa79091396f42d8447aecc8e0ec29",
+              "source_revision": "928ffdb53836258b59b19f4a2a37023810960d88",
+              "tested_revision": "unbound: immutable source inspected; not executed by this review"
+            }
+          ],
+          "findings": []
+        }
+      ],
+      "cross_assignment_dependencies": [],
+      "limitations": [
+        "Follow-up scope only; original immutable findings remain visible in the prior report."
+      ]
+    }
+  ],
+  "limitations": [
+    "Approval is limited to the named fix scopes at each exact file hash; it does not replace the original whole-file baseline or approve unrelated subsequent changes.",
+    "No live, model, broad unit, or full process reruns were performed by this review. Inspected test source demonstrates regression intent; execution evidence without source binding is explicitly unbound.",
+    "Metadata concurrency assessment covers concurrent metadata/full-account resolution and the new cache/copy behavior; it does not assert general thread safety for every existing credential-provider API."
+  ],
+  "owner_reported_execution": [
+    {
+      "owner": "/root/foundation_receipts",
+      "related_revision": "a2f26260f8a3c1b5687a302a012ba7356597fe28",
+      "provenance": "Tool-session-only owner attestation; no persisted report, independently inspectable output, or immutable source binding. Owner states final owned files were committed unchanged after these runs.",
+      "checks": [
+        {
+          "command": "go test ./internal/cmdutil -run 'TestFactoryColdUnifiedOAuth|TestUnifiedOAuthBypass' -count=1",
+          "reported_status": "pass",
+          "owner_session": "82377"
+        },
+        {
+          "command": "go test -race ./internal/cmdutil -run 'TestFactoryColdUnifiedOAuth|TestUnifiedOAuthBypass' -count=1",
+          "reported_status": "pass",
+          "owner_session": "25294"
+        }
+      ]
+    },
+    {
+      "owner": "/root/foundation_output",
+      "related_revision": "928ffdb53836258b59b19f4a2a37023810960d88",
+      "provenance": "Tool-session-only owner attestation; no persisted report, independently inspectable output, or immutable source binding. Owner states final four owned files were committed unchanged after focused race/lint runs.",
+      "checks": [
+        {
+          "command": "go test ./internal/credential ./internal/cmdutil -count=1",
+          "reported_status": "pass",
+          "owner_session": "30374",
+          "limitation": "Factory boundary test was added after this full unit run; metadata production code and credential tests were already present."
+        },
+        {
+          "command": "go test -race ./internal/credential ./internal/cmdutil -run 'SupportedIdentities|ResolveStrictModeUsesOnlyAccountMetadata' -count=1",
+          "reported_status": "pass",
+          "owner_session": "32501",
+          "limitation": "Owner reports all four final files present for this focused race run."
+        }
+      ]
+    }
+  ],
+  "coordination": [
+    {
+      "reviewer": "/root/p2_contact",
+      "scope": "CR-1 command assembly/discovery callsite follow-up remains owned by this reviewer. They confirm the original finding concerned eager identity reads, with no separate token/concurrency finding. This report approves only the shared metadata implementation; no command-recovery closure is inferred."
+    }
+  ]
+}
