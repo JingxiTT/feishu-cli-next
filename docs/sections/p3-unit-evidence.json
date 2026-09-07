@@ -1,14 +1,15 @@
 {
   "schema_version": 1,
   "section": "integration",
-  "revision": "74b6b5346ca4efbd03564045f4f3e01746f18878",
-  "source": "immutable detached local clone with real Git metadata; no origin; no dirty/untracked files copied",
-  "environment": "Committed scripts.next_test.isolated_env with independent isolated HOME/config/temp per check, no customer credentials, cached Go modules/build cache. Public Go module metadata enabled only for pinned golangci and go-licenses commands.",
-  "metadata_sha256": "b5375251ff1f0a5939925587b0d514669a748135cde36c56f1c8ab5f5fe266c8",
-  "binary_sha256": "8bf537f33aa2e3870bdd34f6e03fffb2ce04c37d7beef63132dab4425432364d",
-  "release_accepted": false,
   "gate": "P3 complete unit race regression",
-  "status": "fail",
+  "release_accepted": false,
+  "counting_note": "Counts include Go subtests and their parent tests. Skips are never counted as passes; package skip events identify packages without test files.",
+  "revision": "72fc5e4467494e158216de16b6d3e451a31d0757",
+  "source": "immutable detached local clone with real Git metadata; no origin; no dirty/untracked files copied",
+  "environment": "Committed scripts.next_test.isolated_env; independent isolated HOME/config/temp, no customer credentials, external network blocked, cached Go modules/build cache only. Full race gate ran alone; scoped static checks ran sequentially afterward.",
+  "metadata_sha256": "b5375251ff1f0a5939925587b0d514669a748135cde36c56f1c8ab5f5fe266c8",
+  "binary_sha256": "fc0e985f35b182a1b477201c063c9e3268bf66ff6a2a214d593435cbea37db7b",
+  "status": "pass",
   "race_enabled": true,
   "commands": [
     {
@@ -19,7 +20,7 @@
       ],
       "exit_code": 0,
       "status": "pass",
-      "duration_seconds": 2.11,
+      "duration_seconds": 1.746,
       "public_module_metadata_enabled": false,
       "tests": {
         "pass": 0,
@@ -34,8 +35,8 @@
       "failures": [],
       "skipped_tests": [],
       "race_detected": false,
-      "log": ".tmp/next-evidence/p3-final-74b6b53-build.log",
-      "log_sha256": "634bbf8fb155e50b237a6319186d942507c20efe656ec01ea6ae1b2e25d300df"
+      "log": ".tmp/next-evidence/p3-final-72fc5e4-build.log",
+      "log_sha256": "e3529bf6ec0ca9517c2023bd4eba36502da12ccbbc1aa27433c8d6928b1c908d"
     },
     {
       "name": "unit",
@@ -54,57 +55,32 @@
         "./errs/...",
         "./events/..."
       ],
-      "exit_code": 1,
-      "status": "fail",
-      "duration_seconds": 258.534,
+      "exit_code": 0,
+      "status": "pass",
+      "duration_seconds": 213.828,
       "public_module_metadata_enabled": false,
       "tests": {
-        "pass": 18597,
-        "fail": 7,
+        "pass": 18604,
+        "fail": 0,
         "skip": 12
       },
       "packages": {
-        "pass": 142,
-        "fail": 2,
+        "pass": 144,
+        "fail": 0,
         "skip": 13
       },
-      "failures": [
-        {
-          "package": "github.com/larksuite/cli",
-          "test": "TestEmbeddedDocsAffordanceComplementsShortcutMetadata/+create"
-        },
-        {
-          "package": "github.com/larksuite/cli",
-          "test": "TestEmbeddedDocsAffordanceComplementsShortcutMetadata/+fetch"
-        },
-        {
-          "package": "github.com/larksuite/cli",
-          "test": "TestEmbeddedDocsAffordanceComplementsShortcutMetadata/+update"
-        },
-        {
-          "package": "github.com/larksuite/cli",
-          "test": "TestEmbeddedDocsAffordanceComplementsShortcutMetadata/+history-revert"
-        },
-        {
-          "package": "github.com/larksuite/cli",
-          "test": "TestEmbeddedDocsAffordanceComplementsShortcutMetadata"
-        },
-        {
-          "package": "github.com/larksuite/cli",
-          "test": "TestInstallWizardUsesRegularSkillsRoute"
-        },
-        {
-          "package": "github.com/larksuite/cli"
-        },
-        {
-          "package": "github.com/larksuite/cli/internal/binding",
-          "test": "TestResolveExecRef_EmptyStdout"
-        },
-        {
-          "package": "github.com/larksuite/cli/internal/binding"
-        }
-      ],
+      "failures": [],
       "skipped_tests": [
+        {
+          "package": "github.com/larksuite/cli/cmd",
+          "test": "TestCommandSetSubprocess",
+          "reason": "command_sets_test.go:94: subprocess helper"
+        },
+        {
+          "package": "github.com/larksuite/cli/cmd",
+          "test": "TestScopeSnapshot",
+          "reason": "diagnose_scope_test.go:202: set SCOPE_SNAPSHOT_DIR to enable snapshot generation"
+        },
         {
           "package": "github.com/larksuite/cli/cmd/update",
           "test": "TestPrepareLiveSkillsIntegration/requires_explicit_opt-in",
@@ -119,16 +95,6 @@
           "package": "github.com/larksuite/cli/cmd/update",
           "test": "TestUpdateCommand_SkillsSyncColdStart",
           "reason": "update_test.go:1896: live skills integration test disabled; set LARKSUITE_CLI_RUN_LIVE_SKILLS_TESTS=1 to run"
-        },
-        {
-          "package": "github.com/larksuite/cli/cmd",
-          "test": "TestCommandSetSubprocess",
-          "reason": "command_sets_test.go:94: subprocess helper"
-        },
-        {
-          "package": "github.com/larksuite/cli/cmd",
-          "test": "TestScopeSnapshot",
-          "reason": "diagnose_scope_test.go:202: set SCOPE_SNAPSHOT_DIR to enable snapshot generation"
         },
         {
           "package": "github.com/larksuite/cli/internal/qualitygate/semantic",
@@ -167,31 +133,20 @@
         }
       ],
       "race_detected": false,
-      "log": ".tmp/next-evidence/p3-final-74b6b53-unit.log",
-      "log_sha256": "196ca158d7e4a6737e8c84dfae14ac275c1e8b654cceb83b1fc8614481cf3696"
+      "log": ".tmp/next-evidence/p3-final-72fc5e4-unit.log",
+      "log_sha256": "d369ee92eb17d8d57351b37f06f2874265f6533358a96baba2973a063fe72599"
     }
   ],
   "totals": {
-    "passed_tests": 18597,
-    "failed_tests": 7,
+    "passed_tests": 18604,
+    "failed_tests": 0,
     "skipped_tests": 12,
-    "passed_packages": 142,
-    "failed_packages": 2,
+    "passed_packages": 144,
+    "failed_packages": 0,
     "packages_without_tests": 13
   },
-  "coverage_note": "Explicit race/gcflags/count=1 package list includes root ., all Makefile unit packages, and errs/events. Source restored frozen metadata through canonical make build. The failed single broad run is retained even when an affected package passes a diagnostic rerun.",
-  "counting_note": "Counts include Go subtests and their parent tests. Skips are never counted as passes; package skip events identify packages without test files.",
-  "failure_analysis": [
-    {
-      "package": "github.com/larksuite/cli",
-      "cause": "Root Docs affordance expected tips differ from the committed guidance for +create, +fetch, +update, and +history-revert (four subtests and parent). Installer asset test still expects a hardcoded production regular skills URL."
-    },
-    {
-      "package": "github.com/larksuite/cli/internal/binding",
-      "cause": "TestResolveExecRef_EmptyStdout exceeded the existing 10000ms provider timeout during concurrent broad race/static checks; isolated diagnostic rerun is separate evidence."
-    }
-  ],
-  "report": ".tmp/next-evidence/p3-final-74b6b53-report.json",
+  "coverage_note": "One complete explicit race/gcflags/count=1 gate includes root ., all Makefile unit packages, and errs/events. Canonical make build restored frozen metadata before testing. No skips are counted as passes. Prior failed and diagnostic runs remain separate history.",
+  "report": ".tmp/next-evidence/p3-final-72fc5e4-report.json",
   "history": [
     {
       "revision": "32183054b4cf47e3a42aee1960e2c5ccb951f95c",
@@ -214,46 +169,104 @@
         "status": "fail",
         "reason": "The source archive initially had no .git directory; two qualitygate/deptest tests require git rev-parse --show-toplevel. The rerun uses the same committed source plus an empty git init, without remotes, templates, inherited configuration, hooks, or a synthetic commit."
       }
-    }
-  ],
-  "diagnostic_reruns": [
+    },
     {
       "revision": "74b6b5346ca4efbd03564045f4f3e01746f18878",
-      "report": ".tmp/next-evidence/p3-final-74b6b53-binding-rerun-report.json",
-      "checks": [
+      "status": "fail",
+      "totals": {
+        "passed_tests": 18597,
+        "failed_tests": 7,
+        "skipped_tests": 12,
+        "passed_packages": 142,
+        "failed_packages": 2,
+        "packages_without_tests": 13
+      },
+      "evidence_commit": "45f5aec",
+      "report": ".tmp/next-evidence/p3-final-74b6b53-report.json",
+      "failure_analysis": [
         {
-          "name": "binding",
-          "command": [
-            "go",
-            "test",
-            "-json",
-            "-race",
-            "-gcflags=all=-N -l",
-            "-count=1",
-            "./internal/binding/..."
-          ],
-          "exit_code": 0,
-          "status": "pass",
-          "duration_seconds": 10.603,
-          "public_module_metadata_enabled": false,
-          "tests": {
-            "pass": 141,
-            "fail": 0,
-            "skip": 0
-          },
-          "packages": {
-            "pass": 1,
-            "fail": 0,
-            "skip": 0
-          },
-          "failures": [],
-          "skipped_tests": [],
-          "race_detected": false,
-          "log": ".tmp/next-evidence/p3-final-74b6b53-binding-rerun-binding.log",
-          "log_sha256": "35704d69b0a7d98a605c787fe8566a6f04ed06c96d8eb5d3a8a251c087d6fa08"
+          "package": "github.com/larksuite/cli",
+          "cause": "Root Docs affordance expected tips differ from the committed guidance for +create, +fetch, +update, and +history-revert (four subtests and parent). Installer asset test still expects a hardcoded production regular skills URL."
+        },
+        {
+          "package": "github.com/larksuite/cli/internal/binding",
+          "cause": "TestResolveExecRef_EmptyStdout exceeded the existing 10000ms provider timeout during concurrent broad race/static checks; isolated diagnostic rerun is separate evidence."
         }
       ],
-      "note": "Does not change or replace the failed broad gate."
+      "diagnostic_reruns": [
+        {
+          "revision": "74b6b5346ca4efbd03564045f4f3e01746f18878",
+          "report": ".tmp/next-evidence/p3-final-74b6b53-binding-rerun-report.json",
+          "checks": [
+            {
+              "name": "binding",
+              "command": [
+                "go",
+                "test",
+                "-json",
+                "-race",
+                "-gcflags=all=-N -l",
+                "-count=1",
+                "./internal/binding/..."
+              ],
+              "exit_code": 0,
+              "status": "pass",
+              "duration_seconds": 10.603,
+              "public_module_metadata_enabled": false,
+              "tests": {
+                "pass": 141,
+                "fail": 0,
+                "skip": 0
+              },
+              "packages": {
+                "pass": 1,
+                "fail": 0,
+                "skip": 0
+              },
+              "failures": [],
+              "skipped_tests": [],
+              "race_detected": false,
+              "log": ".tmp/next-evidence/p3-final-74b6b53-binding-rerun-binding.log",
+              "log_sha256": "35704d69b0a7d98a605c787fe8566a6f04ed06c96d8eb5d3a8a251c087d6fa08"
+            }
+          ],
+          "note": "Does not change or replace the failed broad gate."
+        }
+      ]
+    },
+    {
+      "revision": "f563d46dda4edf124ebdc8ce97412ee505a77876",
+      "status": "fail",
+      "totals": {
+        "passed_tests": 18603,
+        "failed_tests": 1,
+        "skipped_tests": 12,
+        "passed_packages": 143,
+        "failed_packages": 1,
+        "packages_without_tests": 13
+      },
+      "evidence_location": "Retained in this document history and immutable local report",
+      "report": ".tmp/next-evidence/p3-final-f563d46-report.json",
+      "failure_analysis": [
+        {
+          "cause": "Requested checkpoint f563d46 predates installer-test fix a3dc986; git merge-base confirms a3dc986 is not its ancestor. Original hardcoded installer assertion remains.",
+          "failures": [
+            {
+              "package": "github.com/larksuite/cli",
+              "test": "TestInstallWizardUsesRegularSkillsRoute"
+            },
+            {
+              "package": "github.com/larksuite/cli"
+            }
+          ]
+        }
+      ],
+      "diagnostic_reruns": []
     }
-  ]
+  ],
+  "verified_ancestors": [
+    "45fd0f4",
+    "a3dc986"
+  ],
+  "failure_analysis": []
 }
