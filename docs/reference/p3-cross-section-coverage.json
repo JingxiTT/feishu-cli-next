@@ -1,0 +1,476 @@
+{
+  "candidate_revision": "94e4afc032b803ad17a6efbcdb2573361ed2b38a",
+  "limits": [
+    "This maps concrete P3 composition requirements and the currently advertised fixture flows; it does not assert that every arbitrary combination of commands has an E2E test.",
+    "Required backend-live guarantees remain separately blocked or unverified in their owning sections. Offline success cannot establish private visibility or real identity/permissions.",
+    "Later Mail read-intent and other runtime changes require affected regression and exact semantic review.",
+    "Do not leave a blanket remaining-cross-section-workflows claim in place of the concrete identity-negative and token-size checks above."
+  ],
+  "method": "Read the existing composed workflow scenarios and their assertions, verify source blob hashes at94e4afc, and independently extract exact pass/fail/skip events from the hash-verified completed all-section and integration reports. No new tests or live requests run by this audit.",
+  "plan": "docs/PLAN.md",
+  "requirements": [
+    {
+      "execution_events": [
+        {
+          "package": "github.com/larksuite/cli/tests/next_integration/sheets_base",
+          "report": ".tmp/next-evidence/p3-e2e-94e4afc-integration.json",
+          "report_sha256": "fcaad21ea0ab4ce89ac1f3c75c22a5a25d5f7bf17152c897efd62565b1ad3822",
+          "status": "pass",
+          "test": "TestTenThousandRowsThroughSheetsAndBaseCLI"
+        },
+        {
+          "package": "github.com/larksuite/cli/tests/next_integration/sheets_base",
+          "report": ".tmp/next-evidence/p3-e2e-94e4afc-integration.json",
+          "report_sha256": "fcaad21ea0ab4ce89ac1f3c75c22a5a25d5f7bf17152c897efd62565b1ad3822",
+          "status": "pass",
+          "test": "TestExportedUnsupportedCellsRejectBeforeDestinationWrites/formula"
+        },
+        {
+          "package": "github.com/larksuite/cli/tests/next_integration/sheets_base",
+          "report": ".tmp/next-evidence/p3-e2e-94e4afc-integration.json",
+          "report_sha256": "fcaad21ea0ab4ce89ac1f3c75c22a5a25d5f7bf17152c897efd62565b1ad3822",
+          "status": "pass",
+          "test": "TestExportedUnsupportedCellsRejectBeforeDestinationWrites/style"
+        },
+        {
+          "package": "github.com/larksuite/cli/tests/next_integration/sheets_base",
+          "report": ".tmp/next-evidence/p3-e2e-94e4afc-integration.json",
+          "report_sha256": "fcaad21ea0ab4ce89ac1f3c75c22a5a25d5f7bf17152c897efd62565b1ad3822",
+          "status": "pass",
+          "test": "TestExportedUnsupportedCellsRejectBeforeDestinationWrites/precision"
+        },
+        {
+          "package": "github.com/larksuite/cli/tests/next_integration/sheets_base",
+          "report": ".tmp/next-evidence/p3-e2e-94e4afc-integration.json",
+          "report_sha256": "fcaad21ea0ab4ce89ac1f3c75c22a5a25d5f7bf17152c897efd62565b1ad3822",
+          "status": "pass",
+          "test": "TestExportedUnsupportedCellsRejectBeforeDestinationWrites"
+        },
+        {
+          "package": "github.com/larksuite/cli/tests/next_integration/sheets_base",
+          "report": ".tmp/next-evidence/p3-e2e-94e4afc-integration.json",
+          "report_sha256": "fcaad21ea0ab4ce89ac1f3c75c22a5a25d5f7bf17152c897efd62565b1ad3822",
+          "status": "pass",
+          "test": "TestPartialExportCannotBecomeAnImportArtifact"
+        },
+        {
+          "package": "github.com/larksuite/cli/tests/next_integration/sheets_base",
+          "report": ".tmp/next-evidence/p3-e2e-94e4afc-integration.json",
+          "report_sha256": "fcaad21ea0ab4ce89ac1f3c75c22a5a25d5f7bf17152c897efd62565b1ad3822",
+          "status": "pass",
+          "test": "TestHandoffStopsAtPartialRejectedOrLostBatch/partial"
+        },
+        {
+          "package": "github.com/larksuite/cli/tests/next_integration/sheets_base",
+          "report": ".tmp/next-evidence/p3-e2e-94e4afc-integration.json",
+          "report_sha256": "fcaad21ea0ab4ce89ac1f3c75c22a5a25d5f7bf17152c897efd62565b1ad3822",
+          "status": "pass",
+          "test": "TestHandoffStopsAtPartialRejectedOrLostBatch/rejected"
+        },
+        {
+          "package": "github.com/larksuite/cli/tests/next_integration/sheets_base",
+          "report": ".tmp/next-evidence/p3-e2e-94e4afc-integration.json",
+          "report_sha256": "fcaad21ea0ab4ce89ac1f3c75c22a5a25d5f7bf17152c897efd62565b1ad3822",
+          "status": "pass",
+          "test": "TestHandoffStopsAtPartialRejectedOrLostBatch/lost"
+        },
+        {
+          "package": "github.com/larksuite/cli/tests/next_integration/sheets_base",
+          "report": ".tmp/next-evidence/p3-e2e-94e4afc-integration.json",
+          "report_sha256": "fcaad21ea0ab4ce89ac1f3c75c22a5a25d5f7bf17152c897efd62565b1ad3822",
+          "status": "pass",
+          "test": "TestHandoffStopsAtPartialRejectedOrLostBatch/duplicate-ids"
+        },
+        {
+          "package": "github.com/larksuite/cli/tests/next_integration/sheets_base",
+          "report": ".tmp/next-evidence/p3-e2e-94e4afc-integration.json",
+          "report_sha256": "fcaad21ea0ab4ce89ac1f3c75c22a5a25d5f7bf17152c897efd62565b1ad3822",
+          "status": "pass",
+          "test": "TestHandoffStopsAtPartialRejectedOrLostBatch"
+        }
+      ],
+      "gap": null,
+      "id": "large_artifact_transfer",
+      "requirement": "PLAN.md P3: 10,000-row cross-section handoff preserves supported values/types outside model context.",
+      "scope": "Actual Sheets export artifact consumed unchanged by Base import; 80,000 primitive cells,16 source pages,50 batches; unsupported last-row types and incomplete export reject before destination writes.",
+      "source_paths": [
+        {
+          "path": "tests/next_integration/sheets_base/transfer_test.go",
+          "sha256": "544dfa5f7c965fba7e15f89bf01b2ff0745783546a013a499e77ff60aec18930"
+        }
+      ],
+      "source_revision": "94e4afc032b803ad17a6efbcdb2573361ed2b38a",
+      "status": "written_and_executed_offline_at_checkpoint"
+    },
+    {
+      "execution_events": [
+        {
+          "package": "github.com/larksuite/cli/tests/next_sections/drive",
+          "report": ".tmp/next-evidence/p3-e2e-94e4afc-all.json",
+          "report_sha256": "fbaffe6705d2453adffad4ed520cbb25ab83d6df47740bd284fb79db6941fdee",
+          "status": "pass",
+          "test": "TestWikiCopyMoveAndGuardedRename"
+        }
+      ],
+      "gap": null,
+      "id": "resource_resolution",
+      "requirement": "PLAN.md P3: resource resolution across section boundaries.",
+      "scope": "Real Drive command resolves Wiki node URL to file token/type, resolves my_space destination, copies/moves exact resource, and avoids unchanged rename. This covers the advertised composed URL flow, not every hypothetical pairing.",
+      "source_paths": [
+        {
+          "path": "tests/next_sections/drive/workflows_test.go",
+          "sha256": "ebd526d8f0286f5bc664712f9d84ecec3994404ccde548e603b3eb2d9e949a17"
+        }
+      ],
+      "source_revision": "94e4afc032b803ad17a6efbcdb2573361ed2b38a",
+      "status": "written_and_executed_offline_at_checkpoint"
+    },
+    {
+      "execution_events": [
+        {
+          "package": "github.com/larksuite/cli/tests/next_sections/drive",
+          "report": ".tmp/next-evidence/p3-e2e-94e4afc-all.json",
+          "report_sha256": "fbaffe6705d2453adffad4ed520cbb25ab83d6df47740bd284fb79db6941fdee",
+          "status": "pass",
+          "test": "TestImportExportPreservesSourceAndAsyncRecovery"
+        }
+      ],
+      "gap": null,
+      "id": "resource_content_handoff",
+      "requirement": "PLAN.md P3: content and identity survive resource handoff.",
+      "scope": "Drive upload/import returns native Docs identity; explicit task-result polling and Markdown/PDF export retain bytes and task evidence. Read-only recovery crosses process calls without replaying the import.",
+      "source_paths": [
+        {
+          "path": "tests/next_sections/drive/transfers_test.go",
+          "sha256": "c90e12c4d9bab1d19d765ba6ce64dc5d3aa8123d24d0e269ed136e610ae5b0a3"
+        }
+      ],
+      "source_revision": "94e4afc032b803ad17a6efbcdb2573361ed2b38a",
+      "status": "written_and_executed_offline_at_checkpoint"
+    },
+    {
+      "execution_events": [
+        {
+          "package": "github.com/larksuite/cli/tests/next_integration/sheets_base",
+          "report": ".tmp/next-evidence/p3-e2e-94e4afc-integration.json",
+          "report_sha256": "fcaad21ea0ab4ce89ac1f3c75c22a5a25d5f7bf17152c897efd62565b1ad3822",
+          "status": "pass",
+          "test": "TestTenThousandRowsThroughSheetsAndBaseCLI"
+        }
+      ],
+      "gap": null,
+      "id": "same_binding_handoff",
+      "requirement": "PLAN.md P3: shared identities.",
+      "scope": "Both endpoints share a verified synthetic user/tenant; exporter checks verified artifact binding, source identity and precise destination record identities.",
+      "source_paths": [
+        {
+          "path": "tests/next_integration/sheets_base/transfer_test.go",
+          "sha256": "544dfa5f7c965fba7e15f89bf01b2ff0745783546a013a499e77ff60aec18930"
+        }
+      ],
+      "source_revision": "94e4afc032b803ad17a6efbcdb2573361ed2b38a",
+      "status": "written_and_executed_offline_at_checkpoint"
+    },
+    {
+      "execution_events": [
+        {
+          "package": "github.com/larksuite/cli/tests/next_sections/base",
+          "report": ".tmp/next-evidence/p3-e2e-94e4afc-all.json",
+          "report_sha256": "fbaffe6705d2453adffad4ed520cbb25ab83d6df47740bd284fb79db6941fdee",
+          "status": "pass",
+          "test": "TestRecordImportRejectsUnsafeInputsBeforeMutation/tenant"
+        },
+        {
+          "package": "github.com/larksuite/cli/tests/next_sections/base",
+          "report": ".tmp/next-evidence/p3-e2e-94e4afc-all.json",
+          "report_sha256": "fbaffe6705d2453adffad4ed520cbb25ab83d6df47740bd284fb79db6941fdee",
+          "status": "pass",
+          "test": "TestRecordImportRejectsUnsafeInputsBeforeMutation/incomplete"
+        },
+        {
+          "package": "github.com/larksuite/cli/tests/next_sections/base",
+          "report": ".tmp/next-evidence/p3-e2e-94e4afc-all.json",
+          "report_sha256": "fbaffe6705d2453adffad4ed520cbb25ab83d6df47740bd284fb79db6941fdee",
+          "status": "pass",
+          "test": "TestRecordImportRejectsUnsafeInputsBeforeMutation/formula"
+        },
+        {
+          "package": "github.com/larksuite/cli/tests/next_sections/base",
+          "report": ".tmp/next-evidence/p3-e2e-94e4afc-all.json",
+          "report_sha256": "fbaffe6705d2453adffad4ed520cbb25ab83d6df47740bd284fb79db6941fdee",
+          "status": "pass",
+          "test": "TestRecordImportRejectsUnsafeInputsBeforeMutation/collision"
+        },
+        {
+          "package": "github.com/larksuite/cli/tests/next_sections/base",
+          "report": ".tmp/next-evidence/p3-e2e-94e4afc-all.json",
+          "report_sha256": "fbaffe6705d2453adffad4ed520cbb25ab83d6df47740bd284fb79db6941fdee",
+          "status": "pass",
+          "test": "TestRecordImportRejectsUnsafeInputsBeforeMutation/field-type"
+        },
+        {
+          "package": "github.com/larksuite/cli/tests/next_sections/base",
+          "report": ".tmp/next-evidence/p3-e2e-94e4afc-all.json",
+          "report_sha256": "fbaffe6705d2453adffad4ed520cbb25ab83d6df47740bd284fb79db6941fdee",
+          "status": "pass",
+          "test": "TestRecordImportRejectsUnsafeInputsBeforeMutation/precision"
+        },
+        {
+          "package": "github.com/larksuite/cli/tests/next_sections/base",
+          "report": ".tmp/next-evidence/p3-e2e-94e4afc-all.json",
+          "report_sha256": "fbaffe6705d2453adffad4ed520cbb25ab83d6df47740bd284fb79db6941fdee",
+          "status": "pass",
+          "test": "TestRecordImportRejectsUnsafeInputsBeforeMutation/default"
+        },
+        {
+          "package": "github.com/larksuite/cli/tests/next_sections/base",
+          "report": ".tmp/next-evidence/p3-e2e-94e4afc-all.json",
+          "report_sha256": "fbaffe6705d2453adffad4ed520cbb25ab83d6df47740bd284fb79db6941fdee",
+          "status": "pass",
+          "test": "TestRecordImportRejectsUnsafeInputsBeforeMutation"
+        }
+      ],
+      "gap": "At this checkpoint no written process scenario exports a real Sheets artifact, changes the effective consumer binding, and proves rejection before destination access. Coordinator owns a focused addition to the existing transfer suite; pending execution is not counted as pass.",
+      "id": "changed_binding_handoff",
+      "requirement": "PLAN.md P3 shared identities and general E2E identity mismatch failures.",
+      "scope": "Existing unit matrix covers environment/endpoint/app/user/identity/tenant binding mismatch, while Base process mismatch uses a manufactured artifact. Same-binding real export/import passes.",
+      "source_paths": [
+        {
+          "path": "tests/next_integration/sheets_base/transfer_test.go",
+          "sha256": "544dfa5f7c965fba7e15f89bf01b2ff0745783546a013a499e77ff60aec18930"
+        },
+        {
+          "path": "tests/next_sections/base/import_e2e_test.go",
+          "sha256": "4d7b34883b2751e8b52728b0911370a7fbd2eeeb733fa01262e3d1f28a086ea1"
+        },
+        {
+          "path": "internal/output/artifact_binding_test.go",
+          "sha256": "3ab67a23d216621720738d8ea5ed03ce87fe32dc4ad45a07ec59ffa5623a3faa"
+        },
+        {
+          "path": "internal/cmdutil/artifact_binding_test.go",
+          "sha256": "0f658b0b4c8d2dd05a54a86e41d28f2a7e51ab82b65c98042a0e59d2428b22f0"
+        }
+      ],
+      "source_revision": "94e4afc032b803ad17a6efbcdb2573361ed2b38a",
+      "status": "gap"
+    },
+    {
+      "execution_events": [
+        {
+          "package": "github.com/larksuite/cli/tests/next_integration/sheets_base",
+          "report": ".tmp/next-evidence/p3-e2e-94e4afc-integration.json",
+          "report_sha256": "fcaad21ea0ab4ce89ac1f3c75c22a5a25d5f7bf17152c897efd62565b1ad3822",
+          "status": "pass",
+          "test": "TestHandoffStopsAtPartialRejectedOrLostBatch/partial"
+        },
+        {
+          "package": "github.com/larksuite/cli/tests/next_integration/sheets_base",
+          "report": ".tmp/next-evidence/p3-e2e-94e4afc-integration.json",
+          "report_sha256": "fcaad21ea0ab4ce89ac1f3c75c22a5a25d5f7bf17152c897efd62565b1ad3822",
+          "status": "pass",
+          "test": "TestHandoffStopsAtPartialRejectedOrLostBatch/rejected"
+        },
+        {
+          "package": "github.com/larksuite/cli/tests/next_integration/sheets_base",
+          "report": ".tmp/next-evidence/p3-e2e-94e4afc-integration.json",
+          "report_sha256": "fcaad21ea0ab4ce89ac1f3c75c22a5a25d5f7bf17152c897efd62565b1ad3822",
+          "status": "pass",
+          "test": "TestHandoffStopsAtPartialRejectedOrLostBatch/lost"
+        },
+        {
+          "package": "github.com/larksuite/cli/tests/next_integration/sheets_base",
+          "report": ".tmp/next-evidence/p3-e2e-94e4afc-integration.json",
+          "report_sha256": "fcaad21ea0ab4ce89ac1f3c75c22a5a25d5f7bf17152c897efd62565b1ad3822",
+          "status": "pass",
+          "test": "TestHandoffStopsAtPartialRejectedOrLostBatch/duplicate-ids"
+        },
+        {
+          "package": "github.com/larksuite/cli/tests/next_integration/sheets_base",
+          "report": ".tmp/next-evidence/p3-e2e-94e4afc-integration.json",
+          "report_sha256": "fcaad21ea0ab4ce89ac1f3c75c22a5a25d5f7bf17152c897efd62565b1ad3822",
+          "status": "pass",
+          "test": "TestHandoffStopsAtPartialRejectedOrLostBatch"
+        },
+        {
+          "package": "github.com/larksuite/cli/tests/next_foundation",
+          "report": ".tmp/next-evidence/p3-e2e-94e4afc-all.json",
+          "report_sha256": "fbaffe6705d2453adffad4ed520cbb25ab83d6df47740bd284fb79db6941fdee",
+          "status": "pass",
+          "test": "TestReceiptSuccessInspectAndCleanup"
+        },
+        {
+          "package": "github.com/larksuite/cli/tests/next_sections/drive",
+          "report": ".tmp/next-evidence/p3-e2e-94e4afc-all.json",
+          "report_sha256": "fbaffe6705d2453adffad4ed520cbb25ab83d6df47740bd284fb79db6941fdee",
+          "status": "pass",
+          "test": "TestMutationUnknownIsNotReplayed"
+        }
+      ],
+      "gap": null,
+      "id": "recovery_across_boundaries",
+      "requirement": "PLAN.md P3: recovery across operation boundaries.",
+      "scope": "Confirmed import prefix, first-unconfirmed row, precise exits and durable receipts agree with independently observed destination effects; later receipt inspection/cleanup is local and does not replay the mutation. No automatic reconciliation or resume is advertised.",
+      "source_paths": [
+        {
+          "path": "tests/next_integration/sheets_base/transfer_test.go",
+          "sha256": "544dfa5f7c965fba7e15f89bf01b2ff0745783546a013a499e77ff60aec18930"
+        },
+        {
+          "path": "tests/next_foundation/receipts_e2e_test.go",
+          "sha256": "bc0359b03e468b4a41903ec77cad1eabf989c8aa7d195ee043dbe83fa9306091"
+        },
+        {
+          "path": "tests/next_sections/drive/workflows_test.go",
+          "sha256": "ebd526d8f0286f5bc664712f9d84ecec3994404ccde548e603b3eb2d9e949a17"
+        }
+      ],
+      "source_revision": "94e4afc032b803ad17a6efbcdb2573361ed2b38a",
+      "status": "written_and_executed_offline_at_checkpoint"
+    },
+    {
+      "execution_events": [
+        {
+          "package": "github.com/larksuite/cli/tests/next_sections/apps",
+          "report": ".tmp/next-evidence/p3-e2e-94e4afc-all.json",
+          "report_sha256": "fbaffe6705d2453adffad4ed520cbb25ab83d6df47740bd284fb79db6941fdee",
+          "status": "pass",
+          "test": "TestAppsFileTransferAndCallbackPartial/complete"
+        },
+        {
+          "package": "github.com/larksuite/cli/tests/next_sections/apps",
+          "report": ".tmp/next-evidence/p3-e2e-94e4afc-all.json",
+          "report_sha256": "fbaffe6705d2453adffad4ed520cbb25ab83d6df47740bd284fb79db6941fdee",
+          "status": "pass",
+          "test": "TestAppsFileTransferAndCallbackPartial/callback-denied"
+        },
+        {
+          "package": "github.com/larksuite/cli/tests/next_sections/apps",
+          "report": ".tmp/next-evidence/p3-e2e-94e4afc-all.json",
+          "report_sha256": "fbaffe6705d2453adffad4ed520cbb25ab83d6df47740bd284fb79db6941fdee",
+          "status": "pass",
+          "test": "TestAppsFileTransferAndCallbackPartial/lost-put"
+        },
+        {
+          "package": "github.com/larksuite/cli/tests/next_sections/apps",
+          "report": ".tmp/next-evidence/p3-e2e-94e4afc-all.json",
+          "report_sha256": "fbaffe6705d2453adffad4ed520cbb25ab83d6df47740bd284fb79db6941fdee",
+          "status": "pass",
+          "test": "TestAppsFileTransferAndCallbackPartial/accepted-put"
+        },
+        {
+          "package": "github.com/larksuite/cli/tests/next_sections/apps",
+          "report": ".tmp/next-evidence/p3-e2e-94e4afc-all.json",
+          "report_sha256": "fbaffe6705d2453adffad4ed520cbb25ab83d6df47740bd284fb79db6941fdee",
+          "status": "pass",
+          "test": "TestAppsFileTransferAndCallbackPartial/redirect-put"
+        },
+        {
+          "package": "github.com/larksuite/cli/tests/next_sections/apps",
+          "report": ".tmp/next-evidence/p3-e2e-94e4afc-all.json",
+          "report_sha256": "fbaffe6705d2453adffad4ed520cbb25ab83d6df47740bd284fb79db6941fdee",
+          "status": "pass",
+          "test": "TestAppsFileTransferAndCallbackPartial/see-other-put"
+        },
+        {
+          "package": "github.com/larksuite/cli/tests/next_sections/apps",
+          "report": ".tmp/next-evidence/p3-e2e-94e4afc-all.json",
+          "report_sha256": "fbaffe6705d2453adffad4ed520cbb25ab83d6df47740bd284fb79db6941fdee",
+          "status": "pass",
+          "test": "TestAppsFileTransferAndCallbackPartial/temporary-redirect-put"
+        },
+        {
+          "package": "github.com/larksuite/cli/tests/next_sections/apps",
+          "report": ".tmp/next-evidence/p3-e2e-94e4afc-all.json",
+          "report_sha256": "fbaffe6705d2453adffad4ed520cbb25ab83d6df47740bd284fb79db6941fdee",
+          "status": "pass",
+          "test": "TestAppsFileTransferAndCallbackPartial"
+        },
+        {
+          "package": "github.com/larksuite/cli/tests/next_sections/apps",
+          "report": ".tmp/next-evidence/p3-e2e-94e4afc-all.json",
+          "report_sha256": "fbaffe6705d2453adffad4ed520cbb25ab83d6df47740bd284fb79db6941fdee",
+          "status": "pass",
+          "test": "TestAppsHTMLStorageAndReleaseRemainSeparateEffects/complete"
+        },
+        {
+          "package": "github.com/larksuite/cli/tests/next_sections/apps",
+          "report": ".tmp/next-evidence/p3-e2e-94e4afc-all.json",
+          "report_sha256": "fbaffe6705d2453adffad4ed520cbb25ab83d6df47740bd284fb79db6941fdee",
+          "status": "pass",
+          "test": "TestAppsHTMLStorageAndReleaseRemainSeparateEffects/lost-put"
+        },
+        {
+          "package": "github.com/larksuite/cli/tests/next_sections/apps",
+          "report": ".tmp/next-evidence/p3-e2e-94e4afc-all.json",
+          "report_sha256": "fbaffe6705d2453adffad4ed520cbb25ab83d6df47740bd284fb79db6941fdee",
+          "status": "pass",
+          "test": "TestAppsHTMLStorageAndReleaseRemainSeparateEffects/release-denied"
+        },
+        {
+          "package": "github.com/larksuite/cli/tests/next_sections/apps",
+          "report": ".tmp/next-evidence/p3-e2e-94e4afc-all.json",
+          "report_sha256": "fbaffe6705d2453adffad4ed520cbb25ab83d6df47740bd284fb79db6941fdee",
+          "status": "pass",
+          "test": "TestAppsHTMLStorageAndReleaseRemainSeparateEffects/accepted-put"
+        },
+        {
+          "package": "github.com/larksuite/cli/tests/next_sections/apps",
+          "report": ".tmp/next-evidence/p3-e2e-94e4afc-all.json",
+          "report_sha256": "fbaffe6705d2453adffad4ed520cbb25ab83d6df47740bd284fb79db6941fdee",
+          "status": "pass",
+          "test": "TestAppsHTMLStorageAndReleaseRemainSeparateEffects/redirect-put"
+        },
+        {
+          "package": "github.com/larksuite/cli/tests/next_sections/apps",
+          "report": ".tmp/next-evidence/p3-e2e-94e4afc-all.json",
+          "report_sha256": "fbaffe6705d2453adffad4ed520cbb25ab83d6df47740bd284fb79db6941fdee",
+          "status": "pass",
+          "test": "TestAppsHTMLStorageAndReleaseRemainSeparateEffects/see-other-put"
+        },
+        {
+          "package": "github.com/larksuite/cli/tests/next_sections/apps",
+          "report": ".tmp/next-evidence/p3-e2e-94e4afc-all.json",
+          "report_sha256": "fbaffe6705d2453adffad4ed520cbb25ab83d6df47740bd284fb79db6941fdee",
+          "status": "pass",
+          "test": "TestAppsHTMLStorageAndReleaseRemainSeparateEffects/temporary-redirect-put"
+        },
+        {
+          "package": "github.com/larksuite/cli/tests/next_sections/apps",
+          "report": ".tmp/next-evidence/p3-e2e-94e4afc-all.json",
+          "report_sha256": "fbaffe6705d2453adffad4ed520cbb25ab83d6df47740bd284fb79db6941fdee",
+          "status": "pass",
+          "test": "TestAppsHTMLStorageAndReleaseRemainSeparateEffects"
+        }
+      ],
+      "gap": null,
+      "id": "compound_storage_effects",
+      "requirement": "PLAN.md E2E: partial/unknown effects and recovery for workflows with dependent operations.",
+      "scope": "Storage PUT and registration/release are distinct effects; lost/provisional/redirect outcomes stop dependent writes and do not replay storage. This is also written within its owning section, not missing just because it is absent from tests/next_integration.",
+      "source_paths": [
+        {
+          "path": "tests/next_sections/apps/apps_files_e2e_test.go",
+          "sha256": "dd9d214d8586ec027f1e8cb1f9d7051808b885b8d60668abad69b2fc880e4855"
+        }
+      ],
+      "source_revision": "94e4afc032b803ad17a6efbcdb2573361ed2b38a",
+      "status": "written_and_executed_offline_at_checkpoint"
+    },
+    {
+      "gap": "No completed provider-token measurements across data sizes are bound to this cross-section workflow in the referenced evidence. Pending development/scenario evaluation is a separate gate.",
+      "id": "token_behavior_across_data_sizes",
+      "requirement": "PLAN.md P3: examine token behavior across data sizes without a percentage target.",
+      "scope": "The 10,000-row process test proves row bodies stay out of stdout. The 401-row scenarios inject failures and validate preservation; neither is a model-token comparison across sizes.",
+      "source_revision": "94e4afc032b803ad17a6efbcdb2573361ed2b38a",
+      "status": "not_yet_measured_in_referenced_workflow_evidence"
+    }
+  ],
+  "schema_version": 1,
+  "shared_e2e_report": {
+    "path": "docs/sections/p3-e2e-evidence.json",
+    "revision": "94e4afc032b803ad17a6efbcdb2573361ed2b38a",
+    "sha256": "3d4b353686442da1ad0aea5cb35ab30d5bc68b464f9326facacab00c2a1fb547",
+    "status": "pass"
+  },
+  "status": "mapped_offline_evidence_with_specific_open_checks"
+}
