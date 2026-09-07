@@ -36,11 +36,11 @@ func TestDriveUploadDryRun_WikiTarget(t *testing.T) {
 	output := strings.TrimSpace(result.Stdout)
 	assert.Contains(t, output, "/open-apis/drive/v1/files/upload_all")
 	assert.Contains(t, output, "/open-apis/drive/v1/metas/batch_query")
-	assert.Contains(t, output, `"with_url": true`)
+	assert.True(t, clie2e.DryRunGet(output, "api.2.body.with_url").Bool())
 	assert.Contains(t, output, "parent_type")
 	assert.Contains(t, output, "parent_node")
 	assert.Contains(t, output, "wikcnDryRunUploadTarget")
-	assert.Contains(t, output, `"parent_type": "wiki"`)
+	assert.Equal(t, "wiki", clie2e.DryRunGet(output, "api.0.body.parent_type").String())
 	assertDriveUploadReportDryRun(t, result.Stdout, "wiki")
 }
 
@@ -67,8 +67,8 @@ func TestDriveUploadDryRun_WithFileToken(t *testing.T) {
 	output := strings.TrimSpace(result.Stdout)
 	assert.Contains(t, output, "/open-apis/drive/v1/files/upload_all")
 	assert.Contains(t, output, "/open-apis/drive/v1/metas/batch_query")
-	assert.Contains(t, output, `"with_url": true`)
-	assert.Contains(t, output, `"parent_node": "fldDryRunUploadTarget"`)
+	assert.True(t, clie2e.DryRunGet(output, "api.2.body.with_url").Bool())
+	assert.Equal(t, "fldDryRunUploadTarget", clie2e.DryRunGet(output, "api.0.body.parent_node").String())
 	assert.Equal(t, "boxcnDryRunOverwriteTarget", clie2e.DryRunGet(output, "api.0.body.file_token").String())
 	assertDriveUploadReportDryRun(t, result.Stdout, "explorer")
 }

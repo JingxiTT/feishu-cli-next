@@ -194,7 +194,7 @@ func TestDriveExportMarkdownWritesFile(t *testing.T) {
 			"code": 0,
 			"data": map[string]interface{}{
 				"metas": []map[string]interface{}{
-					{"title": "Weekly Notes"},
+					{"doc_token": "docx123", "doc_type": "docx", "title": "Weekly Notes"},
 				},
 			},
 		},
