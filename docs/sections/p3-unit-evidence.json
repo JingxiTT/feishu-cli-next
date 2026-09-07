@@ -1,0 +1,145 @@
+{
+  "schema_version": 1,
+  "gate": "P3 complete unit race regression",
+  "revision": "32183054b4cf47e3a42aee1960e2c5ccb951f95c",
+  "source": "git archive of the exact committed revision; no dirty or untracked files copied; empty isolated git init only for repo-root discovery",
+  "environment": "committed scripts.next_test.isolated_env; isolated HOME/config/temp, external proxies blocked, cached Go modules/build cache only",
+  "race_enabled": true,
+  "commands": [
+    {
+      "name": "make",
+      "command": [
+        "make",
+        "unit-test",
+        "RACE_FLAG=-race -json"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 150.597,
+      "tests": {
+        "pass": 18175,
+        "fail": 0,
+        "skip": 12
+      },
+      "packages": {
+        "pass": 133,
+        "fail": 0,
+        "skip": 13
+      },
+      "failures": [],
+      "skipped_tests": [
+        {
+          "package": "github.com/larksuite/cli/cmd/update",
+          "test": "TestPrepareLiveSkillsIntegration/requires_explicit_opt-in",
+          "reason": "update_test.go:1714: live skills integration test disabled; set LARKSUITE_CLI_RUN_LIVE_SKILLS_TESTS=1 to run"
+        },
+        {
+          "package": "github.com/larksuite/cli/cmd/update",
+          "test": "TestUpdateCommand_RealSkillsSyncRewritesState",
+          "reason": "update_test.go:1792: live skills integration test disabled; set LARKSUITE_CLI_RUN_LIVE_SKILLS_TESTS=1 to run"
+        },
+        {
+          "package": "github.com/larksuite/cli/cmd/update",
+          "test": "TestUpdateCommand_SkillsSyncColdStart",
+          "reason": "update_test.go:1896: live skills integration test disabled; set LARKSUITE_CLI_RUN_LIVE_SKILLS_TESTS=1 to run"
+        },
+        {
+          "package": "github.com/larksuite/cli/cmd",
+          "test": "TestCommandSetSubprocess",
+          "reason": "command_sets_test.go:94: subprocess helper"
+        },
+        {
+          "package": "github.com/larksuite/cli/cmd",
+          "test": "TestScopeSnapshot",
+          "reason": "diagnose_scope_test.go:202: set SCOPE_SNAPSHOT_DIR to enable snapshot generation"
+        },
+        {
+          "package": "github.com/larksuite/cli/internal/qualitygate/semantic",
+          "test": "TestArkSemanticLiveCases",
+          "reason": "ark_live_test.go:45: set ARK_SEMANTIC_LIVE=1 to run Ark semantic live eval"
+        },
+        {
+          "package": "github.com/larksuite/cli/internal/qualitygate/semantic",
+          "test": "TestArkSemanticPromptStability",
+          "reason": "ark_live_test.go:57: set ARK_SEMANTIC_STABILITY=1 to run Ark semantic prompt stability eval"
+        },
+        {
+          "package": "github.com/larksuite/cli/internal/registry",
+          "test": "TestColdStart_NoEmbedded_SyncFetch",
+          "reason": "remote_test.go:124: embedded data present, skipping no-embedded test"
+        },
+        {
+          "package": "github.com/larksuite/cli/internal/vfs/localfileio",
+          "test": "TestPolicy_DenyRootWinsOverHomeFilesForRoot",
+          "reason": "policy_test.go:167: only meaningful when the account's home is the /root deny root"
+        },
+        {
+          "package": "github.com/larksuite/cli/shortcuts",
+          "test": "TestGenerateShortcutsJSON",
+          "reason": "register_test.go:391: set SHORTCUTS_OUTPUT env to generate shortcuts.json"
+        },
+        {
+          "package": "github.com/larksuite/cli/shortcuts/doc",
+          "test": "TestReadClipboardImageBytes_EmptyResultReturnsError",
+          "reason": "clipboard_test.go:23: portable empty-result check only runs on Linux; macOS/Windows require a real pasteboard"
+        },
+        {
+          "package": "github.com/larksuite/cli/shortcuts/markdown",
+          "test": "TestUploadMarkdownMultipartPartsRejectsOversizedBlockSize",
+          "reason": "markdown_test.go:1323: oversized block_size guard is only reachable on platforms where int is narrower than int64"
+        }
+      ],
+      "race_detected": false,
+      "log": ".tmp/next-evidence/p3-full-unit-rerun-make.log",
+      "log_sha256": "4aeeb60b297ce0dd0aa8b82731e0f549bef0e7a52ef422d20e60e820f61abf27"
+    },
+    {
+      "name": "errs-events",
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-race",
+        "-gcflags=all=-N -l",
+        "-count=1",
+        "./errs/...",
+        "./events/..."
+      ],
+      "exit_code": 0,
+      "duration_seconds": 18.375,
+      "tests": {
+        "pass": 324,
+        "fail": 0,
+        "skip": 0
+      },
+      "packages": {
+        "pass": 10,
+        "fail": 0,
+        "skip": 0
+      },
+      "failures": [],
+      "skipped_tests": [],
+      "race_detected": false,
+      "log": ".tmp/next-evidence/p3-full-unit-rerun-errs-events.log",
+      "log_sha256": "f23ae94dc9c927d29fb4c51b90fc5eeb8eff6c99232125f1748c3b7daab2f4f9"
+    }
+  ],
+  "metadata_sha256": "b5375251ff1f0a5939925587b0d514669a748135cde36c56f1c8ab5f5fe266c8",
+  "status": "pass",
+  "coverage_note": "The Makefile gate retains default race and gcflags; -json only adds machine-readable test evidence. errs/events are tested separately because the Makefile does not include them. This report establishes isolated unit regression only, not live or release acceptance.",
+  "section": "integration",
+  "release_accepted": false,
+  "counting_note": "Test counts include Go subtests. Package skip events identify packages without test files; the12 explicitly skipped tests are listed with reasons.",
+  "prior_attempt": {
+    "report": ".tmp/next-evidence/p3-full-unit-report.json",
+    "status": "fail",
+    "reason": "The source archive initially had no .git directory; two qualitygate/deptest tests require git rev-parse --show-toplevel. The rerun uses the same committed source plus an empty git init, without remotes, templates, inherited configuration, hooks, or a synthetic commit."
+  },
+  "totals": {
+    "passed_tests": 18499,
+    "failed_tests": 0,
+    "skipped_tests": 12,
+    "passed_packages": 143,
+    "failed_packages": 0,
+    "packages_without_tests": 13
+  }
+}
