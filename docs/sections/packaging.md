@@ -86,6 +86,18 @@ did not exercise amd64 npm/prefix collision, upgrade or uninstall scenarios.
 Existing shared lifecycle evidence must be mapped to those scenarios when
 assessing coverage; physical Intel hardware is not an additional acceptance gate.
 
+Linux arm64 now has actual source-built unit/race and packaging-suite evidence
+in [linux-runtime-evidence.json](linux-runtime-evidence.json). A separate bounded
+follow-up executed both delivered immutable Linux arm64 archives in a new
+resource-capped Linux aarch64 container inside the existing VM. Archive/binary
+checksums, startup/version, exact guide, normal/sidecar distinction, project
+install/repeat, update/no-op, edited-file refusal, uninstall/repeat and unrelated
+project/home/config preservation all passed. The changed update used an intact
+synthetic older managed guide; it does not claim a historical binary migration.
+The container used UID 10001, no mounts, network none, dropped capabilities and
+no-new-privileges. The existing npm/prefix suite was not repeated. Exact hashes,
+limits, commands and local evidence paths are recorded in the packaging JSON.
+
 The completed source export was moved outside the repository after build/smoke
 to prevent source guards discovering a second source tree. All 3,663 tracked file
 hashes were verified before and after the move, and the full tree's bytes, modes
@@ -95,8 +107,8 @@ The exact old/new source paths and unchanged archive hash are recorded in
 `.tmp/source-location.json` and [packaging-evidence.json](packaging-evidence.json).
 Historical logs may refer to the old source path.
 
-Linux and Windows runtime behavior and the public-release/channel checks below
-remain unverified. This section is locally implemented and testable; final
+Linux amd64/riscv64 and Windows runtime behavior and the public-release/channel
+checks below remain unverified. This section is locally implemented and testable; final
 release acceptance remains open. No publishing, external push, global installation
 or real credential use was performed. Comparative/held-out evaluation is recorded
 by its own owner and is not inferred from packaging tests.
@@ -122,11 +134,11 @@ OS runners, VMs or translation environments can provide behavioral evidence when
 the execution mode and checked scenarios are stated accurately.
 
 Cross-compilation verifies conditional source selection, not OS behavior. Linux
-file-backed key storage and applicable installation/lifecycle behavior still need
-Linux execution evidence. Windows named pipes, LockFileEx, path semantics,
+arm64 source-built runtime and delivered-archive lifecycle evidence are now
+recorded above; Linux amd64/riscv64 execution remains unverified. Windows named pipes, LockFileEx, path semantics,
 extraction fallback and `.old` recovery/rollback still need Windows execution
-evidence. These runtime gaps apply across the shipped targets and cannot be
-closed by macOS Rosetta. The successful Rosetta smoke establishes only its listed
+evidence. The remaining target/OS gaps cannot be closed by macOS Rosetta
+or inferred from Linux arm64 execution. The successful Rosetta smoke establishes only its listed
 macOS amd64 checks; signing/notarization and unexecuted lifecycle scenarios remain
 separate coverage questions rather than hardware requirements.
 

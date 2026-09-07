@@ -527,7 +527,91 @@
       "reason": "Move completed source export outside repository to avoid source-guard discovery; archives and logs remain at original paths.",
       "local_record": ".tmp/source-location.json"
     },
-    "still_unverified_scope": "Historical status at archive refresh, before the appended Rosetta smoke. See current_acceptance_scope for current applicability; physical Intel hardware is not an acceptance gate."
+    "still_unverified_scope": "Historical status at archive refresh, before the appended Rosetta smoke. See current_acceptance_scope for current applicability; physical Intel hardware is not an acceptance gate.",
+    "linux_arm64_archive_lifecycle": {
+      "source_revision": "8ce0688b303eb646e1b79a329002dddcb6403be4",
+      "status": "pass",
+      "execution": "Actual Linux aarch64 kernel/ABI and glibc in a capped container inside the existing Rancher Desktop VM; no physical hardware claim.",
+      "platform": "Linux-6.6.119-0-virt-aarch64-with-glibc2.36",
+      "uid": 10001,
+      "container": {
+        "id": "e5fba8121fe812c86aa40246341362f7143c96039d7fbbba4698d79dfdadb0fc",
+        "image_id": "sha256:342d42770f458569d2327f681b2365aa675aed2b9f80d2c5bdbc664530b10557",
+        "user": "10001:10001",
+        "network": "none",
+        "mounts": [],
+        "nano_cpus": 2000000000,
+        "memory_bytes": 4294967296,
+        "memory_swap_bytes": 4294967296,
+        "pids_limit": 512,
+        "cap_drop": [
+          "ALL"
+        ],
+        "security_options": [
+          "no-new-privileges"
+        ],
+        "stopped_after_checks": true,
+        "oom_killed": false
+      },
+      "isolation": "New task-owned container, no mounts or host credentials; network none, capabilities dropped, no-new-privileges; frozen isolated_env helper supplies synthetic HOME/config/temp and disabled external proxies.",
+      "cases": [
+        {
+          "variant": "normal",
+          "archive": "feishu-cli-next-0.1.0-beta.1-linux-arm64.tar.gz",
+          "archive_sha256": "8b60f2c19a38e1ef9c214120778383848890b55465f83118e7770d1cf398491c",
+          "binary_sha256": "184980a8c1205c6571cb7cab20affe35358918ca7f3865ca85ffdcb0e9ed0ad8",
+          "guide_sha256": "c0de66cb47e62ca389a691ca7c9549d68e262702cb692d45dd2a5965779c9f1b",
+          "status": "pass",
+          "checks": [
+            "archive and binary hashes",
+            "startup/version",
+            "exact guide",
+            "normal/sidecar startup distinction",
+            "project install and repeated install",
+            "same-version update no-op",
+            "intact older managed fixture update",
+            "edited guide update/uninstall refusal",
+            "uninstall and repeated uninstall",
+            "unrelated project/home/config preservation",
+            "Unix installed mode 0600"
+          ],
+          "process_invocations": 11
+        },
+        {
+          "variant": "authsidecar",
+          "archive": "feishu-cli-next-0.1.0-beta.1-linux-arm64-authsidecar.tar.gz",
+          "archive_sha256": "82ae691ae8d77fa1705c72c0ac10bc8c99fd2da86aecfc2040a49fe1bcc724d3",
+          "binary_sha256": "3f80ed23a78313839a6074fec6b82b4beae2381e02167b745df24e0ea3cae008",
+          "guide_sha256": "c0de66cb47e62ca389a691ca7c9549d68e262702cb692d45dd2a5965779c9f1b",
+          "status": "pass",
+          "checks": [
+            "archive and binary hashes",
+            "startup/version",
+            "exact guide",
+            "normal/sidecar startup distinction",
+            "project install and repeated install",
+            "same-version update no-op",
+            "intact older managed fixture update",
+            "edited guide update/uninstall refusal",
+            "uninstall and repeated uninstall",
+            "unrelated project/home/config preservation",
+            "Unix installed mode 0600"
+          ],
+          "process_invocations": 11
+        }
+      ],
+      "relationship_to_prior_evidence": "linux-runtime-evidence.json at 1a42186 used the source-built 8ce CLI and included the existing packaging suite. This bounded follow-up verifies delivered immutable linux-arm64 archives in both variants, without rerunning that suite.",
+      "update_fixture": "Changed update starts from an intact synthetic older managed guide with a valid checksum footer; this verifies replacement by the delivered guide, not a historical binary-version migration.",
+      "limits": [
+        "No npm/prefix suite rerun; source-built Linux coverage is recorded separately.",
+        "Linux amd64/riscv64 and Windows target execution remain unverified.",
+        "No live sidecar credential exchange, remote install/self-update, publishing or macOS signing verification."
+      ],
+      "raw_report": ".tmp/packaging-linux-8ce0688/stdout.json",
+      "raw_report_sha256": "ef5c6c46f6bdf51e83f586f3ae480e3f108ee5e7fb0c82dd7c9f8609c48b4509",
+      "harness": ".tmp/packaging-linux-8ce0688/payload/check.py",
+      "harness_sha256": "36531575fd417ed468225d64175d147ae6969583230604529c8f24bc45b2719c"
+    }
   },
   "latest_artifact_refresh": "immutable_refresh_8ce0688",
   "current_acceptance_scope": {
@@ -536,13 +620,14 @@
     "darwin_amd64": "Both immutable 8ce0688 variants executed under Rosetta on macOS arm64: startup/version, exact guide, build-mode distinction, project guide install and unrelated README preservation passed. This is actual translated amd64 execution; it does not cover every lifecycle or signing check.",
     "historical_status": "Earlier native/unexecuted entries describe the time and execution environment recorded. They are preserved, but do not impose a physical Intel gate.",
     "remaining_platform_scenarios": [
-      "Linux runtime on shipped architectures, including Linux file-backed key storage and applicable installation/lifecycle behavior; cross-compilation alone does not verify these OS paths.",
+      "Linux amd64/riscv64 target execution remains unverified. Linux arm64 source-built runtime and delivered normal/authsidecar archive guide lifecycle are verified in their explicitly recorded scopes.",
       "Windows runtime on shipped architectures, including named pipes, LockFileEx, path semantics, ZIP extraction fallbacks and updater .old recovery/rollback; cross-compilation alone does not verify these OS paths.",
       "The Rosetta smoke did not run amd64 npm/prefix collision, upgrade and uninstall scenarios. Existing shared lifecycle evidence must be mapped when assessing coverage; absence of physical Intel hardware is not itself a missing scenario."
     ],
     "public_release_checks": "Owned next channel and publisher credentials; candidate checksum/extraction, Developer ID/team, hardened runtime, timestamp, notarization and version verification on both macOS architectures in the retained release workflow. Signing is optional for local source/unsigned archive use.",
     "execution_environment_rule": "Use an appropriate OS runner, VM or translation environment and label it accurately. macOS Rosetta does not establish Linux or Windows behavior.",
     "remote_update": "Trusted next repository/package and matching artifact/update identities remain unconfigured.",
-    "audit_validation": "Documentation/evidence correction and source relocation integrity checks only; no new runtime tests or artifact rebuilds."
+    "audit_validation": "Earlier acceptance wording correction and source relocation did not rerun runtime tests. The appended linux_arm64_archive_lifecycle is a later bounded actual archive execution, with no rebuild or full-suite rerun.",
+    "linux_arm64": "Source-built Linux unit/race and packaging suite execution is recorded in linux-runtime-evidence.json; both delivered immutable normal/authsidecar archives now pass checksum-bound startup, guide install/update/uninstall, edited-file refusal and unrelated home/config/project preservation. Execution is Linux aarch64 within the existing VM."
   }
 }
