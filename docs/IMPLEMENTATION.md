@@ -104,6 +104,13 @@ account and the sequential user reads. The full test failed on bot search; a
 single bounded diagnosis identified missing `search:bot` user scope. No permission
 was granted and no content was written. This remains an unmet live prerequisite.
 
+The [Drive privacy revalidation](sections/drive-privacy-prerequisites.json)
+records readable official guidance on folder inheritance and configurable
+new-document sharing defaults. It does not establish this account's effective
+defaults or the exact API creation rule. A private parent alone therefore does
+not close the precreation requirement; no authenticated calls or writes were made
+for this documentation check.
+
 The [P3 Sheets-to-Base process suite](integration/sheets-base.md) passes all 11
 initial test/subtest events without skips; the expanded suite at `1f1ce4e`
 passes 18 events including real-export binding switches. Its actual 10,000-row transfer preserves
