@@ -40,6 +40,10 @@ type InvocationContext struct {
 // All function fields are lazily initialized and cached after first call.
 // In tests, replace any field to stub out external dependencies.
 type Factory struct {
+	// StartupBrand is non-secret, build-local metadata for command help. It
+	// must not require resolving credentials or verifying a user identity.
+	StartupBrand core.LarkBrand
+
 	// EnableAgentAttempts opts this invocation into durable mutation evidence.
 	EnableAgentAttempts bool
 	agentAttempts       nextattempt.Journal

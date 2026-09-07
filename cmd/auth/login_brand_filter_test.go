@@ -4,8 +4,11 @@
 package auth
 
 import (
+	"slices"
+	"strings"
 	"testing"
 
+	"github.com/larksuite/cli/internal/cmdutil"
 	"github.com/larksuite/cli/internal/core"
 	"github.com/larksuite/cli/shortcuts"
 )
@@ -52,4 +55,33 @@ func containsDomainMetadata(domains []domainMeta, name string) bool {
 		}
 	}
 	return false
+}
+
+func TestLoginHelpBrandDoesNotResolveCredentialConfig(t *testing.T) {
+	priorCompletion := cmdutil.FlagCompletionsEnabled()
+	cmdutil.SetFlagCompletionsEnabled(true)
+	t.Cleanup(func() { cmdutil.SetFlagCompletionsEnabled(priorCompletion) })
+	t.Setenv("LARKSUITE_CLI_CONFIG_DIR", t.TempDir())
+	for _, brand := range []core.LarkBrand{core.BrandFeishu, core.BrandLark} {
+		t.Run(string(brand), func(t *testing.T) {
+			factory, _, _, _ := cmdutil.TestFactory(t, &core.CliConfig{Brand: brand})
+			factory.Config = func() (*core.CliConfig, error) {
+				t.Fatal("constructor/help resolved credential config")
+				return nil, nil
+			}
+			login := NewCmdAuthLogin(factory, nil)
+			want := "available: " + strings.Join(builtinResolver().sorted(brand), ", ") + ", all"
+			if usage := login.Flag("domain").Usage; !strings.Contains(usage, want) {
+				t.Fatalf("%s help: %s", brand, usage)
+			}
+			completion, ok := login.GetFlagCompletionFunc("domain")
+			if !ok {
+				t.Fatal("missing domain completion")
+			}
+			domains, _ := completion(login, nil, "apps")
+			if slices.Contains(domains, "apps") != (brand == core.BrandFeishu) {
+				t.Fatalf("%s domain completion: %v", brand, domains)
+			}
+		})
+	}
 }

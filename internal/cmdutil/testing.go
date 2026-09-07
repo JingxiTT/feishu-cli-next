@@ -73,6 +73,9 @@ func TestFactory(t *testing.T, config *core.CliConfig) (*Factory, *bytes.Buffer,
 		Credential:     testCred,
 		FileIOProvider: fileio.GetProvider(),
 	}
+	if config != nil {
+		f.StartupBrand = config.Brand
+	}
 	return f, stdoutBuf, stderrBuf, reg
 }
 

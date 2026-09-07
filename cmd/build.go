@@ -248,6 +248,7 @@ func buildInternalWithConfig(ctx context.Context, inv cmdutil.InvocationContext,
 	internalplatform.SetActiveInventory(nil)
 
 	f := cmdutil.NewDefault(cfg.streams, inv)
+	f.StartupBrand = cfg.startupBrand
 	if cfg.keychain != nil {
 		f.Keychain = cfg.keychain
 	}

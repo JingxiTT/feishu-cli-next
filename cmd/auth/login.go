@@ -82,10 +82,8 @@ to generate QR codes (supports ASCII and PNG formats).`,
 	cmd.Flags().StringVar(&opts.Scope, "scope", "", "scopes to request (space- or comma-separated). Combines additively with --domain/--recommend")
 	cmd.Flags().BoolVar(&opts.Recommend, "recommend", false, "request only recommended (auto-approve) scopes")
 	var helpBrand core.LarkBrand
-	if f != nil && f.Config != nil {
-		if cfg, err := f.Config(); err == nil && cfg != nil {
-			helpBrand = cfg.Brand
-		}
+	if f != nil {
+		helpBrand = f.StartupBrand
 	}
 	available := resolver.sorted(helpBrand)
 	cmd.Flags().StringSliceVar(&opts.Domains, "domain", nil,
