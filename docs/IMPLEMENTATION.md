@@ -130,15 +130,18 @@ the default harness skips are not counted as passes.
 
 [Packaging evidence](sections/packaging-evidence.json) covers all 14 cross-built
 platform/variant archives, local installation/update/removal, and actual Node 16
-runtime tests. Native Linux/Windows/macOS Intel execution and a trusted remote
-Next release channel remain unverified or unavailable. Local build evidence does
-not establish public release readiness.
+runtime tests. The final `8ce0688` refresh also verifies both darwin/amd64 variants
+under existing Rosetta, including startup and project guide installation. That
+is translated execution, not an additional physical-hardware requirement.
+Linux/Windows OS-specific behavior, signed public-release checks and a trusted
+remote Next release channel remain unverified or unavailable. Local evidence
+does not establish public release readiness.
 
 ## Outstanding release evidence
 
 P2 domain acceptance, verified private live fixtures,
 remaining development comparisons and provider-token scaling measurements,
-native platform and remote lifecycle checks, full release checks and held-out
+remaining OS-specific and remote lifecycle checks, full release checks and held-out
 evaluation remain open. The [source review aggregate](reference/p3-effective-review-final.json)
 records exact-hash offline approvals for all runtime/build paths; it grants no
 live or release acceptance. The concrete cross-section workflow audit and 18-event
@@ -152,6 +155,6 @@ complete goal.
 | --- | --- |
 | Private live fixtures | Verify current-account and tenant binding plus account-only creation visibility before writing; run the owning live suites and clean up only their resources. |
 | Contact bot search | Current-user authorization for `search:bot`, followed by the failed live scenario and bot binding checks. |
-| Native runtime coverage | Execute the retained platform-specific installation, recovery and runtime suites on native Linux, Windows and macOS Intel; cross-built archives do not substitute. |
+| OS-specific runtime coverage | Execute the retained Linux and Windows behavior checks on appropriate OS runners or VMs; cross-built archives do not substitute. Darwin/amd64 smoke checks already ran under Rosetta. Additional gaps must name the unverified scenario, not require physical hardware absent from PLAN. |
 | Remote release ownership | An owned Next repository/download destination and package identity, then the documented updater identity integration and remote install/update checks. Public signing/notarization and publication retain their separate prerequisites. |
 | Comparative release evidence | Finish the serialized development/scaling comparisons, review their tradeoffs, and perform independently replaced held-out tasks only at the final release gate. |
