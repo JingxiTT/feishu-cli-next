@@ -25,8 +25,9 @@ The release criteria remain those in [PLAN.md](PLAN.md). Imported source is impl
 ## Current evidence
 
 P0 inventory and harness checks pass. The reference remains clean and unchanged;
-the actual next tree preserves all 938 reference command nodes and adds ten
-foundation nodes. Source changes remain explicitly tracked for final review.
+the immutable P3 registration checkpoint preserves all 938 reference command
+nodes and adds 13 nodes, including three data-transfer shortcuts. Source changes
+remain explicitly tracked for semantic review and subsequent fix reconciliation.
 
 [P1 shared interfaces are ready for P2](sections/foundation.md): the full
 foundation unit/process suite, plugin and sidecar checks, static checks and
@@ -57,8 +58,11 @@ successful trials and complete usage accounting, but a regression: Next used
 66,811 tokens per success versus 59,485 for the official arm and 41,233 for its
 concise-guidance arm. The small sample and sanitized queries limit causal claims.
 Commit `ced4030` makes public flag descriptions searchable and clarifies literal
-keyword discovery; it has no measured improvement claim yet. Remaining development
-comparisons are being prepared separately; held-out tasks remain untouched.
+keyword discovery; it has no measured improvement claim yet. A frozen 81-trial
+development batch across nine additional read-only sections
+is running separately; remaining section adapters are undergoing controlled
+verification. Its candidate is recorded independently of newer product fixes.
+Held-out tasks remain untouched.
 
 [Live Contact evidence](sections/contact-live-evidence.json) verifies the current
 account and the sequential user reads. The full test failed on bot search; a
@@ -89,7 +93,9 @@ not establish public release readiness.
 ## Outstanding release evidence
 
 P2 domain acceptance, verified private live fixtures, final source reconciliation,
-10,000-row typed transfer, cross-section workflows, platform/lifecycle packaging,
-full release checks and held-out evaluation remain open. Blocked or unverified
+remaining cross-section workflows, native platform and remote lifecycle checks,
+full release checks and held-out evaluation remain open. The completed offline
+10,000-row transfer and local packaging checks above are recorded milestones.
+Blocked or unverified
 checks remain outstanding; offline or scoped foundation success does not count
 as full live parity or satisfy the complete goal.
