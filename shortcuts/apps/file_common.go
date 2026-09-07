@@ -74,6 +74,7 @@ func normalizeTimestamp(raw string) (string, error) {
 	return "", errs.NewValidationError(errs.SubtypeInvalidArgument, "invalid timestamp %q (want relative 7d/2h/30s, date 2026-04-15, datetime 2026-04-15T10:00:00, or ISO 8601 with TZ)", s)
 }
 
+//nolint:forbidigo // Presigned storage uses the invocation Factory external client, not the Lark gateway; the clone retains the existing transfer timeout.
 func newFileTransferClient(rctx *common.RuntimeContext) (*http.Client, error) {
 	client, err := rctx.Factory.ExternalHTTPClient()
 	if err != nil {

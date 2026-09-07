@@ -6,11 +6,12 @@ package apps
 import (
 	"context"
 	"encoding/json"
-	"github.com/larksuite/cli/errs"
-	"github.com/larksuite/cli/internal/httpmock"
 	"reflect"
 	"strings"
 	"testing"
+
+	"github.com/larksuite/cli/errs"
+	"github.com/larksuite/cli/internal/httpmock"
 )
 
 func TestAutomationListAllRejectsMissingContinuation(t *testing.T) {

@@ -211,7 +211,7 @@ func TestAppsAutomationPaginationAndArtifacts(t *testing.T) {
 				if mode == "missing-cursor" {
 					cursor = ""
 				}
-				reply(w, map[string]interface{}{"items": []interface{}{map[string]interface{}{"name": "trigger-" + string(rune('0'+n)), "trigger_type": "webhook", "trigger_condition": map[string]interface{}{"token_value": "synthetic-sensitive-token", "token_enabled": true}}}, "has_more": more, "page_token": cursor})
+				reply(w, map[string]interface{}{"items": []interface{}{map[string]interface{}{"name": "trigger-" + string('0'+n), "trigger_type": "webhook", "trigger_condition": map[string]interface{}{"token_value": "synthetic-sensitive-token", "token_enabled": true}}}, "has_more": more, "page_token": cursor})
 			}))
 			path := filepath.Join(f.WorkDir, "triggers.json")
 			result := run(f, "+automation-list", "--app-id", "app_fixture", "--all", "--save-result", path)
