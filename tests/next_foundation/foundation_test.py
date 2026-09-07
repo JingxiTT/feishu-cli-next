@@ -51,10 +51,11 @@ class FoundationProcessTests(unittest.TestCase):
             self.assertIn("error", payload)
 
     def test_schema_is_available_from_embedded_metadata(self):
-        result = self.run_cli("schema", "im", "messages", "list")
+        result = self.run_cli("schema", "drive", "files", "list")
         self.assertEqual(result.returncode, 0, result.stderr)
         payload = json.loads(result.stdout)
-        self.assertTrue(payload)
+        self.assertEqual(payload.get("name"), "drive files list")
+        self.assertEqual(payload.get("inputSchema", {}).get("type"), "object")
         self.assertEqual(result.stderr.strip(), "")
 
     def test_config_show_reports_missing_config(self):
