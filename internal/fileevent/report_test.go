@@ -116,13 +116,15 @@ func TestReportUploadReportsEveryCallWithMinimalBody(t *testing.T) {
 }
 
 func TestBuildUploadReportRequestCommandOmitsBinaryName(t *testing.T) {
-	runtime := newFakeRuntime(`{"code":0}`)
-	runtime.command = "+upload"
-	runtime.commandPath = "lark-cli drive +upload"
+	for _, binary := range []string{"lark-cli", "lark", "feishu-cli-next"} {
+		runtime := newFakeRuntime(`{"code":0}`)
+		runtime.command = "+upload"
+		runtime.commandPath = binary + " drive +upload"
 
-	tags := requestTags(t, buildUploadReportRequest(runtime, UploadMeta{}))
-	if got := tags["command"]; got != "drive +upload" {
-		t.Fatalf("tags.command = %q, want drive +upload", got)
+		tags := requestTags(t, buildUploadReportRequest(runtime, UploadMeta{}))
+		if got := tags["command"]; got != "drive +upload" {
+			t.Fatalf("%s tags.command = %q, want drive +upload", binary, got)
+		}
 	}
 }
 

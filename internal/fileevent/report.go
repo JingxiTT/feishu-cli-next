@@ -302,6 +302,7 @@ func commandPathOrName(runtime Runtime) string {
 		return ""
 	}
 	path := strings.TrimSpace(runtime.CommandPath())
+	path = strings.TrimPrefix(path, "feishu-cli-next ")
 	path = strings.TrimPrefix(path, "lark-cli ")
 	path = strings.TrimPrefix(path, "lark ")
 	if path != "" {
