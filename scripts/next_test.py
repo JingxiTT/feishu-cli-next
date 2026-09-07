@@ -177,6 +177,14 @@ def run_command(command, env, timeout, cwd=ROOT):
             continue
         if isinstance(event, dict) and event.get("Test") and event.get("Action") in counts:
             counts[event["Action"]] += 1
+    if not any(counts.values()):
+        ran = re.search(r"^Ran (\d+) tests?\b", stderr, re.MULTILINE)
+        summary = re.search(r"^(?:OK|FAILED)(?: \(([^)]*)\))?$", stderr, re.MULTILINE)
+        if ran and summary:
+            totals = dict(re.findall(r"(failures|errors|skipped)=(\d+)", summary.group(1) or ""))
+            counts["fail"] = int(totals.get("failures", 0)) + int(totals.get("errors", 0))
+            counts["skip"] = int(totals.get("skipped", 0))
+            counts["pass"] = max(0, int(ran.group(1)) - counts["fail"] - counts["skip"])
     return {"command": command, "status": "timeout" if timed_out else "pass" if code == 0 else "fail",
             "exit_code": code, "duration_seconds": round(time.monotonic() - started, 3),
             "stdout": stdout, "stderr": stderr, "tests": counts}
@@ -187,18 +195,21 @@ def main(argv=None):
     selection = parser.add_mutually_exclusive_group()
     selection.add_argument("--section", choices=("foundation", "extensions", "packaging", "all") + DOMAINS, default="foundation")
     selection.add_argument("--integration", type=integration_name, help="run one complete tests/next_integration package")
+    selection.add_argument("--harness", choices=("evaluation", "scripts"), help="run controlled Python harness tests without a CLI binary")
     parser.add_argument("--suite", choices=("unit", "e2e", "all", "live"), default="all")
     parser.add_argument("--binary", type=Path, default=ROOT / "feishu-cli-next")
     parser.add_argument("--report", type=Path, default=ROOT / ".tmp/next-tests/report.json")
     parser.add_argument("--timeout", type=int, default=1200, help="maximum seconds per command")
     parser.add_argument("--allow-live", action="store_true", help="explicit intent only; unverified fixtures still block live runs")
     args = parser.parse_args(argv)
-    if args.integration and args.suite not in ("e2e", "all"):
-        parser.error("--integration requires --suite e2e or all")
-    report = {"schema_version": 1, "section": "integration" if args.integration else args.section, "suite": args.suite,
+    if (args.integration or args.harness) and args.suite not in ("e2e", "all"):
+        parser.error("--integration and --harness require --suite e2e or all")
+    report = {"schema_version": 1, "section": "harness" if args.harness else "integration" if args.integration else args.section, "suite": args.suite,
               "evidence": "offline", "status": "pass", "commands": []}
     if args.suite in ("e2e", "all"):
-        report["section_suites"] = [integration_suite(args.integration)] if args.integration else section_suites(args.section)
+        report["section_suites"] = [] if args.harness else [integration_suite(args.integration)] if args.integration else section_suites(args.section)
+        if args.harness:
+            report["harness"] = args.harness
         if args.integration:
             report["integration"] = args.integration
         report["coverage_note"] = "Offline suite results do not establish live behavior or full capability reconciliation."
@@ -214,7 +225,7 @@ def main(argv=None):
     elif args.section == "packaging" and args.suite == "unit":
         report.update(status="blocked", reason="No packaging unit suite is defined; use the section E2E suite when available.")
         code = 2
-    elif args.suite in ("e2e", "all") and not args.binary.resolve().is_file():
+    elif args.suite in ("e2e", "all") and not args.harness and not args.binary.resolve().is_file():
         report.update(status="blocked", reason="Build the CLI and pass its path with --binary before E2E tests.")
         code = 2
     else:
@@ -225,7 +236,10 @@ def main(argv=None):
             proxy = "http://127.0.0.1:" + str(dead_proxy.getsockname()[1])
             env = isolated_env(directory, os.environ, proxy)
             env["LARK_CLI_BIN"] = str(args.binary.resolve())
-            if args.integration:
+            if args.harness:
+                folder, pattern = ("tests/next_evaluation", "test_*.py") if args.harness == "evaluation" else ("scripts", "next_*test.py")
+                commands = [[sys.executable, "-m", "unittest", "discover", "-s", folder, "-p", pattern, "-v"]]
+            elif args.integration:
                 selected = report["section_suites"][0]
                 commands = [["go", "test", "-json", "-count=1", "-timeout=10m", selected["package"]]] if selected["status"] == "present" else []
             else:

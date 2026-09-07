@@ -23,7 +23,7 @@ PREFIX   ?= /usr/local
 TEST_GOARCH := $(or $(GOARCH),$(shell go env GOARCH))
 RACE_FLAG := $(if $(filter riscv64,$(TEST_GOARCH)),,-race)
 
-.PHONY: all build vet fmt-check script-test test unit-test live-skills-test integration-test examples-build quality-gate install update-install uninstall clean fetch_meta gitleaks sidecar-test
+.PHONY: all build vet fmt-check script-test test unit-test live-skills-test integration-test examples-build quality-gate install update-install uninstall clean fetch_meta gitleaks sidecar-test next-script-test evaluation-test cross-domain-test
 
 all: test
 
@@ -47,7 +47,13 @@ fmt-check:
 		exit 1; \
 	fi
 
-script-test:
+next-script-test:
+	python3 scripts/next_test.py --harness scripts --report .tmp/next-tests/scripts.json
+
+evaluation-test:
+	python3 scripts/next_test.py --harness evaluation --report .tmp/next-tests/evaluation.json
+
+script-test: next-script-test
 	bash scripts/resolve-changed-from.test.sh
 	bash scripts/ci-workflow.test.sh
 	bash scripts/release-workflow.test.sh
@@ -73,10 +79,13 @@ examples-build:
 # ./tests/... includes tests/plugin_e2e, which builds ~20 customer-fork
 # binaries (~1 min warm; a cold module cache also downloads via GOPROXY).
 # Deliberate: local `make test` exercises the L4 plugin contract by default.
-integration-test: build
+cross-domain-test: build
+	python3 scripts/next_test.py --integration sheets_base --binary ./$(BINARY) --report .tmp/next-tests/cross-domain.json
+
+integration-test: build cross-domain-test
 	python3 scripts/next_test.py --section all --suite e2e --binary ./$(BINARY) --report .tmp/next-tests/integration.json
 
-test: vet fmt-check script-test unit-test examples-build integration-test
+test: vet fmt-check script-test unit-test examples-build integration-test evaluation-test
 
 quality-gate: build
 	mkdir -p $(QUALITY_GATE_DIR) $(dir $(QUALITY_GATE_FACTS_OUT)) $(dir $(PUBLIC_CONTENT_METADATA))

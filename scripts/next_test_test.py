@@ -65,6 +65,36 @@ urllib.request.urlopen('http://must-not-resolve.invalid',timeout=0.2)
         self.assertEqual(result["tests"], {"pass": 0, "fail": 0, "skip": 1})
         self.assertEqual(result["stderr"], "diagnostic\n")
 
+    def test_python_unittest_counts_keep_skips_and_failures_separate(self):
+        for summary, expected, code in [
+            ("OK (skipped=2)", {"pass": 3, "fail": 0, "skip": 2}, 0),
+            ("FAILED (failures=1, errors=1, skipped=1)", {"pass": 2, "fail": 2, "skip": 1}, 1),
+        ]:
+            source = "import sys;print(" + repr("Ran 5 tests in 0.1s\n\n" + summary) + ",file=sys.stderr);sys.exit(" + str(code) + ")"
+            with tempfile.TemporaryDirectory() as directory:
+                result = next_test.run_command([sys.executable, "-c", source],
+                                              next_test.isolated_env(directory, os.environ, "http://127.0.0.1:1"), 10)
+            self.assertEqual(result["tests"], expected)
+            self.assertEqual(result["exit_code"], code)
+
+    def test_harness_selectors_run_complete_python_discovery_without_binary(self):
+        for harness, folder, pattern in [("scripts", "scripts", "next_*test.py"),
+                                         ("evaluation", "tests/next_evaluation", "test_*.py")]:
+            with tempfile.TemporaryDirectory() as directory:
+                report_path = Path(directory) / "report.json"
+                def passed(command, env, _timeout):
+                    self.assertTrue(Path(env["HOME"]).is_dir())
+                    self.assertNotIn("TEST_USER_ACCESS_TOKEN", env)
+                    self.assertEqual(command, [sys.executable, "-m", "unittest", "discover", "-s", folder, "-p", pattern, "-v"])
+                    return {"command": command, "status": "pass", "exit_code": 0,
+                            "stdout": "", "stderr": "", "tests": {"pass": 1, "fail": 0, "skip": 0}}
+                with patch.object(next_test, "run_command", side_effect=passed), contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+                    code = next_test.main(["--harness", harness, "--binary", "does-not-exist", "--report", str(report_path)])
+                self.assertEqual(code, 0)
+                report = json.loads(report_path.read_text())
+                self.assertEqual(len(report["commands"]), 1)
+                self.assertEqual(report["evidence"], "offline")
+
     def test_timeout_is_failure(self):
         with tempfile.TemporaryDirectory() as directory:
             result = next_test.run_command([sys.executable, "-c", "import time;time.sleep(30)"],

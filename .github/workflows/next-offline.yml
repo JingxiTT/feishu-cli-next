@@ -1,0 +1,102 @@
+name: Next offline correctness
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  offline:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 90
+    defaults:
+      run:
+        shell: bash
+    env:
+      NEXT_BINARY: ${{ runner.os == 'Windows' && 'feishu-cli-next.exe' || 'feishu-cli-next' }}
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6
+        with:
+          go-version-file: go.mod
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '22'
+      - name: Preload public dependencies and locate caches
+        id: dependencies
+        run: |
+          go mod download
+          python - <<'PY'
+          import os, subprocess
+          with open(os.environ['GITHUB_ENV'], 'a', encoding='utf-8') as stream:
+              for name in ('GOCACHE', 'GOMODCACHE'):
+                  value = subprocess.check_output(['go', 'env', name], text=True).strip()
+                  stream.write(name + '=' + value + '\n')
+          PY
+      - name: Build with frozen audited metadata
+        id: build
+        run: |
+          python scripts/next_meta.py
+          go build -trimpath -o "$NEXT_BINARY" .
+      - name: Inventory, metadata, runner and workflow tests
+        id: scripts
+        if: ${{ always() && steps.dependencies.outcome == 'success' }}
+        run: python scripts/next_test.py --harness scripts --report .tmp/next-ci/scripts.json
+      - name: Complete offline section suites
+        id: sections
+        if: ${{ always() && steps.build.outcome == 'success' }}
+        run: python scripts/next_test.py --section all --suite all --binary "./$NEXT_BINARY" --report .tmp/next-ci/sections.json
+      - name: Controlled evaluation harness
+        id: evaluation
+        if: ${{ always() && steps.dependencies.outcome == 'success' }}
+        run: python scripts/next_test.py --harness evaluation --report .tmp/next-ci/evaluation.json
+      - name: Sheets to Base cross-domain suite
+        id: integration
+        if: ${{ always() && steps.build.outcome == 'success' }}
+        run: python scripts/next_test.py --integration sheets_base --binary "./$NEXT_BINARY" --report .tmp/next-ci/integration.json
+      - name: Record gate outcomes and evidence limits
+        if: ${{ always() }}
+        env:
+          DEPENDENCIES_OUTCOME: ${{ steps.dependencies.outcome }}
+          BUILD_OUTCOME: ${{ steps.build.outcome }}
+          SCRIPTS_OUTCOME: ${{ steps.scripts.outcome }}
+          SECTIONS_OUTCOME: ${{ steps.sections.outcome }}
+          EVALUATION_OUTCOME: ${{ steps.evaluation.outcome }}
+          INTEGRATION_OUTCOME: ${{ steps.integration.outcome }}
+        run: |
+          python - <<'PY'
+          import json, os, pathlib, platform
+          root = pathlib.Path('.tmp/next-ci')
+          root.mkdir(parents=True, exist_ok=True)
+          stages = {name.lower(): os.environ.get(name + '_OUTCOME') or 'not_run'
+                    for name in ('DEPENDENCIES', 'BUILD', 'SCRIPTS', 'SECTIONS', 'EVALUATION', 'INTEGRATION')}
+          (root / 'gate.json').write_text(json.dumps({
+              'evidence': 'offline', 'platform': platform.system(), 'revision': os.environ['GITHUB_SHA'],
+              'stages': stages, 'limits': [
+                  'Skipped or blocked scenarios remain unverified; suite reports retain individual counts and reasons.',
+                  'Unix signal and symlink contracts are platform-specific; native platform results are separate evidence.',
+                  'This gate does not run live APIs, real model comparisons, held-out trials, signing, or release publication.'
+              ]}, indent=2) + '\n', encoding='utf-8')
+          PY
+      - name: Upload all machine-readable evidence
+        if: ${{ always() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: next-offline-${{ runner.os }}-${{ github.sha }}
+          path: .tmp/next-ci/
+          if-no-files-found: error
+          retention-days: 14

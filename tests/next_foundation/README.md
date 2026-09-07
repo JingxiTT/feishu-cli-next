@@ -1,12 +1,13 @@
 # Isolated section regressions
 
 Run from the repository root. Python 3, Go, a populated Go module cache, and a
-built CLI with full embedded metadata are prerequisites. `make build` prepares
-metadata; it may need network access. The test runner never fetches metadata or
+built CLI with full embedded metadata are prerequisites. `make build` restores verified frozen
+metadata; only an empty Go dependency cache may need network access. The test runner never fetches metadata or
 Go dependencies. Use the binary just built, not an installed personal CLI.
 
 ```sh
-python3 scripts/next_test_test.py
+python3 scripts/next_test.py --harness scripts --report .tmp/next-tests/scripts.json
+python3 scripts/next_test.py --harness evaluation --report .tmp/next-tests/evaluation.json
 python3 scripts/next_test.py --section foundation --suite all --binary ./feishu-cli-next --report .tmp/next-tests/foundation.json
 python3 scripts/next_test.py --section docs --suite all --binary ./feishu-cli-next --report .tmp/next-tests/docs.json
 python3 scripts/next_test.py --section all --suite all --binary ./feishu-cli-next --report .tmp/next-tests/all.json
@@ -39,7 +40,7 @@ is not an OS network sandbox: tests using custom transports must remain syntheti
 No ordinary test may depend on the developer keychain or local account.
 
 The runner prints one JSON summary and writes a JSON report with command exit
-codes, pass/fail/timeout status, durations, sanitized output, and Go test
+codes, pass/fail/timeout status, durations, sanitized output, and Go/Python unittest
 pass/fail/skip counts. Child failures retain their exit code; timeout returns
 124. Missing prerequisites and blocked live runs return 2. A skipped test is
 recorded separately and is not evidence that its behavior passed.
@@ -72,3 +73,17 @@ ownership. A fixture harness must verify these before enabling live execution.
 Do not use `go test ./tests/...` or `make test` in a credentialed shell to work
 around this gate: legacy live helpers probe the local account even without an
 explicit token variable.
+
+`make cross-domain-test` runs Sheets to Base independently. `make integration-test`
+includes that gate and all section E2E suites. `make next-script-test` and
+`make evaluation-test` run the isolated Python checks without requiring a CLI
+binary. Controlled evaluation tests do not constitute real model comparisons.
+
+`.github/workflows/next-offline.yml` runs the complete offline section, script,
+evaluation harness, and cross-domain gates on native Linux, macOS, and Windows.
+It preloads public Go dependencies before isolation and always uploads separate
+machine reports plus stage outcomes, including failures and blocked prerequisites.
+The workflow adds to the inherited CI gates. Its definition is not evidence that
+a native platform passed: that requires a completed run on that platform. Offline
+CI does not establish live API behavior, held-out model gains, signing, or release
+publication readiness.
