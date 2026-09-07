@@ -416,7 +416,7 @@ func TestWeightDryRun_KeyResults(t *testing.T) {
 		"--level", "key-result",
 		"--cycle-id", "123",
 		"--objective-id", "456",
-		"--weights", `[{"id":"kr1","weight":0.5},{"id":"kr2","weight":0.5}]`,
+		"--weights", `[{"id":"101","weight":0.5},{"id":"102","weight":0.5}]`,
 		"--dry-run",
 	})
 	if err != nil {
@@ -520,9 +520,9 @@ func TestWeightExecute_KeyResults_Success(t *testing.T) {
 			"msg":  "ok",
 			"data": map[string]interface{}{
 				"items": []interface{}{
-					map[string]interface{}{"id": "kr1", "weight": &w1, "objective_id": "456", "owner": map[string]interface{}{"owner_type": "user"}},
-					map[string]interface{}{"id": "kr2", "weight": &w2, "objective_id": "456", "owner": map[string]interface{}{"owner_type": "user"}},
-					map[string]interface{}{"id": "kr3", "weight": &w3, "objective_id": "456", "owner": map[string]interface{}{"owner_type": "user"}},
+					map[string]interface{}{"id": "101", "weight": &w1, "objective_id": "456", "owner": map[string]interface{}{"owner_type": "user"}},
+					map[string]interface{}{"id": "102", "weight": &w2, "objective_id": "456", "owner": map[string]interface{}{"owner_type": "user"}},
+					map[string]interface{}{"id": "103", "weight": &w3, "objective_id": "456", "owner": map[string]interface{}{"owner_type": "user"}},
 				},
 				"has_more": false,
 			},
@@ -545,7 +545,7 @@ func TestWeightExecute_KeyResults_Success(t *testing.T) {
 		"--level", "key-result",
 		"--cycle-id", "123",
 		"--objective-id", "456",
-		"--weights", `[{"id":"kr1","weight":0.5}]`,
+		"--weights", `[{"id":"101","weight":0.5}]`,
 	})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)

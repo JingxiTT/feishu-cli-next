@@ -426,8 +426,8 @@ func TestReorderExecute_KeyResults_Success(t *testing.T) {
 			"msg":  "ok",
 			"data": map[string]interface{}{
 				"items": []interface{}{
-					map[string]interface{}{"id": "kr1", "position": 1, "objective_id": "456", "owner": map[string]interface{}{"owner_type": "user"}},
-					map[string]interface{}{"id": "kr2", "position": 2, "objective_id": "456", "owner": map[string]interface{}{"owner_type": "user"}},
+					map[string]interface{}{"id": "101", "position": 1, "objective_id": "456", "owner": map[string]interface{}{"owner_type": "user"}},
+					map[string]interface{}{"id": "102", "position": 2, "objective_id": "456", "owner": map[string]interface{}{"owner_type": "user"}},
 				},
 				"has_more": false,
 			},
@@ -442,8 +442,8 @@ func TestReorderExecute_KeyResults_Success(t *testing.T) {
 			"msg":  "ok",
 			"data": map[string]interface{}{
 				"items": []interface{}{
-					map[string]interface{}{"id": "kr2", "position": 1},
-					map[string]interface{}{"id": "kr1", "position": 2},
+					map[string]interface{}{"id": "102", "position": 1},
+					map[string]interface{}{"id": "101", "position": 2},
 				},
 			},
 		},
@@ -453,7 +453,7 @@ func TestReorderExecute_KeyResults_Success(t *testing.T) {
 		"--level", "key-result",
 		"--cycle-id", "123",
 		"--objective-id", "456",
-		"--ops", `[{"id":"kr2","position":1}]`,
+		"--ops", `[{"id":"102","position":1}]`,
 	})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
@@ -471,8 +471,8 @@ func TestReorderExecute_KeyResults_Success(t *testing.T) {
 	if len(ordered) != 2 {
 		t.Fatalf("expected 2 items in ordered list, got %d", len(ordered))
 	}
-	if ordered[0] != "kr2" || ordered[1] != "kr1" {
-		t.Fatalf("expected ordered [kr2,kr1], got %v", ordered)
+	if ordered[0] != "102" || ordered[1] != "101" {
+		t.Fatalf("expected ordered [102,101], got %v", ordered)
 	}
 }
 

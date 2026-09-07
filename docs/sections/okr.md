@@ -168,3 +168,32 @@ Scoped `go vet ./shortcuts/okr/... ./tests/next_sections/okr/...` passed under
 `isolated_env`; scoped `git diff --check` passed. Broad shared-tree
 unit/vet/lint/quality gates are coordinator-owned; this section
 reports only its scoped checks, not full release acceptance.
+
+## P3 malformed native-ID review
+
+Independent review found that duplicate native IDs in a fetched collection could
+collapse the reordered ID list and panic in its no-op comparison. The isolated
+`TestReorderRejectsDuplicateNativeIDs` regression reproduced an index-out-of-range
+panic before the fix (`.tmp/okr-duplicate-repro.json`).
+
+Reorder now validates native IDs before constructing the replacement order;
+weight replacement validates before matching assignments or normalizing weights.
+The complete fetched snapshot must contain distinct, positive int64 IDs. Missing,
+nonnumeric, nonpositive, overflowing and repeated IDs fail with typed
+`internal/invalid_response`, retaining a parsing cause where available and a
+read-again recovery hint. Valid ID strings remain verbatim. A corrupt collection
+is never downgraded to an ordinary write or a claimed no-op. Validation is scoped
+to these whole-collection mutations; read-only domain behavior is unchanged.
+
+Process regressions exercise both operations at objective and KR levels, with
+same-page and cross-page duplicates and each malformed-ID case. They independently
+assert zero writes, the exact error category/subtype and exit, empty stdout, and
+bounded reads. Existing successful KR test fixtures now use numeric native IDs
+instead of alphanumeric placeholders while preserving all tested relationships.
+Evaluation contracts, runtime fixtures and concise guidance were not changed.
+
+Validation after the fix: `python3 scripts/next_test.py --section okr --suite all
+--report .tmp/okr-duplicate-section.json` passed with 357 unit, 42 legacy and 154
+process test pass events; the existing blocked-live skip remains explicit.
+Scoped isolated `go vet ./shortcuts/okr/... ./tests/next_sections/okr/...` and
+`git diff --check` passed. No live actions or model evaluations were run.

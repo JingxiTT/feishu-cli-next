@@ -461,3 +461,74 @@ func TestOKRCompletePaginationKeepsOpaqueToken(t *testing.T) {
 		t.Fatalf("incomplete %s", r.Stdout)
 	}
 }
+
+func TestOKRReplacementRejectsMalformedNativeIDs(t *testing.T) {
+	for _, command := range []string{"reorder", "weight"} {
+		for _, level := range []string{"objective", "key-result"} {
+			for _, kind := range []string{"duplicate", "duplicate_across_pages", "missing", "nonnumeric", "nonpositive", "overflow"} {
+				t.Run(command+"/"+level+"/"+kind, func(t *testing.T) {
+					var reads, writes atomic.Int32
+					f := nextfixture.NewFixture(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+						if r.Method != "GET" {
+							writes.Add(1)
+							reply(w, map[string]any{})
+							return
+						}
+						reads.Add(1)
+						native := map[string]any{"id": "1", "position": 1, "weight": 0.5}
+						bad := map[string]any{"id": "1", "position": 2, "weight": 0.5}
+						switch kind {
+						case "missing":
+							delete(bad, "id")
+						case "nonnumeric":
+							bad["id"] = "invalid"
+						case "nonpositive":
+							bad["id"] = "0"
+						case "overflow":
+							bad["id"] = "9223372036854775808"
+						}
+						if kind == "duplicate_across_pages" {
+							if r.URL.Query().Get("page_token") == "" {
+								reply(w, map[string]any{"items": []any{native}, "has_more": true, "page_token": "next-native-page"})
+								return
+							}
+							reply(w, map[string]any{"items": []any{bad}, "has_more": false})
+							return
+						}
+						reply(w, map[string]any{"items": []any{native, bad}, "has_more": false})
+					}))
+					args := []string{"okr", "+" + command, "--level", level, "--cycle-id", "123"}
+					if level == "key-result" {
+						args = append(args, "--objective-id", "456")
+					}
+					if command == "reorder" {
+						args = append(args, "--ops", `[{"id":"1","position":1}]`)
+					} else {
+						args = append(args, "--weights", `[{"id":"1","weight":1}]`)
+					}
+					result := f.Run(args...)
+					var envelope struct {
+						Error struct {
+							Type    string `json:"type"`
+							Subtype string `json:"subtype"`
+							Hint    string `json:"hint"`
+						} `json:"error"`
+					}
+					if err := json.Unmarshal([]byte(result.Stderr), &envelope); err != nil {
+						t.Fatalf("expected typed JSON, not panic: %+v", result)
+					}
+					if result.ExitCode != 5 || result.Stdout != "" || envelope.Error.Type != "internal" || envelope.Error.Subtype != "invalid_response" || envelope.Error.Hint == "" {
+						t.Fatalf("unsafe malformed snapshot result: %+v", result)
+					}
+					want := int32(1)
+					if kind == "duplicate_across_pages" {
+						want = 2
+					}
+					if writes.Load() != 0 || reads.Load() != want {
+						t.Fatalf("reads=%d writes=%d", reads.Load(), writes.Load())
+					}
+				})
+			}
+		}
+	}
+}

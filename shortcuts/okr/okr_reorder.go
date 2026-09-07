@@ -188,6 +188,9 @@ func fetchKeyResults(ctx context.Context, runtime *common.RuntimeContext, object
 // Items are first placed at user-specified positions, remaining items fill empty slots
 // in original order starting from position 1, and final output is sorted by position.
 func buildReorderedIDs[T reorderItem](items []T, ops []reorderOp, total int) ([]string, error) {
+	if err := validateOKRMutationIDs(items); err != nil {
+		return nil, err
+	}
 	// Create a map of ID to current position
 	idToPos := make(map[string]int)
 	for i, item := range items {

@@ -360,6 +360,9 @@ var OKRWeight = common.Shortcut{
 			if err != nil {
 				return err
 			}
+			if err := validateOKRMutationIDs(objectives); err != nil {
+				return err
+			}
 			total = len(objectives)
 
 			// Validate all specified IDs exist
@@ -433,6 +436,9 @@ var OKRWeight = common.Shortcut{
 			// key-result level
 			keyResults, err := fetchKeyResults(ctx, runtime, objectiveID)
 			if err != nil {
+				return err
+			}
+			if err := validateOKRMutationIDs(keyResults); err != nil {
 				return err
 			}
 			total = len(keyResults)
