@@ -1,0 +1,1812 @@
+{
+  "schema_version": 1,
+  "reviewer": "/root/p3_data_review",
+  "reference_import": "0c1ac7570543db3117ba5bdc6a66b69f87c4a62e",
+  "assignment_checkpoint": "0084501742edb1ee87bdf9623adf7da37267f142",
+  "verdict": "approved_offline",
+  "reviewed_scope": {
+    "assignment_ids": [
+      "application",
+      "apps",
+      "base",
+      "sheets"
+    ],
+    "paths": 61,
+    "changed_reference_paths": 56,
+    "new_implementation_paths": 5,
+    "method": "Read-only semantic review of all assigned import diffs and complete new implementation bodies plus specific caller/contract/test dependencies; exact git-show blob hashes verified. No product changes, broad test rerun, live request or model evaluation."
+  },
+  "reviews": [
+    {
+      "schema_version": 1,
+      "assignment_id": "application",
+      "reviewer": "/root/p3_data_review",
+      "verdict": "changes_requested",
+      "reviewed_scope": "Inspected every assigned import-to-revision diff, the complete new slash-command state helper, create/update/list/resolve call paths, replacement/no-op and malformed-target tests. Preserved conditional read permission versus direct-ID write-only behavior, localized whole-object replacement and exact targeting.",
+      "paths": [
+        {
+          "path": "internal/affordance/application_source_test.go",
+          "kind": "changed_reference",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "6f6f9ac1ba8ce4c70ce7416108f9660226b6eb3f3b6eeff706daba9fb296f3b9",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Adds checks for whole-object localized replacement, omitted-language removal, unchanged comparison and write-only direct-ID guidance.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "shortcuts/application/slash_command_state_test.go",
+              "sha256": "e4fc9f1e5dfaeed391147c99348432cb11961f6ade4e5ba357ab7ed583a48f3e",
+              "tested_revision": "unbound: source inspected at 0084501742edb1ee87bdf9623adf7da37267f142; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/application-all.json",
+              "sha256": "503ab781d33d48c50570f505b5efa90ad6524c9188181454e29f2aa4eb195585",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/application/slash_command_create.go",
+          "kind": "changed_reference",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "97a5c2877741700e302982a6646caf49ffe695392021cc5e10c42f72be87e741",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Known force collision resolves the existing command and compares the whole submitted replacement before PATCH; preserves original collision evidence and conditional read scope.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "shortcuts/application/slash_command_state_test.go",
+              "sha256": "e4fc9f1e5dfaeed391147c99348432cb11961f6ade4e5ba357ab7ed583a48f3e",
+              "tested_revision": "unbound: source inspected at 0084501742edb1ee87bdf9623adf7da37267f142; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/application-all.json",
+              "sha256": "503ab781d33d48c50570f505b5efa90ad6524c9188181454e29f2aa4eb195585",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/application/slash_command_list.go",
+          "kind": "changed_reference",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "f75fc62c767e60c107f5d9706c5abfb64f5718f11aedb42dea36b5df1fd65693",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Retains upstream item/continuation metadata and validates target/display fields before emitting list/count.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "shortcuts/application/slash_command_state_test.go",
+              "sha256": "e4fc9f1e5dfaeed391147c99348432cb11961f6ade4e5ba357ab7ed583a48f3e",
+              "tested_revision": "unbound: source inspected at 0084501742edb1ee87bdf9623adf7da37267f142; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/application-all.json",
+              "sha256": "503ab781d33d48c50570f505b5efa90ad6524c9188181454e29f2aa4eb195585",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/application/slash_command_resolve.go",
+          "kind": "changed_reference",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "7896c35e999cd7e3c41469eb2e0052ca86da5e65a7e64ab63ff1b4972e4f86c0",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Delegates exact unique name resolution to the validated state helper, retaining typed not-found errors.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "shortcuts/application/slash_command_state_test.go",
+              "sha256": "e4fc9f1e5dfaeed391147c99348432cb11961f6ade4e5ba357ab7ed583a48f3e",
+              "tested_revision": "unbound: source inspected at 0084501742edb1ee87bdf9623adf7da37267f142; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/application-all.json",
+              "sha256": "503ab781d33d48c50570f505b5efa90ad6524c9188181454e29f2aa4eb195585",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/application/slash_command_resolve_test.go",
+          "kind": "changed_reference",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "05b0bc2b589d9267f9e03ba34a3d5a4634bb30ee810cf54763b9fd785976faaa",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Moves the exact-case regression from a removed helper to actual command execution and asserts typed not-found metadata.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "shortcuts/application/slash_command_state_test.go",
+              "sha256": "e4fc9f1e5dfaeed391147c99348432cb11961f6ade4e5ba357ab7ed583a48f3e",
+              "tested_revision": "unbound: source inspected at 0084501742edb1ee87bdf9623adf7da37267f142; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/application-all.json",
+              "sha256": "503ab781d33d48c50570f505b5efa90ad6524c9188181454e29f2aa4eb195585",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/application/slash_command_update.go",
+          "kind": "changed_reference",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "b81e1f282b563df1908eb489666686eccbc750d69d16ff3f0b9cc745c2ad27f0",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Compares only on the existing by-name read path; direct-ID update remains write-only and escaped.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "shortcuts/application/slash_command_state_test.go",
+              "sha256": "e4fc9f1e5dfaeed391147c99348432cb11961f6ade4e5ba357ab7ed583a48f3e",
+              "tested_revision": "unbound: source inspected at 0084501742edb1ee87bdf9623adf7da37267f142; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/application-all.json",
+              "sha256": "503ab781d33d48c50570f505b5efa90ad6524c9188181454e29f2aa4eb195585",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/application/slash_command_update_test.go",
+          "kind": "changed_reference",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "d4cb5fdedf5518156e32a8a0d60197625e126e2db7035aa470f8fa94ed7576d9",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Uses a changed icon to keep the test exercising PATCH rather than the new no-op path.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "shortcuts/application/slash_command_state_test.go",
+              "sha256": "e4fc9f1e5dfaeed391147c99348432cb11961f6ade4e5ba357ab7ed583a48f3e",
+              "tested_revision": "unbound: source inspected at 0084501742edb1ee87bdf9623adf7da37267f142; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/application-all.json",
+              "sha256": "503ab781d33d48c50570f505b5efa90ad6524c9188181454e29f2aa4eb195585",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/application/slash_command_state.go",
+          "kind": "new_implementation",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "7178ec4b23f58aba06975340e93f99b09ad1e3d81d8863c232a5acfa1a68a835",
+          "hash_verified": true,
+          "verdict": "changes_requested",
+          "reviewed_scope": "Typed list/target projection rejects malformed, incomplete and ambiguous name resolution; exact whole supplied-object comparison avoids destructive normalization. Snapshot no-op output needs the finding fix below.",
+          "findings": [
+            {
+              "id": "P3-DATA-001",
+              "priority": 2,
+              "title": "Keep an explicit no-op marker under result-field projection",
+              "line": 119,
+              "detail": "outputUnchanged emits action:\"unchanged\" only. internal/output/agent.go protectedField does not retain action, so an unchanged by-name update with --result-fields command drops the sole no-op marker while producing zero writes/no receipt. Add a protected unchanged:true marker and a projected process regression. Application owner independently confirmed and is fixing.",
+              "status": "confirmed_at_assigned_revision",
+              "owner": "application",
+              "resolved_by_revision": "69076349aee47a494c883cd1e98c190009134e71"
+            }
+          ],
+          "evidence": [
+            {
+              "path": "shortcuts/application/slash_command_state_test.go",
+              "sha256": "e4fc9f1e5dfaeed391147c99348432cb11961f6ade4e5ba357ab7ed583a48f3e",
+              "tested_revision": "unbound: source inspected at 0084501742edb1ee87bdf9623adf7da37267f142; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/application-all.json",
+              "sha256": "503ab781d33d48c50570f505b5efa90ad6524c9188181454e29f2aa4eb195585",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        }
+      ],
+      "cross_assignment_dependencies": [
+        "foundation_output: shared projection, typed envelopes, verified artifact binding and invocation FileIO remain independently gated.",
+        "foundation_receipts: exact read markers, mutation effect classification and persistence remain independently gated; local no-op comparisons are not remote concurrency guarantees."
+      ],
+      "limitations": [
+        "Required live/platform/release/evaluation gates remain separate.",
+        "Approval covers the listed exact blobs and reviewed diffs/new implementations, not every unchanged line in the domain or every flag combination.",
+        "Existing log evidence was recounted and source assertions inspected, not rerun; reports without a source manifest remain explicitly unbound.",
+        "The assigned snapshot remains changes_requested; its sole finding is closed only by the separately hash-bound follow-up approval below."
+      ],
+      "evidence_catalog": [
+        {
+          "path": "shortcuts/application/slash_command_state_test.go",
+          "sha256": "e4fc9f1e5dfaeed391147c99348432cb11961f6ade4e5ba357ab7ed583a48f3e",
+          "tested_revision": "unbound: source inspected at 0084501742edb1ee87bdf9623adf7da37267f142; prior test report has no immutable source manifest",
+          "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+        },
+        {
+          "path": "tests/next_sections/application/application_e2e_test.go",
+          "sha256": "5b103c4176c2f18841f79506f9250bc6dd19b3edd9aa066f8f1462c5a8a50504",
+          "tested_revision": "unbound: source inspected at 0084501742edb1ee87bdf9623adf7da37267f142; prior test report has no immutable source manifest",
+          "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+        },
+        {
+          "path": ".tmp/application-all.json",
+          "sha256": "503ab781d33d48c50570f505b5efa90ad6524c9188181454e29f2aa4eb195585",
+          "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+          "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+        }
+      ]
+    },
+    {
+      "schema_version": 1,
+      "assignment_id": "apps",
+      "reviewer": "/root/p3_data_review",
+      "verdict": "approved_offline",
+      "reviewed_scope": "Inspected every assigned import-to-revision diff, affected caller control flow and focused unit/process evidence: POST read annotations, raw SQL/export precision, pagination, metadata comparison, environment artifact exclusion, missing deletion results, external storage invocation client and all three superseding upload blobs.",
+      "paths": [
+        {
+          "path": "shortcuts/apps/apps_automation_list.go",
+          "kind": "changed_reference",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "e3ed32929d6545786c4aa2895878d6e60db2d8734ca9b17be20495ad3b1765fd",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Missing continuation while has_more=true now fails before any aggregate output; repeated tokens remain rejected.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "shortcuts/apps/apps_next_integrity_test.go",
+              "sha256": "9bfe76b62e2107e2ba307d4bc14661fe7a15f102a54972d2ba30c8dfd1b1bbec",
+              "tested_revision": "unbound: source inspected at dcfe8afa41b772a6fc5c8315d1c75936442f2ffb; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/apps-put-confirmation.json",
+              "sha256": "4f5d5a8ec17e20c948d50a3240677e48a5da8327579ee085b3e9839d80477d20",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/apps/apps_create_test.go",
+          "kind": "changed_reference",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "ef5eff7fa840366454bf1a82580452908d44b6dc4156896d9be10e1ed1de6979",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Reviewed complete assigned test diff: fixture transport follows invocation policy and existing assertions remain intact.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "shortcuts/apps/apps_next_integrity_test.go",
+              "sha256": "9bfe76b62e2107e2ba307d4bc14661fe7a15f102a54972d2ba30c8dfd1b1bbec",
+              "tested_revision": "unbound: source inspected at dcfe8afa41b772a6fc5c8315d1c75936442f2ffb; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/apps-put-confirmation.json",
+              "sha256": "4f5d5a8ec17e20c948d50a3240677e48a5da8327579ee085b3e9839d80477d20",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/apps/apps_db_data_export.go",
+          "kind": "changed_reference",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "8350ea366f7b0e71f21ae0bd1a785019e618966b028fc9128f52e3c9c972e007",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Bounded stream retains native bytes; CSV logical records and JSON arrays establish observed count; separate pre-query total and rows_counted distinguish uncertain completeness. No snapshot guarantee.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "shortcuts/apps/apps_next_integrity_test.go",
+              "sha256": "9bfe76b62e2107e2ba307d4bc14661fe7a15f102a54972d2ba30c8dfd1b1bbec",
+              "tested_revision": "unbound: source inspected at dcfe8afa41b772a6fc5c8315d1c75936442f2ffb; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/apps-put-confirmation.json",
+              "sha256": "4f5d5a8ec17e20c948d50a3240677e48a5da8327579ee085b3e9839d80477d20",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/apps/apps_db_data_export_test.go",
+          "kind": "changed_reference",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "bad5d1dba1bc994ad4b0b89b14b38ccb1129710e354362732114ca01898337cd",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Counts actual three CSV rows instead of substituting the unrelated 100-row requested limit.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "shortcuts/apps/apps_next_integrity_test.go",
+              "sha256": "9bfe76b62e2107e2ba307d4bc14661fe7a15f102a54972d2ba30c8dfd1b1bbec",
+              "tested_revision": "unbound: source inspected at dcfe8afa41b772a6fc5c8315d1c75936442f2ffb; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/apps-put-confirmation.json",
+              "sha256": "4f5d5a8ec17e20c948d50a3240677e48a5da8327579ee085b3e9839d80477d20",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/apps/apps_db_data_import.go",
+          "kind": "changed_reference",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "47a901d6332744b6fccf643832333895cfdee5ceed362f782d1014af1046a54d",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Rejects generic versioned result containers before native import dispatch; native CSV/JSON remain the supported route.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "shortcuts/apps/apps_next_integrity_test.go",
+              "sha256": "9bfe76b62e2107e2ba307d4bc14661fe7a15f102a54972d2ba30c8dfd1b1bbec",
+              "tested_revision": "unbound: source inspected at dcfe8afa41b772a6fc5c8315d1c75936442f2ffb; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/apps-put-confirmation.json",
+              "sha256": "4f5d5a8ec17e20c948d50a3240677e48a5da8327579ee085b3e9839d80477d20",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/apps/apps_db_env_migrate.go",
+          "kind": "changed_reference",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "512769d8c6e8153a92d37aa8b3905a3400bf2b3d220a6486c1e9e0414487b486",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Only dry_run:true migration preview requests gain exact read markers; apply stays mutation-tracked.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "shortcuts/apps/apps_next_integrity_test.go",
+              "sha256": "9bfe76b62e2107e2ba307d4bc14661fe7a15f102a54972d2ba30c8dfd1b1bbec",
+              "tested_revision": "unbound: source inspected at dcfe8afa41b772a6fc5c8315d1c75936442f2ffb; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/apps-put-confirmation.json",
+              "sha256": "4f5d5a8ec17e20c948d50a3240677e48a5da8327579ee085b3e9839d80477d20",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/apps/apps_db_execute.go",
+          "kind": "changed_reference",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "c717d089437f28d056439721b74b06e36cc89dc3c6939a113acbf7bb43011725",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Validates SELECT row payloads before rendering and retains nested decimal/integer tokens through UseNumber; legacy DDL handling remains.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "shortcuts/apps/apps_next_integrity_test.go",
+              "sha256": "9bfe76b62e2107e2ba307d4bc14661fe7a15f102a54972d2ba30c8dfd1b1bbec",
+              "tested_revision": "unbound: source inspected at dcfe8afa41b772a6fc5c8315d1c75936442f2ffb; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/apps-put-confirmation.json",
+              "sha256": "4f5d5a8ec17e20c948d50a3240677e48a5da8327579ee085b3e9839d80477d20",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/apps/apps_db_recovery.go",
+          "kind": "changed_reference",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "69594cb443cd0da6930f220a1afb7d25c835bf839ea4f9037c60a4b311f14f5b",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Only recovery preview dry_run:true POST gains read annotation; apply remains separate.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "shortcuts/apps/apps_next_integrity_test.go",
+              "sha256": "9bfe76b62e2107e2ba307d4bc14661fe7a15f102a54972d2ba30c8dfd1b1bbec",
+              "tested_revision": "unbound: source inspected at dcfe8afa41b772a6fc5c8315d1c75936442f2ffb; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/apps-put-confirmation.json",
+              "sha256": "4f5d5a8ec17e20c948d50a3240677e48a5da8327579ee085b3e9839d80477d20",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/apps/apps_db_sync_create.go",
+          "kind": "changed_reference",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "6c876e9a1385d03f232141a1acfd583735102ef0e11af532e8fc79dc8ea24ef0",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Explicit preview selects read call while actual sync creation retains mutation call.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "shortcuts/apps/apps_next_integrity_test.go",
+              "sha256": "9bfe76b62e2107e2ba307d4bc14661fe7a15f102a54972d2ba30c8dfd1b1bbec",
+              "tested_revision": "unbound: source inspected at dcfe8afa41b772a6fc5c8315d1c75936442f2ffb; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/apps-put-confirmation.json",
+              "sha256": "4f5d5a8ec17e20c948d50a3240677e48a5da8327579ee085b3e9839d80477d20",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/apps/apps_env.go",
+          "kind": "changed_reference",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "beded566bc8b21bf58da8495e072e50eed510473e0667a91850e643bfb28b27b",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Sensitive include-values and save-result combination is rejected during validation before fetching environment values.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "shortcuts/apps/apps_next_integrity_test.go",
+              "sha256": "9bfe76b62e2107e2ba307d4bc14661fe7a15f102a54972d2ba30c8dfd1b1bbec",
+              "tested_revision": "unbound: source inspected at dcfe8afa41b772a6fc5c8315d1c75936442f2ffb; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/apps-put-confirmation.json",
+              "sha256": "4f5d5a8ec17e20c948d50a3240677e48a5da8327579ee085b3e9839d80477d20",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/apps/apps_file_delete.go",
+          "kind": "changed_reference",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "8e51c59c4b9c4dc97529af105ba81379fb3dcdbcfbafa08e80072531b0da713c",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Missing per-input response now produces unknown/error evidence rather than manufactured success; runtime receipt classifier remains the outcome owner.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "tests/next_sections/apps/apps_files_e2e_test.go",
+              "sha256": "dd9d214d8586ec027f1e8cb1f9d7051808b885b8d60668abad69b2fc880e4855",
+              "tested_revision": "unbound: source inspected at dcfe8afa41b772a6fc5c8315d1c75936442f2ffb; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/apps-put-confirmation.json",
+              "sha256": "4f5d5a8ec17e20c948d50a3240677e48a5da8327579ee085b3e9839d80477d20",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/apps/apps_file_download.go",
+          "kind": "changed_reference",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "0b4bdfece7168aa538840e30a749a5d7b953cbb4a338e04efbb0bd504d13a29f",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Uses the invocation external client while retaining native presigned GET and redirect support.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "tests/next_sections/apps/apps_files_e2e_test.go",
+              "sha256": "dd9d214d8586ec027f1e8cb1f9d7051808b885b8d60668abad69b2fc880e4855",
+              "tested_revision": "unbound: source inspected at dcfe8afa41b772a6fc5c8315d1c75936442f2ffb; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/apps-put-confirmation.json",
+              "sha256": "4f5d5a8ec17e20c948d50a3240677e48a5da8327579ee085b3e9839d80477d20",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/apps/apps_file_upload.go",
+          "kind": "changed_reference",
+          "review_revision": "dcfe8afa41b772a6fc5c8315d1c75936442f2ffb",
+          "review_sha256": "eca259d21ecce615cbc6e2c1adf3bfa7c153cabbdb0bffd834ccc4b8958b436d",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Exact storage PUT context, invocation client, disabled redirects and strict 200/201/204 confirmation prevent callback after unconfirmed storage.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "tests/next_sections/apps/apps_files_e2e_test.go",
+              "sha256": "dd9d214d8586ec027f1e8cb1f9d7051808b885b8d60668abad69b2fc880e4855",
+              "tested_revision": "unbound: source inspected at dcfe8afa41b772a6fc5c8315d1c75936442f2ffb; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/apps-put-confirmation.json",
+              "sha256": "4f5d5a8ec17e20c948d50a3240677e48a5da8327579ee085b3e9839d80477d20",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/apps/apps_html_publish.go",
+          "kind": "changed_reference",
+          "review_revision": "dcfe8afa41b772a6fc5c8315d1c75936442f2ffb",
+          "review_sha256": "4fde2a4c14d2a00d239d10243cd443dd44dde1ed4f6fca7959e9eb5c35615b92",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Presigned gzip PUT uses invocation transport; strict final confirmation and disabled redirects gate the subsequent release-create call.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "tests/next_sections/apps/apps_files_e2e_test.go",
+              "sha256": "dd9d214d8586ec027f1e8cb1f9d7051808b885b8d60668abad69b2fc880e4855",
+              "tested_revision": "unbound: source inspected at dcfe8afa41b772a6fc5c8315d1c75936442f2ffb; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/apps-put-confirmation.json",
+              "sha256": "4f5d5a8ec17e20c948d50a3240677e48a5da8327579ee085b3e9839d80477d20",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/apps/apps_html_publish_test.go",
+          "kind": "changed_reference",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "3a729c81a8d6cfe1fa97eb3bfe3d3f0f0b0764951e4e4427acfc8c556c2c21a0",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Reviewed complete assigned test diff: fixture transport follows invocation policy and existing assertions remain intact.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "tests/next_sections/apps/apps_files_e2e_test.go",
+              "sha256": "dd9d214d8586ec027f1e8cb1f9d7051808b885b8d60668abad69b2fc880e4855",
+              "tested_revision": "unbound: source inspected at dcfe8afa41b772a6fc5c8315d1c75936442f2ffb; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/apps-put-confirmation.json",
+              "sha256": "4f5d5a8ec17e20c948d50a3240677e48a5da8327579ee085b3e9839d80477d20",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/apps/apps_init_test.go",
+          "kind": "changed_reference",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "d62b6322aa0ad6dbd475bc122506aeaf9ea075dbd99cf3515854cda4f0212c3c",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Reviewed complete assigned test diff: fixture transport follows invocation policy and existing assertions remain intact.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "shortcuts/apps/apps_next_integrity_test.go",
+              "sha256": "9bfe76b62e2107e2ba307d4bc14661fe7a15f102a54972d2ba30c8dfd1b1bbec",
+              "tested_revision": "unbound: source inspected at dcfe8afa41b772a6fc5c8315d1c75936442f2ffb; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/apps-put-confirmation.json",
+              "sha256": "4f5d5a8ec17e20c948d50a3240677e48a5da8327579ee085b3e9839d80477d20",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/apps/apps_list.go",
+          "kind": "changed_reference",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "632fce63fddf3d42975c4d6011eade1b1ff03db44180eb4d4c2573a1b62f4555",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Agent JSON keeps icon_url and created_at; legacy embedded mode retains its existing lean projection.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "shortcuts/apps/apps_next_integrity_test.go",
+              "sha256": "9bfe76b62e2107e2ba307d4bc14661fe7a15f102a54972d2ba30c8dfd1b1bbec",
+              "tested_revision": "unbound: source inspected at dcfe8afa41b772a6fc5c8315d1c75936442f2ffb; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/apps-put-confirmation.json",
+              "sha256": "4f5d5a8ec17e20c948d50a3240677e48a5da8327579ee085b3e9839d80477d20",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/apps/apps_plugin_install.go",
+          "kind": "changed_reference",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "905c8f7077d5301f97a989115a94dfe22b9a08744bc66534d6440daf273dda24",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Known version query and download POST are annotated read-only without changing installation scope or local effects.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "shortcuts/apps/apps_next_integrity_test.go",
+              "sha256": "9bfe76b62e2107e2ba307d4bc14661fe7a15f102a54972d2ba30c8dfd1b1bbec",
+              "tested_revision": "unbound: source inspected at dcfe8afa41b772a6fc5c8315d1c75936442f2ffb; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/apps-put-confirmation.json",
+              "sha256": "4f5d5a8ec17e20c948d50a3240677e48a5da8327579ee085b3e9839d80477d20",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/apps/apps_update.go",
+          "kind": "changed_reference",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "8ba023ed4098dc4951f4359ddc02e3fee9db40af465a584c7f69b9c7618a5350",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Optional skip-unchanged adds conditional read permission; exact requested-field comparison rejects missing/wrong target and observed type mismatch; legacy writes do not acquire a read.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "shortcuts/apps/apps_next_integrity_test.go",
+              "sha256": "9bfe76b62e2107e2ba307d4bc14661fe7a15f102a54972d2ba30c8dfd1b1bbec",
+              "tested_revision": "unbound: source inspected at dcfe8afa41b772a6fc5c8315d1c75936442f2ffb; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/apps-put-confirmation.json",
+              "sha256": "4f5d5a8ec17e20c948d50a3240677e48a5da8327579ee085b3e9839d80477d20",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/apps/file_common.go",
+          "kind": "changed_reference",
+          "review_revision": "dcfe8afa41b772a6fc5c8315d1c75936442f2ffb",
+          "review_sha256": "d97f09278e7df486ab81709ae38e198c48aaafba47972ce1cd37bd9d89e440d2",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Clones Factory external policy client, keeps context cancellation/unbounded transfer timeout, and disables redirects only on the upload-specific clone.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "tests/next_sections/apps/apps_files_e2e_test.go",
+              "sha256": "dd9d214d8586ec027f1e8cb1f9d7051808b885b8d60668abad69b2fc880e4855",
+              "tested_revision": "unbound: source inspected at dcfe8afa41b772a6fc5c8315d1c75936442f2ffb; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/apps-put-confirmation.json",
+              "sha256": "4f5d5a8ec17e20c948d50a3240677e48a5da8327579ee085b3e9839d80477d20",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/apps/file_common_test.go",
+          "kind": "changed_reference",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "df1ed14a33c6ec1ee48ba9bb445ced4368472b84baff79cd5ca35406e914517d",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Reviewed complete assigned test diff: fixture transport follows invocation policy and existing assertions remain intact.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "tests/next_sections/apps/apps_files_e2e_test.go",
+              "sha256": "dd9d214d8586ec027f1e8cb1f9d7051808b885b8d60668abad69b2fc880e4855",
+              "tested_revision": "unbound: source inspected at dcfe8afa41b772a6fc5c8315d1c75936442f2ffb; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/apps-put-confirmation.json",
+              "sha256": "4f5d5a8ec17e20c948d50a3240677e48a5da8327579ee085b3e9839d80477d20",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        }
+      ],
+      "cross_assignment_dependencies": [
+        "foundation_output: shared projection, typed envelopes, verified artifact binding and invocation FileIO remain independently gated.",
+        "foundation_receipts: exact read markers, mutation effect classification and persistence remain independently gated; local no-op comparisons are not remote concurrency guarantees.",
+        "Reviewed common/read_request.go and nextattempt/storage_request.go at checkpoint; Apps superseding upload trio requires strict storage 200/201/204 evidence from the shared external transport observer."
+      ],
+      "limitations": [
+        "Required live/platform/release/evaluation gates remain separate.",
+        "Approval covers the listed exact blobs and reviewed diffs/new implementations, not every unchanged line in the domain or every flag combination.",
+        "Existing log evidence was recounted and source assertions inspected, not rerun; reports without a source manifest remain explicitly unbound.",
+        "No actionable additional issue found in this assigned scope."
+      ],
+      "evidence_catalog": [
+        {
+          "path": "shortcuts/apps/apps_next_integrity_test.go",
+          "sha256": "9bfe76b62e2107e2ba307d4bc14661fe7a15f102a54972d2ba30c8dfd1b1bbec",
+          "tested_revision": "unbound: source inspected at dcfe8afa41b772a6fc5c8315d1c75936442f2ffb; prior test report has no immutable source manifest",
+          "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+        },
+        {
+          "path": "tests/next_sections/apps/apps_e2e_test.go",
+          "sha256": "3627914493a1a0bf5ae5c7a16f79450d5bb924016c94eb77c6803b91e0539a2b",
+          "tested_revision": "unbound: source inspected at dcfe8afa41b772a6fc5c8315d1c75936442f2ffb; prior test report has no immutable source manifest",
+          "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+        },
+        {
+          "path": "tests/next_sections/apps/apps_files_e2e_test.go",
+          "sha256": "dd9d214d8586ec027f1e8cb1f9d7051808b885b8d60668abad69b2fc880e4855",
+          "tested_revision": "unbound: source inspected at dcfe8afa41b772a6fc5c8315d1c75936442f2ffb; prior test report has no immutable source manifest",
+          "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+        },
+        {
+          "path": "tests/next_sections/apps/apps_workflows_e2e_test.go",
+          "sha256": "d98559292cf6903ea85dde32b98e7ee1ec287dddf406b9181e9af85fd9743169",
+          "tested_revision": "unbound: source inspected at dcfe8afa41b772a6fc5c8315d1c75936442f2ffb; prior test report has no immutable source manifest",
+          "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+        },
+        {
+          "path": ".tmp/apps-put-confirmation.json",
+          "sha256": "4f5d5a8ec17e20c948d50a3240677e48a5da8327579ee085b3e9839d80477d20",
+          "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+          "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+        }
+      ]
+    },
+    {
+      "schema_version": 1,
+      "assignment_id": "base",
+      "reviewer": "/root/p3_data_review",
+      "verdict": "approved_offline",
+      "reviewed_scope": "Inspected every assigned import-to-revision diff and complete record_import.go, record_import_data.go and record_noop.go implementations, their decode/API/FileIO/journal dependencies and focused unit/process/cross-domain tests. Checked native numbers, null/omission, exact replacement comparison, IDs across batches, schema/type preflight and exclusive publication.",
+      "paths": [
+        {
+          "path": "shortcuts/base/base_role_common.go",
+          "kind": "changed_reference",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "79f955c4f74d20b6e729ec01681d436eba07723763a564c7e22bd4a4df8288b6",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Precision-safe inner/double-encoded JSON parsing and strict integral business codes retain native values and avoid invalid-code success.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "shortcuts/base/record_noop_test.go",
+              "sha256": "2060b0b314fe757272b8003e4e4fe1ee3f00464901f80c0215fd4391c896fc18",
+              "tested_revision": "unbound: source inspected at 0084501742edb1ee87bdf9623adf7da37267f142; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/base-duplicate-section-gate.json",
+              "sha256": "85e0cdaf222ebabe220a07b75f3e82531473a99435381aa94892fde18916bdf5",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/base/base_shortcut_helpers.go",
+          "kind": "changed_reference",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "5fc6ed03d8f8c059849004954f5571a03ce3fbdddbb16df3be67a24c88978e30",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "JSON value parsing uses the strict single-document number-preserving owner helper.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "shortcuts/base/record_noop_test.go",
+              "sha256": "2060b0b314fe757272b8003e4e4fe1ee3f00464901f80c0215fd4391c896fc18",
+              "tested_revision": "unbound: source inspected at 0084501742edb1ee87bdf9623adf7da37267f142; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/base-duplicate-section-gate.json",
+              "sha256": "85e0cdaf222ebabe220a07b75f3e82531473a99435381aa94892fde18916bdf5",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/base/base_shortcuts_test.go",
+          "kind": "changed_reference",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "e6324c4e49cec95993a797ddba82a05a67582a16592fad4ca5d238a6e966134f",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Reviewed complete assigned test diff: asserts semantic typed/preserved values or parsed dry-run request fields and uses the selected next binary; no weakened behavior assertion found.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "shortcuts/base/record_noop_test.go",
+              "sha256": "2060b0b314fe757272b8003e4e4fe1ee3f00464901f80c0215fd4391c896fc18",
+              "tested_revision": "unbound: source inspected at 0084501742edb1ee87bdf9623adf7da37267f142; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/base-duplicate-section-gate.json",
+              "sha256": "85e0cdaf222ebabe220a07b75f3e82531473a99435381aa94892fde18916bdf5",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/base/block_data_config.go",
+          "kind": "changed_reference",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "15a9f8445645de057da90d80a4cb55e2b3e7898681698922e98fc5d103ba656e",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Ranking limit validation accepts exact integral JSON number spellings while keeping 1..500 bounds.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "shortcuts/base/record_noop_test.go",
+              "sha256": "2060b0b314fe757272b8003e4e4fe1ee3f00464901f80c0215fd4391c896fc18",
+              "tested_revision": "unbound: source inspected at 0084501742edb1ee87bdf9623adf7da37267f142; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/base-duplicate-section-gate.json",
+              "sha256": "85e0cdaf222ebabe220a07b75f3e82531473a99435381aa94892fde18916bdf5",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/base/field_ops.go",
+          "kind": "changed_reference",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "221b3e8ea4216881c4549fc4bb84605f11f74e7506554e4f8dcb6ddde9e690d5",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Typed acknowledgement failure identifies the input and puts executable embedded guide recovery in hint.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "shortcuts/base/record_noop_test.go",
+              "sha256": "2060b0b314fe757272b8003e4e4fe1ee3f00464901f80c0215fd4391c896fc18",
+              "tested_revision": "unbound: source inspected at 0084501742edb1ee87bdf9623adf7da37267f142; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/base-duplicate-section-gate.json",
+              "sha256": "85e0cdaf222ebabe220a07b75f3e82531473a99435381aa94892fde18916bdf5",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/base/helpers.go",
+          "kind": "changed_reference",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "15dce296abebe93bcfdcdd57f46540101e1f155459cd58f6f069ba56d8d0c445",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Shared strict JSON parsing preserves number tokens and rejects trailing documents; integer checks avoid rounding decimal/exponent inputs; exact read marker applies only to known Base reads.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "shortcuts/base/record_noop_test.go",
+              "sha256": "2060b0b314fe757272b8003e4e4fe1ee3f00464901f80c0215fd4391c896fc18",
+              "tested_revision": "unbound: source inspected at 0084501742edb1ee87bdf9623adf7da37267f142; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/base-duplicate-section-gate.json",
+              "sha256": "85e0cdaf222ebabe220a07b75f3e82531473a99435381aa94892fde18916bdf5",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/base/record_batch_update.go",
+          "kind": "changed_reference",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "b09a1482524c25803ccf473ff73a2bdb58e947ed3559d7a275a68fe1c1e769b8",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Adds opt-in comparison metadata and validator without adding read permission to legacy default execution.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "shortcuts/base/record_noop_test.go",
+              "sha256": "2060b0b314fe757272b8003e4e4fe1ee3f00464901f80c0215fd4391c896fc18",
+              "tested_revision": "unbound: source inspected at 0084501742edb1ee87bdf9623adf7da37267f142; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/base-duplicate-section-gate.json",
+              "sha256": "85e0cdaf222ebabe220a07b75f3e82531473a99435381aa94892fde18916bdf5",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/base/record_export.go",
+          "kind": "changed_reference",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "a250fa78001fa648deee0cef1c4b7992da4cd98f58497f9bd50f1cd9133e3706",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Requires explicit continuation evidence for list/search NDJSON and atomic exclusive publication unless overwrite; manifest failure preserves/report records file and cause.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "shortcuts/base/record_export_atomic_test.go",
+              "sha256": "8e814be6d78e653b321a33158532d307d59088d3ccfae52d1959964b3d1af371",
+              "tested_revision": "unbound: source inspected at 0084501742edb1ee87bdf9623adf7da37267f142; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/base-duplicate-section-gate.json",
+              "sha256": "85e0cdaf222ebabe220a07b75f3e82531473a99435381aa94892fde18916bdf5",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/base/record_export_test.go",
+          "kind": "changed_reference",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "684c04d543cc7e106b2c3e9212a50feefc5a5782e5cc5db246b19e021079bef1",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Reviewed complete assigned test diff: asserts semantic typed/preserved values or parsed dry-run request fields and uses the selected next binary; no weakened behavior assertion found.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "shortcuts/base/record_export_atomic_test.go",
+              "sha256": "8e814be6d78e653b321a33158532d307d59088d3ccfae52d1959964b3d1af371",
+              "tested_revision": "unbound: source inspected at 0084501742edb1ee87bdf9623adf7da37267f142; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/base-duplicate-section-gate.json",
+              "sha256": "85e0cdaf222ebabe220a07b75f3e82531473a99435381aa94892fde18916bdf5",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/base/record_ops.go",
+          "kind": "changed_reference",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "183f1f55d769d6699198160cfe0bc87e21653c21338ba33dfa631e893b2a5602",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "No-op read only when opted in; missing/ambiguous matrix blocks all updates; unchanged records removed while changed field maps retain explicit nulls.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "shortcuts/base/record_noop_test.go",
+              "sha256": "2060b0b314fe757272b8003e4e4fe1ee3f00464901f80c0215fd4391c896fc18",
+              "tested_revision": "unbound: source inspected at 0084501742edb1ee87bdf9623adf7da37267f142; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/base-duplicate-section-gate.json",
+              "sha256": "85e0cdaf222ebabe220a07b75f3e82531473a99435381aa94892fde18916bdf5",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/base/record_query.go",
+          "kind": "changed_reference",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "7fc7507def4e82c18e6182916b337980296349a68e9288f3bebd06b1e32221ec",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Routes json.Number integral query fields through exact strict conversion while retaining existing integer validation.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "shortcuts/base/record_noop_test.go",
+              "sha256": "2060b0b314fe757272b8003e4e4fe1ee3f00464901f80c0215fd4391c896fc18",
+              "tested_revision": "unbound: source inspected at 0084501742edb1ee87bdf9623adf7da37267f142; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/base-duplicate-section-gate.json",
+              "sha256": "85e0cdaf222ebabe220a07b75f3e82531473a99435381aa94892fde18916bdf5",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/base/record_upsert.go",
+          "kind": "changed_reference",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "ec828ba8561368074a89ea08d8b65b6c44029a43fcef375541f8ded8f467546b",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Adds optional no-op comparison; creating a record with skip-unchanged is invalid, and default update remains a direct write.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "shortcuts/base/record_noop_test.go",
+              "sha256": "2060b0b314fe757272b8003e4e4fe1ee3f00464901f80c0215fd4391c896fc18",
+              "tested_revision": "unbound: source inspected at 0084501742edb1ee87bdf9623adf7da37267f142; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/base-duplicate-section-gate.json",
+              "sha256": "85e0cdaf222ebabe220a07b75f3e82531473a99435381aa94892fde18916bdf5",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/base/recordexport/dataset.go",
+          "kind": "changed_reference",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "45206d7889030b85b92a4a519a89b1a719e96505f440035cc9c3514b0e4b991b",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Validates typed cells without normalization; rejects field name/ID collisions instead of dropping content; distinguishes missing has_more from false.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "shortcuts/base/recordexport/dataset_test.go",
+              "sha256": "a4e4a973555dc6821116430a336b124233390cc08b2fae6ed4e52f9a8d1f1e4a",
+              "tested_revision": "unbound: source inspected at 0084501742edb1ee87bdf9623adf7da37267f142; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/base-duplicate-section-gate.json",
+              "sha256": "85e0cdaf222ebabe220a07b75f3e82531473a99435381aa94892fde18916bdf5",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/base/recordexport/dataset_test.go",
+          "kind": "changed_reference",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "a4e4a973555dc6821116430a336b124233390cc08b2fae6ed4e52f9a8d1f1e4a",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Reviewed complete assigned test diff: asserts semantic typed/preserved values or parsed dry-run request fields and uses the selected next binary; no weakened behavior assertion found.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "shortcuts/base/recordexport/dataset_test.go",
+              "sha256": "a4e4a973555dc6821116430a336b124233390cc08b2fae6ed4e52f9a8d1f1e4a",
+              "tested_revision": "unbound: source inspected at 0084501742edb1ee87bdf9623adf7da37267f142; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/base-duplicate-section-gate.json",
+              "sha256": "85e0cdaf222ebabe220a07b75f3e82531473a99435381aa94892fde18916bdf5",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/base/recordexport/manifest.go",
+          "kind": "changed_reference",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "f1f9ea0695c57fdf6d344bd869ed64b85b7958c7c829264b297ceca5c535cf18",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Nullable physical types/counts match preserved source values; source numeric bounds remain exact and averages are marked approximate; date statistics disclose unparsed exclusions.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "shortcuts/base/recordexport/dataset_test.go",
+              "sha256": "a4e4a973555dc6821116430a336b124233390cc08b2fae6ed4e52f9a8d1f1e4a",
+              "tested_revision": "unbound: source inspected at 0084501742edb1ee87bdf9623adf7da37267f142; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/base-duplicate-section-gate.json",
+              "sha256": "85e0cdaf222ebabe220a07b75f3e82531473a99435381aa94892fde18916bdf5",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/base/shortcuts.go",
+          "kind": "changed_reference",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "2ffca3734a6eb3899745cc2fff6636295a6049c15747952bb9cc1142ef8ca917",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Registers the cohesive typed artifact import workflow alongside existing record shortcuts.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "shortcuts/base/record_noop_test.go",
+              "sha256": "2060b0b314fe757272b8003e4e4fe1ee3f00464901f80c0215fd4391c896fc18",
+              "tested_revision": "unbound: source inspected at 0084501742edb1ee87bdf9623adf7da37267f142; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/base-duplicate-section-gate.json",
+              "sha256": "85e0cdaf222ebabe220a07b75f3e82531473a99435381aa94892fde18916bdf5",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        },
+        {
+          "path": "tests/cli_e2e/base/base_app_dryrun_test.go",
+          "kind": "changed_reference",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "113b0bc80d87d0db6af419d92f9aa301c43cc3b1ad6deaa53937ac2051bfebd4",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Reviewed complete assigned test diff: asserts semantic typed/preserved values or parsed dry-run request fields and uses the selected next binary; no weakened behavior assertion found.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "shortcuts/base/record_noop_test.go",
+              "sha256": "2060b0b314fe757272b8003e4e4fe1ee3f00464901f80c0215fd4391c896fc18",
+              "tested_revision": "unbound: source inspected at 0084501742edb1ee87bdf9623adf7da37267f142; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/base-duplicate-section-gate.json",
+              "sha256": "85e0cdaf222ebabe220a07b75f3e82531473a99435381aa94892fde18916bdf5",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        },
+        {
+          "path": "tests/cli_e2e/base/base_dashboard_block_get_data_dryrun_test.go",
+          "kind": "changed_reference",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "1cdc40656a4fac13c1b870cb19f24419ef573da706e1f12519e430bd524a770d",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Reviewed complete assigned test diff: asserts semantic typed/preserved values or parsed dry-run request fields and uses the selected next binary; no weakened behavior assertion found.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "shortcuts/base/record_noop_test.go",
+              "sha256": "2060b0b314fe757272b8003e4e4fe1ee3f00464901f80c0215fd4391c896fc18",
+              "tested_revision": "unbound: source inspected at 0084501742edb1ee87bdf9623adf7da37267f142; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/base-duplicate-section-gate.json",
+              "sha256": "85e0cdaf222ebabe220a07b75f3e82531473a99435381aa94892fde18916bdf5",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        },
+        {
+          "path": "tests/cli_e2e/base/base_dashboard_block_layout_precision_dryrun_test.go",
+          "kind": "changed_reference",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "a9581efe5b85f979d66303fd50d4138a03acb03fb2cf98a73e923d840de20297",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Reviewed complete assigned test diff: asserts semantic typed/preserved values or parsed dry-run request fields and uses the selected next binary; no weakened behavior assertion found.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "shortcuts/base/record_noop_test.go",
+              "sha256": "2060b0b314fe757272b8003e4e4fe1ee3f00464901f80c0215fd4391c896fc18",
+              "tested_revision": "unbound: source inspected at 0084501742edb1ee87bdf9623adf7da37267f142; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/base-duplicate-section-gate.json",
+              "sha256": "85e0cdaf222ebabe220a07b75f3e82531473a99435381aa94892fde18916bdf5",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        },
+        {
+          "path": "tests/cli_e2e/base/base_form_detail_dryrun_test.go",
+          "kind": "changed_reference",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "24099d9aa6d9ee8e847b6adad399bd26c64985a5c90eed9e60930de8c03389b6",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Reviewed complete assigned test diff: asserts semantic typed/preserved values or parsed dry-run request fields and uses the selected next binary; no weakened behavior assertion found.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "shortcuts/base/record_noop_test.go",
+              "sha256": "2060b0b314fe757272b8003e4e4fe1ee3f00464901f80c0215fd4391c896fc18",
+              "tested_revision": "unbound: source inspected at 0084501742edb1ee87bdf9623adf7da37267f142; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/base-duplicate-section-gate.json",
+              "sha256": "85e0cdaf222ebabe220a07b75f3e82531473a99435381aa94892fde18916bdf5",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        },
+        {
+          "path": "tests/cli_e2e/base/base_form_questions_dryrun_test.go",
+          "kind": "changed_reference",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "b4c5eaf78004151ce92a6499c2677992e1c7541de8023af3b8f943906dbb027e",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Reviewed complete assigned test diff: asserts semantic typed/preserved values or parsed dry-run request fields and uses the selected next binary; no weakened behavior assertion found.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "shortcuts/base/record_noop_test.go",
+              "sha256": "2060b0b314fe757272b8003e4e4fe1ee3f00464901f80c0215fd4391c896fc18",
+              "tested_revision": "unbound: source inspected at 0084501742edb1ee87bdf9623adf7da37267f142; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/base-duplicate-section-gate.json",
+              "sha256": "85e0cdaf222ebabe220a07b75f3e82531473a99435381aa94892fde18916bdf5",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        },
+        {
+          "path": "tests/cli_e2e/base/base_form_submit_dryrun_test.go",
+          "kind": "changed_reference",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "0ad8e0b695fc54dba935fe622c5617c5c5f19dc1c7183fd68f2200ac24ba2538",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Reviewed complete assigned test diff: asserts semantic typed/preserved values or parsed dry-run request fields and uses the selected next binary; no weakened behavior assertion found.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "shortcuts/base/record_noop_test.go",
+              "sha256": "2060b0b314fe757272b8003e4e4fe1ee3f00464901f80c0215fd4391c896fc18",
+              "tested_revision": "unbound: source inspected at 0084501742edb1ee87bdf9623adf7da37267f142; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/base-duplicate-section-gate.json",
+              "sha256": "85e0cdaf222ebabe220a07b75f3e82531473a99435381aa94892fde18916bdf5",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        },
+        {
+          "path": "tests/cli_e2e/base/base_share_dryrun_test.go",
+          "kind": "changed_reference",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "6d0c37f5f5d67669b229b9ead0dcc0483a528304cee9bcf696036944d4fb4ec6",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Reviewed complete assigned test diff: asserts semantic typed/preserved values or parsed dry-run request fields and uses the selected next binary; no weakened behavior assertion found.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "shortcuts/base/record_noop_test.go",
+              "sha256": "2060b0b314fe757272b8003e4e4fe1ee3f00464901f80c0215fd4391c896fc18",
+              "tested_revision": "unbound: source inspected at 0084501742edb1ee87bdf9623adf7da37267f142; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/base-duplicate-section-gate.json",
+              "sha256": "85e0cdaf222ebabe220a07b75f3e82531473a99435381aa94892fde18916bdf5",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        },
+        {
+          "path": "tests/cli_e2e/base/base_url_resolve_dryrun_test.go",
+          "kind": "changed_reference",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "40ddd83352aa1c518cb045b952f6e90874c0eb31556fb1c2f551f33c36c65fe4",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Reviewed complete assigned test diff: asserts semantic typed/preserved values or parsed dry-run request fields and uses the selected next binary; no weakened behavior assertion found.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "shortcuts/base/record_noop_test.go",
+              "sha256": "2060b0b314fe757272b8003e4e4fe1ee3f00464901f80c0215fd4391c896fc18",
+              "tested_revision": "unbound: source inspected at 0084501742edb1ee87bdf9623adf7da37267f142; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/base-duplicate-section-gate.json",
+              "sha256": "85e0cdaf222ebabe220a07b75f3e82531473a99435381aa94892fde18916bdf5",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/base/record_import.go",
+          "kind": "new_implementation",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "16d8d4d9230982e8a88d4fd3f3a1e4bc4dd9402302b19ada8581bdd149a0e6e4",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Verifies binding, all destination field types/defaults, exclusive report preflight, and full-batch unique IDs before advancing confirmed progress; ambiguous batch stops with unresolved response and typed error.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "shortcuts/base/record_import_test.go",
+              "sha256": "3a1e28e1bdc6f41f8e88994539b4df9ad77af548d8e4ded4129856ec300d1b7c",
+              "tested_revision": "unbound: source inspected at 0084501742edb1ee87bdf9623adf7da37267f142; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/base-duplicate-section-gate.json",
+              "sha256": "85e0cdaf222ebabe220a07b75f3e82531473a99435381aa94892fde18916bdf5",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/base/record_import_data.go",
+          "kind": "new_implementation",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "b7b6592c11cc68399d51946d036fba3cf02ebf12d59aead7c9570764312b8152",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Validates complete typed Sheets artifact and all-column explicit mapping before mutation; rejects lossy double conversion, formula/style/rich fields, duplicate mapping and missing/null column index.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "shortcuts/base/record_import_test.go",
+              "sha256": "3a1e28e1bdc6f41f8e88994539b4df9ad77af548d8e4ded4129856ec300d1b7c",
+              "tested_revision": "unbound: source inspected at 0084501742edb1ee87bdf9623adf7da37267f142; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/base-duplicate-section-gate.json",
+              "sha256": "85e0cdaf222ebabe220a07b75f3e82531473a99435381aa94892fde18916bdf5",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/base/record_noop.go",
+          "kind": "new_implementation",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "7f5f3471084e3261f5757fc7d44731fee16ad13e864b05ffc46bc2e9ded77133",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Validates complete requested matrix, unique rows and unambiguous field name/ID aliases; exact typed submitted cells determine no-op with no coercion or implicit deletion.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "shortcuts/base/record_noop_test.go",
+              "sha256": "2060b0b314fe757272b8003e4e4fe1ee3f00464901f80c0215fd4391c896fc18",
+              "tested_revision": "unbound: source inspected at 0084501742edb1ee87bdf9623adf7da37267f142; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/base-duplicate-section-gate.json",
+              "sha256": "85e0cdaf222ebabe220a07b75f3e82531473a99435381aa94892fde18916bdf5",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        }
+      ],
+      "cross_assignment_dependencies": [
+        "foundation_output: shared projection, typed envelopes, verified artifact binding and invocation FileIO remain independently gated.",
+        "foundation_receipts: exact read markers, mutation effect classification and persistence remain independently gated; local no-op comparisons are not remote concurrency guarantees.",
+        "base <-> sheets: reviewed exact native schema/complete extent/conversion handoff and 10,000-row synthetic transfer assertions; report .tmp/sheets-base/runner-report.json sha256 82ac4001c09da4d1ba5e9a87f87dd4fb733f62b0c877226773b92269bc98148f has 11 passed/0 failed/0 skipped events but no immutable source manifest.",
+        "Reviewed internal/nextattempt/base_create_evidence.go at checkpoint: previous confirmed IDs scoped to invocation identity/origin/table reject repeated cross-batch IDs before final receipt confirmation; full journal audit belongs to foundation reviewer."
+      ],
+      "limitations": [
+        "Required live/platform/release/evaluation gates remain separate.",
+        "Approval covers the listed exact blobs and reviewed diffs/new implementations, not every unchanged line in the domain or every flag combination.",
+        "Existing log evidence was recounted and source assertions inspected, not rerun; reports without a source manifest remain explicitly unbound.",
+        "No actionable additional issue found in this assigned scope."
+      ],
+      "evidence_catalog": [
+        {
+          "path": "shortcuts/base/record_noop_test.go",
+          "sha256": "2060b0b314fe757272b8003e4e4fe1ee3f00464901f80c0215fd4391c896fc18",
+          "tested_revision": "unbound: source inspected at 0084501742edb1ee87bdf9623adf7da37267f142; prior test report has no immutable source manifest",
+          "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+        },
+        {
+          "path": "shortcuts/base/record_import_test.go",
+          "sha256": "3a1e28e1bdc6f41f8e88994539b4df9ad77af548d8e4ded4129856ec300d1b7c",
+          "tested_revision": "unbound: source inspected at 0084501742edb1ee87bdf9623adf7da37267f142; prior test report has no immutable source manifest",
+          "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+        },
+        {
+          "path": "shortcuts/base/record_export_atomic_test.go",
+          "sha256": "8e814be6d78e653b321a33158532d307d59088d3ccfae52d1959964b3d1af371",
+          "tested_revision": "unbound: source inspected at 0084501742edb1ee87bdf9623adf7da37267f142; prior test report has no immutable source manifest",
+          "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+        },
+        {
+          "path": "shortcuts/base/recordexport/dataset_test.go",
+          "sha256": "a4e4a973555dc6821116430a336b124233390cc08b2fae6ed4e52f9a8d1f1e4a",
+          "tested_revision": "unbound: source inspected at 0084501742edb1ee87bdf9623adf7da37267f142; prior test report has no immutable source manifest",
+          "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+        },
+        {
+          "path": "tests/next_integration/sheets_base/transfer_test.go",
+          "sha256": "544dfa5f7c965fba7e15f89bf01b2ff0745783546a013a499e77ff60aec18930",
+          "tested_revision": "unbound: source inspected at 0084501742edb1ee87bdf9623adf7da37267f142; prior test report has no immutable source manifest",
+          "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+        },
+        {
+          "path": ".tmp/base-duplicate-section-gate.json",
+          "sha256": "85e0cdaf222ebabe220a07b75f3e82531473a99435381aa94892fde18916bdf5",
+          "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+          "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+        }
+      ]
+    },
+    {
+      "schema_version": 1,
+      "assignment_id": "sheets",
+      "reviewer": "/root/p3_data_review",
+      "verdict": "changes_requested",
+      "reviewed_scope": "Inspected every assigned import-to-revision diff and complete native transfer implementation, native schema/conversion/no-op helpers, facade API boundary, focused units and native/cross-domain process tests. Checked pagination extent, raw decimals, binding, conversion validation before writes, and partial/unknown outcome reporting.",
+      "paths": [
+        {
+          "path": "shortcuts/sheets/data/flag-defs.json",
+          "kind": "changed_reference",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "c0ace96e17b0d4f9caa773c7dce7069340e74d300702ee953204caa4432b7b4d",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Canonical source declares explicit source/target identity/range and artifact file/stdin input with read/export and write/import risk.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "shortcuts/sheets/data_transfer_test.go",
+              "sha256": "40c0464b44e73b47c6105ab3f7f5be2b50ab47dbd0b839513ee0968ac815660c",
+              "tested_revision": "unbound: source inspected at 0084501742edb1ee87bdf9623adf7da37267f142; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/sheets/section-report.json",
+              "sha256": "c5a7b6b2ca2c7e034d64823211efbd89000a123b81bec40d44562c07015ed1ee",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/sheets/flag_defs_gen.go",
+          "kind": "changed_reference",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "8bb7976f74d8a5fe2f7d47bdb2e7c977198c946c25c1748bc5ef50bfb9efa733",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Generated declarations agree with canonical added transfer flag definitions.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "shortcuts/sheets/data_transfer_test.go",
+              "sha256": "40c0464b44e73b47c6105ab3f7f5be2b50ab47dbd0b839513ee0968ac815660c",
+              "tested_revision": "unbound: source inspected at 0084501742edb1ee87bdf9623adf7da37267f142; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/sheets/section-report.json",
+              "sha256": "c5a7b6b2ca2c7e034d64823211efbd89000a123b81bec40d44562c07015ed1ee",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/sheets/sheet_ai_api.go",
+          "kind": "changed_reference",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "f5ada60c7514a7f3413a037ebdd849838953b6b7da8f4d2d462bc53851d3c919",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Separates raw output string from legacy decoded callTool path; known read tool invokes exact read-only API annotation, retaining typed error flattening.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "shortcuts/sheets/data_transfer_test.go",
+              "sha256": "40c0464b44e73b47c6105ab3f7f5be2b50ab47dbd0b839513ee0968ac815660c",
+              "tested_revision": "unbound: source inspected at 0084501742edb1ee87bdf9623adf7da37267f142; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/sheets/section-report.json",
+              "sha256": "c5a7b6b2ca2c7e034d64823211efbd89000a123b81bec40d44562c07015ed1ee",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/sheets/shortcuts.go",
+          "kind": "changed_reference",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "ca0d6bade9f9038716cf8f58922cc1225647dc56b34df570f42ffd2bbac33d64",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Registers both native data workflows through existing shortcut assembly.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "shortcuts/sheets/data_transfer_test.go",
+              "sha256": "40c0464b44e73b47c6105ab3f7f5be2b50ab47dbd0b839513ee0968ac815660c",
+              "tested_revision": "unbound: source inspected at 0084501742edb1ee87bdf9623adf7da37267f142; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/sheets/section-report.json",
+              "sha256": "c5a7b6b2ca2c7e034d64823211efbd89000a123b81bec40d44562c07015ed1ee",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/sheets/data_transfer.go",
+          "kind": "new_implementation",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "c760f4043ccf9d31307fd24cc6da6d3daf12a0b59a9cf7bdac0b17d492c9c0ba",
+          "hash_verified": true,
+          "verdict": "changes_requested",
+          "reviewed_scope": "Bounded explicit-range export and verified artifact import preserve raw native types, validate every changed conversion before writing and skip equal cells. Snapshot plain-versus-rich no-op comparison has the finding below.",
+          "findings": [
+            {
+              "id": "P3-DATA-002",
+              "priority": 1,
+              "title": "Do not equate plain content to a rich-content cached value",
+              "line": 193,
+              "detail": "nativeCellUnchanged returns true for desired {value:\"hello\"} and current {value:\"hello\",rich_text:[{type:\"link\",text:\"hello\",link:\"https://example.test\"}]}; multiple_values has the same issue. It guards cached formulas but ignores current structured content, so the import skips the replacement and retains the wrong content identity. Existing rich-source conversion test does not cover the inverse. Sheets owner independently reproduced both cases and is fixing.",
+              "status": "confirmed_at_assigned_revision",
+              "owner": "sheets",
+              "resolved_by_revision": "b3f9f6ab6b85c134ae99471946fb934414f3e30f"
+            }
+          ],
+          "evidence": [
+            {
+              "path": "shortcuts/sheets/data_transfer_test.go",
+              "sha256": "40c0464b44e73b47c6105ab3f7f5be2b50ab47dbd0b839513ee0968ac815660c",
+              "tested_revision": "unbound: source inspected at 0084501742edb1ee87bdf9623adf7da37267f142; prior test report has no immutable source manifest",
+              "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+            },
+            {
+              "path": ".tmp/sheets/section-report.json",
+              "sha256": "c5a7b6b2ca2c7e034d64823211efbd89000a123b81bec40d44562c07015ed1ee",
+              "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+              "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+            }
+          ]
+        }
+      ],
+      "cross_assignment_dependencies": [
+        "foundation_output: shared projection, typed envelopes, verified artifact binding and invocation FileIO remain independently gated.",
+        "foundation_receipts: exact read markers, mutation effect classification and persistence remain independently gated; local no-op comparisons are not remote concurrency guarantees.",
+        "base <-> sheets: reviewed exact native schema/complete extent/conversion handoff and 10,000-row synthetic transfer assertions; report .tmp/sheets-base/runner-report.json sha256 82ac4001c09da4d1ba5e9a87f87dd4fb733f62b0c877226773b92269bc98148f has 11 passed/0 failed/0 skipped events but no immutable source manifest."
+      ],
+      "limitations": [
+        "Required live/platform/release/evaluation gates remain separate.",
+        "Approval covers the listed exact blobs and reviewed diffs/new implementations, not every unchanged line in the domain or every flag combination.",
+        "Existing log evidence was recounted and source assertions inspected, not rerun; reports without a source manifest remain explicitly unbound.",
+        "The assigned snapshot remains changes_requested; its sole finding is closed only by the separately hash-bound follow-up approval below."
+      ],
+      "evidence_catalog": [
+        {
+          "path": "shortcuts/sheets/data_transfer_test.go",
+          "sha256": "40c0464b44e73b47c6105ab3f7f5be2b50ab47dbd0b839513ee0968ac815660c",
+          "tested_revision": "unbound: source inspected at 0084501742edb1ee87bdf9623adf7da37267f142; prior test report has no immutable source manifest",
+          "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+        },
+        {
+          "path": "tests/next_sections/sheets/data_test.go",
+          "sha256": "7c1cd4776a25ce3bfafba14a7262869a1a36b653484aff46a62ecceacba1d6a3",
+          "tested_revision": "unbound: source inspected at 0084501742edb1ee87bdf9623adf7da37267f142; prior test report has no immutable source manifest",
+          "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+        },
+        {
+          "path": "tests/next_integration/sheets_base/transfer_test.go",
+          "sha256": "544dfa5f7c965fba7e15f89bf01b2ff0745783546a013a499e77ff60aec18930",
+          "tested_revision": "unbound: source inspected at 0084501742edb1ee87bdf9623adf7da37267f142; prior test report has no immutable source manifest",
+          "scope": "Read relevant focused assertions as semantic evidence; execution is separately recorded by the hashed offline report."
+        },
+        {
+          "path": ".tmp/sheets/section-report.json",
+          "sha256": "c5a7b6b2ca2c7e034d64823211efbd89000a123b81bec40d44562c07015ed1ee",
+          "tested_revision": "unbound: runner report does not bind a complete immutable source tree",
+          "scope": "Independently recounted test pass/fail/skip events from stored Go JSON logs; no test was rerun and no live acceptance is inferred."
+        }
+      ]
+    }
+  ],
+  "followup_reviews": [
+    {
+      "schema_version": 1,
+      "assignment_id": "application",
+      "reviewer": "/root/p3_data_review",
+      "verdict": "approved_offline",
+      "reviewed_scope": "Inspected the immutable one-line fix against the previously reviewed complete helper: unchanged:true is protected by shared output projection, action remains backward-compatible, targeting/replacement comparison and permission flow are unchanged.",
+      "closes_findings": [
+        "P3-DATA-001"
+      ],
+      "paths": [
+        {
+          "path": "shortcuts/application/slash_command_state.go",
+          "review_revision": "69076349aee47a494c883cd1e98c190009134e71",
+          "review_sha256": "cf8f9540cddd1aedbcf59b28ab46598807339b5314be0256fdddcbb75cbae5e1",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "tests/next_sections/application/application_e2e_test.go",
+              "sha256": "d00f622aa28a27dd02674c02a6b6efbb8beac8ea28ac09ae18ee07da03b70208",
+              "tested_revision": "unbound: owner test log lacks a complete immutable source manifest; reviewed source is 69076349aee47a494c883cd1e98c190009134e71",
+              "scope": "TestApplicationProjectedNoopRetainsOutcome asserts boolean unchanged, retained command ID, omitted description, one GET and zero writes/no mutation envelope under result-fields."
+            },
+            {
+              "path": ".tmp/application-projected-noop-before.json",
+              "sha256": "fcc3f8f96d3f1916874945e257716d3ff6896a9c311913f2ed4a333395b1f6fe",
+              "tested_revision": "unbound: historical offline execution report without immutable source manifest",
+              "scope": "Recounted one failed regression before fix."
+            },
+            {
+              "path": ".tmp/application-projected-noop-all.json",
+              "sha256": "c83d381be3867e71cb616c06002db49b4dd956c3cd8c3b4febfc691d3c1354fe",
+              "tested_revision": "unbound: historical offline execution report without immutable source manifest",
+              "scope": "Recounted 57 unit/event, 4 selected inherited and 19 process passes; 1 explicitly blocked live skip, 0 failures."
+            },
+            {
+              "path": ".tmp/application-projected-noop-reference.json",
+              "sha256": "abdf6edb85f15bb98c7e4c3d760e4ce0d3b0de99f9720bbe94c9b1ceb1709640",
+              "tested_revision": "unbound: historical offline execution report without immutable source manifest",
+              "scope": "Recounted all five inherited process tests passing without skips."
+            }
+          ]
+        }
+      ],
+      "cross_assignment_dependencies": [
+        "Foundation output/receipt final audit remains separate; fix is reviewed against the previously inspected shared contract."
+      ],
+      "limitations": [
+        "Offline only; no live/backend content or remote concurrency guarantee.",
+        "No broad tests rerun by reviewer; owner test source and hashed execution logs independently inspected."
+      ]
+    },
+    {
+      "schema_version": 1,
+      "assignment_id": "sheets",
+      "reviewer": "/root/p3_data_review",
+      "verdict": "approved_offline",
+      "reviewed_scope": "Inspected the immutable content guard against the previously reviewed complete transfer implementation: plain requested values cannot be deemed equal to a nonempty/invalid rich_text or multiple_values cache; equal native structured content and empty current read metadata retain prior no-op behavior. Raw write conversion is unchanged.",
+      "closes_findings": [
+        "P3-DATA-002"
+      ],
+      "paths": [
+        {
+          "path": "shortcuts/sheets/data_transfer.go",
+          "review_revision": "b3f9f6ab6b85c134ae99471946fb934414f3e30f",
+          "review_sha256": "fdd13dcfa9bff07b7692dc5f9963c5cd6cdf638bc7b6c127899c9c2e3777ed33",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "shortcuts/sheets/data_transfer_test.go",
+              "sha256": "2255660d111177ce4e866373d769d913227bd97e2ba3c791c38786ed1af92d3e",
+              "tested_revision": "unbound: owner test log lacks a complete immutable source manifest; reviewed source is b3f9f6ab6b85c134ae99471946fb934414f3e30f",
+              "scope": "TestNativePlainValueReplacesStructuredContent requires both rich_text/multiple_values inverse cases to write exactly the plain value; equal structured content remains no-op."
+            },
+            {
+              "path": "tests/next_sections/sheets/data_test.go",
+              "sha256": "1cd85c003abae51b7a350af6efb06afa6ca0959cf5edd63121bf8b1d95ca4b60",
+              "tested_revision": "unbound: owner test log lacks a complete immutable source manifest; reviewed source is b3f9f6ab6b85c134ae99471946fb934414f3e30f",
+              "scope": "TestNativePlainImportReplacesStructuredIdentityThenNoops runs actual export/import processes, asserts exact plain wire and independent fixture state, applied receipt, then repeated no-op with one total write/receipt."
+            },
+            {
+              "path": ".tmp/sheets/rich-replacement-report.json",
+              "sha256": "1c2be120db7ba699c806270520d222958955fce95662f1e5e8173f75dce11a7c",
+              "tested_revision": "unbound: historical offline execution report without immutable source manifest",
+              "scope": "Recounted 1548 unit, 68 selected inherited and 280 process passes; 7 explicitly blocked live skips, 0 failures. Owner-reported pre-fix failures were communicated but no durable pre-fix log was available to this reviewer."
+            }
+          ]
+        }
+      ],
+      "cross_assignment_dependencies": [
+        "Foundation output/receipt final audit remains separate; fix is reviewed against the previously inspected shared contract."
+      ],
+      "limitations": [
+        "Offline only; no live/backend content or remote concurrency guarantee.",
+        "No broad tests rerun by reviewer; owner test source and hashed execution logs independently inspected."
+      ]
+    }
+  ],
+  "limitations": [
+    "Offline semantic review only; does not close live, platform, comparative evaluation or release gates.",
+    "Snapshot findings are retained even when a later immutable follow-up fixes them."
+  ],
+  "checkpoint_verdict": "changes_requested",
+  "effective_review_scope": "The 61 assigned blob reviews, replacing only Application slash_command_state.go and Sheets data_transfer.go with the approved follow-up hashes below. Snapshot findings and verdicts remain historical evidence. No unlisted later source is approved.",
+  "test_execution_note": "Reviewer ran no Go or live tests. Historical Go JSON test events were recounted, exact committed regression sources inspected, and immutable implementation/test SHA-256 values recorded. Historical reports have no complete source manifest and remain explicitly unbound."
+}
