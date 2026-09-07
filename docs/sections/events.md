@@ -156,5 +156,10 @@ An earlier ad hoc `/var/folders` temporary root exceeded macOS's Unix socket
 path limit; the corrected isolated-root run passed all 492 tests. An intermediate
 process build also encountered a concurrently edited OKR compile gap, resolved
 by its owner before the passing boundary. Neither is counted as passing evidence.
-Global formatting/unit/vet/quality and release checks remain coordinator-owned;
-this section has not run global Go module/license gates independently.
+Post-commit `make quality-gate QUALITY_GATE_CHANGED_FROM=3a7a243^
+QUALITY_GATE_DIR=.tmp/events-quality-gate` passed in isolated state. It retained
+non-blocking legacy naming labels (`event _bus`, `drive +task_result`) and list
+limit warnings (`event list`, `drive +member-list`); event list is bounded by the
+25 registered definitions. Raw gate evidence is `.tmp/p2-events-quality.json`.
+Global formatting/unit/vet and release checks remain coordinator-owned; this
+section has not run global Go module/license gates independently.

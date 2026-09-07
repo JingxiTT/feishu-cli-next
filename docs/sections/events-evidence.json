@@ -83,7 +83,8 @@
   "additional_checks": [
     "go vet ./cmd/event/... ./events/... ./shortcuts/event/... ./tests/next_sections/events/...",
     "gofmt -l owned files (empty)",
-    "git diff --check (pass)"
+    "git diff --check (pass)",
+    "make quality-gate QUALITY_GATE_CHANGED_FROM=3a7a243^ QUALITY_GATE_DIR=.tmp/events-quality-gate (pass; legacy naming/list-limit warnings)"
   ],
   "live": {
     "command": "python3 scripts/next_test.py --section events --suite live --allow-live --report .tmp/p2-events-live.json",
@@ -91,5 +92,6 @@
     "exit_code": 2,
     "reason": "No verified current-account/tenant/private fixture and subscription scope ownership; no live requests performed."
   },
-  "comparative_evaluation": "coordinator scheduled; not performed; held-out untouched"
+  "comparative_evaluation": "coordinator scheduled; not performed; held-out untouched",
+  "implementation_commit": "3a7a243"
 }
