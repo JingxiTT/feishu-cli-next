@@ -29,9 +29,12 @@ or contact a backend; inspection remains available after switching accounts.
 ## Outcomes and exits
 
 The command boundary emits a separate JSON object on stderr:
-`{"mutation": {"receipts": [...], "outcome": "...", "applied": 1,
+`{"mutation": {"receipts": ["<receipt-id>"], "outcome": "...", "applied": 1,
 "unapplied": 0, "unknown": 0}}`. This supplements original result and typed
-error contracts, preserving detailed response bodies and original errors.
+error contracts. The normal diagnostic includes receipt IDs and counts;
+`receipts inspect` returns full binding and numeric evidence. JSON stdout marks
+`ok:false` and includes the mutation outcome for unknown, partial, unapplied,
+or failed final persistence, preserving the original data and typed errors.
 
 | Evidence | Recorded outcome | Agent exit override |
 | --- | --- | --- |

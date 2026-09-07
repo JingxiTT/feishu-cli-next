@@ -15,12 +15,21 @@ import (
 	"github.com/larksuite/cli/internal/nextattempt"
 )
 
-func receiptSummary(t *testing.T, result Result) nextattempt.Summary {
+type receiptWireSummary struct {
+	Outcome           string   `json:"outcome"`
+	Receipts          []string `json:"receipts"`
+	Applied           int      `json:"applied"`
+	Unapplied         int      `json:"unapplied"`
+	Unknown           int      `json:"unknown"`
+	PersistenceFailed bool     `json:"persistence_failed,omitempty"`
+}
+
+func receiptSummary(t *testing.T, result Result) receiptWireSummary {
 	t.Helper()
 	decoder := json.NewDecoder(strings.NewReader(result.Stderr))
 	for decoder.More() {
 		var row struct {
-			Mutation *nextattempt.Summary `json:"mutation"`
+			Mutation *receiptWireSummary `json:"mutation"`
 		}
 		if err := decoder.Decode(&row); err != nil {
 			t.Fatalf("stderr JSON: %v\n%s", err, result.Stderr)
@@ -30,7 +39,7 @@ func receiptSummary(t *testing.T, result Result) nextattempt.Summary {
 		}
 	}
 	t.Fatalf("no mutation summary: %+v", result)
-	return nextattempt.Summary{}
+	return receiptWireSummary{}
 }
 func TestReceiptSuccessInspectAndCleanup(t *testing.T) {
 	t.Parallel()
@@ -54,7 +63,7 @@ func TestReceiptSuccessInspectAndCleanup(t *testing.T) {
 	if summary.Applied != 1 || len(summary.Receipts) != 1 {
 		t.Fatal(summary)
 	}
-	id := summary.Receipts[0].ID
+	id := summary.Receipts[0]
 	inspect := fixture.Run("receipts", "inspect", id)
 	if inspect.ExitCode != 0 || !strings.Contains(inspect.Stdout, "confirmed_applied") {
 		t.Fatal(inspect)
@@ -119,6 +128,20 @@ func TestReceiptRejectedAndMalformedResponses(t *testing.T) {
 			}
 			if summary := receiptSummary(t, result); summary.Outcome != tt.outcome {
 				t.Fatal(summary)
+			}
+			if tt.name == "batch" {
+				var envelope struct {
+					OK       bool `json:"ok"`
+					Mutation struct {
+						Outcome string `json:"outcome"`
+					} `json:"mutation"`
+				}
+				if err := json.Unmarshal([]byte(result.Stdout), &envelope); err != nil {
+					t.Fatalf("invalid stdout: %v %s", err, result.Stdout)
+				}
+				if envelope.OK || envelope.Mutation.Outcome != nextattempt.Unknown {
+					t.Fatalf("misleading batch success: %s", result.Stdout)
+				}
 			}
 		})
 	}
