@@ -73,8 +73,18 @@ type driveDuplicateRemotePath struct {
 // Pagination uses common.PaginationMeta, which accepts both page_token and
 // next_page_token.
 func listRemoteFolderEntries(ctx context.Context, runtime *common.RuntimeContext, folderToken, relBase string) ([]driveRemoteEntry, error) {
+	return listRemoteFolderTree(ctx, runtime, folderToken, relBase, make(map[string]bool))
+}
+
+func listRemoteFolderTree(ctx context.Context, runtime *common.RuntimeContext, folderToken, relBase string, ancestors map[string]bool) ([]driveRemoteEntry, error) {
+	if ancestors[folderToken] {
+		return nil, errs.NewInternalError(errs.SubtypeInvalidResponse, "Drive listing contains a folder cycle").WithHint("No mirror changes were applied; inspect the folder hierarchy before retrying")
+	}
+	ancestors[folderToken] = true
+	defer delete(ancestors, folderToken)
 	var out []driveRemoteEntry
 	pageToken := ""
+	seenPages := make(map[string]bool)
 	for {
 		if err := ctx.Err(); err != nil {
 			return nil, err
@@ -94,13 +104,13 @@ func listRemoteFolderEntries(ctx context.Context, runtime *common.RuntimeContext
 		for _, item := range rawFiles {
 			f, ok := item.(map[string]interface{})
 			if !ok {
-				continue
+				return nil, errs.NewInternalError(errs.SubtypeInvalidResponse, "Drive listing contains a malformed file entry")
 			}
 			fType := common.GetString(f, "type")
 			fName := common.GetString(f, "name")
 			fToken := common.GetString(f, "token")
-			if fName == "" || fToken == "" {
-				continue
+			if fName == "" || fToken == "" || fType == "" {
+				return nil, errs.NewInternalError(errs.SubtypeInvalidResponse, "Drive listing entry is missing name, token, or type").WithHint("The listing is incomplete; resolve the backend response before retrying the mirror")
 			}
 			rel := joinRelDrive(relBase, fName)
 			out = append(out, driveRemoteEntry{
@@ -116,7 +126,7 @@ func listRemoteFolderEntries(ctx context.Context, runtime *common.RuntimeContext
 				if err := ctx.Err(); err != nil {
 					return nil, err
 				}
-				sub, err := listRemoteFolderEntries(ctx, runtime, fToken, rel)
+				sub, err := listRemoteFolderTree(ctx, runtime, fToken, rel, ancestors)
 				if err != nil {
 					return nil, err
 				}
@@ -124,9 +134,13 @@ func listRemoteFolderEntries(ctx context.Context, runtime *common.RuntimeContext
 			}
 		}
 		hasMore, nextToken := common.PaginationMeta(result)
-		if !hasMore || nextToken == "" {
+		if !hasMore {
 			break
 		}
+		if nextToken == "" || seenPages[nextToken] {
+			return nil, errs.NewInternalError(errs.SubtypeInvalidResponse, "Drive listing has_more requires a new continuation token").WithHint("The listing is incomplete; no mirror changes were applied. Retry the read after resolving the backend pagination failure")
+		}
+		seenPages[nextToken] = true
 		pageToken = nextToken
 	}
 	return out, nil
