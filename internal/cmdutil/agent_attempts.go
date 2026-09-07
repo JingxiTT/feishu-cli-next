@@ -73,3 +73,20 @@ func (f *Factory) agentAttemptTransport(base http.RoundTripper) http.RoundTrippe
 		},
 	}
 }
+
+// FinalizeAgentAttempt makes non-success mutation evidence observable to hosts
+// executing a built Cobra tree. Call after the command and output finalization.
+func (f *Factory) FinalizeAgentAttempt(runErr error) error {
+	if !f.EnableAgentAttempts {
+		return runErr
+	}
+	summary := f.AgentAttemptSummary()
+	if len(summary.Receipts) == 0 || summary.ExitCode() == 0 {
+		return runErr
+	}
+	ids := make([]string, len(summary.Receipts))
+	for i, receipt := range summary.Receipts {
+		ids[i] = receipt.ID
+	}
+	return errs.NewMutationOutcomeError(summary.Outcome, ids, summary.PersistenceFailed, runErr)
+}

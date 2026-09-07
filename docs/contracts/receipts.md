@@ -57,6 +57,11 @@ backend-specific semantics it could not establish non-application or safe retry.
 A persisted `dispatch_started` receipt after a crash means unknown, including
 when the process may have stopped before dispatch. Never infer failure from it.
 
+Embedded hosts receive a typed `api/mutation_outcome` error with the same
+20/21/22 exit mapping when evidence is non-successful, even if the command
+returned an API success envelope. The original typed cause and its scope/code
+diagnostics remain available; its retry guidance does not authorize replay.
+
 ## Classification and storage boundary
 
 GET, HEAD, OPTIONS, credential acquisition endpoints, and commands explicitly

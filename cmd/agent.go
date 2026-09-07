@@ -84,10 +84,11 @@ func finalizeAgentFoundation(f *cmdutil.Factory, root *cobra.Command, opts *outp
 				if err := validateAgentOutput(f, command, opts); err != nil {
 					return err
 				}
-				if err := run(command, args); err != nil {
-					return err
+				runErr := run(command, args)
+				if runErr == nil {
+					runErr = opts.Finish()
 				}
-				return opts.Finish()
+				return f.FinalizeAgentAttempt(runErr)
 			}
 		}
 		for _, child := range c.Commands() {

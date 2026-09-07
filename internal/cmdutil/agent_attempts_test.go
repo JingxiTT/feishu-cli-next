@@ -5,6 +5,10 @@ package cmdutil
 
 import (
 	"context"
+	"errors"
+	"github.com/larksuite/cli/errs"
+	"github.com/larksuite/cli/internal/nextattempt"
+	"github.com/larksuite/cli/internal/output"
 	"io"
 	"net/http"
 	"strings"
@@ -70,5 +74,49 @@ func TestAgentAttemptBindingAndArbitraryMethod(t *testing.T) {
 	b := s.Receipts[0].Binding
 	if b.Account != "selected" || b.AppID != "test-app" || b.UserID != "verified-user" || b.Identity != "user" || b.Environment != core.ResolveEndpoints(core.BrandLark).Open || b.TenantVerified {
 		t.Fatal(b)
+	}
+}
+
+func TestFinalizeAgentAttemptPreservesOriginalOrReportsEvidence(t *testing.T) {
+	original := errs.NewPermissionError(errs.SubtypeMissingScope, "synthetic denial").WithMissingScopes("synthetic:write")
+	for _, tt := range []struct {
+		name     string
+		enabled  bool
+		receipts []nextattempt.Receipt
+		exit     int
+	}{
+		{"legacy", false, []nextattempt.Receipt{{ID: "id", Outcome: nextattempt.Unknown}}, 0},
+		{"no attempts", true, nil, 0},
+		{"applied", true, []nextattempt.Receipt{{ID: "id", Outcome: nextattempt.Applied}}, 0},
+		{"unapplied", true, []nextattempt.Receipt{{ID: "id", Outcome: nextattempt.Unapplied}}, 20},
+		{"partial", true, []nextattempt.Receipt{{ID: "a", Outcome: nextattempt.Applied}, {ID: "b", Outcome: nextattempt.Unapplied}}, 21},
+		{"unknown", true, []nextattempt.Receipt{{ID: "id", Outcome: nextattempt.Unknown}}, 22},
+		{"persistence", true, []nextattempt.Receipt{{ID: "id", Outcome: nextattempt.Applied, PersistenceFailed: true}}, 22},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			f := &Factory{EnableAgentAttempts: tt.enabled}
+			for _, receipt := range tt.receipts {
+				f.agentAttempts.Add(receipt)
+			}
+			for _, cause := range []error{nil, original} {
+				err := f.FinalizeAgentAttempt(cause)
+				if tt.exit == 0 {
+					if err != cause {
+						t.Fatalf("changed original: %v", err)
+					}
+					continue
+				}
+				var outcome *errs.MutationOutcomeError
+				if !errors.As(err, &outcome) || output.ExitCodeOf(err) != tt.exit {
+					t.Fatalf("missing outcome: %v", err)
+				}
+				if cause != nil && !errors.Is(err, cause) {
+					t.Fatal("lost original error")
+				}
+				if len(outcome.Receipts) != len(tt.receipts) {
+					t.Fatal(outcome)
+				}
+			}
+		})
 	}
 }

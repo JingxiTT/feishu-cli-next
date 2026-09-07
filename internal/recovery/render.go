@@ -146,6 +146,14 @@ func CloneTyped(err error) (error, bool) {
 		clone := *original
 		clone.Rules = slices.Clone(original.Rules)
 		return &clone, true
+	case *errs.MutationOutcomeError:
+		if original == nil {
+			return nil, false
+		}
+		clone := *original
+		clone.Receipts = slices.Clone(original.Receipts)
+		clone.CauseDetail = slices.Clone(original.CauseDetail)
+		return &clone, true
 	case *errs.InternalError:
 		if original == nil {
 			return nil, false

@@ -22,11 +22,15 @@ Something off in production? See **Troubleshooting**.
    It is `omitempty` and never carries CLI-internal meaning.
 5. Every typed error embeds `errs.Problem`. `CheckProblemEmbed` rejects
    exported `*Error` structs that do not.
-6. Wrapping is idempotent: re-wrapping an already-typed error returns it
-   unchanged across the `errors.As` / `errors.Unwrap` chain.
-7. For the typed-envelope path, exit codes derive from `Category` only
+6. Ordinary classification wrapping is idempotent: re-wrapping an already-typed
+   error returns it unchanged across the `errors.As` / `errors.Unwrap` chain.
+   Agent mutation reporting adds effect evidence around the original error;
+   wrapping an existing `MutationOutcomeError` remains idempotent.
+7. For the ordinary typed-envelope path, exit codes derive from `Category`
    via `output.ExitCodeForCategory` — including `SecurityPolicyError`,
-   which exits `6` via `CategoryPolicy`. `output.ErrBare(code)` is the
+   which exits `6` via `CategoryPolicy`. Opt-in agent `MutationOutcomeError`
+   is the documented effect-evidence exception (20/21/22, below).
+   `output.ErrBare(code)` is the
    exception: it constructs an `*output.BareError`, a deliberate
    silent-exit signal (stdout already carries the answer) that bypasses
    the envelope (see **Predicate commands** below).
@@ -157,6 +161,42 @@ residual Cobra usage errors (missing required flag, unknown command,
 argument validation): the latter are classified into a typed validation
 envelope (`invalid_argument`) and exit `2`, matching the explicit flag and
 subcommand guards.
+
+### Agent mutation outcomes (`api/mutation_outcome`)
+
+An agent-mode mutation that is rejected, partially applied, unknown, or cannot
+persist its final evidence returns `*errs.MutationOutcomeError` to embedded
+`Build(..., WithAgentMode()).Execute()` callers as well as process callers.
+It is a typed error, even when the underlying command returned nil after an
+HTTP 202 or ambiguous batch success envelope. Compatibility mode and invocations
+without attempts retain the original error object. Confirmed-applied attempts
+with durable evidence also retain the original command/output error, if any.
+
+The error has `type:"api"`, `subtype:"mutation_outcome"`, `outcome`,
+`receipts` (IDs), optional `persistence_failed:true`, and optional `cause`
+containing the underlying typed error's wire fields. Those fields preserve
+category/subtype, upstream code, log ID, missing scopes, and other typed
+extensions. Nested hint/retryability fields are omitted because a transport
+retry recommendation does not establish safe mutation replay. The original
+error is unchanged and remains reachable through `errors.Is` / `errors.As`.
+Untyped causes remain in the Go error chain but are not serialized as raw text.
+
+`output.ExitCodeOf` checks this concrete type before normal category dispatch:
+
+| Evidence | Exit |
+| --- | --- |
+| `confirmed_unapplied` | 20 |
+| `partial` | 21 |
+| `unknown`, or any final persistence failure | 22 |
+
+The top-level error never advertises automatic retry. `RetryAfter` on an
+underlying error is diagnostic metadata, not replay authorization. This narrow
+exception exposes effect evidence across host boundaries; it does not create a
+general mechanism for overriding category exits. The dedicated constructor
+`NewMutationOutcomeError(outcome, receipts, persistenceFailed, cause)` accepts
+all required evidence together, fixes the declared subtype, copies receipt IDs,
+and avoids duplicate wrapping. Receipt inspection supplies the full durable
+record; local journals never prove that an interrupted request was unapplied.
 
 ### Concealed commands (`validation/command_unavailable`)
 

@@ -123,6 +123,10 @@ func TestRenderClonesEveryConcreteTypedErrorAndPreservesWireExtensions(t *testin
 			},
 		},
 		{
+			name:     "mutation_outcome",
+			original: &errs.MutationOutcomeError{Problem: problem(errs.CategoryAPI, errs.SubtypeMutationOutcome), Outcome: "unknown", Receipts: []string{"id"}, CauseDetail: json.RawMessage(`{"type":"network","subtype":"timeout","message":"timeout"}`), Cause: sentinel},
+		},
+		{
 			name: "internal",
 			original: &errs.InternalError{
 				Problem: problem(errs.CategoryInternal, errs.SubtypeFileIO),
@@ -378,4 +382,18 @@ func mustJSON(t *testing.T, value any) []byte {
 		t.Fatalf("marshal expected value: %v", err)
 	}
 	return data
+}
+
+func TestCloneMutationOutcomeCopiesDiagnosticSlices(t *testing.T) {
+	original := errs.NewMutationOutcomeError("unknown", []string{"id"}, false, errs.NewPermissionError(errs.SubtypeMissingScope, "scope"))
+	value, ok := CloneTyped(original)
+	if !ok {
+		t.Fatal("not cloned")
+	}
+	clone := value.(*errs.MutationOutcomeError)
+	clone.Receipts[0] = "changed"
+	clone.CauseDetail[0] = 'x'
+	if original.Receipts[0] != "id" || original.CauseDetail[0] != '{' {
+		t.Fatal("clone mutated source")
+	}
 }

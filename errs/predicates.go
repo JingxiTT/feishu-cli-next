@@ -132,3 +132,9 @@ func IsTyped(err error) bool {
 	var t TypedError
 	return errors.As(err, &t)
 }
+
+// IsMutationOutcome reports an agent mutation effect report in the error chain.
+func IsMutationOutcome(err error) bool {
+	var outcome *MutationOutcomeError
+	return errors.As(err, &outcome)
+}

@@ -20,6 +20,9 @@ const (
 	ExitNetwork              = 4  // 网络错误（连接超时、DNS 解析失败等）
 	ExitInternal             = 5  // 内部错误（不应发生）
 	ExitContentSafety        = 6  // content safety violation (block mode)
+	ExitMutationUnapplied    = 20 // confirmed rejection of every attempted mutation
+	ExitMutationPartial      = 21 // both applied and unapplied mutations
+	ExitMutationUnknown      = 22 // unknown effect or failed final evidence persistence
 	ExitConfirmationRequired = 10 // 高风险操作需要 --yes 确认（agent 协议信号）
 )
 
@@ -47,13 +50,28 @@ func ExitCodeForCategory(cat errs.Category) int {
 }
 
 // ExitCodeOf returns the shell exit code for any error.
-//   - typed errors (*errs.PermissionError, *errs.APIError, *errs.ConfigError,
+//   - *errs.MutationOutcomeError → evidence-derived 20/21/22
+//   - ordinary typed errors (*errs.PermissionError, *errs.APIError, *errs.ConfigError,
 //     *errs.AuthenticationError, ...) → routed by Category
 //   - *PartialFailureError / *BareError signals → their own Code field
 //   - untyped → ExitInternal
 func ExitCodeOf(err error) int {
 	if err == nil {
 		return ExitOK
+	}
+	var mutation *errs.MutationOutcomeError
+	if errors.As(err, &mutation) {
+		if mutation.PersistenceFailed {
+			return ExitMutationUnknown
+		}
+		switch mutation.Outcome {
+		case "confirmed_unapplied":
+			return ExitMutationUnapplied
+		case "partial":
+			return ExitMutationPartial
+		default:
+			return ExitMutationUnknown
+		}
 	}
 	if _, ok := errs.ProblemOf(err); ok {
 		return ExitCodeForCategory(errs.CategoryOf(err))

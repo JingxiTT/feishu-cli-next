@@ -63,6 +63,7 @@ const (
 
 // CategoryAPI subtypes
 const (
+	SubtypeMutationOutcome     Subtype = "mutation_outcome"      // agent mutation evidence overrides ordinary category-derived exits
 	SubtypeRateLimit           Subtype = "rate_limit"            // request rate limit exceeded
 	SubtypeConflict            Subtype = "conflict"              // resource state conflict (e.g. concurrent modification)
 	SubtypeCrossTenant         Subtype = "cross_tenant"          // operation crosses tenant boundary (not supported)
