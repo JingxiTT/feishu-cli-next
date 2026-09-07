@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 import sys
 from scenario_fixture import load_scenario
+from section_fixture import UNSUPPORTED_REASON_CODES
 
 
 def verify(request):
@@ -19,13 +20,21 @@ def verify(request):
     return module.verify(workspace, answer, receipt, request['expected']) is True
 
 
+def unsupported_diagnostics(receipt):
+    return sorted({item.get('unsupported_reason') if isinstance(item.get('unsupported_reason'), str) and item.get('unsupported_reason') in UNSUPPORTED_REASON_CODES
+                   else 'unsupported_strategy_other' for item in receipt.get('requests', [])
+                   if item.get('rejection') == 'unsupported_strategy'})
+
+
 if __name__ == '__main__':
     request = json.load(sys.stdin)
     limitation = False
+    reasons = []
     try:
         receipt = json.loads((Path(request['workspace']) / 'backend-receipt.json').read_text())
         limitation = any(item.get('rejection') == 'unsupported_strategy' for item in receipt.get('requests', []))
+        reasons = unsupported_diagnostics(receipt)
         success = verify(request)
     except (ValueError, KeyError, TypeError, AttributeError, OSError):
         success = False
-    print(json.dumps({'success': success, 'fixture_unsupported': limitation}))
+    print(json.dumps({'success': success, 'fixture_unsupported': limitation, 'verification_failures': reasons}))

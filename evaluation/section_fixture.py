@@ -12,6 +12,11 @@ from read_fixture import native_read_label
 from urllib.parse import parse_qs, urlsplit
 
 PROXY_KEY = "synthetic-evaluation-proxy-key"
+UNSUPPORTED_REASONS = {
+    "unsupported strategy: general reconstruction needs validated native identity semantics": "unsupported_reconstruction",
+    "unsupported strategy: XML replacement fragments require native inline parsing": "unsupported_xml_fragment",
+}
+UNSUPPORTED_REASON_CODES = frozenset((*UNSUPPORTED_REASONS.values(), "unsupported_strategy_other"))
 CONTACTS = [
     {"open_id": "ou_fixture_1", "name": "Alex", "email": "alex.one@example.invalid", "enterprise_email": "alex.one@example.invalid"},
     {"open_id": "ou_fixture_2", "name": "Alex", "email": "alex.two@example.invalid", "enterprise_email": "alex.two@example.invalid"},
@@ -112,7 +117,7 @@ class SectionFixture:
 
             def handle_request(self):
                 status, route, ids, proof = 403, "rejected", [], {}
-                signature_valid, rejection = False, None
+                signature_valid, rejection, reason = False, None, None
                 content_type, extra_headers, encoded = "application/json", {}, None
                 with fixture.lock:
                     try:
@@ -137,6 +142,8 @@ class SectionFixture:
                                 status = 200
                     except (ValueError, KeyError, TypeError) as error:
                         rejection = "unsupported_strategy" if str(error).startswith("unsupported strategy:") else "rejected_request"
+                        if rejection == "unsupported_strategy":
+                            reason = UNSUPPORTED_REASONS.get(str(error), "unsupported_strategy_other")
                         status, route = 403, "rejected"
                         response = {"code": 403, "msg": "synthetic fixture rejected request"}
                     except Exception:
@@ -150,6 +157,8 @@ class SectionFixture:
                         record["native_read"] = native_route
                     if rejection:
                         record["rejection"] = rejection
+                    if reason:
+                        record["unsupported_reason"] = reason
                     if proof:
                         record["proof"] = proof
                     fixture.records.append(record)

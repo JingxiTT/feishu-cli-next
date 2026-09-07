@@ -187,7 +187,8 @@ def run_one(config, task, trial, arm):
 
 def sanitized_verification_failures(values):
     allowed = {"answer_mismatch", "scenario_mismatch", "missing_request_evidence", "request_outside_fixture",
-               "required_reads_missing", "config_changed", "invalid_verification_input"}
+               "required_reads_missing", "config_changed", "invalid_verification_input",
+               "unsupported_reconstruction", "unsupported_xml_fragment", "unsupported_strategy_other"}
     return values if isinstance(values, list) and all(isinstance(value, str) and value in allowed for value in values) else None
 
 

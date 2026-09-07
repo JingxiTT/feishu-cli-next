@@ -41,6 +41,25 @@ class SectionFixtureTests(unittest.TestCase):
             status, data = self.request(server, "POST", "/open-apis/contact/v3/users/search", {"query": "Alex"})
             self.assertEqual(len(data["data"]["items"]), 2)
 
+    def test_unsupported_diagnostics_are_fixed_and_drop_exception_payloads(self):
+        from section_fixture import UNSUPPORTED_REASONS
+        from scenario_verifier import unsupported_diagnostics
+        from harness import sanitized_verification_failures
+        for message, expected in [*UNSUPPORTED_REASONS.items(),
+                                  ('unsupported strategy: private document and user text', 'unsupported_strategy_other')]:
+            def reject(*_):
+                raise ValueError(message)
+            with SectionFixture('controlled-diagnostic', reject) as server:
+                self.assertEqual(self.request(server, 'POST', '/probe', {'private': 'body'})[0], 403)
+                receipt = server.receipt()
+                self.assertEqual(receipt['requests'][0]['unsupported_reason'], expected)
+                self.assertNotIn('private', json.dumps(receipt))
+                self.assertEqual(sanitized_verification_failures(unsupported_diagnostics(receipt)), [expected])
+        self.assertIsNone(sanitized_verification_failures(['private error']))
+        self.assertEqual(unsupported_diagnostics({'requests': [{'rejection': 'unsupported_strategy',
+                                                               'unsupported_reason': 'private error'}]}),
+                         ['unsupported_strategy_other'])
+
     def test_rejects_unsigned_mutation_and_unknown_routes(self):
         with SectionFixture("contact-exact-id-v1") as server:
             for method, uri, signed in [("GET", "/open-apis/contact/v3/users/ou_fixture_2", False),
