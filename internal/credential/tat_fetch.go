@@ -1,0 +1,147 @@
+// Copyright (c) 2026 Lark Technologies Pte. Ltd.
+// SPDX-License-Identifier: MIT
+
+package credential
+
+import (
+	"context"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"io"
+	"net/http"
+	"net/url"
+	"strconv"
+	"strings"
+
+	"github.com/larksuite/cli/errs"
+	"github.com/larksuite/cli/internal/core"
+)
+
+type tatResponse struct {
+	Code             int    `json:"code"`
+	AccessToken      string `json:"access_token"`
+	Error            string `json:"error"`
+	ErrorDescription string `json:"error_description"`
+	Msg              string `json:"msg"`
+}
+
+// FetchTAT performs a single HTTP POST to mint a tenant access token via the
+// unified OAuth 2.0 Token Endpoint ({accounts}/oauth/v3/token) using the
+// client_credentials grant with client_secret_post authentication. It does not
+// read configuration or keychain, so callers that already hold plaintext
+// credentials (e.g. the post-`config init` probe) can validate them without a
+// second keychain round-trip.
+//
+// A deterministic client-side rejection (e.g. invalid_client) returns the
+// canonical typed error from classifyTATResponseCode — the SAME classification
+// doResolveTAT (and thus every token-resolving command) produces, so callers
+// see one consistent envelope. Transport failures, unreadable/unparseable
+// bodies, and transient server-side failures (5xx / server_error) are returned
+// raw (untyped), leaving them ambiguous. HTTP 429 is the exception: it carries
+// typed retry metadata so callers can back off instead of treating it as a
+// credential rejection.
+//
+// The caller owns the context timeout.
+func FetchTAT(ctx context.Context, httpClient *http.Client, brand core.LarkBrand, appID, appSecret string) (string, error) {
+	ep := core.ResolveEndpoints(brand)
+	endpoint := ep.Accounts + core.OAuthTokenV3Path
+
+	form := url.Values{}
+	form.Set("grant_type", "client_credentials")
+	form.Set("client_id", appID)
+	form.Set("client_secret", appSecret)
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, endpoint, strings.NewReader(form.Encode()))
+	if err != nil {
+		return "", err
+	}
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	resp, err := httpClient.Do(req)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(io.LimitReader(resp.Body, 1<<20))
+	if err != nil {
+		return "", fmt.Errorf("failed to read TAT response: %w", err)
+	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		var rateLimitErr *errs.APIError
+		var result tatResponse
+		if json.Unmarshal(body, &result) == nil {
+			desc := result.ErrorDescription
+			if desc == "" {
+				desc = result.Msg
+			}
+			classified := classifyTATResponseCode(result.Code, result.Error, desc, string(brand), appID)
+			var apiErr *errs.APIError
+			if errors.As(classified, &apiErr) &&
+				apiErr.Subtype == errs.SubtypeRateLimit && apiErr.Retryable {
+				rateLimitErr = apiErr
+			}
+		}
+
+		if rateLimitErr == nil {
+			rateLimitErr = errs.NewAPIError(errs.SubtypeRateLimit, "TAT endpoint rate limited (HTTP 429)").
+				WithCode(http.StatusTooManyRequests).
+				WithRetryable()
+		}
+		if retryAfter := tatRetryAfterSeconds(resp.Header); retryAfter > 0 {
+			rateLimitErr.RetryAfterSeconds = retryAfter
+			rateLimitErr.Hint = fmt.Sprintf("wait at least %d seconds before retrying; if throttling continues, use exponential backoff with jitter", retryAfter)
+		} else {
+			rateLimitErr.Hint = "use exponential backoff with jitter when retrying"
+		}
+		return "", rateLimitErr
+	}
+
+	var result tatResponse
+	if err := json.Unmarshal(body, &result); err != nil {
+		// An unparseable body is ambiguous (covers non-JSON error pages and
+		// truncated payloads); stay untyped so probe callers treat it as noise.
+		return "", fmt.Errorf("failed to parse TAT response (HTTP %d): %w", resp.StatusCode, err)
+	}
+
+	if result.Code == 0 && result.AccessToken != "" {
+		return result.AccessToken, nil
+	}
+
+	// Transient/server-side failures stay untyped so probe callers stay silent and
+	// retryers can back off; only deterministic client rejections are typed. Covers
+	// 5xx and the OAuth transient error strings (server_error,
+	// temporarily_unavailable, slow_down). HTTP 429 was already returned above
+	// as a typed rate-limit error with retry guidance and an upstream delay when available.
+	if resp.StatusCode >= 500 ||
+		result.Error == "server_error" || result.Error == "temporarily_unavailable" ||
+		result.Error == "slow_down" {
+		return "", fmt.Errorf("TAT endpoint transient failure (HTTP %d, code=%d, error=%q): %s",
+			resp.StatusCode, result.Code, result.Error, result.ErrorDescription)
+	}
+
+	// A 2xx with neither token nor error is a malformed success — ambiguous, untyped.
+	if result.Code == 0 && result.Error == "" {
+		return "", fmt.Errorf("TAT response missing access_token (HTTP %d)", resp.StatusCode)
+	}
+
+	// Prefer the OAuth error_description; fall back to the legacy Lark `msg` so a
+	// gateway-level {code, msg} response (carrying no OAuth fields) still yields a
+	// non-empty typed message instead of a bare "API error: [code]".
+	desc := result.ErrorDescription
+	if desc == "" {
+		desc = result.Msg
+	}
+	return "", classifyTATResponseCode(result.Code, result.Error, desc, string(brand), appID)
+}
+
+func tatRetryAfterSeconds(header http.Header) int {
+	for _, name := range []string{"X-Ogw-Ratelimit-Reset", "Retry-After"} {
+		seconds, err := strconv.Atoi(strings.TrimSpace(header.Get(name)))
+		if err == nil && seconds > 0 {
+			return seconds
+		}
+	}
+	return 0
+}
