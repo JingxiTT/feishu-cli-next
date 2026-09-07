@@ -1,0 +1,600 @@
+{
+  "schema_version": 1,
+  "split": "held_out",
+  "status": "initial_scenarios_require_section_adapter_validation",
+  "tasks": [
+    {
+      "id": "application-held-01",
+      "section": "application",
+      "prompt": "Create a private fixture slash command named résumé and inspect its settings.",
+      "fixture": {
+        "kind": "synthetic",
+        "visibility": "self_only",
+        "version": 1,
+        "commands": []
+      },
+      "expected": {
+        "checks": [
+          "exact Unicode name preserved",
+          "one command created",
+          "settings verified"
+        ]
+      },
+      "adapter_status": "not_implemented",
+      "evaluation_status": "not_run"
+    },
+    {
+      "id": "apps-held-01",
+      "section": "apps",
+      "prompt": "Inspect two similarly named fixture apps and explain which matches the supplied exact ID app_b.",
+      "fixture": {
+        "kind": "synthetic",
+        "visibility": "self_only",
+        "version": 1,
+        "apps": [
+          {
+            "id": "app_a",
+            "name": "Notes"
+          },
+          {
+            "id": "app_b",
+            "name": "Notes"
+          }
+        ]
+      },
+      "expected": {
+        "checks": [
+          "exact ID app_b selected",
+          "no inferred owner or scopes"
+        ]
+      },
+      "adapter_status": "not_implemented",
+      "evaluation_status": "not_run"
+    },
+    {
+      "id": "base-held-01",
+      "section": "base",
+      "prompt": "Import the supplied 10000-row file into an empty fixture Base using files or scripts; preserve all supported types and verify the transfer.",
+      "fixture": {
+        "kind": "synthetic",
+        "visibility": "self_only",
+        "version": 1,
+        "generator": {
+          "rows": 10000,
+          "seed": 91,
+          "columns": [
+            "integer",
+            "decimal",
+            "boolean",
+            "empty_string",
+            "unicode",
+            "date"
+          ]
+        }
+      },
+      "expected": {
+        "checks": [
+          "all 10000 rows transferred",
+          "independent row-wise typed equality",
+          "no unintended tables or rows",
+          "data stays outside model context when possible"
+        ]
+      },
+      "adapter_status": "not_implemented",
+      "evaluation_status": "not_run"
+    },
+    {
+      "id": "calendar-held-01",
+      "section": "calendar",
+      "prompt": "Reschedule only the private fixture event identified by its ID; keep recurrence and attendees unchanged.",
+      "fixture": {
+        "kind": "synthetic",
+        "visibility": "self_only",
+        "version": 1,
+        "event_id": "event_private",
+        "attendees": [],
+        "recurrence": "weekly",
+        "shift_minutes": 30
+      },
+      "expected": {
+        "checks": [
+          "correct event moved 30 minutes",
+          "recurrence preserved",
+          "no notifications to other users"
+        ]
+      },
+      "adapter_status": "not_implemented",
+      "evaluation_status": "not_run"
+    },
+    {
+      "id": "contact-held-01",
+      "section": "contact",
+      "prompt": "Find the requested contact using only the ambiguous name Alex; report the ambiguity without choosing a recipient.",
+      "fixture": {
+        "kind": "synthetic",
+        "visibility": "self_only",
+        "version": 1,
+        "contacts": [
+          {
+            "id": "fixture_a",
+            "name": "Alex"
+          },
+          {
+            "id": "fixture_b",
+            "name": "Alex"
+          }
+        ]
+      },
+      "expected": {
+        "checks": [
+          "ambiguity is explicit",
+          "no arbitrary recipient selection",
+          "no writes"
+        ]
+      },
+      "adapter_status": "not_implemented",
+      "evaluation_status": "not_run"
+    },
+    {
+      "id": "docs-held-01",
+      "section": "docs",
+      "prompt": "Read the two identically titled fixture documents and update only document doc_b by ID; leave its empty paragraph and embedded image intact.",
+      "fixture": {
+        "kind": "synthetic",
+        "visibility": "self_only",
+        "version": 1,
+        "documents": [
+          {
+            "id": "doc_a",
+            "title": "Review"
+          },
+          {
+            "id": "doc_b",
+            "title": "Review",
+            "empty_paragraph": true,
+            "image": "fixture-image"
+          }
+        ]
+      },
+      "expected": {
+        "checks": [
+          "only doc_b changed",
+          "empty paragraph preserved",
+          "image identity preserved",
+          "no duplicate edit after interrupted response"
+        ]
+      },
+      "adapter_status": "not_implemented",
+      "evaluation_status": "not_run"
+    },
+    {
+      "id": "drive-held-01",
+      "section": "drive",
+      "prompt": "Find a fixture file across three result pages and copy it to the private fixture folder.",
+      "fixture": {
+        "kind": "synthetic",
+        "visibility": "self_only",
+        "version": 1,
+        "pages": 3,
+        "target_on_page": 3,
+        "folder_visibility": "self_only"
+      },
+      "expected": {
+        "checks": [
+          "all required pages traversed",
+          "correct file copied once",
+          "visibility remains self-only",
+          "original unchanged"
+        ]
+      },
+      "adapter_status": "not_implemented",
+      "evaluation_status": "not_run"
+    },
+    {
+      "id": "events-held-01",
+      "section": "events",
+      "prompt": "Reconnect to an interrupted fixture event stream and explain any replay behavior while retaining available event IDs.",
+      "fixture": {
+        "kind": "synthetic",
+        "visibility": "self_only",
+        "version": 1,
+        "events": [
+          "e1",
+          "e2",
+          "e2",
+          "e3"
+        ],
+        "fault": "disconnect_after_e2"
+      },
+      "expected": {
+        "checks": [
+          "all distinct events observed",
+          "replay semantics accurately reported",
+          "no silent event loss",
+          "bounded termination"
+        ]
+      },
+      "adapter_status": "not_implemented",
+      "evaluation_status": "not_run"
+    },
+    {
+      "id": "extensions-held-01",
+      "section": "extensions",
+      "prompt": "Use the fixture extension host with an unsupported optional capability and report its typed failure.",
+      "fixture": {
+        "kind": "synthetic",
+        "visibility": "self_only",
+        "version": 1,
+        "host": "synthetic-extension-host",
+        "capability": "unsupported"
+      },
+      "expected": {
+        "checks": [
+          "failure explicit",
+          "no false successful output",
+          "unrelated host commands still work"
+        ]
+      },
+      "adapter_status": "not_implemented",
+      "evaluation_status": "not_run"
+    },
+    {
+      "id": "foundation-held-01",
+      "section": "foundation",
+      "prompt": "Read a fixture resource that requires a missing scope and explain the required recovery without retrying a mutation.",
+      "fixture": {
+        "kind": "synthetic",
+        "visibility": "self_only",
+        "version": 1,
+        "missing_scope": "fixture:read",
+        "fault": "missing_scope"
+      },
+      "expected": {
+        "checks": [
+          "missing scope accurately identified",
+          "no success claim",
+          "no credential disclosure",
+          "no mutation attempted"
+        ]
+      },
+      "adapter_status": "not_implemented",
+      "evaluation_status": "not_run"
+    },
+    {
+      "id": "im-held-01",
+      "section": "im",
+      "prompt": "Prepare a message for an ambiguous synthetic recipient Alex; report the unresolved recipient instead of sending.",
+      "fixture": {
+        "kind": "synthetic",
+        "visibility": "self_only",
+        "version": 1,
+        "contacts": [
+          {
+            "id": "fixture_a",
+            "name": "Alex"
+          },
+          {
+            "id": "fixture_b",
+            "name": "Alex"
+          }
+        ]
+      },
+      "expected": {
+        "checks": [
+          "no messages delivered",
+          "ambiguity reported",
+          "no invented identity match"
+        ]
+      },
+      "adapter_status": "not_implemented",
+      "evaluation_status": "not_run"
+    },
+    {
+      "id": "mail-held-01",
+      "section": "mail",
+      "prompt": "Retrieve the exact fixture attachment as a file, preserving its bytes and the message’s read state where supported.",
+      "fixture": {
+        "kind": "synthetic",
+        "visibility": "self_only",
+        "version": 1,
+        "attachment": {
+          "generator": "byte_sequence_mod_251",
+          "size": 8192
+        },
+        "read": false
+      },
+      "expected": {
+        "checks": [
+          "attachment checksum matches",
+          "read-state effect accurately reported",
+          "no outbound mail"
+        ]
+      },
+      "adapter_status": "not_implemented",
+      "evaluation_status": "not_run"
+    },
+    {
+      "id": "markdown-held-01",
+      "section": "markdown",
+      "prompt": "Convert the fixture rich document to markdown while explaining any unsupported native object.",
+      "fixture": {
+        "kind": "synthetic",
+        "visibility": "self_only",
+        "version": 1,
+        "document": {
+          "heading": "Résumé",
+          "native_object": "unsupported-fixture-type",
+          "paragraph": ""
+        }
+      },
+      "expected": {
+        "checks": [
+          "supported content preserved",
+          "unsupported object explicitly reported",
+          "no false lossless claim"
+        ]
+      },
+      "adapter_status": "not_implemented",
+      "evaluation_status": "not_run"
+    },
+    {
+      "id": "minutes-held-01",
+      "section": "minutes",
+      "prompt": "Download the fixture minutes artifact after one recoverable read failure and verify its content.",
+      "fixture": {
+        "kind": "synthetic",
+        "visibility": "self_only",
+        "version": 1,
+        "text": "讨论 — action item",
+        "fault": "first_read_503"
+      },
+      "expected": {
+        "checks": [
+          "eventual exact content",
+          "retry safe and bounded",
+          "failure recovery accurate"
+        ]
+      },
+      "adapter_status": "not_implemented",
+      "evaluation_status": "not_run"
+    },
+    {
+      "id": "note-held-01",
+      "section": "note",
+      "prompt": "Change the fixture note’s title by its exact ID and leave its body untouched.",
+      "fixture": {
+        "kind": "synthetic",
+        "visibility": "self_only",
+        "version": 1,
+        "id": "note_fixture",
+        "title": "Before",
+        "body": "Keep **this**\n",
+        "new_title": "After"
+      },
+      "expected": {
+        "checks": [
+          "title changed exactly",
+          "body untouched",
+          "no other note changes"
+        ]
+      },
+      "adapter_status": "not_implemented",
+      "evaluation_status": "not_run"
+    },
+    {
+      "id": "okr-held-01",
+      "section": "okr",
+      "prompt": "Locate a fixture objective across paginated results without changing progress or assignments.",
+      "fixture": {
+        "kind": "synthetic",
+        "visibility": "self_only",
+        "version": 1,
+        "pages": 2,
+        "target_on_page": 2,
+        "objective": "Internationalization"
+      },
+      "expected": {
+        "checks": [
+          "target identified",
+          "pagination not silently truncated",
+          "assignments unchanged"
+        ]
+      },
+      "adapter_status": "not_implemented",
+      "evaluation_status": "not_run"
+    },
+    {
+      "id": "packaging-held-01",
+      "section": "packaging",
+      "prompt": "Upgrade then uninstall the project-scoped fixture skill while preserving another skill and profiles.",
+      "fixture": {
+        "kind": "synthetic",
+        "visibility": "self_only",
+        "version": 1,
+        "other_skill": "unrelated-skill",
+        "profile": "fixture-profile"
+      },
+      "expected": {
+        "checks": [
+          "upgrade installs requested version",
+          "owned skill removed",
+          "other skill and profile unchanged"
+        ]
+      },
+      "adapter_status": "not_implemented",
+      "evaluation_status": "not_run"
+    },
+    {
+      "id": "sheets-held-01",
+      "section": "sheets",
+      "prompt": "Export the 10000-row synthetic sheet into a file suitable for Base import and verify all rows without putting the full data in the conversation.",
+      "fixture": {
+        "kind": "synthetic",
+        "visibility": "self_only",
+        "version": 1,
+        "generator": {
+          "rows": 10000,
+          "seed": 44,
+          "columns": [
+            "integer",
+            "decimal",
+            "boolean",
+            "empty_string",
+            "unicode",
+            "date"
+          ]
+        }
+      },
+      "expected": {
+        "checks": [
+          "10000 complete rows",
+          "row-wise type and content equality",
+          "source unchanged",
+          "artifact usable by Base adapter"
+        ]
+      },
+      "adapter_status": "not_implemented",
+      "evaluation_status": "not_run"
+    },
+    {
+      "id": "slides-held-01",
+      "section": "slides",
+      "prompt": "Update only the identified slide text element and preserve its placement and adjacent image.",
+      "fixture": {
+        "kind": "synthetic",
+        "visibility": "self_only",
+        "version": 1,
+        "element_id": "text_fixture",
+        "text": "Old",
+        "new_text": "New",
+        "bounds": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "image": "fixture-image"
+      },
+      "expected": {
+        "checks": [
+          "exact element changed",
+          "bounds unchanged",
+          "image unchanged"
+        ]
+      },
+      "adapter_status": "not_implemented",
+      "evaluation_status": "not_run"
+    },
+    {
+      "id": "task-held-01",
+      "section": "task",
+      "prompt": "Set the already complete fixture task to complete again and report the no-op honestly.",
+      "fixture": {
+        "kind": "synthetic",
+        "visibility": "self_only",
+        "version": 1,
+        "id": "task_fixture",
+        "completed": true,
+        "assignees": [
+          "fixture-self"
+        ]
+      },
+      "expected": {
+        "checks": [
+          "state unchanged",
+          "no duplicate task created",
+          "no-op accurately reported"
+        ]
+      },
+      "adapter_status": "not_implemented",
+      "evaluation_status": "not_run"
+    },
+    {
+      "id": "vc-held-01",
+      "section": "vc",
+      "prompt": "List fixture meeting recordings under a bounded page limit and report remaining results.",
+      "fixture": {
+        "kind": "synthetic",
+        "visibility": "self_only",
+        "version": 1,
+        "recordings": [
+          "r1",
+          "r2",
+          "r3"
+        ],
+        "limit": 1
+      },
+      "expected": {
+        "checks": [
+          "one result",
+          "remaining results explicit",
+          "no recording modifications"
+        ]
+      },
+      "adapter_status": "not_implemented",
+      "evaluation_status": "not_run"
+    },
+    {
+      "id": "whiteboard-held-01",
+      "section": "whiteboard",
+      "prompt": "Replace text on node n2 and keep its connector and placement unchanged.",
+      "fixture": {
+        "kind": "synthetic",
+        "visibility": "self_only",
+        "version": 1,
+        "node": {
+          "id": "n2",
+          "text": "Old",
+          "position": [
+            4,
+            5
+          ]
+        },
+        "connector": [
+          "n1",
+          "n2"
+        ],
+        "new_text": "New"
+      },
+      "expected": {
+        "checks": [
+          "only n2 text changed",
+          "position preserved",
+          "connector identity preserved"
+        ]
+      },
+      "adapter_status": "not_implemented",
+      "evaluation_status": "not_run"
+    },
+    {
+      "id": "wiki-held-01",
+      "section": "wiki",
+      "prompt": "Find the exact fixture wiki node among duplicate titles using its ID and preserve its restricted access.",
+      "fixture": {
+        "kind": "synthetic",
+        "visibility": "self_only",
+        "version": 1,
+        "nodes": [
+          {
+            "id": "wiki_a",
+            "title": "Guide"
+          },
+          {
+            "id": "wiki_b",
+            "title": "Guide"
+          }
+        ],
+        "target": "wiki_b"
+      },
+      "expected": {
+        "checks": [
+          "wiki_b selected",
+          "no inferred title match",
+          "access remains self-only"
+        ]
+      },
+      "adapter_status": "not_implemented",
+      "evaluation_status": "not_run"
+    }
+  ]
+}

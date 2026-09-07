@@ -1,0 +1,573 @@
+{
+  "schema_version": 1,
+  "split": "development",
+  "status": "initial_scenarios_require_section_adapter_validation",
+  "tasks": [
+    {
+      "id": "application-dev-01",
+      "section": "application",
+      "prompt": "List this synthetic app’s slash commands and identify its enabled command.",
+      "fixture": {
+        "kind": "synthetic",
+        "visibility": "self_only",
+        "version": 1,
+        "commands": [
+          {
+            "name": "status",
+            "enabled": true
+          }
+        ]
+      },
+      "expected": {
+        "checks": [
+          "answer identifies status",
+          "no app changes"
+        ]
+      },
+      "adapter_status": "not_implemented",
+      "evaluation_status": "not_run"
+    },
+    {
+      "id": "apps-dev-01",
+      "section": "apps",
+      "prompt": "Find the fixture Feishu app and report its owner without changes.",
+      "fixture": {
+        "kind": "synthetic",
+        "visibility": "self_only",
+        "version": 1,
+        "apps": [
+          {
+            "id": "app_fixture",
+            "name": "Journal",
+            "owner": "self"
+          }
+        ]
+      },
+      "expected": {
+        "checks": [
+          "correct app ID and owner",
+          "no changes"
+        ]
+      },
+      "adapter_status": "not_implemented",
+      "evaluation_status": "not_run"
+    },
+    {
+      "id": "base-dev-01",
+      "section": "base",
+      "prompt": "Update the fixture Base row’s numeric amount to zero and text to an empty string, preserving its checkbox and attachment.",
+      "fixture": {
+        "kind": "synthetic",
+        "visibility": "self_only",
+        "version": 1,
+        "row": {
+          "amount": 8,
+          "text": "old",
+          "checked": true,
+          "attachment": "fixture-file"
+        }
+      },
+      "expected": {
+        "checks": [
+          "amount remains numeric zero",
+          "text is empty string",
+          "checkbox and attachment unchanged",
+          "one intended row changed"
+        ]
+      },
+      "adapter_status": "not_implemented",
+      "evaluation_status": "not_run"
+    },
+    {
+      "id": "calendar-dev-01",
+      "section": "calendar",
+      "prompt": "Read tomorrow’s fixture events using the explicit fixture timezone, preserving start and end time semantics.",
+      "fixture": {
+        "kind": "synthetic",
+        "visibility": "self_only",
+        "version": 1,
+        "timezone": "Asia/Shanghai",
+        "event": {
+          "title": "Review",
+          "start": "2030-01-02T09:00:00+08:00",
+          "end": "2030-01-02T10:00:00+08:00"
+        }
+      },
+      "expected": {
+        "checks": [
+          "correct event and timezone",
+          "no invitations sent"
+        ]
+      },
+      "adapter_status": "not_implemented",
+      "evaluation_status": "not_run"
+    },
+    {
+      "id": "contact-dev-01",
+      "section": "contact",
+      "prompt": "Resolve a synthetic contact using exact user ID fixture_2 when two people share a display name.",
+      "fixture": {
+        "kind": "synthetic",
+        "visibility": "self_only",
+        "version": 1,
+        "contacts": [
+          {
+            "id": "fixture_1",
+            "name": "Alex"
+          },
+          {
+            "id": "fixture_2",
+            "name": "Alex"
+          }
+        ]
+      },
+      "expected": {
+        "checks": [
+          "returns fixture_2",
+          "does not rely on display name"
+        ]
+      },
+      "adapter_status": "not_implemented",
+      "evaluation_status": "not_run"
+    },
+    {
+      "id": "docs-dev-01",
+      "section": "docs",
+      "prompt": "Change only the fixture document’s exact phrase Old status to New status, preserving its link and bold formatting.",
+      "fixture": {
+        "kind": "synthetic",
+        "visibility": "self_only",
+        "version": 1,
+        "document": {
+          "text": "Old status — 你好",
+          "link": "synthetic://reference",
+          "bold": "status"
+        }
+      },
+      "expected": {
+        "checks": [
+          "phrase replaced once",
+          "Unicode preserved",
+          "native link and bold identity preserved",
+          "unrelated blocks unchanged"
+        ]
+      },
+      "adapter_status": "not_implemented",
+      "evaluation_status": "not_run"
+    },
+    {
+      "id": "drive-dev-01",
+      "section": "drive",
+      "prompt": "Download the synthetic binary file into the workspace and report its path and checksum.",
+      "fixture": {
+        "kind": "synthetic",
+        "visibility": "self_only",
+        "version": 1,
+        "file": {
+          "generator": "byte_sequence_mod_251",
+          "size": 1048576
+        }
+      },
+      "expected": {
+        "checks": [
+          "file byte-for-byte matches fixture",
+          "checksum correct",
+          "no binary content dumped into answer"
+        ]
+      },
+      "adapter_status": "not_implemented",
+      "evaluation_status": "not_run"
+    },
+    {
+      "id": "events-dev-01",
+      "section": "events",
+      "prompt": "Consume two fixture events and stop cleanly after the second while preserving event IDs.",
+      "fixture": {
+        "kind": "synthetic",
+        "visibility": "self_only",
+        "version": 1,
+        "events": [
+          {
+            "id": "e1",
+            "text": "你好"
+          },
+          {
+            "id": "e2",
+            "text": ""
+          }
+        ]
+      },
+      "expected": {
+        "checks": [
+          "two events decoded",
+          "Unicode and empty values preserved",
+          "process terminates cleanly"
+        ]
+      },
+      "adapter_status": "not_implemented",
+      "evaluation_status": "not_run"
+    },
+    {
+      "id": "extensions-dev-01",
+      "section": "extensions",
+      "prompt": "Run the fixture host integration command with isolated config and capture its structured result.",
+      "fixture": {
+        "kind": "synthetic",
+        "visibility": "self_only",
+        "version": 1,
+        "host": "synthetic-extension-host",
+        "result": {
+          "value": 0
+        }
+      },
+      "expected": {
+        "checks": [
+          "public host contract respected",
+          "structured zero preserved",
+          "no developer config accessed"
+        ]
+      },
+      "adapter_status": "not_implemented",
+      "evaluation_status": "not_run"
+    },
+    {
+      "id": "foundation-dev-01",
+      "section": "foundation",
+      "prompt": "Inspect the fixture CLI identity and available document operations without exposing credentials.",
+      "fixture": {
+        "kind": "synthetic",
+        "visibility": "self_only",
+        "version": 1,
+        "profile": "synthetic-self",
+        "tenant": "synthetic-tenant",
+        "secrets": "never-provisioned"
+      },
+      "expected": {
+        "checks": [
+          "effective fixture identity accurately reported",
+          "document discovery correct",
+          "no secret values"
+        ]
+      },
+      "adapter_status": "not_implemented",
+      "evaluation_status": "not_run"
+    },
+    {
+      "id": "im-dev-01",
+      "section": "im",
+      "prompt": "Read the fixture self-chat message containing Unicode and an empty rich-text segment.",
+      "fixture": {
+        "kind": "synthetic",
+        "visibility": "self_only",
+        "version": 1,
+        "recipient": "fixture-self",
+        "message": {
+          "text": "你好 👋",
+          "empty_segment": ""
+        }
+      },
+      "expected": {
+        "checks": [
+          "message content exact",
+          "empty segment preserved",
+          "no message sent"
+        ]
+      },
+      "adapter_status": "not_implemented",
+      "evaluation_status": "not_run"
+    },
+    {
+      "id": "mail-dev-01",
+      "section": "mail",
+      "prompt": "List the fixture mailbox’s messages with a two-item bound and state whether more results exist.",
+      "fixture": {
+        "kind": "synthetic",
+        "visibility": "self_only",
+        "version": 1,
+        "messages": [
+          "m1",
+          "m2",
+          "m3"
+        ],
+        "limit": 2
+      },
+      "expected": {
+        "checks": [
+          "two messages returned",
+          "remaining results explicitly signaled",
+          "no mail sent"
+        ]
+      },
+      "adapter_status": "not_implemented",
+      "evaluation_status": "not_run"
+    },
+    {
+      "id": "markdown-dev-01",
+      "section": "markdown",
+      "prompt": "Convert the synthetic markdown fixture with a table, Unicode and an empty cell to the supported document representation.",
+      "fixture": {
+        "kind": "synthetic",
+        "visibility": "self_only",
+        "version": 1,
+        "markdown": "# 你好\n\n| Name | Value |\n| --- | --- |\n| A | |\n"
+      },
+      "expected": {
+        "checks": [
+          "heading and Unicode preserved",
+          "table structure and empty cell preserved",
+          "unsupported conversions reported"
+        ]
+      },
+      "adapter_status": "not_implemented",
+      "evaluation_status": "not_run"
+    },
+    {
+      "id": "minutes-dev-01",
+      "section": "minutes",
+      "prompt": "Read the fixture meeting transcript and extract the exact sentence spoken at 00:10.",
+      "fixture": {
+        "kind": "synthetic",
+        "visibility": "self_only",
+        "version": 1,
+        "transcript": [
+          {
+            "time": "00:10",
+            "text": "Ship the résumé update."
+          }
+        ]
+      },
+      "expected": {
+        "checks": [
+          "exact requested sentence",
+          "correct timestamp",
+          "no changes"
+        ]
+      },
+      "adapter_status": "not_implemented",
+      "evaluation_status": "not_run"
+    },
+    {
+      "id": "note-dev-01",
+      "section": "note",
+      "prompt": "Read the fixture note and preserve its checklist state and Unicode title in the answer.",
+      "fixture": {
+        "kind": "synthetic",
+        "visibility": "self_only",
+        "version": 1,
+        "title": "旅行",
+        "checklist": [
+          {
+            "text": "Book",
+            "done": false
+          }
+        ]
+      },
+      "expected": {
+        "checks": [
+          "Unicode title exact",
+          "unchecked item remains unchecked",
+          "no changes"
+        ]
+      },
+      "adapter_status": "not_implemented",
+      "evaluation_status": "not_run"
+    },
+    {
+      "id": "okr-dev-01",
+      "section": "okr",
+      "prompt": "Read the fixture objective and report the two key-result progress values as numbers.",
+      "fixture": {
+        "kind": "synthetic",
+        "visibility": "self_only",
+        "version": 1,
+        "objective": "Quality",
+        "key_results": [
+          {
+            "progress": 0
+          },
+          {
+            "progress": 75
+          }
+        ]
+      },
+      "expected": {
+        "checks": [
+          "both progress values accurate",
+          "zero not omitted",
+          "no updates"
+        ]
+      },
+      "adapter_status": "not_implemented",
+      "evaluation_status": "not_run"
+    },
+    {
+      "id": "packaging-dev-01",
+      "section": "packaging",
+      "prompt": "Install the skill into an isolated project and verify unrelated project files remain unchanged.",
+      "fixture": {
+        "kind": "synthetic",
+        "visibility": "self_only",
+        "version": 1,
+        "unrelated": {
+          "README.md": "keep me"
+        },
+        "installation": "project_scoped"
+      },
+      "expected": {
+        "checks": [
+          "skill discoverable",
+          "unrelated files byte-identical",
+          "no user-home writes"
+        ]
+      },
+      "adapter_status": "not_implemented",
+      "evaluation_status": "not_run"
+    },
+    {
+      "id": "sheets-dev-01",
+      "section": "sheets",
+      "prompt": "Read the fixture sheet into a local artifact preserving numeric zero, false, empty text, Unicode and formulas.",
+      "fixture": {
+        "kind": "synthetic",
+        "visibility": "self_only",
+        "version": 1,
+        "rows": [
+          [
+            0,
+            false,
+            "",
+            "你好",
+            "=A1+1"
+          ]
+        ]
+      },
+      "expected": {
+        "checks": [
+          "typed values exact",
+          "formula preserved",
+          "artifact exists",
+          "source unchanged"
+        ]
+      },
+      "adapter_status": "not_implemented",
+      "evaluation_status": "not_run"
+    },
+    {
+      "id": "slides-dev-01",
+      "section": "slides",
+      "prompt": "Read the fixture slide and identify its text while preserving the source deck.",
+      "fixture": {
+        "kind": "synthetic",
+        "visibility": "self_only",
+        "version": 1,
+        "slide": {
+          "text": "Launch 你好",
+          "image": "fixture-image"
+        }
+      },
+      "expected": {
+        "checks": [
+          "correct text",
+          "no changes to text or image"
+        ]
+      },
+      "adapter_status": "not_implemented",
+      "evaluation_status": "not_run"
+    },
+    {
+      "id": "task-dev-01",
+      "section": "task",
+      "prompt": "Complete the private fixture task by exact ID and verify its completion while leaving assignments unchanged.",
+      "fixture": {
+        "kind": "synthetic",
+        "visibility": "self_only",
+        "version": 1,
+        "id": "task_fixture",
+        "completed": false,
+        "assignees": [
+          "fixture-self"
+        ]
+      },
+      "expected": {
+        "checks": [
+          "task completed",
+          "only intended task changed",
+          "no new assignees or notifications to others"
+        ]
+      },
+      "adapter_status": "not_implemented",
+      "evaluation_status": "not_run"
+    },
+    {
+      "id": "vc-dev-01",
+      "section": "vc",
+      "prompt": "Read the fixture meeting record and identify its exact meeting ID and duration.",
+      "fixture": {
+        "kind": "synthetic",
+        "visibility": "self_only",
+        "version": 1,
+        "id": "meeting_fixture",
+        "duration_seconds": 90
+      },
+      "expected": {
+        "checks": [
+          "correct ID",
+          "correct duration",
+          "no invitations or changes"
+        ]
+      },
+      "adapter_status": "not_implemented",
+      "evaluation_status": "not_run"
+    },
+    {
+      "id": "whiteboard-dev-01",
+      "section": "whiteboard",
+      "prompt": "Read the fixture whiteboard’s two text nodes and preserve their native IDs.",
+      "fixture": {
+        "kind": "synthetic",
+        "visibility": "self_only",
+        "version": 1,
+        "nodes": [
+          {
+            "id": "n1",
+            "text": "你好"
+          },
+          {
+            "id": "n2",
+            "text": ""
+          }
+        ]
+      },
+      "expected": {
+        "checks": [
+          "both node IDs correct",
+          "Unicode and empty text preserved"
+        ]
+      },
+      "adapter_status": "not_implemented",
+      "evaluation_status": "not_run"
+    },
+    {
+      "id": "wiki-dev-01",
+      "section": "wiki",
+      "prompt": "Resolve the fixture wiki node to its underlying document identity and read the document.",
+      "fixture": {
+        "kind": "synthetic",
+        "visibility": "self_only",
+        "version": 1,
+        "node_id": "wiki_fixture",
+        "document_id": "doc_fixture",
+        "text": "Knowledge 你好"
+      },
+      "expected": {
+        "checks": [
+          "correct document identity",
+          "text exact",
+          "no permission changes"
+        ]
+      },
+      "adapter_status": "not_implemented",
+      "evaluation_status": "not_run"
+    }
+  ]
+}

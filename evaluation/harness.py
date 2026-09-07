@@ -1,0 +1,246 @@
+#!/usr/bin/env python3
+"""Balanced CLI agent evaluation. Python standard library only."""
+
+import argparse
+import hashlib
+import json
+import os
+from pathlib import Path
+import random
+import statistics
+import subprocess
+import sys
+import tempfile
+import time
+
+
+ARMS = ("official", "official_concise", "next")
+
+
+def read_json(path):
+    return json.loads(Path(path).read_text(encoding="utf-8"))
+
+
+def digest(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def tasks_from(path, allow_held_out=False):
+    manifest = read_json(path)
+    if manifest.get("split") not in ("development", "held_out", "controlled"):
+        raise ValueError("invalid task split")
+    if manifest["split"] == "held_out" and not allow_held_out:
+        raise ValueError("held-out tasks require --release-held-out; do not use during tuning")
+    tasks = manifest["tasks"]
+    if not tasks or len({task["id"] for task in tasks}) != len(tasks):
+        raise ValueError("tasks must be nonempty with unique IDs")
+    for task in tasks:
+        for field in ("id", "section", "prompt", "fixture", "expected"):
+            if field not in task:
+                raise ValueError("task missing " + field)
+        if not isinstance(task["id"], str) or not task["id"].replace("-", "").replace("_", "").isalnum():
+            raise ValueError("task ID must contain only letters, digits, underscores or hyphens")
+    return manifest
+
+
+def schedule(tasks, repeats, seed):
+    if repeats < 2:
+        raise ValueError("at least two independent trials per task and arm are required")
+    runs = [(task, trial, arm) for task in tasks for trial in range(repeats) for arm in ARMS]
+    random.Random(seed).shuffle(runs)
+    return runs
+
+
+def token_usage(payload):
+    """Input includes cached tokens, which are also reported separately."""
+    if payload.get("accounting_complete") is not True:
+        raise ValueError("complete provider usage is required, including errors/recovery")
+    turns = payload.get("turns")
+    if not isinstance(turns, list) or not turns:
+        raise ValueError("per-turn model usage required")
+    total = {"input_tokens": 0, "cached_input_tokens": 0, "output_tokens": 0}
+    for turn in turns:
+        for key in total:
+            value = turn.get(key)
+            if type(value) is not int or value < 0:
+                raise ValueError("token counts must be nonnegative integers")
+            total[key] += value
+        if turn["cached_input_tokens"] > turn["input_tokens"]:
+            raise ValueError("cached input must be included in input_tokens")
+    total["total_tokens"] = total["input_tokens"] + total["output_tokens"]
+    return total
+
+
+def process(command, request, workspace, timeout):
+    # No inherited profiles, tokens, tenant variables, proxy settings, or Python paths.
+    env = {"PATH": os.defpath, "HOME": str(workspace), "TMPDIR": str(workspace),
+           "LANG": "C.UTF-8", "LC_ALL": "C.UTF-8"}
+    started = time.monotonic()
+    try:
+        completed = subprocess.run(command, input=json.dumps(request), text=True,
+                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                   cwd=workspace, env=env, timeout=timeout, check=False)
+        elapsed = time.monotonic() - started
+        try:
+            payload = json.loads(completed.stdout)
+            if not isinstance(payload, dict):
+                payload = {}
+        except (ValueError, TypeError):
+            payload = {}
+        # Do not persist untrusted stdout/stderr or exception text: they can contain secrets.
+        return payload, completed.returncode, elapsed
+    except subprocess.TimeoutExpired:
+        return {}, "timeout", time.monotonic() - started
+    except OSError:
+        return {}, "launch_failed", time.monotonic() - started
+
+
+def validate_config(config):
+    if not isinstance(config, dict):
+        raise ValueError("config must be an object")
+    for key in ("backend", "model", "tokenizer", "reasoning", "tools", "permissions", "budget", "accounting_method"):
+        if not config.get(key):
+            raise ValueError("pin config field: " + key)
+    if config.get("mode") not in ("controlled", "real"):
+        raise ValueError("mode must be controlled or real")
+    if set(config.get("arms", {})) != set(ARMS):
+        raise ValueError("exactly three comparison arms required")
+    for key in ("runner", "verifier"):
+        command = config.get(key)
+        if not isinstance(command, list) or not command or not all(isinstance(arg, str) for arg in command):
+            raise ValueError(key + " must be a nonempty argv array")
+        if not Path(command[0]).is_absolute():
+            raise ValueError(key + " executable must be absolute")
+    if config["runner"] == config["verifier"]:
+        raise ValueError("verifier must be independent of agent runner")
+    official = config["arms"]["official"]["cli"]
+    if official != config["arms"]["official_concise"]["cli"]:
+        raise ValueError("official arms must use the identical CLI")
+    if type(config.get("timeout_seconds", 120)) not in (int, float) or config.get("timeout_seconds", 120) <= 0:
+        raise ValueError("timeout_seconds must be positive")
+    for arm in config["arms"].values():
+        for key in ("cli", "skill"):
+            if not Path(arm[key]).is_absolute() or not Path(arm[key]).is_file():
+                raise ValueError("each arm requires an absolute existing " + key + " file")
+
+
+def run_one(config, task, trial, arm):
+    with tempfile.TemporaryDirectory(prefix="feishu-eval-") as directory:
+        workspace = Path(directory)
+        (workspace / "fixture.json").write_text(json.dumps(task["fixture"], ensure_ascii=False), encoding="utf-8")
+        request = {"protocol": 1, "task_id": task["id"], "trial": trial, "arm": arm,
+                   "prompt": task["prompt"], "fixture": task["fixture"],
+                   "workspace": directory, "fresh_context": True,
+                   "cli": config["arms"][arm]["cli"], "skill": config["arms"][arm]["skill"],
+                   "settings": {key: config[key] for key in
+                                ("backend", "model", "tokenizer", "reasoning", "tools", "permissions", "budget", "mode")}}
+        payload, code, elapsed = process(config["runner"], request, workspace, config.get("timeout_seconds", 120))
+        categories = []
+        if code != 0:
+            categories.append("runner_failure")
+        try:
+            if payload.get("usage_source") != ("synthetic" if config["mode"] == "controlled" else "provider"):
+                raise ValueError("usage source mismatch")
+            if payload.get("model") != config["model"] or payload.get("tokenizer") != config["tokenizer"]:
+                raise ValueError("usage provenance mismatch")
+            usage = token_usage(payload)
+        except (ValueError, TypeError, AttributeError):
+            usage = None
+            categories.append("usage_unavailable")
+        # Expected outcomes are never sent to the runner. Check actual fixture/backend effects.
+        verification, verify_code, verify_elapsed = process(config["verifier"], {
+            "protocol": 1, "workspace": directory, "task_id": task["id"],
+            "fixture": task["fixture"], "expected": task["expected"],
+            "backend": config["backend"], "claimed_success": payload.get("claimed_success")},
+            workspace, config.get("timeout_seconds", 120))
+        verified = verify_code == 0 and verification.get("success") is True
+        if not verified:
+            categories.append("outcome_failure" if verify_code == 0 else "verifier_failure")
+        misleading = payload.get("claimed_success") is True and not verified
+        if misleading:
+            categories.append("misleading_success_claim")
+        # Whitelist numeric measurements only; raw content and free-form traces stay out of evidence.
+        metrics = {}
+        for key in ("api_calls", "retries"):
+            value = payload.get(key)
+            metrics[key] = value if type(value) is int and value >= 0 else None
+        return {"task_id": task["id"], "section": task["section"], "trial": trial, "arm": arm,
+                "success": verified and code == 0, "usage": usage, "categories": categories,
+                "runner_exit": code, "verifier_exit": verify_code,
+                "latency_seconds": elapsed, "verification_seconds": verify_elapsed, **metrics}
+
+
+def aggregate(runs):
+    groups = {}
+    for scope in ("all", "section", "task_id"):
+        for run in runs:
+            key = (scope, "all" if scope == "all" else run[scope], run["arm"])
+            groups.setdefault(key, []).append(run)
+    rows = []
+    for (scope, name, arm), values in sorted(groups.items()):
+        successes = sum(run["success"] for run in values)
+        tokens = [run["usage"]["total_tokens"] for run in values if run["usage"] is not None]
+        complete = len(tokens) == len(values)
+        rows.append({"scope": scope, "name": name, "arm": arm, "attempts": len(values),
+                     "successes": successes, "success_rate": successes / len(values),
+                     "usage_complete": complete, "known_total_tokens": sum(tokens),
+                     "tokens_per_success": sum(tokens) / successes if complete and successes else None,
+                     "token_distribution": {"min": min(tokens), "median": statistics.median(tokens),
+                                            "max": max(tokens), "stdev": statistics.stdev(tokens) if len(tokens) > 1 else 0} if tokens else None,
+                     "latency_median_seconds": statistics.median(run["latency_seconds"] for run in values),
+                     "api_calls": sum(run["api_calls"] for run in values) if all(run["api_calls"] is not None for run in values) else None,
+                     "retries": sum(run["retries"] for run in values) if all(run["retries"] is not None for run in values) else None,
+                     "failure_categories": {category: sum(category in run["categories"] for run in values)
+                                            for category in sorted({category for run in values for category in run["categories"]})}})
+    matched = []
+    indexed = {(run["task_id"], run["trial"], run["arm"]): run for run in runs}
+    for baseline in ARMS[:2]:
+        pairs = []
+        for run in runs:
+            other = indexed.get((run["task_id"], run["trial"], baseline))
+            if run["arm"] == "next" and other and run["success"] and other["success"] and run["usage"] and other["usage"]:
+                pairs.append({"task_id": run["task_id"], "trial": run["trial"],
+                              "baseline_tokens": other["usage"]["total_tokens"], "next_tokens": run["usage"]["total_tokens"]})
+        matched.append({"baseline": baseline, "pairs": pairs})
+    return {"groups": rows, "matched_success": matched}
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--tasks", type=Path, required=True)
+    parser.add_argument("--config", type=Path, required=True)
+    parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--repeats", type=int, default=3)
+    parser.add_argument("--seed", type=int, default=20260907)
+    parser.add_argument("--release-held-out", action="store_true")
+    parser.add_argument("--section", action="append", help="Evaluate only this inventory section; may repeat")
+    args = parser.parse_args()
+    try:
+        manifest = tasks_from(args.tasks, args.release_held_out)
+        config = read_json(args.config)
+        validate_config(config)
+        selected = [task for task in manifest["tasks"] if not args.section or task["section"] in args.section]
+        if not selected or args.section and set(args.section) - {task["section"] for task in selected}:
+            raise ValueError("unknown or empty section selection")
+        planned = schedule(selected, args.repeats, args.seed)
+        runs = [run_one(config, *run) for run in planned]
+        evidence = {"protocol": 1, "mode": config["mode"], "split": manifest["split"],
+                    "performance_claims_supported": config["mode"] == "real" and all(run["usage"] for run in runs),
+                    "seed": args.seed, "repeats": args.repeats, "fresh_context": True,
+                    "task_manifest_sha256": digest(args.tasks), "config_sha256": digest(args.config),
+                    "environment": {key: config[key] for key in ("backend", "model", "tokenizer", "reasoning", "tools", "permissions", "budget", "accounting_method")},
+                    "arms": {arm: {key + "_sha256": digest(config["arms"][arm][key]) for key in ("cli", "skill")} for arm in ARMS},
+                    "runs": runs, **aggregate(runs)}
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(json.dumps(evidence, indent=2) + "\n", encoding="utf-8")
+        print(json.dumps({"status": "pass" if all(run["success"] and run["usage"] for run in runs) else "fail",
+                          "mode": config["mode"], "runs": len(runs), "output": str(args.output)}))
+        return 0 if all(run["success"] and run["usage"] for run in runs) else 1
+    except (OSError, ValueError, KeyError, TypeError, AttributeError):
+        # Avoid echoing untrusted config/credentials in parse errors.
+        print(json.dumps({"status": "error", "category": "invalid_configuration_or_manifest"}), file=sys.stderr)
+        return 2
+
+
+if __name__ == "__main__":
+    sys.exit(main())
