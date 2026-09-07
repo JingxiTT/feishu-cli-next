@@ -18,6 +18,41 @@ import (
 func classifyKnownResponse(r *Receipt, req *http.Request, data json.RawMessage) bool {
 	unknown := func(evidence string) bool { r.Outcome, r.Evidence = Unknown, evidence; return true }
 	applied := func(evidence string) bool { r.Outcome, r.Evidence = Applied, evidence; return true }
+	if requestMatches(req, "POST", "/open-apis/slides_ai/v1/xml_presentations/{presentation}/history/revert") || requestMatches(req, "POST", "/open-apis/drive/v1/import_tasks") {
+		return unknown("async_task_requires_reconciliation")
+	}
+	if requestMatches(req, "POST", "/open-apis/sheet_ai/v2/spreadsheets/{spreadsheet}/tools/invoke_write") {
+		var request struct {
+			ToolName string `json:"tool_name"`
+		}
+		var result struct {
+			Output string `json:"output"`
+		}
+		if !decodeRequestEvidence(req, &request) || request.ToolName == "" || json.Unmarshal(data, &result) != nil || strings.TrimSpace(result.Output) == "" || !json.Valid([]byte(result.Output)) {
+			return unknown("sheets_tool_output_unverifiable")
+		}
+		// Batch tool output is nested inside a JSON string. Envelope success cannot
+		// prove every operation completed; domain-specific item reconciliation is
+		// required before replay, even when a partial results array looks successful.
+		if (request.ToolName == "batch_update" || request.ToolName == "history_revert") || hasItemFailure([]byte(result.Output)) {
+			return unknown("sheets_tool_items_require_reconciliation")
+		}
+		var object map[string]json.RawMessage
+		var array []json.RawMessage
+		if (json.Unmarshal([]byte(result.Output), &object) != nil || len(object) == 0) && (json.Unmarshal([]byte(result.Output), &array) != nil || len(array) == 0) {
+			return unknown("sheets_tool_output_unverifiable")
+		}
+		return applied("sheets_tool_response_decoded")
+	}
+	if requestMatches(req, "POST", "/open-apis/base/v3/bases/{base}/tables/{table}/records") || requestMatches(req, "PATCH", "/open-apis/base/v3/bases/{base}/tables/{table}/records/{record}") {
+		var result struct {
+			Ignored []json.RawMessage `json:"ignored_fields"`
+		}
+		if json.Unmarshal(data, &result) != nil || len(result.Ignored) > 0 {
+			return unknown("base_record_fields_ignored")
+		}
+		return false
+	}
 	if requestMatches(req, "POST", "/open-apis/docs_ai/v1/documents/{document}/history/revert") {
 		return unknown("docs_history_requires_reconciliation")
 	}
@@ -42,25 +77,40 @@ func classifyKnownResponse(r *Receipt, req *http.Request, data json.RawMessage) 
 	}
 	if isIMRecipientMutation(req) {
 		var result struct {
-			InvalidUsers    []json.RawMessage `json:"invalid_user_id_list"`
-			InvalidIDs      []json.RawMessage `json:"invalid_id_list"`
-			NotExisted      []json.RawMessage `json:"not_existed_id_list"`
-			PendingApproval []json.RawMessage `json:"pending_approval_id_list"`
-			Invalid         []json.RawMessage `json:"invalid_ids"`
-			Results         []struct {
-				Result string `json:"result"`
-			} `json:"results"`
+			InvalidUsers    *[]json.RawMessage `json:"invalid_user_id_list"`
+			InvalidIDs      *[]json.RawMessage `json:"invalid_id_list"`
+			NotExisted      *[]json.RawMessage `json:"not_existed_id_list"`
+			PendingApproval *[]json.RawMessage `json:"pending_approval_id_list"`
+			Invalid         *[]json.RawMessage `json:"invalid_ids"`
 		}
-		if json.Unmarshal(data, &result) != nil || len(result.InvalidUsers)+len(result.InvalidIDs)+len(result.NotExisted)+len(result.PendingApproval)+len(result.Invalid) > 0 {
+		if json.Unmarshal(data, &result) != nil {
 			return unknown("im_recipient_outcomes_incomplete")
 		}
-		for _, item := range result.Results {
-			if item.Result != "success" {
+		for _, items := range []*[]json.RawMessage{result.InvalidUsers, result.InvalidIDs, result.NotExisted, result.PendingApproval, result.Invalid} {
+			if items != nil && len(*items) > 0 {
 				return unknown("im_recipient_outcomes_incomplete")
 			}
 		}
+		// Failure arrays imply success for recipients outside those arrays. They
+		// must actually be present; an empty data object proves nothing. Explicit
+		// per-member result lists instead need request/result reconciliation.
+		present := false
+		switch {
+		case requestMatches(req, "PATCH", "/open-apis/im/v1/messages/{message}/urgent_app"), requestMatches(req, "PATCH", "/open-apis/im/v1/messages/{message}/urgent_phone"), requestMatches(req, "PATCH", "/open-apis/im/v1/messages/{message}/urgent_sms"):
+			present = result.InvalidUsers != nil
+		case requestMatches(req, "POST", "/open-apis/im/v1/chats/{chat}/members"):
+			present = result.InvalidIDs != nil || result.NotExisted != nil || result.PendingApproval != nil
+		case requestMatches(req, "DELETE", "/open-apis/im/v1/chats/{chat}/members"):
+			present = result.InvalidIDs != nil
+		case requestMatches(req, "POST", "/open-apis/im/v1/chats/{chat}/chat_user_setting/batch_update"):
+			present = result.Invalid != nil
+		}
+		if !present {
+			return unknown("im_recipient_outcomes_incomplete")
+		}
 		return applied("im_recipient_response_complete")
 	}
+
 	if requestMatches(req, "PUT", "/open-apis/minutes/v1/minutes/{minute}/transcript/word") {
 		if completeWordReplacement(req, data) {
 			return applied("minutes_replacement_counts_complete")
@@ -91,6 +141,13 @@ func classifyKnownResponse(r *Receipt, req *http.Request, data json.RawMessage) 
 		return applied("sql_statement_responses_complete")
 	}
 	if requestMatches(req, "POST", "/open-apis/vc/v1/bots/invite") {
+		var request struct {
+			Type     int `json:"invite_type"`
+			Invitees []struct {
+				ID       string `json:"id"`
+				UserType int    `json:"user_type"`
+			} `json:"invitees"`
+		}
 		var result struct {
 			Failed  *int `json:"failed_count"`
 			Invited *int `json:"invited_count"`
@@ -100,18 +157,28 @@ func classifyKnownResponse(r *Receipt, req *http.Request, data json.RawMessage) 
 				Status int    `json:"status"`
 			} `json:"invite_results"`
 		}
-		if json.Unmarshal(data, &result) != nil || result.Failed == nil || *result.Failed != 0 || result.Invited == nil || *result.Invited <= 0 || *result.Invited != len(result.Results) || result.HasMore {
+		if !decodeRequestEvidence(req, &request) || request.Type != 2 || len(request.Invitees) == 0 || json.Unmarshal(data, &result) != nil || result.Failed == nil || *result.Failed != 0 || result.Invited == nil || *result.Invited != len(request.Invitees) || len(request.Invitees) != len(result.Results) || result.HasMore {
 			return unknown("vc_invitation_results_incomplete")
 		}
-		seen := map[string]bool{}
-		for _, item := range result.Results {
-			if item.ID == "" || item.Status != 1 || seen[item.ID] {
+		remaining := map[string]bool{}
+		for _, item := range request.Invitees {
+			if item.ID == "" || item.UserType != 1 || remaining[item.ID] {
 				return unknown("vc_invitation_results_incomplete")
 			}
-			seen[item.ID] = true
+			remaining[item.ID] = true
+		}
+		for _, item := range result.Results {
+			if !remaining[item.ID] || item.Status != 1 {
+				return unknown("vc_invitation_results_incomplete")
+			}
+			delete(remaining, item.ID)
+		}
+		if len(remaining) > 0 {
+			return unknown("vc_invitation_results_incomplete")
 		}
 		return applied("vc_invitation_results_complete")
 	}
+
 	if requestMatches(req, "POST", "/open-apis/wiki/v2/spaces/{space}/nodes/move_docs_to_wiki") ||
 		requestMatches(req, "POST", "/open-apis/wiki/v2/nodes/{node}/move_wiki_to_docs") ||
 		requestMatches(req, "DELETE", "/open-apis/wiki/v2/spaces/{space}/nodes/{node}") ||

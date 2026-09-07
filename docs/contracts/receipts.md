@@ -72,21 +72,32 @@ not generalize field names to unrelated endpoints.
   stay unknown; there is no verified completed status for the history operation.
 - IM urgency, membership, settings, and join-request handling retain unknown for
   rejected, nonexistent, pending-approval, or failed recipients. Empty failure
-  arrays preserve the normal acknowledgement semantics.
+  arrays preserve the normal acknowledgement semantics. Missing/null outcome
+  arrays do not prove success; explicit join-request result lists remain unknown
+  until request/result coverage is reconciled.
 - Minutes word replacement requires positive numeric counts covering exactly the
   requested source words. Missing, zero, duplicate, or unmatched counts stay unknown.
-- Base v3 batch-create requires one unique nonempty returned record ID per input
+- Base v3 create/update acknowledgements with ignored fields remain unknown.
+  Batch-create requires one unique nonempty returned record ID per input
   row and no ignored fields or unrecognized response extensions. Missing proof
   stays unknown. The SDK request body's bounded `GetBody` copy supplies counts;
   unclonable/oversized bodies stay unknown and are never consumed or persisted.
 - Apps SQL string results must decode to nonempty statement results without an
   ERROR entry. Mixed or malformed results stay unknown; no SQL text is parsed.
-- VC invitations require matching successful recipient statuses/counts with no
-  failed or truncated results. Incomplete evidence stays unknown.
+- VC SELECTED invitations require exact requested-recipient identity/count
+  coverage with successful statuses and no failed/truncated results. Missing or
+  mismatched targets stay unknown. ALL_SUGGESTED has no explicit target set for
+  this comparison and remains unknown until full selection coverage is verified.
 - Wiki move/delete task acknowledgements stay unknown even if a separate status
   read later succeeds; generic receipt reconciliation is not implemented.
 - Slides native replacement's failed-part index/reason stays unknown; advisory
-  issues alone do not turn a successful response into a failure.
+  issues alone do not turn a successful response into a failure. Slides history
+  reverts and Drive import task acknowledgements also remain unknown.
+- Sheets invoke-write decodes its nested output only at the known RPC endpoint.
+  Malformed/empty output or nested failures remain unknown. Batch-update tool
+  responses and history-revert acknowledgements remain unknown until complete
+  per-operation reconciliation
+  exists; other nonempty decoded responses retain acknowledgement semantics.
 
 These are request evidence rules backed by existing domain contracts and
 synthetic regression tests, not live backend or conditional-write verification.
