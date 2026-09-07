@@ -162,6 +162,10 @@ func updateSlideDryRun(_ context.Context, runtime *common.RuntimeContext) *commo
 	presentationID := ref.Token
 	step := 1
 	total := 1 + len(placeholders)
+	checkUnchanged := runtime.Bool("skip-unchanged") && runtime.Int("revision-id") == -1 && runtime.Str("tid") == "" && len(placeholders) == 0
+	if checkUnchanged {
+		total++
+	}
 	if ref.Kind == "wiki" {
 		total++
 	}
@@ -190,9 +194,10 @@ func updateSlideDryRun(_ context.Context, runtime *common.RuntimeContext) *commo
 	if len(placeholders) > 0 {
 		descSuffix = " (img placeholders auto-replaced)"
 	}
-	if runtime.Bool("skip-unchanged") && runtime.Int("revision-id") == -1 && runtime.Str("tid") == "" && len(placeholders) == 0 {
+	if checkUnchanged {
 		dry.GET(fmt.Sprintf("/open-apis/slides_ai/v1/xml_presentations/%s/slide", validate.EncodePathSegment(presentationID))).
-			Params(map[string]interface{}{"slide_id": slideID, "revision_id": -1}).Desc("Read current page; skip replacement only when target and complete content match")
+			Params(map[string]interface{}{"slide_id": slideID, "revision_id": -1}).Desc(fmt.Sprintf("[%d/%d] Read current page; skip replacement only when target and complete content match", step, total))
+		step++
 	}
 	dry.POST(slideReplaceAPIPath(presentationID)).
 		Desc(fmt.Sprintf("[%d/%d] Replace slide%s", step, total, descSuffix)).

@@ -1,14 +1,19 @@
 # Slides CLI E2E Coverage
 
-## Metrics
-- Denominator: 7 leaf commands
-- Covered: 7
-- Coverage: 100%
+## Scope
+
+This inherited table describes seven selected workflow shortcuts, not the complete
+Slides capability inventory. The frozen section has 14 shortcuts (including the
+hidden update alias) and 11 generated endpoint leaves. See
+[the complete section mapping](../../../docs/sections/slides.md) and
+`tests/next_sections/slides/` for the process suite. Live workflow descriptions
+below identify existing test scenarios; they are not evidence that those tests
+were run under the current private-fixture authorization boundary.
 
 ## Summary
 - TestSlides_CreateWorkflowAsUser: proves the user slides workflow through `create presentation with slide as user` and `get created presentation xml as user`; creates a fresh presentation, asserts returned IDs, then reads back the XML content to prove the title and slide body persisted.
 - TestSlidesCreateRepeatedSlideFileDryRunE2E / TestSlidesCreateSlidesFileAndStdinDryRunE2E / TestSlidesCreateRejectsBothSlideFormsDryRunE2E: cover the `+create` file inputs through the built binary, which is the only layer that can prove the point of the feature — a multi-line, quote-heavy page reaches `slide.content` byte-for-byte with no JSON encoder in the caller's hands, and repeated `--slide` order is page order. The refusal case pins the exit-2 envelope (`param: "--slide"`) that an agent parses to repair its own command; the package test never runs the dispatcher and so cannot see it.
-- TestSlidesAddSlideDryRunE2E / TestSlidesDeleteSlideDryRunE2E: pin the request shapes the unit tests cover, but through the real binary, which is the only layer that proves a full `<slide>` XML document survives flag parsing with its quotes and angle brackets intact. Delete additionally proves the shortcut runs without `--yes`, unlike the high-risk-write raw command.
+- TestSlidesAddSlideDryRunE2E / TestSlidesDeleteSlideDryRunE2E: pin the request shapes the unit tests cover, but through the real binary, which is the only layer that proves a full `<slide>` XML document survives flag parsing with its quotes and angle brackets intact. Delete additionally proves the shortcut runs without `--yes`; the frozen generated delete also declares ordinary write risk.
 - TestSlides_SlideAddDeleteWorkflowAsUser: live add/delete round trip on a throwaway presentation created and torn down per run. Asserts against a readback rather than the write's own response, so it proves what the request shape cannot: the returned `slide_id` addresses a real page, `--before-slide-id` positions the page between its neighbours instead of merely being forwarded, and the deleted page is gone while both neighbours survive.
 - TestSlidesUpdateSlideDryRunE2E / TestSlidesUpdateAliasDryRunE2E / TestSlidesUpdateSlideRefuses*DryRunE2E: dry-run coverage for `+update-slide` through the built binary — one request carrying one `block_replace` part whose `block_id` is the PAGE id (the whole design; an element id there would replace one element and leave the rest of the page), the `slide` service alias / `+update` command alias / `--xml` spelling, and the two refusals that must not produce a request (a bare element root, and a root id naming a different page).
 - TestSlidesUpdateSlideLiveE2E: required live-backend assertion for `+update-slide`; creates a throwaway presentation with the lane's bot credential, replaces its page using the returned page id as `block_id`, reads that page back through `+xml-get`, verifies the new marker replaced the old marker without changing `slide_id`, and self-cleans.
