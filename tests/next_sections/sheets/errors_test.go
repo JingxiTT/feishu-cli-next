@@ -157,3 +157,16 @@ func TestBatchMemberFailureInsideSuccessfulEnvelope(t *testing.T) {
 	require.Equal(t, "unknown", p["outcome"])
 	require.Equal(t, 1, calls)
 }
+
+func TestMalformedWriteOutputKeepsUnknownMutation(t *testing.T) {
+	calls := 0
+	f := nextfixture.NewFixture(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		calls++
+		w.Header().Set("Content-Type", "application/json")
+		_ = json.NewEncoder(w).Encode(map[string]any{"code": 0, "data": map[string]any{"output": "malformed"}})
+	}))
+	result := f.Run("sheets", "+cells-set", "--token", "shtFixture", "--sheet-id", "sh1", "--range", "A1", "--cells", `[[{"value":"x"}]]`)
+	require.Equal(t, 22, result.ExitCode, result.Stderr)
+	require.Equal(t, "unknown", errorProblem(t, result.Stderr)["outcome"])
+	require.Equal(t, 1, calls)
+}

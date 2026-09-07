@@ -150,19 +150,35 @@ Process evidence explicitly uses 5,001 rows to force two native read pages, pres
 The executable isolated process command is:
 
 ```sh
-python3 scripts/next_test.py --section sheets --suite e2e
+make build BINARY=.tmp/sheets/feishu-cli-next
+python3 scripts/next_test.py --section sheets --suite all --binary .tmp/sheets/feishu-cli-next --report .tmp/sheets/section-report.json
 ```
 
 The process package also supports direct `go test ./tests/next_sections/sheets` only inside `scripts/next_test.py`'s `isolated_env`; `TestMain` rejects an unisolated developer environment. It builds the real authsidecar CLI against the restored frozen catalog. Synthetic fixtures never forward requests to real Feishu endpoints. Normal production build evidence remains separate from this alternate transport build.
 
-The process suite additionally includes `TestBatchMemberFailureInsideSuccessfulEnvelope`: even when the outer API code is zero, a nested member failure must return exit 22 with an unknown outcome and exactly one backend invocation. **Current blocker:** this regression fails: the CLI returns exit 0 and `confirmed_applied` instead of exit 22 / `unknown`. The shared runtime fix is pending; the failing test is intentionally retained. This is not passing acceptance evidence.
+The process suite includes `TestBatchMemberFailureInsideSuccessfulEnvelope`: even when the outer API code is zero, a nested member failure returns exit 22 with an unknown outcome and exactly one backend invocation. Shared fix `1bcdb68` interprets the known Sheets tool envelope. `batch_update` and asynchronous `history_revert` acknowledgements remain unknown until domain-specific reconciliation establishes completion. Malformed nested write output also remains unknown. Every batch/async case in the process matrix asserts this conservative outcome while preserving the actual request assertions.
 
-Final section unit, reference regression, and process results are recorded by the section owner at the complete section boundary. Initial process development exposed and corrected fixture expectations, and found that POST Sheet-AI reads during mutations were incorrectly journaled as writes; the shared read-only API interface and Sheets caller fix prevent false applied receipts. Those development failures are not claimed as passes.
+The final combined isolated suite passed on 2026-09-07 with the canonical normal build at `1bcdb68` plus the accompanying test assertions. Counts include Go parent and subtest events:
+
+| Suite | Pass | Fail | Explicit skips |
+| --- | ---: | ---: | ---: |
+| `go test -json -count=1 -timeout=10m ./shortcuts/sheets/...` | 1,545 | 0 | 0 |
+| `go test -json -count=1 -timeout=10m ./tests/cli_e2e/sheets -run 'DryRun|Regression'` | 68 | 0 | 0 |
+| `go test -json -count=1 -timeout=10m ./tests/next_sections/sheets` | 277 | 0 | 7 |
+
+The reference selector leaves 14 named live workflows unselected; they are unverified, not passing tests. Full sanitized local logs and selection evidence are in `.tmp/sheets/section-report.json`. Scoped `go vet ./shortcuts/sheets/...`, canonical `make build`, and `go test ./internal/affordance ./cmd/service ./internal/schema` also passed. The coordinator owns whole-repository lint, inventory reconciliation, comparative evaluation and release gates.
+
+Artifact process assertions verify that saved cell matrices are absent from stdout while the reference retains exact row count and completeness. The native unchanged import performs zero writes and creates zero mutation receipts. Earlier fixture failures and the original false batch-success regression are resolved by the final run; no failed attempt is counted as passing evidence.
 
 The selectable `TestLivePrivateSheetsAcceptance` scenarios cover private workbook create/use/cleanup; typed cells/formulas/native transfer; dimensions/ranges; object lifecycles; file import/export; history/changesets; and generated filter/find methods. They are deliberately skipped with an explicit blocker. The harness has not proved private creation visibility for the effective live account and tenant. No live content, permissions, notifications or cleanup runs occur. Ying Wu is the sole authorized other recipient, and no scenario here requires delivery to that person. Existing unrelated resources must remain untouched. Skips do not satisfy live acceptance.
 
 Backend limitations remain material: facade history revert/status availability is not proven by a successful synthetic response; sparse/large reads can be incomplete and native export rejects them; reference APIs do not establish remote concurrency control; rich-field conversion and server rendering need live verification. All supported flag combinations and media transfer paths require their existing unit/reference regressions in addition to this process suite. No efficiency claim is made without the scheduled comparative development evaluation. Live and comparative requirements keep the section open.
 
-## Process development handoff
+## Implementation commits
 
-The isolated full process run exercised 91 shortcut plans, 84 shortcut tool executions, every published frozen JSON flag schema and all eight generated methods. After correcting the workbook-import bot plan's fourth lookup step, its focused rerun passed. Error metadata/no-replay tests, native two-page precision/no-op/truncation tests and generated schema/request tests passed in the preceding full run; the later changed-native-import precision test also passed. Seven live subscenarios were explicitly skipped. The newly added nested batch-member failure regression fails with exit 0 / confirmed-applied and is the known correctness blocker above. A final combined passing section suite is still required after the shared fix. No benchmark or evaluation run was performed.
+- `9777e05`: native cell export/import, exact raw-number boundary, canonical flag metadata, read-only tool requests, focused units and affordance.
+- `e7cfec6`: reported range/row/column validation and static-value no-op correctness with empty formula metadata.
+- `838d8df`, `cfd8f6c`: preserve rich-content identity and reject ambiguous empty structured-content conversions before writes.
+- `afca95d`: complete frozen mapping and executable process coverage. The final accompanying assertions pin conservative batch/async outcomes, malformed-write uncertainty and compact artifact stdout.
+
+No live mutation, recipient delivery, benchmark or agent evaluation was performed by the section owner. The implementation is ready for authorized private-fixture verification and coordinator-scheduled comparative development tasks; those outstanding gates keep the section open.

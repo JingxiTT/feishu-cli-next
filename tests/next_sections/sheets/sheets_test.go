@@ -185,8 +185,15 @@ func TestShortcutRequests(t *testing.T) {
 				wire := api["body"].(map[string]any)
 				require.Equal(t, input, decode(t, wire["input"].(string)))
 				if tc.Execute {
-					out := success(t, f.Run(args...))
-					require.Equal(t, true, out["ok"])
+					result := f.Run(args...)
+					if tc.Tool == "batch_update" || tc.Tool == "history_revert" {
+						require.Equal(t, 22, result.ExitCode, result.Stdout+result.Stderr)
+						out := decode(t, result.Stdout)
+						require.Equal(t, false, out["ok"])
+						require.Equal(t, "unknown", out["mutation"].(map[string]any)["outcome"], "batch and async acknowledgements cannot prove complete application")
+					} else {
+						success(t, result)
+					}
 					mu.Lock()
 					defer mu.Unlock()
 					require.NotEmpty(t, requests)
