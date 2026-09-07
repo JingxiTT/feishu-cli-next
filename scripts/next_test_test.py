@@ -21,14 +21,14 @@ class RunnerTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             parent = dict(os.environ, HOME="/private/developer", TEST_USER_ACCESS_TOKEN="secret",
                           LARKSUITE_CLI_CONFIG_DIR="/private/config", LARKSUITE_CLI_USER_ACCESS_TOKEN="secret",
-                          LARK_CLI_BIN="/private/cli", AWS_SECRET_ACCESS_KEY="secret", PYTHONPATH="/private/modules",
+                          LARK_CLI_BIN="/private/cli", LARKSUITE_CLI_BRAND="lark", AWS_SECRET_ACCESS_KEY="secret", PYTHONPATH="/private/modules",
                           NO_PROXY="*", GOFLAGS="-modfile=/private/go.mod")
             env = next_test.isolated_env(directory, parent, "http://127.0.0.1:1")
             result = next_test.run_command([sys.executable, "-c", "import json,os;print(json.dumps(dict(os.environ)))"], env, 10)
             self.assertEqual(result["exit_code"], 0)
             child = json.loads(result["stdout"])
             for name in ("TEST_USER_ACCESS_TOKEN", "LARKSUITE_CLI_USER_ACCESS_TOKEN", "AWS_SECRET_ACCESS_KEY",
-                         "LARK_CLI_BIN", "PYTHONPATH", "GOFLAGS"):
+                         "LARK_CLI_BIN", "LARKSUITE_CLI_BRAND", "PYTHONPATH", "GOFLAGS"):
                 self.assertNotIn(name, child)
             for name in ("HOME", "XDG_CONFIG_HOME", "XDG_STATE_HOME", "LARKSUITE_CLI_CONFIG_DIR"):
                 self.assertTrue(Path(child[name]).is_relative_to(directory))
@@ -116,6 +116,16 @@ urllib.request.urlopen('http://must-not-resolve.invalid',timeout=0.2)
         self.assertTrue(all("DryRun" in item["test"] or "Regression" in item["test"]
                             for item in selection["selected_tests"]))
         self.assertTrue(any("Workflow" in item["test"] for item in selection["excluded_tests"]))
+
+
+    @unittest.skipUnless(os.name == "posix", "Unix socket path limits apply on POSIX")
+    def test_default_temp_root_keeps_unix_socket_paths_short(self):
+        source = "import os,socket; sock=socket.socket(socket.AF_UNIX); sock.bind(os.path.join(os.environ['TMPDIR'], 's' * 60)); sock.close()"
+        command = [sys.executable, "-c", source]
+        with tempfile.TemporaryDirectory() as directory:
+            with patch.object(next_test, "commands_for", return_value=[command]), contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+                code = next_test.main(["--suite", "unit", "--report", str(Path(directory) / "report.json")])
+        self.assertEqual(code, 0)
 
 
 

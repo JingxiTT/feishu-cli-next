@@ -54,7 +54,7 @@ def isolated_env(directory, parent, proxy):
                 "LARKSUITE_CLI_REMOTE_META": "off",
                 "LARKSUITE_CLI_NO_UPDATE_NOTIFIER": "1",
                 "LARKSUITE_CLI_NO_SKILLS_NOTIFIER": "1",
-                "LARKSUITE_CLI_BRAND": "feishu", "CI": "1",
+                "CI": "1",
                 "PYTHONNOUSERSITE": "1", "PYTHONDONTWRITEBYTECODE": "1",
                 "GIT_CONFIG_NOSYSTEM": "1", "GIT_TERMINAL_PROMPT": "0"})
     for name in ("HTTP_PROXY", "HTTPS_PROXY", "ALL_PROXY", "http_proxy", "https_proxy", "all_proxy"):
@@ -176,7 +176,7 @@ def main(argv=None):
     else:
         # Reserve a local port without listening: proxy connections fail, and a
         # concurrently launched service cannot claim this port during the run.
-        with tempfile.TemporaryDirectory(prefix="next-tests-") as directory, socket.socket() as dead_proxy:
+        with tempfile.TemporaryDirectory(prefix="next-tests-", dir="/tmp" if os.name == "posix" else None) as directory, socket.socket() as dead_proxy:
             dead_proxy.bind(("127.0.0.1", 0))
             proxy = "http://127.0.0.1:" + str(dead_proxy.getsockname()[1])
             env = isolated_env(directory, os.environ, proxy)
