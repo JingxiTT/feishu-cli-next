@@ -181,6 +181,39 @@ urllib.request.urlopen('http://must-not-resolve.invalid',timeout=0.2)
             self.assertEqual(report["commands"][0]["exit_code"], 9)
             self.assertFalse(Path(child_state.read_text()).exists())
 
+    def test_environment_cleanup_failure_keeps_completed_command_evidence(self):
+        original_directory = tempfile.TemporaryDirectory
+        original_run = next_test.run_command
+        class CleanupFailure(original_directory):
+            def __exit__(self, *args):
+                super().__exit__(*args)
+                raise PermissionError("synthetic teardown error in " + self.name)
+        cases = [("print('completed')", 0, "pass", 1),
+                 ("import sys;print('completed');sys.exit(7)", 7, "fail", 7),
+                 ("import time;print('started',flush=True);time.sleep(1)", 124, "timeout", 124)]
+        with original_directory() as directory:
+            for source, child_code, child_status, expected_code in cases:
+                with self.subTest(child_status=child_status):
+                    report_path = Path(directory) / (child_status + ".json")
+                    command = [sys.executable, "-c", source]
+                    def bounded_run(command, env, _timeout):
+                        return original_run(command, env, 0.1)
+                    with patch.object(tempfile, "TemporaryDirectory", CleanupFailure), patch.object(next_test, "commands_for", return_value=[command]), patch.object(next_test, "run_command", side_effect=bounded_run), contextlib.redirect_stdout(io.StringIO()) as output, contextlib.redirect_stderr(io.StringIO()):
+                        code = next_test.main(["--suite", "unit", "--report", str(report_path)])
+                    report = json.loads(report_path.read_text(encoding="utf-8"))
+                    self.assertEqual(code, expected_code)
+                    self.assertEqual(json.loads(output.getvalue())["exit_code"], expected_code)
+                    self.assertEqual(report["status"], "fail")
+                    self.assertEqual(report["commands"][0]["exit_code"], child_code)
+                    self.assertEqual(report["commands"][0]["status"], child_status)
+                    self.assertTrue(report["commands"][0]["stdout"])
+                    self.assertEqual(report["cleanup_errors"], ["isolated environment teardown failed: synthetic teardown error in <isolated-state>"])
+
+    def test_setup_oserror_is_not_mislabeled_as_cleanup(self):
+        with tempfile.TemporaryDirectory() as directory:
+            with patch.object(next_test, "commands_for", side_effect=PermissionError("synthetic setup error")), self.assertRaisesRegex(PermissionError, "synthetic setup error"):
+                next_test.main(["--suite", "unit", "--report", str(Path(directory) / "report.json")])
+
     def test_live_is_blocked_even_if_opted_in(self):
         with tempfile.TemporaryDirectory() as directory:
             report_path = Path(directory) / "report.json"

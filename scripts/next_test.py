@@ -256,30 +256,39 @@ def main(argv=None):
     else:
         # Reserve a local port without listening: proxy connections fail, and a
         # concurrently launched service cannot claim this port during the run.
-        with tempfile.TemporaryDirectory(prefix="next-tests-", dir="/tmp" if os.name == "posix" else None) as directory, socket.socket() as dead_proxy:
-            dead_proxy.bind(("127.0.0.1", 0))
-            proxy = "http://127.0.0.1:" + str(dead_proxy.getsockname()[1])
-            env = isolated_env(directory, os.environ, proxy)
-            env["LARK_CLI_BIN"] = str(args.binary.resolve())
-            if args.harness:
-                folder, pattern = ("tests/next_evaluation", "test_*.py") if args.harness == "evaluation" else ("scripts", "next_*test.py")
-                commands = [[sys.executable, "-m", "unittest", "discover", "-s", folder, "-p", pattern, "-v"]]
-            elif args.integration:
-                selected = report["section_suites"][0]
-                commands = [["go", "test", "-json", "-count=1", "-timeout=10m", selected["package"]]] if selected["status"] == "present" else []
-            else:
-                commands = commands_for(args.section, args.suite)
-            for command in commands:
-                result = run_command(command, env, args.timeout)
-                result["selection"] = selection_evidence(command)
-                for stream in ("stdout", "stderr"):
-                    result[stream] = result[stream].replace(directory, "<isolated-state>")
-                report["commands"].append(result)
-                print("{}: {}".format(result["status"], " ".join(command)), file=sys.stderr)
-                if result["exit_code"]:
-                    report["status"] = "fail"
-                    code = result["exit_code"] if result["exit_code"] > 0 else 128 - result["exit_code"]
-                    break
+        teardown_started = False
+        try:
+            with tempfile.TemporaryDirectory(prefix="next-tests-", dir="/tmp" if os.name == "posix" else None) as directory, socket.socket() as dead_proxy:
+                dead_proxy.bind(("127.0.0.1", 0))
+                proxy = "http://127.0.0.1:" + str(dead_proxy.getsockname()[1])
+                env = isolated_env(directory, os.environ, proxy)
+                env["LARK_CLI_BIN"] = str(args.binary.resolve())
+                if args.harness:
+                    folder, pattern = ("tests/next_evaluation", "test_*.py") if args.harness == "evaluation" else ("scripts", "next_*test.py")
+                    commands = [[sys.executable, "-m", "unittest", "discover", "-s", folder, "-p", pattern, "-v"]]
+                elif args.integration:
+                    selected = report["section_suites"][0]
+                    commands = [["go", "test", "-json", "-count=1", "-timeout=10m", selected["package"]]] if selected["status"] == "present" else []
+                else:
+                    commands = commands_for(args.section, args.suite)
+                for command in commands:
+                    result = run_command(command, env, args.timeout)
+                    result["selection"] = selection_evidence(command)
+                    for stream in ("stdout", "stderr"):
+                        result[stream] = result[stream].replace(directory, "<isolated-state>")
+                    report["commands"].append(result)
+                    print("{}: {}".format(result["status"], " ".join(command)), file=sys.stderr)
+                    if result["exit_code"]:
+                        report["status"] = "fail"
+                        code = result["exit_code"] if result["exit_code"] > 0 else 128 - result["exit_code"]
+                        break
+                teardown_started = True
+        except OSError as error:
+            if not teardown_started:
+                raise
+            report["status"] = "fail"
+            report["cleanup_errors"] = ["isolated environment teardown failed: " + str(error).replace(directory, "<isolated-state>")]
+            code = code or 1
         if report["status"] == "pass" and any(item["status"] == "missing" for item in report.get("section_suites", [])):
             report.update(status="blocked", reason="Missing requested E2E suites remain unverified; inherited regressions are only a subset.")
             code = 2
