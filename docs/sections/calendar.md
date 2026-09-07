@@ -57,14 +57,14 @@ Whole-series updates retain their existing semantics: each exception may have an
 
 The full process suite uses the real authsidecar production CLI, private local config/work state, and an HTTP fixture that never forwards to Feishu. It covers every shortcut, every frozen generic method, successful event lifecycle/readback/cleanup, rich Unicode and precision-preserving attachments, full result artifact identity/tenant binding, all four free/busy views, constrained room/suggestion reads, pagination continuations, three recurring update/delete strategies, inherited following-series attachment/check-in/third-party attendee preservation, ambiguity before writes, scope denial, partial multi-step effects and malformed-response unknown outcomes without replay. Generic method fixtures assert requests and full response preservation; they are not claims about actual backend side effects.
 
-`attendees/batch_delete` remains conservatively unknown (exit 22) even for a successful envelope; the fixture explicitly asserts that result. Without endpoint-specific item evidence the CLI cannot prove all removals. Other synchronous success receipts acknowledge requests, not downstream notification delivery or complete workflow guarantees. Calendar creation retains the reference compensating deletion on attendee failure; it is not an atomic transaction. Crash/cancellation mechanics are shared foundation contracts; Calendar worker cancellation has nearby unit coverage, but abrupt process interruption during Calendar recurrence is not independently injected by this suite.
+`attendees/batch_delete` remains conservatively unknown (exit 22) even for a successful envelope; the fixture explicitly asserts that result. Without endpoint-specific item evidence the CLI cannot prove all removals. Other synchronous success receipts acknowledge requests, not downstream notification delivery or complete workflow guarantees. Calendar creation retains the reference compensating deletion on attendee failure; it is not an atomic transaction. Crash/cancellation mechanics retain the shared foundation contract. `TestCalendarRecurringProcessInterruptionKeepsUnknownReceipt` now kills the real CLI during an exception PATCH in `--apply-to=all`: the backend inspects the durable `unknown` / `dispatch_started` receipt before applying the synthetic effect, never acknowledges the request, and the test cancels the process. The durable receipt remains identical after termination. Independent readback proves the exception changed while the master remains unchanged; exactly one mutation was attempted, with no replay or attendee request. Forced process termination has a nonzero process exit rather than a fabricated final API envelope.
 
 ## Commands and results
 
 Run the complete isolated boundary:
 
 ```bash
-python3 scripts/next_test.py --section calendar --suite all --report .tmp/calendar-section.json
+python3 scripts/next_test.py --section calendar --suite all --report .tmp/calendar-section-interruption.json
 ```
 
 The runner first executes all Calendar units, then the existing deterministic `DryRun|Regression` selector, then the complete new section process package. The new package uses `nextfixture.RunMain(m, "../../..")` and builds the real authsidecar binary. Prerequisites: canonical built CLI for reference regressions, restored frozen catalog, Python 3, cached Go modules/toolchain. The inherited environment is isolated by `scripts/next_test.py`; no real credentials or personal state enter these commands.
@@ -75,9 +75,9 @@ Latest completed boundary:
 | --- | --- | --- |
 | `go test -json -count=1 -timeout=10m ./shortcuts/calendar/...` | PASS | 390 pass, 0 fail, 0 skip |
 | `go test -json -count=1 -timeout=10m ./tests/cli_e2e/calendar -run "DryRun|Regression"` | PASS | 13 pass, 0 fail, 0 skip |
-| `go test -json -count=1 -timeout=10m ./tests/next_sections/calendar` | PASS offline | 76 pass, 0 fail, 1 blocked live skip |
+| `go test -json -count=1 -timeout=10m ./tests/next_sections/calendar` | PASS offline | 77 pass, 0 fail, 1 blocked live skip |
 
-Counts include parent tests and subtests. Sanitized machine-readable command/count evidence is in `calendar-evidence.json`; detailed offline logs remain under `.tmp/calendar-section.json`. An early package build was temporarily blocked by a concurrent Base implementation edit; the final boundary rebuilt and passed. Earlier failing fixture assumptions (pretty error JSON, command-specific `--yes`, conservative batch outcomes) were corrected without weakening product contracts.
+Counts include parent tests and subtests. Sanitized machine-readable command/count evidence is in `calendar-evidence.json`; detailed offline logs remain under `.tmp/calendar-section-interruption.json`. An early package build was temporarily blocked by a concurrent Base implementation edit; the final boundary rebuilt and passed. Earlier failing fixture assumptions (pretty error JSON, command-specific `--yes`, conservative batch outcomes) were corrected without weakening product contracts.
 
 ## Outstanding live and acceptance evidence
 
@@ -89,4 +89,4 @@ Additional focused check: `go vet ./shortcuts/calendar/... ./tests/next_sections
 
 Implementation commits: `56dc52d` (exact observed replacements) and `44ad3a9` (scope validation before uploads).
 
-Changed implementation: `calendar_update.go`, `calendar_get.go`, `calendar_delete.go`; new nearby regression: `calendar_noop_test.go`; process tests: `calendar_e2e_test.go`, `dryrun_e2e_test.go`, `generated_e2e_test.go`, `recurring_e2e_test.go`. No shared contracts, generated metadata, personal resources or held-out workloads were edited.
+Changed implementation: `calendar_update.go`, `calendar_get.go`, `calendar_delete.go`; new nearby regression: `calendar_noop_test.go`; process tests: `calendar_e2e_test.go`, `dryrun_e2e_test.go`, `generated_e2e_test.go`, `recurring_e2e_test.go`, `interruption_e2e_test.go`. No shared contracts, generated metadata, personal resources or held-out workloads were edited.
