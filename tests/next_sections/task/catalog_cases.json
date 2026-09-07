@@ -1,0 +1,1106 @@
+[
+  {
+    "name": "agent/register_agent",
+    "args": [
+      "task",
+      "agent",
+      "register_agent"
+    ],
+    "method": "POST",
+    "path": "/open-apis/task/v2/agent/register_agent",
+    "query": {},
+    "body": null,
+    "confirm": true
+  },
+  {
+    "name": "agent/update_agent_profile",
+    "args": [
+      "task",
+      "agent",
+      "update_agent_profile"
+    ],
+    "method": "POST",
+    "path": "/open-apis/task/v2/agent/update_agent_profile",
+    "query": {},
+    "body": {
+      "profile_content": "synthetic"
+    },
+    "confirm": true
+  },
+  {
+    "name": "agent_task_step_info/append_task_steps",
+    "args": [
+      "task",
+      "agent_task_step_info",
+      "append_task_steps"
+    ],
+    "method": "POST",
+    "path": "/open-apis/task/v2/agent_task_step_info/append_task_steps",
+    "query": {},
+    "body": {
+      "task_guid": "synthetic",
+      "task_steps": [
+        {
+          "content": "synthetic",
+          "timestamp": 1,
+          "quote": "synthetic"
+        }
+      ],
+      "idempotent_key": "synthetic"
+    },
+    "confirm": true
+  },
+  {
+    "name": "custom_field_options/create",
+    "args": [
+      "task",
+      "custom_field_options",
+      "create",
+      "--custom-field-guid",
+      "synthetic-custom_field_guid"
+    ],
+    "method": "POST",
+    "path": "/open-apis/task/v2/custom_fields/synthetic-custom_field_guid/options",
+    "query": {},
+    "body": {
+      "name": "synthetic",
+      "color_index": 0,
+      "insert_before": "synthetic",
+      "insert_after": "synthetic",
+      "is_hidden": false
+    },
+    "confirm": false
+  },
+  {
+    "name": "custom_field_options/patch",
+    "args": [
+      "task",
+      "custom_field_options",
+      "patch",
+      "--custom-field-guid",
+      "synthetic-custom_field_guid",
+      "--option-guid",
+      "synthetic-option_guid"
+    ],
+    "method": "PATCH",
+    "path": "/open-apis/task/v2/custom_fields/synthetic-custom_field_guid/options/synthetic-option_guid",
+    "query": {},
+    "body": {
+      "option": {
+        "color_index": 0,
+        "insert_before": "synthetic",
+        "insert_after": "synthetic",
+        "is_hidden": false,
+        "name": "synthetic"
+      },
+      "update_fields": [
+        "synthetic"
+      ]
+    },
+    "confirm": false
+  },
+  {
+    "name": "custom_fields/add",
+    "args": [
+      "task",
+      "custom_fields",
+      "add",
+      "--custom-field-guid",
+      "synthetic-custom_field_guid"
+    ],
+    "method": "POST",
+    "path": "/open-apis/task/v2/custom_fields/synthetic-custom_field_guid/add",
+    "query": {},
+    "body": {
+      "resource_type": "synthetic",
+      "resource_id": "synthetic"
+    },
+    "confirm": false
+  },
+  {
+    "name": "custom_fields/create",
+    "args": [
+      "task",
+      "custom_fields",
+      "create",
+      "--user-id-type",
+      "open_id"
+    ],
+    "method": "POST",
+    "path": "/open-apis/task/v2/custom_fields",
+    "query": {
+      "user_id_type": "open_id"
+    },
+    "body": {
+      "text_setting": {},
+      "resource_id": "synthetic",
+      "name": "synthetic",
+      "number_setting": {
+        "custom_symbol_position": "left",
+        "separator": "none",
+        "decimal_count": 0,
+        "format": "normal",
+        "custom_symbol": "synthetic"
+      },
+      "member_setting": {
+        "multi": false
+      },
+      "datetime_setting": {
+        "format": "synthetic"
+      },
+      "single_select_setting": {
+        "options": [
+          {
+            "name": "synthetic",
+            "color_index": 0,
+            "is_hidden": false
+          }
+        ]
+      },
+      "multi_select_setting": {
+        "options": [
+          {
+            "is_hidden": false,
+            "name": "synthetic",
+            "color_index": 0
+          }
+        ]
+      },
+      "resource_type": "synthetic",
+      "type": "number"
+    },
+    "confirm": false
+  },
+  {
+    "name": "custom_fields/get",
+    "args": [
+      "task",
+      "custom_fields",
+      "get",
+      "--custom-field-guid",
+      "synthetic-custom_field_guid",
+      "--user-id-type",
+      "open_id"
+    ],
+    "method": "GET",
+    "path": "/open-apis/task/v2/custom_fields/synthetic-custom_field_guid",
+    "query": {
+      "user_id_type": "open_id"
+    },
+    "body": null,
+    "confirm": false
+  },
+  {
+    "name": "custom_fields/list",
+    "args": [
+      "task",
+      "custom_fields",
+      "list",
+      "--page-size",
+      "50",
+      "--page-token",
+      "aWQ9NzEwMjMzMjMxMDE=",
+      "--resource-id",
+      "5ffbe0ca-6600-41e0-a634-2b38cbcf13b8",
+      "--resource-type",
+      "tasklist",
+      "--update-msec",
+      "1",
+      "--user-id-type",
+      "open_id"
+    ],
+    "method": "GET",
+    "path": "/open-apis/task/v2/custom_fields",
+    "query": {
+      "page_size": "50",
+      "page_token": "aWQ9NzEwMjMzMjMxMDE=",
+      "resource_id": "5ffbe0ca-6600-41e0-a634-2b38cbcf13b8",
+      "resource_type": "tasklist",
+      "update_msec": "1",
+      "user_id_type": "open_id"
+    },
+    "body": null,
+    "confirm": false
+  },
+  {
+    "name": "custom_fields/patch",
+    "args": [
+      "task",
+      "custom_fields",
+      "patch",
+      "--custom-field-guid",
+      "synthetic-custom_field_guid",
+      "--user-id-type",
+      "open_id"
+    ],
+    "method": "PATCH",
+    "path": "/open-apis/task/v2/custom_fields/synthetic-custom_field_guid",
+    "query": {
+      "user_id_type": "open_id"
+    },
+    "body": {
+      "custom_field": {
+        "member_setting": {
+          "multi": false
+        },
+        "datetime_setting": {
+          "format": "synthetic"
+        },
+        "single_select_setting": {
+          "options": [
+            "synthetic"
+          ]
+        },
+        "multi_select_setting": {
+          "options": [
+            "synthetic"
+          ]
+        },
+        "text_setting": {},
+        "name": "synthetic",
+        "number_setting": {
+          "format": "normal",
+          "custom_symbol": "synthetic",
+          "custom_symbol_position": "left",
+          "separator": "none",
+          "decimal_count": 0
+        }
+      },
+      "update_fields": [
+        "synthetic"
+      ]
+    },
+    "confirm": false
+  },
+  {
+    "name": "custom_fields/remove",
+    "args": [
+      "task",
+      "custom_fields",
+      "remove",
+      "--custom-field-guid",
+      "synthetic-custom_field_guid"
+    ],
+    "method": "POST",
+    "path": "/open-apis/task/v2/custom_fields/synthetic-custom_field_guid/remove",
+    "query": {},
+    "body": {
+      "resource_type": "synthetic",
+      "resource_id": "synthetic"
+    },
+    "confirm": true
+  },
+  {
+    "name": "members/add",
+    "args": [
+      "task",
+      "members",
+      "add",
+      "--task-guid",
+      "synthetic-task_guid",
+      "--user-id-type",
+      "open_id"
+    ],
+    "method": "POST",
+    "path": "/open-apis/task/v2/tasks/synthetic-task_guid/add_members",
+    "query": {
+      "user_id_type": "open_id"
+    },
+    "body": {
+      "members": [
+        {
+          "id": "synthetic",
+          "type": "synthetic",
+          "role": "synthetic",
+          "name": "synthetic"
+        }
+      ],
+      "client_token": "synthetic"
+    },
+    "confirm": false
+  },
+  {
+    "name": "members/remove",
+    "args": [
+      "task",
+      "members",
+      "remove",
+      "--task-guid",
+      "synthetic-task_guid",
+      "--user-id-type",
+      "open_id"
+    ],
+    "method": "POST",
+    "path": "/open-apis/task/v2/tasks/synthetic-task_guid/remove_members",
+    "query": {
+      "user_id_type": "open_id"
+    },
+    "body": {
+      "members": [
+        {
+          "name": "synthetic",
+          "id": "synthetic",
+          "type": "synthetic",
+          "role": "synthetic"
+        }
+      ]
+    },
+    "confirm": false
+  },
+  {
+    "name": "sections/create",
+    "args": [
+      "task",
+      "sections",
+      "create",
+      "--user-id-type",
+      "open_id"
+    ],
+    "method": "POST",
+    "path": "/open-apis/task/v2/sections",
+    "query": {
+      "user_id_type": "open_id"
+    },
+    "body": {
+      "resource_type": "synthetic",
+      "resource_id": "synthetic",
+      "insert_before": "synthetic",
+      "insert_after": "synthetic",
+      "name": "synthetic"
+    },
+    "confirm": false
+  },
+  {
+    "name": "sections/delete",
+    "args": [
+      "task",
+      "sections",
+      "delete",
+      "--section-guid",
+      "synthetic-section_guid"
+    ],
+    "method": "DELETE",
+    "path": "/open-apis/task/v2/sections/synthetic-section_guid",
+    "query": {},
+    "body": null,
+    "confirm": true
+  },
+  {
+    "name": "sections/get",
+    "args": [
+      "task",
+      "sections",
+      "get",
+      "--section-guid",
+      "synthetic-section_guid",
+      "--user-id-type",
+      "open_id"
+    ],
+    "method": "GET",
+    "path": "/open-apis/task/v2/sections/synthetic-section_guid",
+    "query": {
+      "user_id_type": "open_id"
+    },
+    "body": null,
+    "confirm": false
+  },
+  {
+    "name": "sections/list",
+    "args": [
+      "task",
+      "sections",
+      "list",
+      "--page-size",
+      "50",
+      "--page-token",
+      "aWQ9NzEwMjMzMjMxMDE=",
+      "--resource-id",
+      "caef228f-2342-23c1-c36d-91186414dc64",
+      "--resource-type",
+      "tasklist",
+      "--update-msec",
+      "1",
+      "--user-id-type",
+      "open_id"
+    ],
+    "method": "GET",
+    "path": "/open-apis/task/v2/sections",
+    "query": {
+      "page_size": "50",
+      "page_token": "aWQ9NzEwMjMzMjMxMDE=",
+      "resource_id": "caef228f-2342-23c1-c36d-91186414dc64",
+      "resource_type": "tasklist",
+      "update_msec": "1",
+      "user_id_type": "open_id"
+    },
+    "body": null,
+    "confirm": false
+  },
+  {
+    "name": "sections/patch",
+    "args": [
+      "task",
+      "sections",
+      "patch",
+      "--section-guid",
+      "synthetic-section_guid",
+      "--user-id-type",
+      "open_id"
+    ],
+    "method": "PATCH",
+    "path": "/open-apis/task/v2/sections/synthetic-section_guid",
+    "query": {
+      "user_id_type": "open_id"
+    },
+    "body": {
+      "section": {
+        "insert_after": "synthetic",
+        "name": "synthetic",
+        "insert_before": "synthetic"
+      },
+      "update_fields": [
+        "synthetic"
+      ]
+    },
+    "confirm": false
+  },
+  {
+    "name": "sections/tasks",
+    "args": [
+      "task",
+      "sections",
+      "tasks",
+      "--completed=false",
+      "--created-from",
+      "1675742789470",
+      "--created-to",
+      "1675742789470",
+      "--page-size",
+      "50",
+      "--page-token",
+      "aWQ9NzEwMjMzMjMxMDE=",
+      "--section-guid",
+      "synthetic-section_guid",
+      "--user-id-type",
+      "open_id"
+    ],
+    "method": "GET",
+    "path": "/open-apis/task/v2/sections/synthetic-section_guid/tasks",
+    "query": {
+      "completed": "false",
+      "created_from": "1675742789470",
+      "created_to": "1675742789470",
+      "page_size": "50",
+      "page_token": "aWQ9NzEwMjMzMjMxMDE=",
+      "user_id_type": "open_id"
+    },
+    "body": null,
+    "confirm": false
+  },
+  {
+    "name": "subtasks/create",
+    "args": [
+      "task",
+      "subtasks",
+      "create",
+      "--task-guid",
+      "synthetic-task_guid",
+      "--user-id-type",
+      "open_id"
+    ],
+    "method": "POST",
+    "path": "/open-apis/task/v2/tasks/synthetic-task_guid/subtasks",
+    "query": {
+      "user_id_type": "open_id"
+    },
+    "body": {
+      "description": "synthetic",
+      "start": {
+        "timestamp": "synthetic",
+        "is_all_day": false
+      },
+      "origin": {
+        "platform_i18n_name": {
+          "en_us": "synthetic",
+          "zh_tw": "synthetic",
+          "fr_fr": "synthetic",
+          "it_it": "synthetic",
+          "ru_ru": "synthetic",
+          "ko_kr": "synthetic",
+          "zh_cn": "synthetic",
+          "zh_hk": "synthetic",
+          "ja_jp": "synthetic",
+          "de_de": "synthetic",
+          "th_th": "synthetic",
+          "es_es": "synthetic"
+        },
+        "href": {
+          "url": "synthetic",
+          "title": "synthetic"
+        }
+      },
+      "completed_at": "synthetic",
+      "repeat_rule": "synthetic",
+      "custom_complete": {
+        "pc": {
+          "href": "synthetic",
+          "tip": {}
+        },
+        "ios": {
+          "href": "synthetic",
+          "tip": {}
+        },
+        "android": {
+          "href": "synthetic",
+          "tip": {}
+        }
+      },
+      "tasklists": [
+        {
+          "tasklist_guid": "synthetic",
+          "section_guid": "synthetic"
+        }
+      ],
+      "is_milestone": false,
+      "text_deliveries": [
+        "synthetic"
+      ],
+      "summary": "synthetic",
+      "members": [
+        {
+          "id": "synthetic",
+          "type": "synthetic",
+          "role": "synthetic",
+          "name": "synthetic"
+        }
+      ],
+      "client_token": "synthetic",
+      "mode": 1,
+      "custom_fields": [
+        {
+          "text_value": "synthetic",
+          "guid": "synthetic",
+          "number_value": "synthetic",
+          "member_value": [
+            {
+              "id": "synthetic",
+              "type": "synthetic",
+              "role": "synthetic",
+              "name": "synthetic"
+            }
+          ],
+          "datetime_value": "synthetic",
+          "single_select_value": "synthetic",
+          "multi_select_value": [
+            "synthetic"
+          ]
+        }
+      ],
+      "docx_source": {
+        "block_id": "synthetic",
+        "token": "synthetic"
+      },
+      "agent_task_progress": "synthetic",
+      "due": {
+        "timestamp": "synthetic",
+        "is_all_day": false
+      },
+      "extra": "synthetic",
+      "reminders": [
+        {
+          "relative_fire_minute": 1
+        }
+      ],
+      "agent_task_status": 1
+    },
+    "confirm": false
+  },
+  {
+    "name": "subtasks/list",
+    "args": [
+      "task",
+      "subtasks",
+      "list",
+      "--page-size",
+      "50",
+      "--page-token",
+      "aWQ9NzEwMjMzMjMxMDE=",
+      "--task-guid",
+      "synthetic-task_guid",
+      "--user-id-type",
+      "open_id"
+    ],
+    "method": "GET",
+    "path": "/open-apis/task/v2/tasks/synthetic-task_guid/subtasks",
+    "query": {
+      "page_size": "50",
+      "page_token": "aWQ9NzEwMjMzMjMxMDE=",
+      "user_id_type": "open_id"
+    },
+    "body": null,
+    "confirm": false
+  },
+  {
+    "name": "tasklists/add_members",
+    "args": [
+      "task",
+      "tasklists",
+      "add_members",
+      "--tasklist-guid",
+      "synthetic-tasklist_guid",
+      "--user-id-type",
+      "open_id"
+    ],
+    "method": "POST",
+    "path": "/open-apis/task/v2/tasklists/synthetic-tasklist_guid/add_members",
+    "query": {
+      "user_id_type": "open_id"
+    },
+    "body": {
+      "members": [
+        {
+          "id": "synthetic",
+          "type": "synthetic",
+          "role": "synthetic",
+          "name": "synthetic"
+        }
+      ]
+    },
+    "confirm": false
+  },
+  {
+    "name": "tasklists/create",
+    "args": [
+      "task",
+      "tasklists",
+      "create",
+      "--user-id-type",
+      "open_id"
+    ],
+    "method": "POST",
+    "path": "/open-apis/task/v2/tasklists",
+    "query": {
+      "user_id_type": "open_id"
+    },
+    "body": {
+      "name": "synthetic",
+      "members": [
+        {
+          "id": "synthetic",
+          "type": "synthetic",
+          "role": "synthetic",
+          "name": "synthetic"
+        }
+      ],
+      "archive_tasklist": false
+    },
+    "confirm": false
+  },
+  {
+    "name": "tasklists/delete",
+    "args": [
+      "task",
+      "tasklists",
+      "delete",
+      "--tasklist-guid",
+      "synthetic-tasklist_guid"
+    ],
+    "method": "DELETE",
+    "path": "/open-apis/task/v2/tasklists/synthetic-tasklist_guid",
+    "query": {},
+    "body": null,
+    "confirm": true
+  },
+  {
+    "name": "tasklists/get",
+    "args": [
+      "task",
+      "tasklists",
+      "get",
+      "--tasklist-guid",
+      "synthetic-tasklist_guid",
+      "--user-id-type",
+      "open_id"
+    ],
+    "method": "GET",
+    "path": "/open-apis/task/v2/tasklists/synthetic-tasklist_guid",
+    "query": {
+      "user_id_type": "open_id"
+    },
+    "body": null,
+    "confirm": false
+  },
+  {
+    "name": "tasklists/list",
+    "args": [
+      "task",
+      "tasklists",
+      "list",
+      "--page-size",
+      "50",
+      "--page-token",
+      "aWQ9NzEwMjMzMjMxMDE=",
+      "--user-id-type",
+      "open_id"
+    ],
+    "method": "GET",
+    "path": "/open-apis/task/v2/tasklists",
+    "query": {
+      "page_size": "50",
+      "page_token": "aWQ9NzEwMjMzMjMxMDE=",
+      "user_id_type": "open_id"
+    },
+    "body": null,
+    "confirm": false
+  },
+  {
+    "name": "tasklists/patch",
+    "args": [
+      "task",
+      "tasklists",
+      "patch",
+      "--tasklist-guid",
+      "synthetic-tasklist_guid",
+      "--user-id-type",
+      "open_id"
+    ],
+    "method": "PATCH",
+    "path": "/open-apis/task/v2/tasklists/synthetic-tasklist_guid",
+    "query": {
+      "user_id_type": "open_id"
+    },
+    "body": {
+      "tasklist": {
+        "name": "synthetic",
+        "owner": {
+          "id": "synthetic",
+          "type": "synthetic",
+          "role": "synthetic",
+          "name": "synthetic"
+        },
+        "archive_tasklist": false
+      },
+      "update_fields": [
+        "synthetic"
+      ],
+      "origin_owner_to_role": "editor"
+    },
+    "confirm": false
+  },
+  {
+    "name": "tasklists/remove_members",
+    "args": [
+      "task",
+      "tasklists",
+      "remove_members",
+      "--tasklist-guid",
+      "synthetic-tasklist_guid",
+      "--user-id-type",
+      "open_id"
+    ],
+    "method": "POST",
+    "path": "/open-apis/task/v2/tasklists/synthetic-tasklist_guid/remove_members",
+    "query": {
+      "user_id_type": "open_id"
+    },
+    "body": {
+      "members": [
+        {
+          "id": "synthetic",
+          "type": "synthetic",
+          "role": "synthetic",
+          "name": "synthetic"
+        }
+      ]
+    },
+    "confirm": false
+  },
+  {
+    "name": "tasklists/tasks",
+    "args": [
+      "task",
+      "tasklists",
+      "tasks",
+      "--completed=false",
+      "--created-from",
+      "1675742789470",
+      "--created-to",
+      "1675742789470",
+      "--page-size",
+      "50",
+      "--page-token",
+      "aWQ9NzEwMjMzMjMxMDE=",
+      "--tasklist-guid",
+      "synthetic-tasklist_guid",
+      "--user-id-type",
+      "open_id"
+    ],
+    "method": "GET",
+    "path": "/open-apis/task/v2/tasklists/synthetic-tasklist_guid/tasks",
+    "query": {
+      "completed": "false",
+      "created_from": "1675742789470",
+      "created_to": "1675742789470",
+      "page_size": "50",
+      "page_token": "aWQ9NzEwMjMzMjMxMDE=",
+      "user_id_type": "open_id"
+    },
+    "body": null,
+    "confirm": false
+  },
+  {
+    "name": "tasks/create",
+    "args": [
+      "task",
+      "tasks",
+      "create",
+      "--user-id-type",
+      "open_id"
+    ],
+    "method": "POST",
+    "path": "/open-apis/task/v2/tasks",
+    "query": {
+      "user_id_type": "open_id"
+    },
+    "body": {
+      "repeat_rule": "synthetic",
+      "mode": 1,
+      "is_milestone": false,
+      "description": "synthetic",
+      "due": {
+        "timestamp": "synthetic",
+        "is_all_day": false
+      },
+      "members": [
+        {
+          "id": "synthetic",
+          "type": "synthetic",
+          "role": "synthetic",
+          "name": "synthetic"
+        }
+      ],
+      "custom_complete": {
+        "pc": {
+          "href": "synthetic",
+          "tip": {}
+        },
+        "ios": {
+          "href": "synthetic",
+          "tip": {}
+        },
+        "android": {
+          "href": "synthetic",
+          "tip": {}
+        }
+      },
+      "reminders": [
+        {
+          "relative_fire_minute": 1
+        }
+      ],
+      "agent_task_progress": "synthetic",
+      "text_deliveries": [
+        "synthetic"
+      ],
+      "origin": {
+        "platform_i18n_name": {
+          "fr_fr": "synthetic",
+          "th_th": "synthetic",
+          "es_es": "synthetic",
+          "en_us": "synthetic",
+          "zh_cn": "synthetic",
+          "zh_hk": "synthetic",
+          "ja_jp": "synthetic",
+          "ko_kr": "synthetic",
+          "zh_tw": "synthetic",
+          "it_it": "synthetic",
+          "de_de": "synthetic",
+          "ru_ru": "synthetic"
+        },
+        "href": {
+          "url": "synthetic",
+          "title": "synthetic"
+        }
+      },
+      "completed_at": "synthetic",
+      "start": {
+        "timestamp": "synthetic",
+        "is_all_day": false
+      },
+      "custom_fields": [
+        {
+          "guid": "synthetic",
+          "number_value": "synthetic",
+          "member_value": [
+            {
+              "id": "synthetic",
+              "type": "synthetic",
+              "name": "synthetic"
+            }
+          ],
+          "datetime_value": "synthetic",
+          "single_select_value": "synthetic",
+          "multi_select_value": [
+            "synthetic"
+          ],
+          "text_value": "synthetic"
+        }
+      ],
+      "docx_source": {
+        "token": "synthetic",
+        "block_id": "synthetic"
+      },
+      "summary": "synthetic",
+      "client_token": "synthetic",
+      "positive_reminders": [
+        {
+          "relative_fire_minute": 1
+        }
+      ],
+      "agent_task_status": 1,
+      "extra": "synthetic",
+      "tasklists": [
+        {
+          "tasklist_guid": "synthetic",
+          "section_guid": "synthetic"
+        }
+      ]
+    },
+    "confirm": false
+  },
+  {
+    "name": "tasks/delete",
+    "args": [
+      "task",
+      "tasks",
+      "delete",
+      "--task-guid",
+      "synthetic-task_guid"
+    ],
+    "method": "DELETE",
+    "path": "/open-apis/task/v2/tasks/synthetic-task_guid",
+    "query": {},
+    "body": null,
+    "confirm": true
+  },
+  {
+    "name": "tasks/get",
+    "args": [
+      "task",
+      "tasks",
+      "get",
+      "--task-guid",
+      "synthetic-task_guid",
+      "--user-id-type",
+      "open_id"
+    ],
+    "method": "GET",
+    "path": "/open-apis/task/v2/tasks/synthetic-task_guid",
+    "query": {
+      "user_id_type": "open_id"
+    },
+    "body": null,
+    "confirm": false
+  },
+  {
+    "name": "tasks/list",
+    "args": [
+      "task",
+      "tasks",
+      "list",
+      "--agent-task-status",
+      "1",
+      "--completed=false",
+      "--page-size",
+      "50",
+      "--page-token",
+      "aWQ9NzEwMjMzMjMxMDE=",
+      "--type",
+      "my_tasks",
+      "--user-id-type",
+      "open_id"
+    ],
+    "method": "GET",
+    "path": "/open-apis/task/v2/tasks",
+    "query": {
+      "agent_task_status": "1",
+      "completed": "false",
+      "page_size": "50",
+      "page_token": "aWQ9NzEwMjMzMjMxMDE=",
+      "type": "my_tasks",
+      "user_id_type": "open_id"
+    },
+    "body": null,
+    "confirm": false
+  },
+  {
+    "name": "tasks/patch",
+    "args": [
+      "task",
+      "tasks",
+      "patch",
+      "--task-guid",
+      "synthetic-task_guid",
+      "--user-id-type",
+      "open_id"
+    ],
+    "method": "PATCH",
+    "path": "/open-apis/task/v2/tasks/synthetic-task_guid",
+    "query": {
+      "user_id_type": "open_id"
+    },
+    "body": {
+      "task": {
+        "completed_at": "synthetic",
+        "start": {
+          "timestamp": "synthetic",
+          "is_all_day": false
+        },
+        "custom_fields": [
+          {
+            "datetime_value": "synthetic",
+            "single_select_value": "synthetic",
+            "multi_select_value": [
+              "synthetic"
+            ],
+            "text_value": "synthetic",
+            "guid": "synthetic",
+            "number_value": "synthetic",
+            "member_value": [
+              "synthetic"
+            ]
+          }
+        ],
+        "agent_task_status": 1,
+        "due": {
+          "timestamp": "synthetic",
+          "is_all_day": false
+        },
+        "is_milestone": false,
+        "positive_reminders": [
+          {
+            "relative_fire_minute": 1
+          }
+        ],
+        "text_deliveries": [
+          "synthetic"
+        ],
+        "description": "synthetic",
+        "agent_task_progress": "synthetic",
+        "summary": "synthetic",
+        "extra": "synthetic",
+        "repeat_rule": "synthetic",
+        "custom_complete": {
+          "pc": {},
+          "ios": {},
+          "android": {}
+        },
+        "mode": 1
+      },
+      "update_fields": [
+        "synthetic"
+      ]
+    },
+    "confirm": false
+  }
+]
