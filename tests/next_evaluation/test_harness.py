@@ -15,6 +15,11 @@ SPEC.loader.exec_module(harness)
 
 
 class AccountingTests(unittest.TestCase):
+    def test_accounting_diagnostics_never_keep_unknown_provider_text(self):
+        self.assertEqual(harness.sanitized_accounting_diagnostics([
+            "provider_turn_failed", "private provider message", {}, "provider_turn_failed"]), ["provider_turn_failed"])
+        self.assertIsNone(harness.sanitized_accounting_diagnostics("private provider message"))
+
     def test_cache_is_not_free_and_all_turns_count(self):
         usage = harness.token_usage({"accounting_complete": True, "turns": [
             {"input_tokens": 100, "cached_input_tokens": 70, "output_tokens": 20},

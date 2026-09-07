@@ -43,6 +43,7 @@ class CodexAccountingTests(unittest.TestCase):
     def test_uses_provider_aggregate_without_byte_estimates(self):
         result = runner.parse_events(self.stream(), 0)
         self.assertTrue(result["accounting_complete"])
+        self.assertEqual(result["accounting_diagnostics"], [])
         self.assertEqual(result["turns"], [{"input_tokens": 200, "cached_input_tokens": 80, "output_tokens": 30}])
         self.assertEqual(result["usage_granularity"], "codex_user_turn")
         self.assertEqual(result["command_executions"], 1)
@@ -79,6 +80,16 @@ class CodexAccountingTests(unittest.TestCase):
     def test_nonzero_exit_keeps_complete_reported_cost(self):
         result = runner.parse_events(self.stream(), 7)
         self.assertTrue(result["accounting_complete"])
+
+    def test_accounting_reasons_are_fixed_codes_without_provider_content(self):
+        raw = self.stream([{"type": "turn.started"}, {"type": "turn.failed", "error": "private provider details"},
+                           {"type": "item.completed", "item": {"type": "mcp_tool_call", "name": "private tool"}}])
+        result = runner.parse_events(raw + "\nprivate non-JSON error", 0)
+        self.assertEqual(set(result["accounting_diagnostics"]), {
+            "provider_event_invalid", "provider_turn_failed", "provider_turn_count_mismatch", "unexpected_provider_tool"})
+        self.assertFalse(result["accounting_complete"])
+        self.assertEqual(result["turns"][0]["input_tokens"], 200)
+        self.assertNotIn("private", json.dumps(result))
 
     def test_malformed_usage_never_passes(self):
         self.assertFalse(runner.parse_events("not-json", 0)["accounting_complete"])

@@ -166,7 +166,12 @@ def parse_events(stdout, returncode):
             if item_kind in ("mcp_tool_call", "web_search", "collab_tool_call"):
                 unexpected_tools = True
     complete = started > 0 and started == completed == len(spans) and not (malformed or failed or unexpected_tools)
+    reasons = [code for code, present in (
+        ("provider_event_invalid", malformed), ("provider_turn_failed", failed),
+        ("provider_turn_count_mismatch", not (started > 0 and started == completed == len(spans))),
+        ("unexpected_provider_tool", unexpected_tools)) if present]
     return {"turns": spans, "accounting_complete": complete,
+            "accounting_diagnostics": reasons,
             "usage_granularity": "codex_user_turn", "command_executions": commands,
             "unexpected_tools": unexpected_tools, "control_trace": control_trace}
 

@@ -176,6 +176,7 @@ def run_one(config, task, trial, arm):
         return {"task_id": task["id"], "section": task["section"], "trial": trial, "arm": arm,
                 "success": verified and code == 0, "outcome_inconclusive": inconclusive, "usage": usage, "categories": categories,
                 "known_usage": known_usage,
+                "accounting_diagnostics": sanitized_accounting_diagnostics(payload.get("accounting_diagnostics")),
                 "verification_failures": sanitized_verification_failures(verification.get("verification_failures")),
                 "api_request_trace": sanitized_api_trace(payload.get("api_request_trace"), task),
                 "control_trace": sanitized_trace(payload.get("control_trace")),
@@ -183,6 +184,11 @@ def run_one(config, task, trial, arm):
                 "runner_exit": code, "verifier_exit": verify_code,
                 "latency_seconds": elapsed, "verification_seconds": verify_elapsed, **metrics}
 
+
+
+def sanitized_accounting_diagnostics(values):
+    allowed = {"provider_event_invalid", "provider_turn_failed", "provider_turn_count_mismatch", "unexpected_provider_tool"}
+    return sorted({value for value in values if isinstance(value, str) and value in allowed}) if isinstance(values, list) else None
 
 
 def sanitized_verification_failures(values):
