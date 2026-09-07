@@ -18,6 +18,12 @@ import (
 func classifyKnownResponse(r *Receipt, req *http.Request, data json.RawMessage) bool {
 	unknown := func(evidence string) bool { r.Outcome, r.Evidence = Unknown, evidence; return true }
 	applied := func(evidence string) bool { r.Outcome, r.Evidence = Applied, evidence; return true }
+	if requestMatches(req, "POST", "/open-apis/mindnote/v1/mindnotes/{mindnote}/nodes") {
+		if completeMindnoteCreate(req, data) {
+			return applied("mindnote_created_node_ids_complete")
+		}
+		return unknown("mindnote_node_effects_require_reconciliation")
+	}
 	if requestMatches(req, "POST", "/open-apis/slides_ai/v1/xml_presentations/{presentation}/history/revert") || requestMatches(req, "POST", "/open-apis/drive/v1/import_tasks") {
 		return unknown("async_task_requires_reconciliation")
 	}
@@ -264,6 +270,38 @@ func completeBaseCreate(req *http.Request, data json.RawMessage) bool {
 	seen := map[string]bool{}
 	for _, id := range result.IDs {
 		if id == "" || seen[id] {
+			return false
+		}
+		seen[id] = true
+	}
+	return true
+}
+
+func completeMindnoteCreate(req *http.Request, data json.RawMessage) bool {
+	var request struct {
+		Nodes []*struct {
+			ID string `json:"node_id"`
+		} `json:"nodes"`
+	}
+	var result struct {
+		ClientToken string   `json:"client_token"`
+		IDs         []string `json:"ids"`
+	}
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	decoder.DisallowUnknownFields()
+	if !decodeRequestEvidence(req, &request) || decoder.Decode(&result) != nil || len(request.Nodes) == 0 || len(request.Nodes) != len(result.IDs) {
+		return false
+	}
+	for _, node := range request.Nodes {
+		// This endpoint also updates nodes, but the frozen response contract
+		// defines ids as created nodes only. It cannot establish update coverage.
+		if node == nil || node.ID != "" {
+			return false
+		}
+	}
+	seen := map[string]bool{}
+	for _, id := range result.IDs {
+		if strings.TrimSpace(id) == "" || seen[id] {
 			return false
 		}
 		seen[id] = true

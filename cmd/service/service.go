@@ -430,13 +430,24 @@ func serviceMethodRun(opts *ServiceMethodOptions) error {
 	// errclass.BuildAPIError via ac.CheckResponse, producing *errs.PermissionError
 	// with MissingScopes / Identity / ConsoleURL populated from the response.
 	checkErr := ac.CheckResponse
+	callCtx := opts.Ctx
+	// These frozen POST methods carry write risk, but their domain contracts
+	// only query records. Keep the catalog intact and declare
+	// only the exact generated request, never arbitrary raw API input.
+	if f.EnableAgentAttempts && request.Method == "POST" {
+		attendanceRead := opts.Method.ID == "user_task.query" && opts.ServicePath == "/open-apis/attendance/v1" && request.URL == "/open-apis/attendance/v1/user_tasks/query"
+		approvalRead := opts.Method.ID == "approvals.search" && opts.ServicePath == "/open-apis/approval/v4" && request.URL == "/open-apis/approval/v4/approvals/search_launchable"
+		if attendanceRead || approvalRead {
+			callCtx = cmdutil.WithReadOnlyRequest(callCtx, request.Method, request.URL)
+		}
+	}
 
 	if opts.PageAll {
-		return servicePaginate(opts.Ctx, ac, request, format, opts.JqExpr, out, f.IOStreams.ErrOut, opts.Cmd.CommandPath(),
+		return servicePaginate(callCtx, ac, request, format, opts.JqExpr, out, f.IOStreams.ErrOut, opts.Cmd.CommandPath(),
 			client.PaginationOptions{PageLimit: opts.PageLimit, PageDelay: opts.PageDelay}, checkErr)
 	}
 
-	resp, err := ac.DoAPI(opts.Ctx, request)
+	resp, err := ac.DoAPI(callCtx, request)
 	if err != nil {
 		return err
 	}

@@ -13,7 +13,20 @@ import (
 func TestKnownEndpointMutationEvidence(t *testing.T) {
 	words := `{"replace_words":[{"source_word":"first","target_word":"target"},{"source_word":"second","target_word":"other"}]}`
 	records := `{"create_records":[{"f":"private-value"},{"f":"other"}]}`
+	nodes := `{"nodes":[{"texts":[]},{"finish":false}]}`
 	tests := []struct{ name, method, path, body, data, outcome string }{
+		{"mindnote created IDs complete", "POST", "/open-apis/mindnote/v1/mindnotes/note/nodes", nodes, `{"ids":["one","two"]}`, Applied},
+		{"mindnote missing IDs", "POST", "/open-apis/mindnote/v1/mindnotes/note/nodes", nodes, `{}`, Unknown},
+		{"mindnote short IDs", "POST", "/open-apis/mindnote/v1/mindnotes/note/nodes", nodes, `{"ids":["one"]}`, Unknown},
+		{"mindnote duplicate IDs", "POST", "/open-apis/mindnote/v1/mindnotes/note/nodes", nodes, `{"ids":["one","one"]}`, Unknown},
+		{"mindnote empty IDs", "POST", "/open-apis/mindnote/v1/mindnotes/note/nodes", nodes, `{"ids":["one",""]}`, Unknown},
+		{"mindnote extra IDs", "POST", "/open-apis/mindnote/v1/mindnotes/note/nodes", nodes, `{"ids":["one","two","three"]}`, Unknown},
+		{"mindnote malformed IDs", "POST", "/open-apis/mindnote/v1/mindnotes/note/nodes", nodes, `{"ids":[1,2]}`, Unknown},
+		{"mindnote unknown async field", "POST", "/open-apis/mindnote/v1/mindnotes/note/nodes", nodes, `{"ids":["one","two"],"task_id":"pending"}`, Unknown},
+		{"mindnote null node", "POST", "/open-apis/mindnote/v1/mindnotes/note/nodes", `{"nodes":[null]}`, `{"ids":["one"]}`, Unknown},
+		{"mindnote empty request", "POST", "/open-apis/mindnote/v1/mindnotes/note/nodes", `{}`, `{"ids":[]}`, Unknown},
+		{"mindnote update IDs not coverage proof", "POST", "/open-apis/mindnote/v1/mindnotes/note/nodes", `{"nodes":[{"node_id":"one","finish":true}]}`, `{"ids":["one"]}`, Unknown},
+		{"mindnote mixed IDs not coverage proof", "POST", "/open-apis/mindnote/v1/mindnotes/note/nodes", `{"nodes":[{}, {"node_id":"one","finish":true}]}`, `{"ids":["two","one"]}`, Unknown},
 		{"docs create failed", "POST", "/open-apis/docs_ai/v1/documents", `{}`, `{"result":"failed"}`, Unknown},
 		{"docs update failed", "PUT", "/open-apis/docs_ai/v1/documents/doc", `{}`, `{"result":" FAILED "}`, Unknown},
 		{"docs create success", "POST", "/open-apis/docs_ai/v1/documents", `{}`, `{"result":"success"}`, Applied},

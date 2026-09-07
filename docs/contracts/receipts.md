@@ -102,6 +102,12 @@ not generalize field names to unrelated endpoints.
 These are request evidence rules backed by existing domain contracts and
 synthetic regression tests, not live backend or conditional-write verification.
 
+Mindnote node creation requires one unique nonempty created-node ID per submitted
+new node. Missing, short or malformed ID evidence remains unknown. The same
+endpoint supports updates, but its frozen response schema only defines created
+IDs, so requests containing existing `node_id` values remain unknown even when
+response IDs match. No update coverage or backend atomicity is inferred.
+
 ## Classification and storage boundary
 
 GET, HEAD, OPTIONS, credential acquisition endpoints, and commands explicitly
@@ -111,6 +117,10 @@ mark an individual domain-known read with
 `common.WithReadOnlyRequest(ctx, method, apiPath)` or
 `runtime.CallReadOnlyAPITyped(method, apiPath, params, data)`. The marker matches
 only the exact method and URL path; other requests retain normal journaling.
+Generated Attendance `user_tasks query` and Approval `approvals search` declare
+their exact POST reads this way: their scopes and endpoint schemas establish
+query-only semantics despite the frozen catalog's write risk. The catalog stays
+unchanged; partial Attendance employee coverage fields remain native read data.
 It preserves cancellation and command risk, and must never be derived from
 arbitrary raw API input or request content. Conversely,
 `common.WithMutationRequest(ctx, method, apiPath)` identifies an exact known
