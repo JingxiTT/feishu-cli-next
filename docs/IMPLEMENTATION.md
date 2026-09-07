@@ -112,8 +112,21 @@ unstated optional-report convention. One recorded outcome is verified; all
 counted and were independently recounted. The partial series is unbalanced and
 supports no size curve or success-rate claim. Twenty unstarted Base slots and
 27 untouched Sheets slots were canceled without model calls. A preflight audit
-found analogous Sheets preview-read gaps before its first trial. Source-backed
-fixture corrections and new balanced size comparisons remain required.
+found analogous Sheets preview-read gaps before its first trial. These defects
+require a separate corrected condition for new balanced comparisons.
+The corrected size/business fixtures are committed at `c61ad62`, with
+[independent Base/business review](reference/reviews/evaluation-fixture-v2-review.json)
+and saved controlled results: [Base 15/15](../evaluation/evidence/scaling-base-v2-controlled.json),
+[Sheets 19/19](../evaluation/evidence/scaling-sheets-v2-controlled.json), and
+[business 14/14](../evaluation/evidence/business-v2-controlled.json). These include
+actual clean-binary workflows; the reports retain their hash and synthetic-model
+limitations. Sheets' final enum distinction has a separate focused pass. The
+shared loader/diagnostic follow-up passes 10 tests with one explicit optional skip
+on independent rerun; known failures cannot be promoted to inconclusive by a
+separate unsupported read. Committed control copies and reviewed hashes were
+checked. No Go runtime source or shipped guide changed. Fresh balanced size
+54 and representative business 18 trials remain required under this new evaluator
+condition; earlier costs and outcomes remain separate.
 Held-out trials have not run. A coordinator search exposed fragments of the Base
 and Sheets held-out prompts and one size field. The
 [exposure record](../evaluation/evidence/held-out-exposure.json) quarantines those
