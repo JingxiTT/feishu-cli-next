@@ -210,6 +210,66 @@ def additions(reference, target, prefix=''):
     return sorted(found)
 
 
+def registration_changes(reference, target, prefix=''):
+    """Bind each interface delta to its exact values, including new subtrees."""
+    changes = []
+    if isinstance(reference, dict) and isinstance(target, dict):
+        for key in sorted(reference.keys() | target.keys()):
+            path = prefix + '/' + key
+            if key not in target:
+                changes.append({'path': path, 'kind': 'missing',
+                                'reference_sha256': digest(canonical(reference[key]))})
+            elif key not in reference:
+                changes.append({'path': path, 'kind': 'added',
+                                'candidate_sha256': digest(canonical(target[key]))})
+            else:
+                changes.extend(registration_changes(reference[key], target[key], path))
+    elif reference != target:
+        changes.append({'path': prefix, 'kind': 'changed',
+                        'reference_sha256': digest(canonical(reference)),
+                        'candidate_sha256': digest(canonical(target))})
+    return changes
+
+
+def capability_gate(report, mapping):
+    """Exact interface reconciliation; source review remains independent."""
+    failures = []
+    for field in ('surface', 'reference_registrations_sha256', 'metadata_sha256'):
+        if report.get(field) != mapping.get(field):
+            failures.append({'kind': 'context_mismatch', 'field': field})
+    if report.get('surface') != 'next' or set(report.get('counts', {})) != {'feishu', 'lark'}:
+        failures.append({'kind': 'configured_next_brands_required'})
+    if not report.get('tracked_source_consistent'):
+        failures.append({'kind': 'mixed_source_snapshot'})
+    for brand, value in report.get('reference_presence', {}).items():
+        for field in ('missing_commands', 'missing_shortcuts', 'missing_event_keys',
+                      'removed_flags', 'changed_existing_flags'):
+            if value.get(field):
+                failures.append({'kind': field, 'brand': brand, 'details': value[field]})
+        if not value.get('raw_api_present'):
+            failures.append({'kind': 'raw_api_missing', 'brand': brand})
+    for row in report.get('differences', []):
+        if row['kind'] not in ('changed', 'missing', 'changed_source_requires_review'):
+            failures.append({'kind': 'unresolved_inventory_difference', 'difference': row})
+    expected = {canonical(row) for row in mapping['registration_changes']}
+    actual = {canonical(row) for row in report['registration_changes']}
+    for row in sorted(actual - expected):
+        failures.append({'kind': 'unmapped_registration_change', 'change': json.loads(row)})
+    for row in sorted(expected - actual):
+        failures.append({'kind': 'mapped_contract_not_present', 'change': json.loads(row)})
+    # A mapping cannot waive removal, existing command flags, or brand guards.
+    for row in report['registration_changes']:
+        if (row['kind'] == 'missing' or
+                (row['kind'] == 'changed' and '/commands/' in row['path'] and
+                 ('/flags/' in row['path'] or row['path'].endswith(('/hidden', '/disable_flag_parsing'))))):
+            failures.append({'kind': 'protected_reference_contract', 'change': row})
+    return {'status': 'fail' if failures else 'pass', 'failures': failures,
+            'mapping_revision': mapping['candidate_revision'],
+            'checked_registration_changes': len(report['registration_changes']),
+            'semantic_review': 'separate; source differences and original report status remain unchanged',
+            'live_verification': 'not_run'}
+
+
 def repository_state(root):
     """Bind evidence to tracked working bytes, not only a possibly stale HEAD."""
     files = {}
@@ -249,13 +309,14 @@ def check(reference_dir, target, surface='next', reference_registrations=None):
     if digest(metadata) != coverage['reference']['metadata_sha256']:
         raise ValueError('frozen metadata checksum does not match coverage.json')
     errors, added, counts, new_commands, new_root_flags = [], [], {}, {}, {}
-    states, retained = {}, {}
+    states, retained, changes = {}, {}, []
     initial_state = repository_state(target)
     for brand, reference in frozen.items():
         states[brand] = {'before': repository_state(target)}
         current = export(target, metadata, brand, surface)
         states[brand]['after'] = repository_state(target)
         retained[brand] = presence(reference, current)
+        changes.extend(registration_changes(reference, current, '/' + brand))
         errors.extend(compare_contract(reference, current, '/' + brand))
         added.extend(additions(reference, current, '/' + brand))
         new_commands[brand] = {k: v for k, v in current['commands'].items() if k not in reference['commands']}
@@ -287,6 +348,7 @@ def check(reference_dir, target, surface='next', reference_registrations=None):
             'reference_context_notice': ('Explicit alternate registration supplement; inspect its capture context.' if reference_registrations else 'Original frozen bootstrap inventory; use the configured-brand supplement for runtime brand conditions.'),
             'reference_registrations_sha256': digest(registration_path.read_bytes()),
             'exporter_source_sha256': digest(exporter_source(surface).encode()),
+            'metadata_sha256': digest(metadata), 'registration_changes': changes,
             'candidate_revision': initial_state['revision'],
             'candidate_state_before': initial_state, 'candidate_state_after': final_state,
             'brand_snapshot_observations': states, 'tracked_source_consistent': consistent,
@@ -344,6 +406,11 @@ def main(argv=None):
     checker.add_argument('--surface', choices=('next', 'legacy'), default='next',
                          help='candidate distribution Build options (default: next); use legacy for upstream self-reconciliation')
     checker.add_argument('--reference-registrations', type=Path, help='explicit configured-brand supplement; original frozen bootstrap snapshot stays unchanged')
+    gate = sub.add_parser('gate', help='configured-brand interface guard; source review stays separate')
+    gate.add_argument('--reference-dir', type=Path, default=ROOT / 'docs/reference')
+    gate.add_argument('--target', type=Path, default=ROOT)
+    gate.add_argument('--mapping', type=Path, default=ROOT / 'docs/reference/next-interface-mapping.json.gz')
+    gate.add_argument('--out', type=Path, required=True)
     brands = sub.add_parser('capture-brands')
     brands.add_argument('--reference-dir', type=Path, default=ROOT / 'docs/reference')
     brands.add_argument('--reference', type=Path, required=True)
@@ -352,6 +419,15 @@ def main(argv=None):
     try:
         if args.action == 'freeze':
             result = freeze(args.reference.resolve(), args.metadata.resolve(), args.out.resolve())
+        elif args.action == 'gate':
+            reference_dir = args.reference_dir.resolve()
+            result = check(reference_dir, args.target.resolve(), 'next',
+                           reference_dir / 'configured-brand-registrations.json.gz')
+            result['capability_gate'] = capability_gate(result, read(args.mapping))
+            result['capability_gate']['mapping_sha256'] = digest(args.mapping.read_bytes())
+            save(args.out, result)
+            print(json.dumps({'report': str(args.out), **result['capability_gate']}, sort_keys=True))
+            return 0 if result['capability_gate']['status'] == 'pass' else 1
         elif args.action == 'capture-brands':
             result = capture_brands(args.reference_dir.resolve(), args.reference.resolve(), args.out.resolve())
         else:
@@ -359,8 +435,11 @@ def main(argv=None):
                            args.reference_registrations.resolve() if args.reference_registrations else None)
         print(json.dumps(result, sort_keys=True))
         return 1 if result.get('status') == 'review_required' else 0
-    except (OSError, ValueError, RuntimeError, subprocess.SubprocessError) as error:
-        print(json.dumps({'status': 'error', 'error': str(error)}), file=sys.stderr)
+    except (OSError, ValueError, KeyError, TypeError, RuntimeError, subprocess.SubprocessError) as error:
+        failure = {'status': 'error', 'error': str(error)}
+        if args.action == 'gate':
+            save(args.out, failure)
+        print(json.dumps(failure), file=sys.stderr)
         return 2
 
 

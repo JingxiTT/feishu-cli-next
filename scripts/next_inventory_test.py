@@ -155,6 +155,98 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(result['missing_event_keys'], ['event.key'])
         self.assertEqual(result['changed_existing_flags'][0]['flag'], 'count')
 
+    def gate_fixture(self):
+        before = {'commands': {'api': {'flags': {'count': {'type': 'int'}},
+                                      'risk': 'write', 'hidden': False}},
+                  'shortcuts': {}, 'events': {'key': {}}}
+        after = json.loads(json.dumps(before))
+        after['commands']['api']['risk'] = 'read'
+        after['commands']['guide'] = {'flags': {'local': {'type': 'bool'}}}
+        changes = inventory.registration_changes(before, after, '/feishu')
+        report = {'surface': 'next', 'reference_registrations_sha256': 'reference',
+                  'metadata_sha256': 'metadata', 'tracked_source_consistent': True,
+                  'counts': {'feishu': {}, 'lark': {}},
+                  'reference_presence': {'feishu': inventory.presence(before, after)},
+                  'registration_changes': changes, 'status': 'review_required',
+                  'differences': [{'kind': 'changed_source_requires_review', 'path': 'cmd/runtime.go'}]}
+        mapping = {**{key: report[key] for key in ('surface', 'reference_registrations_sha256', 'metadata_sha256')},
+                   'candidate_revision': 'reviewed', 'registration_changes': changes}
+        return before, after, report, mapping
+
+    def test_capability_gate_preserves_separate_source_review(self):
+        _, _, report, mapping = self.gate_fixture()
+        original = json.loads(json.dumps(report))
+        self.assertEqual(inventory.capability_gate(report, mapping)['status'], 'pass')
+        self.assertEqual(report, original)
+        self.assertEqual(report['status'], 'review_required')
+
+    def test_capability_gate_rejects_missing_source_without_approving_changed_source(self):
+        _, _, report, mapping = self.gate_fixture()
+        report['differences'].append({'kind': 'missing_source', 'path': 'extension/provider.go'})
+        self.assertEqual(inventory.capability_gate(report, mapping)['status'], 'fail')
+
+    def test_capability_gate_requires_exact_metadata_and_added_subtree(self):
+        before, after, report, mapping = self.gate_fixture()
+        for mutation in ('risk', 'new_flag_type', 'unmapped_addition', 'missing_addition'):
+            candidate = json.loads(json.dumps(after))
+            if mutation == 'risk':
+                candidate['commands']['api']['risk'] = 'delete'
+            elif mutation == 'new_flag_type':
+                candidate['commands']['guide']['flags']['local']['type'] = 'string'
+            elif mutation == 'unmapped_addition':
+                candidate['extra'] = True
+            else:
+                del candidate['commands']['guide']
+            report['registration_changes'] = inventory.registration_changes(before, candidate, '/feishu')
+            with self.subTest(mutation=mutation):
+                self.assertEqual(inventory.capability_gate(report, mapping)['status'], 'fail')
+
+    def test_capability_gate_cannot_map_away_reference_loss_flags_or_guard(self):
+        before, after, report, mapping = self.gate_fixture()
+        for mutation in ('missing_command', 'flag_type', 'brand_guard', 'event'):
+            candidate = json.loads(json.dumps(after))
+            if mutation == 'missing_command':
+                del candidate['commands']['api']
+            elif mutation == 'flag_type':
+                candidate['commands']['api']['flags']['count']['type'] = 'string'
+            elif mutation == 'brand_guard':
+                candidate['commands']['api']['hidden'] = True
+            else:
+                del candidate['events']['key']
+            changes = inventory.registration_changes(before, candidate, '/feishu')
+            report['registration_changes'] = mapping['registration_changes'] = changes
+            report['reference_presence']['feishu'] = inventory.presence(before, candidate)
+            with self.subTest(mutation=mutation):
+                self.assertEqual(inventory.capability_gate(report, mapping)['status'], 'fail')
+
+    def test_capability_gate_rejects_wrong_context_or_mixed_snapshot(self):
+        for field, value in (('surface', 'legacy'), ('reference_registrations_sha256', 'bootstrap'),
+                             ('metadata_sha256', 'unfrozen'), ('tracked_source_consistent', False),
+                             ('counts', {'feishu': {}})):
+            _, _, report, mapping = self.gate_fixture()
+            report[field] = value
+            with self.subTest(field=field):
+                self.assertEqual(inventory.capability_gate(report, mapping)['status'], 'fail')
+
+    def test_gate_cli_saves_report_on_success_rejection_and_collection_error(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            output = Path(temporary) / 'report.json'
+            mapping_path = Path(temporary) / 'mapping.json'
+            _, _, report, mapping = self.gate_fixture()
+            inventory.save(mapping_path, mapping)
+            for fail in (False, True):
+                report['tracked_source_consistent'] = not fail
+                with mock.patch.object(inventory, 'check', return_value=report), mock.patch('builtins.print'):
+                    code = inventory.main(['gate', '--mapping', str(mapping_path), '--out', str(output)])
+                self.assertEqual(code, int(fail))
+                saved = inventory.read(output)
+                self.assertEqual(saved['status'], 'review_required')
+                self.assertEqual(saved['capability_gate']['status'], 'fail' if fail else 'pass')
+            with mock.patch.object(inventory, 'check', side_effect=RuntimeError('export failed')), mock.patch('builtins.print'):
+                code = inventory.main(['gate', '--mapping', str(mapping_path), '--out', str(output)])
+            self.assertEqual(code, 2)
+            self.assertEqual(inventory.read(output), {'status': 'error', 'error': 'export failed'})
+
     def test_process_reports_bad_metadata_to_stderr_with_exit_two(self):
         with tempfile.TemporaryDirectory() as temporary:
             metadata = Path(temporary) / 'metadata.json'
