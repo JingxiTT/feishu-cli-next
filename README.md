@@ -4,6 +4,8 @@ A Feishu/Lark CLI for capable shell and file agents. This development build reus
 
 Implementation and verification are in progress. [The implementation ledger](docs/IMPLEMENTATION.md) distinguishes passing offline checks and scoped foundation measurements from outstanding live, capability and comparative evaluation requirements. Full-product efficiency and release acceptance remain unverified.
 
+Measured results are mixed: [foundation trials](evaluation/evidence/foundation/REPORT.md) show lower average usage for Next on the tested tasks, while [Contact trials](evaluation/evidence/contact/REPORT.md) show higher usage than both comparison arms despite all nine runs succeeding. These scoped results do not establish an overall performance improvement.
+
 ## Build and setup
 
 Requires Go 1.23 or newer and Python 3. The first Go build may download dependencies. The audited API catalog is bundled with the source; canonical builds verify and restore its checksum without fetching a changing catalog.

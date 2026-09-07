@@ -36,9 +36,46 @@ The [foundation model report](../evaluation/evidence/foundation/REPORT.md)
 records 18/18 compatible trials, actual token usage, a task-level regression,
 earlier unknown-cost failures and trace limitations. Held-out tasks are untouched.
 
-P2 assigns every independent inventory section concurrently under
-[section ownership](sections/OWNERSHIP.md), preserving imported implementations
-and adding complete behavioral evidence and useful domain improvements.
+P2 developed every independent inventory section concurrently under
+[section ownership](sections/OWNERSHIP.md). All original domain offline suites
+have recorded passes; their reports retain explicit live blockers and conditional
+skips. The additional [generated business section](sections/business.md) covers
+17 methods found outside the domain assignments. Its complete offline boundary
+passes after fixing later-page errors that previously became successful partial
+aggregates. Commit `6056d73` also rejects missing/repeated continuation tokens;
+its eight unit regressions fail against the prior implementation, and public raw
+API JSON/NDJSON process tests preserve typed failure evidence.
+
+Shared follow-ups verify normal-account artifact identity (`eafd052`), bind
+receipts to each request's actual user/bot identity (`f1bb815`), preserve uncertain
+batch outcomes, and journal both Apps storage PUT paths (`7550245`). Focused
+independent review closed the earlier artifact and IM/VC evidence findings.
+These changes require affected-suite checks at the next integration boundary.
+
+The [Contact comparison](../evaluation/evidence/contact/REPORT.md) records nine
+successful trials and complete usage accounting, but a regression: Next used
+66,811 tokens per success versus 59,485 for the official arm and 41,233 for its
+concise-guidance arm. The small sample and sanitized queries limit causal claims.
+Commit `ced4030` makes public flag descriptions searchable and clarifies literal
+keyword discovery; it has no measured improvement claim yet. Remaining development
+comparisons are being prepared separately; held-out tasks remain untouched.
+
+[Live Contact evidence](sections/contact-live-evidence.json) verifies the current
+account and the sequential user reads. The full test failed on bot search; a
+single bounded diagnosis identified missing `search:bot` user scope. No permission
+was granted and no content was written. This remains an unmet live prerequisite.
+
+P3's actual 10,000-row Sheets-to-Base process workflow preserves 80,000 cells
+through 16 source pages and 50 write batches in its successful scenario. Failure
+injection exposed cross-batch duplicate IDs being accepted by the importer; the
+integration gate remains open until the importer and durable receipts agree on
+that uncertain outcome. This is separate from Base's earlier import-only test.
+
+[Packaging evidence](sections/packaging-evidence.json) covers all 14 cross-built
+platform/variant archives, local installation/update/removal, and actual Node 16
+runtime tests. Native Linux/Windows/macOS Intel execution and a trusted remote
+Next release channel remain unverified or unavailable. Local build evidence does
+not establish public release readiness.
 
 ## Outstanding release evidence
 
