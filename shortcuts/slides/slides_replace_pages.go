@@ -108,6 +108,9 @@ var SlidesReplacePages = common.Shortcut{
 				// always says slide 1. It is appended only on the returning path:
 				// the per-item records already say which items ran and how each
 				// ended, so the batch that keeps going has no use for a position.
+				if result.NewSlideID != "" {
+					err = appendSlidesProgressHint(err, fmt.Sprintf("replacement slide %s was created before old slide %s; read the presentation to establish the deletion outcome before retrying", result.NewSlideID, result.OldSlideID))
+				}
 				return appendSlidesProgressHint(err, fmt.Sprintf("slides +replace-pages stopped at item %d/%d; %d page(s) completed before failure; old page is kept when create failed", i+1, len(resolved.Plan), countReplacedPages(results)))
 			}
 		}
