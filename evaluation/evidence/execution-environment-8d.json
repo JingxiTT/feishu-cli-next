@@ -1,0 +1,8 @@
+{
+  "scope": "8d92e5 development comparison execution environment",
+  "host_contention": "Correctness tests ran concurrently on the host. During the remaining scenario queue, a separate correctness worker bootstrapped a Linux container in the existing Rancher VM capped at 2 CPUs and 4 GiB, with public dependency downloads followed by network-off tests.",
+  "timing_boundary": "The VM workload was reported after Base completed and while Docs was running; exact per-trial overlap was not sampled. Earlier host correctness tests also overlapped evaluation work.",
+  "isolation": "No competing model benchmark workload or live Feishu API workload was reported. Candidate/evaluator/model/tool settings remain pinned.",
+  "interpretation": "Wall-clock and API latency may reflect host CPU, memory or network contention and must not be attributed solely to CLI behavior. Provider-token and success-accounting rules are unchanged; observed timeouts would remain visible in outcomes/usage.",
+  "hardware_measurement_limit": "No controlled idle-host or hardware-normalized latency experiment is claimed."
+}
