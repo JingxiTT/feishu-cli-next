@@ -52,13 +52,14 @@ func TestMain(m *testing.M) {
 	os.Exit(code)
 }
 
-// Fixture owns a private config and a local synthetic backend. Env overrides
+// Fixture owns separate private config/work directories and a local synthetic backend. Env overrides
 // apply to its child CLI only; tests can change them to exercise auth failures.
 // Handler requests carry the real API paths and sidecar target/identity headers.
 // No request is forwarded to the target named in those headers.
 type Fixture struct {
 	Env       map[string]string
 	ConfigDir string
+	WorkDir   string
 	t         *testing.T
 }
 
@@ -73,7 +74,7 @@ func NewFixture(t *testing.T, handler http.Handler) *Fixture {
 	server := httptest.NewServer(handler)
 	t.Cleanup(server.Close)
 	config := t.TempDir()
-	return &Fixture{t: t, ConfigDir: config, Env: map[string]string{
+	return &Fixture{t: t, ConfigDir: config, WorkDir: t.TempDir(), Env: map[string]string{
 		"LARKSUITE_CLI_CONFIG_DIR": config,
 		"LARKSUITE_CLI_AUTH_PROXY": server.URL,
 		"LARKSUITE_CLI_PROXY_KEY":  "synthetic-foundation-proxy-key",
@@ -95,6 +96,7 @@ func (f *Fixture) Run(args ...string) Result {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 	command := exec.CommandContext(ctx, fixtureBinary, args...)
+	command.Dir = f.WorkDir
 	for _, entry := range os.Environ() {
 		key, _, _ := strings.Cut(entry, "=")
 		if _, overridden := f.Env[key]; !overridden {
