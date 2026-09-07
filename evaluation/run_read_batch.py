@@ -24,7 +24,8 @@ def main():
     sections = list(dict.fromkeys(task['section'] for task in manifest['tasks'] if not args.section or task['section'] in args.section))
     if not sections or args.section and set(args.section) - set(sections):
         raise ValueError('unknown section')
-    from codex_runner import validate_output_schema
+    from codex_runner import trace_vocabulary, validate_output_schema
+    trace_vocabulary()
     for task in manifest['tasks']:
         if task['section'] in sections:
             validate_output_schema(task['fixture']['answer_schema'])

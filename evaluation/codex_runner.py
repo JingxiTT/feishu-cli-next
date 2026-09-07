@@ -235,6 +235,8 @@ def validate_output_schema(schema):
 
 def run_agent(request, codex, auth_home, expected_version, fixture_env=None, *, scenario=None, protect_home=False):
     validate_output_schema(request["fixture"]["answer_schema"])
+    # Required for safe command traces; reject incomplete archives before billing.
+    trace_vocabulary()
     workspace = Path(request["workspace"]).resolve()
     for directory in ("bin", "home", "tmp", "feishu-config"):
         (workspace / directory).mkdir(exist_ok=True)

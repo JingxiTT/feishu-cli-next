@@ -49,6 +49,31 @@ class CodexAccountingTests(unittest.TestCase):
         self.assertEqual(result["command_executions"], 1)
         self.assertEqual(result["control_trace"], [{"choices": [{"kind": "unparsed_shell"}], "exit_code": None}])
 
+    def test_missing_trace_registry_rejects_before_provider_or_workspace_setup(self):
+        from unittest.mock import patch
+        schema = {'type': 'object', 'properties': {}, 'required': [], 'additionalProperties': False}
+        with patch.object(runner, 'trace_vocabulary', side_effect=FileNotFoundError('controlled registry')), \
+             patch.object(runner.subprocess, 'Popen') as process:
+            with self.assertRaises(FileNotFoundError):
+                runner.run_agent({'fixture': {'answer_schema': schema}}, None, None, None)
+            process.assert_not_called()
+
+    def test_batch_prepare_rejects_archive_without_trace_registry(self):
+        with tempfile.TemporaryDirectory() as directory:
+            archive = Path(directory)
+            for name in ('run_read_batch.py', 'codex_runner.py', 'tasks.scaling.json'):
+                target = archive / 'evaluation' / name
+                target.parent.mkdir(exist_ok=True)
+                target.write_bytes((ROOT / 'evaluation' / name).read_bytes())
+            args = [sys.executable, str(archive / 'evaluation/run_read_batch.py'),
+                    '--prepare-only', '--task-kind', 'scaling']
+            for key in ('official-source', 'official-cli', 'next-source', 'next-cli', 'codex', 'auth-home', 'output-root'):
+                args.extend(['--' + key, str(archive / 'not-created')])
+            result = subprocess.run(args, capture_output=True, text=True, encoding='utf-8')
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn('registrations.json.gz', result.stderr)
+            self.assertFalse((archive / 'not-created').exists())
+
     def test_trace_keeps_only_public_names_not_content_paths_or_unknown_flags(self):
         command = 'TOKEN=private-value /private/workspace/feishu-cli-next docs +fetch --doc secret-document-id --keyword="private user text" --not-a-real-private-flag=secret && cat /private/secret-file'
         result = runner.command_choices(command)
