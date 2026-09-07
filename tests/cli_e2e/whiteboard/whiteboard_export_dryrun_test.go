@@ -135,7 +135,7 @@ func TestWhiteboardQueryDryRun_LegacySmoke(t *testing.T) {
 	}
 }
 
-func TestWhiteboardExportSelectorRequiredBeforeAuth(t *testing.T) {
+func TestWhiteboardExportSelectorRequiredBeforeAuthRegression(t *testing.T) {
 	setWhiteboardDryRunEnv(t)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)

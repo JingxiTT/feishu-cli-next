@@ -4,8 +4,10 @@
 package whiteboard
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -109,6 +111,9 @@ func wbUpdateDryRun(ctx context.Context, runtime *common.RuntimeContext) *common
 		desc.POST(fmt.Sprintf("/open-apis/board/v1/whiteboards/%s/nodes/plantuml", common.MaskToken(url.PathEscape(token)))).Body(reqBody).Desc(fmt.Sprintf("create %s node on the whiteboard.", format))
 	}
 
+	if idempotentToken := runtime.Str("idempotent-token"); idempotentToken != "" {
+		desc.Params(map[string]interface{}{"client_token": idempotentToken})
+	}
 	return desc
 }
 
@@ -181,8 +186,15 @@ type rawNodesCreateReq struct {
 
 func parseWBcliNodes(rawjson []byte) (wbNodes []interface{}, err error, isRaw bool) {
 	var wbOutput WbCliOutput
-	if err := json.Unmarshal(rawjson, &wbOutput); err != nil {
+	decoder := json.NewDecoder(bytes.NewReader(rawjson))
+	decoder.UseNumber()
+	if err := decoder.Decode(&wbOutput); err != nil {
 		return nil, errs.NewValidationError(errs.SubtypeInvalidArgument, "unmarshal input json failed: %v", err).WithParam("--source").WithCause(err), false
+	}
+	// Decode exactly one JSON value, preserving json.Unmarshal's rejection of
+	// trailing input while retaining the decimal representation of node values.
+	if err := decoder.Decode(new(interface{})); !errors.Is(err, io.EOF) {
+		return nil, errs.NewValidationError(errs.SubtypeInvalidArgument, "source must contain exactly one JSON object").WithParam("--source").WithCause(err), false
 	}
 	if (wbOutput.Code != 0 || wbOutput.Data.To != "openapi") && wbOutput.RawNodes == nil {
 		return nil, errs.NewValidationError(errs.SubtypeInvalidArgument, "whiteboard-cli failed. please check previous log.").WithParam("--source"), false
