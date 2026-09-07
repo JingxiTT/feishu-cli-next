@@ -57,16 +57,22 @@ func TestTaskUpdateDryRunPreviewsEveryTaskID(t *testing.T) {
 	if err := json.Unmarshal(payload, &got); err != nil {
 		t.Fatalf("decode dry-run preview: %v", err)
 	}
-	if len(got.API) != 2 {
-		t.Fatalf("dry-run API calls = %d, want 2; payload: %s", len(got.API), payload)
+	if len(got.API) != 4 {
+		t.Fatalf("dry-run API calls = %d, want 4; payload: %s", len(got.API), payload)
 	}
 
 	wantURLs := []string{
 		"/open-apis/task/v2/tasks/task-guid-1",
+		"/open-apis/task/v2/tasks/task-guid-1",
+		"/open-apis/task/v2/tasks/task-guid-2",
 		"/open-apis/task/v2/tasks/task-guid-2",
 	}
 	for i, call := range got.API {
-		if call.Method != "PATCH" {
+		method := "GET"
+		if i%2 == 1 {
+			method = "PATCH"
+		}
+		if call.Method != method {
 			t.Errorf("api[%d].method = %q, want PATCH", i, call.Method)
 		}
 		if call.URL != wantURLs[i] {
@@ -75,7 +81,7 @@ func TestTaskUpdateDryRunPreviewsEveryTaskID(t *testing.T) {
 		if !reflect.DeepEqual(call.Params, map[string]interface{}{"user_id_type": "open_id"}) {
 			t.Errorf("api[%d].params = %#v", i, call.Params)
 		}
-		if !reflect.DeepEqual(call.Body, got.API[0].Body) {
+		if !reflect.DeepEqual(call.Body, got.API[i%2].Body) {
 			t.Errorf("api[%d].body = %#v, want same body as first call %#v", i, call.Body, got.API[0].Body)
 		}
 	}
@@ -109,6 +115,9 @@ func TestTaskUpdateNormalizesAllIDsAndReturnsConfirmedFields(t *testing.T) {
 			"code": 0, "msg": "success",
 			"data": map[string]interface{}{"task": secondTaskResponse},
 		},
+	}
+	for _, id := range []string{"task-guid-1", "task-guid-2"} {
+		reg.Register(&httpmock.Stub{Method: "GET", URL: "/open-apis/task/v2/tasks/" + id, Body: map[string]interface{}{"code": 0, "data": map[string]interface{}{"task": map[string]interface{}{"guid": id, "summary": "old"}}}})
 	}
 	reg.Register(first)
 	reg.Register(second)

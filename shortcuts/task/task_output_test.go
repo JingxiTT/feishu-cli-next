@@ -86,6 +86,9 @@ func TestTaskRootOutputFields(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			f, stdout, _, reg := taskShortcutTestFactory(t)
 			warmTenantToken(t, f, reg)
+			if tt.name == "reopen" {
+				reg.Register(&httpmock.Stub{Method: "GET", URL: tt.url, Body: map[string]interface{}{"code": 0, "data": map[string]interface{}{"task": map[string]interface{}{"guid": "task-1", "completed_at": "1000"}}}})
+			}
 			reg.Register(&httpmock.Stub{
 				Method: tt.method,
 				URL:    tt.url,

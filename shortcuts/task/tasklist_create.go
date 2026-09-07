@@ -32,6 +32,11 @@ var CreateTasklist = common.Shortcut{
 		{Name: "data", Desc: "JSON array of tasks to create within this tasklist"},
 	},
 
+	Validate: func(ctx context.Context, runtime *common.RuntimeContext) error {
+		_, err := parseTasklistTasks(runtime.Str("data"))
+		return err
+	},
+
 	DryRun: func(ctx context.Context, runtime *common.RuntimeContext) *common.DryRunAPI {
 		body := buildTasklistCreateBody(runtime)
 
@@ -54,11 +59,9 @@ var CreateTasklist = common.Shortcut{
 
 		// Validate --data (client input) before any remote write, so a malformed
 		// payload fails fast without creating an orphan tasklist.
-		var tasks []map[string]interface{}
-		if dataStr := runtime.Str("data"); dataStr != "" {
-			if err := json.Unmarshal([]byte(dataStr), &tasks); err != nil {
-				return errs.NewValidationError(errs.SubtypeInvalidArgument, "failed to parse --data as JSON array: %v", err).WithParam("--data")
-			}
+		tasks, err := parseTasklistTasks(runtime.Str("data"))
+		if err != nil {
+			return err
 		}
 
 		data, err := callTaskAPITyped(runtime, http.MethodPost, "/open-apis/task/v2/tasklists", params, body)
@@ -99,11 +102,7 @@ var CreateTasklist = common.Shortcut{
 					// If assignee is provided as string, convert it to members
 					if assignee, ok := tDef["assignee"].(string); ok {
 						tDef["members"] = []map[string]interface{}{
-							{
-								"id":   assignee,
-								"role": "assignee",
-								"type": "user",
-							},
+							buildTaskMember(assignee, "assignee"),
 						}
 						delete(tDef, "assignee")
 					}
@@ -229,4 +228,31 @@ func buildTasklistCreateBody(runtime *common.RuntimeContext) map[string]interfac
 	}
 
 	return body
+}
+
+// Validate every task before creating its containing tasklist.
+func parseTasklistTasks(input string) ([]map[string]interface{}, error) {
+	if input == "" {
+		return nil, nil
+	}
+	var raw []json.RawMessage
+	if err := json.Unmarshal([]byte(input), &raw); err != nil {
+		return nil, errs.NewValidationError(errs.SubtypeInvalidArgument, "failed to parse --data as JSON array").WithParam("--data").WithCause(err)
+	}
+	if raw == nil {
+		return nil, errs.NewValidationError(errs.SubtypeInvalidArgument, "--data must be a JSON array").WithParam("--data")
+	}
+	tasks := make([]map[string]interface{}, 0, len(raw))
+	for i, item := range raw {
+		task, err := parseTaskObject(string(item))
+		if err != nil {
+			return nil, err
+		}
+		summary, ok := task["summary"].(string)
+		if !ok || strings.TrimSpace(summary) == "" {
+			return nil, errs.NewValidationError(errs.SubtypeInvalidArgument, "task at index %d requires a non-empty summary", i).WithParam("--data")
+		}
+		tasks = append(tasks, task)
+	}
+	return tasks, nil
 }

@@ -5,8 +5,10 @@ package task
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
+	"math"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -37,6 +39,10 @@ var ReminderTask = common.Shortcut{
 		}
 		if runtime.Str("set") != "" && runtime.Bool("remove") {
 			return errs.NewValidationError(errs.SubtypeInvalidArgument, "cannot specify both --set and --remove")
+		}
+		if runtime.Str("set") != "" {
+			_, err := parseReminderMinutes(runtime.Str("set"))
+			return err
 		}
 		return nil
 	},
@@ -103,31 +109,20 @@ var ReminderTask = common.Shortcut{
 				}
 			}
 		} else if setStr := runtime.Str("set"); setStr != "" {
-			// Parse relative time string (e.g. 15m, 1h, 1d, or plain 30)
-			var minutes int
-			var parseErr error
-
-			if strings.HasSuffix(setStr, "m") {
-				minutes, parseErr = strconv.Atoi(strings.TrimSuffix(setStr, "m"))
-			} else if strings.HasSuffix(setStr, "h") {
-				h, e := strconv.Atoi(strings.TrimSuffix(setStr, "h"))
-				if e == nil {
-					minutes = h * 60
-				}
-				parseErr = e
-			} else if strings.HasSuffix(setStr, "d") {
-				d, e := strconv.Atoi(strings.TrimSuffix(setStr, "d"))
-				if e == nil {
-					minutes = d * 24 * 60
-				}
-				parseErr = e
-			} else {
-				// Default to minutes if no suffix
-				minutes, parseErr = strconv.Atoi(setStr)
+			minutes, err := parseReminderMinutes(setStr)
+			if err != nil {
+				return err
 			}
-
-			if parseErr != nil {
-				return errs.NewValidationError(errs.SubtypeInvalidArgument, "%v", parseErr)
+			// A matching reminder is already configured; re-adding could notify again.
+			var observed []struct {
+				RelativeFireMinute *int `json:"relative_fire_minute"`
+			}
+			raw, marshalErr := json.Marshal(reminders)
+			if marshalErr == nil && json.Unmarshal(raw, &observed) == nil && len(observed) == 1 && observed[0].RelativeFireMinute != nil && *observed[0].RelativeFireMinute == minutes {
+				outData := map[string]interface{}{"guid": taskId, "unchanged": true}
+				projectTaskFields(outData, taskObj, standardTaskOutputFields...)
+				runtime.OutFormat(outData, nil, func(w io.Writer) { fmt.Fprintln(w, "Reminder unchanged.") })
+				return nil
 			}
 
 			// If any reminders exist, remove them first
@@ -182,4 +177,22 @@ var ReminderTask = common.Shortcut{
 		})
 		return nil
 	},
+}
+
+func parseReminderMinutes(input string) (int, error) {
+	value, multiplier := input, 1
+	for suffix, factor := range map[string]int{"m": 1, "h": 60, "d": 1440} {
+		if strings.HasSuffix(input, suffix) {
+			value, multiplier = strings.TrimSuffix(input, suffix), factor
+			break
+		}
+	}
+	amount, err := strconv.Atoi(value)
+	if err != nil {
+		return 0, errs.NewValidationError(errs.SubtypeInvalidArgument, "invalid reminder duration").WithParam("--set").WithCause(err)
+	}
+	if amount < 0 || amount > math.MaxInt/multiplier {
+		return 0, errs.NewValidationError(errs.SubtypeInvalidArgument, "reminder duration must be a non-negative number of minutes without overflow").WithParam("--set")
+	}
+	return amount * multiplier, nil
 }

@@ -5,7 +5,6 @@ package task
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -140,17 +139,19 @@ func buildTaskCreateBody(runtime *common.RuntimeContext) (map[string]interface{}
 
 	// Handle generic JSON payload if provided
 	if dataStr := runtime.Str("data"); dataStr != "" {
-		if err := json.Unmarshal([]byte(dataStr), &body); err != nil {
-			return nil, errs.NewValidationError(errs.SubtypeInvalidArgument, "--data must be a valid JSON object: %v", err).WithParam("--data")
+		var err error
+		body, err = parseTaskObject(dataStr)
+		if err != nil {
+			return nil, err
 		}
 	}
 
 	// Explicit flags override generic data
-	if summary := runtime.Str("summary"); summary != "" {
+	if summary := runtime.Str("summary"); summary != "" || runtime.Cmd.Flags().Changed("summary") {
 		body["summary"] = summary
 	}
 
-	if desc := runtime.Str("description"); desc != "" {
+	if desc := runtime.Str("description"); desc != "" || runtime.Cmd.Flags().Changed("description") {
 		body["description"] = desc
 	}
 
@@ -212,6 +213,11 @@ var CreateTask = common.Shortcut{
 		{Name: "tasklist-id", Desc: "tasklist id or applink URL"},
 		{Name: "idempotency-key", Desc: "client token for idempotency"},
 		{Name: "data", Desc: "JSON payload for creating task"},
+	},
+
+	Validate: func(ctx context.Context, runtime *common.RuntimeContext) error {
+		_, err := buildTaskCreateBody(runtime)
+		return err
 	},
 
 	DryRun: func(ctx context.Context, runtime *common.RuntimeContext) *common.DryRunAPI {

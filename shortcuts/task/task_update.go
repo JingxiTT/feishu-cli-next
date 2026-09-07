@@ -5,11 +5,11 @@ package task
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 	"net/url"
+	"sort"
 	"strings"
 
 	"github.com/larksuite/cli/errs"
@@ -35,7 +35,10 @@ var UpdateTask = common.Shortcut{
 	},
 
 	Validate: func(ctx context.Context, runtime *common.RuntimeContext) error {
-		_, err := parseTaskGUIDs(runtime.Str("task-id"))
+		if _, err := parseTaskGUIDs(runtime.Str("task-id")); err != nil {
+			return err
+		}
+		_, err := buildTaskUpdateBody(runtime)
 		return err
 	},
 
@@ -50,7 +53,10 @@ var UpdateTask = common.Shortcut{
 		}
 		preview := common.NewDryRunAPI()
 		for _, taskID := range taskIDs {
-			preview.PATCH("/open-apis/task/v2/tasks/" + url.PathEscape(taskID)).
+			preview.GET("/open-apis/task/v2/tasks/" + url.PathEscape(taskID)).
+				Params(map[string]interface{}{"user_id_type": "open_id"}).
+				Desc("read current fields; skip replacement when unchanged").
+				PATCH("/open-apis/task/v2/tasks/" + url.PathEscape(taskID)).
 				Params(map[string]interface{}{"user_id_type": "open_id"}).
 				Body(body)
 		}
@@ -71,12 +77,24 @@ var UpdateTask = common.Shortcut{
 		}
 
 		var updatedTasks []map[string]interface{}
+		unchanged := make(map[string]bool)
 
 		for _, taskID := range taskIDs {
 			params := map[string]interface{}{"user_id_type": "open_id"}
-			data, err := callTaskAPITyped(runtime, http.MethodPatch, "/open-apis/task/v2/tasks/"+url.PathEscape(taskID), params, body)
+			path := "/open-apis/task/v2/tasks/" + url.PathEscape(taskID)
+			data, err := callTaskAPITyped(runtime, http.MethodGet, path, params, nil)
 			if err != nil {
 				return err
+			}
+			current, _ := data["task"].(map[string]interface{})
+			requested, _ := body["task"].(map[string]interface{})
+			if taskReplacementUnchanged(current, requested) {
+				unchanged[taskID] = true
+			} else {
+				data, err = callTaskAPITyped(runtime, http.MethodPatch, path, params, body)
+				if err != nil {
+					return err
+				}
 			}
 
 			taskObj, _ := data["task"].(map[string]interface{})
@@ -101,6 +119,7 @@ var UpdateTask = common.Shortcut{
 				"guid":      guid,
 				"url":       urlVal,
 				"confirmed": confirmed,
+				"unchanged": unchanged[guid],
 			}
 			projectTaskFields(item, task, standardTaskOutputFields...)
 			tasks = append(tasks, item)
@@ -157,23 +176,26 @@ func buildTaskUpdateBody(runtime *common.RuntimeContext) (map[string]interface{}
 	var updateFields []string
 
 	if dataStr := runtime.Str("data"); dataStr != "" {
-		if err := json.Unmarshal([]byte(dataStr), &taskObj); err != nil {
-			return nil, errs.NewValidationError(errs.SubtypeInvalidArgument, "--data must be a valid JSON object: %v", err).WithParam("--data")
+		var err error
+		taskObj, err = parseTaskObject(dataStr)
+		if err != nil {
+			return nil, err
 		}
 		// If data is provided, assume keys are update fields
 		for k := range taskObj {
 			updateFields = append(updateFields, k)
 		}
+		sort.Strings(updateFields)
 	}
 
-	if summary := runtime.Str("summary"); summary != "" {
+	if summary := runtime.Str("summary"); summary != "" || runtime.Cmd.Flags().Changed("summary") {
 		taskObj["summary"] = summary
 		if !contains(updateFields, "summary") {
 			updateFields = append(updateFields, "summary")
 		}
 	}
 
-	if desc := runtime.Str("description"); desc != "" {
+	if desc := runtime.Str("description"); desc != "" || runtime.Cmd.Flags().Changed("description") {
 		taskObj["description"] = desc
 		if !contains(updateFields, "description") {
 			updateFields = append(updateFields, "description")
@@ -188,6 +210,13 @@ func buildTaskUpdateBody(runtime *common.RuntimeContext) (map[string]interface{}
 		taskObj["due"] = dueObj
 		if !contains(updateFields, "due") {
 			updateFields = append(updateFields, "due")
+		}
+	}
+
+	if summary, exists := taskObj["summary"]; exists {
+		value, ok := summary.(string)
+		if !ok || strings.TrimSpace(value) == "" {
+			return nil, errs.NewValidationError(errs.SubtypeInvalidArgument, "task summary must be a non-empty string").WithParam("--summary")
 		}
 	}
 

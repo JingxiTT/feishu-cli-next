@@ -30,6 +30,9 @@ var ReopenTask = common.Shortcut{
 		body := buildReopenBody()
 		taskId := url.PathEscape(runtime.Str("task-id"))
 		return common.NewDryRunAPI().
+			GET("/open-apis/task/v2/tasks/" + taskId).
+			Params(map[string]interface{}{"user_id_type": "open_id"}).
+			Desc("read completion timestamp; reopen only when changed").
 			PATCH("/open-apis/task/v2/tasks/" + taskId).
 			Params(map[string]interface{}{"user_id_type": "open_id"}).
 			Body(body)
@@ -40,20 +43,29 @@ var ReopenTask = common.Shortcut{
 		body := buildReopenBody()
 
 		params := map[string]interface{}{"user_id_type": "open_id"}
-		data, err := callTaskAPITyped(runtime, http.MethodPatch, "/open-apis/task/v2/tasks/"+taskId, params, body)
+		data, err := callTaskAPITyped(runtime, http.MethodGet, "/open-apis/task/v2/tasks/"+taskId, params, nil)
 		if err != nil {
 			return err
 		}
 
 		task, _ := data["task"].(map[string]interface{})
+		unchanged := taskReplacementUnchanged(task, map[string]interface{}{"completed_at": "0"})
+		if !unchanged {
+			data, err = callTaskAPITyped(runtime, http.MethodPatch, "/open-apis/task/v2/tasks/"+taskId, params, body)
+			if err != nil {
+				return err
+			}
+			task, _ = data["task"].(map[string]interface{})
+		}
 		guid, _ := task["guid"].(string)
 		urlVal, _ := task["url"].(string)
 		urlVal = truncateTaskURL(urlVal)
 
 		// Standardized write output: return resource identifiers
 		outData := map[string]interface{}{
-			"guid": guid,
-			"url":  urlVal,
+			"guid":      guid,
+			"unchanged": unchanged,
+			"url":       urlVal,
 		}
 		projectTaskFields(outData, task, standardTaskOutputFields...)
 
