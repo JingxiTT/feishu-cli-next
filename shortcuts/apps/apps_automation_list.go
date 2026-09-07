@@ -113,8 +113,11 @@ func executeAutomationListAll(rctx *common.RuntimeContext, path string, params m
 		}
 		all = append(all, common.GetSlice(data, "items")...)
 		hasMore, next := common.PaginationMeta(data)
-		if !hasMore || next == "" {
+		if !hasMore {
 			break
+		}
+		if strings.TrimSpace(next) == "" {
+			return errs.NewInternalError(errs.SubtypeInvalidResponse, "automation list has_more is true but page_token is missing")
 		}
 		if _, ok := seen[next]; ok {
 			return errs.NewInternalError(errs.SubtypeInvalidResponse,

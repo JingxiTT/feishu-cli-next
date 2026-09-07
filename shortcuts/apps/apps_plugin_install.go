@@ -303,7 +303,7 @@ func pluginResolveVersion(ctx context.Context, rctx *common.RuntimeContext, key,
 		"latest_only": isLatest,
 	}
 
-	data, err := rctx.CallAPITyped("POST", apiBasePath+"/plugin/versions/batch_query", nil, body)
+	data, err := rctx.CallReadOnlyAPITyped("POST", apiBasePath+"/plugin/versions/batch_query", nil, body)
 	if err != nil {
 		p, ok := errs.ProblemOf(err)
 		if ok && p.Subtype == errs.SubtypeInvalidResponse {
@@ -377,7 +377,7 @@ func pluginDownloadPackage(ctx context.Context, rctx *common.RuntimeContext, key
 		"plugin_version": version,
 	})
 
-	resp, err := rctx.DoAPIStream(ctx, &larkcore.ApiReq{
+	resp, err := rctx.DoAPIStream(common.WithReadOnlyRequest(ctx, http.MethodPost, apiPath), &larkcore.ApiReq{
 		HttpMethod: http.MethodPost,
 		ApiPath:    apiPath,
 		Body:       bytes.NewReader(body),

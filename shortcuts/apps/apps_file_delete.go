@@ -91,7 +91,7 @@ func projectDeleteResults(raw interface{}, inputs []string) []map[string]interfa
 		if i < len(arr) {
 			r, _ = arr[i].(map[string]interface{})
 		}
-		status := "ok"
+		status := "unknown"
 		if r != nil && common.GetString(r, "status") != "" {
 			status = common.GetString(r, "status")
 		}
@@ -109,6 +109,9 @@ func projectDeleteResults(raw interface{}, inputs []string) []map[string]interfa
 			}
 			if code == "" {
 				code = "DELETE_FAILED"
+				if status == "unknown" {
+					code = "DELETE_UNKNOWN"
+				}
 			}
 			item["error"] = map[string]interface{}{
 				"code":    code,
@@ -122,6 +125,9 @@ func projectDeleteResults(raw interface{}, inputs []string) []map[string]interfa
 
 // deleteErrorMessage 据 error_code 生成删除失败文案：FILE_NOT_FOUND 提示文件不存在，其余统一删除失败。
 func deleteErrorMessage(code, path string) string {
+	if code == "DELETE_UNKNOWN" {
+		return fmt.Sprintf("Deletion outcome for %q is unknown; inspect the file before retrying", path)
+	}
 	if code == "FILE_NOT_FOUND" {
 		return fmt.Sprintf("File '%s' does not exist", path)
 	}

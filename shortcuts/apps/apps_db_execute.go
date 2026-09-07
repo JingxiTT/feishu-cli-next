@@ -116,6 +116,9 @@ var AppsDBExecute = common.Shortcut{
 		// server `result: string` 内嵌结构化数组 —— CLI 解出来后按 SQL 类型归一化成 PRD 形态，
 		// 让 json/pretty 路径都基于同一份反序列化产物渲染。
 		stmts := parseSQLResult(common.GetString(raw, "result"))
+		if err := validateSQLStatements(stmts); err != nil {
+			return err
+		}
 		// JSON data 形态（不再透传后端 result 字符串）：
 		//   - 单 SELECT → data 是行数组 [{...}]（空 → []）
 		//   - 单 DML    → data = {command, rows_affected}
@@ -201,7 +204,9 @@ func selectRows(s map[string]interface{}) []map[string]interface{} {
 		return []map[string]interface{}{}
 	}
 	var rows []map[string]interface{}
-	if err := json.Unmarshal([]byte(dataJSON), &rows); err != nil || rows == nil {
+	decoder := json.NewDecoder(strings.NewReader(dataJSON))
+	decoder.UseNumber()
+	if err := decoder.Decode(&rows); err != nil || rows == nil {
 		return []map[string]interface{}{}
 	}
 	return rows
@@ -513,7 +518,9 @@ func renderSelectRowsAsTable(w io.Writer, dataJSON string) {
 		return
 	}
 	var rows []map[string]interface{}
-	if err := json.Unmarshal([]byte(dataJSON), &rows); err != nil {
+	decoder := json.NewDecoder(strings.NewReader(dataJSON))
+	decoder.UseNumber()
+	if err := decoder.Decode(&rows); err != nil {
 		// 数据不符合预期 schema —— 原样打 fallback。
 		fmt.Fprintln(w, dataJSON)
 		return
@@ -665,4 +672,41 @@ func intOrZero(raw interface{}) int64 {
 		return int64(n)
 	}
 	return 0
+}
+
+// validateSQLStatements prevents malformed SELECT data from being reported as
+// a successful empty table. Legacy empty DDL results remain supported.
+
+func validateSQLStatements(statements []map[string]interface{}) error {
+	var decoded []struct {
+		Kind string  `json:"sql_type"`
+		Data *string `json:"data"`
+	}
+	encoded, err := json.Marshal(statements)
+	if err != nil {
+		return errs.NewInternalError(errs.SubtypeInvalidResponse, "cannot decode SQL statement results").WithCause(err)
+	}
+	if err = json.Unmarshal(encoded, &decoded); err != nil {
+		return errs.NewInternalError(errs.SubtypeInvalidResponse, "cannot decode SQL statement results").WithCause(err)
+	}
+	for _, statement := range decoded {
+		if statement.Kind == "" || statement.Kind == "RAW" {
+			return errs.NewInternalError(errs.SubtypeInvalidResponse, "SQL response has an invalid statement result")
+		}
+		if statement.Kind != "SELECT" {
+			continue
+		}
+		if statement.Data == nil {
+			return errs.NewInternalError(errs.SubtypeInvalidResponse, "SQL SELECT response is missing row data")
+		}
+		data := *statement.Data
+		if data == "" || strings.TrimSpace(data) == "null" {
+			continue
+		}
+		var rows []map[string]json.RawMessage
+		if err := json.Unmarshal([]byte(data), &rows); err != nil {
+			return errs.NewInternalError(errs.SubtypeInvalidResponse, "SQL SELECT response has invalid row data").WithCause(err)
+		}
+	}
+	return nil
 }

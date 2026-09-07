@@ -1,0 +1,2129 @@
+{
+  "reference_revision": "7fd6ef3c07182257ce776cdc5a614e122d5bd4b3",
+  "section": "apps",
+  "scope": "96 shortcuts and hidden git-credential-helper; separate from application",
+  "commands": [
+    {
+      "command": "apps +access-scope-get",
+      "target": "feishu-cli-next apps +access-scope-get",
+      "risk": "read",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_access_scope_get.go",
+          "sha256": "0602cabc6d17d512fcb7bc5c341e8ef33927f4a5ecb4b3fff944719c0fdf67c5"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_access_scope_get_test.go"
+      ],
+      "process_request_case": "+access-scope-get",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +access-scope-get"
+    },
+    {
+      "command": "apps +access-scope-set",
+      "target": "feishu-cli-next apps +access-scope-set",
+      "risk": "write",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_access_scope_set.go",
+          "sha256": "53d0d8fc1aee66c23d4478b71c74849ab6125582f9e03368638262679110c6b2"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_access_scope_set_test.go"
+      ],
+      "process_request_case": "+access-scope-set",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +access-scope-set"
+    },
+    {
+      "command": "apps +analytics-list",
+      "target": "feishu-cli-next apps +analytics-list",
+      "risk": "read",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_analytics.go",
+          "sha256": "343168a7450ba6e25d77a87883936c4528e17af3fc8bfdca04b60b18d930c17a"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_analytics_test.go"
+      ],
+      "process_request_case": "+analytics-list",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +analytics-list"
+    },
+    {
+      "command": "apps +automation-create",
+      "target": "feishu-cli-next apps +automation-create",
+      "risk": "write",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_automation_create.go",
+          "sha256": "35d417f8e33a6e3555ab847fc00c8b51257e25722fe89f53ed3eee5e5eeddcbc"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_automation_create_test.go"
+      ],
+      "process_request_case": "+automation-create",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +automation-create"
+    },
+    {
+      "command": "apps +automation-disable",
+      "target": "feishu-cli-next apps +automation-disable",
+      "risk": "write",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_automation_disable.go",
+          "sha256": "84248b281b05901877be804557b9495f7b48f51340027aa67d10ea8ec239a1d2"
+        }
+      ],
+      "unit_sources": [],
+      "process_request_case": "+automation-disable",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +automation-disable"
+    },
+    {
+      "command": "apps +automation-enable",
+      "target": "feishu-cli-next apps +automation-enable",
+      "risk": "write",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_automation_enable.go",
+          "sha256": "2edb87a4b89266d9a7dc6d961f0e075167b8cf9718c8a936f5b8f1a8a2fec937"
+        }
+      ],
+      "unit_sources": [],
+      "process_request_case": "+automation-enable",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +automation-enable"
+    },
+    {
+      "command": "apps +automation-get",
+      "target": "feishu-cli-next apps +automation-get",
+      "risk": "read",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_automation_get.go",
+          "sha256": "84b03e0ea5c831b9805569489ac66d0aeb6763d210f96f690909c7e63a862a0c"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_automation_get_test.go"
+      ],
+      "process_request_case": "+automation-get",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +automation-get"
+    },
+    {
+      "command": "apps +automation-list",
+      "target": "feishu-cli-next apps +automation-list",
+      "risk": "read",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_automation_list.go",
+          "sha256": "eb5bcdc26d8feabbbe0ce0b0431f15466ded3650b53fc97aed8eb42b714b5f1d"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_automation_list_test.go"
+      ],
+      "process_request_case": "+automation-list",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +automation-list"
+    },
+    {
+      "command": "apps +automation-update",
+      "target": "feishu-cli-next apps +automation-update",
+      "risk": "high-risk-write",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_automation_update.go",
+          "sha256": "7b6bd6a33b2fa5be867e740fbcdaeb0a0c74414c9d1303a24af43056c7a25a76"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_automation_update_test.go"
+      ],
+      "process_request_case": "+automation-update",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +automation-update"
+    },
+    {
+      "command": "apps +cache-clear",
+      "target": "feishu-cli-next apps +cache-clear",
+      "risk": "high-risk-write",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_cache_clear.go",
+          "sha256": "796e03463fd097c112119df9c1f5d2fdf851feb05587a00fa1d1f337ac1bfa97"
+        }
+      ],
+      "unit_sources": [],
+      "process_request_case": "+cache-clear",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +cache-clear"
+    },
+    {
+      "command": "apps +cache-delete",
+      "target": "feishu-cli-next apps +cache-delete",
+      "risk": "write",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_cache_delete.go",
+          "sha256": "a37f6aa21f6d67a2cf117e783152aa91fef9438b6cb54e0912577345c4def501"
+        }
+      ],
+      "unit_sources": [],
+      "process_request_case": "+cache-delete",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +cache-delete"
+    },
+    {
+      "command": "apps +cache-get",
+      "target": "feishu-cli-next apps +cache-get",
+      "risk": "read",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_cache_get.go",
+          "sha256": "1456cf8c9f24cf86397db47b28c3dde2aeeff30d2fcb862bc893f6b86f631dda"
+        }
+      ],
+      "unit_sources": [],
+      "process_request_case": "+cache-get",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +cache-get"
+    },
+    {
+      "command": "apps +chat",
+      "target": "feishu-cli-next apps +chat",
+      "risk": "write",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_chat.go",
+          "sha256": "a857746d9c198bdc1a00baf8f6d988279d55b1676b35a5f9e2476a62d27a5291"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_chat_test.go"
+      ],
+      "process_request_case": "+chat",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +chat"
+    },
+    {
+      "command": "apps +create",
+      "target": "feishu-cli-next apps +create",
+      "risk": "write",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_create.go",
+          "sha256": "5d7dd2c12597a955819a357e41291640d33cc1e89dd1a764c6ddc1c059b0bcda"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_create_test.go"
+      ],
+      "process_request_case": "+create",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +create"
+    },
+    {
+      "command": "apps +db-audit-disable",
+      "target": "feishu-cli-next apps +db-audit-disable",
+      "risk": "write",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_db_audit_set.go",
+          "sha256": "e9c942f52efd8cc7cc4dbcbbdbe302a9a382f2b0d48be9e03e9ef4a55c646cac"
+        }
+      ],
+      "unit_sources": [],
+      "process_request_case": "+db-audit-disable",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +db-audit-disable"
+    },
+    {
+      "command": "apps +db-audit-enable",
+      "target": "feishu-cli-next apps +db-audit-enable",
+      "risk": "write",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_db_audit_set.go",
+          "sha256": "e9c942f52efd8cc7cc4dbcbbdbe302a9a382f2b0d48be9e03e9ef4a55c646cac"
+        }
+      ],
+      "unit_sources": [],
+      "process_request_case": "+db-audit-enable",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +db-audit-enable"
+    },
+    {
+      "command": "apps +db-audit-list",
+      "target": "feishu-cli-next apps +db-audit-list",
+      "risk": "read",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_db_audit_list.go",
+          "sha256": "846b43c77ed20598780efb58d76de581bbc66255dea897a5d5b4a0a8ea367046"
+        }
+      ],
+      "unit_sources": [],
+      "process_request_case": "+db-audit-list",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +db-audit-list"
+    },
+    {
+      "command": "apps +db-audit-status",
+      "target": "feishu-cli-next apps +db-audit-status",
+      "risk": "read",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_db_audit_status.go",
+          "sha256": "816f7a776f54e7f9510ca5aed3b3bc43ad132d3b27bdda5bba757bb33797cc06"
+        }
+      ],
+      "unit_sources": [],
+      "process_request_case": "+db-audit-status",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +db-audit-status"
+    },
+    {
+      "command": "apps +db-changelog-list",
+      "target": "feishu-cli-next apps +db-changelog-list",
+      "risk": "read",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_db_changelog_list.go",
+          "sha256": "45a9b540a67fcc2b5db35de1c0ea334156ddacd8490a7ec05b0d39ab8c877879"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_db_changelog_list_test.go"
+      ],
+      "process_request_case": "+db-changelog-list",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +db-changelog-list"
+    },
+    {
+      "command": "apps +db-data-export",
+      "target": "feishu-cli-next apps +db-data-export",
+      "risk": "read",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_db_data_export.go",
+          "sha256": "92c2923866cd579d972c28e92219a82265ef5d81e6adb90873f3e5d36e5c70cb"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_db_data_export_test.go"
+      ],
+      "process_request_case": "+db-data-export",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +db-data-export"
+    },
+    {
+      "command": "apps +db-data-import",
+      "target": "feishu-cli-next apps +db-data-import",
+      "risk": "high-risk-write",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_db_data_import.go",
+          "sha256": "d2ac7915c36d3916cf7f2f490c9a0d06082992f63637865ab76f266faa3b1082"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_db_data_import_test.go"
+      ],
+      "process_request_case": "+db-data-import",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +db-data-import"
+    },
+    {
+      "command": "apps +db-env-create",
+      "target": "feishu-cli-next apps +db-env-create",
+      "risk": "high-risk-write",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_db_env_create.go",
+          "sha256": "061d42a731e11922820b1a00c5b5121d99bb99d41b956200ab4338cad29275d9"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_db_env_create_test.go"
+      ],
+      "process_request_case": "+db-env-create",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +db-env-create"
+    },
+    {
+      "command": "apps +db-env-diff",
+      "target": "feishu-cli-next apps +db-env-diff",
+      "risk": "read",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_db_env_migrate.go",
+          "sha256": "47685702e0252a4df9ebd581e0afa22fee2208856bcb763ec8b08c92dfbb6976"
+        }
+      ],
+      "unit_sources": [],
+      "process_request_case": "+db-env-diff",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +db-env-diff"
+    },
+    {
+      "command": "apps +db-env-migrate",
+      "target": "feishu-cli-next apps +db-env-migrate",
+      "risk": "high-risk-write",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_db_env_migrate.go",
+          "sha256": "47685702e0252a4df9ebd581e0afa22fee2208856bcb763ec8b08c92dfbb6976"
+        }
+      ],
+      "unit_sources": [],
+      "process_request_case": "+db-env-migrate",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +db-env-migrate"
+    },
+    {
+      "command": "apps +db-execute",
+      "target": "feishu-cli-next apps +db-execute",
+      "risk": "high-risk-write",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_db_execute.go",
+          "sha256": "387cd9ec710ecd494db80fec165b5783c078694db2e834e1b93fce73ed227e2e"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_db_execute_test.go"
+      ],
+      "process_request_case": "+db-execute",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +db-execute"
+    },
+    {
+      "command": "apps +db-quota-get",
+      "target": "feishu-cli-next apps +db-quota-get",
+      "risk": "read",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_db_quota_get.go",
+          "sha256": "6900b7803620f8d3aedb500829bbecab3932a87ab355587ba0fbfe77a4963840"
+        }
+      ],
+      "unit_sources": [],
+      "process_request_case": "+db-quota-get",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +db-quota-get"
+    },
+    {
+      "command": "apps +db-recovery-apply",
+      "target": "feishu-cli-next apps +db-recovery-apply",
+      "risk": "high-risk-write",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_db_recovery.go",
+          "sha256": "9ec3c0e38f5f863ec47cf4edcf00dc129be752e306bdf30259b1d2b30155d76e"
+        }
+      ],
+      "unit_sources": [],
+      "process_request_case": "+db-recovery-apply",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +db-recovery-apply"
+    },
+    {
+      "command": "apps +db-recovery-diff",
+      "target": "feishu-cli-next apps +db-recovery-diff",
+      "risk": "read",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_db_recovery.go",
+          "sha256": "9ec3c0e38f5f863ec47cf4edcf00dc129be752e306bdf30259b1d2b30155d76e"
+        }
+      ],
+      "unit_sources": [],
+      "process_request_case": "+db-recovery-diff",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +db-recovery-diff"
+    },
+    {
+      "command": "apps +db-sync-create",
+      "target": "feishu-cli-next apps +db-sync-create",
+      "risk": "high-risk-write",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_db_sync_create.go",
+          "sha256": "abe81adf5126de3ca079758cba223e0bbe198b846ce4bcc7ac21673979ed666f"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_db_sync_create_update_test.go"
+      ],
+      "process_request_case": "+db-sync-create",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +db-sync-create"
+    },
+    {
+      "command": "apps +db-sync-delete",
+      "target": "feishu-cli-next apps +db-sync-delete",
+      "risk": "high-risk-write",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_db_sync_operate.go",
+          "sha256": "16d334f652ae9987d62054cc72e67f4b02a6be4ab34cd2cbe05e06409eaa2106"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_db_sync_operate_test.go"
+      ],
+      "process_request_case": "+db-sync-delete",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +db-sync-delete"
+    },
+    {
+      "command": "apps +db-sync-disable",
+      "target": "feishu-cli-next apps +db-sync-disable",
+      "risk": "write",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_db_sync_operate.go",
+          "sha256": "16d334f652ae9987d62054cc72e67f4b02a6be4ab34cd2cbe05e06409eaa2106"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_db_sync_operate_test.go"
+      ],
+      "process_request_case": "+db-sync-disable",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +db-sync-disable"
+    },
+    {
+      "command": "apps +db-sync-enable",
+      "target": "feishu-cli-next apps +db-sync-enable",
+      "risk": "write",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_db_sync_operate.go",
+          "sha256": "16d334f652ae9987d62054cc72e67f4b02a6be4ab34cd2cbe05e06409eaa2106"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_db_sync_operate_test.go"
+      ],
+      "process_request_case": "+db-sync-enable",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +db-sync-enable"
+    },
+    {
+      "command": "apps +db-sync-get",
+      "target": "feishu-cli-next apps +db-sync-get",
+      "risk": "read",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_db_sync_get.go",
+          "sha256": "99313a4dc5de5cf9f459ab041dad624919c182dc9bd363e26ede61e512e12c28"
+        }
+      ],
+      "unit_sources": [],
+      "process_request_case": "+db-sync-get",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +db-sync-get"
+    },
+    {
+      "command": "apps +db-sync-list",
+      "target": "feishu-cli-next apps +db-sync-list",
+      "risk": "read",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_db_sync_list.go",
+          "sha256": "501081bb4d4d8060a95e3cb69c053e13cb130f7b0fd9bb02417c6c95bb723035"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_db_sync_list_get_test.go"
+      ],
+      "process_request_case": "+db-sync-list",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +db-sync-list"
+    },
+    {
+      "command": "apps +db-sync-update",
+      "target": "feishu-cli-next apps +db-sync-update",
+      "risk": "high-risk-write",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_db_sync_update.go",
+          "sha256": "6ae498bfb4833e305aa9428941beee4338b81a38bd986e30447458675d4ef0cc"
+        }
+      ],
+      "unit_sources": [],
+      "process_request_case": "+db-sync-update",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +db-sync-update"
+    },
+    {
+      "command": "apps +db-table-get",
+      "target": "feishu-cli-next apps +db-table-get",
+      "risk": "read",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_db_table_get.go",
+          "sha256": "659c3026e98f71491abdc22b76c733e1f1145653712cf5750a03179828476244"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_db_table_get_test.go"
+      ],
+      "process_request_case": "+db-table-get",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +db-table-get"
+    },
+    {
+      "command": "apps +db-table-list",
+      "target": "feishu-cli-next apps +db-table-list",
+      "risk": "read",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_db_table_list.go",
+          "sha256": "32a58c8ff5c05c937934496a4393bc1cc254633e2afe030031454f3c0e30511a"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_db_table_list_test.go"
+      ],
+      "process_request_case": "+db-table-list",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +db-table-list"
+    },
+    {
+      "command": "apps +env-delete",
+      "target": "feishu-cli-next apps +env-delete",
+      "risk": "high-risk-write",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_env.go",
+          "sha256": "177d4ae4b8a83a8df0832741dab18153a8afbdf9f0909e1646874be318b04660"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_env_pull_test.go",
+        "shortcuts/apps/apps_env_test.go"
+      ],
+      "process_request_case": "+env-delete",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +env-delete"
+    },
+    {
+      "command": "apps +env-list",
+      "target": "feishu-cli-next apps +env-list",
+      "risk": "read",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_env.go",
+          "sha256": "177d4ae4b8a83a8df0832741dab18153a8afbdf9f0909e1646874be318b04660"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_env_pull_test.go",
+        "shortcuts/apps/apps_env_test.go"
+      ],
+      "process_request_case": "+env-list",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +env-list"
+    },
+    {
+      "command": "apps +env-pull",
+      "target": "feishu-cli-next apps +env-pull",
+      "risk": "write",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_env_pull.go",
+          "sha256": "14d3e3f53d5e1837b992eadd1215ba7d3c8540808ddaff277ab99433366669c6"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_env_pull_test.go"
+      ],
+      "process_request_case": "+env-pull",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +env-pull"
+    },
+    {
+      "command": "apps +env-set",
+      "target": "feishu-cli-next apps +env-set",
+      "risk": "write",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_env.go",
+          "sha256": "177d4ae4b8a83a8df0832741dab18153a8afbdf9f0909e1646874be318b04660"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_env_pull_test.go",
+        "shortcuts/apps/apps_env_test.go"
+      ],
+      "process_request_case": "+env-set",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +env-set"
+    },
+    {
+      "command": "apps +file-delete",
+      "target": "feishu-cli-next apps +file-delete",
+      "risk": "high-risk-write",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_file_delete.go",
+          "sha256": "f6c5bf7ef68f8dbc60bc91a13581351514241ad1b6198646e4444b8a3314458d"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_file_delete_test.go"
+      ],
+      "process_request_case": "+file-delete",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +file-delete"
+    },
+    {
+      "command": "apps +file-download",
+      "target": "feishu-cli-next apps +file-download",
+      "risk": "read",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_file_download.go",
+          "sha256": "9dc7b0f7566b56eb1ad5acc4bbf49c573f345d4ba2ab8633a0f7ecfc6b31d79b"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_file_download_test.go"
+      ],
+      "process_request_case": "+file-download",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +file-download"
+    },
+    {
+      "command": "apps +file-get",
+      "target": "feishu-cli-next apps +file-get",
+      "risk": "read",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_file_get.go",
+          "sha256": "c667aaa336a68a6e6ae25a69313607b81a40396fd7c0fed52dc5b9d3ae6a49af"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_file_get_test.go"
+      ],
+      "process_request_case": "+file-get",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +file-get"
+    },
+    {
+      "command": "apps +file-list",
+      "target": "feishu-cli-next apps +file-list",
+      "risk": "read",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_file_list.go",
+          "sha256": "eafea479a43877212a83121a68a2f0e599b7d267a1854cc630c62bb70644d60b"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_file_list_test.go"
+      ],
+      "process_request_case": "+file-list",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +file-list"
+    },
+    {
+      "command": "apps +file-quota-get",
+      "target": "feishu-cli-next apps +file-quota-get",
+      "risk": "read",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_file_quota_get.go",
+          "sha256": "e97d1111dd2ec8a240161759fa1666d4d302b20077797585806864f250793ec3"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_file_quota_get_test.go"
+      ],
+      "process_request_case": "+file-quota-get",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +file-quota-get"
+    },
+    {
+      "command": "apps +file-sign",
+      "target": "feishu-cli-next apps +file-sign",
+      "risk": "read",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_file_sign.go",
+          "sha256": "771f99ddfc124e189c22bd29deba07e9832193515efa1f77890140628742e561"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_file_sign_test.go"
+      ],
+      "process_request_case": "+file-sign",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +file-sign"
+    },
+    {
+      "command": "apps +file-upload",
+      "target": "feishu-cli-next apps +file-upload",
+      "risk": "write",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_file_upload.go",
+          "sha256": "743c2db8c240457112d71c8130286c01edd341c0da0b78ad6602ac92726c08ec"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_file_upload_test.go"
+      ],
+      "process_request_case": "+file-upload",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +file-upload"
+    },
+    {
+      "command": "apps +get",
+      "target": "feishu-cli-next apps +get",
+      "risk": "read",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_get.go",
+          "sha256": "4e6a07b89df7ae3566963c137eb7f43a33a8a8eaa8adf91c6d7ed2490e311585"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_get_test.go"
+      ],
+      "process_request_case": "+get",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +get"
+    },
+    {
+      "command": "apps +git-credential-init",
+      "target": "feishu-cli-next apps +git-credential-init",
+      "risk": "write",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/git_credential.go",
+          "sha256": "3c7e7ce899ef26c0f41a6cd64845c39d1639d33d78ba58cd1d4624bbb995f59b"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/git_credential_test.go"
+      ],
+      "process_request_case": "+git-credential-init",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +git-credential-init"
+    },
+    {
+      "command": "apps +git-credential-list",
+      "target": "feishu-cli-next apps +git-credential-list",
+      "risk": "read",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/git_credential.go",
+          "sha256": "3c7e7ce899ef26c0f41a6cd64845c39d1639d33d78ba58cd1d4624bbb995f59b"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/git_credential_test.go"
+      ],
+      "process_request_case": "TestAppsLocalPluginLifecycleAndCredentialIsolation",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +git-credential-list"
+    },
+    {
+      "command": "apps +git-credential-remove",
+      "target": "feishu-cli-next apps +git-credential-remove",
+      "risk": "write",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/git_credential.go",
+          "sha256": "3c7e7ce899ef26c0f41a6cd64845c39d1639d33d78ba58cd1d4624bbb995f59b"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/git_credential_test.go"
+      ],
+      "process_request_case": "TestAppsLocalPluginLifecycleAndCredentialIsolation",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +git-credential-remove"
+    },
+    {
+      "command": "apps +html-publish",
+      "target": "feishu-cli-next apps +html-publish",
+      "risk": "write",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_html_publish.go",
+          "sha256": "d79876efbf54afc46c2cddc6b8d2f235b1af9c75f3cf3993b9e42e7c85ef3f6f"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_html_publish_test.go"
+      ],
+      "process_request_case": "+html-publish",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +html-publish"
+    },
+    {
+      "command": "apps +init",
+      "target": "feishu-cli-next apps +init",
+      "risk": "write",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_init.go",
+          "sha256": "0b811c955034766210ebdcb34a7c6a9b1f9c261edf6c4b5feb2657a64db68fd1"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_init_test.go"
+      ],
+      "process_request_case": "+init",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +init"
+    },
+    {
+      "command": "apps +list",
+      "target": "feishu-cli-next apps +list",
+      "risk": "read",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_list.go",
+          "sha256": "85820a639c866d62090eb36dde081679eae9ba8b5b85085d11179af3da772141"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_list_test.go"
+      ],
+      "process_request_case": "+list",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +list"
+    },
+    {
+      "command": "apps +log-get",
+      "target": "feishu-cli-next apps +log-get",
+      "risk": "read",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_logs.go",
+          "sha256": "0bac0d597b64bb4e8d42b66c35e4892fdd4fdc4b54d637004d888763f2f314f5"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_logs_test.go"
+      ],
+      "process_request_case": "+log-get",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +log-get"
+    },
+    {
+      "command": "apps +log-list",
+      "target": "feishu-cli-next apps +log-list",
+      "risk": "read",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_logs.go",
+          "sha256": "0bac0d597b64bb4e8d42b66c35e4892fdd4fdc4b54d637004d888763f2f314f5"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_logs_test.go"
+      ],
+      "process_request_case": "+log-list",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +log-list"
+    },
+    {
+      "command": "apps +member-add",
+      "target": "feishu-cli-next apps +member-add",
+      "risk": "high-risk-write",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_member.go",
+          "sha256": "c88da241debc38a143e1ee08c0b86baaf27146d784f73cc2cd9317d098420725"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_member_common_test.go",
+        "shortcuts/apps/apps_member_response_test.go"
+      ],
+      "process_request_case": "+member-add",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +member-add"
+    },
+    {
+      "command": "apps +member-list",
+      "target": "feishu-cli-next apps +member-list",
+      "risk": "read",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_member.go",
+          "sha256": "c88da241debc38a143e1ee08c0b86baaf27146d784f73cc2cd9317d098420725"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_member_common_test.go",
+        "shortcuts/apps/apps_member_response_test.go"
+      ],
+      "process_request_case": "+member-list",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +member-list"
+    },
+    {
+      "command": "apps +member-remove",
+      "target": "feishu-cli-next apps +member-remove",
+      "risk": "high-risk-write",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_member.go",
+          "sha256": "c88da241debc38a143e1ee08c0b86baaf27146d784f73cc2cd9317d098420725"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_member_common_test.go",
+        "shortcuts/apps/apps_member_response_test.go"
+      ],
+      "process_request_case": "+member-remove",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +member-remove"
+    },
+    {
+      "command": "apps +member-settings-get",
+      "target": "feishu-cli-next apps +member-settings-get",
+      "risk": "read",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_member.go",
+          "sha256": "c88da241debc38a143e1ee08c0b86baaf27146d784f73cc2cd9317d098420725"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_member_common_test.go",
+        "shortcuts/apps/apps_member_response_test.go"
+      ],
+      "process_request_case": "+member-settings-get",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +member-settings-get"
+    },
+    {
+      "command": "apps +member-settings-set",
+      "target": "feishu-cli-next apps +member-settings-set",
+      "risk": "high-risk-write",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_member.go",
+          "sha256": "c88da241debc38a143e1ee08c0b86baaf27146d784f73cc2cd9317d098420725"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_member_common_test.go",
+        "shortcuts/apps/apps_member_response_test.go"
+      ],
+      "process_request_case": "+member-settings-set",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +member-settings-set"
+    },
+    {
+      "command": "apps +member-update",
+      "target": "feishu-cli-next apps +member-update",
+      "risk": "high-risk-write",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_member.go",
+          "sha256": "c88da241debc38a143e1ee08c0b86baaf27146d784f73cc2cd9317d098420725"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_member_common_test.go",
+        "shortcuts/apps/apps_member_response_test.go"
+      ],
+      "process_request_case": "+member-update",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +member-update"
+    },
+    {
+      "command": "apps +metric-list",
+      "target": "feishu-cli-next apps +metric-list",
+      "risk": "read",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_metrics.go",
+          "sha256": "97cc2aca570c596d2ba5f5e2a82d4c7dd90e4a972ed14ef630d05b220d9afaf7"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_metrics_test.go"
+      ],
+      "process_request_case": "+metric-list",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +metric-list"
+    },
+    {
+      "command": "apps +openapi-key-create",
+      "target": "feishu-cli-next apps +openapi-key-create",
+      "risk": "write",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_openapi_key_create.go",
+          "sha256": "bdbc5d218d7b216a0a5381eac6747e019531813a1a21c51f3216023f6991f2c7"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_openapi_key_create_test.go"
+      ],
+      "process_request_case": "+openapi-key-create",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +openapi-key-create"
+    },
+    {
+      "command": "apps +openapi-key-delete",
+      "target": "feishu-cli-next apps +openapi-key-delete",
+      "risk": "high-risk-write",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_openapi_key_delete.go",
+          "sha256": "3b2a60032b1206726fa926907a6c35cd6321e05d5ad7978d167d77dbb538d596"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_openapi_key_delete_test.go"
+      ],
+      "process_request_case": "+openapi-key-delete",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +openapi-key-delete"
+    },
+    {
+      "command": "apps +openapi-key-disable",
+      "target": "feishu-cli-next apps +openapi-key-disable",
+      "risk": "write",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_openapi_key_disable.go",
+          "sha256": "311e645f6726552efca8daa2d262099cec331fe56c32382b0964af4e4baaec76"
+        }
+      ],
+      "unit_sources": [],
+      "process_request_case": "+openapi-key-disable",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +openapi-key-disable"
+    },
+    {
+      "command": "apps +openapi-key-enable",
+      "target": "feishu-cli-next apps +openapi-key-enable",
+      "risk": "write",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_openapi_key_enable.go",
+          "sha256": "0d4881fed5c56c5852b97f93c835ff1acc9b5705c542baa8ba1a7a144cb90e9b"
+        }
+      ],
+      "unit_sources": [],
+      "process_request_case": "+openapi-key-enable",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +openapi-key-enable"
+    },
+    {
+      "command": "apps +openapi-key-get",
+      "target": "feishu-cli-next apps +openapi-key-get",
+      "risk": "read",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_openapi_key_get.go",
+          "sha256": "239b76bd6ad42170bd28969ef1eec652113050cfbc88322ad20e791735ce711c"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_openapi_key_get_test.go"
+      ],
+      "process_request_case": "+openapi-key-get",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +openapi-key-get"
+    },
+    {
+      "command": "apps +openapi-key-list",
+      "target": "feishu-cli-next apps +openapi-key-list",
+      "risk": "read",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_openapi_key_list.go",
+          "sha256": "2a62dfca79c131c81a9757961957871d0eb564f4f0b780b7ad228d61eda2fd9c"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_openapi_key_list_test.go"
+      ],
+      "process_request_case": "+openapi-key-list",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +openapi-key-list"
+    },
+    {
+      "command": "apps +openapi-key-reset",
+      "target": "feishu-cli-next apps +openapi-key-reset",
+      "risk": "high-risk-write",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_openapi_key_reset.go",
+          "sha256": "b45be39dfd2e4e805623366f1e31d86ad8d263592c34dbf82b1ed286ac42a1d0"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_openapi_key_reset_test.go"
+      ],
+      "process_request_case": "+openapi-key-reset",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +openapi-key-reset"
+    },
+    {
+      "command": "apps +openapi-key-update",
+      "target": "feishu-cli-next apps +openapi-key-update",
+      "risk": "write",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_openapi_key_update.go",
+          "sha256": "2a219630cda308818ac8c8475361b02b32e0f905ee9ccfe4f7492ff7ecd12fb4"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_openapi_key_update_test.go"
+      ],
+      "process_request_case": "+openapi-key-update",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +openapi-key-update"
+    },
+    {
+      "command": "apps +plugin-install",
+      "target": "feishu-cli-next apps +plugin-install",
+      "risk": "write",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_plugin_install.go",
+          "sha256": "03a4c5b22db377e579fcb35b6dfa9bdc2e77b4a57b07d2c5600591481b8e24bc"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_plugin_install_test.go"
+      ],
+      "process_request_case": "+plugin-install",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +plugin-install"
+    },
+    {
+      "command": "apps +plugin-list",
+      "target": "feishu-cli-next apps +plugin-list",
+      "risk": "read",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_plugin_list.go",
+          "sha256": "f63117b8bc795d11df1b85087167f9680ba682c7e0e6fd0a69342e726a4ffc81"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_plugin_list_test.go"
+      ],
+      "process_request_case": "TestAppsLocalPluginLifecycleAndCredentialIsolation",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +plugin-list"
+    },
+    {
+      "command": "apps +plugin-uninstall",
+      "target": "feishu-cli-next apps +plugin-uninstall",
+      "risk": "write",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_plugin_uninstall.go",
+          "sha256": "52ac442bbcfdd3dbcd7bd083c0346eb2a72f5064b831ad22ef7c60de6b191110"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_plugin_uninstall_test.go"
+      ],
+      "process_request_case": "TestAppsLocalPluginLifecycleAndCredentialIsolation",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +plugin-uninstall"
+    },
+    {
+      "command": "apps +release-create",
+      "target": "feishu-cli-next apps +release-create",
+      "risk": "write",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_release_create.go",
+          "sha256": "e76523cd3401fe6c40c09fad55a7727158426766eff2c9fc68b82b181cfd68af"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_release_create_test.go"
+      ],
+      "process_request_case": "+release-create",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +release-create"
+    },
+    {
+      "command": "apps +release-get",
+      "target": "feishu-cli-next apps +release-get",
+      "risk": "read",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_release_get.go",
+          "sha256": "617f3b8d4ad2bb67949be92f5388d5af88468347ba4db0baa5d8beef81d12d0a"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_release_get_test.go"
+      ],
+      "process_request_case": "+release-get",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +release-get"
+    },
+    {
+      "command": "apps +release-list",
+      "target": "feishu-cli-next apps +release-list",
+      "risk": "read",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_release_list.go",
+          "sha256": "18fc4a7e10bfa2552317c4deaeb292b56bfcb6df2286ac3fc57d582fbaeeb6b8"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_release_list_test.go"
+      ],
+      "process_request_case": "+release-list",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +release-list"
+    },
+    {
+      "command": "apps +role-create",
+      "target": "feishu-cli-next apps +role-create",
+      "risk": "write",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_role.go",
+          "sha256": "835e3cf40638e07b214e68aa8ce3765b5ce67998137d600a66981b45f06be16b"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_role_common_test.go",
+        "shortcuts/apps/apps_role_member_test.go",
+        "shortcuts/apps/apps_role_test.go"
+      ],
+      "process_request_case": "+role-create",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +role-create"
+    },
+    {
+      "command": "apps +role-delete",
+      "target": "feishu-cli-next apps +role-delete",
+      "risk": "high-risk-write",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_role.go",
+          "sha256": "835e3cf40638e07b214e68aa8ce3765b5ce67998137d600a66981b45f06be16b"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_role_common_test.go",
+        "shortcuts/apps/apps_role_member_test.go",
+        "shortcuts/apps/apps_role_test.go"
+      ],
+      "process_request_case": "+role-delete",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +role-delete"
+    },
+    {
+      "command": "apps +role-get",
+      "target": "feishu-cli-next apps +role-get",
+      "risk": "read",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_role.go",
+          "sha256": "835e3cf40638e07b214e68aa8ce3765b5ce67998137d600a66981b45f06be16b"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_role_common_test.go",
+        "shortcuts/apps/apps_role_member_test.go",
+        "shortcuts/apps/apps_role_test.go"
+      ],
+      "process_request_case": "+role-get",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +role-get"
+    },
+    {
+      "command": "apps +role-list",
+      "target": "feishu-cli-next apps +role-list",
+      "risk": "read",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_role.go",
+          "sha256": "835e3cf40638e07b214e68aa8ce3765b5ce67998137d600a66981b45f06be16b"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_role_common_test.go",
+        "shortcuts/apps/apps_role_member_test.go",
+        "shortcuts/apps/apps_role_test.go"
+      ],
+      "process_request_case": "+role-list",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +role-list"
+    },
+    {
+      "command": "apps +role-match-list",
+      "target": "feishu-cli-next apps +role-match-list",
+      "risk": "read",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_role_member.go",
+          "sha256": "3460a5538340bafc8cff6600d827b537e8c287ed2f6636fc86d5ec7c1fe07e5c"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_role_member_test.go"
+      ],
+      "process_request_case": "+role-match-list",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +role-match-list"
+    },
+    {
+      "command": "apps +role-member-add",
+      "target": "feishu-cli-next apps +role-member-add",
+      "risk": "write",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_role_member.go",
+          "sha256": "3460a5538340bafc8cff6600d827b537e8c287ed2f6636fc86d5ec7c1fe07e5c"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_role_member_test.go"
+      ],
+      "process_request_case": "+role-member-add",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +role-member-add"
+    },
+    {
+      "command": "apps +role-member-list",
+      "target": "feishu-cli-next apps +role-member-list",
+      "risk": "read",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_role_member.go",
+          "sha256": "3460a5538340bafc8cff6600d827b537e8c287ed2f6636fc86d5ec7c1fe07e5c"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_role_member_test.go"
+      ],
+      "process_request_case": "+role-member-list",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +role-member-list"
+    },
+    {
+      "command": "apps +role-member-remove",
+      "target": "feishu-cli-next apps +role-member-remove",
+      "risk": "high-risk-write",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_role_member.go",
+          "sha256": "3460a5538340bafc8cff6600d827b537e8c287ed2f6636fc86d5ec7c1fe07e5c"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_role_member_test.go"
+      ],
+      "process_request_case": "+role-member-remove",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +role-member-remove"
+    },
+    {
+      "command": "apps +role-update",
+      "target": "feishu-cli-next apps +role-update",
+      "risk": "write",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_role.go",
+          "sha256": "835e3cf40638e07b214e68aa8ce3765b5ce67998137d600a66981b45f06be16b"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_role_common_test.go",
+        "shortcuts/apps/apps_role_member_test.go",
+        "shortcuts/apps/apps_role_test.go"
+      ],
+      "process_request_case": "+role-update",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +role-update"
+    },
+    {
+      "command": "apps +session-create",
+      "target": "feishu-cli-next apps +session-create",
+      "risk": "write",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_session_create.go",
+          "sha256": "17b5be8de874c544756a28e6575321fc4f29981c22d48a00c6ca8d402e44dc94"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_session_create_test.go"
+      ],
+      "process_request_case": "+session-create",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +session-create"
+    },
+    {
+      "command": "apps +session-get",
+      "target": "feishu-cli-next apps +session-get",
+      "risk": "read",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_session_get.go",
+          "sha256": "4d70ec2b00e51be4c3505d5f41d616df2aa5270648ba4c73d4ad2a5851226efe"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_session_get_test.go"
+      ],
+      "process_request_case": "+session-get",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +session-get"
+    },
+    {
+      "command": "apps +session-list",
+      "target": "feishu-cli-next apps +session-list",
+      "risk": "read",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_session_list.go",
+          "sha256": "d3eb7d40110ab9721d4074c33236166f9f43f3459d6a885c86fef06598e420d6"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_session_list_test.go"
+      ],
+      "process_request_case": "+session-list",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +session-list"
+    },
+    {
+      "command": "apps +session-messages-list",
+      "target": "feishu-cli-next apps +session-messages-list",
+      "risk": "read",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_session_messages_list.go",
+          "sha256": "a7f5dbc60b12f97b01c4eb7ccce1be76ec1134c2faee3d8830d6a06d01650600"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_session_messages_list_test.go"
+      ],
+      "process_request_case": "+session-messages-list",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +session-messages-list"
+    },
+    {
+      "command": "apps +session-stop",
+      "target": "feishu-cli-next apps +session-stop",
+      "risk": "write",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_session_stop.go",
+          "sha256": "6fb7cb4d2a79849339667c798732122a9b96024d8d79abd17f2750b64d4ddf1e"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_session_stop_test.go"
+      ],
+      "process_request_case": "+session-stop",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +session-stop"
+    },
+    {
+      "command": "apps +trace-get",
+      "target": "feishu-cli-next apps +trace-get",
+      "risk": "read",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_traces.go",
+          "sha256": "f90a490cb5eac704bb345e19a5e9a3f50dbd6d37423c33744ff895fe4dc4b097"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_traces_test.go"
+      ],
+      "process_request_case": "+trace-get",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +trace-get"
+    },
+    {
+      "command": "apps +trace-list",
+      "target": "feishu-cli-next apps +trace-list",
+      "risk": "read",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_traces.go",
+          "sha256": "f90a490cb5eac704bb345e19a5e9a3f50dbd6d37423c33744ff895fe4dc4b097"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_traces_test.go"
+      ],
+      "process_request_case": "+trace-list",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +trace-list"
+    },
+    {
+      "command": "apps +update",
+      "target": "feishu-cli-next apps +update",
+      "risk": "write",
+      "identities": [
+        "user"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_update.go",
+          "sha256": "6375ff28d2a5897634d607c4bf7a1f5bde1667523e6f76a8bc8d603e3b6014c4"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_update_test.go"
+      ],
+      "process_request_case": "+update",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +update"
+    },
+    {
+      "command": "apps +user-id-convert",
+      "target": "feishu-cli-next apps +user-id-convert",
+      "risk": "read",
+      "identities": [
+        "user",
+        "bot"
+      ],
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/apps_user_id_convert.go",
+          "sha256": "486ea8dbdc761b36095a3c0d15c9f7e389ad7262b09319db009a05ae915e72be"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/apps_user_id_convert_test.go"
+      ],
+      "process_request_case": "+user-id-convert",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps +user-id-convert"
+    },
+    {
+      "command": "apps git-credential-helper",
+      "target": "feishu-cli-next apps git-credential-helper",
+      "risk": "",
+      "identities": null,
+      "implementation": "reused domain implementation",
+      "frozen_sources": [
+        {
+          "path": "shortcuts/apps/git_credential.go",
+          "sha256": "3c7e7ce899ef26c0f41a6cd64845c39d1639d33d78ba58cd1d4624bbb995f59b"
+        }
+      ],
+      "unit_sources": [
+        "shortcuts/apps/git_credential_test.go"
+      ],
+      "process_request_case": "TestAppsLocalPluginLifecycleAndCredentialIsolation",
+      "live": "blocked",
+      "comparison": "pending coordinator scheduling",
+      "registration": "../reference/registrations.json.gz#/feishu/commands/apps git-credential-helper"
+    }
+  ],
+  "source_reuse": {
+    "files": 200,
+    "test_files": 98
+  },
+  "status": "offline boundary validated; live and comparative acceptance outstanding",
+  "evidence": "apps-evidence.json"
+}

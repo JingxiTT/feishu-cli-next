@@ -87,7 +87,11 @@ var AppsFileDownload = common.Shortcut{
 		if err != nil {
 			return errs.NewNetworkError(errs.SubtypeNetworkTransport, "build download request").WithCause(err)
 		}
-		resp, err := newFileTransferClient().Do(req) //nolint:forbidigo // see above: direct presigned-URL download, RuntimeContext.DoAPI does not apply.
+		client, err := newFileTransferClient(rctx)
+		if err != nil {
+			return err
+		}
+		resp, err := client.Do(req) //nolint:forbidigo // see above: direct presigned-URL download, RuntimeContext.DoAPI does not apply.
 		if err != nil {
 			// dial/transport 失败是典型可重试场景。
 			return errs.NewNetworkError(errs.SubtypeNetworkTransport, "download failed").WithCause(err).WithRetryable()

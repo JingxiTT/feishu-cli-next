@@ -6,6 +6,7 @@ package apps
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -92,6 +93,9 @@ var AppsDBDataImport = common.Shortcut{
 		if len(content) > dbDataImportMaxBytes {
 			return errs.NewValidationError(errs.SubtypeInvalidArgument, "import data exceeds 1 MB limit (file is %d bytes); split into ≤1 MB chunks", len(content)).WithParam("--file")
 		}
+		if err := rejectResultArtifactImport(content); err != nil {
+			return err
+		}
 		fileName := filepath.Base(file)
 		table := importTableName(rctx)
 
@@ -145,4 +149,17 @@ func importTableName(rctx *common.RuntimeContext) string {
 	}
 	base := filepath.Base(f)
 	return strings.TrimSuffix(base, filepath.Ext(base))
+}
+
+// Generic result artifacts carry bindings and extent, not an import row schema.
+// Keep the native CSV/JSON import route explicit rather than silently importing
+// an artifact envelope as a database record.
+func rejectResultArtifactImport(content []byte) error {
+	var header struct {
+		Schema string `json:"schema"`
+	}
+	if json.Unmarshal(content, &header) == nil && strings.HasPrefix(header.Schema, "feishu-cli-next/result/") {
+		return errs.NewValidationError(errs.SubtypeInvalidArgument, "result artifacts are not native database import payloads").WithParam("--file").WithHint("Use a native CSV/JSON data export; verify artifact binding and completeness before converting one to import rows.")
+	}
+	return nil
 }

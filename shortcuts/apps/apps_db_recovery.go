@@ -165,7 +165,7 @@ var AppsDBRecoveryApply = common.Shortcut{
 func runRecoveryPreview(rctx *common.RuntimeContext, appID, target string) (map[string]interface{}, error) {
 	stop := rctx.StartSpinner("Previewing recovery impact (target: " + target + ")")
 	defer stop()
-	submit, err := rctx.CallAPITyped("POST", appRecoveryPath(appID), dbEnvParams(rctx, map[string]interface{}{}), map[string]interface{}{"target": target, "dry_run": true})
+	submit, err := rctx.CallReadOnlyAPITyped("POST", appRecoveryPath(appID), dbEnvParams(rctx, map[string]interface{}{}), map[string]interface{}{"target": target, "dry_run": true})
 	if err != nil {
 		return nil, withAppsHint(err, dbRecoveryHint)
 	}

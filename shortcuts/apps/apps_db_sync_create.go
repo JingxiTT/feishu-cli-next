@@ -72,7 +72,11 @@ var AppsDBSyncCreate = common.Shortcut{
 		if err != nil {
 			return err
 		}
-		data, err := rctx.CallAPITyped("POST", appDbSyncCreatePath(appID), nil, dbSyncCreateBody(rctx, config, rctx.Bool("preview")))
+		call := rctx.CallAPITyped
+		if rctx.Bool("preview") {
+			call = rctx.CallReadOnlyAPITyped
+		}
+		data, err := call("POST", appDbSyncCreatePath(appID), nil, dbSyncCreateBody(rctx, config, rctx.Bool("preview")))
 		if err != nil {
 			return withDBSyncHint(err, dbSyncFallbackHint)
 		}

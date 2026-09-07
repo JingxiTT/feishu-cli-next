@@ -50,7 +50,7 @@ var AppsDBEnvDiff = common.Shortcut{
 		}
 		stop := rctx.StartSpinner("Previewing migration diff (dev → online)")
 		defer stop()
-		data, err := rctx.CallAPITyped("POST", appEnvMigratePath(appID), nil, map[string]interface{}{"dry_run": true})
+		data, err := rctx.CallReadOnlyAPITyped("POST", appEnvMigratePath(appID), nil, map[string]interface{}{"dry_run": true})
 		stop()
 		if err != nil {
 			return withAppsHint(err, dbEnvMigrateHint)
@@ -103,7 +103,7 @@ var AppsDBEnvMigrate = common.Shortcut{
 		// 交由下面真实 apply 统一报同样的业务错。
 		pending := 0
 		var previewFrom, previewTo string
-		if preview, perr := rctx.CallAPITyped("POST", appEnvMigratePath(appID), nil, map[string]interface{}{"dry_run": true}); perr == nil {
+		if preview, perr := rctx.CallReadOnlyAPITyped("POST", appEnvMigratePath(appID), nil, map[string]interface{}{"dry_run": true}); perr == nil {
 			pending = len(projectMigrationChanges(preview["changes"]))
 			previewFrom, previewTo = common.GetString(preview, "from"), common.GetString(preview, "to")
 		}

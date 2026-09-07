@@ -42,6 +42,11 @@ var AppsEnvVarList = common.Shortcut{
 		if err := validateEnvVarEnv(envVarEnv(rctx)); err != nil {
 			return err
 		}
+		// Environment values may hold arbitrary credentials, whose sensitivity
+		// cannot be inferred from the generic key/value response field names.
+		if rctx.Bool("include-values") && rctx.Str("save-result") != "" {
+			return appsValidationParamError("--save-result", "environment variable values cannot be saved as result artifacts")
+		}
 		return nil
 	},
 	DryRun: func(ctx context.Context, rctx *common.RuntimeContext) *common.DryRunAPI {

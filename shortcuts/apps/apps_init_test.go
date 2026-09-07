@@ -762,6 +762,7 @@ func newAppsExecuteFactoryWithStderr(t *testing.T) (*cmdutil.Factory, *bytes.Buf
 		UserOpenId: "ou_test",
 	}
 	factory, stdout, stderr, reg := cmdutil.TestFactory(t, cfg)
+	allowAppsLoopbackTransfers(factory)
 	return factory, stdout, stderr, reg
 }
 

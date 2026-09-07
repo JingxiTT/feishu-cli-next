@@ -6,6 +6,8 @@ package apps
 import (
 	"bytes"
 	"context"
+	"encoding/csv"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -103,7 +105,7 @@ var AppsDBDataExport = common.Shortcut{
 		if env := dbEnv(rctx); env != "" {
 			exportQuery["env"] = []string{env}
 		}
-		resp, err := rctx.DoAPI(&larkcore.ApiReq{
+		resp, err := rctx.DoAPIStream(rctx.Ctx(), &larkcore.ApiReq{
 			HttpMethod:  http.MethodGet,
 			ApiPath:     appDataExportPath(appID),
 			QueryParams: exportQuery,
@@ -111,16 +113,20 @@ var AppsDBDataExport = common.Shortcut{
 		if err != nil {
 			return withAppsHint(errs.NewNetworkError(errs.SubtypeNetworkTransport, "export request failed").WithCause(err).WithRetryable(), dbDataExportHint)
 		}
-		// 成功是原始字节；业务错误网关以 JSON 信封 {code,msg} 返回（以 '{' 开头）。
-		if b := bytes.TrimSpace(resp.RawBody); len(b) > 0 && b[0] == '{' {
-			if _, cerr := rctx.ClassifyAPIResponse(resp); cerr != nil {
+		defer resp.Body.Close()
+		body, err := io.ReadAll(io.LimitReader(resp.Body, dbDataExportMaxBytes+1))
+		if err != nil {
+			return errs.NewNetworkError(errs.SubtypeNetworkTransport, "cannot read database export").WithCause(err)
+		}
+		// Native CSV/JSON/SQL bytes bypass the SDK's JSON-envelope decoder.
+		if b := bytes.TrimSpace(body); len(b) > 0 && b[0] == '{' {
+			if _, cerr := rctx.ClassifyAPIResponse(&larkcore.ApiResp{StatusCode: resp.StatusCode, Header: resp.Header, RawBody: body}); cerr != nil {
 				return withAppsHint(cerr, dbDataExportHint)
 			}
 		}
 		if resp.StatusCode >= 400 {
 			return withAppsHint(errs.NewNetworkError(errs.SubtypeNetworkServer, "export failed: HTTP %d", resp.StatusCode).WithRetryable(), dbDataExportHint)
 		}
-		body := resp.RawBody
 		if len(body) > dbDataExportMaxBytes {
 			return errs.NewValidationError(errs.SubtypeInvalidArgument, "export exceeds 1 MB limit (%d bytes); filter rows with +db-execute (WHERE/LIMIT) and export smaller subsets", len(body))
 		}
@@ -132,15 +138,10 @@ var AppsDBDataExport = common.Shortcut{
 		if err != nil {
 			return errs.NewValidationError(errs.SubtypeInvalidArgument, "--output: %v", err).WithParam("--output")
 		}
-		// 行数取自预查的 total（导出最多 limit 行，故取 min）；total 查询失败时按导出内容数行兜底。
-		rows := 0
-		if totalErr == nil {
-			rows = total
-			if lim := rctx.Int("limit"); rows > lim {
-				rows = lim
-			}
-		} else {
-			rows = countDataRows(body, format)
+		// Count serialized CSV/JSON records; a separate source total only reports extent.
+		rows, countKnown := countExportRows(body, format)
+		if !countKnown && totalErr == nil {
+			rows = min(total, rctx.Int("limit"))
 		}
 		resolved, perr := rctx.FileIO().ResolvePath(out)
 		if perr != nil || resolved == "" {
@@ -149,6 +150,12 @@ var AppsDBDataExport = common.Shortcut{
 		result := map[string]interface{}{
 			"table": table, "output": resolved, "format": format,
 			"rows": rows, "size_bytes": saved.Size(),
+			"rows_counted": countKnown, "limit": rctx.Int("limit"),
+			"complete": countKnown && totalErr == nil && rows == total,
+		}
+		if totalErr == nil {
+			result["source_total"] = total
+			result["has_more"] = total > rows
 		}
 		rctx.OutFormat(result, nil, func(w io.Writer) {
 			fmt.Fprintf(w, "✓ Exported %s → %s (%d rows)\n", table, resolved, rows)
@@ -168,7 +175,24 @@ func queryExportTotal(rctx *common.RuntimeContext, appID, env, table string) (in
 	if err != nil {
 		return 0, err
 	}
-	return totalAsInt(raw["total"]), nil
+	var count struct {
+		Total *json.Number `json:"total"`
+	}
+	encoded, err := json.Marshal(raw)
+	if err != nil {
+		return 0, errs.NewInternalError(errs.SubtypeInvalidResponse, "cannot decode export total").WithCause(err)
+	}
+	if err = json.Unmarshal(encoded, &count); err != nil {
+		return 0, errs.NewInternalError(errs.SubtypeInvalidResponse, "cannot decode export total").WithCause(err)
+	}
+	if count.Total == nil {
+		return 0, errs.NewInternalError(errs.SubtypeInvalidResponse, "export row-count response is missing total")
+	}
+	total, err := strconv.Atoi(count.Total.String())
+	if err != nil || total < 0 {
+		return 0, errs.NewInternalError(errs.SubtypeInvalidResponse, "export row-count response has an invalid total").WithCause(err)
+	}
+	return total, nil
 }
 
 // totalAsInt 把 total 解析成 int，兼容 JSON number 与 i64-as-string 两种 wire 形态。
@@ -197,4 +221,33 @@ func exportFormatAndOutput(rctx *common.RuntimeContext) (format, outPath string,
 		return "", "", ferr
 	}
 	return f, out, nil
+}
+
+// countExportRows measures serialized rows without interpreting database values.
+// SQL dumps and malformed content do not establish a row count or completeness.
+func countExportRows(body []byte, format string) (int, bool) {
+	switch format {
+	case "csv":
+		reader := csv.NewReader(bytes.NewReader(body))
+		reader.FieldsPerRecord = -1
+		count := -1 // header
+		for {
+			_, err := reader.Read()
+			if err == io.EOF {
+				return max(count, 0), true
+			}
+			if err != nil {
+				return 0, false
+			}
+			count++
+		}
+	case "json":
+		var rows []json.RawMessage
+		if err := json.Unmarshal(body, &rows); err == nil {
+			return len(rows), true
+		}
+		return 0, false
+	default:
+		return 0, false
+	}
 }

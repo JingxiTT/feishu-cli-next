@@ -1,0 +1,1810 @@
+[
+  {
+    "name": "+access-scope-get",
+    "args": [
+      "+access-scope-get",
+      "--app-id",
+      "app_fixture"
+    ],
+    "apis": [
+      {
+        "method": "GET",
+        "url": "/open-apis/spark/v1/apps/app_fixture/access-scope"
+      }
+    ]
+  },
+  {
+    "name": "+access-scope-set",
+    "args": [
+      "+access-scope-set",
+      "--app-id",
+      "app_fixture",
+      "--scope",
+      "specific",
+      "--targets",
+      "[{\"type\":\"user\",\"id\":\"ou_fixture\"}]"
+    ],
+    "apis": [
+      {
+        "method": "PUT",
+        "url": "/open-apis/spark/v1/apps/app_fixture/access-scope",
+        "body": {
+          "scope": "Range",
+          "users": [
+            "ou_fixture"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "name": "+analytics-list",
+    "args": [
+      "+analytics-list",
+      "--analytics",
+      "fixture",
+      "--app-id",
+      "app_fixture",
+      "--analytics",
+      "page-view",
+      "--since",
+      "2026-01-01T00:00:00Z",
+      "--until",
+      "2026-01-02T00:00:00Z"
+    ],
+    "apis": [
+      {
+        "method": "POST",
+        "url": "/open-apis/spark/v1/apps/app_fixture/query_analytics_data",
+        "body": {
+          "end_timestamp_ns": "1767312000000000000",
+          "metric_types": [
+            "PAGE_VIEW"
+          ],
+          "need_pack_lack_point": false,
+          "start_timestamp_ns": "1767225600000000000",
+          "time_aggregation_unit": "DAY"
+        }
+      }
+    ]
+  },
+  {
+    "name": "+automation-create",
+    "args": [
+      "+automation-create",
+      "--app-id",
+      "app_fixture",
+      "--name",
+      "fixture_name",
+      "--trigger-type",
+      "cron",
+      "--cron",
+      "0 10 * * *"
+    ],
+    "apis": [
+      {
+        "method": "POST",
+        "url": "/open-apis/spark/v1/apps/app_fixture/triggers",
+        "body": {
+          "cron_condition": {
+            "cron": "0 10 * * *",
+            "timezone": "Asia/Shanghai"
+          },
+          "name": "fixture_name",
+          "trigger_type": "cron"
+        }
+      }
+    ]
+  },
+  {
+    "name": "+automation-disable",
+    "args": [
+      "+automation-disable",
+      "--app-id",
+      "app_fixture",
+      "--name",
+      "fixture_name"
+    ],
+    "apis": [
+      {
+        "method": "PATCH",
+        "url": "/open-apis/spark/v1/apps/app_fixture/triggers/fixture_name",
+        "body": {
+          "status": "disabled"
+        }
+      }
+    ]
+  },
+  {
+    "name": "+automation-enable",
+    "args": [
+      "+automation-enable",
+      "--app-id",
+      "app_fixture",
+      "--name",
+      "fixture_name"
+    ],
+    "apis": [
+      {
+        "method": "PATCH",
+        "url": "/open-apis/spark/v1/apps/app_fixture/triggers/fixture_name",
+        "body": {
+          "status": "enabled"
+        }
+      }
+    ]
+  },
+  {
+    "name": "+automation-get",
+    "args": [
+      "+automation-get",
+      "--app-id",
+      "app_fixture",
+      "--name",
+      "fixture_name"
+    ],
+    "apis": [
+      {
+        "method": "GET",
+        "url": "/open-apis/spark/v1/apps/app_fixture/triggers/fixture_name"
+      }
+    ]
+  },
+  {
+    "name": "+automation-list",
+    "args": [
+      "+automation-list",
+      "--app-id",
+      "app_fixture"
+    ],
+    "apis": [
+      {
+        "method": "GET",
+        "url": "/open-apis/spark/v1/apps/app_fixture/triggers"
+      }
+    ]
+  },
+  {
+    "name": "+automation-update",
+    "args": [
+      "+automation-update",
+      "--app-id",
+      "app_fixture",
+      "--name",
+      "fixture_name",
+      "--cron",
+      "0 11 * * *"
+    ],
+    "apis": [
+      {
+        "method": "PUT",
+        "url": "/open-apis/spark/v1/apps/app_fixture/triggers/fixture_name",
+        "body": {
+          "cron_condition": {
+            "cron": "0 11 * * *",
+            "timezone": "Asia/Shanghai"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "name": "+cache-clear",
+    "args": [
+      "+cache-clear",
+      "--app-id",
+      "app_fixture"
+    ],
+    "apis": [
+      {
+        "method": "POST",
+        "url": "/open-apis/spark/v1/apps/app_fixture/cache/clear",
+        "body": {}
+      }
+    ]
+  },
+  {
+    "name": "+cache-delete",
+    "args": [
+      "+cache-delete",
+      "--app-id",
+      "app_fixture",
+      "--key",
+      "FOO"
+    ],
+    "apis": [
+      {
+        "method": "DELETE",
+        "url": "/open-apis/spark/v1/apps/app_fixture/cache",
+        "params": {
+          "key": "FOO"
+        }
+      }
+    ]
+  },
+  {
+    "name": "+cache-get",
+    "args": [
+      "+cache-get",
+      "--app-id",
+      "app_fixture",
+      "--key",
+      "FOO"
+    ],
+    "apis": [
+      {
+        "method": "GET",
+        "url": "/open-apis/spark/v1/apps/app_fixture/cache",
+        "params": {
+          "key": "FOO"
+        }
+      }
+    ]
+  },
+  {
+    "name": "+chat",
+    "args": [
+      "+chat",
+      "--app-id",
+      "app_fixture",
+      "--message",
+      "fixture message",
+      "--session-id",
+      "session_fixture"
+    ],
+    "apis": [
+      {
+        "method": "POST",
+        "url": "/open-apis/spark/v1/apps/app_fixture/sessions/session_fixture/chat",
+        "body": {
+          "message": "fixture message"
+        }
+      }
+    ]
+  },
+  {
+    "name": "+create",
+    "args": [
+      "+create",
+      "--app-type",
+      "html",
+      "--name",
+      "fixture_name"
+    ],
+    "apis": [
+      {
+        "method": "POST",
+        "url": "/open-apis/spark/v1/apps",
+        "body": {
+          "app_type": "html",
+          "name": "fixture_name"
+        }
+      }
+    ]
+  },
+  {
+    "name": "+db-audit-disable",
+    "args": [
+      "+db-audit-disable",
+      "--app-id",
+      "app_fixture",
+      "--table",
+      "orders"
+    ],
+    "apis": [
+      {
+        "method": "POST",
+        "url": "/open-apis/spark/v1/apps/app_fixture/db/audit_set",
+        "body": {
+          "enabled": false,
+          "table": "orders"
+        }
+      }
+    ]
+  },
+  {
+    "name": "+db-audit-enable",
+    "args": [
+      "+db-audit-enable",
+      "--app-id",
+      "app_fixture",
+      "--table",
+      "orders"
+    ],
+    "apis": [
+      {
+        "method": "POST",
+        "url": "/open-apis/spark/v1/apps/app_fixture/db/audit_set",
+        "body": {
+          "enabled": true,
+          "retention": "7d",
+          "table": "orders"
+        }
+      }
+    ]
+  },
+  {
+    "name": "+db-audit-list",
+    "args": [
+      "+db-audit-list",
+      "--app-id",
+      "app_fixture",
+      "--table",
+      "orders",
+      "--since",
+      "2026-01-01T00:00:00Z",
+      "--until",
+      "2026-01-02T00:00:00Z"
+    ],
+    "apis": [
+      {
+        "method": "GET",
+        "url": "/open-apis/spark/v1/apps/app_fixture/db/audit_list",
+        "params": {
+          "page_size": 20,
+          "since": "2026-01-01T00:00:00Z",
+          "tables": "orders",
+          "until": "2026-01-02T00:00:00Z"
+        }
+      }
+    ]
+  },
+  {
+    "name": "+db-audit-status",
+    "args": [
+      "+db-audit-status",
+      "--app-id",
+      "app_fixture"
+    ],
+    "apis": [
+      {
+        "method": "GET",
+        "url": "/open-apis/spark/v1/apps/app_fixture/db/audit_status"
+      }
+    ]
+  },
+  {
+    "name": "+db-changelog-list",
+    "args": [
+      "+db-changelog-list",
+      "--app-id",
+      "app_fixture",
+      "--since",
+      "2026-01-01T00:00:00Z",
+      "--until",
+      "2026-01-02T00:00:00Z"
+    ],
+    "apis": [
+      {
+        "method": "GET",
+        "url": "/open-apis/spark/v1/apps/app_fixture/db/changelog_list",
+        "params": {
+          "page_size": 20,
+          "since": "2026-01-01T00:00:00Z",
+          "until": "2026-01-02T00:00:00Z"
+        }
+      }
+    ]
+  },
+  {
+    "name": "+db-data-export",
+    "args": [
+      "+db-data-export",
+      "--app-id",
+      "app_fixture",
+      "--table",
+      "orders"
+    ],
+    "apis": [
+      {
+        "method": "GET",
+        "url": "/open-apis/spark/v1/apps/app_fixture/db/data_export",
+        "params": {
+          "format": "csv",
+          "limit": 5000,
+          "table": "orders"
+        }
+      }
+    ]
+  },
+  {
+    "name": "+db-data-import",
+    "args": [
+      "+db-data-import",
+      "--app-id",
+      "app_fixture",
+      "--file",
+      "fixture.csv"
+    ],
+    "apis": [
+      {
+        "method": "POST",
+        "url": "/open-apis/spark/v1/apps/app_fixture/db/data_import",
+        "params": {
+          "table": "fixture"
+        },
+        "body": {
+          "file": "<contents of --file>",
+          "file_name": "fixture.csv"
+        }
+      }
+    ]
+  },
+  {
+    "name": "+db-env-create",
+    "args": [
+      "+db-env-create",
+      "--app-id",
+      "app_fixture"
+    ],
+    "apis": [
+      {
+        "method": "POST",
+        "url": "/open-apis/spark/v1/apps/app_fixture/db_dev_init",
+        "body": {
+          "sync_data": false
+        }
+      }
+    ]
+  },
+  {
+    "name": "+db-env-diff",
+    "args": [
+      "+db-env-diff",
+      "--app-id",
+      "app_fixture"
+    ],
+    "apis": [
+      {
+        "method": "POST",
+        "url": "/open-apis/spark/v1/apps/app_fixture/db/env_migrate",
+        "body": {
+          "dry_run": true
+        }
+      }
+    ]
+  },
+  {
+    "name": "+db-env-migrate",
+    "args": [
+      "+db-env-migrate",
+      "--app-id",
+      "app_fixture"
+    ],
+    "apis": [
+      {
+        "method": "POST",
+        "url": "/open-apis/spark/v1/apps/app_fixture/db/env_migrate",
+        "body": {
+          "dry_run": false
+        }
+      }
+    ]
+  },
+  {
+    "name": "+db-execute",
+    "args": [
+      "+db-execute",
+      "--app-id",
+      "app_fixture",
+      "--sql",
+      "SELECT 1"
+    ],
+    "apis": [
+      {
+        "method": "POST",
+        "url": "/open-apis/spark/v1/apps/app_fixture/sql_commands",
+        "params": {
+          "transactional": false
+        },
+        "body": {
+          "sql": "SELECT 1"
+        }
+      }
+    ]
+  },
+  {
+    "name": "+db-quota-get",
+    "args": [
+      "+db-quota-get",
+      "--app-id",
+      "app_fixture"
+    ],
+    "apis": [
+      {
+        "method": "GET",
+        "url": "/open-apis/spark/v1/apps/app_fixture/db/quota"
+      }
+    ]
+  },
+  {
+    "name": "+db-recovery-apply",
+    "args": [
+      "+db-recovery-apply",
+      "--app-id",
+      "app_fixture",
+      "--target",
+      "2026-01-01T00:00:00Z"
+    ],
+    "apis": [
+      {
+        "method": "POST",
+        "url": "/open-apis/spark/v1/apps/app_fixture/db/env_recovery",
+        "body": {
+          "dry_run": false,
+          "target": "2026-01-01T00:00:00Z"
+        }
+      }
+    ]
+  },
+  {
+    "name": "+db-recovery-diff",
+    "args": [
+      "+db-recovery-diff",
+      "--app-id",
+      "app_fixture",
+      "--target",
+      "2026-01-01T00:00:00Z"
+    ],
+    "apis": [
+      {
+        "method": "POST",
+        "url": "/open-apis/spark/v1/apps/app_fixture/db/env_recovery",
+        "body": {
+          "dry_run": true,
+          "target": "2026-01-01T00:00:00Z"
+        }
+      }
+    ]
+  },
+  {
+    "name": "+db-sync-create",
+    "args": [
+      "+db-sync-create",
+      "--app-id",
+      "app_fixture",
+      "--config",
+      "{\"mode\":\"batch\",\"source\":{\"type\":\"base\",\"base_url\":\"https://base.example/base/fixture?table=tbl_fixture\",\"table\":{\"name\":\"orders\"}},\"target\":{\"type\":\"postgresql\",\"table\":{\"name\":\"orders\",\"action\":\"create\"}},\"schema_only\":true}"
+    ],
+    "apis": [
+      {
+        "method": "POST",
+        "url": "/open-apis/spark/v1/apps/app_fixture/db/sync_create",
+        "body": {
+          "config": {
+            "mode": "batch",
+            "schema_only": true,
+            "source": {
+              "base_url": "https://base.example/base/fixture?table=tbl_fixture",
+              "table": {
+                "name": "orders"
+              },
+              "type": "base"
+            },
+            "target": {
+              "table": {
+                "action": "create",
+                "name": "orders"
+              },
+              "type": "postgresql"
+            }
+          },
+          "preview": false
+        }
+      }
+    ]
+  },
+  {
+    "name": "+db-sync-delete",
+    "args": [
+      "+db-sync-delete",
+      "--app-id",
+      "app_fixture",
+      "--task-id",
+      "sync_fixture"
+    ],
+    "apis": [
+      {
+        "method": "POST",
+        "url": "/open-apis/spark/v1/apps/app_fixture/db/sync_del",
+        "body": {
+          "task_id": "sync_fixture"
+        }
+      }
+    ]
+  },
+  {
+    "name": "+db-sync-disable",
+    "args": [
+      "+db-sync-disable",
+      "--app-id",
+      "app_fixture",
+      "--task-id",
+      "sync_fixture"
+    ],
+    "apis": [
+      {
+        "method": "POST",
+        "url": "/open-apis/spark/v1/apps/app_fixture/db/sync_disable",
+        "body": {
+          "task_id": "sync_fixture"
+        }
+      }
+    ]
+  },
+  {
+    "name": "+db-sync-enable",
+    "args": [
+      "+db-sync-enable",
+      "--app-id",
+      "app_fixture",
+      "--task-id",
+      "sync_fixture"
+    ],
+    "apis": [
+      {
+        "method": "POST",
+        "url": "/open-apis/spark/v1/apps/app_fixture/db/sync_enable",
+        "body": {
+          "task_id": "sync_fixture"
+        }
+      }
+    ]
+  },
+  {
+    "name": "+db-sync-get",
+    "args": [
+      "+db-sync-get",
+      "--app-id",
+      "app_fixture",
+      "--task-id",
+      "sync_fixture"
+    ],
+    "apis": [
+      {
+        "method": "GET",
+        "url": "/open-apis/spark/v1/apps/app_fixture/db/sync_task",
+        "params": {
+          "task_id": "sync_fixture"
+        }
+      }
+    ]
+  },
+  {
+    "name": "+db-sync-list",
+    "args": [
+      "+db-sync-list",
+      "--app-id",
+      "app_fixture"
+    ],
+    "apis": [
+      {
+        "method": "GET",
+        "url": "/open-apis/spark/v1/apps/app_fixture/db/sync_list",
+        "params": {
+          "page_size": 20
+        }
+      }
+    ]
+  },
+  {
+    "name": "+db-sync-update",
+    "args": [
+      "+db-sync-update",
+      "--app-id",
+      "app_fixture",
+      "--config",
+      "{\"mode\":\"batch\",\"source\":{\"type\":\"base\",\"base_url\":\"https://base.example/base/fixture?table=tbl_fixture\",\"table\":{\"name\":\"orders\"}},\"target\":{\"type\":\"postgresql\",\"table\":{\"name\":\"orders\",\"action\":\"create\"}},\"field_maps\":[{\"source_field\":\"id\",\"target_field\":\"id\",\"enabled\":true}]}",
+      "--task-id",
+      "sync_fixture"
+    ],
+    "apis": [
+      {
+        "method": "PUT",
+        "url": "/open-apis/spark/v1/apps/app_fixture/db/sync_update",
+        "body": {
+          "config": {
+            "field_maps": [
+              {
+                "enabled": true,
+                "source_field": "id",
+                "target_field": "id"
+              }
+            ],
+            "mode": "batch",
+            "source": {
+              "base_url": "https://base.example/base/fixture?table=tbl_fixture",
+              "table": {
+                "name": "orders"
+              },
+              "type": "base"
+            },
+            "target": {
+              "table": {
+                "action": "create",
+                "name": "orders"
+              },
+              "type": "postgresql"
+            }
+          },
+          "task_id": "sync_fixture"
+        }
+      }
+    ]
+  },
+  {
+    "name": "+db-table-get",
+    "args": [
+      "+db-table-get",
+      "--app-id",
+      "app_fixture",
+      "--table",
+      "orders"
+    ],
+    "apis": [
+      {
+        "method": "GET",
+        "url": "/open-apis/spark/v1/apps/app_fixture/tables/orders"
+      }
+    ]
+  },
+  {
+    "name": "+db-table-list",
+    "args": [
+      "+db-table-list",
+      "--app-id",
+      "app_fixture"
+    ],
+    "apis": [
+      {
+        "method": "GET",
+        "url": "/open-apis/spark/v1/apps/app_fixture/tables",
+        "params": {
+          "page_size": 20
+        }
+      }
+    ]
+  },
+  {
+    "name": "+env-delete",
+    "args": [
+      "+env-delete",
+      "--app-id",
+      "app_fixture",
+      "--key",
+      "FOO"
+    ],
+    "apis": [
+      {
+        "method": "POST",
+        "url": "/open-apis/spark/v1/apps/app_fixture/delete_env_vars",
+        "body": {
+          "env": "dev",
+          "keys": [
+            "FOO"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "name": "+env-list",
+    "args": [
+      "+env-list",
+      "--app-id",
+      "app_fixture"
+    ],
+    "apis": [
+      {
+        "method": "POST",
+        "url": "/open-apis/spark/v1/apps/app_fixture/env_vars",
+        "body": {
+          "env": "dev",
+          "scene": 2
+        }
+      }
+    ]
+  },
+  {
+    "name": "+env-pull",
+    "args": [
+      "+env-pull",
+      "--app-id",
+      "app_fixture",
+      "--project-path",
+      "."
+    ],
+    "apis": [
+      {
+        "method": "POST",
+        "url": "/open-apis/spark/v1/apps/app_fixture/env_vars",
+        "body": {
+          "env": "dev"
+        }
+      }
+    ]
+  },
+  {
+    "name": "+env-set",
+    "args": [
+      "+env-set",
+      "--app-id",
+      "app_fixture",
+      "--key",
+      "FOO",
+      "--value",
+      "fixture value"
+    ],
+    "apis": [
+      {
+        "method": "POST",
+        "url": "/open-apis/spark/v1/apps/app_fixture/create_or_update_env_var",
+        "body": {
+          "env": "dev",
+          "key": "FOO",
+          "value": "<redacted>"
+        }
+      }
+    ]
+  },
+  {
+    "name": "+file-delete",
+    "args": [
+      "+file-delete",
+      "--app-id",
+      "app_fixture",
+      "--path",
+      "fixture.html"
+    ],
+    "apis": [
+      {
+        "method": "POST",
+        "url": "/open-apis/spark/v1/apps/app_fixture/storage/file_batch_remove",
+        "body": {
+          "paths": [
+            "fixture.html"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "name": "+file-download",
+    "args": [
+      "+file-download",
+      "--app-id",
+      "app_fixture",
+      "--path",
+      "fixture.html"
+    ],
+    "apis": [
+      {
+        "method": "POST",
+        "url": "/open-apis/spark/v1/apps/app_fixture/storage/file_sign",
+        "body": {
+          "path": "fixture.html"
+        }
+      }
+    ]
+  },
+  {
+    "name": "+file-get",
+    "args": [
+      "+file-get",
+      "--app-id",
+      "app_fixture",
+      "--path",
+      "fixture.html"
+    ],
+    "apis": [
+      {
+        "method": "GET",
+        "url": "/open-apis/spark/v1/apps/app_fixture/storage/file",
+        "params": {
+          "path": "fixture.html"
+        }
+      }
+    ]
+  },
+  {
+    "name": "+file-list",
+    "args": [
+      "+file-list",
+      "--app-id",
+      "app_fixture"
+    ],
+    "apis": [
+      {
+        "method": "GET",
+        "url": "/open-apis/spark/v1/apps/app_fixture/storage/file_list",
+        "params": {
+          "page_size": 20
+        }
+      }
+    ]
+  },
+  {
+    "name": "+file-quota-get",
+    "args": [
+      "+file-quota-get",
+      "--app-id",
+      "app_fixture"
+    ],
+    "apis": [
+      {
+        "method": "GET",
+        "url": "/open-apis/spark/v1/apps/app_fixture/storage/file_quota"
+      }
+    ]
+  },
+  {
+    "name": "+file-sign",
+    "args": [
+      "+file-sign",
+      "--app-id",
+      "app_fixture",
+      "--path",
+      "fixture.html"
+    ],
+    "apis": [
+      {
+        "method": "POST",
+        "url": "/open-apis/spark/v1/apps/app_fixture/storage/file_sign",
+        "body": {
+          "expires_in": 86400,
+          "path": "fixture.html"
+        }
+      }
+    ]
+  },
+  {
+    "name": "+file-upload",
+    "args": [
+      "+file-upload",
+      "--app-id",
+      "app_fixture",
+      "--file",
+      "fixture.csv"
+    ],
+    "apis": [
+      {
+        "method": "POST",
+        "url": "/open-apis/spark/v1/apps/app_fixture/storage/file_pre_upload",
+        "body": {
+          "file_name": "fixture.csv"
+        }
+      }
+    ]
+  },
+  {
+    "name": "+get",
+    "args": [
+      "+get",
+      "--app-id",
+      "app_fixture"
+    ],
+    "apis": [
+      {
+        "method": "GET",
+        "url": "/open-apis/spark/v1/apps/app_fixture"
+      }
+    ]
+  },
+  {
+    "name": "+git-credential-init",
+    "args": [
+      "+git-credential-init",
+      "--app-id",
+      "app_fixture"
+    ],
+    "apis": [
+      {
+        "method": "GET",
+        "url": "/open-apis/spark/v1/apps/app_fixture/git_info",
+        "params": {
+          "app_id": "app_fixture"
+        }
+      }
+    ]
+  },
+  {
+    "name": "+html-publish",
+    "args": [
+      "+html-publish",
+      "--app-id",
+      "app_fixture",
+      "--path",
+      "fixture.html"
+    ],
+    "apis": [
+      {
+        "method": "GET",
+        "url": "/open-apis/spark/v1/apps/app_fixture/pre_release"
+      },
+      {
+        "method": "PUT",
+        "url": "<presigned_upload_url> (from pre_release response)"
+      },
+      {
+        "method": "POST",
+        "url": "/open-apis/spark/v1/apps/app_fixture/releases",
+        "body": {
+          "tos_path": "<from pre_release response>"
+        }
+      }
+    ]
+  },
+  {
+    "name": "+init",
+    "args": [
+      "+init",
+      "--app-id",
+      "app_fixture",
+      "--dir",
+      "project"
+    ],
+    "apis": []
+  },
+  {
+    "name": "+list",
+    "args": [
+      "+list"
+    ],
+    "apis": [
+      {
+        "method": "GET",
+        "url": "/open-apis/spark/v1/apps",
+        "params": {
+          "page_size": 20
+        }
+      }
+    ]
+  },
+  {
+    "name": "+log-get",
+    "args": [
+      "+log-get",
+      "--app-id",
+      "app_fixture",
+      "--log-id",
+      "log_fixture"
+    ],
+    "apis": [
+      {
+        "method": "POST",
+        "url": "/open-apis/spark/v1/apps/app_fixture/search_logs",
+        "body": {
+          "app_env": "runtime",
+          "filter": {
+            "log_ids": [
+              "log_fixture"
+            ]
+          },
+          "limit": 1
+        }
+      }
+    ]
+  },
+  {
+    "name": "+log-list",
+    "args": [
+      "+log-list",
+      "--app-id",
+      "app_fixture",
+      "--since",
+      "2026-01-01T00:00:00Z",
+      "--until",
+      "2026-01-02T00:00:00Z"
+    ],
+    "apis": [
+      {
+        "method": "POST",
+        "url": "/open-apis/spark/v1/apps/app_fixture/search_logs",
+        "body": {
+          "app_env": "runtime",
+          "end_timestamp_ns": "1767312000000000000",
+          "limit": 50,
+          "start_timestamp_ns": "1767225600000000000"
+        }
+      }
+    ]
+  },
+  {
+    "name": "+member-add",
+    "args": [
+      "+member-add",
+      "--member-id",
+      "ou_fixture",
+      "--member-type",
+      "openid",
+      "--perm",
+      "view",
+      "--app-id",
+      "app_fixture"
+    ],
+    "apis": [
+      {
+        "method": "POST",
+        "url": "/open-apis/spark/v1/apps/app_fixture/members",
+        "body": {
+          "user_open_id": "ou_fixture",
+          "role": "view"
+        }
+      }
+    ]
+  },
+  {
+    "name": "+member-list",
+    "args": [
+      "+member-list",
+      "--app-id",
+      "app_fixture"
+    ],
+    "apis": [
+      {
+        "method": "GET",
+        "url": "/open-apis/spark/v1/apps/app_fixture/members"
+      }
+    ]
+  },
+  {
+    "name": "+member-remove",
+    "args": [
+      "+member-remove",
+      "--member-id",
+      "ou_fixture",
+      "--member-type",
+      "openid",
+      "--app-id",
+      "app_fixture"
+    ],
+    "apis": [
+      {
+        "method": "POST",
+        "url": "/open-apis/spark/v1/apps/app_fixture/members/remove",
+        "body": {
+          "user_open_id": "ou_fixture"
+        }
+      }
+    ]
+  },
+  {
+    "name": "+member-settings-get",
+    "args": [
+      "+member-settings-get",
+      "--app-id",
+      "app_fixture"
+    ],
+    "apis": [
+      {
+        "method": "GET",
+        "url": "/open-apis/spark/v1/apps/app_fixture/member-settings"
+      }
+    ]
+  },
+  {
+    "name": "+member-settings-set",
+    "args": [
+      "+member-settings-set",
+      "--comment-by",
+      "viewer",
+      "--app-id",
+      "app_fixture"
+    ],
+    "apis": [
+      {
+        "method": "PATCH",
+        "url": "/open-apis/spark/v1/apps/app_fixture/member-settings",
+        "body": {
+          "comment_by": "viewer"
+        }
+      }
+    ]
+  },
+  {
+    "name": "+member-update",
+    "args": [
+      "+member-update",
+      "--member-id",
+      "ou_fixture",
+      "--member-type",
+      "openid",
+      "--perm",
+      "view",
+      "--app-id",
+      "app_fixture"
+    ],
+    "apis": [
+      {
+        "method": "PATCH",
+        "url": "/open-apis/spark/v1/apps/app_fixture/members",
+        "body": {
+          "user_open_id": "ou_fixture",
+          "role": "view"
+        }
+      }
+    ]
+  },
+  {
+    "name": "+metric-list",
+    "args": [
+      "+metric-list",
+      "--app-id",
+      "app_fixture",
+      "--metric",
+      "fixture",
+      "--metric",
+      "requests",
+      "--since",
+      "2026-01-01T00:00:00Z",
+      "--until",
+      "2026-01-02T00:00:00Z"
+    ],
+    "apis": [
+      {
+        "method": "POST",
+        "url": "/open-apis/spark/v1/apps/app_fixture/query_metrics_data",
+        "body": {
+          "down_sample": "1h",
+          "end_timestamp": "1767312000",
+          "metric_names": [
+            "client_api_request_count",
+            "client_api_request_error_count"
+          ],
+          "need_pack_lack_point": false,
+          "start_timestamp": "1767225600"
+        }
+      }
+    ]
+  },
+  {
+    "name": "+openapi-key-create",
+    "args": [
+      "+openapi-key-create",
+      "--app-id",
+      "app_fixture",
+      "--name",
+      "fixture_name",
+      "--scope-all"
+    ],
+    "apis": [
+      {
+        "method": "POST",
+        "url": "/open-apis/spark/v1/apps/app_fixture/oapi_apikeys",
+        "body": {
+          "config": {
+            "request_scope": {
+              "allow_all": true
+            }
+          },
+          "name": "fixture_name"
+        }
+      }
+    ]
+  },
+  {
+    "name": "+openapi-key-delete",
+    "args": [
+      "+openapi-key-delete",
+      "--app-id",
+      "app_fixture",
+      "--key-id",
+      "key_fixture"
+    ],
+    "apis": [
+      {
+        "method": "DELETE",
+        "url": "/open-apis/spark/v1/apps/app_fixture/oapi_apikeys/key_fixture"
+      }
+    ]
+  },
+  {
+    "name": "+openapi-key-disable",
+    "args": [
+      "+openapi-key-disable",
+      "--app-id",
+      "app_fixture",
+      "--key-id",
+      "key_fixture"
+    ],
+    "apis": [
+      {
+        "method": "PATCH",
+        "url": "/open-apis/spark/v1/apps/app_fixture/oapi_apikeys/key_fixture",
+        "body": {
+          "status": 0
+        }
+      }
+    ]
+  },
+  {
+    "name": "+openapi-key-enable",
+    "args": [
+      "+openapi-key-enable",
+      "--app-id",
+      "app_fixture",
+      "--key-id",
+      "key_fixture"
+    ],
+    "apis": [
+      {
+        "method": "PATCH",
+        "url": "/open-apis/spark/v1/apps/app_fixture/oapi_apikeys/key_fixture",
+        "body": {
+          "status": 1
+        }
+      }
+    ]
+  },
+  {
+    "name": "+openapi-key-get",
+    "args": [
+      "+openapi-key-get",
+      "--app-id",
+      "app_fixture",
+      "--key-id",
+      "key_fixture"
+    ],
+    "apis": [
+      {
+        "method": "GET",
+        "url": "/open-apis/spark/v1/apps/app_fixture/oapi_apikeys/key_fixture"
+      }
+    ]
+  },
+  {
+    "name": "+openapi-key-list",
+    "args": [
+      "+openapi-key-list",
+      "--app-id",
+      "app_fixture"
+    ],
+    "apis": [
+      {
+        "method": "GET",
+        "url": "/open-apis/spark/v1/apps/app_fixture/oapi_apikeys"
+      }
+    ]
+  },
+  {
+    "name": "+openapi-key-reset",
+    "args": [
+      "+openapi-key-reset",
+      "--app-id",
+      "app_fixture",
+      "--key-id",
+      "key_fixture"
+    ],
+    "apis": [
+      {
+        "method": "POST",
+        "url": "/open-apis/spark/v1/apps/app_fixture/oapi_apikeys/key_fixture/refresh"
+      }
+    ]
+  },
+  {
+    "name": "+openapi-key-update",
+    "args": [
+      "+openapi-key-update",
+      "--app-id",
+      "app_fixture",
+      "--key-id",
+      "key_fixture",
+      "--name",
+      "new key"
+    ],
+    "apis": [
+      {
+        "method": "PATCH",
+        "url": "/open-apis/spark/v1/apps/app_fixture/oapi_apikeys/key_fixture",
+        "body": {
+          "name": "new key"
+        }
+      }
+    ]
+  },
+  {
+    "name": "+plugin-install",
+    "args": [
+      "+plugin-install",
+      "--name",
+      "@official-plugins/fixture"
+    ],
+    "apis": [
+      {
+        "method": "POST",
+        "url": "/open-apis/spark/v1/plugin/versions/batch_query"
+      }
+    ]
+  },
+  {
+    "name": "+release-create",
+    "args": [
+      "+release-create",
+      "--app-id",
+      "app_fixture"
+    ],
+    "apis": [
+      {
+        "method": "POST",
+        "url": "/open-apis/spark/v1/apps/app_fixture/releases",
+        "body": {}
+      }
+    ]
+  },
+  {
+    "name": "+release-get",
+    "args": [
+      "+release-get",
+      "--app-id",
+      "app_fixture",
+      "--release-id",
+      "release_fixture"
+    ],
+    "apis": [
+      {
+        "method": "GET",
+        "url": "/open-apis/spark/v1/apps/app_fixture/releases/release_fixture"
+      }
+    ]
+  },
+  {
+    "name": "+release-list",
+    "args": [
+      "+release-list",
+      "--app-id",
+      "app_fixture"
+    ],
+    "apis": [
+      {
+        "method": "GET",
+        "url": "/open-apis/spark/v1/apps/app_fixture/releases",
+        "params": {
+          "page_size": 20
+        }
+      }
+    ]
+  },
+  {
+    "name": "+role-create",
+    "args": [
+      "+role-create",
+      "--app-id",
+      "app_fixture",
+      "--name",
+      "new role"
+    ],
+    "apis": [
+      {
+        "method": "POST",
+        "url": "/open-apis/spark/v1/apps/app_fixture/roles",
+        "body": {
+          "name": "new role"
+        }
+      }
+    ]
+  },
+  {
+    "name": "+role-delete",
+    "args": [
+      "+role-delete",
+      "--app-id",
+      "app_fixture",
+      "--role-id",
+      "role_fixture"
+    ],
+    "apis": [
+      {
+        "method": "DELETE",
+        "url": "/open-apis/spark/v1/apps/app_fixture/roles/role_fixture"
+      }
+    ]
+  },
+  {
+    "name": "+role-get",
+    "args": [
+      "+role-get",
+      "--app-id",
+      "app_fixture",
+      "--role-id",
+      "role_fixture"
+    ],
+    "apis": [
+      {
+        "method": "GET",
+        "url": "/open-apis/spark/v1/apps/app_fixture/roles/role_fixture"
+      }
+    ]
+  },
+  {
+    "name": "+role-list",
+    "args": [
+      "+role-list",
+      "--app-id",
+      "app_fixture"
+    ],
+    "apis": [
+      {
+        "method": "GET",
+        "url": "/open-apis/spark/v1/apps/app_fixture/roles",
+        "params": {
+          "limit": 20,
+          "offset": 0
+        }
+      }
+    ]
+  },
+  {
+    "name": "+role-match-list",
+    "args": [
+      "+role-match-list",
+      "--app-id",
+      "app_fixture",
+      "--user-id",
+      "ou_fixture"
+    ],
+    "apis": [
+      {
+        "method": "POST",
+        "url": "/open-apis/spark/v1/apps/app_fixture/user_role_list",
+        "body": {
+          "target_user_id": "ou_fixture"
+        }
+      }
+    ]
+  },
+  {
+    "name": "+role-member-add",
+    "args": [
+      "+role-member-add",
+      "--app-id",
+      "app_fixture",
+      "--role-id",
+      "role_fixture",
+      "--users",
+      "ou_fixture"
+    ],
+    "apis": [
+      {
+        "method": "POST",
+        "url": "/open-apis/spark/v1/apps/app_fixture/roles/role_fixture/member_add",
+        "body": {
+          "users": [
+            "ou_fixture"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "name": "+role-member-list",
+    "args": [
+      "+role-member-list",
+      "--app-id",
+      "app_fixture",
+      "--role-id",
+      "role_fixture"
+    ],
+    "apis": [
+      {
+        "method": "GET",
+        "url": "/open-apis/spark/v1/apps/app_fixture/roles/role_fixture/member_list"
+      }
+    ]
+  },
+  {
+    "name": "+role-member-remove",
+    "args": [
+      "+role-member-remove",
+      "--app-id",
+      "app_fixture",
+      "--role-id",
+      "role_fixture",
+      "--users",
+      "ou_fixture"
+    ],
+    "apis": [
+      {
+        "method": "POST",
+        "url": "/open-apis/spark/v1/apps/app_fixture/roles/role_fixture/member_remove",
+        "body": {
+          "users": [
+            "ou_fixture"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "name": "+role-update",
+    "args": [
+      "+role-update",
+      "--app-id",
+      "app_fixture",
+      "--role-id",
+      "role_fixture",
+      "--name",
+      "new role"
+    ],
+    "apis": [
+      {
+        "method": "PATCH",
+        "url": "/open-apis/spark/v1/apps/app_fixture/roles/role_fixture",
+        "body": {
+          "name": "new role"
+        }
+      }
+    ]
+  },
+  {
+    "name": "+session-create",
+    "args": [
+      "+session-create",
+      "--app-id",
+      "app_fixture"
+    ],
+    "apis": [
+      {
+        "method": "POST",
+        "url": "/open-apis/spark/v1/apps/app_fixture/sessions"
+      }
+    ]
+  },
+  {
+    "name": "+session-get",
+    "args": [
+      "+session-get",
+      "--app-id",
+      "app_fixture",
+      "--session-id",
+      "session_fixture"
+    ],
+    "apis": [
+      {
+        "method": "GET",
+        "url": "/open-apis/spark/v1/apps/app_fixture/sessions/session_fixture"
+      }
+    ]
+  },
+  {
+    "name": "+session-list",
+    "args": [
+      "+session-list",
+      "--app-id",
+      "app_fixture"
+    ],
+    "apis": [
+      {
+        "method": "GET",
+        "url": "/open-apis/spark/v1/apps/app_fixture/sessions",
+        "params": {
+          "page_size": 20
+        }
+      }
+    ]
+  },
+  {
+    "name": "+session-messages-list",
+    "args": [
+      "+session-messages-list",
+      "--app-id",
+      "app_fixture",
+      "--session-id",
+      "session_fixture",
+      "--turn-id",
+      "turn_fixture"
+    ],
+    "apis": [
+      {
+        "method": "GET",
+        "url": "/open-apis/spark/v1/apps/app_fixture/sessions/session_fixture/turns/turn_fixture/reply_message"
+      }
+    ]
+  },
+  {
+    "name": "+session-stop",
+    "args": [
+      "+session-stop",
+      "--app-id",
+      "app_fixture",
+      "--session-id",
+      "session_fixture",
+      "--turn-id",
+      "fixture"
+    ],
+    "apis": [
+      {
+        "method": "POST",
+        "url": "/open-apis/spark/v1/apps/app_fixture/sessions/session_fixture/stop",
+        "body": {
+          "turn_id": "fixture"
+        }
+      }
+    ]
+  },
+  {
+    "name": "+trace-get",
+    "args": [
+      "+trace-get",
+      "--app-id",
+      "app_fixture",
+      "--trace-id",
+      "trace_fixture"
+    ],
+    "apis": [
+      {
+        "method": "POST",
+        "url": "/open-apis/spark/v1/apps/app_fixture/trace",
+        "body": {
+          "app_env": "runtime",
+          "trace_id": "trace_fixture"
+        }
+      }
+    ]
+  },
+  {
+    "name": "+trace-list",
+    "args": [
+      "+trace-list",
+      "--app-id",
+      "app_fixture",
+      "--since",
+      "2026-01-01T00:00:00Z",
+      "--until",
+      "2026-01-02T00:00:00Z"
+    ],
+    "apis": [
+      {
+        "method": "POST",
+        "url": "/open-apis/spark/v1/apps/app_fixture/search_traces",
+        "body": {
+          "app_env": "runtime",
+          "end_timestamp_ns": "1767312000000000000",
+          "limit": 50,
+          "start_timestamp_ns": "1767225600000000000"
+        }
+      }
+    ]
+  },
+  {
+    "name": "+update",
+    "args": [
+      "+update",
+      "--app-id",
+      "app_fixture",
+      "--name",
+      "new name"
+    ],
+    "apis": [
+      {
+        "method": "PATCH",
+        "url": "/open-apis/spark/v1/apps/app_fixture",
+        "body": {
+          "name": "new name"
+        }
+      }
+    ]
+  },
+  {
+    "name": "+user-id-convert",
+    "args": [
+      "+user-id-convert",
+      "--convert-type",
+      "miaoda-to-open-id",
+      "--ids",
+      "[\"1\"]"
+    ],
+    "apis": [
+      {
+        "method": "POST",
+        "url": "/open-apis/spark/v1/directory/user/id_convert",
+        "body": {
+          "id_convert_type": 10,
+          "ids": [
+            "[\"1\"]"
+          ]
+        }
+      }
+    ]
+  }
+]

@@ -1,0 +1,184 @@
+{
+  "schema_version": 1,
+  "section": "apps",
+  "status": "offline boundary passed; live and comparative acceptance open",
+  "reference_revision": "7fd6ef3c07182257ce776cdc5a614e122d5bd4b3",
+  "mapping": {
+    "frozen_leaves": 97,
+    "shortcuts": 96,
+    "hidden_helpers": 1,
+    "frozen_dry_run_cases": 92,
+    "local_helper_cases": 5,
+    "actual_api_dispatch_rejection_cases": 91,
+    "reference_fixture": "tests/next_sections/apps/testdata/reference_dryrun.json",
+    "complete_registration_mapping": "docs/sections/apps-mapping.json"
+  },
+  "checks": [
+    {
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-count=1",
+        "-timeout=10m",
+        "./shortcuts/apps/..."
+      ],
+      "exit_code": 0,
+      "test_events": {
+        "pass": 1542
+      },
+      "skipped_tests": [],
+      "raw_local_report": ".tmp/apps-boundary-final.json",
+      "raw_report_sha256": "09c36c4bfa89187508a58f5b248db34ef925ace676430c10df2462d6d7c138e2"
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-count=1",
+        "-timeout=10m",
+        "./tests/cli_e2e/apps",
+        "-run",
+        "DryRun|Regression"
+      ],
+      "exit_code": 0,
+      "test_events": {
+        "pass": 123
+      },
+      "skipped_tests": [],
+      "raw_local_report": ".tmp/apps-boundary-final.json",
+      "raw_report_sha256": "09c36c4bfa89187508a58f5b248db34ef925ace676430c10df2462d6d7c138e2"
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-count=1",
+        "-timeout=10m",
+        "./tests/next_sections/apps"
+      ],
+      "exit_code": 0,
+      "test_events": {
+        "pass": 240,
+        "skip": 1
+      },
+      "skipped_tests": [
+        "TestAppsLivePrivateLifecycle"
+      ],
+      "raw_local_report": ".tmp/apps-boundary-final.json",
+      "raw_report_sha256": "09c36c4bfa89187508a58f5b248db34ef925ace676430c10df2462d6d7c138e2"
+    },
+    {
+      "command": [
+        "go",
+        "vet",
+        "./shortcuts/apps/...",
+        "./tests/next_sections/apps"
+      ],
+      "exit_code": 0,
+      "test_events": {},
+      "skipped_tests": [],
+      "raw_local_report": ".tmp/apps-additional-final.json",
+      "raw_report_sha256": "5b9109b437434a74e6fdd25f2e64f00ba13dc9f1e03cb6d3f66b8a9b66da9737"
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-count=1",
+        "-timeout=10m",
+        "./internal/affordance",
+        "./cmd/service",
+        "./internal/schema",
+        "./tests/cli_e2e/apps"
+      ],
+      "exit_code": 0,
+      "test_events": {
+        "pass": 428,
+        "skip": 4
+      },
+      "skipped_tests": [
+        "TestAppsFileUploadLiveWorkflow",
+        "TestAppsRoleManagementLiveWorkflow",
+        "TestAppsRoleLifecycleLiveWorkflow",
+        "TestAppsRoleMatchListLiveWorkflow"
+      ],
+      "raw_local_report": ".tmp/apps-additional-final.json",
+      "raw_report_sha256": "5b9109b437434a74e6fdd25f2e64f00ba13dc9f1e03cb6d3f66b8a9b66da9737"
+    },
+    {
+      "command": [
+        "go",
+        "vet",
+        "./shortcuts/apps/...",
+        "./tests/next_sections/apps",
+        "./internal/affordance"
+      ],
+      "exit_code": 0,
+      "test_events": {},
+      "skipped_tests": [],
+      "raw_local_report": ".tmp/apps-vet-final.json",
+      "raw_report_sha256": "e904ada75a0fe75522245efefa91cadc73212a6b3c730a59b36f162fde2424eb"
+    }
+  ],
+  "check_method": "scripts.next_test.isolated_env; local synthetic HTTP fixtures; no forwarding or live effects",
+  "changed_files": [
+    "affordance/apps.md",
+    "docs/sections/apps-evidence.json",
+    "docs/sections/apps-mapping.json",
+    "docs/sections/apps.md",
+    "internal/affordance/apps_source_test.go",
+    "shortcuts/apps/apps_automation_list.go",
+    "shortcuts/apps/apps_create_test.go",
+    "shortcuts/apps/apps_db_data_export.go",
+    "shortcuts/apps/apps_db_data_export_test.go",
+    "shortcuts/apps/apps_db_data_import.go",
+    "shortcuts/apps/apps_db_env_migrate.go",
+    "shortcuts/apps/apps_db_execute.go",
+    "shortcuts/apps/apps_db_recovery.go",
+    "shortcuts/apps/apps_db_sync_create.go",
+    "shortcuts/apps/apps_env.go",
+    "shortcuts/apps/apps_file_delete.go",
+    "shortcuts/apps/apps_file_download.go",
+    "shortcuts/apps/apps_file_upload.go",
+    "shortcuts/apps/apps_html_publish.go",
+    "shortcuts/apps/apps_html_publish_test.go",
+    "shortcuts/apps/apps_init_test.go",
+    "shortcuts/apps/apps_list.go",
+    "shortcuts/apps/apps_next_integrity_test.go",
+    "shortcuts/apps/apps_plugin_install.go",
+    "shortcuts/apps/apps_update.go",
+    "shortcuts/apps/file_common.go",
+    "shortcuts/apps/file_common_test.go",
+    "tests/next_sections/apps/apps_e2e_test.go",
+    "tests/next_sections/apps/apps_files_e2e_test.go",
+    "tests/next_sections/apps/apps_workflows_e2e_test.go",
+    "tests/next_sections/apps/testdata/reference_dryrun.json"
+  ],
+  "shared_dependencies": [
+    {
+      "commit": "6bdc473",
+      "purpose": "precise presigned PUT evidence classifier"
+    },
+    {
+      "commit": "582bee7",
+      "purpose": "Factory external transport receipt/credential isolation regression"
+    },
+    {
+      "commit": "08ca8e8",
+      "purpose": "shared synthetic current-tenant fixture"
+    }
+  ],
+  "limitations": [
+    "Offline mapping is complete but does not establish live backend semantics or every successful multi-step process outcome. Existing extensive units cover uncommon flags/types and scaffold failures.",
+    "Live private account/tenant/visibility and cleanup fixture is unverified; Apps has no run-owned app deletion workflow, and downstream recipient/effect authorization is unproven. No live write occurred.",
+    "Process full initialization/git push, backend asynchronous completion, live storage, backend transaction rollback and privacy remain unverified.",
+    "Reference-vs-new autonomous development comparisons are coordinator-owned and outstanding; no held-out tasks or model runs were used by this owner.",
+    "Repository-wide unit-test/vet/fmt-check, license/module checks and committed diff quality gate are coordinator-owned; this evidence records only the scoped checks actually run.",
+    "Export completeness compares separately observed source total with counted rows; it is not an atomic database snapshot.",
+    "Raw reports are local scratch evidence; compact check counts and test sources are committed here."
+  ]
+}

@@ -117,9 +117,8 @@ func TestAppsDBDataExport_SuccessWritesFile(t *testing.T) {
 	}
 }
 
-// 行数取自 records total，且按 --limit 截顶（min(total, limit)）。
-// TestAppsDBDataExport_RowsFromTotalCappedByLimit 验证行数取 records total 并按 --limit 截顶（total=10000、limit=100 → rows=100）。
-func TestAppsDBDataExport_RowsFromTotalCappedByLimit(t *testing.T) {
+// A pre-query total is not the exported row count: report the three actual rows.
+func TestAppsDBDataExport_RowsFromObservedFileWithTruncation(t *testing.T) {
 	chdirTemp(t)
 	factory, stdout, reg := newAppsExecuteFactory(t)
 	reg.Register(&httpmock.Stub{
@@ -134,8 +133,8 @@ func TestAppsDBDataExport_RowsFromTotalCappedByLimit(t *testing.T) {
 		[]string{"+db-data-export", "--app-id", "app_x", "--table", "orders", "--output", "orders.csv", "--limit", "100", "--as", "user"}, factory, stdout); err != nil {
 		t.Fatalf("execute err=%v", err)
 	}
-	if !strings.Contains(stdout.String(), `"rows": 100`) {
-		t.Fatalf("expected rows capped to limit 100 from total=10000:\n%s", stdout.String())
+	if !strings.Contains(stdout.String(), `"rows": 3`) {
+		t.Fatalf("expected observed rows3 from CSV, independent of total10000:\n%s", stdout.String())
 	}
 }
 

@@ -84,7 +84,7 @@ var AppsFileUpload = common.Shortcut{
 		}
 
 		// 2. PUT 文件字节到 presigned URL，取 ETag（带 Content-Disposition 透传原始文件名）
-		etag, err := putFileBytes(rctx.Ctx(), uploadURL, content, contentType, fileName)
+		etag, err := putFileBytes(rctx, uploadURL, content, contentType, fileName)
 		if err != nil {
 			return err
 		}
@@ -112,8 +112,8 @@ var AppsFileUpload = common.Shortcut{
 // （平台 16 位 ID）当文件名 —— 即「上传后文件名变成 ID」的根因。
 //
 //nolint:forbidigo // direct PUT to a presigned object-storage URL bypasses the Lark gateway — raw HTTP is required (no Lark auth/gateway); RuntimeContext.DoAPI cannot target a presigned URL.
-func putFileBytes(ctx context.Context, url string, content []byte, contentType, fileName string) (string, error) {
-	req, err := http.NewRequestWithContext(ctx, http.MethodPut, url, bytes.NewReader(content))
+func putFileBytes(rctx *common.RuntimeContext, url string, content []byte, contentType, fileName string) (string, error) {
+	req, err := http.NewRequestWithContext(rctx.Ctx(), http.MethodPut, url, bytes.NewReader(content))
 	if err != nil {
 		return "", errs.NewNetworkError(errs.SubtypeNetworkTransport, "build upload request").WithCause(err)
 	}
@@ -129,7 +129,12 @@ func putFileBytes(ctx context.Context, url string, content []byte, contentType, 
 		disposition = "attachment"
 	}
 	req.Header.Set("Content-Disposition", disposition)
-	resp, err := newFileTransferClient().Do(req)
+	req = req.WithContext(common.WithStoragePutRequest(req.Context(), req.URL.Path))
+	client, err := newFileTransferClient(rctx)
+	if err != nil {
+		return "", err
+	}
+	resp, err := client.Do(req)
 	if err != nil {
 		// dial/transport 失败是典型可重试场景。
 		return "", errs.NewNetworkError(errs.SubtypeNetworkTransport, "upload failed").WithCause(err).WithRetryable()

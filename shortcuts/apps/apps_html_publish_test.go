@@ -532,6 +532,7 @@ func newTOSTestRuntime(t *testing.T) (*common.RuntimeContext, *httpmock.Registry
 		UserOpenId: "ou_test",
 	}
 	factory, _, _, reg := cmdutil.TestFactory(t, cfg)
+	allowAppsLoopbackTransfers(factory)
 	factory.FileIOProvider = permissiveFIOProvider{}
 	rt := common.TestNewRuntimeContextForAPI(
 		context.Background(),

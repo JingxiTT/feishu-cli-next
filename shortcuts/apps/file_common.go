@@ -14,7 +14,6 @@ import (
 	"time"
 
 	"github.com/larksuite/cli/errs"
-	"github.com/larksuite/cli/internal/transport"
 	"github.com/larksuite/cli/internal/validate"
 	"github.com/larksuite/cli/shortcuts/common"
 )
@@ -75,9 +74,15 @@ func normalizeTimestamp(raw string) (string, error) {
 	return "", errs.NewValidationError(errs.SubtypeInvalidArgument, "invalid timestamp %q (want relative 7d/2h/30s, date 2026-04-15, datetime 2026-04-15T10:00:00, or ISO 8601 with TZ)", s)
 }
 
-//nolint:forbidigo // Presigned transfers use the external HTTP policy.
-func newFileTransferClient() *http.Client {
-	return transport.NewExternalHTTPClient(0)
+func newFileTransferClient(rctx *common.RuntimeContext) (*http.Client, error) {
+	client, err := rctx.Factory.ExternalHTTPClient()
+	if err != nil {
+		return nil, err
+	}
+	// ExternalHTTPClient returns a clone; transfers retain their unbounded client
+	// timeout and remain cancellable by the invocation's request context.
+	client.Timeout = 0
+	return client, nil
 }
 
 // URL helpers for the file (storage) CLI commands.

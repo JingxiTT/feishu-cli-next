@@ -9,6 +9,9 @@ import (
 	"testing"
 
 	exttransport "github.com/larksuite/cli/extension/transport"
+	"github.com/larksuite/cli/internal/transport"
+	"github.com/larksuite/cli/shortcuts/common"
+	"github.com/spf13/cobra"
 )
 
 type appsExternalProvider struct {
@@ -67,7 +70,15 @@ func TestFileTransferClientUsesExternalRequestClass(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	resp, err := newFileTransferClient().Do(req)
+	factory, _, _ := newAppsExecuteFactory(t)
+	factory.HttpClient = func() (*http.Client, error) { return transport.NewHTTPClient(0), nil }
+	rctx := common.TestNewRuntimeContext(&cobra.Command{}, nil)
+	rctx.Factory = factory
+	client, err := newFileTransferClient(rctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	resp, err := client.Do(req)
 	if err != nil {
 		t.Fatal(err)
 	}

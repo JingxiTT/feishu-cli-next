@@ -361,7 +361,12 @@ func runHTMLPublishTOS(ctx context.Context, rctx *common.RuntimeContext, spec ap
 	}
 	req.ContentLength = tarball.Size
 	req.Header.Set("Content-Type", "application/gzip")
-	resp, err := newFileTransferClient().Do(req) //nolint:forbidigo // presigned TOS upload, see above.
+	req = req.WithContext(common.WithStoragePutRequest(req.Context(), req.URL.Path))
+	client, err := newFileTransferClient(rctx)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := client.Do(req) //nolint:forbidigo // presigned TOS upload, see above.
 	if err != nil {
 		return nil, errs.NewNetworkError(errs.SubtypeNetworkTransport, "TOS upload failed").WithCause(err).WithRetryable()
 	}
