@@ -39,6 +39,11 @@ func isDriveImportStatusRequest(req *http.Request) bool {
 // under this context's explicit request identity. Unverifiable proof leaves the
 // original unknown outcome intact. Persistence failures are surfaced by the
 // invocation summary, so completed jobs are never polled again for a local error.
+// Local proof-assembly errors retain the pending receipt and exit 22; returning
+// them would retry the completed task poll and discard its observed ready status.
+// Dependent permission changes use their separate exact-create proof validator.
+//
+//nolint:nilerr // Incomplete local proof deliberately leaves the existing unknown receipt unchanged instead of triggering another poll.
 func (f *Factory) ReconcileDriveImport(ctx context.Context, ticket string, data map[string]interface{}) error {
 	if !f.EnableAgentAttempts || !f.agentAttempts.HasDriveImport(ticket) {
 		return nil
