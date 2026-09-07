@@ -154,6 +154,9 @@ type CredentialProvider struct {
 	accountErr     error
 	selectedSource credentialSource
 
+	artifactUser artifactIdentityCache
+	artifactBot  artifactIdentityCache
+
 	userBindingOnce sync.Once
 	userBinding     UserBinding
 	userBindingErr  error

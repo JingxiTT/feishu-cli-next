@@ -92,21 +92,6 @@ func TestArtifactBindingUsesCachedEnvironmentUserAndTenant(t *testing.T) {
 	}
 }
 
-func TestArtifactBindingSelectedUserDoesNotFetchMissingTenant(t *testing.T) {
-	t.Setenv("LARKSUITE_CLI_CONFIG_DIR", t.TempDir())
-	f, _, _, _ := cmdutil.TestFactory(t, &core.CliConfig{Brand: core.BrandFeishu, AppID: "selected-app", ProfileName: "selected"})
-	f.Credential = credential.NewCredentialProvider(nil, artifactBindingAccount{&credential.Account{Brand: core.BrandFeishu, AppID: "selected-app", UserOpenId: "selected-user"}}, nil, func() (*http.Client, error) { t.Fatal("missing tenant caused identity lookup"); return nil, nil })
-	f.ResolvedIdentity = core.AsUser
-	opts := configureAgentFoundation(f, &cobra.Command{})
-	binding, err := opts.ResolveBinding()
-	if err != nil {
-		t.Fatal(err)
-	}
-	if binding.UserID != "selected-user" || binding.UserVerified || binding.TenantVerified || binding.TenantKey != "" || binding.Endpoint != core.ResolveEndpoints(core.BrandFeishu).Open {
-		t.Fatalf("unobserved verification claimed: %+v", binding)
-	}
-}
-
 func TestArtifactBindingResolvesSelectedTokenWithCurrentContextOnce(t *testing.T) {
 	t.Setenv("LARKSUITE_CLI_CONFIG_DIR", t.TempDir())
 	f, _, _, _ := cmdutil.TestFactory(t, &core.CliConfig{Brand: core.BrandFeishu, AppID: "selected-app"})
@@ -117,7 +102,7 @@ func TestArtifactBindingResolvesSelectedTokenWithCurrentContextOnce(t *testing.T
 			if r.Context().Value(artifactBindingContextKey{}) != "current-command" {
 				t.Fatal("output ignored current command context")
 			}
-			return &http.Response{StatusCode: 200, Body: io.NopCloser(strings.NewReader(`{"code":0,"data":{"open_id":"selected-user"}}`))}, nil
+			return &http.Response{StatusCode: 200, Body: io.NopCloser(strings.NewReader(`{"code":0,"data":{"open_id":"selected-user","tenant_key":"observed-tenant"}}`))}, nil
 		})}, nil
 	})
 	f.ResolvedIdentity = core.AsUser
@@ -126,7 +111,7 @@ func TestArtifactBindingResolvesSelectedTokenWithCurrentContextOnce(t *testing.T
 	opts := configureAgentFoundation(f, &cobra.Command{})
 	for i := 0; i < 2; i++ {
 		binding, err := opts.ResolveBinding()
-		if err != nil || binding.UserID != "selected-user" || !binding.UserVerified || binding.TenantVerified || binding.TenantKey != "" {
+		if err != nil || binding.UserID != "selected-user" || !binding.UserVerified || !binding.TenantVerified || binding.TenantKey != "observed-tenant" {
 			t.Fatalf("selected-token binding: %+v, %v", binding, err)
 		}
 	}
@@ -135,13 +120,27 @@ func TestArtifactBindingResolvesSelectedTokenWithCurrentContextOnce(t *testing.T
 	}
 }
 
-func TestArtifactBindingBotDoesNotClaimConfiguredUserOrTenant(t *testing.T) {
+func TestArtifactBindingBotVerifiesTenantWithoutUser(t *testing.T) {
 	t.Setenv("LARKSUITE_CLI_CONFIG_DIR", t.TempDir())
 	f, _, _, _ := cmdutil.TestFactory(t, &core.CliConfig{Brand: core.BrandFeishu, AppID: "bot-app", UserOpenId: "other-user"})
-	f.Credential = credential.NewCredentialProvider(nil, artifactBindingAccount{&credential.Account{}}, nil, func() (*http.Client, error) { t.Fatal("bot artifact resolved user credentials"); return nil, nil })
+	calls := 0
+	f.Credential = credential.NewCredentialProvider(nil, artifactBindingAccount{&credential.Account{Brand: core.BrandFeishu, AppID: "bot-app", UserOpenId: "other-user"}}, artifactBindingToken{}, func() (*http.Client, error) {
+		return &http.Client{Transport: artifactBindingRoundTrip(func(r *http.Request) (*http.Response, error) {
+			calls++
+			if r.Method != "GET" || r.URL.Path != "/open-apis/tenant/v2/tenant/query" {
+				t.Fatalf("unexpected identity endpoint: %s", r.URL)
+			}
+			return &http.Response{StatusCode: 200, Body: io.NopCloser(strings.NewReader(`{"code":0,"data":{"tenant":{"tenant_key":"observed-tenant"}}}`))}, nil
+		})}, nil
+	})
 	f.ResolvedIdentity = core.AsBot
-	binding, err := configureAgentFoundation(f, &cobra.Command{}).ResolveBinding()
-	if err != nil || binding.Identity != "bot" || binding.UserID != "" || binding.UserVerified || binding.TenantKey != "" || binding.TenantVerified {
-		t.Fatalf("invented bot user/tenant: %+v %v", binding, err)
+	for i := 0; i < 2; i++ {
+		binding, err := configureAgentFoundation(f, &cobra.Command{}).ResolveBinding()
+		if err != nil || binding.Identity != "bot" || binding.UserID != "" || binding.UserVerified || binding.TenantKey != "observed-tenant" || !binding.TenantVerified {
+			t.Fatalf("wrong bot binding: %+v %v", binding, err)
+		}
+	}
+	if calls != 1 {
+		t.Fatalf("uncached tenant lookup: %d", calls)
 	}
 }

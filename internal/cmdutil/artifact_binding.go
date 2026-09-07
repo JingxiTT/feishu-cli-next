@@ -12,8 +12,8 @@ import (
 )
 
 // ResolveArtifactBinding returns effective, non-secret account evidence for this
-// invocation. User resolution reuses the credential provider's cached lookup;
-// missing tenant evidence alone never triggers another network request.
+// requested artifact operation. Read-only identity verification is cached by
+// the credential provider; ordinary reads do not call this method.
 func (f *Factory) ResolveArtifactBinding(ctx context.Context, identity core.Identity) (output.ArtifactBinding, error) {
 	if f == nil || f.Config == nil {
 		return output.ArtifactBinding{}, errs.NewInternalError(errs.SubtypeUnknown, "artifact binding has no configuration resolver")
@@ -32,16 +32,16 @@ func (f *Factory) ResolveArtifactBinding(ctx context.Context, identity core.Iden
 		ctx = context.Background()
 	}
 	binding := output.ArtifactBinding{Environment: string(cfg.Brand), Endpoint: core.ResolveEndpoints(cfg.Brand).Open, AppID: cfg.AppID, Identity: string(identity), Profile: cfg.ProfileName}
+	if f.Credential == nil {
+		return output.ArtifactBinding{}, errs.NewValidationError(errs.SubtypeFailedPrecondition, "artifact binding requires a credential resolver for identity verification")
+	}
+	resolved, err := f.Credential.ResolveArtifactIdentity(ctx, identity)
+	if err != nil {
+		return output.ArtifactBinding{}, err
+	}
+	binding.TenantKey, binding.TenantVerified = resolved.TenantKey, true
 	if identity == core.AsUser {
-		binding.UserID = cfg.UserOpenId
-		if f.Credential != nil {
-			resolved, err := f.Credential.ResolveUserBinding(ctx)
-			if err != nil {
-				return output.ArtifactBinding{}, err
-			}
-			binding.UserID, binding.TenantKey, binding.UserVerified = resolved.OpenID, resolved.TenantKey, resolved.Verified
-			binding.TenantVerified = resolved.TenantKey != ""
-		}
+		binding.UserID, binding.UserVerified = resolved.OpenID, true
 	}
 	if binding.Environment == "" || binding.AppID == "" || (identity == core.AsUser && binding.UserID == "") {
 		return output.ArtifactBinding{}, errs.NewValidationError(errs.SubtypeFailedPrecondition, "artifact binding requires a resolved account and identity")

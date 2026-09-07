@@ -73,7 +73,7 @@ fallback bypasses it. Provider failures retain their cause and typed error.
 The file is a versioned container, not a lossy projection:
 
 ```json
-{"schema":"feishu-cli-next/result/v1","binding":{"environment":"feishu","app_id":"cli_example","identity":"bot","tenant_verified":false},"result":{"ok":true,"identity":"bot","data":{"items":[{"id":"1","title":"Example"}],"has_more":false}}}
+{"schema":"feishu-cli-next/result/v1","binding":{"environment":"feishu","app_id":"cli_example","identity":"bot","endpoint":"https://open.feishu.cn","tenant_key":"tenant_example","tenant_verified":true},"result":{"ok":true,"identity":"bot","data":{"items":[{"id":"1","title":"Example"}],"has_more":false}}}
 ```
 
 Stdout keeps envelope fields, relevant resource/continuation facts, and an
@@ -91,16 +91,26 @@ unknown fields remain visible. Mail `messages` collections contribute their
 observed count, and mailbox identity, continuation and notices remain intact.
 
 Binding records the brand environment, resolved API endpoint, app ID, effective
-identity and optional profile. For user operations it reuses the credential
-resolver's current user ID, including environment credentials and selected-token
-identity enrichment. User identity requires a user ID. `user_verified` records
-whether user_info supplied current identity evidence; a configured user ID alone
-does not imply current verification. `tenant_key` and `tenant_verified:true` are
-included only when tenant evidence is available. Missing tenant evidence remains
-`tenant_verified:false`, with no extra lookup solely to discover a tenant.
-Bot operations do not resolve a user or infer their tenant. Binding contains no
-token or secret. Domain artifact consumers must validate schema and current
-binding before reusing data; the generic container is not an import command.
+identity and optional profile. Requested artifact operations verify the selected
+credential through a read-only identity endpoint, once per invocation, and reuse
+current account enrichment when it already includes verified user and tenant
+facts. Ordinary reads without artifact options do not add these lookups.
+
+User operations call `GET /open-apis/authen/v1/user_info` with the selected UAT
+when current evidence is unavailable. A persisted config user ID is checked
+against the observed user; it is not treated as verification by itself. User
+artifacts include `user_verified:true` and the observed user and tenant IDs.
+Bot operations call `GET /open-apis/tenant/v2/tenant/query` with the selected TAT
+and include the observed `tenant_key` and `tenant_verified:true`; they do not
+resolve user credentials or infer a tenant from an app ID. The bot endpoint
+requires `tenant:tenant:readonly`; its optional domain-field permission is not
+needed. See the [official tenant query contract](https://open.feishu.cn/document/server-docs/tenant-v2/query).
+
+Missing identity or tenant evidence and lookup permission failures stop the
+artifact operation explicitly. The CLI never grants extra scopes or falls back
+to unverified output. Binding contains no token or secret. Domain artifact
+consumers must validate schema and current binding before reusing data; the
+generic container is not an import command.
 
 Domain code obtains the same binding through `RuntimeContext.ResolveArtifactBinding()`
 and uses the `common.ArtifactBinding` alias. The command output and runtime method

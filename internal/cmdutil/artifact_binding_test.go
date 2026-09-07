@@ -10,11 +10,13 @@ import (
 
 	"github.com/larksuite/cli/errs"
 	"github.com/larksuite/cli/internal/core"
+	"github.com/larksuite/cli/internal/credential"
 )
 
 func TestResolveArtifactBindingUsesRequestedEffectiveIdentity(t *testing.T) {
 	t.Setenv("LARKSUITE_CLI_CONFIG_DIR", t.TempDir())
 	f, _, _, _ := TestFactory(t, &core.CliConfig{Brand: core.BrandLark, AppID: "app", ProfileName: "selected", UserOpenId: "selected-user"})
+	f.Credential = credential.NewCredentialProvider(nil, artifactVerifiedAccount{}, nil, nil)
 	f.ResolvedIdentity = core.AsBot
 	binding, err := f.ResolveArtifactBinding(context.Background(), core.AsUser)
 	if err != nil || binding.Identity != "user" || binding.UserID != "selected-user" || binding.Profile != "selected" || binding.Endpoint != core.ResolveEndpoints(core.BrandLark).Open {
@@ -39,4 +41,10 @@ func TestResolveArtifactBindingRejectsIncompleteIdentity(t *testing.T) {
 			t.Fatalf("incomplete identity %q accepted: %v", identity, err)
 		}
 	}
+}
+
+type artifactVerifiedAccount struct{}
+
+func (artifactVerifiedAccount) ResolveAccount(context.Context) (*credential.Account, error) {
+	return &credential.Account{AppID: "app", Brand: core.BrandLark, UserOpenId: "selected-user", TenantKey: "tenant", UserInfoVerified: true}, nil
 }
