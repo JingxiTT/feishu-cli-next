@@ -74,6 +74,10 @@ func finalizeAgentFoundation(f *cmdutil.Factory, root *cobra.Command, opts *outp
 	}
 	var walk func(*cobra.Command)
 	walk = func(c *cobra.Command) {
+		// Cobra otherwise replays pflag deprecation notices to command stdout.
+		// Keep parser diagnostics separate from structured business results.
+		c.Flags().SetOutput(f.IOStreams.ErrOut)
+		c.PersistentFlags().SetOutput(f.IOStreams.ErrOut)
 		// These are repository-owned help strings, never user data or results.
 		c.Short = strings.ReplaceAll(c.Short, "lark-cli", "feishu-cli-next")
 		c.Long = strings.ReplaceAll(c.Long, "lark-cli", "feishu-cli-next")
