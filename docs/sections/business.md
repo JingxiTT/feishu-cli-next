@@ -19,11 +19,14 @@ no approval, attendance, or mindnotes shortcut directories/registrations. These
 are intentionally one-to-one supported OpenAPI commands assembled by
 `cmd/service`; adding endpoint wrapper shortcuts would duplicate the reference
 surface. Existing typed parameter flags, JSON body/file input, and raw `--params`
-escape hatch are retained. No frozen metadata or product implementation was
-edited by this section.
+escape hatch are retained. Frozen metadata is unchanged; coordinated shared service corrections are
+listed below.
 
 Owned files: `tests/next_sections/business/business_e2e_test.go` and this report.
-The coordinator owns shared fixes, runner/CI registration, and inventory.
+The coordinator owns shared fixes, runner/CI registration, and inventory. A
+coordinator-delegated follow-up (`1058824`) also changed the owning generic service
+read classification/tests and the corresponding receipt contract for three
+confirmed Mail POST reads; the Mail owner supplies their process coverage.
 Dependencies: accepted P1 `ce68188`, generic service registry/schema/parameter
 binder, input FileIO, sidecar fixture, result artifacts, and mutation receipts.
 
@@ -66,10 +69,12 @@ All eight help routes and discovery reachability of all 17 leaves are executed.
 - Approval methods accept user identity only. Attendance query and mindnotes
   create accept both bot and user; mindnotes list accepts user only. Process
   tests reject unsupported bot identities before business dispatch.
-- Frozen approval search and attendance query risks are `write`, despite being
-  query operations; the advertised risk remains unchanged. The shared service
-  runtime marks only those exact generated requests read-only, so they produce
-  no mutation receipts. Arbitrary raw API POST calls retain conservative
+- Frozen approval search and attendance query catalog/schema risks remain
+  `write`, as do legacy command annotations. Agent-mode command annotations
+  identify their verified read semantics and enable `--save-result`; exact
+  request markers avoid mutation receipts. Their artifacts preserve full native
+  results, partial employee arrays, continuation and verified user/tenant binding
+  despite projected stdout. Arbitrary raw API POST calls retain conservative
   mutation classification. Approval's nine
   high-risk operations require `--yes`, including cancellation, cc, initiation,
   signing, approval, rejection, reminder, rollback, and transfer.
@@ -122,13 +127,14 @@ python3 scripts/next_test.py --section business --suite live --allow-live --repo
 ```
 
 Current complete section execution (2026-09-07): canonical runner registration
-`6226e3c`, shared receipt/read-marker correction `041a9cd`, and the coordinator's
-pagination correction in the shared working tree. The authsidecar build is
+`6226e3c`, receipt correction `041a9cd`, verified POST read-artifact correction
+`ef9a2c8`, pagination corrections `6056d73`/`94e4afc`, and the exact Mail read
+classification follow-up `1058824`. The authsidecar build is
 performed by `TestMain` for the process suite.
 
 | Isolated command | Result |
 | --- | --- |
-| `python3 scripts/next_test.py --section business --suite all --report .tmp/next-tests/business.json` | PASS: shared units 500 pass records, zero failures, one skip; process suite 186 pass records, zero failures, 17 blocked live skips |
+| `python3 scripts/next_test.py --section business --suite all --report .tmp/next-tests/business.json` | PASS: shared units 551 pass records, zero failures, one skip; process suite 189 pass records, zero failures, 17 blocked live skips |
 | `python3 scripts/next_test.py --section business --suite live --allow-live --report .tmp/next-tests/business-live.json` | BLOCKED, exit 2: no verified authorized fixture harness |
 
 The unit package set is `cmd/service`, `internal/apicatalog`, `internal/registry`,
@@ -147,8 +153,9 @@ create→approve/reject/cancel→readback retains exact forms, history, comments
 leading-zero identifiers, and a 64-bit attachment size. The shared generic unit
 selection includes inherited reference regressions; no legacy domain E2E package
 exists for these three services.
-No product source was changed by this section; broader root CI/static checks
-and comparative evaluations remain coordinator-owned and were not run here.
+The shared Mail follow-up also passed 487 focused service/cmdutil test records
+and `go vet ./cmd/service`. Broader root CI/static checks and comparative
+evaluations remain coordinator-owned and were not run here.
 
 The live selector is deliberately blocked until authorized fixtures exist.
 `TestBusinessLive` contains a separately named blocked scenario for each of the
@@ -164,10 +171,24 @@ successful result artifact. Missing and cyclic continuation tokens also return
 
 The shared receipt owner implemented conservative mindnote created-ID evidence
 and exact read-only markers for generated attendance query and approval search.
-The business suite preserves native partial attendance arrays and separately
+The business suite verifies full saved artifacts and no receipt files for both
+known POST reads, preserves native partial attendance arrays, and separately
 checks ten mindnote response completeness/update uncertainty cases. It does not
 infer applied item counts for mixed updates or employee coverage from an API
 success envelope.
+
+The coordinator-requested frozen-catalog audit examined 251 generated methods,
+including 106 POSTs and 92 POSTs with non-read risk. Three additional native Mail
+reads were confirmed from exact endpoint, body/response and readonly-scope
+contracts: `user_mailbox.message.batch_get`, `multi_entity.search`, and
+`user_mailbox.search`. The shared helper corrects only their exact service/ID/
+HTTP/path tuples and binds each validated concrete decoded path; neighboring
+mutations and raw API calls remain independently classified. Mail's full suite
+verifies the corresponding process behavior. IM chat-link generation and Slides
+image rendering were not reclassified because their generated-link/artifact
+effects need separate domain interpretation. Drive user-event subscription
+remains a mutation despite its readonly scope. No name-only or scope-only
+classification rule was introduced.
 
 ## Outstanding acceptance
 

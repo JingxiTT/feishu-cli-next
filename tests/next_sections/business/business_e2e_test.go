@@ -279,6 +279,8 @@ func TestFrozenBusinessSchemaAndRouting(t *testing.T) {
 					for _, pair := range [][2]string{{"parameters", "inputSchema.properties.params"}, {"requestBody", "inputSchema.properties.data"}, {"responseBody", "outputSchema"}} {
 						assertFields(t, gjson.GetBytes(raw, pair[0]), gjson.Get(result.Stdout, pair[1]), pair[0] != "responseBody")
 					}
+					// The schema retains frozen catalog metadata; only agent command risk
+					// annotations receive the narrowly verified read correction.
 					require.Equal(t, gjson.GetBytes(raw, "risk").String(), gjson.Get(result.Stdout, "_meta.risk").String())
 					require.JSONEq(t, gjson.GetBytes(raw, "scopes").Raw, gjson.Get(result.Stdout, "_meta.scopes").Raw)
 					identities := []string{}
@@ -696,6 +698,52 @@ func TestApprovalMissingOrRepeatedContinuationFails(t *testing.T) {
 					_, err := os.Stat(path)
 					require.True(t, os.IsNotExist(err))
 				})
+			}
+		})
+	}
+}
+
+func TestKnownBusinessPostReadsSaveFullArtifactsWithoutReceipts(t *testing.T) {
+	for _, tc := range []struct {
+		command, body, data string
+		flags               []string
+	}{
+		{"approval approvals search", `{"keyword":"Travel","page_size":1}`, `{"approvals":[{"approval_code":"definition_fixture","approval_name":"Travel 出差","form":"[]"}],"has_more":true,"page_token":"search_next"}`, nil},
+		{"attendance user_tasks query", `{"user_ids":["0001","0002","0003"],"check_date_from":20260901,"check_date_to":20260907,"need_overtime_result":false}`, `{"user_task_results":[{"user_id":"0001","records":[{"check_in_record_id":"9007199254740993","task_shift_type":1}]}],"invalid_user_ids":["0002"],"unauthorized_user_ids":["0003"]}`, []string{"--employee-type", "employee_no"}},
+	} {
+		t.Run(tc.command, func(t *testing.T) {
+			var reads atomic.Int32
+			f := nextfixture.NewFixture(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				reads.Add(1)
+				require.Equal(t, "POST", r.Method)
+				raw, err := io.ReadAll(r.Body)
+				require.NoError(t, err)
+				require.JSONEq(t, tc.body, string(raw))
+				reply(w, `{"code":0,"data":`+tc.data+`}`)
+			}))
+			path := filepath.Join(f.WorkDir, "full-post-read.json")
+			args := append(strings.Fields(tc.command), tc.flags...)
+			args = append(args, "--as", "user", "--data", tc.body, "--save-result", path, "--result-fields", "id")
+			r := f.Run(args...)
+			success(t, r)
+			require.Equal(t, int32(1), reads.Load())
+			require.NotContains(t, r.Stderr, `"mutation"`)
+			require.False(t, gjson.Get(r.Stdout, "mutation").Exists())
+			raw, err := os.ReadFile(path)
+			require.NoError(t, err)
+			require.Equal(t, "feishu-cli-next/result/v1", gjson.GetBytes(raw, "schema").String())
+			require.JSONEq(t, tc.data, gjson.GetBytes(raw, "result.data").Raw)
+			require.Equal(t, "user", gjson.GetBytes(raw, "binding.identity").String())
+			require.Equal(t, "ou_foundation_fixture", gjson.GetBytes(raw, "binding.user_id").String())
+			require.Equal(t, "foundation-fixture-tenant", gjson.GetBytes(raw, "binding.tenant_key").String())
+			receipts, err := filepath.Glob(filepath.Join(f.ConfigDir, "next", "receipts", "*.json"))
+			require.NoError(t, err)
+			require.Empty(t, receipts)
+			if tc.command == "approval approvals search" {
+				require.Equal(t, "search_next", gjson.Get(r.Stdout, "data.page_token").String())
+			} else {
+				require.Equal(t, "0002", gjson.Get(r.Stdout, "data.invalid_user_ids.0").String())
+				require.Equal(t, "0003", gjson.Get(r.Stdout, "data.unauthorized_user_ids.0").String())
 			}
 		})
 	}
