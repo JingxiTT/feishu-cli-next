@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"sync/atomic"
 	"testing"
@@ -145,13 +146,108 @@ func TestWikiEveryMappedCommandHasHelpAndDiscoveryOrSchema(t *testing.T) {
 			require.Equal(t, 0, r.ExitCode, "%+v", r)
 			require.NotEmpty(t, r.Stdout)
 			if strings.HasPrefix(command, "+") {
-				r = f.Run(append(append([]string{"discover"}, args...), "--flags")...)
-				require.Equal(t, "wiki "+command, gjson.Get(r.Stdout, "data.0.command").String(), "%+v", r)
+				assertWikiDiscovery(t, f, command)
+				return
 			} else {
 				r = f.Run(append([]string{"schema"}, args...)...)
 			}
 			require.Equal(t, 0, r.ExitCode, "%+v", r)
 			require.True(t, json.Valid([]byte(r.Stdout)), "%+v", r)
 		})
+	}
+}
+
+// Discovery searches public flag descriptions as well as paths, so a precise
+// command query may legitimately match other domains. Verify the whole bounded
+// result set and the exact entry's contract without assuming its rank.
+func assertWikiDiscovery(t *testing.T, f *nextfixture.Fixture, command string) {
+	t.Helper()
+	flagNames := map[string][]string{
+		"+delete-space":  {"space-id", "yes"},
+		"+member-add":    {"space-id", "member-id", "member-type", "member-role", "need-notification"},
+		"+member-list":   {"space-id", "page-size", "page-token", "page-all", "page-limit"},
+		"+member-remove": {"space-id", "member-id", "member-type", "member-role"},
+		"+move":          {"node-token", "source-space-id", "target-space-id", "target-parent-token", "obj-type", "obj-token", "apply"},
+		"+move-to-drive": {"node-token", "folder-token"},
+		"+node-copy":     {"space-id", "node-token", "target-space-id", "target-parent-node-token", "title", "yes"},
+		"+node-create":   {"space-id", "parent-node-token", "title", "node-type", "obj-type", "origin-node-token"},
+		"+node-delete":   {"node-token", "obj-type", "space-id", "include-children", "yes"},
+		"+node-get":      {"node-token", "obj-type", "space-id"},
+		"+node-list":     {"space-id", "parent-node-token", "page-size", "page-token", "page-all", "page-limit"},
+		"+space-create":  {"name", "description"},
+		"+space-list":    {"page-size", "page-token", "page-all", "page-limit"},
+	}
+	query := "wiki " + command
+	offset, total := 0, -1
+	entries := map[string]gjson.Result{}
+	for {
+		result := f.Run("discover", "wiki", command, "--flags", "--limit", "2", "--offset", strconv.Itoa(offset))
+		success(t, result)
+		require.True(t, json.Valid([]byte(result.Stdout)))
+		require.Equal(t, query, gjson.Get(result.Stdout, "meta.query").String())
+		require.Equal(t, int64(offset), gjson.Get(result.Stdout, "meta.offset").Int())
+		require.Equal(t, int64(2), gjson.Get(result.Stdout, "meta.limit").Int())
+		pageTotal := int(gjson.Get(result.Stdout, "meta.total").Int())
+		if total < 0 {
+			total = pageTotal
+		}
+		require.Equal(t, total, pageTotal, "discovery extent changed between pages")
+		page := gjson.Get(result.Stdout, "data").Array()
+		require.LessOrEqual(t, len(page), 2)
+		for _, entry := range page {
+			path := entry.Get("command").String()
+			require.NotEmpty(t, path)
+			require.NotContains(t, entries, path, "duplicate discovery entry")
+			entries[path] = entry
+		}
+		offset += len(page)
+		complete := gjson.Get(result.Stdout, "meta.complete")
+		require.True(t, gjson.True == complete.Type || gjson.False == complete.Type)
+		require.Equal(t, offset == total, complete.Bool(), "complete must describe returned extent")
+		if complete.Bool() {
+			require.False(t, gjson.Get(result.Stdout, "meta.next_offset").Exists())
+			break
+		}
+		require.NotEmpty(t, page, "incomplete discovery must advance")
+		require.Less(t, offset, total)
+		require.Equal(t, int64(offset), gjson.Get(result.Stdout, "meta.next_offset").Int())
+	}
+	require.Len(t, entries, total)
+	target, found := entries[query]
+	require.True(t, found, "exact command missing from complete discovery: %s", query)
+	expectedRisk := "write"
+	switch command {
+	case "+node-get", "+node-list", "+space-list", "+member-list":
+		expectedRisk = "read"
+	case "+node-copy", "+node-delete", "+delete-space":
+		expectedRisk = "high-risk-write"
+	}
+	require.Equal(t, expectedRisk, target.Get("risk").String())
+	identities := []string{}
+	for _, identity := range target.Get("identities").Array() {
+		identities = append(identities, identity.String())
+	}
+	expectedIdentities := []string{"user", "bot"}
+	if command == "+space-create" {
+		expectedIdentities = []string{"user"}
+	}
+	require.ElementsMatch(t, expectedIdentities, identities)
+	flags := map[string]gjson.Result{}
+	for _, flag := range target.Get("flags").Array() {
+		flags[flag.Get("name").String()] = flag
+	}
+	// Authsidecar intentionally hides --profile; discovery includes public flags only.
+	expectedFlags := append([]string{"as", "dry-run"}, flagNames[command]...)
+	for _, name := range expectedFlags {
+		flag, found := flags[name]
+		require.True(t, found, "%s missing public flag %s", query, name)
+		flagType := "string"
+		switch name {
+		case "yes", "dry-run", "need-notification", "page-all", "apply", "include-children":
+			flagType = "bool"
+		case "page-size", "page-limit":
+			flagType = "int"
+		}
+		require.Equal(t, flagType, flag.Get("type").String(), "%s --%s", query, name)
 	}
 }
