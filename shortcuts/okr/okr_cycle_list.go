@@ -177,11 +177,11 @@ var OKRListCycles = common.Shortcut{
 		for _, item := range itemsRaw {
 			raw, err := json.Marshal(item)
 			if err != nil {
-				continue
+				return errs.NewInternalError(errs.SubtypeInvalidResponse, "invalid OKR collection item").WithCause(err)
 			}
 			var cycle Cycle
 			if err := json.Unmarshal(raw, &cycle); err != nil {
-				continue
+				return errs.NewInternalError(errs.SubtypeInvalidResponse, "invalid OKR collection item").WithCause(err)
 			}
 			allCycles = append(allCycles, cycle)
 		}

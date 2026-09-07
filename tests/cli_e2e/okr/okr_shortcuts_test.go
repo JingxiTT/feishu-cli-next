@@ -268,7 +268,7 @@ func TestOKR_PatchDryRun_Objective_AllFields(t *testing.T) {
 	assert.True(t, strings.Contains(output, "notes=true"), "dry-run should show notes patch, got: %s", output)
 	assert.True(t, strings.Contains(output, "score=true"), "dry-run should show score patch, got: %s", output)
 	assert.True(t, strings.Contains(output, "deadline=true"), "dry-run should show deadline patch, got: %s", output)
-	assert.True(t, strings.Contains(output, `"user_id_type": "open_id"`), "dry-run should contain user_id_type param, got: %s", output)
+	assert.Equal(t, "open_id", gjson.Get(output, "data.api.0.params.user_id_type").String())
 }
 
 // TestOKR_PatchDryRun_KeyResult validates +patch dry-run for key result.
@@ -294,7 +294,7 @@ func TestOKR_PatchDryRun_KeyResult(t *testing.T) {
 	assert.True(t, strings.Contains(output, "PATCH"), "dry-run should contain PATCH method, got: %s", output)
 	assert.True(t, strings.Contains(output, "/open-apis/okr/v2/key_results/789"), "dry-run should contain key_result API path, got: %s", output)
 	assert.True(t, strings.Contains(output, "score=true"), "dry-run should show score patch, got: %s", output)
-	assert.True(t, strings.Contains(output, `"user_id_type": "user_id"`), "dry-run should contain user_id_type param, got: %s", output)
+	assert.Equal(t, "user_id", gjson.Get(output, "data.api.0.params.user_id_type").String())
 }
 
 // TestOKR_PatchDryRun_KeyResult_RichText validates +patch dry-run for key result with richtext style.

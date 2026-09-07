@@ -132,11 +132,11 @@ var OKRListProgress = common.Shortcut{
 		for _, item := range itemsRaw {
 			raw, err := json.Marshal(item)
 			if err != nil {
-				continue
+				return errs.NewInternalError(errs.SubtypeInvalidResponse, "invalid OKR collection item").WithCause(err)
 			}
 			var progress Progress
 			if err := json.Unmarshal(raw, &progress); err != nil {
-				continue
+				return errs.NewInternalError(errs.SubtypeInvalidResponse, "invalid OKR collection item").WithCause(err)
 			}
 			allProgress = append(allProgress, &progress)
 		}

@@ -64,6 +64,7 @@ func fetchObjectives(ctx context.Context, runtime *common.RuntimeContext, cycleI
 	queryParams := map[string]interface{}{"page_size": "100"}
 	var objectives []Objective
 	page := 0
+	seen := map[string]bool{}
 
 	for {
 		if page > 0 {
@@ -85,17 +86,20 @@ func fetchObjectives(ctx context.Context, runtime *common.RuntimeContext, cycleI
 		for _, item := range itemsRaw {
 			raw, err := json.Marshal(item)
 			if err != nil {
-				continue
+				return nil, errs.NewInternalError(errs.SubtypeInvalidResponse, "invalid OKR collection item").WithCause(err)
 			}
 			var obj Objective
 			if err := json.Unmarshal(raw, &obj); err != nil {
-				continue
+				return nil, errs.NewInternalError(errs.SubtypeInvalidResponse, "invalid OKR collection item").WithCause(err)
 			}
 			objectives = append(objectives, obj)
 		}
 
 		hasMore, pageToken := common.PaginationMeta(data)
-		if !hasMore || pageToken == "" {
+		if err := advanceOKRPage(hasMore, pageToken, seen); err != nil {
+			return nil, err
+		}
+		if !hasMore {
 			break
 		}
 		queryParams["page_token"] = pageToken
@@ -122,6 +126,7 @@ func fetchKeyResults(ctx context.Context, runtime *common.RuntimeContext, object
 	queryParams := map[string]interface{}{"page_size": "100"}
 	var keyResults []KeyResult
 	page := 0
+	seen := map[string]bool{}
 
 	for {
 		if page > 0 {
@@ -143,17 +148,20 @@ func fetchKeyResults(ctx context.Context, runtime *common.RuntimeContext, object
 		for _, item := range itemsRaw {
 			raw, err := json.Marshal(item)
 			if err != nil {
-				continue
+				return nil, errs.NewInternalError(errs.SubtypeInvalidResponse, "invalid OKR collection item").WithCause(err)
 			}
 			var kr KeyResult
 			if err := json.Unmarshal(raw, &kr); err != nil {
-				continue
+				return nil, errs.NewInternalError(errs.SubtypeInvalidResponse, "invalid OKR collection item").WithCause(err)
 			}
 			keyResults = append(keyResults, kr)
 		}
 
 		hasMore, pageToken := common.PaginationMeta(data)
-		if !hasMore || pageToken == "" {
+		if err := advanceOKRPage(hasMore, pageToken, seen); err != nil {
+			return nil, err
+		}
+		if !hasMore {
 			break
 		}
 		queryParams["page_token"] = pageToken
@@ -375,6 +383,7 @@ var OKRReorder = common.Shortcut{
 
 		var reorderedIDs []string
 		var total int
+		noop := false
 
 		if level == "objective" {
 			objectives, err := fetchObjectives(ctx, runtime, cycleID)
@@ -388,6 +397,14 @@ var OKRReorder = common.Shortcut{
 				return err
 			}
 
+			noop = true
+			for i, item := range objectives {
+				if item.Position == nil || *item.Position != int32(i+1) || item.ID != reorderedIDs[i] {
+					noop = false
+					break
+				}
+			}
+
 			// Submit reorder
 			params := map[string]interface{}{
 				"cycle_id": cycleID,
@@ -396,7 +413,9 @@ var OKRReorder = common.Shortcut{
 				"objective_ids": reorderedIDs,
 			}
 			path := fmt.Sprintf("/open-apis/okr/v2/cycles/%s/objectives_position", cycleID)
-			_, err = runtime.CallAPITyped("PUT", path, params, body)
+			if !noop {
+				_, err = runtime.CallAPITyped("PUT", path, params, body)
+			}
 			if err != nil {
 				return wrapOkrNetworkErr(err, "failed to update objective positions")
 			}
@@ -413,6 +432,14 @@ var OKRReorder = common.Shortcut{
 				return err
 			}
 
+			noop = true
+			for i, item := range keyResults {
+				if item.Position == nil || *item.Position != int32(i+1) || item.ID != reorderedIDs[i] {
+					noop = false
+					break
+				}
+			}
+
 			// Submit reorder
 			params := map[string]interface{}{
 				"objective_id": objectiveID,
@@ -421,7 +448,9 @@ var OKRReorder = common.Shortcut{
 				"key_result_ids": reorderedIDs,
 			}
 			path := fmt.Sprintf("/open-apis/okr/v2/objectives/%s/key_results_position", objectiveID)
-			_, err = runtime.CallAPITyped("PUT", path, params, body)
+			if !noop {
+				_, err = runtime.CallAPITyped("PUT", path, params, body)
+			}
 			if err != nil {
 				return wrapOkrNetworkErr(err, "failed to update key result positions")
 			}
@@ -433,10 +462,15 @@ var OKRReorder = common.Shortcut{
 			"cycle_id": cycleID,
 			"total":    total,
 			"ordered":  reorderedIDs,
+			"noop":     noop,
 		}
 
 		runtime.OutFormat(result, nil, func(w io.Writer) {
-			fmt.Fprintf(w, "Successfully reordered %d %s(s)\n", total, level)
+			if noop {
+				fmt.Fprintln(w, "Order unchanged")
+			} else {
+				fmt.Fprintf(w, "Successfully reordered %d %s(s)\n", total, level)
+			}
 			fmt.Fprintln(w, "New order:")
 			for i, id := range reorderedIDs {
 				fmt.Fprintf(w, "  Position %d: %s\n", i+1, id)

@@ -62,6 +62,7 @@ var OKRCycleDetail = common.Shortcut{
 
 		var objectives []Objective
 		page := 0
+		seen := map[string]bool{}
 		for {
 			if err := ctx.Err(); err != nil {
 				return err
@@ -85,17 +86,20 @@ var OKRCycleDetail = common.Shortcut{
 			for _, item := range itemsRaw {
 				raw, err := json.Marshal(item)
 				if err != nil {
-					continue
+					return errs.NewInternalError(errs.SubtypeInvalidResponse, "invalid OKR collection item").WithCause(err)
 				}
 				var obj Objective
 				if err := json.Unmarshal(raw, &obj); err != nil {
-					continue
+					return errs.NewInternalError(errs.SubtypeInvalidResponse, "invalid OKR collection item").WithCause(err)
 				}
 				objectives = append(objectives, obj)
 			}
 
 			hasMore, pageToken := common.PaginationMeta(data)
-			if !hasMore || pageToken == "" {
+			if err := advanceOKRPage(hasMore, pageToken, seen); err != nil {
+				return err
+			}
+			if !hasMore {
 				break
 			}
 			queryParams["page_token"] = pageToken

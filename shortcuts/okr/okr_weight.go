@@ -353,6 +353,7 @@ var OKRWeight = common.Shortcut{
 
 		var normalizedWeights []map[string]interface{}
 		var total int
+		noop := false
 
 		if level == "objective" {
 			objectives, err := fetchObjectives(ctx, runtime, cycleID)
@@ -375,6 +376,22 @@ var OKRWeight = common.Shortcut{
 			normalizedWeights, err = normalizeWeights(objectives, ops)
 			if err != nil {
 				return err
+			}
+
+			noop = len(normalizedWeights) == len(objectives)
+			for _, item := range objectives {
+				if item.Weight == nil {
+					noop = false
+					break
+				}
+				for _, desired := range normalizedWeights {
+					value, ok := desired["weight"].(json.Number)
+					weight, parseErr := value.Float64()
+					if desired["id"] == item.ID && (!ok || parseErr != nil || weight != *item.Weight) {
+						noop = false
+						break
+					}
+				}
 			}
 
 			// Build position map for sorting
@@ -406,7 +423,9 @@ var OKRWeight = common.Shortcut{
 				"objective_weights": objectiveWeights,
 			}
 			path := fmt.Sprintf("/open-apis/okr/v2/cycles/%s/objectives_weight", cycleID)
-			_, err = runtime.CallAPITyped("PUT", path, params, body)
+			if !noop {
+				_, err = runtime.CallAPITyped("PUT", path, params, body)
+			}
 			if err != nil {
 				return wrapOkrNetworkErr(err, "failed to update objective weights")
 			}
@@ -432,6 +451,22 @@ var OKRWeight = common.Shortcut{
 			normalizedWeights, err = normalizeWeights(keyResults, ops)
 			if err != nil {
 				return err
+			}
+
+			noop = len(normalizedWeights) == len(keyResults)
+			for _, item := range keyResults {
+				if item.Weight == nil {
+					noop = false
+					break
+				}
+				for _, desired := range normalizedWeights {
+					value, ok := desired["weight"].(json.Number)
+					weight, parseErr := value.Float64()
+					if desired["id"] == item.ID && (!ok || parseErr != nil || weight != *item.Weight) {
+						noop = false
+						break
+					}
+				}
 			}
 
 			// Build position map for sorting
@@ -463,7 +498,9 @@ var OKRWeight = common.Shortcut{
 				"key_result_weights": keyResultWeights,
 			}
 			path := fmt.Sprintf("/open-apis/okr/v2/objectives/%s/key_results_weight", objectiveID)
-			_, err = runtime.CallAPITyped("PUT", path, params, body)
+			if !noop {
+				_, err = runtime.CallAPITyped("PUT", path, params, body)
+			}
 			if err != nil {
 				return wrapOkrNetworkErr(err, "failed to update key result weights")
 			}
@@ -475,10 +512,15 @@ var OKRWeight = common.Shortcut{
 			"cycle_id": cycleID,
 			"total":    total,
 			"weights":  normalizedWeights,
+			"noop":     noop,
 		}
 
 		runtime.OutFormat(result, nil, func(w io.Writer) {
-			fmt.Fprintf(w, "Successfully updated weights for %d %s(s)\n", total, level)
+			if noop {
+				fmt.Fprintln(w, "Weights unchanged")
+			} else {
+				fmt.Fprintf(w, "Successfully updated weights for %d %s(s)\n", total, level)
+			}
 			fmt.Fprintln(w, "Weights:")
 			for _, weightEntry := range normalizedWeights {
 				fmt.Fprintf(w, "  %s: %v\n", weightEntry["id"], weightEntry["weight"])

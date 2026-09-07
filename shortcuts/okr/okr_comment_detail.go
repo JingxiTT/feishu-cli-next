@@ -57,6 +57,7 @@ func decodeCommentProgressPage(data map[string]interface{}) ([]Progress, error) 
 func fetchComments(ctx context.Context, runtime *common.RuntimeContext, target CommentTarget) ([]Comment, error) {
 	params := map[string]interface{}{"target_type": target.TargetType, "target_id": target.TargetID, "page_size": 100}
 	var comments []Comment
+	seen := map[string]bool{}
 	for {
 		if err := ctx.Err(); err != nil {
 			return nil, err
@@ -70,7 +71,10 @@ func fetchComments(ctx context.Context, runtime *common.RuntimeContext, target C
 			return nil, err
 		}
 		comments = append(comments, items...)
-		if !hasMore || token == "" {
+		if err := advanceOKRPage(hasMore, token, seen); err != nil {
+			return nil, err
+		}
+		if !hasMore {
 			return comments, nil
 		}
 		params["page_token"] = token
@@ -81,6 +85,7 @@ func fetchCommentProgresses(ctx context.Context, runtime *common.RuntimeContext,
 	path := fmt.Sprintf("/open-apis/okr/v2/%s/%s/progresses", collection, targetID)
 	params := map[string]interface{}{"page_size": 100}
 	var progresses []Progress
+	seen := map[string]bool{}
 	for {
 		if err := ctx.Err(); err != nil {
 			return nil, err
@@ -95,7 +100,10 @@ func fetchCommentProgresses(ctx context.Context, runtime *common.RuntimeContext,
 		}
 		progresses = append(progresses, items...)
 		hasMore, token := common.PaginationMeta(data)
-		if !hasMore || token == "" {
+		if err := advanceOKRPage(hasMore, token, seen); err != nil {
+			return nil, err
+		}
+		if !hasMore {
 			return progresses, nil
 		}
 		params["page_token"] = token
