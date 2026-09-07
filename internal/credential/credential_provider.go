@@ -149,6 +149,11 @@ type CredentialProvider struct {
 	httpClient   func() (*http.Client, error)
 	warnOut      io.Writer
 
+	metadataOnce    sync.Once
+	metadataAccount *Account
+	metadataSource  credentialSource
+	metadataErr     error
+
 	accountOnce    sync.Once
 	account        *Account
 	accountErr     error
@@ -192,38 +197,73 @@ func (p *CredentialProvider) ResolveAccount(ctx context.Context) (*Account, erro
 	return p.account, p.accountErr
 }
 
-func (p *CredentialProvider) doResolveAccount(ctx context.Context) (*Account, error) {
+// ResolveSupportedIdentities reads provider account metadata without resolving
+// tokens or calling user_info. Command-tree construction and local discovery can
+// apply strict mode without authenticating a user. Account selection is shared
+// with ResolveAccount so later platform requests keep the same provider.
+func (p *CredentialProvider) ResolveSupportedIdentities(ctx context.Context) (uint8, error) {
+	account, _, err := p.resolveAccountMetadata(ctx)
+	if err != nil {
+		return 0, err
+	}
+	if account == nil {
+		return 0, nil
+	}
+	return account.SupportedIdentities, nil
+}
+
+func (p *CredentialProvider) resolveAccountMetadata(ctx context.Context) (*Account, credentialSource, error) {
+	p.metadataOnce.Do(func() {
+		p.metadataAccount, p.metadataSource, p.metadataErr = p.selectAccount(ctx)
+	})
+	return p.metadataAccount, p.metadataSource, p.metadataErr
+}
+
+func (p *CredentialProvider) selectAccount(ctx context.Context) (*Account, credentialSource, error) {
 	for _, prov := range p.providers {
-		acct, err := prov.ResolveAccount(ctx)
+		account, err := prov.ResolveAccount(ctx)
 		if err != nil {
-			return nil, err
+			return nil, nil, err
 		}
-		if acct != nil {
-			internal := convertAccount(acct)
-			source := extensionTokenSource{provider: prov}
-			if err := p.enrichUserInfo(ctx, internal, source); err != nil {
-				if p.warnOut != nil {
-					_, _ = fmt.Fprintf(p.warnOut, "warning: unable to verify user identity from credential source %q: %v\n", source.Name(), err)
-				}
-				// enrichUserInfo failure is non-fatal: SupportedIdentities
-				// (used for strict mode) is already set by the provider.
-				// Clear unverified user identity for safety.
-				internal.UserOpenId = ""
-				internal.UserName = ""
-			}
-			p.selectedSource = source
-			return internal, nil
+		if account != nil {
+			return convertAccount(account), extensionTokenSource{provider: prov}, nil
 		}
 	}
 	if p.defaultAcct != nil {
-		acct, err := p.defaultAcct.ResolveAccount(ctx)
+		account, err := p.defaultAcct.ResolveAccount(ctx)
 		if err != nil {
-			return nil, err
+			return nil, nil, err
 		}
-		p.selectedSource = defaultTokenSource{resolver: p.defaultToken}
-		return acct, nil
+		return account, defaultTokenSource{resolver: p.defaultToken}, nil
 	}
-	return nil, core.NotConfiguredError()
+	return nil, nil, core.NotConfiguredError()
+}
+
+func (p *CredentialProvider) doResolveAccount(ctx context.Context) (*Account, error) {
+	metadata, source, err := p.resolveAccountMetadata(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if metadata == nil {
+		p.selectedSource = source
+		return nil, nil
+	}
+	// Enrichment must not mutate the metadata observed by concurrent strict-mode
+	// readers, or the provider's original account object.
+	account := *metadata
+	if _, extension := source.(extensionTokenSource); extension {
+		if err := p.enrichUserInfo(ctx, &account, source); err != nil {
+			if p.warnOut != nil {
+				_, _ = fmt.Fprintf(p.warnOut, "warning: unable to verify user identity from credential source %q: %v\n", source.Name(), err)
+			}
+			// An enrichment failure remains non-fatal for supported identities, but
+			// provider-supplied user details are not trusted for platform operations.
+			account.UserOpenId = ""
+			account.UserName = ""
+		}
+	}
+	p.selectedSource = source
+	return &account, nil
 }
 
 // enrichUserInfo resolves user identity when extension provides a UAT.

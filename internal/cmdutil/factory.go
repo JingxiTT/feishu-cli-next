@@ -209,16 +209,16 @@ func (f *Factory) CheckIdentity(as core.Identity, supported []string) error {
 }
 
 // ResolveStrictMode returns the effective strict mode by reading
-// Account.SupportedIdentities from the credential provider chain.
+// supported identity metadata without resolving tokens or verifying user_info.
 func (f *Factory) ResolveStrictMode(ctx context.Context) core.StrictMode {
 	if f.Credential == nil {
 		return core.StrictModeOff
 	}
-	acct, err := f.Credential.ResolveAccount(ctx)
-	if err != nil || acct == nil {
+	supported, err := f.Credential.ResolveSupportedIdentities(ctx)
+	if err != nil {
 		return core.StrictModeOff
 	}
-	ids := extcred.IdentitySupport(acct.SupportedIdentities)
+	ids := extcred.IdentitySupport(supported)
 	switch {
 	case ids.BotOnly():
 		return core.StrictModeBot
