@@ -1,0 +1,597 @@
+{
+  "schema_version": 1,
+  "import_revision": "0c1ac7570543db3117ba5bdc6a66b69f87c4a62e",
+  "review_checkpoint": "0084501742edb1ee87bdf9623adf7da37267f142",
+  "assignments": [
+    {
+      "schema_version": 1,
+      "assignment_id": "docs_markdown",
+      "reviewer": "/root/p3_domain_review/docs_drive_review",
+      "verdict": "approved_offline",
+      "paths": [
+        {
+          "path": "shortcuts/doc/docs_fetch_v2.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "2dac96a39f1fbf7b9cd657595702cd8f330ccd9ea18900d19abc53eaed1e9ca2",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "shortcuts/doc/docs_fetch_v2.go",
+              "sha256": "2dac96a39f1fbf7b9cd657595702cd8f330ccd9ea18900d19abc53eaed1e9ca2",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Explicit revision zero and -1 pass through while <-1 fails typed validation; explicitly supplied full-read bounds now reject instead of being ignored. Existing range/section fragment handling and export detail options remain intact.",
+              "import_to_review_diff_sha256": "12c649e9ff6941f1da681fa1e744b657a8b85e6cd9b6514f85bea927a6f14f98"
+            },
+            {
+              "path": "shortcuts/doc/docs_input_test.go",
+              "sha256": "207ca5811dfc65d6b1ee9c20483b520574ba835b1e7304fd8000956eec350157",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): TestDocsExplicitZeroRevisionIsPreserved and TestDocsFetchRejectsIgnoredFullReadBounds assert explicit presence and typed validation."
+            },
+            {
+              "path": "shortcuts/doc/docs_fetch_v2_test.go",
+              "sha256": "25ba16ec8ea4abeaf92df1d52b60e3b4f73d617f218d3f638975f52fb2094af9",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Revision/full detail, read-option modes, valid scopes and comment scope assertions inspected."
+            }
+          ],
+          "findings": [],
+          "limitations": [
+            "Static source and test-assertion inspection only; no tests, live/model runs, platform acceptance or broad gates executed by this reviewer."
+          ]
+        },
+        {
+          "path": "shortcuts/doc/docs_search.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "d0f7628e4c505a4c16b77d2228e6f2645082cb4bcf2a3586b202813ca41fb396",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "shortcuts/doc/docs_search.go",
+              "sha256": "d0f7628e4c505a4c16b77d2228e6f2645082cb4bcf2a3586b202813ca41fb396",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Pre-dry-run Validate uses the same request builder as execution. UseNumber preserves extensible filters; time-range conversion clones existing keys so numeric/null/empty values survive. Existing folder/wiki exclusivity and ISO conversion remain.",
+              "import_to_review_diff_sha256": "2b669c86a5ce73f1b86715c2a5da8262ee19591ac7c1f9c43276fc8c8dca3290"
+            },
+            {
+              "path": "shortcuts/doc/docs_input_test.go",
+              "sha256": "207ca5811dfc65d6b1ee9c20483b520574ba835b1e7304fd8000956eec350157",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): TestDocsSearchPreservesNumericTimeRanges asserts large opaque integer, numeric start, null end, empty start and cursor."
+            },
+            {
+              "path": "shortcuts/doc/docs_search_test.go",
+              "sha256": "a157bd6686558a0ac9c2d967cb09f56cc2a12c5fc1f7fd8ee5c9292d745e6d47",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): ISO start/end conversion and folder/space exclusivity and opposite-scope removal assertions inspected."
+            }
+          ],
+          "findings": [],
+          "limitations": [
+            "Static source and test-assertion inspection only; no tests, live/model runs, platform acceptance or broad gates executed by this reviewer."
+          ]
+        },
+        {
+          "path": "shortcuts/doc/docs_update_v2.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "7b2fe87075d07cc9e19c1cebb10f3228d14ae6373ac454f61f12b3227d7a9d3d",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "shortcuts/doc/docs_update_v2.go",
+              "sha256": "7b2fe87075d07cc9e19c1cebb10f3228d14ae6373ac454f61f12b3227d7a9d3d",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): XML overwrite without local resources reads native full XML before comparing. Markdown and resource writes retain PUT behavior. Read/compare failures stop before PUT; false comparison preserves original revision and write body. Revision zero is forwarded. Existing declared readonly/write_only scopes are unchanged from import.",
+              "import_to_review_diff_sha256": "b190485042b8f0e948879b5508e72f2c8e06b7dfee891e30bf4dae91319e1c86"
+            },
+            {
+              "path": "shortcuts/doc/docs_update_noop_test.go",
+              "sha256": "475ff648d10ba09f44d71d1c7e0065fdf25567e7ba307c11dbeed7b49a365e1f",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Exact snapshot and mounted identical XML test assert no PUT stub is used, XML format and absence of bounded read options."
+            },
+            {
+              "path": "tests/next_sections/docs/docs_e2e_test.go",
+              "sha256": "acdc70269db06ab3c6839465e75c53a22e8e4cf52da0c97f075114fe18834ee1",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): TestDocsUnchangedXMLOverwriteNoop asserts one fetch, revision zero, unchanged result and zero persisted mutation receipts."
+            },
+            {
+              "path": "shortcuts/doc/docs_update.go",
+              "sha256": "a018b18037449fb2665c5760eaeb48c98fbc9c24d3a99b6c77818d86e6c99030",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Scopes compared with import; both docx readonly and write_only already declared."
+            }
+          ],
+          "findings": [],
+          "limitations": [
+            "Static source and test-assertion inspection only; no tests, live/model runs, platform acceptance or broad gates executed by this reviewer.",
+            "Live native full-fetch representation, XML fidelity, revision race semantics and backend permission compatibility are not established by synthetic snapshots. Explicit read failure propagation is inspected; no tenant request was made."
+          ]
+        },
+        {
+          "path": "shortcuts/doc/html5_block_resources.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "1fcc85e8b43c819e85b6c1df183432ec5a0e55d3df8c2482535c4dfc564b7e0f",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "shortcuts/doc/html5_block_resources.go",
+              "sha256": "1fcc85e8b43c819e85b6c1df183432ec5a0e55d3df8c2482535c4dfc564b7e0f",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Reference-map parser delegates to strict UseNumber object parser while keeping existing empty/null compatibility at this helper boundary. Generic sidecar values remain shallow-copied without float64 conversion; HTML5 preparation and local resource ownership unchanged.",
+              "import_to_review_diff_sha256": "adf5b7e1ffc24833360d5f112f4507ceae1397bf403f53077583907b464f0b39"
+            },
+            {
+              "path": "shortcuts/doc/docs_input_test.go",
+              "sha256": "207ca5811dfc65d6b1ee9c20483b520574ba835b1e7304fd8000956eec350157",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Create and update prepared-body tests assert high precision decimals, >2^53 integers, Unicode, null, empty and leading-zero strings."
+            },
+            {
+              "path": "shortcuts/doc/html5_block_resources_test.go",
+              "sha256": "2cb715edcfe89a0a0464ed8829b5b65872d6289812b96448bf7580ad1d6ab500",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): TestDocsUpdateV2HTML5BlockReferenceMapFromPath asserts prepared content, HTML source sidecar and returned new block preservation."
+            }
+          ],
+          "findings": [],
+          "limitations": [
+            "Static source and test-assertion inspection only; no tests, live/model runs, platform acceptance or broad gates executed by this reviewer."
+          ]
+        },
+        {
+          "path": "shortcuts/markdown/helpers.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "53a46b39a9caddc2981750687bc1e644f40ec2c9e79259f4de11683111055912",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "shortcuts/markdown/helpers.go",
+              "sha256": "53a46b39a9caddc2981750687bc1e644f40ec2c9e79259f4de11683111055912",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Metadata lookup now uses token/type-bound shared owner and retains bounded retries for read failures. Upload retries narrow to known explicit rate-limit rejection, leaving uncertain transport/server outcomes unreplayed and preserving typed error/cause. No new permissions or duplicate write on uncertain outcome is introduced by these changes.",
+              "import_to_review_diff_sha256": "c696e14afcc1186d55119689ff44e7abae96e2360460f886f93f5623d924b65e"
+            },
+            {
+              "path": "shortcuts/markdown/markdown_integrity_test.go",
+              "sha256": "6457e46836387d98e53c4a9eec13ed63907e116b283b1ca1cdbe96dfc19a7c08",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): TestMarkdownUnknownUploadOutcomeDoesNotRetry asserts same typed error and one attempt for all/prepare/part."
+            },
+            {
+              "path": "tests/next_sections/markdown/markdown_e2e_test.go",
+              "sha256": "5e7dae813eed3bebf24e470d36a229258a2ec594e64e7491c7d9765b09f369ed",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): TestMarkdownUnknownWriteIsNotReplayed asserts one request, unknown outcome and exit 22 for lost reply, 502 and 503; lifecycle checks metadata POST receipt count."
+            },
+            {
+              "path": "shortcuts/common/drive_meta.go",
+              "sha256": "a057aa2736234214ed6be7637cd9d728a0b8a8af539bd4b282e07e48fe8c90f9",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Shared metadata selection checks requested token/type and duplicates; empty metas retains established empty-title fallback."
+            }
+          ],
+          "findings": [],
+          "limitations": [
+            "Static source and test-assertion inspection only; no tests, live/model runs, platform acceptance or broad gates executed by this reviewer."
+          ]
+        },
+        {
+          "path": "shortcuts/markdown/markdown_patch.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "d960dbfefa35ae436c7cef70ea581e143517427ace03baac230cf51ccc245800",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "shortcuts/markdown/markdown_patch.go",
+              "sha256": "d960dbfefa35ae436c7cef70ea581e143517427ace03baac230cf51ccc245800",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Exact patched-byte equality suppresses upload even when literal/regex matches exist; match_count and byte sizes remain truthful. Changed content follows existing file-token/name resolution and upload/version path. Explicit overwrite remains version-producing.",
+              "import_to_review_diff_sha256": "60d800a2e42bfb8c13b1e7448eff6c322e94223b8d0c1a1486d785ab74290b1a"
+            },
+            {
+              "path": "shortcuts/markdown/markdown_integrity_test.go",
+              "sha256": "6457e46836387d98e53c4a9eec13ed63907e116b283b1ca1cdbe96dfc19a7c08",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Identical literal, capture replacement and zero-width tests preserve Unicode and CRLF and have no upload stub."
+            },
+            {
+              "path": "tests/next_sections/markdown/markdown_e2e_test.go",
+              "sha256": "5e7dae813eed3bebf24e470d36a229258a2ec594e64e7491c7d9765b09f369ed",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Lifecycle asserts unchanged patch upload count, literal $1 preservation and explicit overwrite version/effect semantics."
+            }
+          ],
+          "findings": [],
+          "limitations": [
+            "Static source and test-assertion inspection only; no tests, live/model runs, platform acceptance or broad gates executed by this reviewer."
+          ]
+        },
+        {
+          "path": "shortcuts/markdown/markdown_patch_test.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "30d9079ea4a79ded4a7f1ba49b9cc6d67aa92e3ffd914b9e25ecc21b58585fac",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "shortcuts/markdown/markdown_patch_test.go",
+              "sha256": "30d9079ea4a79ded4a7f1ba49b9cc6d67aa92e3ffd914b9e25ecc21b58585fac",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Four fixtures add requested document identity for stricter metadata selection. Multipart token/name, exact uploaded bytes, match counts, versions and empty replacement assertions remain.",
+              "import_to_review_diff_sha256": "3625e4f433982a4139b6a995076b465d17574d1aae84ed671fb0540854f0ff47"
+            },
+            {
+              "path": "shortcuts/markdown/markdown_patch_test.go",
+              "sha256": "30d9079ea4a79ded4a7f1ba49b9cc6d67aa92e3ffd914b9e25ecc21b58585fac",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Literal overwrite captured multipart body and empty replacement exact uploaded content assertions inspected."
+            }
+          ],
+          "findings": [],
+          "limitations": [
+            "Static source and test-assertion inspection only; no tests, live/model runs, platform acceptance or broad gates executed by this reviewer."
+          ]
+        },
+        {
+          "path": "shortcuts/markdown/markdown_test.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "c735986be138ee4a320982181679068c2e252720b620ba9ca4cf87d4540f7a5b",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "shortcuts/markdown/markdown_test.go",
+              "sha256": "c735986be138ee4a320982181679068c2e252720b620ba9ca4cf87d4540f7a5b",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Retry assertions now require known API rate-limit code and reject unknown 502 replay. Metadata fixtures carry matching token/type; upload content, token, title, version and no-version failure checks remain.",
+              "import_to_review_diff_sha256": "5f9f20cf7ba28e5d77537ea18de310bc3e5081c61103e47753bc38149f2d336c"
+            },
+            {
+              "path": "shortcuts/markdown/markdown_test.go",
+              "sha256": "c735986be138ee4a320982181679068c2e252720b620ba9ca4cf87d4540f7a5b",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): TestMarkdownUploadShouldRetryBranches, TestMarkdownOverwriteUploadAllIncludesFileTokenAndVersion and TestMarkdownOverwriteFailsWithoutVersion nearby assertions inspected."
+            }
+          ],
+          "findings": [],
+          "limitations": [
+            "Static source and test-assertion inspection only; no tests, live/model runs, platform acceptance or broad gates executed by this reviewer."
+          ]
+        },
+        {
+          "path": "tests/cli_e2e/docs/coverage.md",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "b86c6a4ea021259618df728b492b928fa7ae82ae44550a039f36fb35338fdd4f",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "tests/cli_e2e/docs/coverage.md",
+              "sha256": "b86c6a4ea021259618df728b492b928fa7ae82ae44550a039f36fb35338fdd4f",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Replaces incomplete 12-command percentage with 16 frozen capabilities and separates imported legacy references from authorized next/live evidence; links resolve relative to coverage file. Does not claim live acceptance.",
+              "import_to_review_diff_sha256": "207ad2ef55860505600e4ac774585bfef6642145c1dc81940022ea169eb28e08"
+            },
+            {
+              "path": "tests/cli_e2e/docs/coverage.md",
+              "sha256": "b86c6a4ea021259618df728b492b928fa7ae82ae44550a039f36fb35338fdd4f",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Complete changed prose and adjacent upstream capability table inspected; no listed legacy/live test executed."
+            }
+          ],
+          "findings": [],
+          "limitations": [
+            "Static source and test-assertion inspection only; no tests, live/model runs, platform acceptance or broad gates executed by this reviewer."
+          ]
+        },
+        {
+          "path": "tests/cli_e2e/markdown/markdown_dryrun_test.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "b04cc9ad58e2d3e80d362900b11fddecf911a1dcb432fc6d1470f57570dd8cb1",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "tests/cli_e2e/markdown/markdown_dryrun_test.go",
+              "sha256": "b04cc9ad58e2d3e80d362900b11fddecf911a1dcb432fc6d1470f57570dd8cb1",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Whitespace-sensitive string assertions replaced with concrete JSON-path comparisons preserving expected names, parents, sizes, preview type, mode and output paths. Target API step indices match existing dry-run sequence.",
+              "import_to_review_diff_sha256": "53aecad6afee7e653ab97c13a138f7184e35850957d7188c09c956dbf39f061d"
+            },
+            {
+              "path": "tests/cli_e2e/markdown/markdown_dryrun_test.go",
+              "sha256": "b04cc9ad58e2d3e80d362900b11fddecf911a1dcb432fc6d1470f57570dd8cb1",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): All 21 replacement assertion lines inspected against create/fetch/diff/overwrite/patch dry-run request plans."
+            }
+          ],
+          "findings": [],
+          "limitations": [
+            "Static source and test-assertion inspection only; no tests, live/model runs, platform acceptance or broad gates executed by this reviewer."
+          ]
+        },
+        {
+          "path": "shortcuts/doc/docs_input.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "49cbd704215a6af7b322d4f4b9a15750407c2a28868c320d5190e115335149a0",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "shortcuts/doc/docs_input.go",
+              "sha256": "49cbd704215a6af7b322d4f4b9a15750407c2a28868c320d5190e115335149a0",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Entire new implementation inspected: decoder.UseNumber, non-null object requirement and exactly-one-object EOF check preserve rich JSON number/string/null types and reject arrays/scalars/trailing payloads through typed validation.",
+              "import_to_review_diff_sha256": "f77d00dfb0ce25b6ca538cbcd7d833b21aed9d71e272533be374b7d8da9e7408"
+            },
+            {
+              "path": "shortcuts/doc/docs_input_test.go",
+              "sha256": "207ca5811dfc65d6b1ee9c20483b520574ba835b1e7304fd8000956eec350157",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Strict object/trailing JSON and both prepared-write number/presence assertions inspected."
+            }
+          ],
+          "findings": [],
+          "limitations": [
+            "Static source and test-assertion inspection only; no tests, live/model runs, platform acceptance or broad gates executed by this reviewer."
+          ]
+        },
+        {
+          "path": "shortcuts/doc/docs_update_noop.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "b6e0622e00a4d3df3f362fce11acf390e5f5d5c88985d5ee0d9d5582430ca8f6",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "shortcuts/doc/docs_update_noop.go",
+              "sha256": "b6e0622e00a4d3df3f362fce11acf390e5f5d5c88985d5ee0d9d5582430ca8f6",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Entire new implementation inspected: XML-only eligibility without resources, typed snapshot with UseNumber, exact content/sidecar comparison, document and explicit revision guard, and refusal on warnings or explicit incomplete/truncated/paginated results. No XML canonicalization or sidecar dropping is used.",
+              "import_to_review_diff_sha256": "efa6d238ebca75b91e4d34282a8eb3e92f7efbfa1aeb190a5c858cfb64806104"
+            },
+            {
+              "path": "shortcuts/doc/docs_update_noop_test.go",
+              "sha256": "475ff648d10ba09f44d71d1c7e0065fdf25567e7ba307c11dbeed7b49a365e1f",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Table covers exact match, matching/different revision, wrong document, missing content/sidecar, lossy text, false completeness, truncation and warnings."
+            }
+          ],
+          "findings": [],
+          "limitations": [
+            "Static source and test-assertion inspection only; no tests, live/model runs, platform acceptance or broad gates executed by this reviewer.",
+            "Live native full-fetch representation, XML fidelity, revision race semantics and backend permission compatibility are not established by synthetic snapshots. Explicit read failure propagation is inspected; no tenant request was made."
+          ]
+        }
+      ],
+      "cross_assignment_dependencies": [
+        "Shared common.FetchDriveMetaTitle/FetchDriveMeta token/type selection and CallReadOnlyAPITyped context, authentication, JSON decoding and mutation classification remain owned by common/foundation review. Their integration is inspected here, not whole-owner approval."
+      ],
+      "limitations": [
+        "Static source and test-assertion inspection only; no tests, live/model runs, platform acceptance or broad gates executed by this reviewer.",
+        "Required live/platform/release/evaluation gates remain separate. Review binds only to the checkpoint blobs, not later worktree or follow-up changes."
+      ]
+    },
+    {
+      "schema_version": 1,
+      "assignment_id": "drive",
+      "reviewer": "/root/p3_domain_review/docs_drive_review",
+      "verdict": "approved_offline",
+      "paths": [
+        {
+          "path": "shortcuts/drive/drive_export_test.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "8376ed88d533f21039c778cb3ddbdf37ff564d5ec9c8e570fda2bb1cc68f0705",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "shortcuts/drive/drive_export_test.go",
+              "sha256": "8376ed88d533f21039c778cb3ddbdf37ff564d5ec9c8e570fda2bb1cc68f0705",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Single metadata fixture now includes matching doc_token/doc_type; original Markdown fetch format, no comment extra_param, named output file and exact saved bytes assertions remain unchanged.",
+              "import_to_review_diff_sha256": "f74f2928279731fc54d217a1aadadfcffb876974684a123da2491f135d10e12a"
+            },
+            {
+              "path": "shortcuts/drive/drive_export_test.go",
+              "sha256": "8376ed88d533f21039c778cb3ddbdf37ff564d5ec9c8e570fda2bb1cc68f0705",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): TestDriveExportMarkdownWritesFile captured fetch-body and Weekly Notes.md exact content checks inspected."
+            }
+          ],
+          "findings": [],
+          "limitations": [
+            "Static source and test-assertion inspection only; no tests, live/model runs, platform acceptance or broad gates executed by this reviewer."
+          ]
+        },
+        {
+          "path": "shortcuts/drive/drive_update_title.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "028783179a7f23c9c704179b9f65a4c2a8f5e8c27f3e0757c87ba34051aa03c4",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "shortcuts/drive/drive_update_title.go",
+              "sha256": "028783179a7f23c9c704179b9f65a4c2a8f5e8c27f3e0757c87ba34051aa03c4",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): No-op uses only title already fetched by existing extension guard. File allow policy and non-file renames continue without metadata lookup. Unchanged output retains identity/title/extension facts and marks updated=false, unchanged=true.",
+              "import_to_review_diff_sha256": "a741f5358e57933ed44462b6f426b344d94cac87e860104feb0ddfa1c49a6d2d"
+            },
+            {
+              "path": "shortcuts/drive/drive_update_title_noop_test.go",
+              "sha256": "6df46927c3ee9fa4bd0e840fdb6fb184b00e7cbeee825e055478dfec4762db30",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Both full and extensionless Unicode titles assert exact resolved title and no PATCH stub."
+            },
+            {
+              "path": "shortcuts/drive/drive_update_title_test.go",
+              "sha256": "0ffc07377bccb9bc89d20d2f587c3014115180d0b93c99eddb574b002e52cc46",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Allow-policy test prohibits metadata read and verifies new_title; guard read failure preserves API code and allow recovery hint."
+            },
+            {
+              "path": "tests/next_sections/drive/workflows_test.go",
+              "sha256": "ebd526d8f0286f5bc664712f9d84ecec3994404ccde548e603b3eb2d9e949a17",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): TestWikiCopyMoveAndGuardedRename asserts one copy/move and zero rename PATCH for unchanged guarded name."
+            }
+          ],
+          "findings": [],
+          "limitations": [
+            "Static source and test-assertion inspection only; no tests, live/model runs, platform acceptance or broad gates executed by this reviewer."
+          ]
+        },
+        {
+          "path": "shortcuts/drive/list_remote.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "8aa2f0671954f3695f9722801ba83c330ba3e4a0b74209e47b029f67ff0e7cdc",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "shortcuts/drive/list_remote.go",
+              "sha256": "8aa2f0671954f3695f9722801ba83c330ba3e4a0b74209e47b029f67ff0e7cdc",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): All changed diff and consuming mirror path inspected: ancestor stack detects cycles without treating sibling revisits as cycles; per-folder cursor history bounds repeated pages; malformed present arrays/items/pagination fail before mirror effects. All Drive kinds and both cursor spellings remain. Optional files/has_more omissions remain compatible with frozen catalog.",
+              "import_to_review_diff_sha256": "d78e490233a3e9f00a84714ad9a887d2e063f605d9a077f1f53a5bd5a64e11ed"
+            },
+            {
+              "path": "shortcuts/drive/drive_listing_integrity_test.go",
+              "sha256": "9fb5780a876ce7b31abf9addf4e899cde49f73df481a6a9b2ba974c34f8acb00",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): TestDriveMirrorRejectsIncompleteListing asserts typed invalid_response, bounded reads and no success for missing/repeated cursor, malformed shape and cycles."
+            },
+            {
+              "path": "tests/next_sections/drive/workflows_test.go",
+              "sha256": "ebd526d8f0286f5bc664712f9d84ecec3994404ccde548e603b3eb2d9e949a17",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): TestMirrorExactHashNoopAndIncompleteListing asserts at most two reads, zero writes and unchanged local bytes."
+            },
+            {
+              "path": "shortcuts/drive/drive_pull.go",
+              "sha256": "90aee0aa82574fe14e35563e3caa0ee7694fac00f5cae6c64ac3e44a01bf4689",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Listing completes and errors return before download/delete-local loops; remotePaths includes all Drive kinds."
+            },
+            {
+              "path": "shortcuts/drive/drive_pull_test.go",
+              "sha256": "4cc794566d71286d13ad734b0069d656f354b57c12638fb372b97f98efd7b10c",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Two-page page_token (not next_page_token) fixture and both file download requests inspected."
+            },
+            {
+              "path": "docs/reference/meta_data.json.gz",
+              "sha256": "c3717197efc20093b4b9eb737bbe3f5f5e6acb75c19b86071ccf5acf62f588d7",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Frozen drive v1 files.list responseBody marks files and has_more required:false, with name/token/type required for present entries. Gzip catalog parsed statically."
+            }
+          ],
+          "findings": [],
+          "limitations": [
+            "Static source and test-assertion inspection only; no tests, live/model runs, platform acceptance or broad gates executed by this reviewer.",
+            "Missing/null files and absent has_more are accepted as empty/terminal. Catalog marks these fields optional, so omission alone is not a confirmed defect. A successful but semantically incomplete backend listing could still mislead delete-local; static review does not establish snapshot completeness or real empty-folder null behavior. A stricter follow-up must reconcile optional-field compatibility instead of inventing required fields."
+          ]
+        },
+        {
+          "path": "tests/cli_e2e/drive/drive_upload_dryrun_test.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "deebaeded812bca4913beba71a4a8c34d0a6d6019d22a2c56c0c9a2b608cc6b2",
+          "verdict": "approved_offline",
+          "evidence": [
+            {
+              "path": "tests/cli_e2e/drive/drive_upload_dryrun_test.go",
+              "sha256": "deebaeded812bca4913beba71a4a8c34d0a6d6019d22a2c56c0c9a2b608cc6b2",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Four whitespace-sensitive assertions replaced with concrete JSON-path values for metadata with_url, wiki parent_type and folder parent_node. Existing overwrite file_token and report plan assertions retained.",
+              "import_to_review_diff_sha256": "4d20715269b12f87d95279bfef53d73a802fb8d38d143ae7d01d9d1cee2a1bf5"
+            },
+            {
+              "path": "tests/cli_e2e/drive/drive_upload_dryrun_test.go",
+              "sha256": "deebaeded812bca4913beba71a4a8c34d0a6d6019d22a2c56c0c9a2b608cc6b2",
+              "tested_revision": "unbound: not executed",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "scope": "Static inspection (not executed): Full changed diff inspected; api.0 upload and api.2 metadata steps preserve asserted meanings."
+            }
+          ],
+          "findings": [],
+          "limitations": [
+            "Static source and test-assertion inspection only; no tests, live/model runs, platform acceptance or broad gates executed by this reviewer."
+          ]
+        }
+      ],
+      "cross_assignment_dependencies": [
+        "Shared common.FetchDriveMetaTitle/FetchDriveMeta token/type selection and CallReadOnlyAPITyped context, authentication, JSON decoding and mutation classification remain owned by common/foundation review. Their integration is inspected here, not whole-owner approval."
+      ],
+      "limitations": [
+        "Static source and test-assertion inspection only; no tests, live/model runs, platform acceptance or broad gates executed by this reviewer.",
+        "Required live/platform/release/evaluation gates remain separate. Review binds only to the checkpoint blobs, not later worktree or follow-up changes."
+      ]
+    }
+  ],
+  "review_method": "Read-only independent import-to-checkpoint diff and full new implementation review, with nearby assertion and call-path inspection; exact source/evidence SHA-256 computed from git show immutable blobs. No source changes or test execution.",
+  "contracts": [
+    {
+      "path": "AGENTS.md",
+      "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+      "sha256": "ce0c06d134fe6a90220392eca15d905a45769c6c1b347d9d96438f1ec1ca4a61",
+      "scope": "Static contract inspection, not executed."
+    },
+    {
+      "path": "docs/contracts/output.md",
+      "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+      "sha256": "57d621f11b119b2692793a1d3af28d156ad22ee370cf63eb2d8929631ecf0fc3",
+      "scope": "Static contract inspection, not executed."
+    },
+    {
+      "path": "README.upstream.md",
+      "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+      "sha256": "d31ae76aaca1a72ac6dc8770995e56dcc03270fb613dc9b064086a2ad1752a41",
+      "scope": "Static contract inspection, not executed."
+    },
+    {
+      "path": "errs/ERROR_CONTRACT.md",
+      "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+      "sha256": "1289bfd0543fb6572a2e73f790bcc57fc41269ab44da9908963ee102488aeb6e",
+      "scope": "Static contract inspection, not executed."
+    }
+  ]
+}
