@@ -503,3 +503,43 @@ func TestAgentArtifactResourceTokensRemainSupported(t *testing.T) {
 		t.Fatalf("resource token artifact missing: %v", err)
 	}
 }
+
+func TestAgentArtifactIncludesObservedBindingEvidence(t *testing.T) {
+	opts := artifactOptions(t)
+	binding := output.ArtifactBinding{Environment: "lark", Endpoint: "https://example.invalid", AppID: "fixture-app", Identity: "user", UserID: "fixture-user", TenantKey: "observed-tenant", UserVerified: true, TenantVerified: true}
+	opts.ResolveBinding = func() (output.ArtifactBinding, error) { return binding, nil }
+	var stdout bytes.Buffer
+	if err := output.WriteJSON(output.WithAgentOptions(&stdout, opts), json.RawMessage(`{"ok":true,"data":{"id":"1"}}`)); err != nil {
+		t.Fatal(err)
+	}
+	var response struct {
+		Artifact output.ArtifactReference `json:"artifact"`
+	}
+	if err := json.Unmarshal(stdout.Bytes(), &response); err != nil {
+		t.Fatal(err)
+	}
+	saved, err := os.ReadFile(opts.SaveResult)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var artifact output.ResultArtifact
+	if err := json.Unmarshal(saved, &artifact); err != nil {
+		t.Fatal(err)
+	}
+	if artifact.Binding != binding || response.Artifact.Binding != binding {
+		t.Fatalf("binding evidence lost: %+v %+v", artifact.Binding, response.Artifact.Binding)
+	}
+}
+
+func TestAgentArtifactRejectsUnobservedVerifiedTenant(t *testing.T) {
+	opts := artifactOptions(t)
+	opts.ResolveBinding = func() (output.ArtifactBinding, error) {
+		return output.ArtifactBinding{Environment: "feishu", AppID: "fixture-app", Identity: "bot", TenantVerified: true}, nil
+	}
+	if err := output.WriteJSON(output.WithAgentOptions(io.Discard, opts), json.RawMessage(`{"ok":true}`)); !errs.IsValidation(err) {
+		t.Fatalf("invented verified tenant accepted: %v", err)
+	}
+	if _, err := os.Stat(opts.SaveResult); !os.IsNotExist(err) {
+		t.Fatalf("unbound artifact created: %v", err)
+	}
+}

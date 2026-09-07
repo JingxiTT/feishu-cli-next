@@ -65,7 +65,7 @@ fallback bypasses it. Provider failures retain their cause and typed error.
 The file is a versioned container, not a lossy projection:
 
 ```json
-{"schema":"feishu-cli-next/result/v1","binding":{"environment":"feishu","app_id":"cli_example","identity":"bot"},"result":{"ok":true,"identity":"bot","data":{"items":[{"id":"1","title":"Example"}],"has_more":false}}}
+{"schema":"feishu-cli-next/result/v1","binding":{"environment":"feishu","app_id":"cli_example","identity":"bot","tenant_verified":false},"result":{"ok":true,"identity":"bot","data":{"items":[{"id":"1","title":"Example"}],"has_more":false}}}
 ```
 
 Stdout keeps envelope fields, relevant resource/continuation facts, and an
@@ -82,11 +82,17 @@ For a safe bare result only recognized collections are removed from stdout;
 unknown fields remain visible. Mail `messages` collections contribute their
 observed count, and mailbox identity, continuation and notices remain intact.
 
-Binding records environment, app ID, effective identity, optional profile and
-resolved user ID. User identity requires a user ID. Binding contains no token or
-secret; no tenant ID is inferred. This is app/account binding, not verified tenant
-binding. Domain artifact consumers must validate schema and current binding
-before reusing data; the generic result container is not an import command.
+Binding records the brand environment, resolved API endpoint, app ID, effective
+identity and optional profile. For user operations it reuses the credential
+resolver's current user ID, including environment credentials and selected-token
+identity enrichment. User identity requires a user ID. `user_verified` records
+whether user_info supplied current identity evidence; a configured user ID alone
+does not imply current verification. `tenant_key` and `tenant_verified:true` are
+included only when tenant evidence is available. Missing tenant evidence remains
+`tenant_verified:false`, with no extra lookup solely to discover a tenant.
+Bot operations do not resolve a user or infer their tenant. Binding contains no
+token or secret. Domain artifact consumers must validate schema and current
+binding before reusing data; the generic container is not an import command.
 
 Artifacts remain until the user removes their chosen files; there is no implicit
 cleanup or overwrite. Large result payloads stay out of model context, but the

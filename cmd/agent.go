@@ -4,6 +4,7 @@
 package cmd
 
 import (
+	"context"
 	"io/fs"
 	"strings"
 
@@ -13,6 +14,7 @@ import (
 	"github.com/larksuite/cli/errs"
 	"github.com/larksuite/cli/internal/cmdmeta"
 	"github.com/larksuite/cli/internal/cmdutil"
+	"github.com/larksuite/cli/internal/core"
 	"github.com/larksuite/cli/internal/output"
 	"github.com/spf13/cobra"
 )
@@ -43,7 +45,26 @@ func configureAgentFoundation(f *cmdutil.Factory, root *cobra.Command) *output.A
 		if err != nil {
 			return output.ArtifactBinding{}, err
 		}
-		return output.ArtifactBinding{Environment: string(cfg.Brand), AppID: cfg.AppID, UserID: cfg.UserOpenId, Identity: string(f.ResolvedIdentity), Profile: cfg.ProfileName}, nil
+		binding := output.ArtifactBinding{Environment: string(cfg.Brand), Endpoint: core.ResolveEndpoints(cfg.Brand).Open, AppID: cfg.AppID, Identity: string(f.ResolvedIdentity), Profile: cfg.ProfileName}
+		if f.ResolvedIdentity == core.AsUser {
+			binding.UserID = cfg.UserOpenId
+			if f.Credential != nil {
+				ctx := root.Context()
+				if f.CurrentCommand != nil {
+					ctx = f.CurrentCommand.Context()
+				}
+				if ctx == nil {
+					ctx = context.Background()
+				}
+				resolved, err := f.Credential.ResolveUserBinding(ctx)
+				if err != nil {
+					return output.ArtifactBinding{}, err
+				}
+				binding.UserID, binding.TenantKey, binding.UserVerified = resolved.OpenID, resolved.TenantKey, resolved.Verified
+				binding.TenantVerified = resolved.TenantKey != ""
+			}
+		}
+		return binding, nil
 	}
 	opts.ResolveMutation = func() (string, []string, bool) {
 		summary := f.AgentAttemptSummary()

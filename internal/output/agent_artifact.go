@@ -16,14 +16,18 @@ import (
 
 const ArtifactSchema = "feishu-cli-next/result/v1"
 
-// ArtifactBinding records only resolved, non-secret identity facts. App/account
-// binding is not proof of tenant identity; no tenant ID is inferred.
+// ArtifactBinding records only resolved, non-secret identity facts. Tenant
+// verification requires observed tenant evidence; no tenant ID is inferred.
 type ArtifactBinding struct {
-	Environment string `json:"environment"`
-	AppID       string `json:"app_id"`
-	UserID      string `json:"user_id,omitempty"`
-	Identity    string `json:"identity"`
-	Profile     string `json:"profile,omitempty"`
+	Environment    string `json:"environment"`
+	Endpoint       string `json:"endpoint,omitempty"`
+	AppID          string `json:"app_id"`
+	UserID         string `json:"user_id,omitempty"`
+	Identity       string `json:"identity"`
+	Profile        string `json:"profile,omitempty"`
+	TenantKey      string `json:"tenant_key,omitempty"`
+	UserVerified   bool   `json:"user_verified,omitempty"`
+	TenantVerified bool   `json:"tenant_verified"`
 }
 
 // ResultArtifact preserves the complete original JSON result inside a versioned
@@ -86,7 +90,7 @@ func (o *AgentOptions) saveArtifact(result json.RawMessage) (json.RawMessage, er
 	if err != nil {
 		return nil, err
 	}
-	if binding.Environment == "" || binding.AppID == "" || binding.Identity == "" || (binding.Identity == "user" && binding.UserID == "") {
+	if binding.Environment == "" || binding.AppID == "" || binding.Identity == "" || (binding.Identity == "user" && binding.UserID == "") || (binding.TenantVerified && binding.TenantKey == "") {
 		return nil, errs.NewValidationError(errs.SubtypeFailedPrecondition,
 			"result artifact account binding is incomplete").WithParam("--save-result")
 	}
