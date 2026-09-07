@@ -1310,5 +1310,70 @@
     },
     "setup_history": "Two setup attempts failed before capture because the shallow source bundle omitted the original7fd shallow boundary. Recreating that exact boundary in the owned reference Git root resolved fetch; original reference checkout was read-only throughout.",
     "pending_followup": "Inventory owner will commit a selector/profile bound to this actual Linux reference hash. Rerun only corrected capability gate afterward; original failure and raw checker review_required remain retained."
-  }
+  },
+  "capability_gate_followups": [
+    {
+      "status": "pass",
+      "report": {
+        "schema_version": 1,
+        "product_revision": "8ce0688b303eb646e1b79a329002dddcb6403be4",
+        "helper_revision": "cb3a7500f62c53ecb9b1bd893d4953d9652b3e54",
+        "command": [
+          "python3",
+          "/workspace/export-tool/scripts/next_inventory.py",
+          "gate",
+          "--reference-dir",
+          "/workspace/export-tool/docs/reference",
+          "--target",
+          "/workspace/source",
+          "--out",
+          "/evidence/platform-closure/platform-gate.json"
+        ],
+        "exit_code": 0,
+        "status": "pass",
+        "duration_seconds": 23.127,
+        "product_before": {
+          "head": "8ce0688b303eb646e1b79a329002dddcb6403be4",
+          "tracked_tree": "2827a1f2f492d36df50b41435da67258e5e88a78",
+          "status": "",
+          "binary_sha256": "72e9002d077af6c23e9715fb45a4bb75fcfb47e1f61d088636ac059f7cb10e7e"
+        },
+        "product_after": {
+          "head": "8ce0688b303eb646e1b79a329002dddcb6403be4",
+          "tracked_tree": "2827a1f2f492d36df50b41435da67258e5e88a78",
+          "status": "",
+          "binary_sha256": "72e9002d077af6c23e9715fb45a4bb75fcfb47e1f61d088636ac059f7cb10e7e"
+        },
+        "tool_archive_sha256": "9a300694938096139b4a32f71139a83c2aeb8e9377c484fb40a9378d3e777335",
+        "helper_sha256": "e2760eab86d4dfadfac8a75ff25d49dc18ecf26354f8ac626a73a8a3e6e25d16",
+        "exporter_sha256": "3cc40a3c1513a0e9dea9d402d187a2fcd58aead22ac7ac49aa2d653f71e8a136",
+        "profile_sha256": "864f50f065fd3e8e404dd61569a1834e59c2e022c8be1a43f71366d75286fa74",
+        "checker_status": "review_required",
+        "capability_gate": {
+          "checked_registration_changes": 5742,
+          "failures": [],
+          "live_verification": "not_run",
+          "mapping_revision": "10588248080a91412b0718eb0aa921cff6a90f10",
+          "mapping_sha256": "3597fe639ab729226de12283f70e002e98f670433f7ee837f18dd52a993b3bd2",
+          "native_reference_capture": "captured",
+          "reference_provenance": "actual configured reference registration execution on linux",
+          "semantic_review": "separate; source differences and original report status remain unchanged",
+          "status": "pass"
+        }
+      },
+      "image_id": "sha256:342d42770f458569d2327f681b2365aa675aed2b9f80d2c5bdbc664530b10557",
+      "container_id": "002f80cef87204a09599d4877a6ac4147e1095dc87280fa5e23bb6ef62884fdb",
+      "network_mode": "none",
+      "user": "10001:10001",
+      "outputs": {
+        ".tmp/next-evidence/linux-8ce0688/platform-closure/platform-gate.json": "b51a11cdfac60a25590aa20d098ffb5916d8093fb85952bb9afdb44a81e81e6a",
+        ".tmp/next-evidence/linux-8ce0688/platform-closure/report.json": "cc8d81e79180a22294ab1577ece1c130642e3552a89666626089a9cb82fae44c",
+        ".tmp/next-evidence/linux-8ce0688/platform-closure/stdout.log": "2e6c6f02292fb0176d0b1b364cded2e3d6415a5a428544e61432ba8de7cc5d62",
+        ".tmp/next-evidence/linux-8ce0688/platform-closure/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "scope_note": "Only the corrected capability CLI gate was run with committed helper/profile cb3a750 against unchanged product8ce0688. Initial capability failure remains above; no unit/E2E/runtime tests were repeated. The actual Linux reference profile closes only the platform registration mismatch; raw checker review_required and separate semantic/live/release boundaries remain unchanged."
+    }
+  ],
+  "effective_status": "pass",
+  "effective_status_note": "Bounded Linux runtime correctness and corrected capability gate pass when the separately recorded followup is applied. Original status/failure fields remain historical evidence; this is not live, model, physical Linux hardware, Windows or release acceptance."
 }
