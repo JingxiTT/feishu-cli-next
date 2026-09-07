@@ -9,6 +9,11 @@ set -euo pipefail
 ruby -ropen3 -ryaml <<'RUBY'
 workflow = YAML.load_file(".github/workflows/release.yml")
 goreleaser = YAML.load_file(".goreleaser.yml")
+abort("next publication must remain disabled") unless workflow.dig("jobs", "preflight", "if") == '${{ false }}'
+abort("goreleaser publication must remain disabled") unless goreleaser.dig("release", "disable") == true
+preview = YAML.load_file(".github/workflows/pkg-pr-new.yml")
+abort("preview publication must remain disabled") unless preview.fetch("jobs").values.all? { |job| job["if"] == '${{ false }}' }
+
 
 def contract_error(message)
   abort("release workflow contract: #{message}")
@@ -148,7 +153,7 @@ expect_equal(setup_go&.dig("with", "go-version"), "${{ env.RELEASE_GO_VERSION }}
 fetch_metadata_index = build_steps.index { |step| step["name"] == "Fetch build metadata" }
 prepare_key_index = build_steps.index { |step| step["name"] == "Prepare Apple notarization key" }
 contract_error("build metadata must be fetched before Apple credentials are prepared") unless fetch_metadata_index && prepare_key_index && fetch_metadata_index < prepare_key_index
-contract_error("build metadata must be fetched outside GoReleaser hooks") if goreleaser.dig("before", "hooks")&.include?("python3 scripts/fetch_meta.py")
+contract_error("local GoReleaser must restore frozen metadata") unless goreleaser.dig("before", "hooks")&.include?("python3 scripts/next_meta.py")
 
 goreleaser_index = build_steps.index { |step| step["name"] == "Run GoReleaser" }
 toolchain_verify_index = build_steps.index { |step| step["name"] == "Verify release Go toolchain" }
@@ -211,7 +216,7 @@ notarize = goreleaser.fetch("notarize").fetch("macos")
 expect_equal(notarize.length, 1, "number of macOS notarization configurations")
 macos_notarize = notarize.first
 expect_equal(macos_notarize.fetch("enabled"), '{{ isEnvSet "MACOS_SIGN_P12" }}', "macOS notarization enablement")
-expect_equal(macos_notarize.fetch("ids"), ["lark-cli"], "notarized build IDs")
+expect_equal(macos_notarize.fetch("ids"), ["feishu-cli-next"], "notarized build IDs")
 expect_equal(macos_notarize.fetch("sign"), {
   "certificate" => "{{ .Env.MACOS_SIGN_P12 }}",
   "password" => "{{ .Env.MACOS_SIGN_PASSWORD }}",

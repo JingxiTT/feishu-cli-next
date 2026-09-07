@@ -1,9 +1,9 @@
 {
-  "name": "@larksuite/cli",
-  "version": "1.0.93",
-  "description": "The official CLI for Lark/Feishu open platform",
+  "name": "feishu-cli-next",
+  "version": "0.1.0-beta.1",
+  "description": "Agent-oriented Feishu CLI, derived from larksuite/cli",
   "bin": {
-    "lark-cli": "scripts/run.js"
+    "feishu-cli-next": "scripts/run.js"
   },
   "scripts": {
     "postinstall": "node scripts/install.js",
@@ -22,19 +22,16 @@
   "engines": {
     "node": ">=16"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/larksuite/cli.git"
-  },
   "license": "MIT",
   "files": [
     "scripts/install.js",
     "scripts/install-wizard.js",
     "scripts/run.js",
     "checksums.txt",
-    "CHANGELOG.md"
+    "CHANGELOG.md",
+    "LICENSE",
+    "docs/distribution.md",
+    "docs/contracts/skill.md"
   ],
-  "dependencies": {
-    "@clack/prompts": "^1.2.0"
-  }
+  "private": true
 }

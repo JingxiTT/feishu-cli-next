@@ -17,6 +17,7 @@ concurrency:
 
 jobs:
   preflight:
+    if: ${{ false }} # P4: next publication channel has not been accepted.
     runs-on: ubuntu-22.04
     permissions:
       contents: read
@@ -115,7 +116,7 @@ jobs:
           package-manager-cache: false
 
       - name: Fetch build metadata
-        run: python3 scripts/fetch_meta.py
+        run: python3 scripts/next_meta.py
 
       - name: Prepare Apple notarization key
         env:
@@ -169,7 +170,7 @@ jobs:
         run: |
           set -euo pipefail
           mapfile -d '' release_binaries < <(
-            find dist -type f \( -name lark-cli -o -name lark-cli.exe \) -print0
+            find dist -type f \( -name feishu-cli-next -o -name feishu-cli-next.exe \) -print0
           )
           (( ${#release_binaries[@]} > 0 )) || {
             echo "GoReleaser produced no binaries to verify." >&2
@@ -201,7 +202,7 @@ jobs:
           node - "$pack_json" "$VERSION" <<'NODE'
           const [payload, version] = process.argv.slice(2);
           const packs = JSON.parse(payload);
-          if (!Array.isArray(packs) || packs.length !== 1 || packs[0]?.name !== "@larksuite/cli" || packs[0]?.version !== version || !/^[^/\\]+\.tgz$/.test(packs[0]?.filename || "")) {
+          if (!Array.isArray(packs) || packs.length !== 1 || packs[0]?.name !== "feishu-cli-next" || packs[0]?.version !== version || !/^[^/\\]+\.tgz$/.test(packs[0]?.filename || "")) {
             throw new Error("npm pack did not produce the expected release package");
           }
           NODE
@@ -344,15 +345,15 @@ jobs:
         run: |
           set -euo pipefail
           [[ -n "$MACOS_TEAM_ID" ]] || { echo "MACOS_TEAM_ID is not configured." >&2; exit 1; }
-          archive="lark-cli-${VERSION}-darwin-${ARCH}.tar.gz"
+          archive="feishu-cli-next-${VERSION}-darwin-${ARCH}.tar.gz"
           awk -v archive="$archive" '$2 == archive { print }' release-candidate/checksums.txt > checksum.txt
           [[ "$(wc -l < checksum.txt | tr -d '[:space:]')" == "1" ]] || { echo "checksums.txt must contain exactly one entry for ${archive}." >&2; exit 1; }
           (cd release-candidate && shasum -a 256 -c ../checksum.txt)
           work="$(mktemp -d "${RUNNER_TEMP}/macos-release.XXXXXX")"
           trap 'rm -rf -- "$work" checksum.txt' EXIT
           tar -xzf "release-candidate/$archive" -C "$work"
-          binary="$work/lark-cli"
-          [[ -f "$binary" && ! -L "$binary" ]] || { echo "Archive did not contain a regular lark-cli binary." >&2; exit 1; }
+          binary="$work/feishu-cli-next"
+          [[ -f "$binary" && ! -L "$binary" ]] || { echo "Archive did not contain a regular feishu-cli-next binary." >&2; exit 1; }
           codesign --verify --strict --verbose=4 "$binary"
           details="$(codesign -dv --verbose=4 "$binary" 2>&1)"
           grep -Eq '^Authority=Developer ID Application: .+' <<<"$details"
@@ -415,7 +416,7 @@ jobs:
           set -euo pipefail
           dist_tag=latest
           [[ "$CHANNEL" != "beta" ]] || dist_tag=beta
-          if ! current="$(npm view @larksuite/cli "dist-tags.${dist_tag}" --json | tr -d '"[:space:]')"; then
+          if ! current="$(npm view feishu-cli-next "dist-tags.${dist_tag}" --json | tr -d '"[:space:]')"; then
             echo "Could not determine the npm ${dist_tag} dist-tag before GitHub publication." >&2
             exit 1
           fi
@@ -496,9 +497,9 @@ jobs:
           integrity_matches=false
           version_error="$(mktemp "${RUNNER_TEMP}/npm-version.XXXXXX")"
           trap 'rm -f -- "$version_error"' EXIT
-          if npm view "@larksuite/cli@${VERSION}" version --json >/dev/null 2>"$version_error"; then
+          if npm view "feishu-cli-next@${VERSION}" version --json >/dev/null 2>"$version_error"; then
             version_exists=true
-            published="$(npm view "@larksuite/cli@${VERSION}" dist.integrity --json | tr -d '"[:space:]')"
+            published="$(npm view "feishu-cli-next@${VERSION}" dist.integrity --json | tr -d '"[:space:]')"
             [[ "$published" != "$integrity" ]] || integrity_matches=true
           elif ! node - "$version_error" <<'NODE'
           const fs = require("node:fs");
@@ -510,7 +511,7 @@ jobs:
             echo "Could not determine whether npm version ${VERSION} already exists." >&2
             exit 1
           fi
-          if ! current="$(npm view @larksuite/cli "dist-tags.${dist_tag}" --json | tr -d '"[:space:]')"; then
+          if ! current="$(npm view feishu-cli-next "dist-tags.${dist_tag}" --json | tr -d '"[:space:]')"; then
             echo "Could not determine the npm ${dist_tag} dist-tag." >&2
             exit 1
           fi
@@ -532,7 +533,7 @@ jobs:
               npm publish "./$tgz" --access public --provenance --tag "$dist_tag"
               ;;
             advance-tag)
-              npm dist-tag add "@larksuite/cli@${VERSION}" "$dist_tag"
+              npm dist-tag add "feishu-cli-next@${VERSION}" "$dist_tag"
               ;;
             verify)
               echo "npm ${dist_tag} already points to ${VERSION} or a newer verified version."

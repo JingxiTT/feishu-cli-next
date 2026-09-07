@@ -27,14 +27,14 @@ describe("resolveReleaseAsset", () => {
     );
 
     assert.deepEqual(asset, {
-      archiveName: "lark-cli-1.2.0-beta.1-linux-amd64.tar.gz",
+      archiveName: "feishu-cli-next-1.2.0-beta.1-linux-amd64.tar.gz",
       githubUrl:
-        "https://github.com/larksuite/cli/releases/download/v1.2.0-beta.1/lark-cli-1.2.0-beta.1-linux-amd64.tar.gz",
+        null,
     });
     assert.deepEqual(
       resolveMirrorUrls({}, asset.archiveName, "1.2.0-beta.1"),
       [
-        "https://registry.npmmirror.com/-/binary/lark-cli/v1.2.0-beta.1/lark-cli-1.2.0-beta.1-linux-amd64.tar.gz",
+        "https://registry.npmmirror.com/-/binary/feishu-cli-next/v1.2.0-beta.1/feishu-cli-next-1.2.0-beta.1-linux-amd64.tar.gz",
       ]
     );
   });
@@ -49,10 +49,10 @@ describe("getExpectedChecksum", () => {
 
   it("returns correct hash from standard-format checksums.txt", () => {
     const dir = makeTmpChecksums(
-      "abc123def456  lark-cli-1.0.0-darwin-arm64.tar.gz\n"
+      "abc123def456  feishu-cli-next-1.0.0-darwin-arm64.tar.gz\n"
     );
     const hash = getExpectedChecksum(
-      "lark-cli-1.0.0-darwin-arm64.tar.gz",
+      "feishu-cli-next-1.0.0-darwin-arm64.tar.gz",
       dir
     );
     assert.equal(hash, "abc123def456");
@@ -60,12 +60,12 @@ describe("getExpectedChecksum", () => {
 
   it("returns correct entry when multiple entries exist", () => {
     const dir = makeTmpChecksums(
-      "aaaa  lark-cli-1.0.0-linux-amd64.tar.gz\n" +
-      "bbbb  lark-cli-1.0.0-darwin-arm64.tar.gz\n" +
-      "cccc  lark-cli-1.0.0-windows-amd64.zip\n"
+      "aaaa  feishu-cli-next-1.0.0-linux-amd64.tar.gz\n" +
+      "bbbb  feishu-cli-next-1.0.0-darwin-arm64.tar.gz\n" +
+      "cccc  feishu-cli-next-1.0.0-windows-amd64.zip\n"
     );
     const hash = getExpectedChecksum(
-      "lark-cli-1.0.0-darwin-arm64.tar.gz",
+      "feishu-cli-next-1.0.0-darwin-arm64.tar.gz",
       dir
     );
     assert.equal(hash, "bbbb");
@@ -73,7 +73,7 @@ describe("getExpectedChecksum", () => {
 
   it("throws Error when archiveName is not found", () => {
     const dir = makeTmpChecksums(
-      "aaaa  lark-cli-1.0.0-linux-amd64.tar.gz\n"
+      "aaaa  feishu-cli-next-1.0.0-linux-amd64.tar.gz\n"
     );
     assert.throws(
       () => getExpectedChecksum("nonexistent.tar.gz", dir),
@@ -93,11 +93,11 @@ describe("getExpectedChecksum", () => {
     const dir = makeTmpChecksums(
       "garbage line without separator\n" +
       "\n" +
-      "abc123  lark-cli-1.0.0-darwin-arm64.tar.gz\n" +
+      "abc123  feishu-cli-next-1.0.0-darwin-arm64.tar.gz\n" +
       "also garbage\n"
     );
     const hash = getExpectedChecksum(
-      "lark-cli-1.0.0-darwin-arm64.tar.gz",
+      "feishu-cli-next-1.0.0-darwin-arm64.tar.gz",
       dir
     );
     assert.equal(hash, "abc123");
@@ -105,11 +105,11 @@ describe("getExpectedChecksum", () => {
 
   it("skips tab-separated lines (only double-space is valid)", () => {
     const dir = makeTmpChecksums(
-      "wrong\tlark-cli-1.0.0-darwin-arm64.tar.gz\n" +
-      "correct  lark-cli-1.0.0-darwin-arm64.tar.gz\n"
+      "wrong\tfeishu-cli-next-1.0.0-darwin-arm64.tar.gz\n" +
+      "correct  feishu-cli-next-1.0.0-darwin-arm64.tar.gz\n"
     );
     const hash = getExpectedChecksum(
-      "lark-cli-1.0.0-darwin-arm64.tar.gz",
+      "feishu-cli-next-1.0.0-darwin-arm64.tar.gz",
       dir
     );
     assert.equal(hash, "correct");
@@ -201,7 +201,7 @@ describe("assertAllowedHost", () => {
   });
 
   it("accepts registry.npmmirror.com", () => {
-    assertAllowedHost("https://registry.npmmirror.com/-/binary/lark-cli/v1.0.0/archive.tar.gz");
+    assertAllowedHost("https://registry.npmmirror.com/-/binary/feishu-cli-next/v1.0.0/archive.tar.gz");
   });
 
   it("rejects unknown host", () => {
@@ -230,9 +230,9 @@ describe("assertAllowedHost", () => {
 });
 
 describe("resolveMirrorUrls", () => {
-  const ARCHIVE = "lark-cli-1.0.0-linux-amd64.tar.gz";
+  const ARCHIVE = "feishu-cli-next-1.0.0-linux-amd64.tar.gz";
   const VERSION = "1.0.0";
-  const DEFAULT = "https://registry.npmmirror.com/-/binary/lark-cli/v1.0.0/lark-cli-1.0.0-linux-amd64.tar.gz";
+  const DEFAULT = "https://registry.npmmirror.com/-/binary/feishu-cli-next/v1.0.0/feishu-cli-next-1.0.0-linux-amd64.tar.gz";
 
   it("returns only the default mirror when no env vars are set", () => {
     assert.deepEqual(resolveMirrorUrls({}, ARCHIVE, VERSION), [DEFAULT]);
@@ -263,7 +263,7 @@ describe("resolveMirrorUrls", () => {
         VERSION
       ),
       [
-        "https://corp.example.com/repository/npm-public/-/binary/lark-cli/v1.0.0/lark-cli-1.0.0-linux-amd64.tar.gz",
+        "https://corp.example.com/repository/npm-public/-/binary/feishu-cli-next/v1.0.0/feishu-cli-next-1.0.0-linux-amd64.tar.gz",
         DEFAULT,
       ]
     );
@@ -301,7 +301,7 @@ describe("resolveMirrorUrls", () => {
         VERSION
       ),
       [
-        "https://corp.example.com/-/binary/lark-cli/v1.0.0/lark-cli-1.0.0-linux-amd64.tar.gz",
+        "https://corp.example.com/-/binary/feishu-cli-next/v1.0.0/feishu-cli-next-1.0.0-linux-amd64.tar.gz",
         DEFAULT,
       ]
     );
@@ -393,4 +393,12 @@ describe("isCurlVersionSupported", () => {
     // anchor keeps it from being mistaken for a real curl version line.
     assert.equal(isCurlVersionSupported("libcurl 8.0.0"), false);
   });
+});
+
+it("rejects duplicate checksum entries", () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "duplicate-checksum-"));
+  try {
+    fs.writeFileSync(path.join(dir, "checksums.txt"), "aaa  a.tar.gz\nbbb  a.tar.gz\n");
+    assert.throws(() => getExpectedChecksum("a.tar.gz", dir), /Duplicate checksum/);
+  } finally { fs.rmSync(dir, { recursive: true, force: true }); }
 });

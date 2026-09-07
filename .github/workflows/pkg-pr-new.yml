@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   publish:
-    if: github.event.pull_request.draft == false
+    if: ${{ false }} # Next preview packages are local until P4 channel acceptance.
     runs-on: ubuntu-latest
 
     steps:

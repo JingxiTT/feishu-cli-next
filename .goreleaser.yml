@@ -1,8 +1,15 @@
 version: 2
 
+before:
+  hooks:
+    - python3 scripts/next_meta.py
+
+release:
+  disable: true # No next release channel is configured.
+
 builds:
-  - id: lark-cli
-    binary: lark-cli
+  - id: feishu-cli-next
+    binary: feishu-cli-next
     env:
       - CGO_ENABLED=0
     ldflags:
@@ -15,12 +22,17 @@ builds:
       - amd64
       - arm64
       - riscv64
+    ignore:
+      - goos: darwin
+        goarch: riscv64
+      - goos: windows
+        goarch: riscv64
 
 notarize:
   macos:
     - enabled: '{{ isEnvSet "MACOS_SIGN_P12" }}'
       ids:
-        - lark-cli
+        - feishu-cli-next
       sign:
         certificate: "{{ .Env.MACOS_SIGN_P12 }}"
         password: "{{ .Env.MACOS_SIGN_PASSWORD }}"
@@ -32,7 +44,7 @@ notarize:
         timeout: 20m
 
 archives:
-  - name_template: "lark-cli-{{ .Version }}-{{ .Os }}-{{ .Arch }}"
+  - name_template: "feishu-cli-next-{{ .Version }}-{{ .Os }}-{{ .Arch }}"
     formats: [tar.gz]
     format_overrides:
       - goos: windows
@@ -41,6 +53,8 @@ archives:
       - README.md
       - LICENSE
       - CHANGELOG.md
+      - docs/distribution.md
+      - docs/contracts/skill.md
 
 checksum:
   name_template: checksums.txt

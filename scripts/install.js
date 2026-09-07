@@ -8,8 +8,8 @@ const os = require("os");
 const crypto = require("crypto");
 
 const VERSION = require("../package.json").version;
-const REPO = "larksuite/cli";
-const NAME = "lark-cli";
+const REPO = null; // Configure only after the next product release channel is accepted.
+const NAME = "feishu-cli-next";
 const DEFAULT_MIRROR_HOST = "https://registry.npmmirror.com";
 // Allowlist gates the *initial* request URL only. curl --location follows
 // redirects (capped by --max-redirs 3) without re-checking the target host.
@@ -53,7 +53,7 @@ function resolveReleaseAsset(version, platformName, archName) {
   return {
     archiveName: resolvedArchiveName,
     githubUrl:
-      `https://github.com/${REPO}/releases/download/v${version}/${resolvedArchiveName}`,
+      REPO ? `https://github.com/${REPO}/releases/download/v${version}/${resolvedArchiveName}` : null,
   };
 }
 
@@ -74,7 +74,7 @@ function resolveReleaseAsset(version, platformName, archName) {
 // Non-https / malformed npm_config_registry is silently ignored so npm users
 // with http-only internal registries don't have their installs broken.
 function resolveMirrorUrls(env, archive, version) {
-  const binaryPath = `/-/binary/lark-cli/v${version}/${archive}`;
+  const binaryPath = `/-/binary/feishu-cli-next/v${version}/${archive}`;
   const defaultUrl = joinUrl(DEFAULT_MIRROR_HOST, binaryPath);
 
   const urls = [];
@@ -193,21 +193,21 @@ function extractZipWindows(archivePath, destDir) {
   const psStdio = ["ignore", "inherit", "inherit"];
   const psEnv = {
     ...process.env,
-    LARK_CLI_ARCHIVE: archivePath,
-    LARK_CLI_DEST: destDir,
+    FEISHU_CLI_NEXT_ARCHIVE: archivePath,
+    FEISHU_CLI_NEXT_DEST: destDir,
   };
 
   try {
     const dotnet =
       "$ErrorActionPreference='Stop';" +
       "Add-Type -AssemblyName System.IO.Compression.FileSystem;" +
-      "[System.IO.Compression.ZipFile]::ExtractToDirectory($env:LARK_CLI_ARCHIVE,$env:LARK_CLI_DEST)";
+      "[System.IO.Compression.ZipFile]::ExtractToDirectory($env:FEISHU_CLI_NEXT_ARCHIVE,$env:FEISHU_CLI_NEXT_DEST)";
     execFileSync("powershell.exe", [...psOpts, dotnet], { stdio: psStdio, env: psEnv });
   } catch (primaryErr) {
     try {
       const cmdlet =
         "$ErrorActionPreference='Stop';" +
-        "Expand-Archive -LiteralPath $env:LARK_CLI_ARCHIVE -DestinationPath $env:LARK_CLI_DEST -Force";
+        "Expand-Archive -LiteralPath $env:FEISHU_CLI_NEXT_ARCHIVE -DestinationPath $env:FEISHU_CLI_NEXT_DEST -Force";
       execFileSync("powershell.exe", [...psOpts, cmdlet], { stdio: psStdio, env: psEnv });
     } catch (secondErr) {
       try {
@@ -225,12 +225,16 @@ function extractZipWindows(archivePath, destDir) {
 }
 
 function install() {
-  const mirrorUrls = getMirrorUrls(process.env);
-  const downloadUrls = [GITHUB_URL, ...mirrorUrls];
+  const localDir = process.env.FEISHU_CLI_NEXT_ARTIFACT_DIR;
+  if (!localDir && !GITHUB_URL) {
+    throw new Error("No feishu-cli-next release channel is configured. Set FEISHU_CLI_NEXT_ARTIFACT_DIR to locally built archives.");
+  }
+  const downloadUrls = GITHUB_URL ? [GITHUB_URL, ...getMirrorUrls(process.env)] : [];
 
   fs.mkdirSync(binDir, { recursive: true });
+  if (!fs.lstatSync(binDir).isDirectory()) throw new Error("Binary directory must not be a symlink");
 
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "lark-cli-"));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "feishu-cli-next-"));
   const archivePath = path.join(tmpDir, archiveName);
 
   try {
@@ -240,7 +244,11 @@ function install() {
     // actually host /-/binary/<pkg>/...
     let lastErr;
     let downloaded = false;
-    for (const url of downloadUrls) {
+    if (localDir) {
+      fs.copyFileSync(path.join(localDir, archiveName), archivePath);
+      downloaded = true;
+    }
+    for (const url of downloaded ? [] : downloadUrls) {
       try {
         download(url, archivePath);
         downloaded = true;
@@ -265,8 +273,21 @@ function install() {
     const binaryName = NAME + (isWindows ? ".exe" : "");
     const extractedBinary = path.join(tmpDir, binaryName);
 
-    fs.copyFileSync(extractedBinary, dest);
-    fs.chmodSync(dest, 0o755);
+    if (!fs.lstatSync(extractedBinary).isFile()) throw new Error("Archive binary must be a regular file");
+    // npm owns the package directory; never follow an unexpected binary symlink.
+    try {
+      if (!fs.lstatSync(dest).isFile()) throw new Error("Binary destination is not a regular file");
+    } catch (error) {
+      if (error.code !== "ENOENT") throw error;
+    }
+    const staged = path.join(binDir, ".install-" + crypto.randomBytes(8).toString("hex"));
+    try {
+      fs.copyFileSync(extractedBinary, staged, fs.constants.COPYFILE_EXCL);
+      fs.chmodSync(staged, 0o755);
+      fs.renameSync(staged, dest);
+    } finally {
+      fs.rmSync(staged, { force: true });
+    }
     console.log(`${NAME} v${VERSION} installed successfully`);
   } finally {
     fs.rmSync(tmpDir, { recursive: true, force: true });
@@ -282,6 +303,7 @@ function getExpectedChecksum(archiveName, checksumsDir) {
   }
 
   const content = fs.readFileSync(checksumsPath, "utf8");
+  const matches = [];
   for (const line of content.split("\n")) {
     const trimmed = line.trim();
     if (!trimmed) continue;
@@ -289,9 +311,11 @@ function getExpectedChecksum(archiveName, checksumsDir) {
     if (idx === -1) continue;
     const hash = trimmed.slice(0, idx);
     const name = trimmed.slice(idx + 2);
-    if (name === archiveName) return hash;
+    if (name === archiveName) matches.push(hash);
   }
 
+  if (matches.length === 1) return matches[0];
+  if (matches.length > 1) throw new Error(`Duplicate checksum entry for ${archiveName}`);
   throw new Error(`Checksum entry not found for ${archiveName}`);
 }
 
@@ -328,7 +352,7 @@ function verifyChecksum(archivePath, expectedHash) {
 }
 
 if (require.main === module) {
-  if (!platform || !arch) {
+  if (!platform || !arch || (arch === "riscv64" && platform !== "linux")) {
     console.error(
       `Unsupported platform: ${process.platform}-${process.arch}`
     );
@@ -336,10 +360,9 @@ if (require.main === module) {
   }
 
   // When triggered as a postinstall hook under npx, skip the binary download.
-  // The "install" wizard doesn't need it, and run.js calls install.js directly
-  // (with LARK_CLI_RUN=1) for other commands that do need the binary.
+  // The launcher acquires it lazily (with FEISHU_CLI_NEXT_RUN=1) on first use.
   const isNpxPostinstall =
-    process.env.npm_command === "exec" && !process.env.LARK_CLI_RUN;
+    process.env.npm_command === "exec" && !process.env.FEISHU_CLI_NEXT_RUN;
 
   if (isNpxPostinstall) {
     process.exit(0);
@@ -350,12 +373,8 @@ if (require.main === module) {
   } catch (err) {
     console.error(`Failed to install ${NAME}:`, err.message);
     console.error(
-      `\nIf you are behind a firewall or in a restricted network, try one of:\n` +
-      `  # 1. Use a proxy:\n` +
-      `  export https_proxy=http://your-proxy:port\n` +
-      `  npm install -g @larksuite/cli\n\n` +
-      `  # 2. Point to a corporate npm mirror that proxies /-/binary/lark-cli/...:\n` +
-      `  npm install -g @larksuite/cli --registry=https://your-corp-mirror/`
+      "Build local archives with scripts/next_package.py, then set " +
+      "FEISHU_CLI_NEXT_ARTIFACT_DIR to that directory when installing the generated npm tarball."
     );
     process.exit(1);
   }

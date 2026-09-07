@@ -23,7 +23,7 @@ PREFIX   ?= /usr/local
 TEST_GOARCH := $(or $(GOARCH),$(shell go env GOARCH))
 RACE_FLAG := $(if $(filter riscv64,$(TEST_GOARCH)),,-race)
 
-.PHONY: all build vet fmt-check script-test test unit-test live-skills-test integration-test examples-build quality-gate install uninstall clean fetch_meta gitleaks sidecar-test
+.PHONY: all build vet fmt-check script-test test unit-test live-skills-test integration-test examples-build quality-gate install update-install uninstall clean fetch_meta gitleaks sidecar-test
 
 all: test
 
@@ -104,12 +104,13 @@ quality-gate: build
 		--facts-out $(QUALITY_GATE_FACTS_OUT)
 
 install: build
-	install -d $(PREFIX)/bin
-	install -m755 $(BINARY) $(PREFIX)/bin/$(BINARY)
-	@echo "OK: $(PREFIX)/bin/$(BINARY) ($(VERSION))"
+	python3 scripts/next_binary.py install --prefix "$(PREFIX)" --source "$(BINARY)"
+
+update-install: build
+	python3 scripts/next_binary.py update --prefix "$(PREFIX)" --source "$(BINARY)"
 
 uninstall:
-	rm -f $(PREFIX)/bin/$(BINARY)
+	python3 scripts/next_binary.py uninstall --prefix "$(PREFIX)"
 
 clean:
 	rm -f $(BINARY)

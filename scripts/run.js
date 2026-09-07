@@ -7,7 +7,7 @@ const fs = require("fs");
 const path = require("path");
 
 const ext = process.platform === "win32" ? ".exe" : "";
-const bin = path.join(__dirname, "..", "bin", "lark-cli" + ext);
+const bin = path.join(__dirname, "..", "bin", "feishu-cli-next" + ext);
 
 // On Windows, a crashed self-update may have left the binary renamed to .old.
 // Recover it before proceeding so the CLI remains functional.
@@ -41,22 +41,19 @@ if (process.platform === "win32" && fs.existsSync(oldBin)) {
   }
 }
 
-// Intercept "install" subcommand — run the setup wizard directly,
-// bypassing the native binary (which may not exist yet under npx).
+// The npm setup alias installs the embedded skill in the selected project.
 const args = process.argv.slice(2);
-if (args[0] === "install") {
-  require("./install-wizard.js");
-} else {
+{
   // Auto-download binary if missing (e.g. npx skipped postinstall).
   if (!fs.existsSync(bin)) {
     try {
       execFileSync(process.execPath, [path.join(__dirname, "install.js")], {
         stdio: "inherit",
-        env: { ...process.env, LARK_CLI_RUN: "true" },
+        env: { ...process.env, FEISHU_CLI_NEXT_RUN: "true" },
       });
     } catch (_) {
       console.error(
-        `\nFailed to auto-install lark-cli binary.\n` +
+        `\nFailed to auto-install feishu-cli-next binary.\n` +
         `To fix, run the install script manually:\n` +
         `  node "${path.join(__dirname, "install.js")}"\n`
       );
@@ -65,7 +62,7 @@ if (args[0] === "install") {
   }
 
   try {
-    execFileSync(bin, args, { stdio: "inherit" });
+    execFileSync(bin, args[0] === "install" ? ["guide", "install", ...args.slice(1)] : args, { stdio: "inherit" });
   } catch (e) {
     process.exit(e.status || 1);
   }
