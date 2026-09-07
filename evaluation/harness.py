@@ -165,15 +165,47 @@ def run_one(config, task, trial, arm):
             categories.append("misleading_success_claim")
         # Whitelist numeric measurements only; raw content and free-form traces stay out of evidence.
         metrics = {}
-        for key in ("api_calls", "retries"):
+        for key in ("api_calls", "retries", "command_executions"):
             value = payload.get(key)
             metrics[key] = value if type(value) is int and value >= 0 else None
         return {"task_id": task["id"], "section": task["section"], "trial": trial, "arm": arm,
                 "success": verified and code == 0, "usage": usage, "categories": categories,
                 "known_usage": known_usage,
+                "control_trace": sanitized_trace(payload.get("control_trace")),
                 "usage_granularity": payload.get("usage_granularity") if payload.get("usage_granularity") in ("model_turn", "codex_user_turn") else None,
                 "runner_exit": code, "verifier_exit": verify_code,
                 "latency_seconds": elapsed, "verification_seconds": verify_elapsed, **metrics}
+
+
+def sanitized_trace(trace):
+    """Validate even adapter-provided trace strings against the public vocabulary."""
+    if not isinstance(trace, list):
+        return None
+    from codex_runner import trace_vocabulary
+    paths, flags = trace_vocabulary()
+    result = []
+    for event in trace:
+        if not isinstance(event, dict) or not isinstance(event.get("choices"), list):
+            return None
+        choices = []
+        for choice in event["choices"]:
+            if not isinstance(choice, dict):
+                return None
+            kind = choice.get("kind")
+            if kind == "cli":
+                command, names = choice.get("command"), choice.get("flags")
+                if not isinstance(command, list) or not all(isinstance(word, str) for word in command) or tuple(command) not in paths:
+                    return None
+                if not isinstance(names, list) or not all(isinstance(name, str) and name in flags for name in names):
+                    return None
+                choices.append({"kind": kind, "command": command, "flags": names})
+            elif kind in ("file_read", "file_search", "script", "other_shell", "unparsed_shell"):
+                choices.append({"kind": kind})
+            else:
+                return None
+        code = event.get("exit_code")
+        result.append({"choices": choices, "exit_code": code if type(code) is int else None})
+    return result
 
 
 def aggregate(runs):

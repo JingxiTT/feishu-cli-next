@@ -132,9 +132,9 @@ No inherited Feishu credentials, profiles, proxy configuration, or private conte
 are forwarded. Real adapters must manage their explicitly authorized access.
 Keep credentials out of argv. Raw stdout, stderr, final claims, and traces are
 not published. Only fixed categories, token counts, numeric telemetry, sanitized
-environment labels, and file hashes are persisted. A release reviewer must
-separately inspect deliberately sanitized traces for repeated discovery, missing
-detail, and autonomous choices; this minimal harness does not retain raw traces.
+environment labels, file hashes, and the restricted command-choice records below
+are persisted. A release reviewer can inspect those records for repeated
+discovery and autonomous choices; this minimal harness does not retain raw traces.
 
 Results contain task/domain/arm success, all-attempt token distributions, cached
 input, failed costs, latency, API calls, retries, and failure categories.
@@ -221,3 +221,24 @@ mandates more reference reading. Arm 1 versus 3 is therefore a product compariso
 not a language-specific result. Arm 2 versus 3 narrows the guidance difference,
 but differing domain detail still limits interface-only attribution. No forced
 help lookup, planning sequence, or model-token ceiling is part of the task.
+
+### Sanitized command-choice records
+
+Future runs retain `command_executions` and `control_trace`. The count is completed
+Codex command events, not API requests or a count of interrupted commands. Each
+trace record contains the submitted shell command's overall exit code and a list
+of conservative choices: a recognized CLI command path and public flag names,
+or a fixed file-read, file-search, script, other-shell, or unparsed-shell category.
+Command/flag names are restricted to the captured registration vocabulary plus
+the new `discover` root. The harness revalidates the vocabulary before writing
+results. Unknown flags, flag values, environment values, file paths, input/output
+content, and arbitrary tool output are omitted. Nested common shell wrappers are
+recognized; complex scripts and invocations may remain unparsed. Shell conditions
+can prevent submitted commands from running, and a compound command has one
+overall exit code, so these records show choices rather than independently
+verified per-command effects. They can identify repeated help/schema/skill
+discovery without retaining document text or user identifiers.
+
+The foundation batches predate this instrumentation. Their raw output was
+discarded, and no command choices can be recovered from their retained evidence.
+They were not rerun merely to obtain traces.

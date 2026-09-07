@@ -27,6 +27,22 @@ class CodexAccountingTests(unittest.TestCase):
         self.assertEqual(result["turns"], [{"input_tokens": 200, "cached_input_tokens": 80, "output_tokens": 30}])
         self.assertEqual(result["usage_granularity"], "codex_user_turn")
         self.assertEqual(result["command_executions"], 1)
+        self.assertEqual(result["control_trace"], [{"choices": [{"kind": "unparsed_shell"}], "exit_code": None}])
+
+    def test_trace_keeps_only_public_names_not_content_paths_or_unknown_flags(self):
+        command = 'TOKEN=private-value /private/workspace/feishu-cli-next docs +fetch --doc secret-document-id --keyword="private user text" --not-a-real-private-flag=secret && cat /private/secret-file'
+        result = runner.command_choices(command)
+        self.assertEqual(result, [{"kind": "cli", "command": ["docs", "+fetch"], "flags": ["--doc", "--keyword"]}, {"kind": "file_read"}])
+        self.assertNotIn("private", json.dumps(result))
+        self.assertNotIn("secret", json.dumps(result))
+
+    def test_trace_supports_shell_wrapper_and_does_not_count_echo_as_cli(self):
+        result = runner.command_choices('zsh -lc "lark-cli auth status --json; echo lark-cli docs +fetch"')
+        self.assertEqual(result, [{"kind": "cli", "command": ["auth", "status"], "flags": ["--json"]}, {"kind": "other_shell"}])
+
+    def test_discovery_trace_drops_query_and_payload(self):
+        self.assertEqual(runner.command_choices('feishu-cli-next discover "private query" --limit 5'),
+                         [{"kind": "cli", "command": ["discover"], "flags": ["--limit"]}])
 
     def test_incomplete_and_failed_turns_are_unknown(self):
         for tail in ([{"type": "turn.started"}], [{"type": "turn.failed"}],

@@ -8,6 +8,7 @@ import tempfile
 import unittest
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / "evaluation"))
 SPEC = importlib.util.spec_from_file_location("harness", ROOT / "evaluation/harness.py")
 harness = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(harness)
@@ -57,6 +58,13 @@ class AccountingTests(unittest.TestCase):
         self.assertFalse(result["usage_complete"])
         self.assertIsNone(result["tokens_per_success"])
 
+    def test_trace_revalidates_all_persisted_names(self):
+        trace = [{"choices": [{"kind": "cli", "command": ["docs", "+fetch"], "flags": ["--doc", "--help"]}], "exit_code": 0, "private_extra": "not retained"}]
+        result = harness.sanitized_trace(trace)
+        self.assertNotIn("private_extra", json.dumps(result))
+        trace[0]["choices"][0]["flags"].append("--secret-user-value")
+        self.assertIsNone(harness.sanitized_trace(trace))
+
 
 class ProcessE2ETests(unittest.TestCase):
     def invoke(self, fixture=None, split="controlled", extra_args=()):
@@ -89,6 +97,8 @@ class ProcessE2ETests(unittest.TestCase):
         self.assertEqual(len(result["runs"]), 6)
         self.assertTrue(all(run["success"] for run in result["runs"]))
         self.assertEqual(result["runs"][0]["usage"]["total_tokens"], 165)
+        self.assertEqual(result["runs"][0]["command_executions"], 1)
+        self.assertEqual(result["runs"][0]["control_trace"], [{"choices": [{"kind": "cli", "command": ["auth", "status"], "flags": ["--json"]}], "exit_code": 3}])
         self.assertEqual(len(result["matched_success"][0]["pairs"]), 2)
         self.assertNotIn("private marker", json.dumps(result))
         self.assertNotIn("must-not-be-inherited", json.dumps(result))

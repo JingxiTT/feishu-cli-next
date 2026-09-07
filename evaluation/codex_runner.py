@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 """Codex 0.146 JSONL adapter for offline foundation development tasks."""
 import argparse
+import functools
+import gzip
 import json
 import os
 from pathlib import Path
 import shutil
+import shlex
 import signal
 import subprocess
 import sys
@@ -16,6 +19,68 @@ DISABLED_FEATURES = (
     "multi_agent_v2", "plugins", "remote_plugin", "skill_search", "tool_suggest",
     "workspace_dependencies", "shell_snapshot",
 )
+
+
+@functools.lru_cache(maxsize=1)
+def trace_vocabulary():
+    """Only published command/flag names may appear in retained trace evidence."""
+    snapshot = Path(__file__).resolve().parents[1] / "docs/reference/registrations.json.gz"
+    with gzip.open(snapshot, "rt", encoding="utf-8") as stream:
+        registrations = json.load(stream)
+    paths = {("discover",)}
+    flags = {"--help", "-h"}
+    for variant in registrations.values():
+        for command, descriptor in variant["commands"].items():
+            paths.add(tuple(command.split()))
+            for name, metadata in descriptor.get("flags", {}).items():
+                flags.add("--" + name)
+                if metadata.get("shorthand"):
+                    flags.add("-" + metadata["shorthand"])
+    return paths, flags
+
+
+def command_choices(command, depth=0):
+    """Conservative submitted-shell choices, never arguments, payloads, or paths."""
+    if not isinstance(command, str) or depth > 2:
+        return [{"kind": "unparsed_shell"}]
+    try:
+        lexer = shlex.shlex(command, posix=True, punctuation_chars=";&|()")
+        lexer.whitespace_split = True
+        tokens = list(lexer)
+    except ValueError:
+        return [{"kind": "unparsed_shell"}]
+    segments = [[]]
+    for token in tokens:
+        if token and all(char in ";&|()" for char in token):
+            segments.append([])
+        else:
+            segments[-1].append(token)
+    paths, allowed_flags = trace_vocabulary()
+    result = []
+    for segment in segments:
+        while segment and "=" in segment[0] and not segment[0].startswith("-"):
+            segment = segment[1:]
+        if not segment:
+            continue
+        executable = Path(segment[0]).name
+        if executable in ("bash", "zsh", "sh") and len(segment) >= 3 and segment[1] in ("-c", "-lc"):
+            result.extend(command_choices(segment[2], depth + 1))
+        elif executable in ("lark-cli", "feishu-cli-next"):
+            path = []
+            for token in segment[1:]:
+                candidate = tuple(path + [token])
+                if candidate not in paths:
+                    break
+                path.append(token)
+            flags = sorted({token.split("=", 1)[0] for token in segment[1:]
+                            if token.split("=", 1)[0] in allowed_flags})
+            result.append({"kind": "cli", "command": path, "flags": flags})
+        else:
+            kind = "file_read" if executable in ("cat", "head", "tail", "sed") else \
+                   "file_search" if executable in ("rg", "grep", "find") else \
+                   "script" if executable in ("python", "python3", "node") else "other_shell"
+            result.append({"kind": kind})
+    return result or [{"kind": "unparsed_shell"}]
 
 
 def cli_environment(workspace):
@@ -47,6 +112,7 @@ def parse_events(stdout, returncode):
     malformed = False
     failed = False
     commands = 0
+    control_trace = []
     unexpected_tools = False
     for line in stdout.splitlines():
         try:
@@ -78,12 +144,15 @@ def parse_events(stdout, returncode):
             item_kind = item.get("type")
             if item_kind == "command_execution":
                 commands += 1
+                exit_code = item.get("exit_code")
+                control_trace.append({"choices": command_choices(item.get("command")),
+                                      "exit_code": exit_code if type(exit_code) is int else None})
             if item_kind in ("mcp_tool_call", "web_search", "collab_tool_call"):
                 unexpected_tools = True
     complete = started > 0 and started == completed == len(spans) and not (malformed or failed or unexpected_tools)
     return {"turns": spans, "accounting_complete": complete,
             "usage_granularity": "codex_user_turn", "command_executions": commands,
-            "unexpected_tools": unexpected_tools}
+            "unexpected_tools": unexpected_tools, "control_trace": control_trace}
 
 
 def run(request, codex, auth_home, expected_version):
