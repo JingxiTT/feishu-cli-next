@@ -71,11 +71,11 @@ func TestRecordImportBatchIDsRequireCompleteUniqueEvidence(t *testing.T) {
 		{"record_id_list": []string{"rec_one", "rec_one"}},
 		{"record_id_list": []string{"rec_one", "rec_two"}, "ignored_fields": []interface{}{map[string]interface{}{"id": "fld_x"}}},
 	} {
-		if _, err := recordImportBatchIDs(data, 2); err == nil {
+		if _, err := recordImportBatchIDs(data, 2, nil); err == nil {
 			t.Fatalf("ambiguous batch accepted: %#v", data)
 		}
 	}
-	if _, err := recordImportBatchIDs(map[string]interface{}{"record_id_list": []string{"rec_one", "rec_two"}}, 2); err != nil {
+	if _, err := recordImportBatchIDs(map[string]interface{}{"record_id_list": []string{"rec_one", "rec_two"}}, 2, nil); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -90,5 +90,20 @@ func TestRecordImportRejectsNumbersThatLoseDestinationPrecision(t *testing.T) {
 		if !baseDoubleRoundtrip(number) {
 			t.Fatalf("rejected supported number %s", number)
 		}
+	}
+}
+
+func TestRecordImportBatchIDsRejectPreviouslyConfirmedIDs(t *testing.T) {
+	confirmed := map[string]bool{"rec_previous": true}
+	for _, ids := range [][]string{{"rec_new", "rec_previous"}, {"rec_previous", "rec_new"}} {
+		if _, err := recordImportBatchIDs(map[string]interface{}{"record_id_list": ids}, 2, confirmed); err == nil {
+			t.Fatal("accepted a record ID confirmed by an earlier batch")
+		}
+		if len(confirmed) != 1 || !confirmed["rec_previous"] {
+			t.Fatal("failed batch changed confirmed evidence")
+		}
+	}
+	if _, err := recordImportBatchIDs(map[string]interface{}{"record_id_list": []string{"rec_new", "rec_other"}}, 2, confirmed); err != nil {
+		t.Fatal(err)
 	}
 }

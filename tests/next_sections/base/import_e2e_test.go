@@ -283,3 +283,78 @@ func TestRecordImportBatchAndReportFailureRetainBothErrors(t *testing.T) {
 		t.Fatalf("lost one failure: %+v", result)
 	}
 }
+
+func TestRecordImportStopsOnIDsRepeatedAcrossBatches(t *testing.T) {
+	var writes atomic.Int32
+	f := nextfixture.NewFixture(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if importFieldResponse(w, r) {
+			return
+		}
+		count := writes.Add(1)
+		ids := make([]string, 200)
+		for i := range ids {
+			ids[i] = fmt.Sprintf("rec_%d", (int(count)-1)*200+i)
+		}
+		if count == 2 {
+			ids[199] = "rec_0"
+		}
+		_ = json.NewEncoder(w).Encode(map[string]interface{}{"code": 0, "data": map[string]interface{}{"record_id_list": ids}})
+	}))
+	saveImportSource(t, f, 401, nil)
+	result := f.Run(importArguments()...)
+	if result.ExitCode != 22 || writes.Load() != 2 || !strings.Contains(result.Stderr, `"outcome":"unknown"`) || !strings.Contains(result.Stdout, `"ok":false`) {
+		t.Fatalf("exit=%d writes=%d stdout=%s stderr=%s", result.ExitCode, writes.Load(), result.Stdout, result.Stderr)
+	}
+	raw, err := os.ReadFile(filepath.Join(f.WorkDir, "import-report.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	var report struct {
+		Status    string          `json:"status"`
+		Created   int             `json:"created"`
+		Completed int             `json:"completed_batches"`
+		Next      int             `json:"first_unconfirmed_row"`
+		IDs       []string        `json:"record_ids"`
+		Response  json.RawMessage `json:"unresolved_response"`
+	}
+	if err := json.Unmarshal(raw, &report); err != nil {
+		t.Fatal(err)
+	}
+	if report.Status != "unknown" || report.Created != 200 || report.Completed != 1 || report.Next != 200 || len(report.IDs) != 200 || !strings.Contains(string(report.Response), "rec_398") {
+		t.Fatalf("lost confirmed prefix or unresolved evidence: %s", raw)
+	}
+	for i, id := range report.IDs {
+		if id != fmt.Sprintf("rec_%d", i) {
+			t.Fatalf("wrong confirmed ID %d: %s", i, id)
+		}
+	}
+	var envelope struct {
+		Mutation struct {
+			Outcome string `json:"outcome"`
+		} `json:"mutation"`
+	}
+	if err := json.Unmarshal([]byte(result.Stdout), &envelope); err != nil || envelope.Mutation.Outcome != "unknown" {
+		t.Fatalf("stdout overstates certainty: %s", result.Stdout)
+	}
+	receipts, err := filepath.Glob(filepath.Join(f.ConfigDir, "next", "receipts", "*.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	outcomes := map[string]int{}
+	for _, path := range receipts {
+		data, err := os.ReadFile(path)
+		if err != nil {
+			t.Fatal(err)
+		}
+		var receipt struct {
+			Outcome string `json:"outcome"`
+		}
+		if err := json.Unmarshal(data, &receipt); err != nil {
+			t.Fatal(err)
+		}
+		outcomes[receipt.Outcome]++
+	}
+	if len(receipts) != 2 || outcomes["confirmed_applied"] != 1 || outcomes["unknown"] != 1 {
+		t.Fatalf("durable receipts overstate effects: %v", outcomes)
+	}
+}

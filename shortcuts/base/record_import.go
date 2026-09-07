@@ -120,6 +120,7 @@ func executeRecordImport(r *common.RuntimeContext) error {
 	}
 	report := recordImportReport{Status: "complete", BaseToken: r.Str("base-token"), TableID: baseTableID(r), Requested: len(imp.records), RecordIDs: []string{}, Binding: current}
 	var operationErr error
+	confirmedIDs := make(map[string]bool, len(imp.records))
 	for start := 0; start < len(imp.records); start += 200 {
 		end := min(start+200, len(imp.records))
 		data, err := baseV3Call(r, "POST", baseV3Path("bases", r.Str("base-token"), "tables", baseTableID(r), "records", "batch_create"), nil, map[string]interface{}{"create_records": imp.records[start:end]})
@@ -128,12 +129,15 @@ func executeRecordImport(r *common.RuntimeContext) error {
 			operationErr = err
 			break
 		}
-		ids, err := recordImportBatchIDs(data, end-start)
+		ids, err := recordImportBatchIDs(data, end-start, confirmedIDs)
 		if err != nil {
 			report.Status = "unknown"
 			report.Response, _ = json.Marshal(data)
 			operationErr = err
 			break
+		}
+		for _, id := range ids {
+			confirmedIDs[id] = true
 		}
 		report.RecordIDs = append(report.RecordIDs, ids...)
 		report.Created += len(ids)
@@ -154,7 +158,7 @@ func executeRecordImport(r *common.RuntimeContext) error {
 	return operationErr
 }
 
-func recordImportBatchIDs(data map[string]interface{}, count int) ([]string, error) {
+func recordImportBatchIDs(data map[string]interface{}, count int, confirmedIDs map[string]bool) ([]string, error) {
 	raw, err := json.Marshal(data)
 	if err != nil {
 		return nil, errs.NewInternalError(errs.SubtypeInvalidResponse, "invalid import batch response").WithCause(err)
@@ -170,8 +174,8 @@ func recordImportBatchIDs(data map[string]interface{}, count int) ([]string, err
 	}
 	seen := map[string]bool{}
 	for _, id := range response.IDs {
-		if id == "" || seen[id] {
-			return nil, errs.NewInternalError(errs.SubtypeInvalidResponse, "batch returned missing or duplicate record IDs")
+		if id == "" || seen[id] || confirmedIDs[id] {
+			return nil, errs.NewInternalError(errs.SubtypeInvalidResponse, "batch returned missing record IDs or IDs duplicated within this import; do not replay without reconciliation")
 		}
 		seen[id] = true
 	}
