@@ -1,0 +1,505 @@
+{
+  "schema_version": 1,
+  "reviewer": "/root/foundation_review",
+  "report_kind": "hash_bound_follow_up",
+  "verdict": "approved_offline",
+  "review_revisions": [
+    "032b922eb4b3c62bdb97ebf8749c5fc8f71b510f",
+    "68126eebf8041e2b39b4bd442a6a669cc0a79acb"
+  ],
+  "scope": {
+    "assignment_ids": [
+      "mutation_receipts",
+      "invocation_identity",
+      "drive"
+    ],
+    "path_count": 10,
+    "method": "Whole new shared modules, focused changes with cohesive dependencies in existing modules, complete new regression source, and existing owner execution artifacts inspected. Final verdicts bind committed source blobs only; early working-tree findings are retained as closed review findings.",
+    "product_files_modified": false,
+    "tests_executed_by_this_review": false
+  },
+  "assignments": [
+    {
+      "schema_version": 1,
+      "reviewer": "/root/foundation_review",
+      "assignment_id": "mutation_receipts",
+      "verdict": "approved_offline",
+      "paths": [
+        {
+          "path": "internal/nextattempt/drive_import.go",
+          "review_revision": "032b922eb4b3c62bdb97ebf8749c5fc8f71b510f",
+          "review_sha256": "05b28b3e520128fe8e801157b53db4d98093b5b1afd3eebf66ffa01957ac4873",
+          "verdict": "approved_offline",
+          "review_scope": "Whole new module: bounded actual-POST-ack capture, exact binding/origin/ticket uniqueness, strict completed native result and echo checking, pending-only reconciliation, locked validated store update before summary update, pure grant matcher without journal authority. No replay or persisted source/ticket identifiers.",
+          "evidence": [
+            {
+              "path": "internal/nextattempt/drive_import_test.go",
+              "scope": "Whole new regression source inspected: strict native proof, optional echo contradictions, immutable binding/origin/ticket, duplicate tickets, unrelated unknowns, 128-entry/4MiB non-evicting retention, HTTP202 no capture, raw GET no upgrade, concurrent completion, durable storage failures including post-rename directory sync, and no persisted private content identifiers.",
+              "sha256": "f4d4b8a393126ce49d63456664aaa7b8a141225cfc6e2ea306fc7e232bf1df22",
+              "source_revision": "032b922eb4b3c62bdb97ebf8749c5fc8f71b510f",
+              "tested_revision": "unbound: immutable source inspected; not executed by this review"
+            },
+            {
+              "path": "docs/contracts/receipts.md",
+              "scope": "Drive-specific completion, same-invocation memory bounds, durable state and directory-fsync visibility contract checked.",
+              "sha256": "24fafccea054d27c1e117e9e782d7f0c376bc06684182d2dc42f7d9305505f44",
+              "source_revision": "032b922eb4b3c62bdb97ebf8749c5fc8f71b510f",
+              "tested_revision": "unbound: immutable source inspected; not executed by this review"
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "internal/nextattempt/transport.go",
+          "review_revision": "032b922eb4b3c62bdb97ebf8749c5fc8f71b510f",
+          "review_sha256": "627e98ead32f5e46ad4a124ec65bccc3ccab94c4c1f71f97a6300cfd6e296e8c",
+          "verdict": "approved_offline",
+          "review_scope": "Drive follow-up delta plus cohesive transport/classification/journal integration: only bounded invocation-memory fields added; existing dispatch lock, finish, Add, response replay and summary semantics retained.",
+          "evidence": [
+            {
+              "path": "internal/nextattempt/drive_import_test.go",
+              "scope": "Whole new regression source inspected: strict native proof, optional echo contradictions, immutable binding/origin/ticket, duplicate tickets, unrelated unknowns, 128-entry/4MiB non-evicting retention, HTTP202 no capture, raw GET no upgrade, concurrent completion, durable storage failures including post-rename directory sync, and no persisted private content identifiers.",
+              "sha256": "f4d4b8a393126ce49d63456664aaa7b8a141225cfc6e2ea306fc7e232bf1df22",
+              "source_revision": "032b922eb4b3c62bdb97ebf8749c5fc8f71b510f",
+              "tested_revision": "unbound: immutable source inspected; not executed by this review"
+            },
+            {
+              "path": "docs/contracts/receipts.md",
+              "scope": "Drive-specific completion, same-invocation memory bounds, durable state and directory-fsync visibility contract checked.",
+              "sha256": "24fafccea054d27c1e117e9e782d7f0c376bc06684182d2dc42f7d9305505f44",
+              "source_revision": "032b922eb4b3c62bdb97ebf8749c5fc8f71b510f",
+              "tested_revision": "unbound: immutable source inspected; not executed by this review"
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "internal/nextattempt/response_evidence.go",
+          "review_revision": "032b922eb4b3c62bdb97ebf8749c5fc8f71b510f",
+          "review_sha256": "c88436cf4fd9e860f500f52143f290c478cdbbc61bb1d3979a8ef8bb340f0ee3",
+          "verdict": "approved_offline",
+          "review_scope": "Drive-specific classifier follow-up: exact import POST acknowledgement may be captured but remains unknown; unsupported/oversized/unmatched capture stays generic async unknown; unrelated async classifiers not waived.",
+          "evidence": [
+            {
+              "path": "internal/nextattempt/drive_import_test.go",
+              "scope": "Whole new regression source inspected: strict native proof, optional echo contradictions, immutable binding/origin/ticket, duplicate tickets, unrelated unknowns, 128-entry/4MiB non-evicting retention, HTTP202 no capture, raw GET no upgrade, concurrent completion, durable storage failures including post-rename directory sync, and no persisted private content identifiers.",
+              "sha256": "f4d4b8a393126ce49d63456664aaa7b8a141225cfc6e2ea306fc7e232bf1df22",
+              "source_revision": "032b922eb4b3c62bdb97ebf8749c5fc8f71b510f",
+              "tested_revision": "unbound: immutable source inspected; not executed by this review"
+            },
+            {
+              "path": "docs/contracts/receipts.md",
+              "scope": "Drive-specific completion, same-invocation memory bounds, durable state and directory-fsync visibility contract checked.",
+              "sha256": "24fafccea054d27c1e117e9e782d7f0c376bc06684182d2dc42f7d9305505f44",
+              "source_revision": "032b922eb4b3c62bdb97ebf8749c5fc8f71b510f",
+              "tested_revision": "unbound: immutable source inspected; not executed by this review"
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "shortcuts/common/drive_import_receipts.go",
+          "review_revision": "032b922eb4b3c62bdb97ebf8749c5fc8f71b510f",
+          "review_sha256": "1de01616af99db254909ba3c24169960132907a43f180dc78fff26be9d681899",
+          "verdict": "approved_offline",
+          "review_scope": "Whole new runtime facade: explicit runtime identity forwarded to receipt matching; nil legacy Factory tolerated; pure create-body/completion matcher cannot modify receipts; request marker scoped to native status read.",
+          "evidence": [
+            {
+              "path": "internal/nextattempt/drive_import_test.go",
+              "scope": "Whole new regression source inspected: strict native proof, optional echo contradictions, immutable binding/origin/ticket, duplicate tickets, unrelated unknowns, 128-entry/4MiB non-evicting retention, HTTP202 no capture, raw GET no upgrade, concurrent completion, durable storage failures including post-rename directory sync, and no persisted private content identifiers.",
+              "sha256": "f4d4b8a393126ce49d63456664aaa7b8a141225cfc6e2ea306fc7e232bf1df22",
+              "source_revision": "032b922eb4b3c62bdb97ebf8749c5fc8f71b510f",
+              "tested_revision": "unbound: immutable source inspected; not executed by this review"
+            },
+            {
+              "path": "internal/cmdutil/drive_import_receipts_test.go",
+              "scope": "Whole new regression source inspected: actual request identity overrides global identity, standalone status does not resolve binding, native and encoded-ticket redirect suppression, unmarked redirects still follow, unrelated path/origin markers do not bleed.",
+              "sha256": "a4264e8f780db1b40323ac16ceb85c6d9c948781d4ad6ee6db25a41c891904d4",
+              "source_revision": "032b922eb4b3c62bdb97ebf8749c5fc8f71b510f",
+              "tested_revision": "unbound: immutable source inspected; not executed by this review"
+            },
+            {
+              "path": "tests/next_sections/drive/import_outcome_test.go",
+              "scope": "Whole new process test source inspected: malformed/nonfinal native status, interrupted polling and independent recovery, user+bot exact/mismatched completion, HTTP202/unresolved302/same-host changed-ticket/cross-origin redirect with zero target calls, zero dependent grants on invalid proof, valid bot grant once, and save failure preserving unknown without replay/grant.",
+              "sha256": "f4f1f6653f074f8208f5d26ef25a8e7d4bcf5ca1865fc90bd3d06f7ab6600b42",
+              "source_revision": "68126eebf8041e2b39b4bd442a6a669cc0a79acb",
+              "tested_revision": "unbound: immutable source inspected; not executed by this review"
+            }
+          ],
+          "findings": []
+        }
+      ],
+      "cross_assignment_dependencies": [
+        {
+          "assignment_id": "invocation_identity",
+          "scope": "Cohesive Drive import follow-up requires the exact shared/domain path hashes in this report."
+        },
+        {
+          "assignment_id": "drive",
+          "scope": "Cohesive Drive import follow-up requires the exact shared/domain path hashes in this report."
+        }
+      ],
+      "limitations": [
+        "Follow-up scopes only; prior immutable review reports remain unchanged."
+      ]
+    },
+    {
+      "schema_version": 1,
+      "reviewer": "/root/foundation_review",
+      "assignment_id": "invocation_identity",
+      "verdict": "approved_offline",
+      "paths": [
+        {
+          "path": "internal/cmdutil/agent_attempts.go",
+          "review_revision": "032b922eb4b3c62bdb97ebf8749c5fc8f71b510f",
+          "review_sha256": "fdbe74a723c5c57eed330968ab20baee6fc077de94eb4a4ee23d27824054b69b",
+          "verdict": "approved_offline",
+          "review_scope": "Binding-extraction follow-up: receipt transport and reconciliation share identical selected config plus per-request identity precedence and verified user-binding logic. Existing auth/read/effect classifier behavior retained.",
+          "evidence": [
+            {
+              "path": "internal/cmdutil/drive_import_receipts_test.go",
+              "scope": "Whole new regression source inspected: actual request identity overrides global identity, standalone status does not resolve binding, native and encoded-ticket redirect suppression, unmarked redirects still follow, unrelated path/origin markers do not bleed.",
+              "sha256": "a4264e8f780db1b40323ac16ceb85c6d9c948781d4ad6ee6db25a41c891904d4",
+              "source_revision": "032b922eb4b3c62bdb97ebf8749c5fc8f71b510f",
+              "tested_revision": "unbound: immutable source inspected; not executed by this review"
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "internal/cmdutil/drive_import_receipts.go",
+          "review_revision": "032b922eb4b3c62bdb97ebf8749c5fc8f71b510f",
+          "review_sha256": "bce3f9d2384faf8fe39669cc4d45759453d9555ac54c1550a6c106374db73027",
+          "verdict": "approved_offline",
+          "review_scope": "Whole new facade: no captured same-invocation ticket means no identity/storage work; replay-free current binding resolution; exact native GET marker checks secure platform Open origin and escaped ticket path. Matching native proof forwarded only through domain callsite contract.",
+          "evidence": [
+            {
+              "path": "internal/cmdutil/drive_import_receipts_test.go",
+              "scope": "Whole new regression source inspected: actual request identity overrides global identity, standalone status does not resolve binding, native and encoded-ticket redirect suppression, unmarked redirects still follow, unrelated path/origin markers do not bleed.",
+              "sha256": "a4264e8f780db1b40323ac16ceb85c6d9c948781d4ad6ee6db25a41c891904d4",
+              "source_revision": "032b922eb4b3c62bdb97ebf8749c5fc8f71b510f",
+              "tested_revision": "unbound: immutable source inspected; not executed by this review"
+            },
+            {
+              "path": "docs/contracts/receipts.md",
+              "scope": "Drive-specific completion, same-invocation memory bounds, durable state and directory-fsync visibility contract checked.",
+              "sha256": "24fafccea054d27c1e117e9e782d7f0c376bc06684182d2dc42f7d9305505f44",
+              "source_revision": "032b922eb4b3c62bdb97ebf8749c5fc8f71b510f",
+              "tested_revision": "unbound: immutable source inspected; not executed by this review"
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "internal/cmdutil/factory_default.go",
+          "review_revision": "032b922eb4b3c62bdb97ebf8749c5fc8f71b510f",
+          "review_sha256": "d14e983ea69dee6943f16e65f5a6c1435f86ebc42f5079744cb9b143455f8686",
+          "verdict": "approved_offline",
+          "review_scope": "Redirect-policy follow-up only: native marked import status request returns original redirect response without following it. Unmarked redirects retain existing compatibility; no global redirect prohibition.",
+          "evidence": [
+            {
+              "path": "internal/cmdutil/drive_import_receipts_test.go",
+              "scope": "Whole new regression source inspected: actual request identity overrides global identity, standalone status does not resolve binding, native and encoded-ticket redirect suppression, unmarked redirects still follow, unrelated path/origin markers do not bleed.",
+              "sha256": "a4264e8f780db1b40323ac16ceb85c6d9c948781d4ad6ee6db25a41c891904d4",
+              "source_revision": "032b922eb4b3c62bdb97ebf8749c5fc8f71b510f",
+              "tested_revision": "unbound: immutable source inspected; not executed by this review"
+            },
+            {
+              "path": "tests/next_sections/drive/import_outcome_test.go",
+              "scope": "Whole new process test source inspected: malformed/nonfinal native status, interrupted polling and independent recovery, user+bot exact/mismatched completion, HTTP202/unresolved302/same-host changed-ticket/cross-origin redirect with zero target calls, zero dependent grants on invalid proof, valid bot grant once, and save failure preserving unknown without replay/grant.",
+              "sha256": "f4f1f6653f074f8208f5d26ef25a8e7d4bcf5ca1865fc90bd3d06f7ab6600b42",
+              "source_revision": "68126eebf8041e2b39b4bd442a6a669cc0a79acb",
+              "tested_revision": "unbound: immutable source inspected; not executed by this review"
+            }
+          ],
+          "findings": []
+        }
+      ],
+      "cross_assignment_dependencies": [
+        {
+          "assignment_id": "mutation_receipts",
+          "scope": "Cohesive Drive import follow-up requires the exact shared/domain path hashes in this report."
+        },
+        {
+          "assignment_id": "drive",
+          "scope": "Cohesive Drive import follow-up requires the exact shared/domain path hashes in this report."
+        }
+      ],
+      "limitations": [
+        "Follow-up scopes only; prior immutable review reports remain unchanged."
+      ]
+    },
+    {
+      "schema_version": 1,
+      "reviewer": "/root/foundation_review",
+      "assignment_id": "drive",
+      "verdict": "approved_offline",
+      "paths": [
+        {
+          "path": "shortcuts/drive/drive_import_common.go",
+          "review_revision": "68126eebf8041e2b39b4bd442a6a669cc0a79acb",
+          "review_sha256": "49433ef6525d6c76613691312cd097d4950838b36f1829c2ed785787da6829ba",
+          "verdict": "approved_offline",
+          "review_scope": "Import-status/poll follow-up only: exact encoded-ticket GET uses scoped no-redirect context, typed native error classification preserved, final HTTP200 required, explicit integer status and optional echo types validated, original native data retained for proof matching; invalid_response stops polling while transient errors keep bounded retry behavior.",
+          "evidence": [
+            {
+              "path": "tests/next_sections/drive/import_outcome_test.go",
+              "scope": "Whole new process test source inspected: malformed/nonfinal native status, interrupted polling and independent recovery, user+bot exact/mismatched completion, HTTP202/unresolved302/same-host changed-ticket/cross-origin redirect with zero target calls, zero dependent grants on invalid proof, valid bot grant once, and save failure preserving unknown without replay/grant.",
+              "sha256": "f4f1f6653f074f8208f5d26ef25a8e7d4bcf5ca1865fc90bd3d06f7ab6600b42",
+              "source_revision": "68126eebf8041e2b39b4bd442a6a669cc0a79acb",
+              "tested_revision": "unbound: immutable source inspected; not executed by this review"
+            },
+            {
+              "path": "shortcuts/drive/drive_import_status_integrity_test.go",
+              "scope": "Whole new unit test source inspected: missing/null/noninteger status; malformed result wrappers; typed token/type; null/empty/mismatched optional ticket and null error; whitespace token remains pending; explicit integer and pending compatibility.",
+              "sha256": "6e2aa8f87d917fd1cae3bc997e4b62ce6d28ec0feb8eaf0f27f471c10a273a47",
+              "source_revision": "68126eebf8041e2b39b4bd442a6a669cc0a79acb",
+              "tested_revision": "unbound: immutable source inspected; not executed by this review"
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "shortcuts/drive/drive_import.go",
+          "review_revision": "68126eebf8041e2b39b4bd442a6a669cc0a79acb",
+          "review_sha256": "936615ed170f48ffa21ff33ff21ffe9405efb964982a17b9e9008e110b7235d2",
+          "verdict": "approved_offline",
+          "review_scope": "RunImport/dependent-grant follow-up only: compare native completion against original spec.CreateTaskBody(uploaded media token) before bot grant; skip grant on contradictory/incomplete proof or any receipt persistence failure, with actual readiness and recovery output retained.",
+          "evidence": [
+            {
+              "path": "tests/next_sections/drive/import_outcome_test.go",
+              "scope": "Whole new process test source inspected: malformed/nonfinal native status, interrupted polling and independent recovery, user+bot exact/mismatched completion, HTTP202/unresolved302/same-host changed-ticket/cross-origin redirect with zero target calls, zero dependent grants on invalid proof, valid bot grant once, and save failure preserving unknown without replay/grant.",
+              "sha256": "f4f1f6653f074f8208f5d26ef25a8e7d4bcf5ca1865fc90bd3d06f7ab6600b42",
+              "source_revision": "68126eebf8041e2b39b4bd442a6a669cc0a79acb",
+              "tested_revision": "unbound: immutable source inspected; not executed by this review"
+            },
+            {
+              "path": "internal/nextattempt/drive_import_test.go",
+              "scope": "Whole new regression source inspected: strict native proof, optional echo contradictions, immutable binding/origin/ticket, duplicate tickets, unrelated unknowns, 128-entry/4MiB non-evicting retention, HTTP202 no capture, raw GET no upgrade, concurrent completion, durable storage failures including post-rename directory sync, and no persisted private content identifiers.",
+              "sha256": "f4d4b8a393126ce49d63456664aaa7b8a141225cfc6e2ea306fc7e232bf1df22",
+              "source_revision": "032b922eb4b3c62bdb97ebf8749c5fc8f71b510f",
+              "tested_revision": "unbound: immutable source inspected; not executed by this review"
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "shortcuts/drive/drive_task_result.go",
+          "review_revision": "68126eebf8041e2b39b4bd442a6a669cc0a79acb",
+          "review_sha256": "7505869ff475a6720a3a142d0982502fb842cb7023b220c45d70232396ffc6ed",
+          "verdict": "approved_offline",
+          "review_scope": "Standalone import-status grant follow-up only: no cross-invocation receipt rewrite; existing optional bot grant now needs direct HTTP200 status, explicit completion, exact supported type and noncontradictory error, and shared persistence guard. Export task behavior outside this follow-up.",
+          "evidence": [
+            {
+              "path": "tests/next_sections/drive/import_outcome_test.go",
+              "scope": "Whole new process test source inspected: malformed/nonfinal native status, interrupted polling and independent recovery, user+bot exact/mismatched completion, HTTP202/unresolved302/same-host changed-ticket/cross-origin redirect with zero target calls, zero dependent grants on invalid proof, valid bot grant once, and save failure preserving unknown without replay/grant.",
+              "sha256": "f4f1f6653f074f8208f5d26ef25a8e7d4bcf5ca1865fc90bd3d06f7ab6600b42",
+              "source_revision": "68126eebf8041e2b39b4bd442a6a669cc0a79acb",
+              "tested_revision": "unbound: immutable source inspected; not executed by this review"
+            },
+            {
+              "path": "shortcuts/drive/drive_import_status_integrity_test.go",
+              "scope": "Whole new unit test source inspected: missing/null/noninteger status; malformed result wrappers; typed token/type; null/empty/mismatched optional ticket and null error; whitespace token remains pending; explicit integer and pending compatibility.",
+              "sha256": "6e2aa8f87d917fd1cae3bc997e4b62ce6d28ec0feb8eaf0f27f471c10a273a47",
+              "source_revision": "68126eebf8041e2b39b4bd442a6a669cc0a79acb",
+              "tested_revision": "unbound: immutable source inspected; not executed by this review"
+            }
+          ],
+          "findings": []
+        }
+      ],
+      "cross_assignment_dependencies": [
+        {
+          "assignment_id": "mutation_receipts",
+          "scope": "Cohesive Drive import follow-up requires the exact shared/domain path hashes in this report."
+        },
+        {
+          "assignment_id": "invocation_identity",
+          "scope": "Cohesive Drive import follow-up requires the exact shared/domain path hashes in this report."
+        }
+      ],
+      "limitations": [
+        "Follow-up scopes only; prior immutable review reports remain unchanged."
+      ]
+    }
+  ],
+  "execution_evidence": [
+    {
+      "path": ".tmp/next-evidence/drive-reconciliation/packages.log",
+      "sha256": "4082c5caaad496937415b749bb723e6739f50e058a81b5e0ec88910e22c4b16d",
+      "tested_revision": "unbound: artifact does not embed tested source revision or hashes; owner associates final unchanged files with this run",
+      "observed_output": "ok  \tgithub.com/larksuite/cli/internal/nextattempt\t(cached)\nok  \tgithub.com/larksuite/cli/internal/cmdutil\t4.298s\nok  \tgithub.com/larksuite/cli/shortcuts/common\t3.402s",
+      "status": "owner_reported_pass",
+      "limitation": "Plain output log does not embed command, exit code or revision; empty vet output alone cannot prove success."
+    },
+    {
+      "path": ".tmp/next-evidence/drive-reconciliation/focused-race.log",
+      "sha256": "a5c874b4c83da1f15fd1f568560417e5ff442965a64551d4e8127e8097cc6afd",
+      "tested_revision": "unbound: artifact does not embed tested source revision or hashes; owner associates final unchanged files with this run",
+      "observed_output": "ok  \tgithub.com/larksuite/cli/internal/nextattempt\t2.596s\nok  \tgithub.com/larksuite/cli/internal/cmdutil\t2.256s",
+      "status": "owner_reported_pass",
+      "limitation": "Plain output log does not embed command, exit code or revision; empty vet output alone cannot prove success."
+    },
+    {
+      "path": ".tmp/next-evidence/drive-reconciliation/vet.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tested_revision": "unbound: artifact does not embed tested source revision or hashes; owner associates final unchanged files with this run",
+      "observed_output": "",
+      "status": "owner_reported_pass",
+      "limitation": "Plain output log does not embed command, exit code or revision; empty vet output alone cannot prove success."
+    },
+    {
+      "path": ".tmp/drive-import-focused-final.json",
+      "sha256": "7490202e68417e86827d8405e9f525c5c83830ae54bd082d94eb3768e148305f",
+      "tested_revision": "unbound: artifact does not embed tested source revision or hashes; owner associates final unchanged files with this run",
+      "status": "pass",
+      "commands": [
+        {
+          "command": [
+            "go",
+            "test",
+            "-json",
+            "-count=1",
+            "./tests/next_sections/drive",
+            "-run",
+            "Import"
+          ],
+          "status": "pass",
+          "exit_code": 0,
+          "test_pass_events": 42,
+          "failure_events": 0,
+          "skip_events": 0
+        }
+      ]
+    },
+    {
+      "path": ".tmp/drive-import-accepted-all.json",
+      "sha256": "cb56207ebbfe5d8f0047ea323103237f939517600991abb3830310da867bb418",
+      "tested_revision": "unbound: artifact does not embed tested source revision or hashes; owner associates final unchanged files with this run",
+      "status": "pass",
+      "commands": [
+        {
+          "command": [
+            "go",
+            "test",
+            "-json",
+            "-count=1",
+            "-timeout=10m",
+            "./shortcuts/drive/..."
+          ],
+          "status": "pass",
+          "exit_code": 0,
+          "test_pass_events": 1359,
+          "failure_events": 0,
+          "skip_events": 0
+        },
+        {
+          "command": [
+            "go",
+            "test",
+            "-json",
+            "-count=1",
+            "-timeout=10m",
+            "./tests/cli_e2e/drive",
+            "-run",
+            "DryRun|Regression"
+          ],
+          "status": "pass",
+          "exit_code": 0,
+          "test_pass_events": 232,
+          "failure_events": 0,
+          "skip_events": 0
+        },
+        {
+          "command": [
+            "go",
+            "test",
+            "-json",
+            "-count=1",
+            "-timeout=10m",
+            "./tests/next_sections/drive"
+          ],
+          "status": "pass",
+          "exit_code": 0,
+          "test_pass_events": 157,
+          "failure_events": 0,
+          "skip_events": 0
+        }
+      ]
+    },
+    {
+      "path": ".tmp/drive-import-accepted-vet.json",
+      "sha256": "642558a89d843284b1e1cc3492d99b2751484f65fbd685969860341f8f93164c",
+      "tested_revision": "unbound: artifact does not embed tested source revision or hashes; owner associates final unchanged files with this run",
+      "status": "pass",
+      "commands": [
+        {
+          "command": [
+            "go",
+            "vet",
+            "./shortcuts/drive/...",
+            "./tests/next_sections/drive"
+          ],
+          "status": "pass",
+          "exit_code": 0,
+          "test_pass_events": 0,
+          "failure_events": 0,
+          "skip_events": 0
+        }
+      ]
+    },
+    {
+      "path": ".tmp/next-evidence/drive-reconciliation/source-lint-committed.log",
+      "sha256": "589702fd43d9e47ca6ee50fbcd806672ae31b3e96b98cd110c065dff206547fc",
+      "tested_revision": "032b922eb4b3c62bdb97ebf8749c5fc8f71b510f",
+      "scope": "Shared owner clean detached-checkout source-contract lint; log explicitly records immutable revision and snapshot location. Inspected existing output only; no lint rerun by this reviewer.",
+      "observed_output": "Source: detached git checkout 032b922\nSnapshot: /var/folders/zs/67gq3b8s0f122fqv9w0b9ycm0000gn/T/drive-receipts-checkout-b3qfr_uj",
+      "status": "pass"
+    }
+  ],
+  "closed_review_findings": [
+    {
+      "id": "DRIVE-IMPORT-REVIEW-1",
+      "status": "closed_at_review_revision",
+      "detected_in": "uncommitted initial integration, reported directly to both owners before final commits",
+      "scenario": "CallAPITyped discarded HTTP202/unresolved3xx status, allowing terminal-looking result data to reconcile a pending receipt.",
+      "resolution_revision": "68126eebf8041e2b39b4bd442a6a669cc0a79acb",
+      "resolution": "Domain now retains raw ApiResp and requires final HTTP200 before status parsing/reconciliation; malformed or nonfinal proof stops immediately.",
+      "paths": [
+        "shortcuts/drive/drive_import_common.go"
+      ]
+    },
+    {
+      "id": "DRIVE-IMPORT-REVIEW-2",
+      "status": "closed_at_review_revision",
+      "detected_in": "uncommitted initial integration, reported directly to both owners before final commits",
+      "scenario": "Existing default GET redirect policy could follow to another ticket/origin and return200, while reconciliation inferred the original configured origin.",
+      "resolution_revision": "032b922eb4b3c62bdb97ebf8749c5fc8f71b510f",
+      "resolution": "Exact native status-request marker makes default redirect policy return the original3xx with no target request; ordinary unmarked/download redirects retain behavior. Domain rejects the original non200 response.",
+      "paths": [
+        "internal/cmdutil/drive_import_receipts.go",
+        "internal/cmdutil/factory_default.go",
+        "shortcuts/drive/drive_import_common.go"
+      ]
+    },
+    {
+      "id": "DRIVE-IMPORT-REVIEW-3",
+      "status": "closed_at_review_revision",
+      "detected_in": "uncommitted initial integration, reported directly to domain owner before final commits",
+      "scenario": "A status0+token result could remain an unknown import because its type/source/target/error contradicted the create, yet still trigger bot full_access grant on the returned token.",
+      "resolution_revision": "68126eebf8041e2b39b4bd442a6a669cc0a79acb",
+      "resolution": "RunImport now requires pure exact-create-body completion proof and successful receipt persistence before a dependent bot grant; standalone recovery requires direct native status and supported noncontradictory target.",
+      "paths": [
+        "shortcuts/drive/drive_import.go",
+        "shortcuts/drive/drive_task_result.go",
+        "shortcuts/common/drive_import_receipts.go"
+      ]
+    }
+  ],
+  "limitations": [
+    "Approval covers the named Drive follow-up scopes at exact path hashes, not unrelated changes in pre-existing files or the entire release.",
+    "No live, model, broad unit or process reruns were performed by this reviewer. Unit/race/process artifacts lack embedded tested source revision/hash binding; owners associate them with final committed files, recorded without inferring immutable execution provenance. The separate detached-checkout source-lint log explicitly binds032b922.",
+    "Native optional source/destination echoes are validated when present; direct same-ticket authenticated HTTP200 job_status0 with requested type/token is the completion contract when echoes are omitted. No cross-invocation reconciliation is provided.",
+    "Post-rename directory fsync failure can leave an applied file visible while the invocation retains unknown with persistence_failed and exit22; no durable-success claim is made in that case. Windows directory-fsync limitation is inherited."
+  ]
+}
