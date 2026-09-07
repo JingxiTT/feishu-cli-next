@@ -89,6 +89,9 @@ not published after these failures. Streaming formats may already have emitted
 earlier successful pages; their nonzero exit and typed stderr error indicate that
 the stream is incomplete. An explicit page limit retains `has_more:true` when
 more pages exist; the aggregate is not a snapshot or a resumable cursor container.
+HTTP 4xx/5xx remains a failure even if a JSON body omits a business error code or
+contains `code:0`. A structured nonzero business error keeps its original typed
+classification and diagnostic fields; otherwise the HTTP status supplies it.
 Failed/partial/unknown results keep their full decision-critical data on stdout
 as well, even when this makes the reference response longer. Bare object results
 retain their native top-level metadata and never acquire a fabricated `ok:true`.

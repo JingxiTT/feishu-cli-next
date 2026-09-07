@@ -374,6 +374,21 @@ func (c *APIClient) CallAPI(ctx context.Context, request RawApiRequest) (interfa
 		return nil, err
 	}
 	result, parseErr := ParseJSONResponse(resp)
+	if resp.StatusCode >= http.StatusBadRequest {
+		// Match single-response routing: a structured business error takes
+		// precedence, but a zero/missing code cannot turn an HTTP failure into
+		// a successful page. Invalid error bodies are classified by status.
+		if parseErr == nil {
+			identity := request.As
+			if identity == "" {
+				identity = core.AsUser
+			}
+			if apiErr := c.CheckResponse(result, identity); apiErr != nil {
+				return nil, apiErr
+			}
+		}
+		return nil, httpStatusError(resp.StatusCode, resp.RawBody)
+	}
 	if parseErr != nil {
 		return nil, WrapJSONResponseParseError(parseErr, resp.RawBody)
 	}

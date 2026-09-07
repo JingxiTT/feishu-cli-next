@@ -7,10 +7,46 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strings"
 	"sync/atomic"
 	"testing"
 )
+
+func TestPaginationHTTPFailureDoesNotPublishArtifact(t *testing.T) {
+	for _, status := range []int{403, 500} {
+		t.Run(fmt.Sprint(status), func(t *testing.T) {
+			var pages atomic.Int32
+			f := NewFixture(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				w.Header().Set("Content-Type", "application/json")
+				if pages.Add(1) == 1 {
+					_, _ = fmt.Fprint(w, `{"code":0,"data":{"files":[{"token":"first"}],"has_more":true,"page_token":"next"}}`)
+				} else {
+					w.WriteHeader(status)
+					_, _ = fmt.Fprint(w, `{"code":0,"data":{"files":[],"has_more":false}}`)
+				}
+			}))
+			artifact := filepath.Join(f.WorkDir, "incomplete.json")
+			r := f.Run("drive", "files", "list", "--as", "bot", "--page-all", "--save-result", artifact)
+			if r.ExitCode == 0 || r.Stdout != "" || pages.Load() != 2 {
+				t.Fatalf("HTTP failure published success: %+v pages=%d", r, pages.Load())
+			}
+			if _, err := os.Stat(artifact); !os.IsNotExist(err) {
+				t.Fatalf("failed aggregate published artifact: %v", err)
+			}
+			var envelope struct {
+				Error struct {
+					Code int `json:"code"`
+				} `json:"error"`
+			}
+			start := strings.Index(r.Stderr, "{")
+			if start < 0 || json.Unmarshal([]byte(r.Stderr[start:]), &envelope) != nil || envelope.Error.Code != status {
+				t.Fatalf("HTTP status lost: %s", r.Stderr)
+			}
+		})
+	}
+}
 
 func TestRawPaginationLaterErrorIsNotSuccess(t *testing.T) {
 	for _, format := range []string{"json", "ndjson"} {
