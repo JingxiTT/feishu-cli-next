@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -440,6 +441,72 @@ func TestPartialExportCannotBecomeAnImportArtifact(t *testing.T) {
 		t.Fatal("source changed")
 	}
 	verifyStoredPrefix(t, b, 0)
+}
+
+func TestActualExportRejectsChangedEffectiveBindingBeforeDestinationAccess(t *testing.T) {
+	for _, changed := range []string{"tenant", "user", "app", "environment", "identity"} {
+		t.Run(changed, func(t *testing.T) {
+			f, b := newTransfer(t, 2, "")
+			before := fingerprint(b.source)
+			artifact := exportArtifact(t, f, 2)
+			user, tenant := "ou_foundation_fixture", "foundation-fixture-tenant"
+			args := importArgs()
+			switch changed {
+			case "tenant":
+				tenant = "other-synthetic-tenant"
+			case "user":
+				user = "ou_other_synthetic_user"
+			case "app":
+				f.Env["LARKSUITE_CLI_APP_ID"] = "other-synthetic-app"
+			case "environment":
+				f.Env["LARKSUITE_CLI_BRAND"] = "lark"
+			case "identity":
+				args[3] = "bot"
+			}
+			// Change the effective identity source, never the real exported artifact.
+			// This local sidecar answers identity reads and never forwards requests.
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				w.Header().Set("Content-Type", "application/json")
+				if r.Method == http.MethodGet && r.URL.Path == "/open-apis/authen/v1/user_info" {
+					reply(w, map[string]any{"open_id": user, "name": "Synthetic Fixture", "tenant_key": tenant})
+					return
+				}
+				if r.Method == http.MethodGet && r.URL.Path == "/open-apis/tenant/v2/tenant/query" {
+					reply(w, map[string]any{"tenant": map[string]any{"tenant_key": tenant}})
+					return
+				}
+				b.ServeHTTP(w, r)
+			}))
+			t.Cleanup(server.Close)
+			f.Env["LARKSUITE_CLI_AUTH_PROXY"] = server.URL
+			result := f.Run(args...)
+			var failure struct {
+				Error struct {
+					Type    string `json:"type"`
+					Subtype string `json:"subtype"`
+					Param   string `json:"param"`
+				} `json:"error"`
+			}
+			if err := json.Unmarshal([]byte(result.Stderr), &failure); err != nil || result.ExitCode != 2 || result.Stdout != "" || failure.Error.Type != "validation" || failure.Error.Subtype != "failed_precondition" || failure.Error.Param != "--artifact" {
+				t.Fatalf("changed binding was not rejected at artifact boundary: %+v", result)
+			}
+			if len(b.fields) != 0 || b.writes != 0 || len(b.ranges) != 1 || b.sourceWrites != 0 || fingerprint(b.source) != before {
+				t.Fatal("changed binding accessed destination or changed source")
+			}
+			verifyStoredPrefix(t, b, 0)
+			after, err := os.ReadFile(filepath.Join(f.WorkDir, sourceFile))
+			if err != nil || sha256.Sum256(after) != sha256.Sum256(artifact) {
+				t.Fatal("rejected import changed actual source artifact")
+			}
+			if _, err := os.Stat(filepath.Join(f.WorkDir, reportFile)); !os.IsNotExist(err) {
+				t.Fatal("rejected import published a destination report")
+			}
+			receipts, err := filepath.Glob(filepath.Join(f.ConfigDir, "next", "receipts", "*.json"))
+			if err != nil || len(receipts) != 0 {
+				t.Fatal("rejected handoff dispatched a journaled mutation")
+			}
+		})
+	}
 }
 
 func TestHandoffStopsAtPartialRejectedOrLostBatch(t *testing.T) {

@@ -45,6 +45,12 @@ any write. The exact unsupported number must survive export before the
 consumer rejects its conversion. A truncated second source page cannot commit
 an artifact or trigger destination reads/writes.
 
+Five further process cases consume an actual exported artifact after changing the
+effective tenant, user, app, environment, or user/bot identity. The artifact itself
+is never edited. Each case requires typed `--artifact` validation before any Base
+schema read or write, with no destination report or mutation receipt. Both the
+source state and artifact bytes must remain identical.
+
 For a 401-row handoff, batch one confirms 200 records. Batch two then exercises
 four independent backend behaviors:
 
@@ -91,6 +97,10 @@ It ran after both product dependencies were committed: Base importer
 `f080e43` and shared receipt journal `d91e695`. The canonical integration runner
 is provided by `312af93`.
 
+The binding follow-up suite passed all 17 test/subtest events, with no failures
+or skips, in `.tmp/sheets-base/binding-followup.json`. This initial run used the
+shared working tree and is not an immutable release-candidate result.
+
 ## Limits
 
 This is complete offline evidence for the supported primitive handoff, not full
@@ -101,6 +111,6 @@ The primitive source fixture omits those unsupported fields; the suite does not
 claim that arbitrary live Sheet-AI response shapes are interchangeable.
 
 Neither endpoint supplies a snapshot or compare-and-swap lock. Backend live
-privacy, live type/storage behavior, all other cross-domain workflows and
+privacy, live type/storage behavior, separately mapped cross-domain workflows and
 comparative provider-token measurements remain separate gates. No skipped or
 unperformed live case is counted as passing evidence here.
