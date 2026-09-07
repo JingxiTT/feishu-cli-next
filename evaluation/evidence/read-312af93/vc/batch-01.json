@@ -1,0 +1,970 @@
+{
+  "protocol": 1,
+  "mode": "real",
+  "split": "development",
+  "performance_claims_supported": true,
+  "completed": true,
+  "planned_runs": 9,
+  "seed": 20260916,
+  "repeats": 3,
+  "fresh_context": true,
+  "task_manifest_sha256": "92ef8e8a8996a2c18151b2569006a142616f19bd16262c71855d7f70731b260f",
+  "config_sha256": "c9a23940d11582801bbfe2d02e482a9eeb0ddc8ed86fcbbff7aeb0f9ae0c4d0f",
+  "environment": {
+    "backend": "synthetic-read-v1",
+    "model": "gpt-6-astra",
+    "tokenizer": "provider-undisclosed",
+    "reasoning": "high",
+    "tools": [
+      "shell",
+      "files"
+    ],
+    "permissions": "workspace-write; managed proxy loopback-only with local binding; isolated synthetic sidecar",
+    "budget": {
+      "timeout_seconds": 180
+    },
+    "accounting_method": "codex-cli 0.153.4 provider turn.completed; cached input included in full"
+  },
+  "arms": {
+    "official": {
+      "cli_sha256": "ab8b101b5f68418c8df02752a5ef19947d311d2e9a91fd685c0e5be24f723020",
+      "skill_sha256": "46b56963508d7a89ce291020993f9c22fb46f52db2632443f9e81495a5469123"
+    },
+    "official_concise": {
+      "cli_sha256": "ab8b101b5f68418c8df02752a5ef19947d311d2e9a91fd685c0e5be24f723020",
+      "skill_sha256": "25f02cba210aa067ed02c68460c0f5581957cf41ce68e8231fb30ce93672c70a"
+    },
+    "next": {
+      "cli_sha256": "d6795c17ebf7add776d970b69f148d87bb83c08a9ec81b490e1a69e7d55b763c",
+      "skill_sha256": "e8de6468a3b3eb65754b66961bc7037dceddb1e9f61f6b64d63539afe62a2ea0"
+    }
+  },
+  "runs": [
+    {
+      "task_id": "vc-dev-01",
+      "section": "vc",
+      "trial": 2,
+      "arm": "official_concise",
+      "success": true,
+      "usage": {
+        "input_tokens": 32361,
+        "cached_input_tokens": 15872,
+        "output_tokens": 114,
+        "total_tokens": 32475
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 32361,
+        "cached_input_tokens": 15872,
+        "output_tokens": 114,
+        "total_tokens": 32475
+      },
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "vc",
+                "meeting",
+                "get"
+              ],
+              "flags": [
+                "--as",
+                "--params"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 21.51233054199838,
+      "verification_seconds": 0.09907708299579099,
+      "api_calls": 2,
+      "retries": null,
+      "command_executions": 1
+    },
+    {
+      "task_id": "vc-dev-01",
+      "section": "vc",
+      "trial": 1,
+      "arm": "official_concise",
+      "success": true,
+      "usage": {
+        "input_tokens": 32373,
+        "cached_input_tokens": 15872,
+        "output_tokens": 108,
+        "total_tokens": 32481
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 32373,
+        "cached_input_tokens": 15872,
+        "output_tokens": 108,
+        "total_tokens": 32481
+      },
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "vc",
+                "meeting",
+                "get"
+              ],
+              "flags": [
+                "--as",
+                "--params"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 22.127334457996767,
+      "verification_seconds": 0.039431999990483746,
+      "api_calls": 2,
+      "retries": null,
+      "command_executions": 1
+    },
+    {
+      "task_id": "vc-dev-01",
+      "section": "vc",
+      "trial": 1,
+      "arm": "official",
+      "success": true,
+      "usage": {
+        "input_tokens": 114498,
+        "cached_input_tokens": 80896,
+        "output_tokens": 328,
+        "total_tokens": 114826
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 114498,
+        "cached_input_tokens": 80896,
+        "output_tokens": 328,
+        "total_tokens": 114826
+      },
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 127
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "vc",
+                "meeting",
+                "get"
+              ],
+              "flags": [
+                "--as",
+                "--params"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 45.655236207996495,
+      "verification_seconds": 0.022359499998856336,
+      "api_calls": 2,
+      "retries": null,
+      "command_executions": 7
+    },
+    {
+      "task_id": "vc-dev-01",
+      "section": "vc",
+      "trial": 0,
+      "arm": "next",
+      "success": true,
+      "usage": {
+        "input_tokens": 50338,
+        "cached_input_tokens": 36608,
+        "output_tokens": 174,
+        "total_tokens": 50512
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 50338,
+        "cached_input_tokens": 36608,
+        "output_tokens": 174,
+        "total_tokens": 50512
+      },
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "vc"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "vc",
+                "meeting",
+                "get"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "vc",
+                "meeting",
+                "get"
+              ],
+              "flags": [
+                "--as",
+                "--meeting-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 28.2331239170162,
+      "verification_seconds": 0.021368958987295628,
+      "api_calls": 4,
+      "retries": null,
+      "command_executions": 3
+    },
+    {
+      "task_id": "vc-dev-01",
+      "section": "vc",
+      "trial": 2,
+      "arm": "next",
+      "success": true,
+      "usage": {
+        "input_tokens": 51095,
+        "cached_input_tokens": 37120,
+        "output_tokens": 179,
+        "total_tokens": 51274
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 51095,
+        "cached_input_tokens": 37120,
+        "output_tokens": 179,
+        "total_tokens": 51274
+      },
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "vc",
+                "meeting",
+                "get"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "vc",
+                "meeting",
+                "get"
+              ],
+              "flags": [
+                "--as",
+                "--meeting-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 27.699219166999683,
+      "verification_seconds": 0.041834000003291294,
+      "api_calls": 4,
+      "retries": null,
+      "command_executions": 3
+    },
+    {
+      "task_id": "vc-dev-01",
+      "section": "vc",
+      "trial": 1,
+      "arm": "next",
+      "success": true,
+      "usage": {
+        "input_tokens": 51085,
+        "cached_input_tokens": 45696,
+        "output_tokens": 177,
+        "total_tokens": 51262
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 51085,
+        "cached_input_tokens": 45696,
+        "output_tokens": 177,
+        "total_tokens": 51262
+      },
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "vc",
+                "meeting",
+                "get"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "vc",
+                "meeting",
+                "get"
+              ],
+              "flags": [
+                "--as",
+                "--meeting-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 32.85688599999412,
+      "verification_seconds": 0.04378716700011864,
+      "api_calls": 4,
+      "retries": null,
+      "command_executions": 3
+    },
+    {
+      "task_id": "vc-dev-01",
+      "section": "vc",
+      "trial": 0,
+      "arm": "official_concise",
+      "success": true,
+      "usage": {
+        "input_tokens": 32368,
+        "cached_input_tokens": 15872,
+        "output_tokens": 112,
+        "total_tokens": 32480
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 32368,
+        "cached_input_tokens": 15872,
+        "output_tokens": 112,
+        "total_tokens": 32480
+      },
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "vc",
+                "meeting",
+                "get"
+              ],
+              "flags": [
+                "--as",
+                "--params"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 20.375377457996365,
+      "verification_seconds": 0.04791799999657087,
+      "api_calls": 2,
+      "retries": null,
+      "command_executions": 1
+    },
+    {
+      "task_id": "vc-dev-01",
+      "section": "vc",
+      "trial": 2,
+      "arm": "official",
+      "success": true,
+      "usage": {
+        "input_tokens": 113789,
+        "cached_input_tokens": 99200,
+        "output_tokens": 323,
+        "total_tokens": 114112
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 113789,
+        "cached_input_tokens": 99200,
+        "output_tokens": 323,
+        "total_tokens": 114112
+      },
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 127
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "vc",
+                "meeting",
+                "get"
+              ],
+              "flags": [
+                "--as",
+                "--params"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 50.68846083400422,
+      "verification_seconds": 0.03452549999929033,
+      "api_calls": 2,
+      "retries": null,
+      "command_executions": 7
+    },
+    {
+      "task_id": "vc-dev-01",
+      "section": "vc",
+      "trial": 0,
+      "arm": "official",
+      "success": true,
+      "usage": {
+        "input_tokens": 134341,
+        "cached_input_tokens": 109056,
+        "output_tokens": 335,
+        "total_tokens": 134676
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 134341,
+        "cached_input_tokens": 109056,
+        "output_tokens": 335,
+        "total_tokens": 134676
+      },
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 127
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "vc",
+                "meeting",
+                "get"
+              ],
+              "flags": [
+                "--as",
+                "--params"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 43.106660707999254,
+      "verification_seconds": 0.040828874974977225,
+      "api_calls": 2,
+      "retries": null,
+      "command_executions": 7
+    }
+  ],
+  "groups": [
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 3,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 153048,
+      "tokens_per_success": 51016.0,
+      "token_distribution": {
+        "min": 50512,
+        "median": 51262,
+        "max": 51274,
+        "stdev": 436.51804086429235
+      },
+      "latency_median_seconds": 28.2331239170162,
+      "api_calls": 12,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 3,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 363614,
+      "tokens_per_success": 121204.66666666667,
+      "token_distribution": {
+        "min": 114112,
+        "median": 114826,
+        "max": 134676,
+        "stdev": 11671.977781564414
+      },
+      "latency_median_seconds": 45.655236207996495,
+      "api_calls": 6,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "official_concise",
+      "attempts": 3,
+      "successes": 3,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 97436,
+      "tokens_per_success": 32478.666666666668,
+      "token_distribution": {
+        "min": 32475,
+        "median": 32480,
+        "max": 32481,
+        "stdev": 3.2145502536643185
+      },
+      "latency_median_seconds": 21.51233054199838,
+      "api_calls": 6,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "section",
+      "name": "vc",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 3,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 153048,
+      "tokens_per_success": 51016.0,
+      "token_distribution": {
+        "min": 50512,
+        "median": 51262,
+        "max": 51274,
+        "stdev": 436.51804086429235
+      },
+      "latency_median_seconds": 28.2331239170162,
+      "api_calls": 12,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "section",
+      "name": "vc",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 3,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 363614,
+      "tokens_per_success": 121204.66666666667,
+      "token_distribution": {
+        "min": 114112,
+        "median": 114826,
+        "max": 134676,
+        "stdev": 11671.977781564414
+      },
+      "latency_median_seconds": 45.655236207996495,
+      "api_calls": 6,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "section",
+      "name": "vc",
+      "arm": "official_concise",
+      "attempts": 3,
+      "successes": 3,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 97436,
+      "tokens_per_success": 32478.666666666668,
+      "token_distribution": {
+        "min": 32475,
+        "median": 32480,
+        "max": 32481,
+        "stdev": 3.2145502536643185
+      },
+      "latency_median_seconds": 21.51233054199838,
+      "api_calls": 6,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "task_id",
+      "name": "vc-dev-01",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 3,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 153048,
+      "tokens_per_success": 51016.0,
+      "token_distribution": {
+        "min": 50512,
+        "median": 51262,
+        "max": 51274,
+        "stdev": 436.51804086429235
+      },
+      "latency_median_seconds": 28.2331239170162,
+      "api_calls": 12,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "task_id",
+      "name": "vc-dev-01",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 3,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 363614,
+      "tokens_per_success": 121204.66666666667,
+      "token_distribution": {
+        "min": 114112,
+        "median": 114826,
+        "max": 134676,
+        "stdev": 11671.977781564414
+      },
+      "latency_median_seconds": 45.655236207996495,
+      "api_calls": 6,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "task_id",
+      "name": "vc-dev-01",
+      "arm": "official_concise",
+      "attempts": 3,
+      "successes": 3,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 97436,
+      "tokens_per_success": 32478.666666666668,
+      "token_distribution": {
+        "min": 32475,
+        "median": 32480,
+        "max": 32481,
+        "stdev": 3.2145502536643185
+      },
+      "latency_median_seconds": 21.51233054199838,
+      "api_calls": 6,
+      "retries": null,
+      "failure_categories": {}
+    }
+  ],
+  "matched_success": [
+    {
+      "baseline": "official",
+      "pairs": [
+        {
+          "task_id": "vc-dev-01",
+          "trial": 0,
+          "baseline_tokens": 134676,
+          "next_tokens": 50512
+        },
+        {
+          "task_id": "vc-dev-01",
+          "trial": 2,
+          "baseline_tokens": 114112,
+          "next_tokens": 51274
+        },
+        {
+          "task_id": "vc-dev-01",
+          "trial": 1,
+          "baseline_tokens": 114826,
+          "next_tokens": 51262
+        }
+      ]
+    },
+    {
+      "baseline": "official_concise",
+      "pairs": [
+        {
+          "task_id": "vc-dev-01",
+          "trial": 0,
+          "baseline_tokens": 32480,
+          "next_tokens": 50512
+        },
+        {
+          "task_id": "vc-dev-01",
+          "trial": 2,
+          "baseline_tokens": 32475,
+          "next_tokens": 51274
+        },
+        {
+          "task_id": "vc-dev-01",
+          "trial": 1,
+          "baseline_tokens": 32481,
+          "next_tokens": 51262
+        }
+      ]
+    }
+  ]
+}

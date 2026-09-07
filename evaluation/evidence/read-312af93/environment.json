@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "status": "complete_with_verification_failures",
+  "candidate_revision": "312af93804a44fe38cbaf1fb7ffea36a24b60357",
+  "candidate_binary_sha256": "d6795c17ebf7add776d970b69f148d87bb83c08a9ec81b490e1a69e7d55b763c",
+  "official_revision": "7fd6ef3c07182257ce776cdc5a614e122d5bd4b3",
+  "official_binary_sha256": "ab8b101b5f68418c8df02752a5ef19947d311d2e9a91fd685c0e5be24f723020",
+  "evaluator_revision": "cc745f538bfba7805f5f36c17faca4436b15a1aa",
+  "codex_version": "codex-cli 0.153.4",
+  "model": "gpt-6-astra",
+  "reasoning": "high",
+  "sections": [
+    "application",
+    "apps",
+    "im",
+    "minutes",
+    "note",
+    "slides",
+    "vc",
+    "whiteboard",
+    "wiki"
+  ],
+  "planned_attempts": 81,
+  "repeats_per_arm": 3,
+  "seeds": "20260910..20260918 in manifest section order",
+  "metadata_sha256": "b5375251ff1f0a5939925587b0d514669a748135cde36c56f1c8ab5f5fe266c8",
+  "build_command": "go build -mod=readonly -tags authsidecar -o <binary> .",
+  "controlled_tests": {
+    "passed": 34,
+    "skipped": 0,
+    "read_cli_examples": 70,
+    "binary_section_combinations": 18,
+    "native_sandbox_loopback_and_external_denial": true
+  },
+  "guidance": "Frozen original skill distribution/reference files; selected entry injected. Concise English replaces selected entry with identical original references available. Application uses unchanged official domain affordance fallback; no matching official skill exists. Note/Minutes/VC original compatibility entries route to lark-meeting.",
+  "privacy": "Synthetic signed loopback fixture only, no forwarding, isolated empty Feishu auth/config, runtime expected/serverdata not supplied to model, sanitized command names/flags only. Existing Codex authhome consumed internally; no contents or path committed.",
+  "held_out": "untouched",
+  "previous_contact": "Separate 4ce36da regression retained unchanged; this candidate includes discoveryced4030.",
+  "completed_attempts": 81,
+  "verified_successes": 75,
+  "provider_total_tokens": 8419135,
+  "whole_batch_product_performance_claim_supported": false
+}

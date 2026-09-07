@@ -1,0 +1,969 @@
+{
+  "protocol": 1,
+  "mode": "real",
+  "split": "development",
+  "performance_claims_supported": true,
+  "completed": true,
+  "planned_runs": 9,
+  "seed": 20260917,
+  "repeats": 3,
+  "fresh_context": true,
+  "task_manifest_sha256": "92ef8e8a8996a2c18151b2569006a142616f19bd16262c71855d7f70731b260f",
+  "config_sha256": "5cd27430e7129a9fb689164652903643dc853ce785687edc2389a6d865834b74",
+  "environment": {
+    "backend": "synthetic-read-v1",
+    "model": "gpt-6-astra",
+    "tokenizer": "provider-undisclosed",
+    "reasoning": "high",
+    "tools": [
+      "shell",
+      "files"
+    ],
+    "permissions": "workspace-write; managed proxy loopback-only with local binding; isolated synthetic sidecar",
+    "budget": {
+      "timeout_seconds": 180
+    },
+    "accounting_method": "codex-cli 0.153.4 provider turn.completed; cached input included in full"
+  },
+  "arms": {
+    "official": {
+      "cli_sha256": "ab8b101b5f68418c8df02752a5ef19947d311d2e9a91fd685c0e5be24f723020",
+      "skill_sha256": "78a3fbffa0da5c561b3e7035543fe1e80dbd7854c38d84e35e1392598b288f07"
+    },
+    "official_concise": {
+      "cli_sha256": "ab8b101b5f68418c8df02752a5ef19947d311d2e9a91fd685c0e5be24f723020",
+      "skill_sha256": "72010406ff5304bee5b493902c4e164aa7a49a504b52f62da03e39e2385a572a"
+    },
+    "next": {
+      "cli_sha256": "d6795c17ebf7add776d970b69f148d87bb83c08a9ec81b490e1a69e7d55b763c",
+      "skill_sha256": "e8de6468a3b3eb65754b66961bc7037dceddb1e9f61f6b64d63539afe62a2ea0"
+    }
+  },
+  "runs": [
+    {
+      "task_id": "whiteboard-dev-01",
+      "section": "whiteboard",
+      "trial": 2,
+      "arm": "official",
+      "success": true,
+      "usage": {
+        "input_tokens": 81902,
+        "cached_input_tokens": 65280,
+        "output_tokens": 368,
+        "total_tokens": 82270
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 81902,
+        "cached_input_tokens": 65280,
+        "output_tokens": 368,
+        "total_tokens": 82270
+      },
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 127
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [],
+              "flags": [
+                "--version"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "whiteboard",
+                "+export"
+              ],
+              "flags": [
+                "--as",
+                "--output-type",
+                "--whiteboard-token"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 34.63475216698134,
+      "verification_seconds": 0.02668116701534018,
+      "api_calls": 3,
+      "retries": null,
+      "command_executions": 7
+    },
+    {
+      "task_id": "whiteboard-dev-01",
+      "section": "whiteboard",
+      "trial": 1,
+      "arm": "next",
+      "success": true,
+      "usage": {
+        "input_tokens": 49479,
+        "cached_input_tokens": 36096,
+        "output_tokens": 187,
+        "total_tokens": 49666
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 49479,
+        "cached_input_tokens": 36096,
+        "output_tokens": 187,
+        "total_tokens": 49666
+      },
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "whiteboard",
+                "+export"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "whiteboard",
+                "+export"
+              ],
+              "flags": [
+                "--output-type",
+                "--whiteboard-token"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 29.000151792017277,
+      "verification_seconds": 0.029737708013271913,
+      "api_calls": 4,
+      "retries": null,
+      "command_executions": 3
+    },
+    {
+      "task_id": "whiteboard-dev-01",
+      "section": "whiteboard",
+      "trial": 1,
+      "arm": "official",
+      "success": true,
+      "usage": {
+        "input_tokens": 82332,
+        "cached_input_tokens": 65536,
+        "output_tokens": 398,
+        "total_tokens": 82730
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 82332,
+        "cached_input_tokens": 65536,
+        "output_tokens": 398,
+        "total_tokens": 82730
+      },
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 127
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "whiteboard"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [],
+              "flags": [
+                "--version"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "whiteboard",
+                "+export"
+              ],
+              "flags": [
+                "--as",
+                "--output-type",
+                "--whiteboard-token"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 38.13435937499162,
+      "verification_seconds": 0.0363782919885125,
+      "api_calls": 4,
+      "retries": null,
+      "command_executions": 7
+    },
+    {
+      "task_id": "whiteboard-dev-01",
+      "section": "whiteboard",
+      "trial": 0,
+      "arm": "official",
+      "success": true,
+      "usage": {
+        "input_tokens": 81979,
+        "cached_input_tokens": 65408,
+        "output_tokens": 435,
+        "total_tokens": 82414
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 81979,
+        "cached_input_tokens": 65408,
+        "output_tokens": 435,
+        "total_tokens": 82414
+      },
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 127
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [],
+              "flags": [
+                "--version"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 127
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "whiteboard",
+                "+export"
+              ],
+              "flags": [
+                "--as",
+                "--output-type",
+                "--whiteboard-token"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 49.25750274999882,
+      "verification_seconds": 0.0487631669966504,
+      "api_calls": 3,
+      "retries": null,
+      "command_executions": 8
+    },
+    {
+      "task_id": "whiteboard-dev-01",
+      "section": "whiteboard",
+      "trial": 0,
+      "arm": "official_concise",
+      "success": true,
+      "usage": {
+        "input_tokens": 27047,
+        "cached_input_tokens": 13184,
+        "output_tokens": 111,
+        "total_tokens": 27158
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 27047,
+        "cached_input_tokens": 13184,
+        "output_tokens": 111,
+        "total_tokens": 27158
+      },
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "whiteboard",
+                "+export"
+              ],
+              "flags": [
+                "--as",
+                "--output-type",
+                "--whiteboard-token"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 22.62556833299459,
+      "verification_seconds": 0.033795791008742526,
+      "api_calls": 2,
+      "retries": null,
+      "command_executions": 1
+    },
+    {
+      "task_id": "whiteboard-dev-01",
+      "section": "whiteboard",
+      "trial": 2,
+      "arm": "official_concise",
+      "success": true,
+      "usage": {
+        "input_tokens": 27040,
+        "cached_input_tokens": 13184,
+        "output_tokens": 111,
+        "total_tokens": 27151
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 27040,
+        "cached_input_tokens": 13184,
+        "output_tokens": 111,
+        "total_tokens": 27151
+      },
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "whiteboard",
+                "+export"
+              ],
+              "flags": [
+                "--as",
+                "--output-type",
+                "--whiteboard-token"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 27.582308749988442,
+      "verification_seconds": 0.04860745801124722,
+      "api_calls": 2,
+      "retries": null,
+      "command_executions": 1
+    },
+    {
+      "task_id": "whiteboard-dev-01",
+      "section": "whiteboard",
+      "trial": 2,
+      "arm": "next",
+      "success": true,
+      "usage": {
+        "input_tokens": 49488,
+        "cached_input_tokens": 44800,
+        "output_tokens": 184,
+        "total_tokens": 49672
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 49488,
+        "cached_input_tokens": 44800,
+        "output_tokens": 184,
+        "total_tokens": 49672
+      },
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "whiteboard",
+                "+export"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "whiteboard",
+                "+export"
+              ],
+              "flags": [
+                "--output-type",
+                "--whiteboard-token"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 33.50600883399602,
+      "verification_seconds": 0.045115541986888275,
+      "api_calls": 4,
+      "retries": null,
+      "command_executions": 3
+    },
+    {
+      "task_id": "whiteboard-dev-01",
+      "section": "whiteboard",
+      "trial": 1,
+      "arm": "official_concise",
+      "success": true,
+      "usage": {
+        "input_tokens": 27045,
+        "cached_input_tokens": 13184,
+        "output_tokens": 116,
+        "total_tokens": 27161
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 27045,
+        "cached_input_tokens": 13184,
+        "output_tokens": 116,
+        "total_tokens": 27161
+      },
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "whiteboard",
+                "+export"
+              ],
+              "flags": [
+                "--as",
+                "--output-type",
+                "--whiteboard-token"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 20.27776129200356,
+      "verification_seconds": 0.030346999992616475,
+      "api_calls": 2,
+      "retries": null,
+      "command_executions": 1
+    },
+    {
+      "task_id": "whiteboard-dev-01",
+      "section": "whiteboard",
+      "trial": 0,
+      "arm": "next",
+      "success": true,
+      "usage": {
+        "input_tokens": 49483,
+        "cached_input_tokens": 36096,
+        "output_tokens": 186,
+        "total_tokens": 49669
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 49483,
+        "cached_input_tokens": 36096,
+        "output_tokens": 186,
+        "total_tokens": 49669
+      },
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "whiteboard",
+                "+export"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "whiteboard",
+                "+export"
+              ],
+              "flags": [
+                "--output-type",
+                "--whiteboard-token"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 25.76844983297633,
+      "verification_seconds": 0.03565825000987388,
+      "api_calls": 4,
+      "retries": null,
+      "command_executions": 3
+    }
+  ],
+  "groups": [
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 3,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 149007,
+      "tokens_per_success": 49669.0,
+      "token_distribution": {
+        "min": 49666,
+        "median": 49669,
+        "max": 49672,
+        "stdev": 3.0
+      },
+      "latency_median_seconds": 29.000151792017277,
+      "api_calls": 12,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 3,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 247414,
+      "tokens_per_success": 82471.33333333333,
+      "token_distribution": {
+        "min": 82270,
+        "median": 82414,
+        "max": 82730,
+        "stdev": 235.29839211803665
+      },
+      "latency_median_seconds": 38.13435937499162,
+      "api_calls": 10,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "official_concise",
+      "attempts": 3,
+      "successes": 3,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 81470,
+      "tokens_per_success": 27156.666666666668,
+      "token_distribution": {
+        "min": 27151,
+        "median": 27158,
+        "max": 27161,
+        "stdev": 5.131601439446884
+      },
+      "latency_median_seconds": 22.62556833299459,
+      "api_calls": 6,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "section",
+      "name": "whiteboard",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 3,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 149007,
+      "tokens_per_success": 49669.0,
+      "token_distribution": {
+        "min": 49666,
+        "median": 49669,
+        "max": 49672,
+        "stdev": 3.0
+      },
+      "latency_median_seconds": 29.000151792017277,
+      "api_calls": 12,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "section",
+      "name": "whiteboard",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 3,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 247414,
+      "tokens_per_success": 82471.33333333333,
+      "token_distribution": {
+        "min": 82270,
+        "median": 82414,
+        "max": 82730,
+        "stdev": 235.29839211803665
+      },
+      "latency_median_seconds": 38.13435937499162,
+      "api_calls": 10,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "section",
+      "name": "whiteboard",
+      "arm": "official_concise",
+      "attempts": 3,
+      "successes": 3,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 81470,
+      "tokens_per_success": 27156.666666666668,
+      "token_distribution": {
+        "min": 27151,
+        "median": 27158,
+        "max": 27161,
+        "stdev": 5.131601439446884
+      },
+      "latency_median_seconds": 22.62556833299459,
+      "api_calls": 6,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "task_id",
+      "name": "whiteboard-dev-01",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 3,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 149007,
+      "tokens_per_success": 49669.0,
+      "token_distribution": {
+        "min": 49666,
+        "median": 49669,
+        "max": 49672,
+        "stdev": 3.0
+      },
+      "latency_median_seconds": 29.000151792017277,
+      "api_calls": 12,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "task_id",
+      "name": "whiteboard-dev-01",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 3,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 247414,
+      "tokens_per_success": 82471.33333333333,
+      "token_distribution": {
+        "min": 82270,
+        "median": 82414,
+        "max": 82730,
+        "stdev": 235.29839211803665
+      },
+      "latency_median_seconds": 38.13435937499162,
+      "api_calls": 10,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "task_id",
+      "name": "whiteboard-dev-01",
+      "arm": "official_concise",
+      "attempts": 3,
+      "successes": 3,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 81470,
+      "tokens_per_success": 27156.666666666668,
+      "token_distribution": {
+        "min": 27151,
+        "median": 27158,
+        "max": 27161,
+        "stdev": 5.131601439446884
+      },
+      "latency_median_seconds": 22.62556833299459,
+      "api_calls": 6,
+      "retries": null,
+      "failure_categories": {}
+    }
+  ],
+  "matched_success": [
+    {
+      "baseline": "official",
+      "pairs": [
+        {
+          "task_id": "whiteboard-dev-01",
+          "trial": 1,
+          "baseline_tokens": 82730,
+          "next_tokens": 49666
+        },
+        {
+          "task_id": "whiteboard-dev-01",
+          "trial": 2,
+          "baseline_tokens": 82270,
+          "next_tokens": 49672
+        },
+        {
+          "task_id": "whiteboard-dev-01",
+          "trial": 0,
+          "baseline_tokens": 82414,
+          "next_tokens": 49669
+        }
+      ]
+    },
+    {
+      "baseline": "official_concise",
+      "pairs": [
+        {
+          "task_id": "whiteboard-dev-01",
+          "trial": 1,
+          "baseline_tokens": 27161,
+          "next_tokens": 49666
+        },
+        {
+          "task_id": "whiteboard-dev-01",
+          "trial": 2,
+          "baseline_tokens": 27151,
+          "next_tokens": 49672
+        },
+        {
+          "task_id": "whiteboard-dev-01",
+          "trial": 0,
+          "baseline_tokens": 27158,
+          "next_tokens": 49669
+        }
+      ]
+    }
+  ]
+}
