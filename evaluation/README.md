@@ -464,3 +464,18 @@ The candidate receives its pinned entry skill. This is source-matched general
 CLI guidance, not an invented official business skill. The adapter uses the same
 signed loopback transport, provider accounting and independent state verifier.
 No supplemental model trials have run yet.
+
+## Completed size-series plot
+
+After both Base and Sheets batches contain all 27 planned attempts, export the
+provider-token plot with Matplotlib (3.10.8 used for this work):
+
+```sh
+python3 evaluation/plot_scaling.py evaluation/evidence/scaling-8d-archive04
+```
+
+The script produces PNG/SVG files beside the batch reports and embeds their
+source hashes. It rejects incomplete batches. All complete-usage attempts remain
+visible, including nonverified outcomes; unknown totals are disclosed and are
+never plotted at zero. Inspect the actual exported images before including them
+in the final report. The script alone is not completed scaling evidence.
