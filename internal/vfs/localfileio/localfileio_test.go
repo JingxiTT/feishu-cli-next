@@ -6,12 +6,14 @@ package localfileio
 import (
 	"errors"
 	"io"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 
 	"github.com/larksuite/cli/extension/fileio"
+	"github.com/larksuite/cli/internal/vfs"
 )
 
 // testChdir temporarily changes the working directory for a test.
@@ -205,21 +207,53 @@ func TestLocalFileIO_Save_RejectsTraversal(t *testing.T) {
 	}
 }
 
+// saveValidationFS has no backing filesystem: even a validation regression cannot
+// write to the host. Unexpected operations panic through the nil embedded FS.
+type saveValidationFS struct {
+	vfs.FS
+	cwd        string
+	mkdirCalls int
+	writeCalls int
+}
+
+func (f *saveValidationFS) Getwd() (string, error) { return f.cwd, nil }
+
+func (f *saveValidationFS) Lstat(string) (fs.FileInfo, error) { return nil, fs.ErrNotExist }
+
+func (f *saveValidationFS) MkdirAll(string, fs.FileMode) error {
+	f.mkdirCalls++
+	return fs.ErrPermission
+}
+
+func (f *saveValidationFS) CreateTemp(string, string) (*os.File, error) {
+	f.writeCalls++
+	return nil, fs.ErrPermission
+}
+
 func TestLocalFileIO_Save_RejectsPathOutsideAllowlist(t *testing.T) {
-	home, err := os.UserHomeDir()
-	if err != nil {
-		t.Skipf("no home dir: %v", err)
-	}
-	// The home directory itself is not an allow root (only ~/files is), so
-	// this absolute target must be refused before anything touches the disk.
-	target := filepath.Join(home, "save-outside-allowlist-test", "evil.txt")
+	// Populate the process-wide policy caches before installing the synthetic FS.
+	fixedAllowRoots()
+	denyRoots()
+	root := filepath.VolumeName(os.TempDir()) + string(filepath.Separator)
+	target := filepath.Join(root, "save-outside-allowlist-test", "evil.txt")
+	spy := &saveValidationFS{cwd: filepath.Join(root, "save-workspace-test")}
+	t.Setenv("LARKSUITE_CLI_CONFIG_DIR", filepath.Join(spy.cwd, ".lark-cli"))
+	original := vfs.DefaultFS
+	vfs.DefaultFS = spy
+	t.Cleanup(func() { vfs.DefaultFS = original })
 
 	fio := &LocalFileIO{}
-	if _, err := fio.Save(target, fileio.SaveOptions{}, strings.NewReader("bad")); err == nil {
-		t.Error("expected error for absolute path outside the allowlist in Save")
+	body := strings.NewReader("bad")
+	result, err := fio.Save(target, fileio.SaveOptions{}, body)
+	if !errors.Is(err, fileio.ErrPathValidation) {
+		t.Fatalf("Save error = %v, want fileio.ErrPathValidation", err)
 	}
-	if _, err := os.Stat(filepath.Dir(target)); !os.IsNotExist(err) {
-		t.Errorf("Save must not create directories for rejected paths, stat err = %v", err)
+	if !strings.Contains(err.Error(), "outside the built-in allowlist") {
+		t.Errorf("Save error = %v, want allowlist rejection", err)
+	}
+	if result != nil || spy.mkdirCalls != 0 || spy.writeCalls != 0 || body.Len() != len("bad") {
+		t.Errorf("rejected Save had side effects: result=%v mkdir=%d write=%d unread=%d",
+			result, spy.mkdirCalls, spy.writeCalls, body.Len())
 	}
 }
 
