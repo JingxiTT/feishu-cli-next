@@ -44,27 +44,27 @@ func specForFieldType(fieldType string) (fieldTypeSpec, bool) {
 	case "number":
 		return fieldTypeSpec{kind: KindNumber, physicalType: "number|null"}, true
 	case "checkbox":
-		return fieldTypeSpec{kind: KindBoolean, physicalType: "boolean"}, true
+		return fieldTypeSpec{kind: KindBoolean, physicalType: "boolean|null"}, true
 	case "location":
 		return fieldTypeSpec{
 			kind: KindObject, physicalType: "struct<lng number, lat number, full_address string>|null",
 		}, true
 	case "select":
-		return fieldTypeSpec{kind: KindString, repeated: true, physicalType: "array<string>"}, true
+		return fieldTypeSpec{kind: KindString, repeated: true, physicalType: "array<string>|null"}, true
 	case "user", "group_chat", "created_by", "updated_by":
 		return fieldTypeSpec{
 			kind: KindObject, repeated: true,
-			physicalType: "array<struct<id string, name string>>",
+			physicalType: "array<struct<id string, name string>>|null",
 		}, true
 	case "link":
 		return fieldTypeSpec{
 			kind: KindObject, repeated: true,
-			physicalType: "array<struct<id string>>",
+			physicalType: "array<struct<id string>>|null",
 		}, true
 	case "attachment":
 		return fieldTypeSpec{
 			kind: KindObject, repeated: true,
-			physicalType: "array<struct<file_token string, size number, name string>>",
+			physicalType: "array<struct<file_token string, size number, name string>>|null",
 		}, true
 	default:
 		return fieldTypeSpec{}, false
@@ -118,9 +118,11 @@ type IgnoredField struct {
 
 // Page contains one parsed matrix page and its query metadata.
 type Page struct {
-	Dataset        Dataset
-	Rev            *int64
-	HasMore        bool
+	Dataset Dataset
+	Rev     *int64
+	HasMore bool
+	// HasMoreKnown distinguishes omitted pagination metadata from explicit false.
+	HasMoreKnown   bool
 	IgnoredFields  []IgnoredField
 	QueryContext   map[string]any
 	RecordNotFound []string
@@ -172,19 +174,22 @@ func ParseMatrix(data map[string]any) (Page, error) {
 	exportColumns := []Column{{
 		Name: RecordIDColumnName, System: true,
 	}}
-	exportSourceIndexes := make([]int, 0, len(fields))
+	seenNames := map[string]bool{RecordIDColumnName: true}
+	seenIDs := make(map[string]bool, len(fields))
 	for index := range fields {
 		column, err := sourceColumn(fields[index], fieldIDs[index], fieldTypes[index])
 		if err != nil {
 			return Page{}, err
 		}
 		sourceColumns = append(sourceColumns, column)
-		// The system join key intentionally wins over a same-named Base field.
-		if column.Name == RecordIDColumnName {
-			continue
+		if seenNames[column.Name] {
+			return Page{}, &MatrixError{Reason: fmt.Sprintf("field name %q collides with another exported column", column.Name)}
 		}
+		if seenIDs[column.FieldID] {
+			return Page{}, &MatrixError{Reason: fmt.Sprintf("duplicate field ID %q", column.FieldID)}
+		}
+		seenNames[column.Name], seenIDs[column.FieldID] = true, true
 		exportColumns = append(exportColumns, column)
-		exportSourceIndexes = append(exportSourceIndexes, index)
 	}
 
 	recordIDs, err := stringList(data["record_id_list"], "record_id_list")
@@ -214,8 +219,8 @@ func ParseMatrix(data map[string]any) (Page, error) {
 		}
 		values := make([]any, 1, len(exportColumns))
 		values[0] = recordIDs[rowIndex]
-		for _, sourceIndex := range exportSourceIndexes {
-			value, err := normalizeCell(sourceColumns[sourceIndex], row[sourceIndex], timezone)
+		for sourceIndex := range sourceColumns {
+			value, err := validateCell(sourceColumns[sourceIndex], row[sourceIndex])
 			if err != nil {
 				return Page{}, &MatrixError{Reason: fmt.Sprintf(
 					"row %d column %q: %v", rowIndex+1, sourceColumns[sourceIndex].Name, err,
@@ -246,6 +251,7 @@ func ParseMatrix(data map[string]any) (Page, error) {
 			return Page{}, &MatrixError{Reason: "has_more must be a boolean"}
 		}
 		page.HasMore = value
+		page.HasMoreKnown = true
 	}
 	if raw, exists := data["query_context"]; exists && raw != nil {
 		value, ok := raw.(map[string]any)
@@ -289,15 +295,17 @@ func sourceColumn(name, fieldID, fieldType string) (Column, error) {
 	return Column{Name: name, FieldID: fieldID, FieldType: fieldType}, nil
 }
 
-func normalizeCell(column Column, value any, timezone string) (any, error) {
+func validateCell(column Column, value any) (any, error) {
 	spec, ok := specForFieldType(column.FieldType)
 	if !ok {
 		return nil, newDetailErrorf("unsupported field type %q", column.FieldType)
 	}
+	// Validation never substitutes values: null, empty containers, and date
+	// strings retain their source JSON representation.
+	if value == nil {
+		return nil, nil
+	}
 	if spec.repeated {
-		if value == nil {
-			return []any{}, nil
-		}
 		items, ok := value.([]any)
 		if !ok {
 			return nil, newDetailErrorf("expected array, got %T", value)
@@ -316,20 +324,11 @@ func normalizeCell(column Column, value any, timezone string) (any, error) {
 		}
 		return items, nil
 	}
-	if value == nil {
-		if column.FieldType == "checkbox" {
-			return false, nil
-		}
-		return nil, nil
-	}
 	switch spec.kind {
 	case KindString:
 		text, ok := value.(string)
 		if !ok {
 			return nil, newDetailErrorf("expected string, got %T", value)
-		}
-		if column.FieldType == "datetime" || column.FieldType == "created_at" || column.FieldType == "updated_at" {
-			return normalizeDateTime(text, timezone)
 		}
 		return text, nil
 	case KindNumber:
@@ -354,6 +353,8 @@ func normalizeCell(column Column, value any, timezone string) (any, error) {
 	}
 }
 
+// normalizeDateTime is used only to compare manifest date bounds. Record cells
+// retain their original strings, including unparseable or empty text.
 func normalizeDateTime(value, timezone string) (string, error) {
 	if _, err := time.Parse(time.RFC3339Nano, value); err == nil {
 		return value, nil

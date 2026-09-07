@@ -19,7 +19,7 @@ import (
 	"github.com/larksuite/cli/internal/httpmock"
 )
 
-func TestRecordListNDJSONOutputInfersFormatAndNormalizesValues(t *testing.T) {
+func TestRecordListNDJSONOutputInfersFormatAndPreservesValues(t *testing.T) {
 	dir := t.TempDir()
 	withBaseWorkingDir(t, dir)
 	factory, stdout, registry := newExecuteFactory(t)
@@ -72,11 +72,11 @@ func TestRecordListNDJSONOutputInfersFormatAndNormalizesValues(t *testing.T) {
 		t.Fatalf("Name stats = %#v", nameStats)
 	}
 	tagStats := columns["Tags"].(map[string]any)["stats"].(map[string]any)
-	if tagStats["empty_count"] != float64(1) || tagStats["max_length"] != float64(1) || tagStats["avg_length"] != 0.5 {
+	if tagStats["empty_count"] != float64(0) || tagStats["null_count"] != float64(1) || tagStats["max_length"] != float64(1) || tagStats["avg_length"] != float64(1) {
 		t.Fatalf("Tags stats = %#v", tagStats)
 	}
 	doneColumn := columns["Done"].(map[string]any)
-	if doneColumn["physical_type"] != "boolean" || doneColumn["stats"].(map[string]any)["true_count"] != float64(1) {
+	if doneColumn["physical_type"] != "boolean|null" || doneColumn["stats"].(map[string]any)["true_count"] != float64(1) {
 		t.Fatalf("Done column = %#v", doneColumn)
 	}
 
@@ -108,17 +108,17 @@ func TestRecordListNDJSONOutputInfersFormatAndNormalizesValues(t *testing.T) {
 	if len(rows) != 2 {
 		t.Fatalf("rows = %d", len(rows))
 	}
-	if tags, ok := rows[0]["Tags"].([]any); !ok || len(tags) != 0 {
+	if rows[0]["Tags"] != nil {
 		t.Fatalf("empty Tags = %#v", rows[0]["Tags"])
 	}
-	if got := rows[0]["When"]; got != "2026-08-04T12:30:00+08:00" {
+	if got := rows[0]["When"]; got != "2026-08-04 12:30:00" {
 		t.Fatalf("When = %#v", got)
 	}
 	if rows[1]["Name"] != nil {
 		t.Fatalf("Name = %#v, want null", rows[1]["Name"])
 	}
-	if rows[1]["Done"] != false {
-		t.Fatalf("Done = %#v, want false", rows[1]["Done"])
+	if rows[1]["Done"] != nil {
+		t.Fatalf("Done = %#v, want null", rows[1]["Done"])
 	}
 	manifestFileBytes, err := os.ReadFile(filepath.Join(dir, "exports", "customers.manifest.json"))
 	if err != nil {
@@ -656,4 +656,36 @@ func recordMatrixPageWithRev(start, count int, hasMore bool, fieldID string, rev
 	page := recordMatrixPage(start, count, hasMore, fieldID)
 	page["rev"] = json.Number(fmt.Sprintf("%d", rev))
 	return page
+}
+
+func TestRecordListNDJSONRejectsCollisionsWithoutPublishingFiles(t *testing.T) {
+	for _, tc := range []struct {
+		name        string
+		fields, ids []any
+	}{
+		{"system name", []any{"record_id", "Name"}, []any{"fld_one", "fld_two"}},
+		{"duplicate name", []any{"Name", "Name"}, []any{"fld_one", "fld_two"}},
+		{"duplicate ID", []any{"Name", "Other"}, []any{"fld_one", "fld_one"}},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			dir := t.TempDir()
+			withBaseWorkingDir(t, dir)
+			factory, stdout, registry := newExecuteFactory(t)
+			registry.Register(&httpmock.Stub{Method: "GET", URL: "limit=1&offset=0", Body: map[string]any{"code": 0, "data": map[string]any{
+				"timezone": "UTC", "fields": tc.fields, "field_id_list": tc.ids,
+				"field_type_list": []any{"text", "text"}, "record_id_list": []any{"rec_1"},
+				"data": []any{[]any{"first", "second"}}, "has_more": false,
+			}}})
+			err := runShortcut(t, BaseRecordList, []string{"+record-list", "--base-token", "app_x", "--table-id", "tbl_x", "--limit", "1", "--output", "collision.ndjson"}, factory, stdout)
+			problem, ok := errs.ProblemOf(err)
+			if !ok || problem.Subtype != errs.SubtypeInvalidResponse || errors.Unwrap(err) == nil {
+				t.Fatalf("problem = %#v, error = %v", problem, err)
+			}
+			for _, filename := range []string{"collision.ndjson", "collision.manifest.json"} {
+				if _, statErr := os.Stat(filepath.Join(dir, filename)); !errors.Is(statErr, os.ErrNotExist) {
+					t.Fatalf("%s exists: %v", filename, statErr)
+				}
+			}
+		})
+	}
 }

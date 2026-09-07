@@ -6,11 +6,13 @@ package recordexport
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
+	"reflect"
 	"strings"
 	"testing"
 )
 
-func TestParseMatrixNormalizesTypedRows(t *testing.T) {
+func TestParseMatrixPreservesTypedRows(t *testing.T) {
 	page, err := ParseMatrix(map[string]any{
 		"rev":           json.Number("42"),
 		"timezone":      "Asia/Shanghai",
@@ -38,29 +40,29 @@ func TestParseMatrixNormalizesTypedRows(t *testing.T) {
 	if got := page.Dataset.Columns[0].PhysicalType(); got != "string" {
 		t.Fatalf("record_id physical type = %q", got)
 	}
-	if got := page.Dataset.Columns[2].PhysicalType(); got != "array<string>" {
+	if got := page.Dataset.Columns[2].PhysicalType(); got != "array<string>|null" {
 		t.Fatalf("Tags physical type = %q", got)
 	}
-	if got := page.Dataset.Columns[3].PhysicalType(); got != "array<struct<id string, name string>>" {
+	if got := page.Dataset.Columns[3].PhysicalType(); got != "array<struct<id string, name string>>|null" {
 		t.Fatalf("Owner physical type = %q", got)
 	}
 	if got := page.Dataset.Columns[4].PhysicalType(); got != "string|null" {
 		t.Fatalf("Due physical type = %q", got)
 	}
-	if got := page.Dataset.Columns[6].PhysicalType(); got != "boolean" {
+	if got := page.Dataset.Columns[6].PhysicalType(); got != "boolean|null" {
 		t.Fatalf("Done physical type = %q", got)
 	}
 	if got := page.Dataset.Columns[7].PhysicalType(); got != "struct<lng number, lat number, full_address string>|null" {
 		t.Fatalf("Place physical type = %q", got)
 	}
 	first := page.Dataset.Records[0].Values
-	if tags, ok := first[2].([]any); !ok || len(tags) != 0 {
-		t.Fatalf("empty Tags = %#v, want []", first[2])
+	if first[2] != nil {
+		t.Fatalf("Tags = %#v, want null", first[2])
 	}
-	if owners, ok := first[3].([]any); !ok || len(owners) != 0 {
-		t.Fatalf("empty Owner = %#v, want []", first[3])
+	if first[3] != nil {
+		t.Fatalf("Owner = %#v, want null", first[3])
 	}
-	if got := first[4]; got != "2026-08-04T12:30:00+08:00" {
+	if got := first[4]; got != "2026-08-04 12:30:00" {
 		t.Fatalf("Due = %#v", got)
 	}
 	if got := first[6]; got != false {
@@ -74,8 +76,8 @@ func TestParseMatrixNormalizesTypedRows(t *testing.T) {
 	if second[1] != nil || second[4] != nil || second[5] != nil {
 		t.Fatalf("nullable scalars = %#v", second)
 	}
-	if got := second[6]; got != false {
-		t.Fatalf("empty Done = %#v, want false", got)
+	if got := second[6]; got != nil {
+		t.Fatalf("Done = %#v, want null", got)
 	}
 
 	var output bytes.Buffer
@@ -87,8 +89,8 @@ func TestParseMatrixNormalizesTypedRows(t *testing.T) {
 	if err := json.Unmarshal(lines[1], &secondRow); err != nil {
 		t.Fatal(err)
 	}
-	if got := secondRow["Done"]; got != false {
-		t.Fatalf("NDJSON Done = %#v, want false", got)
+	if got := secondRow["Done"]; got != nil {
+		t.Fatalf("NDJSON Done = %#v, want null", got)
 	}
 }
 
@@ -130,12 +132,12 @@ func TestManifestDeclaresKnownObjectStructsWithoutRewritingRows(t *testing.T) {
 	}
 
 	wantTypes := map[string]string{
-		"Users":   "array<struct<id string, name string>>",
-		"Chats":   "array<struct<id string, name string>>",
-		"Links":   "array<struct<id string>>",
-		"Files":   "array<struct<file_token string, size number, name string>>",
-		"Creator": "array<struct<id string, name string>>",
-		"Updater": "array<struct<id string, name string>>",
+		"Users":   "array<struct<id string, name string>>|null",
+		"Chats":   "array<struct<id string, name string>>|null",
+		"Links":   "array<struct<id string>>|null",
+		"Files":   "array<struct<file_token string, size number, name string>>|null",
+		"Creator": "array<struct<id string, name string>>|null",
+		"Updater": "array<struct<id string, name string>>|null",
 	}
 	manifest := BuildManifest(page.Dataset, ManifestOptions{
 		BaseToken: "base_x", TableID: "tbl_x", PageCount: 1,
@@ -157,23 +159,26 @@ func TestManifestDeclaresKnownObjectStructsWithoutRewritingRows(t *testing.T) {
 	}
 }
 
-func TestParseMatrixSystemRecordIDWins(t *testing.T) {
-	page, err := ParseMatrix(map[string]any{
-		"timezone":        "UTC",
-		"fields":          []any{"record_id", "Name"},
-		"field_id_list":   []any{"fld_shadow", "fld_name"},
-		"field_type_list": []any{"text", "text"},
-		"record_id_list":  []any{"rec_real"},
-		"data":            []any{[]any{"user-value", "Alice"}},
-	})
-	if err != nil {
-		t.Fatalf("ParseMatrix() error = %v", err)
-	}
-	if len(page.Dataset.Columns) != 2 || page.Dataset.Columns[0].Name != "record_id" || page.Dataset.Columns[1].Name != "Name" {
-		t.Fatalf("export columns = %#v", page.Dataset.Columns)
-	}
-	if got := page.Dataset.Records[0].Values[0]; got != "rec_real" {
-		t.Fatalf("record_id = %#v", got)
+func TestParseMatrixRejectsColumnCollisions(t *testing.T) {
+	for _, tc := range []struct {
+		name       string
+		names, ids []any
+	}{
+		{"system name", []any{"record_id", "Name"}, []any{"fld_shadow", "fld_name"}},
+		{"duplicate name", []any{"Name", "Name"}, []any{"fld_one", "fld_two"}},
+		{"duplicate ID", []any{"Name", "Other"}, []any{"fld_one", "fld_one"}},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			_, err := ParseMatrix(map[string]any{
+				"timezone": "UTC", "fields": tc.names, "field_id_list": tc.ids,
+				"field_type_list": []any{"text", "text"},
+				"record_id_list":  []any{"rec_real"}, "data": []any{[]any{"user-value", "Alice"}},
+			})
+			var matrixErr *MatrixError
+			if !errors.As(err, &matrixErr) {
+				t.Fatalf("error = %v, want MatrixError", err)
+			}
+		})
 	}
 }
 
@@ -215,7 +220,7 @@ func TestManifestExamplesAndNDJSON(t *testing.T) {
 	if manifest.Columns["EmptyUsers"].Example != nil || manifest.Columns["EmptyUsers"].Hint == "" {
 		t.Fatalf("EmptyUsers metadata = %#v", manifest.Columns["EmptyUsers"])
 	}
-	if got := manifest.Columns["EmptyUsers"].PhysicalType; got != "array<struct<id string, name string>>" {
+	if got := manifest.Columns["EmptyUsers"].PhysicalType; got != "array<struct<id string, name string>>|null" {
 		t.Fatalf("EmptyUsers physical type = %q", got)
 	}
 	if got := manifest.Columns["Count"].Example; got != 0 {
@@ -224,8 +229,8 @@ func TestManifestExamplesAndNDJSON(t *testing.T) {
 	if got := *manifest.Columns["Long"].Stats.MaxLength; got != 150 {
 		t.Fatalf("Long.stats.max_length = %d, want 150", got)
 	}
-	if got := *manifest.Columns["EmptyUsers"].Stats.EmptyCount; got != 1 {
-		t.Fatalf("EmptyUsers.stats.empty_count = %d, want 1", got)
+	if stats := manifest.Columns["EmptyUsers"].Stats; *stats.EmptyCount != 0 || *stats.NullCount != 1 {
+		t.Fatalf("EmptyUsers.stats = %#v, want one null and zero empty arrays", stats)
 	}
 	if got := *manifest.Columns["Count"].Stats.Avg; got != 0 {
 		t.Fatalf("Count.stats.avg = %v, want 0", got)
@@ -242,7 +247,7 @@ func TestManifestExamplesAndNDJSON(t *testing.T) {
 	if row["record_id"] != "rec_1" {
 		t.Fatalf("row = %#v", row)
 	}
-	if empty, ok := row["EmptyUsers"].([]any); !ok || len(empty) != 0 {
+	if row["EmptyUsers"] != nil {
 		t.Fatalf("EmptyUsers = %#v", row["EmptyUsers"])
 	}
 }
@@ -283,7 +288,7 @@ func TestManifestColumnStatsByFieldType(t *testing.T) {
 		t.Errorf("Text.stats = %#v", textStats)
 	}
 	numberStats := manifest.Columns["Number"].Stats
-	if *numberStats.NullCount != 1 || numberStats.Min != 10.0 || numberStats.Max != 20.0 || *numberStats.Avg != 15.0 {
+	if *numberStats.NullCount != 1 || numberStats.Min != 10 || numberStats.Max != 20.0 || *numberStats.Avg != 15.0 {
 		t.Errorf("Number.stats = %#v", numberStats)
 	}
 	whenStats := manifest.Columns["When"].Stats
@@ -291,7 +296,7 @@ func TestManifestColumnStatsByFieldType(t *testing.T) {
 		t.Errorf("When.stats = %#v", whenStats)
 	}
 	doneStats := manifest.Columns["Done"].Stats
-	if *doneStats.TrueCount != 1 || doneStats.NullCount != nil {
+	if *doneStats.TrueCount != 1 || *doneStats.NullCount != 1 {
 		t.Errorf("Done.stats = %#v", doneStats)
 	}
 	placeStats := manifest.Columns["Place"].Stats
@@ -299,7 +304,7 @@ func TestManifestColumnStatsByFieldType(t *testing.T) {
 		t.Errorf("Place.stats = %#v", placeStats)
 	}
 	tagStats := manifest.Columns["Tags"].Stats
-	if *tagStats.EmptyCount != 1 || *tagStats.MaxLength != 2 || *tagStats.AvgLength != 1 {
+	if *tagStats.EmptyCount != 0 || *tagStats.NullCount != 1 || *tagStats.MaxLength != 2 || *tagStats.AvgLength != 1.5 {
 		t.Errorf("Tags.stats = %#v", tagStats)
 	}
 }
@@ -334,5 +339,91 @@ func matrixFixture(name, id, fieldType, recordID string, value any) map[string]a
 		"field_type_list": []any{fieldType},
 		"record_id_list":  []any{recordID},
 		"data":            []any{[]any{value}},
+	}
+}
+
+func TestParseMatrixPreservesSourceJSONValues(t *testing.T) {
+	for _, tc := range []struct {
+		fieldType string
+		values    []any
+	}{
+		{"text", []any{nil, "", "00123", "名字😀"}},
+		{"select", []any{nil, []any{}, []any{"", "00123", "名字😀"}}},
+		{"user", []any{nil, []any{}, []any{map[string]any{"id": "00123", "extra": json.Number("9007199254740993")}}}},
+		{"checkbox", []any{nil, false, true}},
+		{"datetime", []any{nil, "", "2026-08-04 12:30:00", "2026-11-01T01:30:00.123456-04:00", "not a date"}},
+		{"created_at", []any{"2026-08-04 12:30:00", ""}},
+		{"updated_at", []any{"2026-08-04 12:30:00", ""}},
+		{"number", []any{nil, json.Number("9007199254740993"), json.Number("1.2300000000000000001"), json.Number("1e+30")}},
+	} {
+		t.Run(tc.fieldType, func(t *testing.T) {
+			for _, value := range tc.values {
+				page, err := ParseMatrix(matrixFixture("Value", "fld_value", tc.fieldType, "rec_1", value))
+				if err != nil {
+					t.Fatal(err)
+				}
+				var output bytes.Buffer
+				if err := WriteNDJSON(&output, page.Dataset); err != nil {
+					t.Fatal(err)
+				}
+				var row map[string]any
+				decoder := json.NewDecoder(&output)
+				decoder.UseNumber()
+				if err := decoder.Decode(&row); err != nil {
+					t.Fatal(err)
+				}
+				if !reflect.DeepEqual(row["Value"], value) {
+					t.Fatalf("round trip = %#v, want %#v", row["Value"], value)
+				}
+			}
+		})
+	}
+}
+
+func TestManifestPreservesExactNumericBounds(t *testing.T) {
+	page, err := ParseMatrix(map[string]any{
+		"timezone": "UTC", "fields": []any{"Number"}, "field_id_list": []any{"fld_number"},
+		"field_type_list": []any{"number"}, "record_id_list": []any{"rec_1", "rec_2"},
+		"data": []any{[]any{json.Number("9007199254740993")}, []any{json.Number("9007199254740992")}},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	stats := BuildManifest(page.Dataset, ManifestOptions{}).Columns["Number"].Stats
+	if stats.Min != json.Number("9007199254740992") || stats.Max != json.Number("9007199254740993") || stats.Avg == nil || !stats.AvgApproximate {
+		t.Fatalf("stats = %#v", stats)
+	}
+}
+
+func TestManifestNullEmptyAndUnparsedDates(t *testing.T) {
+	page, err := ParseMatrix(map[string]any{
+		"timezone": "UTC", "fields": []any{"Tags", "When"}, "field_id_list": []any{"fld_tags", "fld_when"},
+		"field_type_list": []any{"select", "datetime"}, "record_id_list": []any{"rec_1", "rec_2", "rec_3"},
+		"data": []any{[]any{nil, nil}, []any{[]any{}, ""}, []any{[]any{"a", "b"}, "2026-08-04 12:30:00"}},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	manifest := BuildManifest(page.Dataset, ManifestOptions{})
+	tags := manifest.Columns["Tags"].Stats
+	if *tags.NullCount != 1 || *tags.EmptyCount != 1 || *tags.AvgLength != 1 {
+		t.Fatalf("tags = %#v", tags)
+	}
+	when := manifest.Columns["When"].Stats
+	if *when.NullCount != 1 || *when.UnparsedCount != 1 || when.Min != "2026-08-04 12:30:00" || when.Max != when.Min {
+		t.Fatalf("when = %#v", when)
+	}
+}
+
+func TestParseMatrixTracksPaginationPresence(t *testing.T) {
+	fixture := matrixFixture("Name", "fld_name", "text", "rec_1", "Alice")
+	page, err := ParseMatrix(fixture)
+	if err != nil || page.HasMoreKnown {
+		t.Fatalf("absent has_more = %#v, %v", page, err)
+	}
+	fixture["has_more"] = false
+	page, err = ParseMatrix(fixture)
+	if err != nil || !page.HasMoreKnown || page.HasMore {
+		t.Fatalf("explicit has_more = %#v, %v", page, err)
 	}
 }

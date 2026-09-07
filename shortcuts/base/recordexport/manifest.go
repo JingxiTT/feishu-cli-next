@@ -6,6 +6,8 @@ package recordexport
 import (
 	"encoding/json"
 	"io"
+	"math"
+	"math/big"
 	"time"
 	"unicode/utf8"
 )
@@ -30,7 +32,10 @@ type ColumnManifest struct {
 }
 
 // ColumnStats contains only the metrics that are meaningful for a column's
-// Base field type. All metrics describe the records in this export.
+// Base field type. All metrics describe the records in this export. Array
+// lengths exclude nulls. Date bounds cover parseable values, with unparsed_count
+// exposing exclusions. Numeric bounds preserve source values; averages are
+// explicitly marked as approximate.
 type ColumnStats struct {
 	NullCount  *int     `json:"null_count,omitempty"`
 	EmptyCount *int     `json:"empty_count,omitempty"`
@@ -38,8 +43,11 @@ type ColumnStats struct {
 	Min        any      `json:"min,omitempty"`
 	Max        any      `json:"max,omitempty"`
 	Avg        *float64 `json:"avg,omitempty"`
-	MaxLength  *int     `json:"max_length,omitempty"`
-	AvgLength  *float64 `json:"avg_length,omitempty"`
+	// AvgApproximate marks the float64 average; min/max retain source numbers.
+	AvgApproximate bool     `json:"avg_approximate,omitempty"`
+	UnparsedCount  *int     `json:"unparsed_count,omitempty"`
+	MaxLength      *int     `json:"max_length,omitempty"`
+	AvgLength      *float64 `json:"avg_length,omitempty"`
 }
 
 // Manifest describes one exported artifact and the exact query boundary that
@@ -123,7 +131,7 @@ func BuildManifest(dataset Dataset, opts ManifestOptions) Manifest {
 			FieldID:      column.FieldID,
 			FieldType:    column.FieldType,
 			PhysicalType: column.PhysicalType(),
-			Stats:        buildColumnStats(dataset.Records, columnIndex, column),
+			Stats:        buildColumnStats(dataset.Records, columnIndex, column, dataset.Timezone),
 		}
 		if example, truncated, found := bestExample(dataset.Records, columnIndex); found {
 			metadata.Example = example
@@ -136,7 +144,7 @@ func BuildManifest(dataset Dataset, opts ManifestOptions) Manifest {
 	return manifest
 }
 
-func buildColumnStats(records []Record, columnIndex int, column Column) ColumnStats {
+func buildColumnStats(records []Record, columnIndex int, column Column, timezone string) ColumnStats {
 	if column.System {
 		maxLength := 0
 		for _, record := range records {
@@ -156,15 +164,20 @@ func buildColumnStats(records []Record, columnIndex int, column Column) ColumnSt
 		return ColumnStats{}
 	}
 	if spec.repeated {
-		emptyCount, maxLength, totalLength := 0, 0, 0
+		nullCount, emptyCount, maxLength, totalLength, valueCount := 0, 0, 0, 0, 0
 		for _, record := range records {
 			if columnIndex >= len(record.Values) {
+				continue
+			}
+			if record.Values[columnIndex] == nil {
+				nullCount++
 				continue
 			}
 			items, ok := record.Values[columnIndex].([]any)
 			if !ok {
 				continue
 			}
+			valueCount++
 			length := len(items)
 			totalLength += length
 			if length == 0 {
@@ -175,10 +188,11 @@ func buildColumnStats(records []Record, columnIndex int, column Column) ColumnSt
 			}
 		}
 		avgLength := 0.0
-		if len(records) > 0 {
-			avgLength = float64(totalLength) / float64(len(records))
+		if valueCount > 0 {
+			avgLength = float64(totalLength) / float64(valueCount)
 		}
 		return ColumnStats{
+			NullCount:  &nullCount,
 			EmptyCount: &emptyCount,
 			MaxLength:  &maxLength,
 			AvgLength:  &avgLength,
@@ -188,34 +202,45 @@ func buildColumnStats(records []Record, columnIndex int, column Column) ColumnSt
 	switch column.FieldType {
 	case "number":
 		nullCount, valueCount := 0, 0
-		var minValue, maxValue, total float64
+		var minValue, maxValue any
+		var minNumber, maxNumber *big.Rat
+		total := new(big.Rat)
 		for _, record := range records {
 			if columnIndex >= len(record.Values) || record.Values[columnIndex] == nil {
 				nullCount++
 				continue
 			}
-			value, ok := numberAsFloat64(record.Values[columnIndex])
+			value := record.Values[columnIndex]
+			encoded, err := json.Marshal(value)
+			if err != nil {
+				continue
+			}
+			number, ok := new(big.Rat).SetString(string(encoded))
 			if !ok {
 				continue
 			}
-			if valueCount == 0 || value < minValue {
-				minValue = value
+			if minNumber == nil || number.Cmp(minNumber) < 0 {
+				minValue, minNumber = value, number
 			}
-			if valueCount == 0 || value > maxValue {
-				maxValue = value
+			if maxNumber == nil || number.Cmp(maxNumber) > 0 {
+				maxValue, maxNumber = value, number
 			}
-			total += value
+			total.Add(total, number)
 			valueCount++
 		}
 		stats := ColumnStats{NullCount: &nullCount}
 		if valueCount > 0 {
-			avg := total / float64(valueCount)
-			stats.Min, stats.Max, stats.Avg = minValue, maxValue, &avg
+			stats.Min, stats.Max = minValue, maxValue
+			average := new(big.Rat).Quo(total, new(big.Rat).SetInt64(int64(valueCount)))
+			avg, _ := average.Float64()
+			if !math.IsInf(avg, 0) {
+				stats.Avg, stats.AvgApproximate = &avg, true
+			}
 		}
 		return stats
 
 	case "datetime", "created_at", "updated_at":
-		nullCount := 0
+		nullCount, unparsedCount := 0, 0
 		var minValue, maxValue string
 		var minTime, maxTime time.Time
 		found := false
@@ -228,8 +253,14 @@ func buildColumnStats(records []Record, columnIndex int, column Column) ColumnSt
 			if !ok {
 				continue
 			}
-			parsed, err := time.Parse(time.RFC3339Nano, value)
+			normalized, err := normalizeDateTime(value, timezone)
 			if err != nil {
+				unparsedCount++
+				continue
+			}
+			parsed, err := time.Parse(time.RFC3339Nano, normalized)
+			if err != nil {
+				unparsedCount++
 				continue
 			}
 			if !found || parsed.Before(minTime) {
@@ -240,20 +271,24 @@ func buildColumnStats(records []Record, columnIndex int, column Column) ColumnSt
 			}
 			found = true
 		}
-		stats := ColumnStats{NullCount: &nullCount}
+		stats := ColumnStats{NullCount: &nullCount, UnparsedCount: &unparsedCount}
 		if found {
 			stats.Min, stats.Max = minValue, maxValue
 		}
 		return stats
 
 	case "checkbox":
-		trueCount := 0
+		nullCount, trueCount := 0, 0
 		for _, record := range records {
-			if columnIndex < len(record.Values) && record.Values[columnIndex] == true {
+			if columnIndex >= len(record.Values) || record.Values[columnIndex] == nil {
+				nullCount++
+				continue
+			}
+			if record.Values[columnIndex] == true {
 				trueCount++
 			}
 		}
-		return ColumnStats{TrueCount: &trueCount}
+		return ColumnStats{NullCount: &nullCount, TrueCount: &trueCount}
 
 	case "location":
 		nullCount := 0
@@ -277,40 +312,6 @@ func buildColumnStats(records []Record, columnIndex int, column Column) ColumnSt
 			}
 		}
 		return ColumnStats{NullCount: &nullCount, MaxLength: &maxLength}
-	}
-}
-
-func numberAsFloat64(value any) (float64, bool) {
-	switch typed := value.(type) {
-	case json.Number:
-		converted, err := typed.Float64()
-		return converted, err == nil
-	case float64:
-		return typed, true
-	case float32:
-		return float64(typed), true
-	case int:
-		return float64(typed), true
-	case int8:
-		return float64(typed), true
-	case int16:
-		return float64(typed), true
-	case int32:
-		return float64(typed), true
-	case int64:
-		return float64(typed), true
-	case uint:
-		return float64(typed), true
-	case uint8:
-		return float64(typed), true
-	case uint16:
-		return float64(typed), true
-	case uint32:
-		return float64(typed), true
-	case uint64:
-		return float64(typed), true
-	default:
-		return 0, false
 	}
 }
 
