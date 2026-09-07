@@ -1,5 +1,8 @@
 # Agent comparison evaluation
 
+The [provisional assessment](ASSESSMENT.md) compares completed conditions, retains
+regressions and links the remaining release evidence.
+
 Run the isolated harness acceptance suite:
 
 ```sh
