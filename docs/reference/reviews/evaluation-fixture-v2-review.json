@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "reviewer": "/root",
+  "report_kind": "bounded_evaluation_fixture_review",
+  "verdict": "approved_offline",
+  "base_revision": "9cbcf210570cb993591ca0d7906660726757c43a",
+  "scope": "Independent review of the Base scaling v2 and generated-business correction diffs; exact reviewed bytes below. The coordinator did not author these four file changes.",
+  "paths": [
+    {
+      "path": "evaluation/scaling/base.py",
+      "review_sha256": "10f8d05c3c0a2f54131981271a02bee795b0f6d6ed2be3765e9eb492b3f7b0a3",
+      "verdict": "approved_offline"
+    },
+    {
+      "path": "tests/next_evaluation/test_scaling_base.py",
+      "review_sha256": "e0063362d9d03f95e7cb98435d69b6219c359eba7adefd8f3dd7a532ff160d6e",
+      "verdict": "approved_offline"
+    },
+    {
+      "path": "evaluation/scenarios/generated_business.py",
+      "review_sha256": "f94ef38fb7d42c5e49e58c52c049ee0b00d8fdd02871aaba05515d72493d39b9",
+      "verdict": "approved_offline"
+    },
+    {
+      "path": "tests/next_evaluation/test_scenario_generated_business.py",
+      "review_sha256": "2bb7a5a108871f2dfeeb6920a6886c62743aaaedbcac5eb26d8efbc14068bf9d",
+      "verdict": "approved_offline"
+    }
+  ],
+  "findings_closed": [
+    "Base native table-get prerequisites now return table metadata, fields and views in the shapes consumed by the frozen CLI. Known unmodeled view-property reads remain explicitly unsupported; foreign and invalid reads remain rejected.",
+    "Base report validation checks the task-required integer created count, exact unique record IDs and required path. Optional report metadata no longer imposes an unstated native schema. Independent full typed rows, sentinel/schema/input preservation and signed mutation effects remain mandatory.",
+    "Business final-form verification compares unambiguous decoded JSON with scalar types and array order preserved; whitespace, object-key ordering and Unicode escaping can vary. Duplicate keys, nonfinite values, altered values and types fail. The write and idempotency rules are unchanged.",
+    "Approval initiated reads accept the documented definition filter and reflect pre/post-creation state. Native list fields and numeric-string status enums replace invented fields; the deterministic pagination expectation correction is separate from unchanged representative model prompts."
+  ],
+  "source_checks": [
+    "shortcuts/base/table_ops.go:executeTableGet",
+    "shortcuts/base/helpers.go:listAllFields/listAllTables/listAllViews",
+    "shortcuts/base/base_ops.go:executeBaseGet",
+    "shortcuts/base/view_ops.go",
+    "shortcuts/base/record_import.go:recordImportReport",
+    "docs/reference/meta_data.json.gz approval response schema regression"
+  ],
+  "independent_tests": [
+    {
+      "command": "python3 -m unittest discover -s tests/next_evaluation -p test_scaling_base.py",
+      "passed": 13,
+      "skipped": 2,
+      "failed": 0,
+      "exit_code": 0
+    },
+    {
+      "command": "python3 -m unittest discover -s tests/next_evaluation -p test_scenario_generated_business.py",
+      "passed": 13,
+      "skipped": 1,
+      "failed": 0,
+      "exit_code": 0
+    }
+  ],
+  "owner_control_evidence": [
+    {
+      "path": ".tmp/scaling-base-v2-controlled.json",
+      "sha256": "443732aa28847647cd01e4672a352e205d1df21c3cdb07314d99e0dac975dfeb"
+    },
+    {
+      "path": ".tmp/business-v2-controlled.json",
+      "sha256": "d3dbed9d36ef94da81e13ad7877005dd9e497d4ee5487d874fbe004fadf374ad"
+    }
+  ],
+  "limitations": [
+    "Native process checks were executed by the owners and inspected here, not independently rerun. Their reports explicitly retain the unrecorded official binary hash limitation.",
+    "This approves only the listed fixture corrections, not shared verifier diagnostics, Sheets changes, historical model-outcome rescoring, or a new comparative result.",
+    "Historical failed and unknown trial costs must remain separate. New trials require a frozen evaluator condition; product and guidance remain frozen.",
+    "No live behavior, full functional parity, token improvement or release acceptance is established by this review."
+  ]
+}
