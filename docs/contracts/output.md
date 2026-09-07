@@ -94,6 +94,24 @@ Bot operations do not resolve a user or infer their tenant. Binding contains no
 token or secret. Domain artifact consumers must validate schema and current
 binding before reusing data; the generic container is not an import command.
 
+Domain code obtains the same binding through `RuntimeContext.ResolveArtifactBinding()`
+and uses the `common.ArtifactBinding` alias. The command output and runtime method
+share `Factory.ResolveArtifactBinding`; they do not independently resolve accounts.
+Dry-run runtimes reject binding resolution so previews cannot fetch credentials.
+
+Before reusing a file, domains call
+`common.ValidateArtifactBinding(saved, current, "--input", requireVerifiedIdentity)`.
+This requires matching nonempty brand, endpoint, app, effective identity and user
+ID for user operations. Any known tenant must match; a known source tenant cannot
+match an unknown current tenant. Profile names are local labels and are ignored.
+The boolean is deliberately explicit: `true` requires verified tenant evidence
+on both sides and verified user evidence on both sides for user identity. `false`
+permits matching unverified evidence while still rejecting every identity mismatch;
+it does not upgrade that evidence to verified. Legacy artifacts missing endpoint
+or required identity facts need to be exported again. Consumers independently
+validate their native schema, completeness, types and supported effects before a
+write; this helper verifies only account binding.
+
 Artifacts remain until the user removes their chosen files; there is no implicit
 cleanup or overwrite. Large result payloads stay out of model context, but the
 current shared JSON emitter still serializes an already materialized result in
