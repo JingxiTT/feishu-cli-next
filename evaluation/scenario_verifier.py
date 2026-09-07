@@ -6,6 +6,10 @@ import sys
 from scenario_fixture import load_scenario
 from section_fixture import UNSUPPORTED_REASON_CODES
 
+SCENARIO_DIAGNOSTICS = frozenset(('execution_proof_unavailable', 'packaging_receipt_invalid',
+    'packaging_isolation_missing', 'packaging_answer_mismatch', 'packaging_answer_path_mismatch',
+    'packaging_protected_changed', 'packaging_project_changed', 'packaging_install_invalid'))
+
 
 def verify(request):
     workspace = Path(request['workspace'])
@@ -26,6 +30,22 @@ def unsupported_diagnostics(receipt):
                    if item.get('rejection') == 'unsupported_strategy'})
 
 
+def outcome_diagnostics(request, receipt):
+    module = load_scenario(request['fixture'].get('scenario_section', request['fixture']['scenario']),
+        request['fixture'].get('row_count'), request['fixture'].get('case_id'))
+    # A missing scenario-specific proof must not hide a known shared rejection.
+    if request['task_id'] != module.TASK['id'] or any(
+            item.get('route') in ('rejected', 'fixture_error') or item.get('signature_valid') is False
+            for item in receipt.get('requests', [])):
+        return []
+    diagnose = getattr(module, 'verification_diagnostics', None)
+    if diagnose is None:
+        return []
+    answer = json.loads((Path(request['workspace']) / 'answer.json').read_text())
+    reasons = diagnose(Path(request['workspace']), answer, receipt, request['expected'])
+    return sorted({code for code in reasons if isinstance(code, str) and code in SCENARIO_DIAGNOSTICS}) if isinstance(reasons, list) else []
+
+
 if __name__ == '__main__':
     request = json.load(sys.stdin)
     limitation = False
@@ -35,6 +55,9 @@ if __name__ == '__main__':
         limitation = any(item.get('rejection') == 'unsupported_strategy' for item in receipt.get('requests', []))
         reasons = unsupported_diagnostics(receipt)
         success = verify(request)
+        if not success:
+            reasons = sorted(set(reasons + outcome_diagnostics(request, receipt)))
+            limitation = limitation or 'execution_proof_unavailable' in reasons
     except (ValueError, KeyError, TypeError, AttributeError, OSError):
         success = False
     print(json.dumps({'success': success, 'fixture_unsupported': limitation, 'verification_failures': reasons}))

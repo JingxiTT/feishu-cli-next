@@ -15,7 +15,7 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "evaluation"))
-from scenarios.events import APP_ID, EXPECTED, KEY, NAME, PAYLOADS, Scenario, TASK, verify, _executable
+from scenarios.events import APP_ID, EXPECTED, KEY, NAME, PAYLOADS, Scenario, TASK, verify, verification_diagnostics, _executable
 from section_fixture import valid_signature, PROXY_KEY
 
 UNIX = sys.platform == "darwin" or sys.platform.startswith("linux")
@@ -115,6 +115,49 @@ class RouteAndVerifierTests(unittest.TestCase):
     def test_missing_or_malformed_independent_evidence_fails(self):
         for receipt in [None, [], {}, {'scenario':NAME}, {'scenario':NAME,'requests':[None]}]:
             self.assertFalse(verify('/not-used',EXPECTED['answer'],receipt,EXPECTED))
+            self.assertEqual(verification_diagnostics('/not-used',EXPECTED['answer'],receipt,EXPECTED),[])
+
+    def test_missing_exit_diagnostic_requires_every_other_predicate(self):
+        with tempfile.TemporaryDirectory() as directory:
+            artifact=Path(directory)/'events.ndjson'
+            artifact.write_text(''.join(json.dumps(p,ensure_ascii=False)+'\n' for p in PAYLOADS),encoding='utf-8')
+            receipt={'scenario':NAME,'requests':[{'route':'event_preflight','status':200}],
+                     'state':{'scenario':NAME,'rejected':[],'active_before_teardown':0,
+                              'selected_cli':'selected-cli','executions':[],
+                              'episodes':[{'delivered_ids':['e1','e2'],'connection_closed':True,
+                                           'terminated':True,'forced_disconnect':False,
+                                           'executable':'selected-cli','peer_pid':123,'termination_seconds':0.1}]}}
+            def diagnostics(value=receipt,answer=EXPECTED['answer']):
+                self.assertFalse(verify(directory,answer,value,EXPECTED))
+                return verification_diagnostics(directory,answer,value,EXPECTED)
+            self.assertEqual(diagnostics(),['execution_proof_unavailable'])
+            partial=copy.deepcopy(receipt)
+            partial['state']['episodes'].append(copy.deepcopy(partial['state']['episodes'][0]))
+            partial['state']['executions']=[{'simple_selected_cli_consume':True,'exit_code':0}]
+            self.assertEqual(diagnostics(partial),['execution_proof_unavailable'])
+            for change in ['nonzero','malformed_exit','boolean_exit','extra_exit','wrong_peer','leak','forced',
+                           'missing_event','unclosed','rejected','no_preflight','bad_api','bad_duration']:
+                with self.subTest(change=change):
+                    damaged=copy.deepcopy(receipt);state=damaged['state'];episode=state['episodes'][0]
+                    if change=='nonzero':
+                        state['episodes'].append(copy.deepcopy(episode))
+                        state['executions']=[{'simple_selected_cli_consume':True,'exit_code':1}]
+                    if change=='malformed_exit':state['executions']=[None]
+                    if change=='boolean_exit':state['executions']=[{'simple_selected_cli_consume':True,'exit_code':False}]
+                    if change=='extra_exit':state['executions']=[{'simple_selected_cli_consume':True,'exit_code':0}]*2
+                    if change=='wrong_peer':episode['executable']='foreign-cli'
+                    if change=='leak':state['active_before_teardown']=1;episode['terminated']=False
+                    if change=='forced':episode['forced_disconnect']=True
+                    if change=='missing_event':episode['delivered_ids']=['e1']
+                    if change=='unclosed':episode['connection_closed']=False
+                    if change=='rejected':state['rejected']=['invalid_or_interrupted_connection']
+                    if change=='no_preflight':damaged['requests']=[]
+                    if change=='bad_api':damaged['requests'][0]['status']=403
+                    if change=='bad_duration':episode['termination_seconds']=True
+                    self.assertEqual(diagnostics(damaged),[])
+            self.assertEqual(diagnostics(answer={'events':[]}),[])
+            artifact.write_text('{}\n',encoding='utf-8')
+            self.assertEqual(diagnostics(),[])
 
 
 @unittest.skipUnless(UNIX,'event IPC peer identity fixture is macOS/Linux only')
@@ -140,6 +183,7 @@ class UnixScenarioTests(unittest.TestCase):
             receipt=self.receipt(scenario)
             self.assertEqual(receipt['state']['episodes'][0]['peer_pid'],process.pid)
             self.assertTrue(verify(directory,EXPECTED['answer'],receipt,EXPECTED),receipt)
+            self.assertEqual(verification_diagnostics(directory,EXPECTED['answer'],receipt,EXPECTED),[])
             artifact=Path(directory)/'events.ndjson';original=artifact.read_bytes()
             for value in ['', '{}\n', original.decode().replace('你好','other'),
                           original.decode().replace('"name": ""','"name": null'),
@@ -187,10 +231,10 @@ class UnixScenarioTests(unittest.TestCase):
                      'set EVAL_EVENTS_BINARIES to clean archived authsidecar CLI paths')
 class CleanCLIProcessTests(unittest.TestCase):
     def test_selected_cli_two_native_events_and_exit(self):
-        pairs=[(binary,alias) for binary in json.loads(os.environ['EVAL_EVENTS_BINARIES'])
-               for alias in ('lark-cli','feishu-cli-next')]
-        for binary,alias in pairs:
-            with self.subTest(binary=Path(binary).name,alias=alias),tempfile.TemporaryDirectory() as directory:
+        pairs=[(binary,alias,mode) for binary in json.loads(os.environ['EVAL_EVENTS_BINARIES'])
+               for alias in ('lark-cli','feishu-cli-next') for mode in ('direct','script')]
+        for binary,alias,mode in pairs:
+            with self.subTest(binary=Path(binary).name,alias=alias,mode=mode),tempfile.TemporaryDirectory() as directory:
                 scenario=Scenario();scenario.bind_cli(binary);scenario.setup(directory)
                 bindir=Path(directory)/'bin';bindir.mkdir()
                 (bindir/alias).symlink_to(scenario.selected_cli)
@@ -220,18 +264,28 @@ class CleanCLIProcessTests(unittest.TestCase):
                     env.update({'HOME':directory,'LARKSUITE_CLI_AUTH_PROXY':f'http://127.0.0.1:{server.server_port}',
                                 'LARKSUITE_CLI_PROXY_KEY':PROXY_KEY,'LARKSUITE_CLI_REMOTE_META':'off',
                                 'LARKSUITE_CLI_NO_UPDATE_NOTIFIER':'1','LARKSUITE_CLI_NO_SKILLS_NOTIFIER':'1'})
-                    result=subprocess.run([alias,'event','consume',KEY,'--as','bot','--max-events','2','--timeout','5s'],
+                    argv=[alias,'event','consume',KEY,'--as','bot','--max-events','2','--timeout','5s']
+                    if mode=='script':
+                        script="import subprocess,sys\np=subprocess.run(sys.argv[1:],capture_output=True,timeout=10)\nsys.stdout.buffer.write(p.stdout)\nsys.stderr.buffer.write(p.stderr)\nsys.exit(p.returncode)"
+                        argv=[sys.executable,'-c',script,*argv]
+                    result=subprocess.run(argv,
                                           cwd=directory,env=env,capture_output=True,timeout=10)
                     self.assertEqual(result.returncode,0,result.stderr.decode())
                     self.assertIn(b'reason: limit',result.stderr)
                     (Path(directory)/'events.ndjson').write_bytes(result.stdout)
                     event={'type':'item.completed','item':{'type':'command_execution',
-                           'command':'/bin/zsh -lc '+shlex.quote(command(alias)),
+                           'command':shlex.join(argv) if mode=='script' else '/bin/zsh -lc '+shlex.quote(command(alias)),
                            'exit_code':result.returncode,'aggregated_output':''}}
                     scenario.observe_execution(event['item'])
                     scenario.close()
                     receipt={'scenario':NAME,'requests':requests,'state':scenario.snapshot()}
-                    self.assertTrue(verify(directory,EXPECTED['answer'],receipt,EXPECTED),receipt)
+                    if mode=='script':
+                        self.assertFalse(verify(directory,EXPECTED['answer'],receipt,EXPECTED))
+                        self.assertEqual(verification_diagnostics(directory,EXPECTED['answer'],receipt,EXPECTED),
+                                         ['execution_proof_unavailable'],receipt)
+                    else:
+                        self.assertTrue(verify(directory,EXPECTED['answer'],receipt,EXPECTED),receipt)
+                        self.assertEqual(verification_diagnostics(directory,EXPECTED['answer'],receipt,EXPECTED),[])
                 finally:
                     scenario.close();server.shutdown();server.server_close();thread.join(2)
 

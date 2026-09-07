@@ -336,7 +336,8 @@ class Scenario(ScenarioBase):
                     "executions": copy.deepcopy(self._executions)}
 
 
-def verify(workspace, answer, receipt, expected):
+def _valid_outcome(workspace, answer, receipt, expected):
+    """Check every outcome predicate except the separately observed exit status."""
     try:
         if not isinstance(receipt, dict) or answer != expected["answer"] or receipt.get("scenario") != NAME:
             return False
@@ -359,10 +360,6 @@ def verify(workspace, answer, receipt, expected):
                                or e["peer_pid"] <= 0 or type(e.get("termination_seconds")) not in (int, float)
                                or not 0 <= e["termination_seconds"] <= TERMINATION_SECONDS for e in episodes):
             return False
-        executions = state.get("executions", [])
-        if (len(executions) != len(episodes) or any(e.get("simple_selected_cli_consume") is not True
-                or type(e.get("exit_code")) is not int or e["exit_code"] != 0 for e in executions)):
-            return False
         artifact = Path(workspace) / "events.ndjson"
         if artifact.is_symlink() or not artifact.is_file() or artifact.stat().st_size > 65536:
             return False
@@ -370,3 +367,33 @@ def verify(workspace, answer, receipt, expected):
         return len(lines) == 2 and [json.loads(line) for line in lines] == expected["payloads"]
     except (OSError, ValueError, TypeError, KeyError, AttributeError):
         return False
+
+
+def _valid_exit_records(executions):
+    return isinstance(executions, list) and all(
+        isinstance(item, dict) and item.get("simple_selected_cli_consume") is True
+        and type(item.get("exit_code")) is int and item["exit_code"] == 0
+        for item in executions)
+
+
+def verify(workspace, answer, receipt, expected):
+    if not _valid_outcome(workspace, answer, receipt, expected):
+        return False
+    state = receipt["state"]
+    executions = state.get("executions", [])
+    return _valid_exit_records(executions) and len(executions) == len(state["episodes"])
+
+
+def verification_diagnostics(workspace, answer, receipt, expected):
+    """Missing observation is inconclusive only when no other predicate fails.
+
+    Do not infer a child's exit status from an outer script or socket EOF.
+    Nonzero or malformed records remain failures, even alongside missing records.
+    """
+    if not _valid_outcome(workspace, answer, receipt, expected):
+        return []
+    state = receipt["state"]
+    executions = state.get("executions", [])
+    if _valid_exit_records(executions) and len(executions) < len(state["episodes"]):
+        return ["execution_proof_unavailable"]
+    return []

@@ -194,7 +194,10 @@ def sanitized_accounting_diagnostics(values):
 def sanitized_verification_failures(values):
     allowed = {"answer_mismatch", "scenario_mismatch", "missing_request_evidence", "request_outside_fixture",
                "required_reads_missing", "config_changed", "invalid_verification_input",
-               "unsupported_reconstruction", "unsupported_xml_fragment", "unsupported_strategy_other"}
+               "unsupported_reconstruction", "unsupported_xml_fragment", "unsupported_strategy_other",
+               "execution_proof_unavailable", "packaging_receipt_invalid", "packaging_isolation_missing",
+               "packaging_answer_mismatch", "packaging_answer_path_mismatch", "packaging_protected_changed",
+               "packaging_project_changed", "packaging_install_invalid"}
     return values if isinstance(values, list) and all(isinstance(value, str) and value in allowed for value in values) else None
 
 

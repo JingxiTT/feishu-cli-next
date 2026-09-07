@@ -4,6 +4,7 @@ from pathlib import Path
 import sys
 import tempfile
 import unittest
+from types import SimpleNamespace
 from unittest.mock import patch
 from urllib.request import Request, urlopen
 from urllib.error import HTTPError
@@ -17,6 +18,26 @@ from codex_runner import run_agent, configuration
 
 
 class ScenarioIntegrationTests(unittest.TestCase):
+    def test_scenario_diagnostics_keep_only_fixed_codes_and_no_private_answer(self):
+        import scenario_verifier
+        import harness
+        with tempfile.TemporaryDirectory() as directory:
+            workspace = Path(directory)
+            (workspace / 'answer.json').write_text('{"private": "answer contents"}')
+            module = SimpleNamespace(TASK={'id': 'controlled'}, verification_diagnostics=lambda *args: [
+                'execution_proof_unavailable', 'packaging_answer_path_mismatch', 'private path', {}])
+            request = {'task_id': 'controlled', 'workspace': directory, 'fixture': {'scenario': 'events'}, 'expected': {}}
+            with patch.object(scenario_verifier, 'load_scenario', return_value=module):
+                reasons = scenario_verifier.outcome_diagnostics(request, {})
+            self.assertEqual(reasons, ['execution_proof_unavailable', 'packaging_answer_path_mismatch'])
+            self.assertEqual(harness.sanitized_verification_failures(reasons), reasons)
+            self.assertNotIn('private', json.dumps(reasons))
+            with patch.object(scenario_verifier, 'load_scenario', return_value=module):
+                # Even an otherwise-normal event route cannot hide a rejected signature.
+                invalid = {'requests': [{'route': 'event_preflight', 'status': 200, 'signature_valid': False}]}
+                self.assertEqual(scenario_verifier.outcome_diagnostics(request, invalid), [])
+                self.assertEqual(scenario_verifier.outcome_diagnostics({**request, 'task_id': 'wrong'}, {}), [])
+
     def test_binary_reply_state_and_unsigned_attempt_ledger(self):
         class Fixture(ScenarioBase):
             def dispatch(self, method, uri, body, headers):
