@@ -1,0 +1,113 @@
+{
+  "closure": {
+    "assessment": "The CLI exports the real Sheets artifact first. Subsequent invocations change effective tenant, user, app, environment or identity without editing that artifact. Each change rejects with typed --artifact validation before schema/destination access or mutation journaling; source bytes and artifact hash stay unchanged. An unchanged effective binding through a replacement sidecar still succeeds, so fixture replacement alone does not cause rejection.",
+    "counts": {
+      "pass": 18
+    },
+    "evidence": {
+      "path": "docs/integration/sheets-base-binding-evidence.json",
+      "raw_report": {
+        "path": ".tmp/sheets-base/binding-immutable-ready.json",
+        "sha256": "0ceb5068b2d2b0fa77edcae2225b7eea96e2865dcff33fba264c179bb95486d2"
+      },
+      "sha256": "a6021e1502ddcdc98cba0f6fb55917fe062c6842a4f34df982867f4df358154a"
+    },
+    "independently_recounted_events": [
+      {
+        "status": "pass",
+        "test": "TestTenThousandRowsThroughSheetsAndBaseCLI"
+      },
+      {
+        "status": "pass",
+        "test": "TestExportedUnsupportedCellsRejectBeforeDestinationWrites/formula"
+      },
+      {
+        "status": "pass",
+        "test": "TestExportedUnsupportedCellsRejectBeforeDestinationWrites/style"
+      },
+      {
+        "status": "pass",
+        "test": "TestExportedUnsupportedCellsRejectBeforeDestinationWrites/precision"
+      },
+      {
+        "status": "pass",
+        "test": "TestExportedUnsupportedCellsRejectBeforeDestinationWrites"
+      },
+      {
+        "status": "pass",
+        "test": "TestPartialExportCannotBecomeAnImportArtifact"
+      },
+      {
+        "status": "pass",
+        "test": "TestActualExportRejectsChangedEffectiveBindingBeforeDestinationAccess/unchanged"
+      },
+      {
+        "status": "pass",
+        "test": "TestActualExportRejectsChangedEffectiveBindingBeforeDestinationAccess/tenant"
+      },
+      {
+        "status": "pass",
+        "test": "TestActualExportRejectsChangedEffectiveBindingBeforeDestinationAccess/user"
+      },
+      {
+        "status": "pass",
+        "test": "TestActualExportRejectsChangedEffectiveBindingBeforeDestinationAccess/app"
+      },
+      {
+        "status": "pass",
+        "test": "TestActualExportRejectsChangedEffectiveBindingBeforeDestinationAccess/environment"
+      },
+      {
+        "status": "pass",
+        "test": "TestActualExportRejectsChangedEffectiveBindingBeforeDestinationAccess/identity"
+      },
+      {
+        "status": "pass",
+        "test": "TestActualExportRejectsChangedEffectiveBindingBeforeDestinationAccess"
+      },
+      {
+        "status": "pass",
+        "test": "TestHandoffStopsAtPartialRejectedOrLostBatch/partial"
+      },
+      {
+        "status": "pass",
+        "test": "TestHandoffStopsAtPartialRejectedOrLostBatch/rejected"
+      },
+      {
+        "status": "pass",
+        "test": "TestHandoffStopsAtPartialRejectedOrLostBatch/lost"
+      },
+      {
+        "status": "pass",
+        "test": "TestHandoffStopsAtPartialRejectedOrLostBatch/duplicate-ids"
+      },
+      {
+        "status": "pass",
+        "test": "TestHandoffStopsAtPartialRejectedOrLostBatch"
+      }
+    ],
+    "requirement_id": "changed_binding_handoff",
+    "source_path": "tests/next_integration/sheets_base/transfer_test.go",
+    "source_sha256": "996871f54f8a17f3ef99d8eba74fc3e073eb7a89e42d7fb8042add6f9c221380",
+    "status": "written_and_executed_offline",
+    "tested_revision": "1f1ce4e3f62226a79aa93655a0fb6084586a14f6"
+  },
+  "historical_report": {
+    "path": "docs/reference/p3-cross-section-coverage.json",
+    "preserved": true,
+    "sha256": "dfb035891d98652fe0ba726b914f65d345f2645fad9706699175aa9b02a2578d",
+    "source_revision": "94e4afc032b803ad17a6efbcdb2573361ed2b38a"
+  },
+  "limits": [
+    "No arbitrary missing cross-section workflow is inferred: resource resolution, content handoff, same-binding transfer, operation-boundary recovery and compound storage effects have concrete prior written/executed coverage.",
+    "Required live auth-provider/private visibility behavior remains unverified by these controlled identity switches.",
+    "Later code changes need their own affected regression; this run is bound only to 1f1ce4e."
+  ],
+  "remaining_specific_workflow_check": {
+    "id": "token_behavior_across_data_sizes",
+    "scope": "Bounded stdout and18 passing process events do not measure model input/output tokens across sizes. Evaluate only completed, provider-accounted comparable trials when available.",
+    "status": "separate_provider_measurement_gate"
+  },
+  "schema_version": 1,
+  "status": "specific_offline_composition_gap_closed"
+}
