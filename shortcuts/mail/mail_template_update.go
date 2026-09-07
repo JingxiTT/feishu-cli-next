@@ -143,6 +143,11 @@ var MailTemplateUpdate = common.Shortcut{
 			return nil
 		}
 
+		before, err := json.Marshal(tpl)
+		if err != nil {
+			return mailValidationError("serialize original template: %v", err).WithCause(err)
+		}
+
 		// Apply flat --set-* flags.
 		if v := runtime.Str("set-name"); v != "" {
 			tpl.Name = v
@@ -258,6 +263,16 @@ var MailTemplateUpdate = common.Shortcut{
 			}
 			seenAttKey[attKey(a)] = true
 			tpl.Attachments = append(tpl.Attachments, a)
+		}
+		after, err := json.Marshal(tpl)
+		if err != nil {
+			return mailValidationError("serialize updated template: %v", err).WithCause(err)
+		}
+		if len(newAtts) == 0 && string(before) == string(after) {
+			runtime.OutFormat(map[string]interface{}{"template": tpl, "no_op": true}, nil, func(w io.Writer) {
+				fmt.Fprintln(w, "Template already matches the requested content; no update sent.")
+			})
+			return nil
 		}
 		// Server rejects the PUT with errno 99992402
 		// `template.attachments[*].body is required` when any entry's

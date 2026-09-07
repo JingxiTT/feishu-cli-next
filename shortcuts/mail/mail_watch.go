@@ -248,7 +248,7 @@ var MailWatch = common.Shortcut{
 
 		// Step 1: subscribe mailbox events (required before WebSocket pushes mail events)
 		info(fmt.Sprintf("Subscribing mailbox events for: %s", mailbox))
-		_, err = runtime.CallAPITyped("POST", mailboxPath(mailbox, "event", "subscribe"), nil, map[string]interface{}{"event_type": 1})
+		_, err = runtime.CallMutationAPITyped("POST", mailboxPath(mailbox, "event", "subscribe"), nil, map[string]interface{}{"event_type": 1})
 		if err != nil {
 			return wrapWatchSubscribeError(err)
 		}
@@ -258,7 +258,7 @@ var MailWatch = common.Shortcut{
 		var unsubErr error
 		unsubscribe := func() error {
 			unsubOnce.Do(func() {
-				_, unsubErr = runtime.CallAPITyped("POST", mailboxPath(mailbox, "event", "unsubscribe"), nil, map[string]interface{}{"event_type": 1})
+				_, unsubErr = runtime.CallMutationAPITyped("POST", mailboxPath(mailbox, "event", "unsubscribe"), nil, map[string]interface{}{"event_type": 1})
 			})
 			return unsubErr
 		}

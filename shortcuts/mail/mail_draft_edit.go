@@ -105,6 +105,10 @@ var MailDraftEdit = common.Shortcut{
 		if err != nil {
 			return mailFailedPreconditionError("parse draft raw EML failed: %v", err).WithCause(err)
 		}
+		before, err := draftpkg.Serialize(snapshot)
+		if err != nil {
+			return mailValidationError("serialize original draft failed: %v", err).WithCause(err)
+		}
 		// Pre-process ops that need snapshot context: resolve signature using
 		// the draft's From address, and build ICS for set_calendar using the
 		// draft's From/To/Cc so organizer and attendee addresses are correct.
@@ -211,6 +215,18 @@ var MailDraftEdit = common.Shortcut{
 		serialized, err := draftpkg.Serialize(snapshot)
 		if err != nil {
 			return mailValidationError("serialize draft failed: %v", err).WithCause(err)
+		}
+		// Compare using the same serializer to avoid line-ending/base64 padding
+		// differences in the backend representation. Append, attachment,
+		// signature and calendar operations retain their explicit effects.
+		if draftReplacementOnly(patch) && before == serialized {
+			out := map[string]interface{}{"draft_id": draftID, "no_op": true, "projection": draftpkg.Project(snapshot)}
+			applyLintToEnvelope(out, lintApplied, lintBlocked, runtime.Bool("show-lint-details"))
+			runtime.OutFormat(out, nil, func(w io.Writer) {
+				fmt.Fprintln(w, "Draft already matches the requested content; no update sent.")
+				fmt.Fprintf(w, "draft_id: %s\n", draftID)
+			})
+			return nil
 		}
 		updateResult, err := draftpkg.UpdateWithRaw(runtime, mailboxID, draftID, serialized)
 		if err != nil {
@@ -683,4 +699,17 @@ func effectiveRecipients(snapshot *draftpkg.DraftSnapshot, ops []draftpkg.PatchO
 		}
 	}
 	return to, cc
+}
+
+// draftReplacementOnly excludes operations that can have effects beyond the
+// final MIME representation, such as uploading an attachment.
+func draftReplacementOnly(patch draftpkg.Patch) bool {
+	for _, op := range patch.Ops {
+		switch op.Op {
+		case "set_subject", "set_recipients", "set_reply_to", "clear_reply_to", "set_body", "replace_body", "set_header", "remove_header":
+		default:
+			return false
+		}
+	}
+	return true
 }

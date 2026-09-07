@@ -67,6 +67,18 @@ func applyOp(dctx *DraftCtx, snapshot *DraftSnapshot, op PatchOp, options PatchO
 		if strings.ContainsAny(op.Value, "\r\n") {
 			return fmt.Errorf("set_subject: value must not contain CR or LF")
 		}
+		// Preserve an existing encoded-word subject when its decoded value
+		// already matches. Duplicate Subject headers still take the normal
+		// replacement path, which removes the ambiguous duplicates.
+		subjectHeaders := 0
+		for _, header := range snapshot.Headers {
+			if strings.EqualFold(header.Name, "Subject") {
+				subjectHeaders++
+			}
+		}
+		if subjectHeaders == 1 && decodeHeaderValue(headerValue(snapshot.Headers, "Subject")) == op.Value {
+			return nil
+		}
 		upsertHeader(&snapshot.Headers, "Subject", op.Value)
 	case "set_recipients":
 		return setRecipients(snapshot, op.Field, op.Addresses)
@@ -253,8 +265,10 @@ func replaceBody(snapshot *DraftSnapshot, bodyKind, value string, options PatchO
 	if err != nil {
 		return err
 	}
-	part.Body = []byte(value)
-	part.Dirty = true
+	if string(part.Body) != value {
+		part.Body = []byte(value)
+		part.Dirty = true
+	}
 	return nil
 }
 
@@ -378,10 +392,15 @@ func tryApplyCoupledBodySetBody(snapshot *DraftSnapshot, value string) bool {
 		return false
 	}
 
-	htmlPart.Body = []byte(value)
-	htmlPart.Dirty = true
-	textPart.Body = []byte(plainTextFromHTML(value))
-	textPart.Dirty = true
+	if string(htmlPart.Body) != value {
+		htmlPart.Body = []byte(value)
+		htmlPart.Dirty = true
+	}
+	text := plainTextFromHTML(value)
+	if string(textPart.Body) != text {
+		textPart.Body = []byte(text)
+		textPart.Dirty = true
+	}
 	return true
 }
 

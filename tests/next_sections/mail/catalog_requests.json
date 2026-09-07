@@ -1,0 +1,849 @@
+[
+  {
+    "command": [
+      "mail",
+      "multi_entity",
+      "search"
+    ],
+    "method": "POST",
+    "path": "/open-apis/mail/v1/multi_entity/search",
+    "params": {},
+    "body": {
+      "query": "synthetic"
+    },
+    "yes": false
+  },
+  {
+    "command": [
+      "mail",
+      "user_mailbox.drafts",
+      "cancel_scheduled_send"
+    ],
+    "method": "POST",
+    "path": "/open-apis/mail/v1/user_mailboxes/synthetic/messages/synthetic/cancel_scheduled_send",
+    "params": {
+      "user_mailbox_id": "synthetic",
+      "message_id": "synthetic"
+    },
+    "yes": false
+  },
+  {
+    "command": [
+      "mail",
+      "user_mailbox.drafts",
+      "create"
+    ],
+    "method": "POST",
+    "path": "/open-apis/mail/v1/user_mailboxes/synthetic/drafts",
+    "params": {
+      "user_mailbox_id": "synthetic"
+    },
+    "body": {},
+    "yes": false
+  },
+  {
+    "command": [
+      "mail",
+      "user_mailbox.drafts",
+      "delete"
+    ],
+    "method": "DELETE",
+    "path": "/open-apis/mail/v1/user_mailboxes/synthetic/drafts/synthetic",
+    "params": {
+      "user_mailbox_id": "synthetic",
+      "draft_id": "synthetic"
+    },
+    "yes": true
+  },
+  {
+    "command": [
+      "mail",
+      "user_mailbox.drafts",
+      "get"
+    ],
+    "method": "GET",
+    "path": "/open-apis/mail/v1/user_mailboxes/synthetic/drafts/synthetic",
+    "params": {
+      "draft_id": "synthetic",
+      "user_mailbox_id": "synthetic"
+    },
+    "yes": false
+  },
+  {
+    "command": [
+      "mail",
+      "user_mailbox.drafts",
+      "list"
+    ],
+    "method": "GET",
+    "path": "/open-apis/mail/v1/user_mailboxes/synthetic/drafts",
+    "params": {
+      "user_mailbox_id": "synthetic"
+    },
+    "yes": false
+  },
+  {
+    "command": [
+      "mail",
+      "user_mailbox.drafts",
+      "send"
+    ],
+    "method": "POST",
+    "path": "/open-apis/mail/v1/user_mailboxes/synthetic/drafts/synthetic/send",
+    "params": {
+      "user_mailbox_id": "synthetic",
+      "draft_id": "synthetic"
+    },
+    "body": {},
+    "yes": true
+  },
+  {
+    "command": [
+      "mail",
+      "user_mailbox.drafts",
+      "update"
+    ],
+    "method": "PUT",
+    "path": "/open-apis/mail/v1/user_mailboxes/synthetic/drafts/synthetic",
+    "params": {
+      "user_mailbox_id": "synthetic",
+      "draft_id": "synthetic"
+    },
+    "body": {
+      "raw": "synthetic"
+    },
+    "yes": false
+  },
+  {
+    "command": [
+      "mail",
+      "user_mailbox.event",
+      "subscribe"
+    ],
+    "method": "POST",
+    "path": "/open-apis/mail/v1/user_mailboxes/synthetic/event/subscribe",
+    "params": {
+      "user_mailbox_id": "synthetic"
+    },
+    "body": {
+      "event_type": 1
+    },
+    "yes": false
+  },
+  {
+    "command": [
+      "mail",
+      "user_mailbox.event",
+      "subscription"
+    ],
+    "method": "GET",
+    "path": "/open-apis/mail/v1/user_mailboxes/synthetic/event/subscription",
+    "params": {
+      "user_mailbox_id": "synthetic"
+    },
+    "yes": false
+  },
+  {
+    "command": [
+      "mail",
+      "user_mailbox.event",
+      "unsubscribe"
+    ],
+    "method": "POST",
+    "path": "/open-apis/mail/v1/user_mailboxes/synthetic/event/unsubscribe",
+    "params": {
+      "user_mailbox_id": "synthetic"
+    },
+    "body": {
+      "event_type": 1
+    },
+    "yes": false
+  },
+  {
+    "command": [
+      "mail",
+      "user_mailbox.folders",
+      "create"
+    ],
+    "method": "POST",
+    "path": "/open-apis/mail/v1/user_mailboxes/synthetic/folders",
+    "params": {
+      "user_mailbox_id": "synthetic"
+    },
+    "body": {
+      "name": "synthetic",
+      "parent_folder_id": "synthetic"
+    },
+    "yes": false
+  },
+  {
+    "command": [
+      "mail",
+      "user_mailbox.folders",
+      "delete"
+    ],
+    "method": "DELETE",
+    "path": "/open-apis/mail/v1/user_mailboxes/synthetic/folders/synthetic",
+    "params": {
+      "folder_id": "synthetic",
+      "user_mailbox_id": "synthetic"
+    },
+    "yes": true
+  },
+  {
+    "command": [
+      "mail",
+      "user_mailbox.folders",
+      "get"
+    ],
+    "method": "GET",
+    "path": "/open-apis/mail/v1/user_mailboxes/synthetic/folders/synthetic",
+    "params": {
+      "user_mailbox_id": "synthetic",
+      "folder_id": "synthetic"
+    },
+    "yes": false
+  },
+  {
+    "command": [
+      "mail",
+      "user_mailbox.folders",
+      "list"
+    ],
+    "method": "GET",
+    "path": "/open-apis/mail/v1/user_mailboxes/synthetic/folders",
+    "params": {
+      "user_mailbox_id": "synthetic"
+    },
+    "yes": false
+  },
+  {
+    "command": [
+      "mail",
+      "user_mailbox.folders",
+      "patch"
+    ],
+    "method": "PATCH",
+    "path": "/open-apis/mail/v1/user_mailboxes/synthetic/folders/synthetic",
+    "params": {
+      "user_mailbox_id": "synthetic",
+      "folder_id": "synthetic"
+    },
+    "body": {},
+    "yes": false
+  },
+  {
+    "command": [
+      "mail",
+      "user_mailbox.labels",
+      "create"
+    ],
+    "method": "POST",
+    "path": "/open-apis/mail/v1/user_mailboxes/synthetic/labels",
+    "params": {
+      "user_mailbox_id": "synthetic"
+    },
+    "body": {
+      "label": {
+        "name": "synthetic"
+      }
+    },
+    "yes": false
+  },
+  {
+    "command": [
+      "mail",
+      "user_mailbox.labels",
+      "delete"
+    ],
+    "method": "DELETE",
+    "path": "/open-apis/mail/v1/user_mailboxes/synthetic/labels/synthetic",
+    "params": {
+      "user_mailbox_id": "synthetic",
+      "label_id": "synthetic"
+    },
+    "yes": true
+  },
+  {
+    "command": [
+      "mail",
+      "user_mailbox.labels",
+      "get"
+    ],
+    "method": "GET",
+    "path": "/open-apis/mail/v1/user_mailboxes/synthetic/labels/synthetic",
+    "params": {
+      "user_mailbox_id": "synthetic",
+      "label_id": "synthetic"
+    },
+    "yes": false
+  },
+  {
+    "command": [
+      "mail",
+      "user_mailbox.labels",
+      "list"
+    ],
+    "method": "GET",
+    "path": "/open-apis/mail/v1/user_mailboxes/synthetic/labels",
+    "params": {
+      "user_mailbox_id": "synthetic"
+    },
+    "yes": false
+  },
+  {
+    "command": [
+      "mail",
+      "user_mailbox.labels",
+      "patch"
+    ],
+    "method": "PATCH",
+    "path": "/open-apis/mail/v1/user_mailboxes/synthetic/labels/synthetic",
+    "params": {
+      "user_mailbox_id": "synthetic",
+      "label_id": "synthetic"
+    },
+    "body": {
+      "label": {}
+    },
+    "yes": false
+  },
+  {
+    "command": [
+      "mail",
+      "user_mailbox.mail_contacts",
+      "create"
+    ],
+    "method": "POST",
+    "path": "/open-apis/mail/v1/user_mailboxes/synthetic/mail_contacts",
+    "params": {
+      "user_mailbox_id": "synthetic"
+    },
+    "body": {
+      "name": "synthetic"
+    },
+    "yes": false
+  },
+  {
+    "command": [
+      "mail",
+      "user_mailbox.mail_contacts",
+      "delete"
+    ],
+    "method": "DELETE",
+    "path": "/open-apis/mail/v1/user_mailboxes/synthetic/mail_contacts/synthetic",
+    "params": {
+      "user_mailbox_id": "synthetic",
+      "mail_contact_id": "synthetic"
+    },
+    "yes": true
+  },
+  {
+    "command": [
+      "mail",
+      "user_mailbox.mail_contacts",
+      "list"
+    ],
+    "method": "GET",
+    "path": "/open-apis/mail/v1/user_mailboxes/synthetic/mail_contacts",
+    "params": {
+      "user_mailbox_id": "synthetic",
+      "page_size": 1
+    },
+    "yes": false
+  },
+  {
+    "command": [
+      "mail",
+      "user_mailbox.mail_contacts",
+      "patch"
+    ],
+    "method": "PATCH",
+    "path": "/open-apis/mail/v1/user_mailboxes/synthetic/mail_contacts/synthetic",
+    "params": {
+      "user_mailbox_id": "synthetic",
+      "mail_contact_id": "synthetic"
+    },
+    "body": {
+      "name": "synthetic"
+    },
+    "yes": false
+  },
+  {
+    "command": [
+      "mail",
+      "user_mailbox.message.attachments",
+      "download_url"
+    ],
+    "method": "GET",
+    "path": "/open-apis/mail/v1/user_mailboxes/synthetic/messages/synthetic/attachments/download_url",
+    "params": {
+      "attachment_ids": "synthetic",
+      "user_mailbox_id": "synthetic",
+      "message_id": "synthetic"
+    },
+    "yes": false
+  },
+  {
+    "command": [
+      "mail",
+      "user_mailbox.messages",
+      "batch_get"
+    ],
+    "method": "POST",
+    "path": "/open-apis/mail/v1/user_mailboxes/synthetic/messages/batch_get",
+    "params": {
+      "user_mailbox_id": "synthetic"
+    },
+    "body": {},
+    "yes": false
+  },
+  {
+    "command": [
+      "mail",
+      "user_mailbox.messages",
+      "batch_modify"
+    ],
+    "method": "POST",
+    "path": "/open-apis/mail/v1/user_mailboxes/synthetic/messages/batch_modify",
+    "params": {
+      "user_mailbox_id": "synthetic"
+    },
+    "body": {},
+    "yes": false
+  },
+  {
+    "command": [
+      "mail",
+      "user_mailbox.messages",
+      "batch_trash"
+    ],
+    "method": "POST",
+    "path": "/open-apis/mail/v1/user_mailboxes/synthetic/messages/batch_trash",
+    "params": {
+      "user_mailbox_id": "synthetic"
+    },
+    "body": {},
+    "yes": false
+  },
+  {
+    "command": [
+      "mail",
+      "user_mailbox.messages",
+      "get"
+    ],
+    "method": "GET",
+    "path": "/open-apis/mail/v1/user_mailboxes/synthetic/messages/synthetic",
+    "params": {
+      "user_mailbox_id": "synthetic",
+      "message_id": "synthetic"
+    },
+    "yes": false
+  },
+  {
+    "command": [
+      "mail",
+      "user_mailbox.messages",
+      "list"
+    ],
+    "method": "GET",
+    "path": "/open-apis/mail/v1/user_mailboxes/synthetic/messages",
+    "params": {
+      "user_mailbox_id": "synthetic",
+      "page_size": 1
+    },
+    "yes": false
+  },
+  {
+    "command": [
+      "mail",
+      "user_mailbox.messages",
+      "modify"
+    ],
+    "method": "PUT",
+    "path": "/open-apis/mail/v1/user_mailboxes/synthetic/messages/synthetic/modify",
+    "params": {
+      "user_mailbox_id": "synthetic",
+      "message_id": "synthetic"
+    },
+    "body": {},
+    "yes": false
+  },
+  {
+    "command": [
+      "mail",
+      "user_mailbox.messages",
+      "send_status"
+    ],
+    "method": "GET",
+    "path": "/open-apis/mail/v1/user_mailboxes/synthetic/messages/synthetic/send_status",
+    "params": {
+      "message_id": "synthetic",
+      "user_mailbox_id": "synthetic"
+    },
+    "yes": false
+  },
+  {
+    "command": [
+      "mail",
+      "user_mailbox.messages",
+      "trash"
+    ],
+    "method": "POST",
+    "path": "/open-apis/mail/v1/user_mailboxes/synthetic/messages/synthetic/trash",
+    "params": {
+      "user_mailbox_id": "synthetic",
+      "message_id": "synthetic"
+    },
+    "yes": false
+  },
+  {
+    "command": [
+      "mail",
+      "user_mailbox.rules",
+      "create"
+    ],
+    "method": "POST",
+    "path": "/open-apis/mail/v1/user_mailboxes/synthetic/rules",
+    "params": {
+      "user_mailbox_id": "synthetic"
+    },
+    "body": {
+      "condition": {
+        "match_type": 1,
+        "items": []
+      },
+      "action": {
+        "items": []
+      },
+      "ignore_the_rest_of_rules": false,
+      "name": "synthetic",
+      "is_enable": false
+    },
+    "yes": false
+  },
+  {
+    "command": [
+      "mail",
+      "user_mailbox.rules",
+      "delete"
+    ],
+    "method": "DELETE",
+    "path": "/open-apis/mail/v1/user_mailboxes/synthetic/rules/synthetic",
+    "params": {
+      "rule_id": "synthetic",
+      "user_mailbox_id": "synthetic"
+    },
+    "yes": true
+  },
+  {
+    "command": [
+      "mail",
+      "user_mailbox.rules",
+      "list"
+    ],
+    "method": "GET",
+    "path": "/open-apis/mail/v1/user_mailboxes/synthetic/rules",
+    "params": {
+      "user_mailbox_id": "synthetic"
+    },
+    "yes": false
+  },
+  {
+    "command": [
+      "mail",
+      "user_mailbox.rules",
+      "reorder"
+    ],
+    "method": "POST",
+    "path": "/open-apis/mail/v1/user_mailboxes/synthetic/rules/reorder",
+    "params": {
+      "user_mailbox_id": "synthetic"
+    },
+    "body": {
+      "rule_ids": []
+    },
+    "yes": false
+  },
+  {
+    "command": [
+      "mail",
+      "user_mailbox.rules",
+      "update"
+    ],
+    "method": "PUT",
+    "path": "/open-apis/mail/v1/user_mailboxes/synthetic/rules/synthetic",
+    "params": {
+      "user_mailbox_id": "synthetic",
+      "rule_id": "synthetic"
+    },
+    "body": {
+      "condition": {
+        "items": [],
+        "match_type": 1
+      },
+      "action": {
+        "items": []
+      },
+      "ignore_the_rest_of_rules": false,
+      "name": "synthetic",
+      "is_enable": false
+    },
+    "yes": false
+  },
+  {
+    "command": [
+      "mail",
+      "user_mailbox.sent_messages",
+      "get_recall_detail"
+    ],
+    "method": "GET",
+    "path": "/open-apis/mail/v1/user_mailboxes/synthetic/messages/synthetic/recall",
+    "params": {
+      "user_mailbox_id": "synthetic",
+      "message_id": "synthetic"
+    },
+    "yes": false
+  },
+  {
+    "command": [
+      "mail",
+      "user_mailbox.sent_messages",
+      "recall"
+    ],
+    "method": "POST",
+    "path": "/open-apis/mail/v1/user_mailboxes/synthetic/messages/synthetic/recall",
+    "params": {
+      "user_mailbox_id": "synthetic",
+      "message_id": "synthetic"
+    },
+    "yes": false
+  },
+  {
+    "command": [
+      "mail",
+      "user_mailbox.settings",
+      "send_as"
+    ],
+    "method": "GET",
+    "path": "/open-apis/mail/v1/user_mailboxes/synthetic/settings/send_as",
+    "params": {
+      "user_mailbox_id": "synthetic"
+    },
+    "yes": false
+  },
+  {
+    "command": [
+      "mail",
+      "user_mailbox.template.attachments",
+      "download_url"
+    ],
+    "method": "GET",
+    "path": "/open-apis/mail/v1/user_mailboxes/synthetic/templates/synthetic/attachments/download_url",
+    "params": {
+      "user_mailbox_id": "synthetic",
+      "template_id": "synthetic",
+      "attachment_ids": "synthetic"
+    },
+    "yes": false
+  },
+  {
+    "command": [
+      "mail",
+      "user_mailbox.templates",
+      "create"
+    ],
+    "method": "POST",
+    "path": "/open-apis/mail/v1/user_mailboxes/synthetic/templates",
+    "params": {
+      "user_mailbox_id": "synthetic"
+    },
+    "body": {
+      "template": {}
+    },
+    "yes": false
+  },
+  {
+    "command": [
+      "mail",
+      "user_mailbox.templates",
+      "delete"
+    ],
+    "method": "DELETE",
+    "path": "/open-apis/mail/v1/user_mailboxes/synthetic/templates/synthetic",
+    "params": {
+      "user_mailbox_id": "synthetic",
+      "template_id": "synthetic"
+    },
+    "yes": false
+  },
+  {
+    "command": [
+      "mail",
+      "user_mailbox.templates",
+      "get"
+    ],
+    "method": "GET",
+    "path": "/open-apis/mail/v1/user_mailboxes/synthetic/templates/synthetic",
+    "params": {
+      "template_id": "synthetic",
+      "user_mailbox_id": "synthetic"
+    },
+    "yes": false
+  },
+  {
+    "command": [
+      "mail",
+      "user_mailbox.templates",
+      "list"
+    ],
+    "method": "GET",
+    "path": "/open-apis/mail/v1/user_mailboxes/synthetic/templates",
+    "params": {
+      "user_mailbox_id": "synthetic"
+    },
+    "yes": false
+  },
+  {
+    "command": [
+      "mail",
+      "user_mailbox.templates",
+      "update"
+    ],
+    "method": "PUT",
+    "path": "/open-apis/mail/v1/user_mailboxes/synthetic/templates/synthetic",
+    "params": {
+      "user_mailbox_id": "synthetic",
+      "template_id": "synthetic"
+    },
+    "body": {
+      "template": {}
+    },
+    "yes": false
+  },
+  {
+    "command": [
+      "mail",
+      "user_mailbox.threads",
+      "batch_modify"
+    ],
+    "method": "POST",
+    "path": "/open-apis/mail/v1/user_mailboxes/synthetic/threads/batch_modify",
+    "params": {
+      "user_mailbox_id": "synthetic"
+    },
+    "body": {},
+    "yes": false
+  },
+  {
+    "command": [
+      "mail",
+      "user_mailbox.threads",
+      "batch_trash"
+    ],
+    "method": "POST",
+    "path": "/open-apis/mail/v1/user_mailboxes/synthetic/threads/batch_trash",
+    "params": {
+      "user_mailbox_id": "synthetic"
+    },
+    "body": {},
+    "yes": false
+  },
+  {
+    "command": [
+      "mail",
+      "user_mailbox.threads",
+      "get"
+    ],
+    "method": "GET",
+    "path": "/open-apis/mail/v1/user_mailboxes/synthetic/threads/synthetic",
+    "params": {
+      "user_mailbox_id": "synthetic",
+      "thread_id": "synthetic"
+    },
+    "yes": false
+  },
+  {
+    "command": [
+      "mail",
+      "user_mailbox.threads",
+      "list"
+    ],
+    "method": "GET",
+    "path": "/open-apis/mail/v1/user_mailboxes/synthetic/threads",
+    "params": {
+      "user_mailbox_id": "synthetic",
+      "page_size": 1
+    },
+    "yes": false
+  },
+  {
+    "command": [
+      "mail",
+      "user_mailbox.threads",
+      "modify"
+    ],
+    "method": "POST",
+    "path": "/open-apis/mail/v1/user_mailboxes/synthetic/threads/synthetic/modify",
+    "params": {
+      "user_mailbox_id": "synthetic",
+      "thread_id": "synthetic"
+    },
+    "body": {},
+    "yes": false
+  },
+  {
+    "command": [
+      "mail",
+      "user_mailbox.threads",
+      "trash"
+    ],
+    "method": "POST",
+    "path": "/open-apis/mail/v1/user_mailboxes/synthetic/threads/synthetic/trash",
+    "params": {
+      "thread_id": "synthetic",
+      "user_mailbox_id": "synthetic"
+    },
+    "yes": false
+  },
+  {
+    "command": [
+      "mail",
+      "user_mailboxes",
+      "accessible_mailboxes"
+    ],
+    "method": "GET",
+    "path": "/open-apis/mail/v1/user_mailboxes/synthetic/accessible_mailboxes",
+    "params": {
+      "user_mailbox_id": "synthetic"
+    },
+    "yes": false
+  },
+  {
+    "command": [
+      "mail",
+      "user_mailboxes",
+      "profile"
+    ],
+    "method": "GET",
+    "path": "/open-apis/mail/v1/user_mailboxes/synthetic/profile",
+    "params": {
+      "user_mailbox_id": "synthetic"
+    },
+    "yes": false
+  },
+  {
+    "command": [
+      "mail",
+      "user_mailboxes",
+      "search"
+    ],
+    "method": "POST",
+    "path": "/open-apis/mail/v1/user_mailboxes/synthetic/search",
+    "params": {
+      "user_mailbox_id": "synthetic"
+    },
+    "body": {},
+    "yes": false
+  }
+]
