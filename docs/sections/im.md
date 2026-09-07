@@ -163,3 +163,32 @@ list GET, preserves the continuation token and does not walk automatically.
 The endpoint exposes no page-size control. Additional warnings concerned Sheets
 commands changed concurrently. Full repository formatting/lint/license/release
 gates remain coordinator-owned. Live and comparative work above remain open.
+
+### Strict recipient-evidence fixture follow-up
+
+The combined `052357e` E2E run exposed six generated mutation stubs whose generic
+`items:[]` data did not satisfy the stricter shared receipt classifier introduced
+by `1bcdb68`. The frozen `docs/reference/meta_data.json.gz` response definitions
+now supply the fixture shapes: membership creation has explicit empty
+`invalid_id_list`, `not_existed_id_list`, and `pending_approval_id_list` arrays;
+membership deletion has `invalid_id_list:[]`; all three urgency methods have
+`invalid_user_id_list:[]`. Assertions preserve the returned native fields.
+
+Join-request handling returns an ordered `results` entry with the requested
+member/action and `result:"success"`. Its expected receipt remains `unknown`
+(exit 22): the shared classifier does not reconcile the list with original
+request coverage. This is conservative evidence handling, not a claim that the
+synthetic result failed. No classifier or product assertions were weakened.
+Each of the six endpoints also runs empty data, null data, an unrelated empty
+array, and null native-field responses. All 24 variants must remain unknown,
+report `ok:false`, and perform exactly one attempt without replay.
+
+Full section validation passed with
+`python3 scripts/next_test.py --section im --suite all --report .tmp/im-receipt-fixtures-all-fixed.json`:
+1,294 unit events, 45 legacy deterministic E2E events, and 131 process events
+passed; the existing live-boundary scenario remained skipped. Scoped
+`go vet ./tests/next_sections/im` used `isolated_env` and passed; formatting and
+owned-file diff checks passed. The initial local run in
+`.tmp/im-receipt-fixtures-all.json` failed on a fixture test syntax error; the
+fixed report records the complete successful rerun. These tests remain synthetic
+and prove neither actual delivery nor live membership/permission behavior.

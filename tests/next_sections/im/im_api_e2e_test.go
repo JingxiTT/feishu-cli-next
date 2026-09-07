@@ -13,6 +13,7 @@ import (
 	"testing"
 
 	"github.com/larksuite/cli/tests/nextfixture"
+	"github.com/tidwall/gjson"
 )
 
 // Static synthetic cases independently pin every generated IM JSON endpoint.
@@ -27,6 +28,8 @@ func TestGeneratedIMContracts(t *testing.T) {
 		Name, Method, Path, Identity, Risk string
 		Params                             map[string]any
 		Body                               any
+		Response                           map[string]any
+		ExpectedUnknown                    bool `json:"expected_unknown"`
 	}
 	if err := json.Unmarshal(raw, &cases); err != nil {
 		t.Fatal(err)
@@ -56,7 +59,15 @@ func TestGeneratedIMContracts(t *testing.T) {
 						t.Errorf("body %s want %#v", body, tc.Body)
 					}
 				}
-				respond(w, map[string]any{"fixture_marker": "preserved α", "items": []any{}, "has_more": false})
+				data := map[string]any{"fixture_marker": "preserved α", "items": []any{}, "has_more": false}
+				if tc.Response != nil {
+					// Endpoint-native evidence replaces the generic list-shaped stub.
+					data = map[string]any{"fixture_marker": "preserved α"}
+					for key, value := range tc.Response {
+						data[key] = value
+					}
+				}
+				respond(w, data)
 			}))
 			args := append([]string{"im"}, strings.Split(tc.Name, " ")...)
 			args = append(args, "--as", tc.Identity)
@@ -72,7 +83,7 @@ func TestGeneratedIMContracts(t *testing.T) {
 				args = append(args, "--yes")
 			}
 			r := f.Run(args...)
-			if tc.Method != "GET" && (strings.Contains(tc.Name, "batch_update") || strings.Contains(tc.Name, "batch_add_item") || strings.Contains(tc.Name, "batch_remove_item")) {
+			if tc.ExpectedUnknown || tc.Method != "GET" && (strings.Contains(tc.Name, "batch_update") || strings.Contains(tc.Name, "batch_add_item") || strings.Contains(tc.Name, "batch_remove_item")) {
 				if r.ExitCode != 22 || !strings.Contains(r.Stderr, "unknown") {
 					t.Fatalf("batch must stay unknown: %+v", r)
 				}
@@ -81,6 +92,42 @@ func TestGeneratedIMContracts(t *testing.T) {
 			}
 			if calls.Load() != 1 || !strings.Contains(r.Stdout, "preserved α") {
 				t.Fatalf("%+v calls %d", r, calls.Load())
+			}
+			for key, want := range tc.Response {
+				if got := gjson.Get(r.Stdout, "data."+key); !got.Exists() || !reflect.DeepEqual(got.Value(), want) {
+					t.Fatalf("native outcome %s lost: %+v", key, r)
+				}
+			}
+			if tc.Response == nil {
+				return
+			}
+			nullFields := map[string]any{}
+			for key := range tc.Response {
+				nullFields[key] = nil
+			}
+			for _, missing := range []struct {
+				name string
+				data any
+			}{
+				{"empty_data", map[string]any{}},
+				{"null_data", nil},
+				{"unrelated_array", map[string]any{"items": []any{}}},
+				{"null_native_fields", nullFields},
+			} {
+				t.Run(missing.name, func(t *testing.T) {
+					var attempts atomic.Int32
+					f := nextfixture.NewFixture(t, http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+						attempts.Add(1)
+						if req.Method != tc.Method || req.URL.Path != tc.Path {
+							t.Errorf("unexpected %s %s", req.Method, req.URL)
+						}
+						respond(w, missing.data)
+					}))
+					r := f.Run(args...)
+					if r.ExitCode != 22 || gjson.Get(r.Stdout, "ok").Bool() || !strings.Contains(r.Stderr, "unknown") || attempts.Load() != 1 {
+						t.Fatalf("missing native evidence must stay unknown without replay: %+v calls %d", r, attempts.Load())
+					}
+				})
 			}
 		})
 	}

@@ -63,7 +63,17 @@
       ]
     },
     "identity": "user",
-    "risk": "write"
+    "risk": "write",
+    "response": {
+      "results": [
+        {
+          "member_id": "ou_fixture",
+          "action": "approve",
+          "result": "success"
+        }
+      ]
+    },
+    "expected_unknown": true
   },
   {
     "name": "threads forward",
@@ -391,7 +401,12 @@
       ]
     },
     "identity": "bot",
-    "risk": "write"
+    "risk": "write",
+    "response": {
+      "invalid_id_list": [],
+      "not_existed_id_list": [],
+      "pending_approval_id_list": []
+    }
   },
   {
     "name": "chat.members delete",
@@ -407,7 +422,10 @@
       ]
     },
     "identity": "bot",
-    "risk": "high-risk-write"
+    "risk": "high-risk-write",
+    "response": {
+      "invalid_id_list": []
+    }
   },
   {
     "name": "chat.members get",
@@ -460,7 +478,10 @@
       ]
     },
     "identity": "bot",
-    "risk": "write"
+    "risk": "write",
+    "response": {
+      "invalid_user_id_list": []
+    }
   },
   {
     "name": "messages delete",
@@ -514,7 +535,10 @@
       ]
     },
     "identity": "bot",
-    "risk": "write"
+    "risk": "write",
+    "response": {
+      "invalid_user_id_list": []
+    }
   },
   {
     "name": "messages urgent_phone",
@@ -531,7 +555,10 @@
       ]
     },
     "identity": "bot",
-    "risk": "write"
+    "risk": "write",
+    "response": {
+      "invalid_user_id_list": []
+    }
   },
   {
     "name": "messages read_status",
