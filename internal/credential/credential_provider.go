@@ -154,6 +154,10 @@ type CredentialProvider struct {
 	accountErr     error
 	selectedSource credentialSource
 
+	userBindingOnce sync.Once
+	userBinding     UserBinding
+	userBindingErr  error
+
 	hintOnce sync.Once
 	hint     *IdentityHint
 	hintErr  error
@@ -248,6 +252,8 @@ func (p *CredentialProvider) enrichUserInfo(ctx context.Context, acct *Account, 
 		return fmt.Errorf("failed to verify user identity: %w", err)
 	}
 	acct.UserOpenId = info.OpenID
+	acct.TenantKey = info.TenantKey
+	acct.UserInfoVerified = info.OpenID != ""
 	acct.UserName = info.Name
 	return nil
 }

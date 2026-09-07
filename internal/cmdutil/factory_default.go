@@ -193,7 +193,7 @@ func cachedHttpClientFunc(f *Factory, workspaceConfig workspaceConfigSource) fun
 		platform := buildDirectHTTPTransport(outbound, true)
 		external := buildDirectHTTPTransport(outbound, false)
 		client := &http.Client{
-			Transport:     transport.NewHTTPPolicyRouter(platform, external),
+			Transport:     f.agentAttemptTransport(transport.NewHTTPPolicyRouter(platform, external)),
 			Timeout:       30 * time.Second,
 			CheckRedirect: safeRedirectPolicy,
 		}
@@ -226,7 +226,7 @@ func cachedLarkClientFunc(f *Factory, workspaceConfig workspaceConfigSource) fun
 		}
 		hostSignalSource := resolveSDKHostSignalSource(workspaceConfig)
 		opts = append(opts, lark.WithHttpClient(&http.Client{
-			Transport:     buildSDKTransport(hostSignalSource),
+			Transport:     f.agentAttemptTransport(buildSDKTransport(hostSignalSource)),
 			CheckRedirect: safeRedirectPolicy,
 		}))
 		ep := core.ResolveEndpoints(acct.Brand)

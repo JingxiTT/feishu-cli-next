@@ -22,6 +22,8 @@ type Account struct {
 	AppSecret           string
 	Brand               core.LarkBrand
 	DefaultAs           core.Identity
+	TenantKey           string // verified user_info tenant, unavailable in legacy config
+	UserInfoVerified    bool
 	UserOpenId          string
 	UserName            string
 	Lang                i18n.Lang
