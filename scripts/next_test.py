@@ -94,7 +94,7 @@ def commands_for(section, suite):
     go_test = ["go", "test", "-json", "-count=1", "-timeout=10m"]
     if suite in ("unit", "all"):
         if section == "all":
-            packages = ["./cmd/...", "./internal/...", "./shortcuts/...", "./extension/...", "./events/...", "./errs/..."]
+            packages = [".", "./cmd/...", "./internal/...", "./shortcuts/...", "./extension/...", "./events/...", "./errs/..."]
         elif section == "foundation":
             packages = ["./cmd/...", "./internal/...", "./shortcuts/common/...", "./extension/...", "./errs/..."]
         elif section == "extensions":

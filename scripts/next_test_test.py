@@ -129,6 +129,13 @@ urllib.request.urlopen('http://must-not-resolve.invalid',timeout=0.2)
                 self.assertEqual(report["evidence"], "live")
                 self.assertEqual(report["commands"], [])
 
+    def test_all_unit_selection_includes_root_startup_and_embedded_content_tests(self):
+        for suite in ("unit", "all"):
+            commands = next_test.commands_for("all", suite)
+            self.assertEqual(commands[0].count("."), 1)
+            self.assertNotIn("-run", commands[0])
+        self.assertFalse(any("." in command for command in next_test.commands_for("all", "e2e")))
+
     def test_section_selector_keeps_live_workflows_out(self):
         commands = next_test.commands_for("docs", "all")
         self.assertIn("./shortcuts/doc/...", commands[0])
