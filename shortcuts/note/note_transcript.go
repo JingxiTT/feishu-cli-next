@@ -192,17 +192,15 @@ func fetchUnifiedTranscript(ctx context.Context, runtime *common.RuntimeContext,
 			return nil, mapNoteError(err)
 		}
 
-		if transcript, _ := data["transcript"].(map[string]any); transcript != nil {
-			if chunk, _ := transcript[transcriptFormat].(string); chunk != "" {
-				buf.WriteString(chunk)
-			}
+		transcriptPage, err := parseTranscriptPage(data, transcriptFormat)
+		if err != nil {
+			return nil, err
 		}
-
-		hasMore, _ := data["has_more"].(bool)
-		if !hasMore {
+		buf.WriteString(transcriptPage.Content)
+		if !transcriptPage.HasMore {
 			break
 		}
-		next, ok := parseLooseCursorID(data["next_cursor_id"])
+		next, ok := parseLooseCursorID(transcriptPage.NextCursor)
 		if !ok || next == cursor || seenCursors[next] {
 			fmt.Fprintf(errOut, "%s has_more set but cursor did not advance at page %d\n", logPrefix, page)
 			return nil, errs.NewInternalError(errs.SubtypeInvalidResponse, "transcript pagination cursor did not advance at page %d; aborting to avoid saving a partial transcript", page)
@@ -222,6 +220,36 @@ func fetchUnifiedTranscript(ctx context.Context, runtime *common.RuntimeContext,
 		return nil, errs.NewInternalError(errs.SubtypeInvalidResponse, "transcript is empty for note %s in %s format; aborting to avoid saving an empty transcript", noteID, transcriptFormat)
 	}
 	return buf.Bytes(), nil
+}
+
+// transcriptPage projects the loose response before pagination consumes it.
+// Empty chunks are valid; absent or non-string chunks cannot prove completeness.
+type transcriptPage struct {
+	Content    string
+	HasMore    bool
+	NextCursor any
+}
+
+func parseTranscriptPage(data map[string]any, format string) (transcriptPage, error) {
+	var page transcriptPage
+	transcript, ok := data["transcript"].(map[string]any)
+	if !ok {
+		return page, errs.NewInternalError(errs.SubtypeInvalidResponse, "transcript page is missing its content object")
+	}
+	page.Content, ok = transcript[format].(string)
+	if !ok {
+		return page, errs.NewInternalError(errs.SubtypeInvalidResponse, "transcript page is missing string content for %s", format)
+	}
+	// Preserve the legacy omitted has_more terminal-page behavior, but never
+	// interpret a malformed value (for example the string "true") as false.
+	if value, present := data["has_more"]; present {
+		page.HasMore, ok = value.(bool)
+		if !ok {
+			return page, errs.NewInternalError(errs.SubtypeInvalidResponse, "transcript page has_more must be boolean")
+		}
+	}
+	page.NextCursor = data["next_cursor_id"]
+	return page, nil
 }
 
 func transcriptContextError(err error) error {

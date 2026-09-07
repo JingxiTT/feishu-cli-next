@@ -121,3 +121,20 @@ func setNoteDryRunEnv(t *testing.T) {
 	t.Setenv("LARKSUITE_CLI_APP_SECRET", "note_dryrun_secret")
 	t.Setenv("LARKSUITE_CLI_BRAND", "feishu")
 }
+
+func TestNoteTranscriptOptionsDryRun(t *testing.T) {
+	setNoteDryRunEnv(t)
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	t.Cleanup(cancel)
+	result, err := clie2e.RunCmd(ctx, clie2e.Request{
+		Args:      []string{"note", "+transcript", "--note-id", "note_options", "--transcript-format", "markdown", "--locale", "ja_jp", "--output", "custom.md", "--overwrite", "--dry-run"},
+		DefaultAs: "user", Format: "json",
+	})
+	require.NoError(t, err)
+	result.AssertExitCode(t, 0)
+	require.Equal(t, "ja_jp", clie2e.DryRunGet(result.Stdout, "api.1.params.locale").String())
+	require.Equal(t, "markdown", clie2e.DryRunGet(result.Stdout, "api.1.params.format").String())
+	require.Equal(t, "/open-apis/vc/v1/notes/note_options/unified_note_transcript", clie2e.DryRunGet(result.Stdout, "api.1.url").String())
+	require.False(t, clie2e.DryRunGet(result.Stdout, "api.1.params.output").Exists())
+	require.False(t, clie2e.DryRunGet(result.Stdout, "api.1.params.overwrite").Exists())
+}
