@@ -153,22 +153,45 @@ def selection_evidence(command):
 
 def run_command(command, env, timeout, cwd=ROOT):
     started = time.monotonic()
-    try:
-        process = subprocess.Popen(command, cwd=cwd, env=env, stdout=subprocess.PIPE,
-                                   stderr=subprocess.PIPE, text=True, encoding="utf-8", errors="replace", start_new_session=os.name == "posix")
-    except OSError as error:
-        return {"command": command, "status": "fail", "exit_code": 127,
-                "duration_seconds": 0, "stdout": "", "stderr": str(error), "tests": {}}
     timed_out = False
-    try:
-        stdout, stderr = process.communicate(timeout=timeout)
-    except subprocess.TimeoutExpired:
-        timed_out = True
-        if os.name == "posix":
-            os.killpg(process.pid, signal.SIGKILL)
-        else:
-            process.kill()
-        stdout, stderr = process.communicate()
+    cleanup_errors = []
+    # File capture cannot wait for EOF on a pipe held open by a stuck grandchild.
+    # Keep capture identical across platforms; readers decode the finished bytes.
+    with tempfile.TemporaryFile() as output, tempfile.TemporaryFile() as errors:
+        try:
+            process = subprocess.Popen(command, cwd=cwd, env=env, stdout=output,
+                                       stderr=errors, start_new_session=os.name == "posix")
+        except OSError as error:
+            return {"command": command, "status": "fail", "exit_code": 127,
+                    "duration_seconds": 0, "stdout": "", "stderr": str(error), "tests": {}}
+        try:
+            process.wait(timeout=timeout)
+        except subprocess.TimeoutExpired:
+            timed_out = True
+            if os.name == "posix":
+                try:
+                    os.killpg(process.pid, signal.SIGKILL)
+                except ProcessLookupError:
+                    pass
+            else:
+                try:
+                    killed = subprocess.run(["taskkill", "/T", "/F", "/PID", str(process.pid)],
+                                            env=env, stdout=subprocess.DEVNULL,
+                                            stderr=subprocess.DEVNULL, timeout=2)
+                    if killed.returncode:
+                        cleanup_errors.append("taskkill failed; descendant termination is unverified")
+                except (OSError, subprocess.TimeoutExpired):
+                    cleanup_errors.append("taskkill unavailable or timed out; descendant termination is unverified")
+            if process.poll() is None:
+                process.kill()
+            try:
+                process.wait(timeout=1)
+            except subprocess.TimeoutExpired:
+                cleanup_errors.append("parent termination did not complete within cleanup deadline")
+        output.seek(0)
+        errors.seek(0)
+        stdout = output.read().decode("utf-8", errors="replace")
+        stderr = errors.read().decode("utf-8", errors="replace")
     code = 124 if timed_out else process.returncode
     counts = {"pass": 0, "fail": 0, "skip": 0}
     for line in stdout.splitlines():
@@ -188,7 +211,8 @@ def run_command(command, env, timeout, cwd=ROOT):
             counts["pass"] = max(0, int(ran.group(1)) - counts["fail"] - counts["skip"])
     return {"command": command, "status": "timeout" if timed_out else "pass" if code == 0 else "fail",
             "exit_code": code, "duration_seconds": round(time.monotonic() - started, 3),
-            "stdout": stdout, "stderr": stderr, "tests": counts}
+            "stdout": stdout, "stderr": stderr, "tests": counts,
+            "cleanup_errors": cleanup_errors}
 
 
 def main(argv=None):

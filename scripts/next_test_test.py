@@ -11,6 +11,8 @@ import socket
 import subprocess
 import sys
 import tempfile
+import time
+from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
 
@@ -124,6 +126,45 @@ urllib.request.urlopen('http://must-not-resolve.invalid',timeout=0.2)
                                           next_test.isolated_env(directory, os.environ, "http://127.0.0.1:1"), 0.05)
         self.assertEqual(result["exit_code"], 124)
         self.assertEqual(result["status"], "timeout")
+
+    def test_nonposix_timeout_is_bounded_when_descendant_holds_output(self):
+        # Simulate only the runner's platform branch. The finite grandchild makes
+        # this regression safe even when native tree termination is unavailable.
+        source = "import subprocess,sys,time;subprocess.Popen([sys.executable,'-c',\"import time;time.sleep(1)\"]);print('started',flush=True);time.sleep(2)"
+        with tempfile.TemporaryDirectory() as directory:
+            env = next_test.isolated_env(directory, os.environ, "http://127.0.0.1:1")
+            with patch.object(next_test, "os", SimpleNamespace(name="nt")), patch.object(subprocess, "run", side_effect=FileNotFoundError("synthetic taskkill unavailable")) as kill:
+                started = time.monotonic()
+                result = next_test.run_command([sys.executable, "-c", source], env, 0.2)
+                duration = time.monotonic() - started
+            self.assertLess(duration, 0.8)
+            self.assertEqual(result["exit_code"], 124)
+            self.assertEqual(result["status"], "timeout")
+            self.assertEqual(result["stdout"], "started\n")
+            self.assertTrue(result["cleanup_errors"])
+            self.assertEqual(kill.call_args.args[0][:4], ["taskkill", "/T", "/F", "/PID"])
+            self.assertEqual(kill.call_args.kwargs["timeout"], 2)
+
+    def test_native_timeout_stops_descendant_file_effect(self):
+        with tempfile.TemporaryDirectory() as directory:
+            marker = Path(directory) / "unexpected-child-effect"
+            env = next_test.isolated_env(directory, os.environ, "http://127.0.0.1:1")
+            child = "import pathlib,sys,time;time.sleep(0.8);pathlib.Path(sys.argv[1]).write_text('unexpected')"
+            source = "import subprocess,sys,time;subprocess.Popen([sys.executable,'-c',sys.argv[1],sys.argv[2]]);print('started',flush=True);time.sleep(2)"
+            result = next_test.run_command([sys.executable, "-c", source, child, str(marker)], env, 0.3)
+            self.assertEqual(result["exit_code"], 124)
+            self.assertEqual(result["stdout"], "started\n")
+            self.assertEqual(result["cleanup_errors"], [])
+            time.sleep(0.8)
+            self.assertFalse(marker.exists(), "timed-out descendant still changed local state")
+
+    def test_nonposix_tree_cleanup_timeout_remains_reported(self):
+        with tempfile.TemporaryDirectory() as directory:
+            env = next_test.isolated_env(directory, os.environ, "http://127.0.0.1:1")
+            with patch.object(next_test, "os", SimpleNamespace(name="nt")), patch.object(subprocess, "run", side_effect=subprocess.TimeoutExpired("taskkill", 2)):
+                result = next_test.run_command([sys.executable, "-c", "import time;time.sleep(1)"], env, 0.05)
+            self.assertEqual(result["exit_code"], 124)
+            self.assertIn("descendant termination is unverified", result["cleanup_errors"][0])
 
     def test_main_forwards_failure_and_removes_isolated_state(self):
         with tempfile.TemporaryDirectory() as directory:
