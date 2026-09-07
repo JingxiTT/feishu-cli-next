@@ -35,6 +35,10 @@ func TestGuideProcessLifecycle(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
+	canonicalProject, err := filepath.EvalSymlinks(project)
+	if err != nil {
+		t.Fatal(err)
+	}
 	env := make([]string, 0)
 	for _, value := range os.Environ() {
 		key, _, _ := strings.Cut(value, "=")
@@ -99,7 +103,7 @@ func TestGuideProcessLifecycle(t *testing.T) {
 		if err := json.Unmarshal(data, &result); err != nil {
 			t.Fatalf("%s: %v", data, err)
 		}
-		if !result.OK || result.Action != action || result.Changed != changed || result.Path != filepath.Join(project, ".agents", "skills", "feishu-cli-next", "SKILL.md") {
+		if !result.OK || result.Action != action || result.Changed != changed || result.Path != filepath.Join(canonicalProject, ".agents", "skills", "feishu-cli-next", "SKILL.md") {
 			t.Fatalf("bad lifecycle result: %+v", result)
 		}
 	}
