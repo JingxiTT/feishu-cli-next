@@ -22,8 +22,10 @@ for interface tuning. The release flag is intentionally required to execute them
 
 `codex_runner.py` and `foundation_verifier.py` implement real Codex execution
 and independent checks for two offline foundation tasks described below.
-Other sections still need controlled Feishu backend adapters, and real comparative
-results remain pending. Use the runner and independently implemented verifier
+The [foundation report](evidence/foundation/REPORT.md) records the completed
+18-trial compatible comparison and all earlier failed attempts. Other sections
+still need controlled Feishu backend adapters and broader comparative results.
+Use the runner and independently implemented verifier
 with the protocol below; model
 usage must come from the provider across every turn. A CLI output byte count,
 locally estimated tokenizer count, or synthetic runner is not a substitute.
@@ -148,9 +150,11 @@ configuration failures go to stderr without echoing potentially private values.
 
 ## Codex adapter: offline foundation development
 
-The installed native `codex-cli 0.146.0` provides `exec --json`, `--ephemeral`,
+Native Codex provides `exec --json`, `--ephemeral`,
 `--ignore-user-config`, and `--ignore-rules`. The adapter checks its version before
-execution. Supply the native executable, not the npm Node shim, because child
+execution. `gpt-6-astra` rejected version `0.146.0`; the completed comparison uses
+`0.153.4`, supplied explicitly through `--codex-version`. Supply the native
+executable, not the npm Node shim, because child
 PATH intentionally excludes user-installed executables. Keep its binary hash
 with release evidence. The [official non-interactive documentation](https://learn.chatgpt.com/docs/non-interactive-mode)
 documents the JSONL `turn.completed.usage` fields. Each such usage object covers
@@ -176,9 +180,10 @@ Start from the config above with these changes:
   turn-count budget.
 - Set `tokenizer` to `provider-undisclosed` if Codex does not disclose its version;
   never invent a tokenizer version. Set `accounting_method` to
-  `codex-cli 0.146.0 turn.completed provider usage, aggregate per user turn`.
+  `codex-cli 0.153.4 turn.completed provider usage, aggregate per user turn`.
 - Set `runner` to `["/absolute/python3", "/absolute/evaluation/codex_runner.py",
-  "--codex", "/absolute/native/codex", "--auth-home", "/absolute/codex/auth-home"]`.
+  "--codex", "/absolute/native/codex", "--auth-home", "/absolute/codex/auth-home",
+  "--codex-version", "codex-cli 0.153.4"]`.
   Codex consumes its existing login internally. The adapter does not read,
   copy, or publish credentials. Do not put secret values in any argument.
 - Set `verifier` to `["/absolute/python3", "/absolute/evaluation/foundation_verifier.py"]`.

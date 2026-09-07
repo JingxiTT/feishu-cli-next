@@ -1,0 +1,61 @@
+{
+  "kind": "same-model-runner-diagnostic-not-comparative",
+  "response": {
+    "claimed_success": false,
+    "usage_source": "provider",
+    "model": "gpt-6-astra",
+    "tokenizer": "provider-undisclosed",
+    "turns": [],
+    "accounting_complete": false,
+    "usage_granularity": "codex_user_turn",
+    "command_executions": 0,
+    "unexpected_tools": false
+  },
+  "exit": 1,
+  "diagnostic": [
+    {
+      "exit": 1,
+      "matches": [
+        "400"
+      ],
+      "events": [
+        {
+          "type": "thread.started",
+          "keys": [
+            "type",
+            "thread_id"
+          ]
+        },
+        {
+          "type": "item.completed",
+          "keys": [
+            "type",
+            "item"
+          ]
+        },
+        {
+          "type": "turn.started",
+          "keys": [
+            "type"
+          ]
+        },
+        {
+          "type": "error",
+          "keys": [
+            "type",
+            "message"
+          ]
+        },
+        {
+          "type": "turn.failed",
+          "keys": [
+            "type",
+            "error"
+          ]
+        }
+      ],
+      "stdout_bytes": 801,
+      "stderr_bytes": 147
+    }
+  ]
+}

@@ -1,0 +1,672 @@
+{
+  "protocol": 1,
+  "mode": "real",
+  "split": "development",
+  "performance_claims_supported": false,
+  "seed": 20260907,
+  "repeats": 3,
+  "fresh_context": true,
+  "task_manifest_sha256": "f23db38619c025d778650f264341400fb4ad4a411c7cc19bc1a57427af6b014f",
+  "config_sha256": "43afb7889a5650e906b15b512d6cafd964bc6c3242ed3b6fe9d6c28604d60141",
+  "environment": {
+    "backend": "offline-foundation-v1",
+    "model": "gpt-6-astra",
+    "tokenizer": "provider-undisclosed",
+    "reasoning": "high",
+    "tools": [
+      "shell",
+      "files"
+    ],
+    "permissions": "workspace-write; shell network disabled; isolated Feishu config",
+    "budget": {
+      "timeout_seconds": 180
+    },
+    "accounting_method": "codex-cli 0.146.0 turn.completed provider usage, aggregate per user turn"
+  },
+  "arms": {
+    "official": {
+      "cli_sha256": "32d33635e71e6e3a492177f0ff5cbb906434da8eaed99b6e666390ca6e995e7e",
+      "skill_sha256": "9fa68bb1f3ce564602c6df6c303ea4d2759de02442772f332fe5041d65720a1f"
+    },
+    "official_concise": {
+      "cli_sha256": "32d33635e71e6e3a492177f0ff5cbb906434da8eaed99b6e666390ca6e995e7e",
+      "skill_sha256": "4a1815130eeeea9eb7dd109ec0ee600e140b1771340e5e26c7dba7bd25b0e0ab"
+    },
+    "next": {
+      "cli_sha256": "28a382064599b854b601096e00f22cc00ed2cf0d1239757257d47d535f002a9f",
+      "skill_sha256": "02e00bd401026e4e7efd9c6de8d394c4451ed250f71fe9cd0b668076233ac951"
+    }
+  },
+  "runs": [
+    {
+      "task_id": "foundation-unconfigured-status",
+      "section": "foundation",
+      "trial": 0,
+      "arm": "official",
+      "success": false,
+      "usage": null,
+      "categories": [
+        "runner_failure",
+        "usage_unavailable",
+        "outcome_failure"
+      ],
+      "known_usage": null,
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 1,
+      "verifier_exit": 0,
+      "latency_seconds": 9.884045332990354,
+      "verification_seconds": 0.05306024997844361,
+      "api_calls": null,
+      "retries": null
+    },
+    {
+      "task_id": "foundation-unconfigured-status",
+      "section": "foundation",
+      "trial": 1,
+      "arm": "next",
+      "success": false,
+      "usage": null,
+      "categories": [
+        "runner_failure",
+        "usage_unavailable",
+        "outcome_failure"
+      ],
+      "known_usage": null,
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 1,
+      "verifier_exit": 0,
+      "latency_seconds": 6.108121917000972,
+      "verification_seconds": 0.05061383300926536,
+      "api_calls": null,
+      "retries": null
+    },
+    {
+      "task_id": "foundation-document-discovery",
+      "section": "foundation",
+      "trial": 0,
+      "arm": "official_concise",
+      "success": false,
+      "usage": null,
+      "categories": [
+        "runner_failure",
+        "usage_unavailable",
+        "outcome_failure"
+      ],
+      "known_usage": null,
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 1,
+      "verifier_exit": 0,
+      "latency_seconds": 7.325100041984115,
+      "verification_seconds": 0.051423166994936764,
+      "api_calls": null,
+      "retries": null
+    },
+    {
+      "task_id": "foundation-unconfigured-status",
+      "section": "foundation",
+      "trial": 2,
+      "arm": "next",
+      "success": false,
+      "usage": null,
+      "categories": [
+        "runner_failure",
+        "usage_unavailable",
+        "outcome_failure"
+      ],
+      "known_usage": null,
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 1,
+      "verifier_exit": 0,
+      "latency_seconds": 6.799537333019543,
+      "verification_seconds": 0.033285708021139726,
+      "api_calls": null,
+      "retries": null
+    },
+    {
+      "task_id": "foundation-unconfigured-status",
+      "section": "foundation",
+      "trial": 0,
+      "arm": "next",
+      "success": false,
+      "usage": null,
+      "categories": [
+        "runner_failure",
+        "usage_unavailable",
+        "outcome_failure"
+      ],
+      "known_usage": null,
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 1,
+      "verifier_exit": 0,
+      "latency_seconds": 5.948563958983868,
+      "verification_seconds": 0.0389333329803776,
+      "api_calls": null,
+      "retries": null
+    },
+    {
+      "task_id": "foundation-document-discovery",
+      "section": "foundation",
+      "trial": 2,
+      "arm": "official_concise",
+      "success": false,
+      "usage": null,
+      "categories": [
+        "runner_failure",
+        "usage_unavailable",
+        "outcome_failure"
+      ],
+      "known_usage": null,
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 1,
+      "verifier_exit": 0,
+      "latency_seconds": 6.921509458014043,
+      "verification_seconds": 0.04155283301952295,
+      "api_calls": null,
+      "retries": null
+    },
+    {
+      "task_id": "foundation-document-discovery",
+      "section": "foundation",
+      "trial": 2,
+      "arm": "official",
+      "success": false,
+      "usage": null,
+      "categories": [
+        "runner_failure",
+        "usage_unavailable",
+        "outcome_failure"
+      ],
+      "known_usage": null,
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 1,
+      "verifier_exit": 0,
+      "latency_seconds": 6.403055750008207,
+      "verification_seconds": 0.052498458011541516,
+      "api_calls": null,
+      "retries": null
+    },
+    {
+      "task_id": "foundation-unconfigured-status",
+      "section": "foundation",
+      "trial": 0,
+      "arm": "official_concise",
+      "success": false,
+      "usage": null,
+      "categories": [
+        "runner_failure",
+        "usage_unavailable",
+        "outcome_failure"
+      ],
+      "known_usage": null,
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 1,
+      "verifier_exit": 0,
+      "latency_seconds": 7.944824667007197,
+      "verification_seconds": 0.049000708997482434,
+      "api_calls": null,
+      "retries": null
+    },
+    {
+      "task_id": "foundation-unconfigured-status",
+      "section": "foundation",
+      "trial": 1,
+      "arm": "official_concise",
+      "success": false,
+      "usage": null,
+      "categories": [
+        "runner_failure",
+        "usage_unavailable",
+        "outcome_failure"
+      ],
+      "known_usage": null,
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 1,
+      "verifier_exit": 0,
+      "latency_seconds": 8.856423292018007,
+      "verification_seconds": 0.05107983297784813,
+      "api_calls": null,
+      "retries": null
+    },
+    {
+      "task_id": "foundation-document-discovery",
+      "section": "foundation",
+      "trial": 2,
+      "arm": "next",
+      "success": false,
+      "usage": null,
+      "categories": [
+        "runner_failure",
+        "usage_unavailable",
+        "outcome_failure"
+      ],
+      "known_usage": null,
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 1,
+      "verifier_exit": 0,
+      "latency_seconds": 8.14205895899795,
+      "verification_seconds": 0.04937541700201109,
+      "api_calls": null,
+      "retries": null
+    },
+    {
+      "task_id": "foundation-document-discovery",
+      "section": "foundation",
+      "trial": 1,
+      "arm": "next",
+      "success": false,
+      "usage": null,
+      "categories": [
+        "runner_failure",
+        "usage_unavailable",
+        "outcome_failure"
+      ],
+      "known_usage": null,
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 1,
+      "verifier_exit": 0,
+      "latency_seconds": 8.498350792011479,
+      "verification_seconds": 0.0410075839899946,
+      "api_calls": null,
+      "retries": null
+    },
+    {
+      "task_id": "foundation-document-discovery",
+      "section": "foundation",
+      "trial": 0,
+      "arm": "official",
+      "success": false,
+      "usage": null,
+      "categories": [
+        "runner_failure",
+        "usage_unavailable",
+        "outcome_failure"
+      ],
+      "known_usage": null,
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 1,
+      "verifier_exit": 0,
+      "latency_seconds": 5.590671083016787,
+      "verification_seconds": 0.0493336669751443,
+      "api_calls": null,
+      "retries": null
+    },
+    {
+      "task_id": "foundation-document-discovery",
+      "section": "foundation",
+      "trial": 0,
+      "arm": "next",
+      "success": false,
+      "usage": null,
+      "categories": [
+        "runner_failure",
+        "usage_unavailable",
+        "outcome_failure"
+      ],
+      "known_usage": null,
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 1,
+      "verifier_exit": 0,
+      "latency_seconds": 9.432133082998917,
+      "verification_seconds": 0.039275791990803555,
+      "api_calls": null,
+      "retries": null
+    },
+    {
+      "task_id": "foundation-document-discovery",
+      "section": "foundation",
+      "trial": 1,
+      "arm": "official",
+      "success": false,
+      "usage": null,
+      "categories": [
+        "runner_failure",
+        "usage_unavailable",
+        "outcome_failure"
+      ],
+      "known_usage": null,
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 1,
+      "verifier_exit": 0,
+      "latency_seconds": 8.939136458007852,
+      "verification_seconds": 0.04685195899219252,
+      "api_calls": null,
+      "retries": null
+    },
+    {
+      "task_id": "foundation-unconfigured-status",
+      "section": "foundation",
+      "trial": 1,
+      "arm": "official",
+      "success": false,
+      "usage": null,
+      "categories": [
+        "runner_failure",
+        "usage_unavailable",
+        "outcome_failure"
+      ],
+      "known_usage": null,
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 1,
+      "verifier_exit": 0,
+      "latency_seconds": 7.737327625014586,
+      "verification_seconds": 0.04987774998880923,
+      "api_calls": null,
+      "retries": null
+    },
+    {
+      "task_id": "foundation-document-discovery",
+      "section": "foundation",
+      "trial": 1,
+      "arm": "official_concise",
+      "success": false,
+      "usage": null,
+      "categories": [
+        "runner_failure",
+        "usage_unavailable",
+        "outcome_failure"
+      ],
+      "known_usage": null,
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 1,
+      "verifier_exit": 0,
+      "latency_seconds": 7.507377292000456,
+      "verification_seconds": 0.04922687498037703,
+      "api_calls": null,
+      "retries": null
+    },
+    {
+      "task_id": "foundation-unconfigured-status",
+      "section": "foundation",
+      "trial": 2,
+      "arm": "official",
+      "success": false,
+      "usage": null,
+      "categories": [
+        "runner_failure",
+        "usage_unavailable",
+        "outcome_failure"
+      ],
+      "known_usage": null,
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 1,
+      "verifier_exit": 0,
+      "latency_seconds": 13.757890832988778,
+      "verification_seconds": 0.048500250006327406,
+      "api_calls": null,
+      "retries": null
+    },
+    {
+      "task_id": "foundation-unconfigured-status",
+      "section": "foundation",
+      "trial": 2,
+      "arm": "official_concise",
+      "success": false,
+      "usage": null,
+      "categories": [
+        "runner_failure",
+        "usage_unavailable",
+        "outcome_failure"
+      ],
+      "known_usage": null,
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 1,
+      "verifier_exit": 0,
+      "latency_seconds": 7.075977333995979,
+      "verification_seconds": 0.0250976660172455,
+      "api_calls": null,
+      "retries": null
+    }
+  ],
+  "groups": [
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "next",
+      "attempts": 6,
+      "successes": 0,
+      "success_rate": 0.0,
+      "usage_complete": false,
+      "known_total_tokens": 0,
+      "tokens_per_success": null,
+      "token_distribution": null,
+      "latency_median_seconds": 7.470798146008747,
+      "api_calls": null,
+      "retries": null,
+      "failure_categories": {
+        "outcome_failure": 6,
+        "runner_failure": 6,
+        "usage_unavailable": 6
+      }
+    },
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "official",
+      "attempts": 6,
+      "successes": 0,
+      "success_rate": 0.0,
+      "usage_complete": false,
+      "known_total_tokens": 0,
+      "tokens_per_success": null,
+      "token_distribution": null,
+      "latency_median_seconds": 8.338232041511219,
+      "api_calls": null,
+      "retries": null,
+      "failure_categories": {
+        "outcome_failure": 6,
+        "runner_failure": 6,
+        "usage_unavailable": 6
+      }
+    },
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "official_concise",
+      "attempts": 6,
+      "successes": 0,
+      "success_rate": 0.0,
+      "usage_complete": false,
+      "known_total_tokens": 0,
+      "tokens_per_success": null,
+      "token_distribution": null,
+      "latency_median_seconds": 7.416238666992285,
+      "api_calls": null,
+      "retries": null,
+      "failure_categories": {
+        "outcome_failure": 6,
+        "runner_failure": 6,
+        "usage_unavailable": 6
+      }
+    },
+    {
+      "scope": "section",
+      "name": "foundation",
+      "arm": "next",
+      "attempts": 6,
+      "successes": 0,
+      "success_rate": 0.0,
+      "usage_complete": false,
+      "known_total_tokens": 0,
+      "tokens_per_success": null,
+      "token_distribution": null,
+      "latency_median_seconds": 7.470798146008747,
+      "api_calls": null,
+      "retries": null,
+      "failure_categories": {
+        "outcome_failure": 6,
+        "runner_failure": 6,
+        "usage_unavailable": 6
+      }
+    },
+    {
+      "scope": "section",
+      "name": "foundation",
+      "arm": "official",
+      "attempts": 6,
+      "successes": 0,
+      "success_rate": 0.0,
+      "usage_complete": false,
+      "known_total_tokens": 0,
+      "tokens_per_success": null,
+      "token_distribution": null,
+      "latency_median_seconds": 8.338232041511219,
+      "api_calls": null,
+      "retries": null,
+      "failure_categories": {
+        "outcome_failure": 6,
+        "runner_failure": 6,
+        "usage_unavailable": 6
+      }
+    },
+    {
+      "scope": "section",
+      "name": "foundation",
+      "arm": "official_concise",
+      "attempts": 6,
+      "successes": 0,
+      "success_rate": 0.0,
+      "usage_complete": false,
+      "known_total_tokens": 0,
+      "tokens_per_success": null,
+      "token_distribution": null,
+      "latency_median_seconds": 7.416238666992285,
+      "api_calls": null,
+      "retries": null,
+      "failure_categories": {
+        "outcome_failure": 6,
+        "runner_failure": 6,
+        "usage_unavailable": 6
+      }
+    },
+    {
+      "scope": "task_id",
+      "name": "foundation-document-discovery",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 0,
+      "success_rate": 0.0,
+      "usage_complete": false,
+      "known_total_tokens": 0,
+      "tokens_per_success": null,
+      "token_distribution": null,
+      "latency_median_seconds": 8.498350792011479,
+      "api_calls": null,
+      "retries": null,
+      "failure_categories": {
+        "outcome_failure": 3,
+        "runner_failure": 3,
+        "usage_unavailable": 3
+      }
+    },
+    {
+      "scope": "task_id",
+      "name": "foundation-document-discovery",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 0,
+      "success_rate": 0.0,
+      "usage_complete": false,
+      "known_total_tokens": 0,
+      "tokens_per_success": null,
+      "token_distribution": null,
+      "latency_median_seconds": 6.403055750008207,
+      "api_calls": null,
+      "retries": null,
+      "failure_categories": {
+        "outcome_failure": 3,
+        "runner_failure": 3,
+        "usage_unavailable": 3
+      }
+    },
+    {
+      "scope": "task_id",
+      "name": "foundation-document-discovery",
+      "arm": "official_concise",
+      "attempts": 3,
+      "successes": 0,
+      "success_rate": 0.0,
+      "usage_complete": false,
+      "known_total_tokens": 0,
+      "tokens_per_success": null,
+      "token_distribution": null,
+      "latency_median_seconds": 7.325100041984115,
+      "api_calls": null,
+      "retries": null,
+      "failure_categories": {
+        "outcome_failure": 3,
+        "runner_failure": 3,
+        "usage_unavailable": 3
+      }
+    },
+    {
+      "scope": "task_id",
+      "name": "foundation-unconfigured-status",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 0,
+      "success_rate": 0.0,
+      "usage_complete": false,
+      "known_total_tokens": 0,
+      "tokens_per_success": null,
+      "token_distribution": null,
+      "latency_median_seconds": 6.108121917000972,
+      "api_calls": null,
+      "retries": null,
+      "failure_categories": {
+        "outcome_failure": 3,
+        "runner_failure": 3,
+        "usage_unavailable": 3
+      }
+    },
+    {
+      "scope": "task_id",
+      "name": "foundation-unconfigured-status",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 0,
+      "success_rate": 0.0,
+      "usage_complete": false,
+      "known_total_tokens": 0,
+      "tokens_per_success": null,
+      "token_distribution": null,
+      "latency_median_seconds": 9.884045332990354,
+      "api_calls": null,
+      "retries": null,
+      "failure_categories": {
+        "outcome_failure": 3,
+        "runner_failure": 3,
+        "usage_unavailable": 3
+      }
+    },
+    {
+      "scope": "task_id",
+      "name": "foundation-unconfigured-status",
+      "arm": "official_concise",
+      "attempts": 3,
+      "successes": 0,
+      "success_rate": 0.0,
+      "usage_complete": false,
+      "known_total_tokens": 0,
+      "tokens_per_success": null,
+      "token_distribution": null,
+      "latency_median_seconds": 7.944824667007197,
+      "api_calls": null,
+      "retries": null,
+      "failure_categories": {
+        "outcome_failure": 3,
+        "runner_failure": 3,
+        "usage_unavailable": 3
+      }
+    }
+  ],
+  "matched_success": [
+    {
+      "baseline": "official",
+      "pairs": []
+    },
+    {
+      "baseline": "official_concise",
+      "pairs": []
+    }
+  ]
+}

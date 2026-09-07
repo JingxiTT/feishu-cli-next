@@ -1,0 +1,45 @@
+{
+  "mode": "real",
+  "backend": "offline-foundation-v1",
+  "model": "gpt-6-astra",
+  "tokenizer": "provider-undisclosed",
+  "reasoning": "high",
+  "tools": [
+    "shell",
+    "files"
+  ],
+  "permissions": "workspace-write; shell network disabled; isolated Feishu config",
+  "budget": {
+    "timeout_seconds": 180
+  },
+  "accounting_method": "codex-cli 0.153.4 turn.completed provider usage, aggregate per user turn",
+  "timeout_seconds": 210,
+  "runner": [
+    "/ABSOLUTE/python3",
+    "/ABSOLUTE/REPOSITORY/evaluation/codex_runner.py",
+    "--codex",
+    "/ABSOLUTE/native/codex",
+    "--auth-home",
+    "/ABSOLUTE/CODEX_AUTH_HOME",
+    "--codex-version",
+    "codex-cli 0.153.4"
+  ],
+  "verifier": [
+    "/ABSOLUTE/python3",
+    "/ABSOLUTE/REPOSITORY/evaluation/foundation_verifier.py"
+  ],
+  "arms": {
+    "official": {
+      "cli": "/ABSOLUTE/REPOSITORY/lark-cli",
+      "skill": "/ABSOLUTE/REPOSITORY/skills/lark-shared/SKILL.md"
+    },
+    "official_concise": {
+      "cli": "/ABSOLUTE/REPOSITORY/lark-cli",
+      "skill": "/ABSOLUTE/REPOSITORY/evaluation/official-concise/SKILL.md"
+    },
+    "next": {
+      "cli": "/ABSOLUTE/REPOSITORY/feishu-cli-next",
+      "skill": "/ABSOLUTE/REPOSITORY/agent-skills/feishu-cli-next/SKILL.md"
+    }
+  }
+}
