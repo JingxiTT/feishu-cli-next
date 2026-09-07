@@ -126,9 +126,19 @@ func envelope(t *testing.T, text string) map[string]any {
 func TestExternalHostContracts(t *testing.T) {
 	binary := buildHost(t)
 	var requests atomic.Int32
+	var tenantRequests atomic.Int32
 	var status atomic.Int32
 	status.Store(http.StatusOK)
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/open-apis/tenant/v2/tenant/query" {
+			tenantRequests.Add(1)
+			if r.Method != http.MethodGet || r.Header.Get("Authorization") != "Bearer synthetic-host-token" {
+				t.Errorf("unexpected tenant verification: %s", r.Method)
+			}
+			w.Header().Set("Content-Type", "application/json")
+			_, _ = io.WriteString(w, `{"code":0,"data":{"tenant":{"tenant_key":"synthetic-host-tenant"}}}`)
+			return
+		}
 		requests.Add(1)
 		if r.URL.Path != "/open-apis/im/v1/host-fixture" || r.Header.Get("Authorization") != "Bearer synthetic-host-token" {
 			t.Errorf("unexpected request: %s %s", r.Method, r.URL.Path)
@@ -147,7 +157,7 @@ func TestExternalHostContracts(t *testing.T) {
 	for _, mode := range []string{"legacy", "agent"} {
 		t.Run(mode, func(t *testing.T) {
 			result, report := runHost(t, binary, server.URL, map[string]string{"HOST_AGENT": mode}, "im", "+host-read", "--as", "bot")
-			if result.ExitCode != 0 || result.Stderr != "" || len(report.Files) != 0 {
+			if result.ExitCode != 0 || result.Stderr != "" || len(report.Files) != 0 || tenantRequests.Load() != 0 {
 				t.Fatalf("read: %+v report=%+v", result, report)
 			}
 			data := envelope(t, result.Stdout)["data"].(map[string]any)
@@ -161,13 +171,14 @@ func TestExternalHostContracts(t *testing.T) {
 	}
 	t.Run("legacy FileIO remains usable for ordinary reads", func(t *testing.T) {
 		result, report := runHost(t, binary, server.URL, map[string]string{"HOST_FILES": "legacy"}, "im", "+host-read", "--as", "bot")
-		if result.ExitCode != 0 || result.Stderr != "" || report.Saves != 0 || envelope(t, result.Stdout)["ok"] != true {
+		if result.ExitCode != 0 || result.Stderr != "" || report.Saves != 0 || tenantRequests.Load() != 0 || envelope(t, result.Stdout)["ok"] != true {
 			t.Fatalf("legacy FileIO read: %+v", result)
 		}
 	})
 	t.Run("artifact full content and canonical host reference", func(t *testing.T) {
+		before := tenantRequests.Load()
 		result, report := runHost(t, binary, server.URL, nil, "im", "+host-read", "--as", "bot", "--result-fields", "title", "--save-result", "result.json")
-		if result.ExitCode != 0 || result.Stderr != "" || report.Saves != 1 {
+		if result.ExitCode != 0 || result.Stderr != "" || report.Saves != 1 || tenantRequests.Load()-before != 1 {
 			t.Fatalf("artifact: %+v report=%+v", result, report)
 		}
 		output := envelope(t, result.Stdout)
@@ -180,7 +191,7 @@ func TestExternalHostContracts(t *testing.T) {
 			t.Fatalf("schema: %v", saved)
 		}
 		binding := saved["binding"].(map[string]any)
-		if binding["app_id"] != "synthetic-host-app" || binding["identity"] != "bot" || binding["tenant_verified"] != false {
+		if binding["app_id"] != "synthetic-host-app" || binding["identity"] != "bot" || binding["tenant_verified"] != true || binding["tenant_key"] != "synthetic-host-tenant" {
 			t.Fatalf("binding: %v", binding)
 		}
 		data := saved["result"].(map[string]any)["data"].(map[string]any)
@@ -198,9 +209,13 @@ func TestExternalHostContracts(t *testing.T) {
 	} {
 		t.Run(test.name, func(t *testing.T) {
 			before := requests.Load()
+			tenantBefore := tenantRequests.Load()
 			result, report := runHost(t, binary, server.URL, map[string]string{"HOST_FILES": test.mode}, "im", "+host-read", "--as", "bot", "--save-result", test.path)
 			if result.ExitCode == 0 || result.Stdout != "" || requests.Load()-before != test.calls || report.Saves != int(test.saves) {
 				t.Fatalf("failure: %+v calls=%d report=%+v", result, requests.Load()-before, report)
+			}
+			if tenantRequests.Load()-tenantBefore != test.calls {
+				t.Fatalf("tenant verification calls = %d, want %d", tenantRequests.Load()-tenantBefore, test.calls)
 			}
 			failure, ok := envelope(t, result.Stderr)["error"].(map[string]any)
 			if !ok || failure["param"] != "--save-result" {

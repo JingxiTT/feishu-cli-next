@@ -55,6 +55,13 @@ business request. A concurrent destination is rejected at commit and preserved.
 Artifacts retain full Unicode/content, leading-zero IDs and the host's canonical
 reference; a projection does not become the stored data.
 
+The shared verified-binding follow-up resolves bot tenant evidence with the
+selected TAT at `GET /open-apis/tenant/v2/tenant/query`. The external host fixture
+supplies that explicit evidence and counts verification separately from business
+requests. It does not manufacture a tenant from an app ID. User artifacts retain
+their observed user/tenant evidence. Ordinary reads and artifact preflight
+failures do not issue this additional verification request.
+
 The [receipt contract](../contracts/receipts.md) applies to host commands too.
 The process suite independently counts requests and verifies acknowledged,
 rejected and asynchronous/unknown results, typed failure envelopes and exit
@@ -98,6 +105,14 @@ working-tree changes present. Raw offline results are in
 | `make examples-build` | Both public platform examples compile successfully. |
 | `go test -json -count=1 -tags authsidecar_multi_tenant_demo ./sidecar/server-multi-tenant-demo` | All 53 events pass, no failures or skips; `.tmp/extensions-multi-tenant.json` records this additional build variant. |
 | `go build -tags authsidecar_multi_tenant_demo -o <isolated-temp>/multi-tenant-demo ./sidecar/server-multi-tenant-demo` | The multi-tenant demo executable compiles successfully. |
+
+After the shared verified-binding implementation and central fixture update
+`08ca8e8`, the complete 17-event section process package passed again with zero
+failures or skips. `.tmp/extensions-verified-binding.json` records the isolated
+run. The external provider now supplies genuine synthetic tenant endpoint
+evidence; bot artifacts assert that evidence rather than the old unverified
+binding. Ordinary reads and rejected artifact preflights still perform no tenant
+verification, and separate request counts preserve the collision/no-retry checks.
 
 `git diff --check` passes for the owned files. No product behavior or exported
 API changed in this section; the new tests prove that the shared next interface

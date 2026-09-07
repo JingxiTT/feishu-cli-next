@@ -64,8 +64,8 @@ func TestSidecarArtifactBindings(t *testing.T) {
 				if identity == "user" && (binding["user_id"] != "ou_foundation_fixture" || binding["user_verified"] != true || binding["tenant_verified"] != true) {
 					t.Fatalf("lost observed user evidence: %v", binding)
 				}
-				if identity == "bot" && (binding["user_id"] != nil || binding["tenant_verified"] != false) {
-					t.Fatalf("invented bot evidence: %v", binding)
+				if identity == "bot" && (binding["user_id"] != nil || binding["tenant_verified"] != true || binding["tenant_key"] != "foundation-fixture-tenant") {
+					t.Fatalf("incorrect observed bot evidence: %v", binding)
 				}
 			})
 		}
