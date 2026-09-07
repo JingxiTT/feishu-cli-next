@@ -108,6 +108,14 @@ endpoint supports updates, but its frozen response schema only defines created
 IDs, so requests containing existing `node_id` values remain unknown even when
 response IDs match. No update coverage or backend atomicity is inferred.
 
+Native Base batch creation also checks IDs already confirmed in the same
+invocation, scoped to the effective account/identity and exact host/table path.
+An overlapping later response becomes durably unknown; earlier confirmed
+batches stay applied. This synchronized memory holds at most 10,000 IDs and
+4 MiB of ID/scope strings, matching the import's row ceiling. Exhausted evidence
+capacity remains unknown instead of evicting earlier IDs. These IDs and paths
+are never persisted in receipts; this does not detect reuse across invocations.
+
 ## Classification and storage boundary
 
 GET, HEAD, OPTIONS, credential acquisition endpoints, and commands explicitly

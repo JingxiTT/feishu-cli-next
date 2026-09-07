@@ -15,7 +15,7 @@ import (
 // classifyKnownResponse projects only endpoint shapes whose existing domain
 // owners establish stronger evidence than code:0. It never stores payloads or
 // invents applied item counts. Unrecognized endpoint semantics remain generic.
-func classifyKnownResponse(r *Receipt, req *http.Request, data json.RawMessage) bool {
+func classifyKnownResponse(r *Receipt, req *http.Request, data json.RawMessage, journal *Journal) bool {
 	unknown := func(evidence string) bool { r.Outcome, r.Evidence = Unknown, evidence; return true }
 	applied := func(evidence string) bool { r.Outcome, r.Evidence = Applied, evidence; return true }
 	if requestMatches(req, "POST", "/open-apis/mindnote/v1/mindnotes/{mindnote}/nodes") {
@@ -124,7 +124,7 @@ func classifyKnownResponse(r *Receipt, req *http.Request, data json.RawMessage) 
 		return unknown("minutes_replacement_counts_incomplete")
 	}
 	if requestMatches(req, "POST", "/open-apis/base/v3/bases/{base}/tables/{table}/records/batch_create") {
-		if completeBaseCreate(req, data) {
+		if ids := completeBaseCreate(req, data); ids != nil && journal.observeBaseCreates(r.Binding, req.URL, ids) {
 			return applied("base_created_record_ids_complete")
 		}
 		return unknown("base_created_record_ids_incomplete")
@@ -252,7 +252,7 @@ func completeWordReplacement(req *http.Request, data json.RawMessage) bool {
 	return len(remaining) == 0
 }
 
-func completeBaseCreate(req *http.Request, data json.RawMessage) bool {
+func completeBaseCreate(req *http.Request, data json.RawMessage) []string {
 	var request struct {
 		Records []json.RawMessage `json:"create_records"`
 	}
@@ -265,16 +265,16 @@ func completeBaseCreate(req *http.Request, data json.RawMessage) bool {
 	decoder := json.NewDecoder(bytes.NewReader(data))
 	decoder.DisallowUnknownFields()
 	if !decodeRequestEvidence(req, &request) || decoder.Decode(&result) != nil || len(request.Records) == 0 || len(request.Records) > 200 || len(request.Records) != len(result.IDs) || len(result.Ignored) > 0 {
-		return false
+		return nil
 	}
 	seen := map[string]bool{}
 	for _, id := range result.IDs {
 		if id == "" || seen[id] {
-			return false
+			return nil
 		}
 		seen[id] = true
 	}
-	return true
+	return result.IDs
 }
 
 func completeMindnoteCreate(req *http.Request, data json.RawMessage) bool {

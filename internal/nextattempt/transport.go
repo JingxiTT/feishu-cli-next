@@ -25,8 +25,11 @@ type Summary struct {
 	PersistenceFailed bool      `json:"persistence_failed,omitempty"`
 }
 type Journal struct {
-	mu       sync.Mutex
-	receipts []Receipt
+	mu              sync.Mutex
+	receipts        []Receipt
+	baseCreated     map[baseCreateScope]map[string]struct{}
+	baseCreatedIDs  int
+	baseCreatedSize int
 }
 
 func (j *Journal) Add(r Receipt) {
@@ -115,7 +118,7 @@ func (t *Transport) RoundTrip(req *http.Request) (*http.Response, error) {
 		receipt.Outcome, receipt.Evidence = Unapplied, "canceled_before_dispatch"
 	} else {
 		response, err = t.Base.RoundTrip(req)
-		classifyResponse(&receipt, response, err, req)
+		classifyResponse(&receipt, response, err, req, t.Journal)
 	}
 	saveErr := store.finish(receipt)
 	if saveErr != nil {
@@ -134,7 +137,7 @@ type replayBody struct {
 
 const responseEvidenceLimit = 1 << 20
 
-func classifyResponse(r *Receipt, resp *http.Response, requestErr error, req *http.Request) {
+func classifyResponse(r *Receipt, resp *http.Response, requestErr error, req *http.Request, journal *Journal) {
 	r.Outcome, r.Evidence = Unknown, "transport_error"
 	if resp != nil {
 		r.HTTPStatus = resp.StatusCode
@@ -199,7 +202,7 @@ func classifyResponse(r *Receipt, resp *http.Response, requestErr error, req *ht
 			r.Evidence = "item_failure_requires_reconciliation"
 			return
 		}
-		if classifyKnownResponse(r, req, envelope.Data) {
+		if classifyKnownResponse(r, req, envelope.Data, journal) {
 			return
 		}
 		path := req.URL.Path
