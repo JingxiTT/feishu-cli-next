@@ -1,0 +1,9 @@
+# Representative business command choices
+
+On approval creation and readback, Next used 11 shell executions in every trial, compared with 10–15 for the original and 13–14 for the concise original. Each Next trace includes one discovery call, two schema calls, and the same search/get/create/get operation sequence. The original and concise-original traces contain more schema or local command steps. Counting create command names alone cannot identify replays: help, validation and dry-run flags remain part of the recorded choices.
+
+On the existing-node Mindnote edit, Next used 8–11 shell executions, the original 12–13, and the concise original 12. Every Next trace shows two discovery calls, one node list, a single node create/update command returning exit 22, and a subsequent successful node list. The independent backend verifier confirms the intended mutation and preserved unrelated content. The recorded recovery uses readback rather than blindly repeating the uncertain write. One Next trial also saves read results to local artifacts and inspects them.
+
+Next used fewer provider tokens and fewer total API requests than both comparison arms on these two small tasks. The API totals include identity, discovery prerequisites and business requests; route-level request traces were not retained for these scenarios, so their precise contributions cannot be separated. Provider accounting is per complete user turn, not per command, and does not identify the token cost of a particular schema response, failed probe, guide paragraph or output format.
+
+These are representative generated-API decisions, not model trials of every method. Twelve controlled fixture cases separately cover all seventeen native methods. The frozen original uses its shared CLI skill; the concise-original arm uses the reviewed English shared guidance, and Next uses its own entry skill. There is no claim of a dedicated matching upstream Business skill or live backend coverage.

@@ -1,0 +1,4158 @@
+{
+  "protocol": 1,
+  "mode": "real",
+  "split": "development",
+  "performance_claims_supported": true,
+  "completed": true,
+  "planned_runs": 18,
+  "seed": 20261101,
+  "repeats": 3,
+  "fresh_context": true,
+  "task_manifest_sha256": "7d9a58ff8c561fffa55f0bcd2d6723bdf2f0eb6c6159516f55c700b114f50d59",
+  "config_sha256": "a4b5cd8f03eb4fe0408774f04b1fcec214cab63e2c1c4712a786a8dcaa589f53",
+  "environment": {
+    "backend": "synthetic-scenario-v1",
+    "model": "gpt-6-astra",
+    "tokenizer": "provider-undisclosed",
+    "reasoning": "high",
+    "tools": [
+      "shell",
+      "files"
+    ],
+    "permissions": "workspace-write; managed proxy loopback-only with local binding; isolated synthetic sidecar",
+    "budget": {
+      "timeout_seconds": 180
+    },
+    "accounting_method": "codex-cli 0.153.4 provider turn.completed; cached input included in full"
+  },
+  "arms": {
+    "official": {
+      "cli_sha256": "ab8b101b5f68418c8df02752a5ef19947d311d2e9a91fd685c0e5be24f723020",
+      "skill_sha256": "9fa68bb1f3ce564602c6df6c303ea4d2759de02442772f332fe5041d65720a1f"
+    },
+    "official_concise": {
+      "cli_sha256": "ab8b101b5f68418c8df02752a5ef19947d311d2e9a91fd685c0e5be24f723020",
+      "skill_sha256": "47588159e2f11b02773b86a6fc6dd5ddf597b0a7ce36bae50671489f6e70c590"
+    },
+    "next": {
+      "cli_sha256": "b2e848a3c9c0742a416a3b72d042f2166cec694bc35c06bbf748139f69e3e263",
+      "skill_sha256": "c0de66cb47e62ca389a691ca7c9549d68e262702cb692d45dd2a5965779c9f1b"
+    }
+  },
+  "runs": [
+    {
+      "task_id": "business-dev-approval-flow",
+      "section": "business",
+      "trial": 2,
+      "arm": "official_concise",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 177967,
+        "cached_input_tokens": 151424,
+        "output_tokens": 595,
+        "total_tokens": 178562
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 177967,
+        "cached_input_tokens": 151424,
+        "output_tokens": 595,
+        "total_tokens": 178562
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "approval"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "approvals",
+                "search"
+              ],
+              "flags": [
+                "--as",
+                "--data"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "approvals",
+                "get"
+              ],
+              "flags": [
+                "--approval-code",
+                "--as"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "instances",
+                "create"
+              ],
+              "flags": [
+                "--as",
+                "--data",
+                "--yes"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "instances",
+                "get"
+              ],
+              "flags": [
+                "--as",
+                "--instance-code"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 55.531261125026504,
+      "verification_seconds": 0.07052529201610014,
+      "api_calls": 14,
+      "retries": null,
+      "command_executions": 13
+    },
+    {
+      "task_id": "business-dev-mindnote-edit",
+      "section": "business",
+      "trial": 2,
+      "arm": "next",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 101338,
+        "cached_input_tokens": 83712,
+        "output_tokens": 451,
+        "total_tokens": 101789
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 101338,
+        "cached_input_tokens": 83712,
+        "output_tokens": 451,
+        "total_tokens": 101789
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mindnotes",
+                "nodes",
+                "list"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mindnotes",
+                "nodes",
+                "create"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mindnotes",
+                "nodes",
+                "list"
+              ],
+              "flags": [
+                "--as",
+                "--mindnote-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mindnotes",
+                "nodes",
+                "create"
+              ],
+              "flags": [
+                "--as",
+                "--data",
+                "--mindnote-id"
+              ]
+            }
+          ],
+          "exit_code": 22
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mindnotes",
+                "nodes",
+                "list"
+              ],
+              "flags": [
+                "--as",
+                "--mindnote-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 44.337838083010865,
+      "verification_seconds": 0.07224070900701918,
+      "api_calls": 6,
+      "retries": null,
+      "command_executions": 8
+    },
+    {
+      "task_id": "business-dev-mindnote-edit",
+      "section": "business",
+      "trial": 1,
+      "arm": "official_concise",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 135674,
+        "cached_input_tokens": 92800,
+        "output_tokens": 560,
+        "total_tokens": 136234
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 135674,
+        "cached_input_tokens": 92800,
+        "output_tokens": 560,
+        "total_tokens": 136234
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 127
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mindnotes"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mindnotes",
+                "nodes"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mindnotes",
+                "nodes",
+                "list"
+              ],
+              "flags": [
+                "--as",
+                "--mindnote-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mindnotes",
+                "nodes",
+                "create"
+              ],
+              "flags": [
+                "--as",
+                "--data",
+                "--mindnote-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mindnotes",
+                "nodes",
+                "list"
+              ],
+              "flags": [
+                "--as",
+                "--mindnote-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 47.07414745801361,
+      "verification_seconds": 0.07117408400517888,
+      "api_calls": 11,
+      "retries": null,
+      "command_executions": 12
+    },
+    {
+      "task_id": "business-dev-approval-flow",
+      "section": "business",
+      "trial": 2,
+      "arm": "next",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 118367,
+        "cached_input_tokens": 100864,
+        "output_tokens": 570,
+        "total_tokens": 118937
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 118367,
+        "cached_input_tokens": 100864,
+        "output_tokens": 570,
+        "total_tokens": 118937
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "approvals",
+                "search"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "instances",
+                "get"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "instances",
+                "create"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "approvals",
+                "get"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "approvals",
+                "search"
+              ],
+              "flags": [
+                "--as",
+                "--data"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "approvals",
+                "get"
+              ],
+              "flags": [
+                "--approval-code",
+                "--as"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "instances",
+                "create"
+              ],
+              "flags": [
+                "--as",
+                "--data",
+                "--yes"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "instances",
+                "get"
+              ],
+              "flags": [
+                "--as",
+                "--instance-code"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 58.54760137500125,
+      "verification_seconds": 0.08197549998294562,
+      "api_calls": 8,
+      "retries": null,
+      "command_executions": 11
+    },
+    {
+      "task_id": "business-dev-mindnote-edit",
+      "section": "business",
+      "trial": 0,
+      "arm": "official",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 166673,
+        "cached_input_tokens": 145024,
+        "output_tokens": 679,
+        "total_tokens": 167352
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 166673,
+        "cached_input_tokens": 145024,
+        "output_tokens": 679,
+        "total_tokens": 167352
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "mindnotes"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mindnotes",
+                "nodes"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mindnotes",
+                "nodes",
+                "list"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mindnotes",
+                "nodes",
+                "create"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mindnotes",
+                "nodes",
+                "list"
+              ],
+              "flags": [
+                "--as",
+                "--mindnote-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mindnotes",
+                "nodes",
+                "create"
+              ],
+              "flags": [
+                "--as",
+                "--data",
+                "--dry-run",
+                "--mindnote-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mindnotes",
+                "nodes",
+                "create"
+              ],
+              "flags": [
+                "--as",
+                "--data",
+                "--mindnote-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mindnotes",
+                "nodes",
+                "list"
+              ],
+              "flags": [
+                "--as",
+                "--mindnote-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 56.79742695900495,
+      "verification_seconds": 0.08114108399604447,
+      "api_calls": 13,
+      "retries": null,
+      "command_executions": 12
+    },
+    {
+      "task_id": "business-dev-approval-flow",
+      "section": "business",
+      "trial": 2,
+      "arm": "official",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 196293,
+        "cached_input_tokens": 173184,
+        "output_tokens": 820,
+        "total_tokens": 197113
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 196293,
+        "cached_input_tokens": 173184,
+        "output_tokens": 820,
+        "total_tokens": 197113
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_search"
+            },
+            {
+              "kind": "cli",
+              "command": [],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "approval"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "approvals",
+                "search"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "approvals",
+                "get"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "instances",
+                "create"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "instances",
+                "get"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "approvals",
+                "search"
+              ],
+              "flags": [
+                "--as",
+                "--data"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "approvals",
+                "get"
+              ],
+              "flags": [
+                "--approval-code",
+                "--as"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "instances",
+                "create"
+              ],
+              "flags": [
+                "--as",
+                "--data",
+                "--dry-run"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "script"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "instances",
+                "get"
+              ],
+              "flags": [
+                "--as",
+                "--instance-code"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 60.895924040989485,
+      "verification_seconds": 0.08299841699772514,
+      "api_calls": 17,
+      "retries": null,
+      "command_executions": 10
+    },
+    {
+      "task_id": "business-dev-approval-flow",
+      "section": "business",
+      "trial": 0,
+      "arm": "official_concise",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 193809,
+        "cached_input_tokens": 167168,
+        "output_tokens": 610,
+        "total_tokens": 194419
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 193809,
+        "cached_input_tokens": 167168,
+        "output_tokens": 610,
+        "total_tokens": 194419
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 127
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "approval"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "approvals",
+                "search"
+              ],
+              "flags": [
+                "--as",
+                "--data"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "approvals",
+                "get"
+              ],
+              "flags": [
+                "--approval-code",
+                "--as"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "instances",
+                "create"
+              ],
+              "flags": [
+                "--as",
+                "--data",
+                "--yes"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "instances",
+                "get"
+              ],
+              "flags": [
+                "--as",
+                "--instance-code"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 57.12126404198352,
+      "verification_seconds": 0.09051841599284671,
+      "api_calls": 14,
+      "retries": null,
+      "command_executions": 14
+    },
+    {
+      "task_id": "business-dev-approval-flow",
+      "section": "business",
+      "trial": 1,
+      "arm": "next",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 120323,
+        "cached_input_tokens": 86144,
+        "output_tokens": 518,
+        "total_tokens": 120841
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 120323,
+        "cached_input_tokens": 86144,
+        "output_tokens": 518,
+        "total_tokens": 120841
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "approvals",
+                "search"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "instances",
+                "get"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "instances",
+                "create"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "approvals",
+                "get"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "approvals",
+                "search"
+              ],
+              "flags": [
+                "--as",
+                "--data"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "approvals",
+                "get"
+              ],
+              "flags": [
+                "--approval-code",
+                "--as"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "instances",
+                "create"
+              ],
+              "flags": [
+                "--as",
+                "--data",
+                "--yes"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "instances",
+                "get"
+              ],
+              "flags": [
+                "--as",
+                "--instance-code"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 43.83037845799117,
+      "verification_seconds": 0.082528958999319,
+      "api_calls": 8,
+      "retries": null,
+      "command_executions": 11
+    },
+    {
+      "task_id": "business-dev-approval-flow",
+      "section": "business",
+      "trial": 1,
+      "arm": "official_concise",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 174961,
+        "cached_input_tokens": 149120,
+        "output_tokens": 624,
+        "total_tokens": 175585
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 174961,
+        "cached_input_tokens": 149120,
+        "output_tokens": 624,
+        "total_tokens": 175585
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "approval"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "approvals",
+                "search"
+              ],
+              "flags": [
+                "--as",
+                "--data"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "approvals",
+                "get"
+              ],
+              "flags": [
+                "--approval-code",
+                "--as"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "instances",
+                "create"
+              ],
+              "flags": [
+                "--as",
+                "--data",
+                "--yes"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "instances",
+                "get"
+              ],
+              "flags": [
+                "--as",
+                "--instance-code"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 48.4313994589902,
+      "verification_seconds": 0.05393191700568423,
+      "api_calls": 14,
+      "retries": null,
+      "command_executions": 13
+    },
+    {
+      "task_id": "business-dev-mindnote-edit",
+      "section": "business",
+      "trial": 2,
+      "arm": "official_concise",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 156620,
+        "cached_input_tokens": 120320,
+        "output_tokens": 587,
+        "total_tokens": 157207
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 156620,
+        "cached_input_tokens": 120320,
+        "output_tokens": 587,
+        "total_tokens": 157207
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mindnotes"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mindnotes",
+                "nodes"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "api"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mindnotes",
+                "nodes",
+                "list"
+              ],
+              "flags": [
+                "--as",
+                "--mindnote-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mindnotes",
+                "nodes",
+                "create"
+              ],
+              "flags": [
+                "--as",
+                "--data",
+                "--mindnote-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mindnotes",
+                "nodes",
+                "list"
+              ],
+              "flags": [
+                "--as",
+                "--mindnote-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 45.80356029199902,
+      "verification_seconds": 0.08395620799274184,
+      "api_calls": 12,
+      "retries": null,
+      "command_executions": 12
+    },
+    {
+      "task_id": "business-dev-mindnote-edit",
+      "section": "business",
+      "trial": 0,
+      "arm": "official_concise",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 156503,
+        "cached_input_tokens": 133632,
+        "output_tokens": 564,
+        "total_tokens": 157067
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 156503,
+        "cached_input_tokens": 133632,
+        "output_tokens": 564,
+        "total_tokens": 157067
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mindnotes"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mindnotes",
+                "nodes"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "api"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mindnotes",
+                "nodes",
+                "list"
+              ],
+              "flags": [
+                "--as",
+                "--mindnote-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mindnotes",
+                "nodes",
+                "create"
+              ],
+              "flags": [
+                "--as",
+                "--data",
+                "--mindnote-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mindnotes",
+                "nodes",
+                "list"
+              ],
+              "flags": [
+                "--as",
+                "--mindnote-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 58.480492374976166,
+      "verification_seconds": 0.08265716599998996,
+      "api_calls": 12,
+      "retries": null,
+      "command_executions": 12
+    },
+    {
+      "task_id": "business-dev-mindnote-edit",
+      "section": "business",
+      "trial": 2,
+      "arm": "official",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 155032,
+        "cached_input_tokens": 119168,
+        "output_tokens": 700,
+        "total_tokens": 155732
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 155032,
+        "cached_input_tokens": 119168,
+        "output_tokens": 700,
+        "total_tokens": 155732
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            },
+            {
+              "kind": "cli",
+              "command": [],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mindnotes"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mindnotes",
+                "nodes"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mindnotes",
+                "nodes",
+                "create"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mindnotes",
+                "nodes",
+                "list"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mindnotes",
+                "nodes",
+                "list"
+              ],
+              "flags": [
+                "--as",
+                "--mindnote-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mindnotes",
+                "nodes",
+                "create"
+              ],
+              "flags": [
+                "--as",
+                "--data",
+                "--dry-run",
+                "--mindnote-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mindnotes",
+                "nodes",
+                "create"
+              ],
+              "flags": [
+                "--as",
+                "--data",
+                "--mindnote-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mindnotes",
+                "nodes",
+                "list"
+              ],
+              "flags": [
+                "--as",
+                "--mindnote-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 55.48144649999449,
+      "verification_seconds": 0.07065149999107234,
+      "api_calls": 13,
+      "retries": null,
+      "command_executions": 12
+    },
+    {
+      "task_id": "business-dev-mindnote-edit",
+      "section": "business",
+      "trial": 1,
+      "arm": "next",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 116391,
+        "cached_input_tokens": 98304,
+        "output_tokens": 733,
+        "total_tokens": 117124
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 116391,
+        "cached_input_tokens": 98304,
+        "output_tokens": 733,
+        "total_tokens": 117124
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--limit",
+                "--offset"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mindnotes",
+                "nodes",
+                "create"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mindnotes",
+                "nodes",
+                "list"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mindnotes",
+                "nodes",
+                "list"
+              ],
+              "flags": [
+                "--as",
+                "--mindnote-id",
+                "--save-result"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "script"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mindnotes",
+                "nodes",
+                "create"
+              ],
+              "flags": [
+                "--as",
+                "--data",
+                "--mindnote-id"
+              ]
+            }
+          ],
+          "exit_code": 22
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mindnotes",
+                "nodes",
+                "list"
+              ],
+              "flags": [
+                "--as",
+                "--mindnote-id",
+                "--save-result"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "script"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 58.89996287500253,
+      "verification_seconds": 0.08163800000329502,
+      "api_calls": 6,
+      "retries": null,
+      "command_executions": 11
+    },
+    {
+      "task_id": "business-dev-mindnote-edit",
+      "section": "business",
+      "trial": 0,
+      "arm": "next",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 99476,
+        "cached_input_tokens": 67200,
+        "output_tokens": 431,
+        "total_tokens": 99907
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 99476,
+        "cached_input_tokens": 67200,
+        "output_tokens": 431,
+        "total_tokens": 99907
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--limit",
+                "--offset"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mindnotes",
+                "nodes",
+                "create"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mindnotes",
+                "nodes",
+                "list"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mindnotes",
+                "nodes",
+                "list"
+              ],
+              "flags": [
+                "--as",
+                "--mindnote-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mindnotes",
+                "nodes",
+                "create"
+              ],
+              "flags": [
+                "--as",
+                "--data",
+                "--mindnote-id"
+              ]
+            }
+          ],
+          "exit_code": 22
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mindnotes",
+                "nodes",
+                "list"
+              ],
+              "flags": [
+                "--as",
+                "--mindnote-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 44.34933229201124,
+      "verification_seconds": 0.06879258397384547,
+      "api_calls": 6,
+      "retries": null,
+      "command_executions": 8
+    },
+    {
+      "task_id": "business-dev-approval-flow",
+      "section": "business",
+      "trial": 0,
+      "arm": "official",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 207065,
+        "cached_input_tokens": 188032,
+        "output_tokens": 767,
+        "total_tokens": 207832
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 207065,
+        "cached_input_tokens": 188032,
+        "output_tokens": 767,
+        "total_tokens": 207832
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "approval"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "approvals",
+                "search"
+              ],
+              "flags": [
+                "--as",
+                "--data"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "instances",
+                "create"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "approvals",
+                "get"
+              ],
+              "flags": [
+                "--approval-code",
+                "--as"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "instances",
+                "create"
+              ],
+              "flags": [
+                "--as",
+                "--data",
+                "--dry-run"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "instances",
+                "create"
+              ],
+              "flags": [
+                "--as",
+                "--data",
+                "--yes"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "instances",
+                "get"
+              ],
+              "flags": [
+                "--as",
+                "--instance-code"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 62.95550608399208,
+      "verification_seconds": 0.081506749993423,
+      "api_calls": 16,
+      "retries": null,
+      "command_executions": 15
+    },
+    {
+      "task_id": "business-dev-mindnote-edit",
+      "section": "business",
+      "trial": 1,
+      "arm": "official",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 151555,
+        "cached_input_tokens": 133632,
+        "output_tokens": 710,
+        "total_tokens": 152265
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 151555,
+        "cached_input_tokens": 133632,
+        "output_tokens": 710,
+        "total_tokens": 152265
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 127
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mindnotes"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mindnotes",
+                "nodes"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mindnotes",
+                "nodes",
+                "create"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mindnotes",
+                "nodes",
+                "list"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mindnotes",
+                "nodes",
+                "list"
+              ],
+              "flags": [
+                "--as",
+                "--mindnote-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mindnotes",
+                "nodes",
+                "create"
+              ],
+              "flags": [
+                "--as",
+                "--data",
+                "--dry-run",
+                "--mindnote-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mindnotes",
+                "nodes",
+                "create"
+              ],
+              "flags": [
+                "--as",
+                "--data",
+                "--mindnote-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mindnotes",
+                "nodes",
+                "list"
+              ],
+              "flags": [
+                "--as",
+                "--mindnote-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 60.50130887501291,
+      "verification_seconds": 0.0825252500071656,
+      "api_calls": 13,
+      "retries": null,
+      "command_executions": 13
+    },
+    {
+      "task_id": "business-dev-approval-flow",
+      "section": "business",
+      "trial": 1,
+      "arm": "official",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 182327,
+        "cached_input_tokens": 138880,
+        "output_tokens": 772,
+        "total_tokens": 183099
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 182327,
+        "cached_input_tokens": 138880,
+        "output_tokens": 772,
+        "total_tokens": 183099
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            },
+            {
+              "kind": "cli",
+              "command": [],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "approval"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "approvals",
+                "search"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "approvals",
+                "get"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "instances",
+                "create"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "instances",
+                "get"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "approvals",
+                "search"
+              ],
+              "flags": [
+                "--as",
+                "--data"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "approvals",
+                "get"
+              ],
+              "flags": [
+                "--approval-code",
+                "--as"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "instances",
+                "create"
+              ],
+              "flags": [
+                "--as",
+                "--data",
+                "--dry-run"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "instances",
+                "create"
+              ],
+              "flags": [
+                "--as",
+                "--data",
+                "--yes"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "instances",
+                "get"
+              ],
+              "flags": [
+                "--as",
+                "--instance-code"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 52.371016999997664,
+      "verification_seconds": 0.07440937499632128,
+      "api_calls": 17,
+      "retries": null,
+      "command_executions": 12
+    },
+    {
+      "task_id": "business-dev-approval-flow",
+      "section": "business",
+      "trial": 0,
+      "arm": "next",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 120150,
+        "cached_input_tokens": 102272,
+        "output_tokens": 570,
+        "total_tokens": 120720
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 120150,
+        "cached_input_tokens": 102272,
+        "output_tokens": 570,
+        "total_tokens": 120720
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "approvals",
+                "get"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "instances",
+                "get"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "instances",
+                "create"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "approvals",
+                "search"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "approvals",
+                "search"
+              ],
+              "flags": [
+                "--as",
+                "--data"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "approvals",
+                "get"
+              ],
+              "flags": [
+                "--approval-code",
+                "--as"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "instances",
+                "create"
+              ],
+              "flags": [
+                "--as",
+                "--data",
+                "--yes"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "approval",
+                "instances",
+                "get"
+              ],
+              "flags": [
+                "--as",
+                "--instance-code"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 48.167587915988406,
+      "verification_seconds": 0.08383350001531653,
+      "api_calls": 8,
+      "retries": null,
+      "command_executions": 11
+    }
+  ],
+  "groups": [
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "next",
+      "attempts": 6,
+      "successes": 6,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 679318,
+      "tokens_per_success": 113219.66666666667,
+      "token_distribution": {
+        "min": 99907,
+        "median": 118030.5,
+        "max": 120841,
+        "stdev": 9696.996187823665
+      },
+      "latency_median_seconds": 46.25846010399982,
+      "api_calls": 42,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "official",
+      "attempts": 6,
+      "successes": 6,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 1063393,
+      "tokens_per_success": 177232.16666666666,
+      "token_distribution": {
+        "min": 152265,
+        "median": 175225.5,
+        "max": 207832,
+        "stdev": 22579.864210545347
+      },
+      "latency_median_seconds": 58.64936791700893,
+      "api_calls": 89,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "official_concise",
+      "attempts": 6,
+      "successes": 6,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 999074,
+      "tokens_per_success": 166512.33333333334,
+      "token_distribution": {
+        "min": 136234,
+        "median": 166396.0,
+        "max": 194419,
+        "stdev": 20488.390914531738
+      },
+      "latency_median_seconds": 51.98133029200835,
+      "api_calls": 77,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "section",
+      "name": "business",
+      "arm": "next",
+      "attempts": 6,
+      "successes": 6,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 679318,
+      "tokens_per_success": 113219.66666666667,
+      "token_distribution": {
+        "min": 99907,
+        "median": 118030.5,
+        "max": 120841,
+        "stdev": 9696.996187823665
+      },
+      "latency_median_seconds": 46.25846010399982,
+      "api_calls": 42,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "section",
+      "name": "business",
+      "arm": "official",
+      "attempts": 6,
+      "successes": 6,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 1063393,
+      "tokens_per_success": 177232.16666666666,
+      "token_distribution": {
+        "min": 152265,
+        "median": 175225.5,
+        "max": 207832,
+        "stdev": 22579.864210545347
+      },
+      "latency_median_seconds": 58.64936791700893,
+      "api_calls": 89,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "section",
+      "name": "business",
+      "arm": "official_concise",
+      "attempts": 6,
+      "successes": 6,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 999074,
+      "tokens_per_success": 166512.33333333334,
+      "token_distribution": {
+        "min": 136234,
+        "median": 166396.0,
+        "max": 194419,
+        "stdev": 20488.390914531738
+      },
+      "latency_median_seconds": 51.98133029200835,
+      "api_calls": 77,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "task_id",
+      "name": "business-dev-approval-flow",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 360498,
+      "tokens_per_success": 120166.0,
+      "token_distribution": {
+        "min": 118937,
+        "median": 120720,
+        "max": 120841,
+        "stdev": 1066.0633189449866
+      },
+      "latency_median_seconds": 48.167587915988406,
+      "api_calls": 24,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "task_id",
+      "name": "business-dev-approval-flow",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 588044,
+      "tokens_per_success": 196014.66666666666,
+      "token_distribution": {
+        "min": 183099,
+        "median": 197113,
+        "max": 207832,
+        "stdev": 12403.026821438923
+      },
+      "latency_median_seconds": 60.895924040989485,
+      "api_calls": 50,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "task_id",
+      "name": "business-dev-approval-flow",
+      "arm": "official_concise",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 548566,
+      "tokens_per_success": 182855.33333333334,
+      "token_distribution": {
+        "min": 175585,
+        "median": 178562,
+        "max": 194419,
+        "stdev": 10124.446766778585
+      },
+      "latency_median_seconds": 55.531261125026504,
+      "api_calls": 42,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "task_id",
+      "name": "business-dev-mindnote-edit",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 318820,
+      "tokens_per_success": 106273.33333333333,
+      "token_distribution": {
+        "min": 99907,
+        "median": 101789,
+        "max": 117124,
+        "stdev": 9443.950779908446
+      },
+      "latency_median_seconds": 44.34933229201124,
+      "api_calls": 18,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "task_id",
+      "name": "business-dev-mindnote-edit",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 475349,
+      "tokens_per_success": 158449.66666666666,
+      "token_distribution": {
+        "min": 152265,
+        "median": 155732,
+        "max": 167352,
+        "stdev": 7902.131126052853
+      },
+      "latency_median_seconds": 56.79742695900495,
+      "api_calls": 39,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "task_id",
+      "name": "business-dev-mindnote-edit",
+      "arm": "official_concise",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 450508,
+      "tokens_per_success": 150169.33333333334,
+      "token_distribution": {
+        "min": 136234,
+        "median": 157067,
+        "max": 157207,
+        "stdev": 12068.555685471785
+      },
+      "latency_median_seconds": 47.07414745801361,
+      "api_calls": 35,
+      "retries": null,
+      "failure_categories": {}
+    }
+  ],
+  "matched_success": [
+    {
+      "baseline": "official",
+      "pairs": [
+        {
+          "task_id": "business-dev-mindnote-edit",
+          "trial": 2,
+          "baseline_tokens": 155732,
+          "next_tokens": 101789
+        },
+        {
+          "task_id": "business-dev-approval-flow",
+          "trial": 2,
+          "baseline_tokens": 197113,
+          "next_tokens": 118937
+        },
+        {
+          "task_id": "business-dev-approval-flow",
+          "trial": 1,
+          "baseline_tokens": 183099,
+          "next_tokens": 120841
+        },
+        {
+          "task_id": "business-dev-mindnote-edit",
+          "trial": 1,
+          "baseline_tokens": 152265,
+          "next_tokens": 117124
+        },
+        {
+          "task_id": "business-dev-mindnote-edit",
+          "trial": 0,
+          "baseline_tokens": 167352,
+          "next_tokens": 99907
+        },
+        {
+          "task_id": "business-dev-approval-flow",
+          "trial": 0,
+          "baseline_tokens": 207832,
+          "next_tokens": 120720
+        }
+      ]
+    },
+    {
+      "baseline": "official_concise",
+      "pairs": [
+        {
+          "task_id": "business-dev-mindnote-edit",
+          "trial": 2,
+          "baseline_tokens": 157207,
+          "next_tokens": 101789
+        },
+        {
+          "task_id": "business-dev-approval-flow",
+          "trial": 2,
+          "baseline_tokens": 178562,
+          "next_tokens": 118937
+        },
+        {
+          "task_id": "business-dev-approval-flow",
+          "trial": 1,
+          "baseline_tokens": 175585,
+          "next_tokens": 120841
+        },
+        {
+          "task_id": "business-dev-mindnote-edit",
+          "trial": 1,
+          "baseline_tokens": 136234,
+          "next_tokens": 117124
+        },
+        {
+          "task_id": "business-dev-mindnote-edit",
+          "trial": 0,
+          "baseline_tokens": 157067,
+          "next_tokens": 99907
+        },
+        {
+          "task_id": "business-dev-approval-flow",
+          "trial": 0,
+          "baseline_tokens": 194419,
+          "next_tokens": 120720
+        }
+      ]
+    }
+  ]
+}

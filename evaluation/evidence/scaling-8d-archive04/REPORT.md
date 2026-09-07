@@ -2,7 +2,7 @@
 
 Completed **54 attempts**, with **51 verified successes** and 0 inconclusive outcomes. Known provider usage totals **9,780,669 tokens**; 1 attempt has unavailable usage. Non-success-attempt known costs total **499,819 tokens** and are retained.
 
-The complete total is unknown:9,780,669 is a lower bound because the concise-original1,000-row Sheets trial reached the unchanged180-second budget before a provider usage summary. Its missing total is not plotted as zero, and the affected group has no finite efficiency result. The two Base nonverified outcomes retain499,819 known tokens; their generic rejected-request reason cannot identify a product cause.
+The complete total is unknown: 9,780,669 is a lower bound because the concise-original 1,000-row Sheets trial reached the unchanged 180-second budget before a provider usage summary. Its missing total is not plotted as zero, and the affected group has no finite efficiency result. The two Base nonverified outcomes retain 499,819 known tokens; their generic rejected-request reason cannot identify a product cause.
 
 Provider input includes cached input in full; output and failed/recovery turns are counted. Token distributions come from the provider, not byte estimates. A group with unknown usage, inconclusive outcomes, or no successful outcome has no finite tokens-per-success result.
 
@@ -27,9 +27,9 @@ Provider input includes cached input in full; output and failed/recovery turns a
 | sheets-size-dev-10000 | official_concise | 3/3 | 256,691.00 | 216,763–278,297 | 13 |
 | sheets-size-dev-10000 | next | 3/3 | 117,159.00 | 105,820–122,923 | 51 |
 
-Next regressed on the smaller Base tasks but verified all three10,000-row imports with fewer total tokens and API requests than either original arm at that size. For Sheets, Next used fewer tokens than the original at every size and the concise original at100 and10,000 rows; the concise1,000-row total is unknown. At10,000 rows, Next made51 total API requests versus9 original and13 concise, despite its lower provider usage. There is no uniform API advantage.
+Next regressed on the smaller Base tasks but verified all three 10,000-row imports with fewer total tokens and API requests than either original arm at that size. For Sheets, Next used fewer tokens than the original at every size and the concise original at 100 and 10,000 rows; the concise 1,000-row total is unknown. At 10,000 rows, Next made 51 total API requests versus 9 original and 13 concise, despite its lower provider usage. There is no uniform API advantage.
 
-Both original and Next file workflows show provider-token variation far smaller than the100-fold row-count change in this sample. Three fixed sizes and three repetitions cannot establish an asymptotic bound or isolate how much of the difference comes from guidance, command discovery, formatting or model choices. Tokens/success divides all attempt costs, including known failures, by verified successes only when every attempt has complete usage.
+Both original and Next file workflows show provider-token variation far smaller than the 100-fold row-count change in this sample. Three fixed sizes and three repetitions cannot establish an asymptotic bound or isolate how much of the difference comes from guidance, command discovery, formatting or model choices. Tokens/success divides all attempt costs, including known failures, by verified successes only when every attempt has complete usage.
 
 ![Actual provider tokens by size](usage-by-size.png)
 
@@ -46,3 +46,5 @@ The row-count family is 100/1,000/10,000, prefix-paired across sizes and fixed a
 See the [execution-environment note](execution-environment.json) for concurrent correctness-workload limits on latency attribution.
 
 The Base regression and its observed command choices are reviewed in [the trace assessment](base-trace.md); no automatic tuning or rerun was applied.
+
+Sheets workflow and timeout observations are summarized in [the command-choice notes](trace-notes.md).
