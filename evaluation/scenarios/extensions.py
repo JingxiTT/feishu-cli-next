@@ -133,6 +133,12 @@ class Scenario(ScenarioBase):
                     del words[position:position + 2]
                 elif flag + "=" + value in words:
                     words.remove(flag + "=" + value)
+            # Public business commands inherit this boolean JSON-format alias.
+            # Only its true spellings are equivalent to selecting JSON here.
+            if "--json" in words:
+                words.remove("--json")
+            elif "--json=true" in words:
+                words.remove("--json=true")
             if words != ["im", "+fixture-host"]:
                 return
             observed = item.get("aggregated_output")

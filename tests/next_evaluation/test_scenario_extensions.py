@@ -83,6 +83,30 @@ class ExtensionScenarioTests(unittest.TestCase):
         proof = self.scenario.snapshot()["host_executions"][0]
         self.assertEqual(set(proof), {"command_path", "exit_code", "capture", "sha256"})
 
+    def test_supported_json_alias_preserves_observed_and_redirected_proof(self):
+        digest = self.receipt["state"]["host_executions"][0]["sha256"]
+        for flag in ("--json", "--json=true"):
+            for redirect in (False, True):
+                with self.subTest(flag=flag, redirect=redirect):
+                    self.scenario.executions = []
+                    command = "host-cli im +fixture-host --as bot " + flag
+                    if redirect:
+                        command += " > host-result.json"
+                    self.scenario.observe_execution({**self.item, "command": command,
+                                                     "aggregated_output": "" if redirect else self.stdout})
+                    receipt = {**self.receipt, "state": self.scenario.snapshot()}
+                    self.assertTrue(self.verify(receipt=receipt))
+                    self.assertEqual(receipt["state"]["host_executions"][0]["sha256"], digest)
+                    self.assertEqual((self.workspace / "host-result.json").read_text(), self.stdout)
+
+    def test_false_value_and_compound_json_flags_do_not_prove_execution(self):
+        for suffix in ("--json=false", "--json false", "--json=0", "--json=value", "--json true",
+                       "--json; true", "--json | cat", "--json --format pretty"):
+            with self.subTest(suffix=suffix):
+                self.scenario.executions = []
+                self.scenario.observe_execution({**self.item, "command": "host-cli im +fixture-host " + suffix})
+                self.assertEqual(self.scenario.snapshot()["host_executions"], [])
+
     def test_artifact_changed_after_observation_fails(self):
         (self.workspace / "host-result.json").write_text(json.dumps(json.loads(self.stdout), indent=2))
         self.assertFalse(self.verify())
