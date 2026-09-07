@@ -94,14 +94,14 @@
     "verified private-at-creation live harness and live cases",
     "comparative development trials",
     "actual Sheets-to-Base cross-section gate",
-    "field formula/lookup on-demand guide routing in project skill",
     "coordinator repository-wide release checks"
   ],
   "raw_logs": [
     ".tmp/base-section-gate.json",
     ".tmp/base-build.json",
     ".tmp/base-vet.json",
-    ".tmp/base-live-gate.json"
+    ".tmp/base-live-gate.json",
+    ".tmp/base-guide-recovery.json"
   ],
   "commits": [
     {
@@ -203,6 +203,37 @@
         "docs/sections/base.md",
         "shortcuts/base/shortcuts.go"
       ]
+    },
+    {
+      "revision": "79fa235",
+      "files": [
+        "affordance/base.md",
+        "internal/affordance/base_next_source_test.go",
+        "shortcuts/base/field_ops.go",
+        "tests/next_sections/base/field_types_e2e_test.go"
+      ]
     }
-  ]
+  ],
+  "followup_guide_recovery": {
+    "command": [
+      "go",
+      "test",
+      "-json",
+      "./shortcuts/base/...",
+      "./internal/affordance",
+      "./tests/next_sections/base",
+      "-run",
+      "Guide|TestBaseNextGuidance",
+      "-count=1"
+    ],
+    "status": "pass",
+    "exit_code": 0,
+    "duration_seconds": 7.238,
+    "tests": {
+      "pass": 54,
+      "fail": 0,
+      "skip": 0
+    },
+    "shared_distribution_commit": "b7833ae"
+  }
 }
