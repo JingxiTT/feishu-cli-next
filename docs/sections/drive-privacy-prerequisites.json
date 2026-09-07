@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "checked_on": "2026-09-07",
+  "scope": "Read-only public documentation and shipped source; no authenticated API calls, private-resource crawling, writes, or model runs.",
+  "decision": "blocked_before_live_creation",
+  "sources": [
+    {
+      "url": "https://www.feishu.cn/hc/zh-CN/articles/778513900437",
+      "title": "快速上手云盘",
+      "updated_on": "2026-02-09",
+      "access": "Public HTML content and indexed article text; web open renderer had no body.",
+      "supports": "UI personal-folder creation without invited collaborators; default child inheritance of parent collaborators/settings.",
+      "does_not_establish": "Exact API creation privacy or effective link-sharing policy."
+    },
+    {
+      "url": "https://www.feishu.cn/hc/zh-CN/articles/265017155035",
+      "title": "管理员设置文档权限默认值",
+      "updated_on": "2025-09-18",
+      "access": "Public HTML content and indexed article text; web open renderer had no body.",
+      "supports": "Effective member document defaults may allow organization link access and differ from global defaults.",
+      "does_not_establish": "Current account policy, folder/API applicability, or precedence against destination inheritance."
+    }
+  ],
+  "local_interfaces": [
+    {
+      "source": "shortcuts/drive/drive_create_folder.go",
+      "operation": "POST /open-apis/drive/v1/files/create_folder",
+      "finding": "Body has name and folder_token only; empty parent selects caller root. Bot auto-grant occurs after creation."
+    },
+    {
+      "source": "shortcuts/drive/drive_permission_get_setting.go",
+      "operation": "GET /open-apis/drive/v2/permissions/{token}/public",
+      "finding": "Reads existing target settings, not future-child effective policy."
+    },
+    {
+      "source": "shortcuts/drive/drive_member_list.go",
+      "operation": "GET /open-apis/drive/v1/permissions/{token}/members",
+      "finding": "Target membership must be assessed together with link sharing and applicable inheritance."
+    },
+    {
+      "source": "docs/reference/meta_data.json.gz",
+      "operation": "drive v1 files.create_folder and permission.public.patch",
+      "finding": "Create has no atomic privacy field; external_access=false does not close organization link sharing. Post-create patch cannot establish privacy before creation."
+    }
+  ],
+  "bounded_discovery": {
+    "searched": "Frozen catalog method/resource names and method descriptions for default/permission combinations and 权限默认 or 默认权限.",
+    "result": "No effective member creation-default reader found in that catalog search.",
+    "limit": "Not proof that no such API exists outside the shipped catalog. Public UI guidance is not an API guarantee."
+  },
+  "unverified_prerequisites": [
+    "Effective current user, tenant, and user/app identity binding.",
+    "Current effective member creation policy, including applicable overrides and completed propagation.",
+    "Authoritative exact-operation API rule establishing account-only visibility at creation, with applicable destination inheritance and policy precedence.",
+    "For an existing destination, complete account-only membership plus public and inherited settings."
+  ],
+  "rejected_shortcuts": [
+    "Treating an invisible personal-folder tree or absent invited collaborators as proof all link access is closed.",
+    "Using an existing private document, root metadata, or parent ACL alone as proof of unborn-child privacy.",
+    "Creating first and reading or restricting permissions afterward."
+  ],
+  "conclusion": "No verified current-account-only precreation route is established by these sources without additional account-policy and API-specific evidence. A user-supplied destination alone would not resolve an unproved creation rule.",
+  "source_sha256": {
+    "shortcuts/drive/drive_create_folder.go": "c77b3ef834df74969fe0bcbda150cdca5a1e54f0dfd2eb196d3d394dfcc18c73",
+    "shortcuts/drive/drive_permission_get_setting.go": "512d22a4244f0fd901cb97f1cb39cde1ef88edfa6fc95505247147545368adc3",
+    "shortcuts/drive/drive_member_list.go": "d7a91c22af767df781670ff59ea18ad1b072a5ef79f8643a8d8977e9a9017289",
+    "docs/reference/meta_data.json.gz": "c3717197efc20093b4b9eb737bbe3f5f5e6acb75c19b86071ccf5acf62f588d7"
+  }
+}
