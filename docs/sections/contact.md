@@ -124,9 +124,11 @@ sanitized shape/identity-equality evidence, never personal profiles in committed
 logs. Contact needs no content creation or notification. Any subsequent delivery
 is a cross-section action, requires independently verified Ying Wu identity or
 current-account-only private visibility, and is outside these Contact reads.
-No tenant-bound live harness or verified current-account fixture was supplied;
-these checks are blocked and are not passing evidence. No comparative or held-out
-tasks were run by this section; the coordinator schedules them.
+An initial missing-fixture blocker was superseded by the coordinator-authorized
+current-account live attempt recorded below. The complete section remains open
+after its final bot-search read failed. Comparative development evidence is
+owned by the coordinator under `evaluation/evidence/contact/`; this section owner
+did not run model evaluations or held-out tasks.
 
 ## Recorded offline results
 
@@ -136,7 +138,8 @@ passed with 228 Contact unit test events, 21 process test events and one explici
 live-blocker skip. The legacy `DryRun|Regression` selection compiled successfully
 but ran zero tests. Raw synthetic machine-readable results are in the report
 path (ignored local evidence). The live command above returned `blocked`, exit
-2, recorded in `.tmp/contact-live.json`; no live requests were made.
+2, recorded in `.tmp/contact-live.json`; that initial offline-boundary invocation
+made no live requests. The later authorized live attempt is separate below.
 
 `go vet ./shortcuts/contact/... ./tests/next_sections/contact ./tests/cli_e2e/contact`
 was run with `scripts/next_test.py`'s `isolated_env` helper. `gofmt` and
@@ -144,3 +147,39 @@ was run with `scripts/next_test.py`'s `isolated_env` helper. `gofmt` and
 quality-gate, licensing/module checks, normal-build variants, comparative tasks
 and held-out evaluation are coordinator/release checks and were not run by this
 section owner.
+
+
+## Authorized current-account live attempt
+
+The coordinator subsequently authorized only
+`TestContactNextLiveCurrentAccountReads`. A dedicated normal CLI was built from
+committed candidate `312af93804a44fe38cbaf1fb7ffea36a24b60357` in a temporary
+source snapshot, using the checksum-verified frozen catalog. The working tree and
+root binary were not used for the build. Current account configuration remained
+in place; legacy `TEST_*` credential fallbacks were removed from child processes.
+The inspected harness performs no login or content mutations; its existing
+bounded retry policy applies only when a read returns a typed retryable error.
+
+Preflight `auth status --json --verify` confirmed user identity. A separate own
+`GET /open-apis/authen/v1/user_info --as user` returned the same open ID and a
+nonempty tenant key. Those values were compared and supplied to the exact test
+only in process memory/environment, never committed or printed. The exact
+selection was `go test -json -count=1 -timeout=4m ./tests/cli_e2e/contact -run
+^TestContactNextLiveCurrentAccountReads$`, with the dedicated binary selected.
+
+The test failed at `contact_next_live_test.go:69`, the final rare-keyword
+`+search-bot` read. Earlier sequential assertions completed: self lookup,
+exact-ID get-user round-trip, ID-restricted user-search shape and returned
+identities, and self personal-profile array/returned-identity checks. Those
+assertions do not establish full Contact live coverage or completeness of every
+profile field. The generic failure deliberately omits upstream response content;
+its backend cause remains unclassified. No additional live retry, login or scope
+change was performed after the failure.
+
+The selected test recorded zero passes, one failure and zero skips. Full Contact
+live acceptance, bot-search success and bot-identity tenant binding remain open.
+[Sanitized live evidence](contact-live-evidence.json) retains only build/test
+hashes, revision, status, binding booleans and the code failure location. Raw
+auth/profile data, identifiers, tokens and test output were kept in memory only
+and discarded; the temporary build directory was removed. No content was
+created, changed, sent or shared.

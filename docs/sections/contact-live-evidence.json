@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "section": "contact",
+  "evidence": "live",
+  "authorized_workflow": "TestContactNextLiveCurrentAccountReads",
+  "timestamp_utc": "2026-09-07T05:52:54.306627+00:00",
+  "status": "fail",
+  "content_writes": false,
+  "personal_data_persisted": false,
+  "auth_login_performed": false,
+  "selection": "^TestContactNextLiveCurrentAccountReads$",
+  "binding": {
+    "auth_verified": true,
+    "user_id_match": true,
+    "tenant_observed": true
+  },
+  "candidate_revision": "312af93804a44fe38cbaf1fb7ffea36a24b60357",
+  "metadata_sha256": "b5375251ff1f0a5939925587b0d514669a748135cde36c56f1c8ab5f5fe266c8",
+  "build_exit": 0,
+  "binary_sha256": "55b7e441857b51fac0eb8d8811a56b8e21ad8058f9a53c57831ced79fff80402",
+  "test_source_sha256": "063091fd2a1d7d7589441cd00961b9015d9da9b5e12ca46ed96c9955ac5bd468",
+  "auth_status_exit": 0,
+  "self_info_exit": 0,
+  "test_exit": 1,
+  "test_events": {
+    "pass": 0,
+    "fail": 1,
+    "skip": 0
+  },
+  "failure_locations": [
+    "contact_next_live_test.go:69"
+  ],
+  "reason": "account_bound_read_workflow_failed",
+  "failure_step": "contact +search-bot --query <rare synthetic keyword> --page-size 1",
+  "upstream_failure_cause": "unavailable: existing test reports only a generic read failure",
+  "reached_steps": [
+    "verified_auth_status",
+    "own_user_info_account_and_tenant_binding",
+    "self_get_user",
+    "exact_id_get_user_roundtrip",
+    "id_restricted_user_search_shape_and_identity",
+    "self_user_profiles_array_and_returned_identity_checks"
+  ],
+  "remaining_unverified": [
+    "bot_search_live_success",
+    "bot_identity_tenant_binding",
+    "full_contact_section_live_acceptance"
+  ],
+  "harness_review": {
+    "auto_login": false,
+    "content_mutation_commands": false,
+    "typed_retryable_read_errors": "existing bounded retry policy",
+    "test_credential_fallbacks": "TEST_* removed from child environment",
+    "config": "effective current-account config preserved; normal token refresh allowed"
+  }
+}
