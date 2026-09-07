@@ -131,6 +131,20 @@ class ProcessE2ETests(unittest.TestCase):
         self.assertNotIn("private marker", json.dumps(result))
         self.assertNotIn("must-not-be-inherited", json.dumps(result))
 
+    def test_operator_stop_preserves_active_attempt_and_skips_unstarted_models(self):
+        with tempfile.TemporaryDirectory() as directory:
+            stop = Path(directory) / 'STOP'
+            completed, result = self.invoke({'operator_stop_file': str(stop)}, extra_args=['--stop-file', str(stop)])
+            self.assertEqual(completed.returncode, 0, completed.stderr)
+            self.assertEqual(json.loads(completed.stdout)['status'], 'stopped')
+            self.assertTrue(result['stopped'])
+            self.assertEqual(result['cancelled_before_model'], 5)
+            self.assertEqual(len(result['runs']), 1)
+            self.assertEqual(result['runs'][0]['usage']['total_tokens'], 165)
+            self.assertTrue(result['runs'][0]['success'])
+            self.assertFalse(result['completed'])
+            self.assertFalse(result['performance_claims_supported'])
+
     def test_agent_claim_cannot_override_actual_effect(self):
         completed, result = self.invoke({"wrong_effect": True})
         self.assertEqual(completed.returncode, 1)

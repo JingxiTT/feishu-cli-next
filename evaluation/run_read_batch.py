@@ -28,6 +28,9 @@ def main():
     with tempfile.TemporaryDirectory(prefix='eval-read-config-') as directory:
         temporary = Path(directory)
         for section in sections:
+            if (args.output_root / "STOP").exists():
+                print(json.dumps({"status": "stopped_before_next_section"}), flush=True)
+                return 0
             index = next(i for i, task in enumerate(manifest["tasks"]) if task["section"] == section)
             skill_name = 'lark-' + {'docs': 'doc', 'events': 'event', 'packaging': 'shared'}.get(section, section)
             official_entry = args.official_source / 'skills' / skill_name / 'SKILL.md'
@@ -81,7 +84,8 @@ def main():
             result = subprocess.run([sys.executable, str(ROOT / 'evaluation/harness.py'),
                                      '--tasks', str(manifest_path), '--section', section,
                                      '--config', str(path), '--output', str(args.output_root / section / 'batch-01.json'),
-                                     '--seed', str((20260910 if args.task_kind == 'read' else 20260930) + index), '--repeats', '3'], check=False)
+                                     '--seed', str((20260910 if args.task_kind == 'read' else 20260930) + index), '--repeats', '3',
+                                     '--stop-file', str(args.output_root / 'STOP')], check=False)
             failed |= result.returncode != 0
     print(json.dumps({'status': 'prepared' if args.prepare_only else 'complete_with_failures' if failed else 'complete',
                       'sections': sections}), flush=True)

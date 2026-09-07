@@ -288,6 +288,7 @@ def main():
     parser.add_argument("--config", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--repeats", type=int, default=3)
+    parser.add_argument("--stop-file", type=Path, help="Operator stop request, checked only between complete attempts")
     parser.add_argument("--seed", type=int, default=20260907)
     parser.add_argument("--release-held-out", action="store_true")
     parser.add_argument("--section", action="append", help="Evaluate only this inventory section; may repeat")
@@ -311,6 +312,13 @@ def main():
         args.output.parent.mkdir(parents=True, exist_ok=True)
         # Checkpoint each finished attempt before launching another billed model run.
         for planned_run in planned:
+            if args.stop_file and args.stop_file.exists():
+                evidence.update(stopped=True, cancelled_before_model=len(planned) - len(runs))
+                checkpoint = args.output.with_suffix(args.output.suffix + ".tmp")
+                checkpoint.write_text(json.dumps(evidence, indent=2) + "\n", encoding="utf-8")
+                checkpoint.replace(args.output)
+                print(json.dumps({"status": "stopped", "completed_attempts": len(runs), "cancelled_before_model": len(planned) - len(runs)}))
+                return 0
             runs.append(run_one(config, *planned_run))
             evidence.update({"runs": runs, **aggregate(runs), "completed": len(runs) == len(planned),
                              "performance_claims_supported": config["mode"] == "real" and len(runs) == len(planned)

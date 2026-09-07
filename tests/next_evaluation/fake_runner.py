@@ -24,5 +24,7 @@ print(json.dumps({"claimed_success": True, "usage_source": "synthetic",
                             {"input_tokens": 50, "cached_input_tokens": 0, "output_tokens": 5}],
                   "api_calls": 2, "retries": 1, "command_executions": 1,
                   "control_trace": [{"choices": [{"kind": "cli", "command": ["auth", "status"], "flags": ["--json"], "payload": "private marker"}], "exit_code": 3}]}))
+if fixture.get("operator_stop_file"):
+    Path(fixture["operator_stop_file"]).write_text("controlled operator cancellation")
 print("synthetic stderr private marker", file=sys.stderr)
 sys.exit(7 if fixture.get("nonzero_exit") else 0)

@@ -36,6 +36,13 @@ class ReadFixtureTests(unittest.TestCase):
         self.assertIsNone(native_read_label('POST', uri))
         self.assertIsNone(native_read_label('GET', '/private/path'))
 
+    def test_executable_manifest_matches_runtime_task_and_read_proof(self):
+        manifest = json.loads((ROOT / 'evaluation/tasks.read-sections.json').read_text())
+        for task in manifest['tasks']:
+            expected = json.loads(json.dumps(load_runtime(task['section'])['task']))
+            expected['fixture']['runtime_section'] = task['section']
+            self.assertEqual(task, expected)
+
     def test_models_receive_only_public_fixture_and_type_schema(self):
         for path in (ROOT / 'evaluation/runtime').glob('*.json'):
             data = load_runtime(path.stem)

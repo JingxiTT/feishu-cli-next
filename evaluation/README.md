@@ -380,3 +380,9 @@ proof, a request outside the fixture, and forbidden configuration changes withou
 retaining paths, queries, payloads or content. The earlier frozen `cc745f5` runs
 lack these diagnostics; failed raw-API attempts there cannot be attributed to a
 specific route or product defect retrospectively.
+
+For an operator stop request, create `STOP` under the batch output root. The
+launcher/harness checks it between complete attempts, checkpoints all active
+attempt usage first, and cancels unstarted slots without calling them product
+failures. A partial series is not a balanced performance comparison. Direct
+harness users may supply an explicit `--stop-file` path.
