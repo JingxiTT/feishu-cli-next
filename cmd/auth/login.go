@@ -20,7 +20,6 @@ import (
 	"github.com/larksuite/cli/internal/core"
 	"github.com/larksuite/cli/internal/i18n"
 	"github.com/larksuite/cli/internal/output"
-	"github.com/larksuite/cli/internal/recovery"
 	"github.com/larksuite/cli/internal/registry"
 	"github.com/larksuite/cli/shortcuts"
 	"github.com/larksuite/cli/shortcuts/common"
@@ -141,7 +140,7 @@ func authLoginRun(opts *LoginOptions, resolver domainResolver) error {
 		}
 	}
 	msg := getLoginMsg(lang)
-	renderContext := recovery.RenderContext{Profile: f.Invocation.Profile}
+	renderContext := f.RecoveryContext()
 
 	log := func(format string, a ...interface{}) {
 		if !opts.JSON {
@@ -442,7 +441,7 @@ func authLoginPollDeviceCode(opts *LoginOptions, config *core.CliConfig, msg *lo
 	// when running on an interactive terminal — the agent-oriented
 	// instructions only matter for piped / harness environments.
 	if !opts.JSON && f.IOStreams != nil && !f.IOStreams.IsTerminal {
-		fmt.Fprintln(f.IOStreams.ErrOut, msg.AgentTimeoutHint(recovery.RenderContext{Profile: f.Invocation.Profile}))
+		fmt.Fprintln(f.IOStreams.ErrOut, msg.AgentTimeoutHint(f.RecoveryContext()))
 	}
 	log(msg.WaitingAuth)
 	result := pollDeviceToken(opts.Ctx, httpClient, config.AppID, config.AppSecret, config.Brand,

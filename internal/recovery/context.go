@@ -9,6 +9,10 @@ import "strings"
 // rendering. It belongs to one command-tree build; business error producers do
 // not receive it and therefore remain independent of CLI invocation details.
 type RenderContext struct {
+	// CommandName is the code-owned executable name selected by this build.
+	// Empty retains the legacy lark-cli command; never populate it from user text.
+	CommandName string
+
 	// Profile is the explicit --profile override from this invocation. An empty
 	// value means recovery commands retain their historical profile-free form.
 	Profile string
@@ -18,7 +22,11 @@ type RenderContext struct {
 // is a code-owned argument fragment (for example "--device-code <code>"); the
 // invocation profile is always emitted as one shell-safe argv value.
 func (c RenderContext) AuthLoginCommand(suffix string) string {
-	command := "lark-cli auth login"
+	name := c.CommandName
+	if name == "" {
+		name = "lark-cli"
+	}
+	command := name + " auth login"
 	if c.Profile != "" {
 		// The equals form keeps a leading-dash profile value attached to its flag;
 		// single-quote escaping prevents shell expansion or argument splitting.

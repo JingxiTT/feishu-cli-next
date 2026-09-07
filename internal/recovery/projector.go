@@ -57,3 +57,12 @@ func (p *Projector) RenderHint(hint Hint) string {
 	}
 	return hint.render(p.surfacePlan(), p.context)
 }
+
+// Context returns a copy of the build-local rendering context. Local auth
+// workflows use it for code-owned login instructions outside error envelopes.
+func (p *Projector) Context() RenderContext {
+	if p == nil {
+		return RenderContext{}
+	}
+	return p.context
+}

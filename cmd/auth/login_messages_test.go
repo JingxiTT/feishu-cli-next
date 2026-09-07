@@ -149,3 +149,13 @@ func TestAgentTimeoutHint_ExplicitProfilePreservesStartAndResume(t *testing.T) {
 		}
 	}
 }
+
+func TestAgentTimeoutHint_UsesNextInvocationContext(t *testing.T) {
+	context := recovery.RenderContext{CommandName: "feishu-cli-next", Profile: "next profile"}
+	for _, lang := range []i18n.Lang{i18n.LangZhCN, i18n.LangEnUS} {
+		hint := getLoginMsg(lang).AgentTimeoutHint(context)
+		if !strings.Contains(hint, "feishu-cli-next auth login --profile='next profile' --device-code <code>") || strings.Contains(hint, "lark-cli auth login") {
+			t.Errorf("%s timeout hint has incorrect binary identity: %s", lang, hint)
+		}
+	}
+}

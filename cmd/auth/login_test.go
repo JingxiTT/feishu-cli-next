@@ -1374,6 +1374,12 @@ func TestNoWaitAgentHint_DefaultBytesStable(t *testing.T) {
 }
 
 func TestAuthLoginRun_NoWaitJSONHintPreservesExplicitProfile(t *testing.T) {
+	for _, name := range []string{"lark-cli", "feishu-cli-next"} {
+		t.Run(name, func(t *testing.T) { testNoWaitJSONHintInvocation(t, name) })
+	}
+}
+
+func testNoWaitJSONHintInvocation(t *testing.T, name string) {
 	f, stdout, _, reg := cmdutil.TestFactory(t, &core.CliConfig{
 		ProfileName: "team-beta",
 		AppID:       "cli_test",
@@ -1381,6 +1387,9 @@ func TestAuthLoginRun_NoWaitJSONHintPreservesExplicitProfile(t *testing.T) {
 		Brand:       core.BrandFeishu,
 	})
 	f.Invocation.Profile = "team-beta"
+	if name == "feishu-cli-next" {
+		f.Recovery = recovery.NewProjectorWithContext(nil, recovery.RenderContext{CommandName: name, Profile: "team-beta"})
+	}
 
 	reg.Register(&httpmock.Stub{
 		Method: "POST",
@@ -1411,8 +1420,8 @@ func TestAuthLoginRun_NoWaitJSONHintPreservesExplicitProfile(t *testing.T) {
 	}
 	hint, _ := data["hint"].(string)
 	for _, want := range []string{
-		"`lark-cli auth login --profile='team-beta' --device-code <device_code>`",
-		"rerun `lark-cli auth login --profile='team-beta'` with the same",
+		"`" + name + " auth login --profile='team-beta' --device-code <device_code>`",
+		"rerun `" + name + " auth login --profile='team-beta'` with the same",
 	} {
 		if !strings.Contains(hint, want) {
 			t.Errorf("profile-aware no-wait JSON hint missing %q: %s", want, hint)

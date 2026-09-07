@@ -253,9 +253,13 @@ func buildInternalWithConfig(ctx context.Context, inv cmdutil.InvocationContext,
 	}
 	f.SkillContent = embeddedSkillContent
 	runtime := &buildRuntime{Factory: f}
+	recoveryContext := recovery.RenderContext{Profile: inv.Profile}
+	if cfg.agentMode {
+		recoveryContext.CommandName = "feishu-cli-next"
+	}
 	runtime.recovery = recovery.NewProjectorWithContext(func() *surface.Plan {
 		return runtime.surface
-	}, recovery.RenderContext{Profile: inv.Profile})
+	}, recoveryContext)
 	f.Recovery = runtime.recovery
 	rootCmd := &cobra.Command{
 		Use:     "lark-cli",
