@@ -367,3 +367,9 @@ mutation; the original reference returned 0. This occurred before any Mail model
 trial. It remains a version-specific product defect pending the corrected clean
 candidate's controlled acceptance. The existing 81-trial nine-section read batch
 keeps its original candidate and evaluator snapshots.
+
+A coordinator search accidentally exposed limited held-out snippets during later
+scaling-coverage review. Files remain unchanged and no held-out trial ran, but
+complete blinding can no longer be claimed for the affected examples. See
+[evidence/held-out-exposure.json](evidence/held-out-exposure.json). They require
+independent blind replacement after product freeze before release evaluation.

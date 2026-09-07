@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "status": "affected_examples_quarantined_pending_blind_replacement",
+  "reported_by": "coordinator",
+  "exposure_method": "accidental broad rg search over evaluation/tasks*.json during provider-token scaling coverage review",
+  "limited_content_reported": [
+    "Base import prompt/count indicating 10000 rows",
+    "Sheets export prompt/count indicating 10000 rows",
+    "one size field with value 8192; task association not inspected"
+  ],
+  "full_held_out_tasks_opened": false,
+  "held_out_trials_run": 0,
+  "held_out_files_modified": false,
+  "product_tuning_from_exposed_snippets": false,
+  "scope_note": "These statements describe the coordinator report; the evaluator did not inspect the held-out file. Other section-owner accidental ID-only filename search exposure was previously disclosed separately.",
+  "required_action": "After product freeze, an independent blind author must quarantine or replace affected examples and version the replacement before any held-out release run. Do not claim every coordinator saw no held-out content.",
+  "development_scaling_basis": "Independent small/medium/10000 size experiment derives from docs/PLAN.md scaling requirements, not withheld fixture reuse."
+}
