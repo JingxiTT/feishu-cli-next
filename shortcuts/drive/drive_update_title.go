@@ -130,6 +130,13 @@ var DriveUpdateTitle = common.Shortcut{
 			return err
 		}
 		spec.Title = guard.Title
+		if guard.PreviousTitle != "" && guard.PreviousTitle == spec.Title {
+			out := buildDriveUpdateTitleOutput(runtime, spec, guard)
+			out["updated"] = false
+			out["unchanged"] = true
+			runtime.Out(out, nil)
+			return nil
+		}
 
 		if _, err := runtime.CallAPITyped(
 			"PATCH",
@@ -467,7 +474,7 @@ func buildDriveUpdateTitleDryRun(spec driveUpdateTitleSpec) *common.DryRunAPI {
 				},
 			}).
 			PATCH("/open-apis/drive/v1/files/:file_token").
-			Desc("[2] If the extension guard accepts, update the title resolved from step 1").
+			Desc("[2] If the extension guard accepts and the resolved title differs, update the title resolved from step 1").
 			Params(buildDriveUpdateTitleParams(spec)).
 			Body(map[string]interface{}{"new_title": "<resolved from --title and current title in step 1>"}).
 			Set("file_token", spec.Ref.Token)
