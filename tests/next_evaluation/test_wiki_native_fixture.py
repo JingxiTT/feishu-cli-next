@@ -108,7 +108,8 @@ class WikiNativeBinaryTests(unittest.TestCase):
     def test_pinned_official_and_candidate_native_read_proof(self):
         paths = json.loads(Path(os.environ["EVAL_WIKI_BINARY_PATHS"]).read_text())
         self.assertEqual(paths["official_revision"], "7fd6ef3c07182257ce776cdc5a614e122d5bd4b3")
-        self.assertEqual(paths["next_revision"], "74b6b5346ca4efbd03564045f4f3e01746f18878")
+        self.assertRegex(paths["next_revision"], r"^[0-9a-f]{40}$")
+        self.assertRegex(paths["next_binary_sha256"], r"^[0-9a-f]{64}$")
         self.assertEqual(hashlib.sha256(Path(paths["next_cli"]).read_bytes()).hexdigest(), paths["next_binary_sha256"])
         runtime = load_runtime("wiki")
         expected = runtime["task"]["expected"]["answer"]

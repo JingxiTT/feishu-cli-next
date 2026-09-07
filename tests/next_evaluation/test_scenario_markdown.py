@@ -1,7 +1,9 @@
 """No live access/model calls; direct synthetic transitions and hostile artifacts."""
 import copy
 import json
+import os
 from pathlib import Path
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -247,6 +249,55 @@ class MarkdownScenarioTests(unittest.TestCase):
         state = self.backend.snapshot()
         state["final"]["created"] = True
         self.assertFalse(self.backend.snapshot()["final"]["created"])
+
+
+@unittest.skipUnless(os.environ.get("EVAL_MARKDOWN_BINARIES"),
+                     "set EVAL_MARKDOWN_BINARIES to clean archived authsidecar binaries")
+class MarkdownBinaryTests(unittest.TestCase):
+    def test_each_binary_preserves_native_structure_and_successful_outcomes(self):
+        from codex_runner import cli_environment
+        from section_fixture import SectionFixture
+
+        binaries = json.loads(os.environ["EVAL_MARKDOWN_BINARIES"])
+        self.assertIsInstance(binaries, list)
+        self.assertTrue(binaries, "at least one archived binary is required")
+        for binary in binaries:
+            self.assertIsInstance(binary, str)
+            self.assertTrue(Path(binary).is_absolute() and Path(binary).is_file())
+            for strategy in ("docs_ai", "drive_import"):
+                with self.subTest(binary=binary, strategy=strategy), tempfile.TemporaryDirectory() as directory:
+                    workspace = Path(directory)
+                    for name in ("home", "tmp", "feishu-config"):
+                        (workspace / name).mkdir()
+                    backend = scenario.Scenario()
+                    backend.setup(workspace)
+                    with SectionFixture(scenario.SCENARIO, backend.dispatch, backend.snapshot) as server:
+                        env = {**cli_environment(workspace), **server.environment()}
+                        for name in ("HTTP_PROXY", "HTTPS_PROXY", "ALL_PROXY", "http_proxy", "https_proxy", "all_proxy"):
+                            env[name] = "http://127.0.0.1:9"
+                        env["NO_PROXY"] = env["no_proxy"] = "localhost,127.0.0.1,::1"
+                        create_args = (["docs", "+create", "--content", "@input.md", "--doc-format", "markdown"]
+                                       if strategy == "docs_ai" else
+                                       ["drive", "+import", "--file", "input.md", "--type", "docx"])
+                        created = subprocess.run([binary, *create_args, "--as", "user"], cwd=workspace,
+                                                 env=env, capture_output=True, timeout=20)
+                        # Read back once even after an uncertain exit; never replay a create.
+                        fetched = subprocess.run([binary, "docs", "+fetch", "--doc", scenario.DOCUMENT_ID,
+                                                  "--doc-format", "xml", "--detail", "full", "--as", "user",
+                                                  "--format", "pretty"], cwd=workspace, env=env,
+                                                 capture_output=True, timeout=20)
+                        (workspace / "converted.xml").write_bytes(fetched.stdout)
+                    receipt = server.receipt()
+                    self.assertTrue(receipt["requests"])
+                    self.assertTrue(all(record["status"] == 200 and record["signature_valid"] is True
+                                        for record in receipt["requests"]))
+                    self.assertEqual(receipt["state"]["final"]["create_attempts"], 1)
+                    self.assertEqual(receipt["state"]["final"]["strategy"], strategy)
+                    answer = {"document_id": scenario.DOCUMENT_ID, "artifact_path": "converted.xml", "unsupported": []}
+                    self.assertEqual(fetched.returncode, 0, fetched.stderr.decode())
+                    self.assertTrue(scenario.verify(workspace, answer, receipt, scenario.TASK["expected"]))
+                    # Backend success and artifact fidelity cannot hide a false uncertain CLI outcome.
+                    self.assertEqual(created.returncode, 0, created.stderr.decode())
 
 
 if __name__ == "__main__":
