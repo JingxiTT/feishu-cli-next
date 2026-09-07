@@ -51,7 +51,12 @@ Shared follow-ups verify normal-account artifact identity (`eafd052`), bind
 receipts to each request's actual user/bot identity (`f1bb815`), preserve uncertain
 batch outcomes, and journal both Apps storage PUT paths (`7550245`). Focused
 independent review closed the earlier artifact and IM/VC evidence findings.
-These changes require affected-suite checks at the next integration boundary.
+Subsequent fixes preserve HTTP failures during pagination (`94e4afc`), exclude
+trusted OAuth acquisition from content receipts (`a2f2626`), and keep local
+command discovery free of identity requests. Three exact native Mail POST reads
+now preserve read/artifact behavior (`1058824`) while raw and neighboring writes
+retain conservative mutation handling. Independent source reviews and affected
+section checks record their specific revision boundaries.
 
 The [Contact comparison](../evaluation/evidence/contact/REPORT.md) records nine
 successful trials and complete usage accounting, but a regression: Next used
@@ -72,7 +77,8 @@ single bounded diagnosis identified missing `search:bot` user scope. No permissi
 was granted and no content was written. This remains an unmet live prerequisite.
 
 The [P3 Sheets-to-Base process suite](integration/sheets-base.md) passes all 11
-test/subtest events without skips. Its actual 10,000-row transfer preserves
+initial test/subtest events without skips; the expanded suite at `1f1ce4e`
+passes 18 events including real-export binding switches. Its actual 10,000-row transfer preserves
 80,000 cells through 16 source pages and 50 write batches. Failure injection
 exposed cross-batch duplicate IDs being accepted by the importer; `f080e43` and
 `d91e695` now stop the operation with consistent unknown report and receipt
@@ -85,6 +91,11 @@ have their own focused unit/process checks. Vet, formatting, dependency/license
 checks, quality gate, source guards and pinned Go lint have passed at their
 recorded development boundaries; final release verification still needs an
 immutable candidate after remaining changes settle.
+
+The [complete offline E2E checkpoint](sections/p3-e2e-evidence.json) at `94e4afc`
+passes 3,296 test events with zero failures and 45 explicit skips. All 23 section
+suites ran. Later Mail and integration changes have affected-suite evidence;
+this historical run does not automatically cover later fixes.
 
 [Packaging evidence](sections/packaging-evidence.json) covers all 14 cross-built
 platform/variant archives, local installation/update/removal, and actual Node 16
