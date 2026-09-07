@@ -27,3 +27,11 @@ An unknown batch stops the import. The report distinguishes confirmed created ID
 ## +record-list
 
 For analysis, NDJSON keeps full typed rows in a file. Check continuation and query extent before treating an export as complete; multiple pages are not a snapshot. Duplicate field names or a field named `record_id` cannot be represented by the row-object format and are rejected. JSON preserves the native matrix for those schemas.
+
+## +field-create
+
+Use native field JSON for full schema configuration. Formula and lookup definitions retain their reference acknowledgement requirement; read the specific protocol on demand with `feishu-cli-next skills read lark-base references/lark-base-field-formula.md` or `feishu-cli-next skills read lark-base references/lark-base-field-lookup.md`, then acknowledge it for that command.
+
+## +field-update
+
+This replaces the complete field definition and can change an entire column. Retain the writable configuration that must survive. For formula or lookup protocol details, use the same executable `skills read` references as field creation; the source checkout and an installed legacy skill are not prerequisites.

@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync/atomic"
 	"testing"
 
@@ -85,5 +86,33 @@ func TestEveryNativeFieldTypePreservesWritableConfiguration(t *testing.T) {
 	result := f.Run(table("field-create", "--json", "@fields.json", "--i-have-read-guide")...)
 	if result.ExitCode != 0 || calls.Load() != int32(len(definitions)) {
 		t.Fatalf("exit=%d calls=%d stdout=%s stderr=%s", result.ExitCode, calls.Load(), result.Stdout, result.Stderr)
+	}
+}
+
+func TestFieldGuideRecoveryNamesInstalledExecutableReads(t *testing.T) {
+	for _, kind := range []string{"formula", "lookup"} {
+		for _, command := range []string{"field-create", "field-update"} {
+			t.Run(command+"/"+kind, func(t *testing.T) {
+				f := nextfixture.NewFixture(t, nil)
+				flags := []string{"--json", fmt.Sprintf(`{"type":%q,"name":"Derived"}`, kind), "--dry-run"}
+				if command == "field-update" {
+					flags = append(flags, "--field-id", "fld_derived", "--yes")
+				}
+				result := f.Run(table(command, flags...)...)
+				var envelope struct {
+					Error struct {
+						Param string `json:"param"`
+						Hint  string `json:"hint"`
+					}
+				}
+				if err := json.Unmarshal([]byte(result.Stderr), &envelope); err != nil {
+					t.Fatalf("error is not JSON: %+v", result)
+				}
+				expected := "feishu-cli-next skills read lark-base references/lark-base-field-" + kind + ".md"
+				if result.ExitCode != 2 || result.Stdout != "" || envelope.Error.Param != "--i-have-read-guide" || !strings.Contains(envelope.Error.Hint, expected) {
+					t.Fatalf("unusable recovery: %+v", result)
+				}
+			})
+		}
 	}
 }
