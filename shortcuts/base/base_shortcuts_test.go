@@ -172,7 +172,7 @@ func TestShortcutsCatalog(t *testing.T) {
 		"+field-list", "+field-get", "+field-create", "+field-update", "+field-delete", "+field-search-options",
 		"+field-extension-get", "+field-extension-update", "+field-extension-update-cells",
 		"+view-list", "+view-get", "+view-create", "+view-delete", "+view-get-filter", "+view-set-filter", "+view-get-visible-fields", "+view-set-visible-fields", "+view-get-group", "+view-set-group", "+view-get-sort", "+view-set-sort", "+view-get-timebar", "+view-set-timebar", "+view-get-card", "+view-set-card", "+view-rename",
-		"+record-list", "+record-search", "+record-get", "+record-upsert", "+record-batch-create", "+record-batch-update", "+record-share-link-create", "+record-upload-attachment", "+record-download-attachment", "+record-remove-attachment", "+record-delete",
+		"+record-list", "+record-search", "+record-get", "+record-upsert", "+record-batch-create", "+record-import", "+record-batch-update", "+record-share-link-create", "+record-upload-attachment", "+record-download-attachment", "+record-remove-attachment", "+record-delete",
 		"+record-history-list",
 		"+base-get", "+base-copy", "+base-create",
 		"+template-categories", "+template-list", "+template-search",
