@@ -1,9 +1,19 @@
 # Docs CLI E2E Coverage
 
-## Metrics
-- Denominator: 12 leaf commands
-- Covered: 9
-- Coverage: 75.0%
+## Current section evidence
+
+The frozen Docs registration has 16 leaf commands, including Whiteboard-owned
+`+whiteboard-update`. The former 12-command percentage below was incomplete and
+is not a next-release acceptance metric. See [the complete section mapping](../../../docs/sections/docs.md)
+and [the production-process suite](../../next_sections/docs/README.md) for all
+16 capabilities, request/effect evidence and explicit live blockers. Media upload
+and cover download/update/delete are included in that complete mapping.
+
+The following notes describe **imported upstream tests**, not live tests executed
+under the next plan. Only the isolated runner's deterministic selector is run as
+a reference regression. Legacy live fixtures have not established pre-write
+current-account, tenant and private-creation visibility and are not authorized
+substitutes for the separately selectable live scenario.
 
 ## Summary
 - TestDocs_CreateAndFetchWorkflow: proves `docs +create` and `docs +fetch`; key `t.Run(...)` proof points are `create as bot` and `fetch as bot`.

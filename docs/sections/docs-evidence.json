@@ -1,0 +1,371 @@
+{
+  "schema_version": 1,
+  "section": "docs",
+  "status": "open",
+  "offline_status": "pass",
+  "reference_revision": "7fd6ef3c07182257ce776cdc5a614e122d5bd4b3",
+  "implementation_commit": "f72a408",
+  "mapped_leaf_commands": 16,
+  "commands": [
+    {
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-count=1",
+        "-timeout=10m",
+        "./shortcuts/doc/..."
+      ],
+      "status": "pass",
+      "exit_code": 0,
+      "duration_seconds": 15.038,
+      "tests": {
+        "pass": 889,
+        "fail": 0,
+        "skip": 1
+      },
+      "selection": {
+        "policy": "all tests in the listed packages"
+      },
+      "skipped_tests": [
+        {
+          "package": "github.com/larksuite/cli/shortcuts/doc",
+          "test": "TestReadClipboardImageBytes_EmptyResultReturnsError"
+        }
+      ]
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-count=1",
+        "-timeout=10m",
+        "./tests/cli_e2e/docs",
+        "-run",
+        "DryRun|Regression"
+      ],
+      "status": "pass",
+      "exit_code": 0,
+      "duration_seconds": 3.428,
+      "tests": {
+        "pass": 42,
+        "fail": 0,
+        "skip": 0
+      },
+      "selection": {
+        "policy": "official CI deterministic name selector; excluded tests remain unverified",
+        "selector": "DryRun|Regression",
+        "selected_tests": [
+          {
+            "file": "tests/cli_e2e/docs/docs_fetch_dryrun_test.go",
+            "test": "TestDocsFetchDryRunXMLIncludesCommentsForUserAndBot"
+          },
+          {
+            "file": "tests/cli_e2e/docs/docs_fetch_dryrun_test.go",
+            "test": "TestDocsFetchDryRunMarkdownFormatsIncludeCommentSidecar"
+          },
+          {
+            "file": "tests/cli_e2e/docs/docs_fetch_dryrun_test.go",
+            "test": "TestDocsFetchDryRunIgnoresAPIVersionCompatFlag"
+          },
+          {
+            "file": "tests/cli_e2e/docs/docs_fetch_dryrun_test.go",
+            "test": "TestDocsFetchDryRunSelectionAnchorFragmentBecomesRangeStart"
+          },
+          {
+            "file": "tests/cli_e2e/docs/docs_fetch_dryrun_test.go",
+            "test": "TestDocsFetchDryRunUnsupportedSelectionAnchorFragmentStaysFull"
+          },
+          {
+            "file": "tests/cli_e2e/docs/docs_local_resources_dryrun_test.go",
+            "test": "TestDocs_LocalResourcesDryRun"
+          },
+          {
+            "file": "tests/cli_e2e/docs/docs_local_resources_dryrun_test.go",
+            "test": "TestDocs_RemoteImageDryRun"
+          },
+          {
+            "file": "tests/cli_e2e/docs/docs_media_download_dryrun_test.go",
+            "test": "TestDocsMediaDownloadDryRun_PlansExportAuthBeforeMediaDownload"
+          },
+          {
+            "file": "tests/cli_e2e/docs/docs_media_download_dryrun_test.go",
+            "test": "TestDocsMediaDownloadDryRun_WhiteboardSkipsExportAuth"
+          },
+          {
+            "file": "tests/cli_e2e/docs/docs_media_insert_dryrun_test.go",
+            "test": "TestDocsMediaInsertDryRun_AppendsWithoutMCP"
+          },
+          {
+            "file": "tests/cli_e2e/docs/docs_script_test.go",
+            "test": "TestDocsScriptRemoteImagePreflightDryRunDeclaresNetwork"
+          },
+          {
+            "file": "tests/cli_e2e/docs/docs_script_test.go",
+            "test": "TestDocsScriptDryRunIsLocal"
+          },
+          {
+            "file": "tests/cli_e2e/docs/docs_script_test.go",
+            "test": "TestDocsScriptInitDraftDryRunDoesNotWrite"
+          },
+          {
+            "file": "tests/cli_e2e/docs/docs_script_test.go",
+            "test": "TestDocsScriptOnlineDryRunFetchesXML"
+          },
+          {
+            "file": "tests/cli_e2e/docs/docs_update_dryrun_test.go",
+            "test": "TestDocs_DryRunDefaultsToV2OpenAPI"
+          },
+          {
+            "file": "tests/cli_e2e/docs/docs_update_dryrun_test.go",
+            "test": "TestDocs_CreateTitleDryRunPrependsContent"
+          },
+          {
+            "file": "tests/cli_e2e/docs/docs_update_dryrun_test.go",
+            "test": "TestDocsUpdateDryRunLegacyFlagReturnsCurrentEmbeddedGuidance"
+          }
+        ],
+        "excluded_tests": [
+          {
+            "file": "tests/cli_e2e/docs/docs_create_fetch_test.go",
+            "test": "TestDocs_CreateAndFetchWorkflowAsBot"
+          },
+          {
+            "file": "tests/cli_e2e/docs/docs_create_fetch_test.go",
+            "test": "TestDocs_CreateAndFetchWorkflowAsUser"
+          },
+          {
+            "file": "tests/cli_e2e/docs/docs_fetch_comments_workflow_test.go",
+            "test": "TestDocsFetchCommentsWorkflowAsBot"
+          },
+          {
+            "file": "tests/cli_e2e/docs/docs_fetch_comments_workflow_test.go",
+            "test": "TestDocsFetchCommentsWorkflowAsUser"
+          },
+          {
+            "file": "tests/cli_e2e/docs/docs_fetch_comments_workflow_test.go",
+            "test": "TestDocsFetchCommentsDeniedDocumentDoesNotLeakToBot"
+          },
+          {
+            "file": "tests/cli_e2e/docs/docs_fetch_comments_workflow_test.go",
+            "test": "TestFirstCommentRefAnchor"
+          },
+          {
+            "file": "tests/cli_e2e/docs/docs_fetch_comments_workflow_test.go",
+            "test": "TestAssertCommentXMLAcceptsDocumentAnchorContract"
+          },
+          {
+            "file": "tests/cli_e2e/docs/docs_fetch_dryrun_test.go",
+            "test": "TestDocsFetchCommentsFlagIsRemovedFromHelpAndRejected"
+          },
+          {
+            "file": "tests/cli_e2e/docs/docs_fetch_dryrun_test.go",
+            "test": "TestDocsCommandsHideFormatHelpButKeepCompatibility"
+          },
+          {
+            "file": "tests/cli_e2e/docs/docs_history_workflow_test.go",
+            "test": "TestDocs_HistoryWorkflow"
+          },
+          {
+            "file": "tests/cli_e2e/docs/docs_local_resources_workflow_test.go",
+            "test": "TestDocs_LocalResourcesWorkflowAsBot"
+          },
+          {
+            "file": "tests/cli_e2e/docs/docs_local_resources_workflow_test.go",
+            "test": "TestDocs_LocalResourcesWorkflowAsUser"
+          },
+          {
+            "file": "tests/cli_e2e/docs/docs_media_download_workflow_test.go",
+            "test": "TestDocs_MediaDownloadWorkflow"
+          },
+          {
+            "file": "tests/cli_e2e/docs/docs_media_insert_dryrun_test.go",
+            "test": "TestDocsMediaInsertRemovedLocationFlagsRejected"
+          },
+          {
+            "file": "tests/cli_e2e/docs/docs_script_test.go",
+            "test": "TestDocsScriptParseXMLFromFile"
+          },
+          {
+            "file": "tests/cli_e2e/docs/docs_script_test.go",
+            "test": "TestDocsScriptLocalParseWithAuthenticatedBot"
+          },
+          {
+            "file": "tests/cli_e2e/docs/docs_script_test.go",
+            "test": "TestDocsScriptPresentationDecisionListCountsULAndOL"
+          },
+          {
+            "file": "tests/cli_e2e/docs/docs_script_test.go",
+            "test": "TestDocsScriptInitializedDraftAutomaticallyValidatesPresentationDecision"
+          },
+          {
+            "file": "tests/cli_e2e/docs/docs_script_test.go",
+            "test": "TestDocsScriptInitializedDraftPreflightsBlockedRemoteImage"
+          },
+          {
+            "file": "tests/cli_e2e/docs/docs_script_test.go",
+            "test": "TestDocsScriptParseRepairsMalformedXMLForProfile"
+          },
+          {
+            "file": "tests/cli_e2e/docs/docs_script_test.go",
+            "test": "TestDocsScriptStrictFlagIsRemoved"
+          },
+          {
+            "file": "tests/cli_e2e/docs/docs_script_test.go",
+            "test": "TestDocsScriptFileNameFlagIsRemoved"
+          },
+          {
+            "file": "tests/cli_e2e/docs/docs_script_test.go",
+            "test": "TestDocsScriptMarkdownToXMLIsRemoved"
+          },
+          {
+            "file": "tests/cli_e2e/docs/docs_script_test.go",
+            "test": "TestDocsScriptCreateTempXMLIsRemoved"
+          },
+          {
+            "file": "tests/cli_e2e/docs/docs_script_test.go",
+            "test": "TestDocsScriptParseAcceptsLocalImagePath"
+          },
+          {
+            "file": "tests/cli_e2e/docs/docs_script_test.go",
+            "test": "TestDocsScriptParseDoesNotSupportLegacyQAImage"
+          },
+          {
+            "file": "tests/cli_e2e/docs/docs_script_test.go",
+            "test": "TestDocsScriptParseAcceptsServerSDKAttributeAmpersand"
+          },
+          {
+            "file": "tests/cli_e2e/docs/docs_script_test.go",
+            "test": "TestDocsScriptParseRejectsMarkdownFromFile"
+          },
+          {
+            "file": "tests/cli_e2e/docs/docs_script_test.go",
+            "test": "TestDocsScriptInitDraftCreatesUniqueWorkspacesWithoutXML"
+          },
+          {
+            "file": "tests/cli_e2e/docs/docs_script_test.go",
+            "test": "TestDocsScriptInitDraftAcceptsWindowsCommandShimQuotes"
+          },
+          {
+            "file": "tests/cli_e2e/docs/docs_script_test.go",
+            "test": "TestDocsScriptRecoversPowerShellDequotedPresentationDecision"
+          },
+          {
+            "file": "tests/cli_e2e/docs/docs_script_test.go",
+            "test": "TestDocsScriptAmbiguousMangledPresentationDecisionSuggestsFileInput"
+          },
+          {
+            "file": "tests/cli_e2e/docs/docs_script_test.go",
+            "test": "TestDocsScriptInitDraftRejectsNullWordCountWithOmitGuidance"
+          },
+          {
+            "file": "tests/cli_e2e/docs/docs_update_dryrun_test.go",
+            "test": "TestDocs_CreateEmptyContentFileReportsActionableError"
+          },
+          {
+            "file": "tests/cli_e2e/docs/docs_update_test.go",
+            "test": "TestDocs_UpdateWorkflow"
+          },
+          {
+            "file": "tests/cli_e2e/docs/docs_update_test.go",
+            "test": "TestDocs_BlockMutationRangeWorkflow"
+          }
+        ]
+      },
+      "skipped_tests": []
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-count=1",
+        "-timeout=10m",
+        "./tests/next_sections/docs"
+      ],
+      "status": "pass",
+      "exit_code": 0,
+      "duration_seconds": 10.303,
+      "tests": {
+        "pass": 64,
+        "fail": 0,
+        "skip": 1
+      },
+      "selection": {
+        "policy": "all tests in the listed packages"
+      },
+      "skipped_tests": [
+        {
+          "package": "github.com/larksuite/cli/tests/next_sections/docs",
+          "test": "TestDocsLivePrivateLifecycle"
+        }
+      ]
+    }
+  ],
+  "affordance_checks": {
+    "command": [
+      "go",
+      "test",
+      "-json",
+      "-count=1",
+      "./internal/affordance",
+      "./cmd/service",
+      "./internal/schema"
+    ],
+    "status": "pass",
+    "exit_code": 0,
+    "duration_seconds": 2.031,
+    "tests": {
+      "pass": 272,
+      "fail": 0,
+      "skip": 0
+    }
+  },
+  "vet": {
+    "command": [
+      "go",
+      "vet",
+      "./shortcuts/doc/..."
+    ],
+    "status": "pass",
+    "exit_code": 0,
+    "duration_seconds": 1.032,
+    "tests": {
+      "pass": 0,
+      "fail": 0,
+      "skip": 0
+    }
+  },
+  "live": {
+    "schema_version": 1,
+    "section": "docs",
+    "suite": "live",
+    "evidence": "live",
+    "status": "blocked",
+    "commands": [],
+    "reason": "No verified fixture harness binds the effective account and tenant, private visibility, Ying Wu's unambiguous identity when applicable, and run-owned cleanup. Legacy live tests are not authorized fixtures."
+  },
+  "comparative_development_evaluation": "not run; coordinator owns isolated evaluation scheduling",
+  "heldout": "untouched",
+  "tested_source_sha256": {
+    "affordance/docs.md": "dbf8499f66435a87d23eba8775f5da26a4e0f7aad1a0a74a1b730ec07a76bd18",
+    "internal/affordance/docs_next_source_test.go": "1f223a31107078cf452f86144605207a39ff01e0645bcd6fa25e4052fb0baa2b",
+    "shortcuts/doc/docs_fetch_v2.go": "2dac96a39f1fbf7b9cd657595702cd8f330ccd9ea18900d19abc53eaed1e9ca2",
+    "shortcuts/doc/docs_search.go": "d0f7628e4c505a4c16b77d2228e6f2645082cb4bcf2a3586b202813ca41fb396",
+    "shortcuts/doc/docs_update_v2.go": "7b2fe87075d07cc9e19c1cebb10f3228d14ae6373ac454f61f12b3227d7a9d3d",
+    "shortcuts/doc/html5_block_resources.go": "1fcc85e8b43c819e85b6c1df183432ec5a0e55d3df8c2482535c4dfc564b7e0f",
+    "shortcuts/doc/docs_input.go": "49cbd704215a6af7b322d4f4b9a15750407c2a28868c320d5190e115335149a0",
+    "shortcuts/doc/docs_input_test.go": "207ca5811dfc65d6b1ee9c20483b520574ba835b1e7304fd8000956eec350157",
+    "shortcuts/doc/docs_update_noop.go": "b6e0622e00a4d3df3f362fce11acf390e5f5d5c88985d5ee0d9d5582430ca8f6",
+    "shortcuts/doc/docs_update_noop_test.go": "475ff648d10ba09f44d71d1c7e0065fdf25567e7ba307c11dbeed7b49a365e1f",
+    "tests/next_sections/docs/docs_e2e_test.go": "acdc70269db06ab3c6839465e75c53a22e8e4cf52da0c97f075114fe18834ee1"
+  },
+  "limitations": [
+    "Offline fixtures establish CLI request/effect contracts, not live backend fidelity or privacy.",
+    "No-op software proves exact native XML overwrite and already-empty cover clear; general block/text/Markdown/local-resource replacement equivalence remains open.",
+    "Native backend revision enforcement and concurrent-editor protection remain unverified.",
+    "Full live media orchestration, multipart recovery, clipboard, history, preview and private creation require verified run-owned fixtures.",
+    "Complete repository quality/release checks remain coordinator-owned; this section ran scoped units, all written process tests, inherited deterministic regression selector, affordance integration tests and scoped go vet."
+  ]
+}
