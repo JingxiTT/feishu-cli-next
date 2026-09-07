@@ -173,6 +173,7 @@ func parseTaskGUIDs(input string) ([]string, error) {
 
 func buildTaskUpdateBody(runtime *common.RuntimeContext) (map[string]interface{}, error) {
 	taskObj := make(map[string]interface{})
+	summaryParam := "--data"
 	var updateFields []string
 
 	if dataStr := runtime.Str("data"); dataStr != "" {
@@ -190,6 +191,7 @@ func buildTaskUpdateBody(runtime *common.RuntimeContext) (map[string]interface{}
 
 	if summary := runtime.Str("summary"); summary != "" || runtime.Cmd.Flags().Changed("summary") {
 		taskObj["summary"] = summary
+		summaryParam = "--summary"
 		if !contains(updateFields, "summary") {
 			updateFields = append(updateFields, "summary")
 		}
@@ -216,7 +218,7 @@ func buildTaskUpdateBody(runtime *common.RuntimeContext) (map[string]interface{}
 	if summary, exists := taskObj["summary"]; exists {
 		value, ok := summary.(string)
 		if !ok || strings.TrimSpace(value) == "" {
-			return nil, errs.NewValidationError(errs.SubtypeInvalidArgument, "task summary must be a non-empty string").WithParam("--summary")
+			return nil, errs.NewValidationError(errs.SubtypeInvalidArgument, "task summary must be a non-empty string").WithParam(summaryParam)
 		}
 	}
 

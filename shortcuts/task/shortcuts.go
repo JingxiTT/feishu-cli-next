@@ -136,6 +136,7 @@ func parseTaskGUID(input string) (string, error) {
 
 func buildTaskCreateBody(runtime *common.RuntimeContext) (map[string]interface{}, error) {
 	body := make(map[string]interface{})
+	summaryParam := "--summary"
 
 	// Handle generic JSON payload if provided
 	if dataStr := runtime.Str("data"); dataStr != "" {
@@ -144,11 +145,15 @@ func buildTaskCreateBody(runtime *common.RuntimeContext) (map[string]interface{}
 		if err != nil {
 			return nil, err
 		}
+		if _, exists := body["summary"]; exists {
+			summaryParam = "--data"
+		}
 	}
 
 	// Explicit flags override generic data
 	if summary := runtime.Str("summary"); summary != "" || runtime.Cmd.Flags().Changed("summary") {
 		body["summary"] = summary
+		summaryParam = "--summary"
 	}
 
 	if desc := runtime.Str("description"); desc != "" || runtime.Cmd.Flags().Changed("description") {
@@ -189,7 +194,7 @@ func buildTaskCreateBody(runtime *common.RuntimeContext) (map[string]interface{}
 
 	summary, _ := body["summary"].(string)
 	if strings.TrimSpace(summary) == "" {
-		return nil, errs.NewValidationError(errs.SubtypeInvalidArgument, "task summary is required").WithParam("--summary")
+		return nil, errs.NewValidationError(errs.SubtypeInvalidArgument, "task summary is required").WithParam(summaryParam)
 	}
 
 	return body, nil

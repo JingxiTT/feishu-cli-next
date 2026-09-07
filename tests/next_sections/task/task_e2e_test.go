@@ -234,3 +234,75 @@ func TestInvalidTasksNeverDispatch(t *testing.T) {
 		}
 	}
 }
+
+func TestTaskSummaryInputProvenance(t *testing.T) {
+	for _, shortcut := range []string{"+create", "+update"} {
+		for _, test := range []struct {
+			name, data, summary, param string
+			explicitSummary            bool
+		}{
+			{name: "null data summary", data: `{"summary":null}`, param: "--data"},
+			{name: "empty data summary", data: `{"summary":""}`, param: "--data"},
+			{name: "numeric data summary", data: `{"summary":3}`, param: "--data"},
+			{name: "empty override", data: `{"summary":"valid"}`, explicitSummary: true, param: "--summary"},
+			{name: "invalid data and empty override", data: `{"summary":null}`, explicitSummary: true, param: "--summary"},
+			{name: "valid override of null", data: `{"summary":null}`, explicitSummary: true, summary: "override"},
+			{name: "valid override of empty", data: `{"summary":""}`, explicitSummary: true, summary: "override"},
+		} {
+			t.Run(shortcut+"/"+test.name, func(t *testing.T) {
+				var writes atomic.Int32
+				f := nextfixture.NewFixture(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+					if test.param != "" {
+						t.Errorf("invalid summary dispatched %s %s", r.Method, r.URL.Path)
+					}
+					summary := "old"
+					if r.Method != http.MethodGet {
+						writes.Add(1)
+						body, err := io.ReadAll(r.Body)
+						if err != nil {
+							t.Error(err)
+						}
+						field := "summary"
+						if shortcut == "+update" {
+							field = "task.summary"
+						}
+						summary = gjson.GetBytes(body, field).String()
+						if summary != "override" {
+							t.Errorf("override lost: %s", body)
+						}
+					}
+					w.Header().Set("Content-Type", "application/json")
+					_ = json.NewEncoder(w).Encode(map[string]interface{}{"code": 0, "data": map[string]interface{}{"task": map[string]interface{}{"guid": "task-fixture", "summary": summary}}})
+				}))
+				args := []string{"task", shortcut, "--data", test.data, "--as", "user"}
+				if shortcut == "+update" {
+					args = append(args, "--task-id", "task-fixture")
+				}
+				if test.explicitSummary {
+					args = append(args, "--summary", test.summary)
+				}
+				for _, dry := range []bool{true, false} {
+					invocation := append([]string{}, args...)
+					if dry {
+						invocation = append(invocation, "--dry-run")
+					}
+					result := f.Run(invocation...)
+					if test.param != "" {
+						if result.ExitCode != 2 || gjson.Get(result.Stderr, "error.param").String() != test.param || gjson.Get(result.Stderr, "error.type").String() != "validation" {
+							t.Fatalf("wrong input attribution: %+v; want %s", result, test.param)
+						}
+					} else if result.ExitCode != 0 {
+						t.Fatalf("valid override: %+v", result)
+					}
+				}
+				wantWrites := int32(0)
+				if test.param == "" {
+					wantWrites = 1
+				}
+				if writes.Load() != wantWrites {
+					t.Fatalf("writes %d want %d", writes.Load(), wantWrites)
+				}
+			})
+		}
+	}
+}

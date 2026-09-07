@@ -138,9 +138,9 @@ validation and type-specific workflows remain live-dependent.
 
 Canonical build: `make build BINARY=.tmp/task-cli`.
 Whole section: `python3 scripts/next_test.py --section task --suite all
---binary .tmp/task-cli --report .tmp/task-section-all.json`.
+--binary .tmp/task-cli --report .tmp/task-summary-provenance.json`.
 The full offline run passes 228 unit/event test events, 14 deterministic legacy
-E2E events and 62 process test events with zero failures/skips. These counts
+E2E events and 77 process test events with zero failures/skips. These counts
 include subtests, not distinct capabilities. `internal/affordance`, `cmd/service`
 and `internal/schema` tests pass in the same isolated environment. Reports are
 local `.tmp` artifacts and contain synthetic state only. Focused `go vet` of
@@ -175,3 +175,10 @@ agent evaluation. P2 stays open until live and comparison evidence is accepted.
 Implementation commit: `552c531`. Shared task collection projection was fixed by
 Foundation in `44362bc`; the task process regression requires GUID, confirmed
 fields and unchanged status to survive `--result-fields summary`.
+
+P3 summary-input review: create/update now attribute an invalid summary supplied
+inside `--data` to `error.param:"--data"`; an explicit `--summary` override owns
+its own validation error. The full section rerun above includes null, empty and
+numeric data summaries, invalid empty overrides, and valid flag overrides of
+invalid data summaries through both dry-run and execution. Invalid inputs never
+dispatch a business request; valid overrides preserve the requested summary.
