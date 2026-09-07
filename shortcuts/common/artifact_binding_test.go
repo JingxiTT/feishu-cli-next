@@ -6,6 +6,9 @@ package common
 import (
 	"context"
 	"errors"
+	"io"
+	"net/http"
+	"strings"
 	"testing"
 
 	"github.com/larksuite/cli/errs"
@@ -13,9 +16,6 @@ import (
 	"github.com/larksuite/cli/internal/core"
 	"github.com/larksuite/cli/internal/credential"
 	"github.com/spf13/cobra"
-	"io"
-	"net/http"
-	"strings"
 )
 
 func TestRuntimeArtifactBindingUsesRuntimeIdentity(t *testing.T) {
