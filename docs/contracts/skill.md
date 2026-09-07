@@ -45,6 +45,6 @@ is running. Uninstall removes only the intact managed skill file; directories
 and unrelated files remain. No automatic deletion of modified content occurs.
 
 Validation: `go test ./internal/nextskill ./cmd/guide`; real process coverage is
-`python3 scripts/next_test.py --section foundation --suite offline --binary /absolute/path/feishu-cli-next`.
+`python3 scripts/next_test.py --section foundation --suite e2e --binary /absolute/path/feishu-cli-next`.
 The foundation runner supplies isolated HOME/config and the explicit binary;
 the guide lifecycle needs no credentials or live Feishu resources.
