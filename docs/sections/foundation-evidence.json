@@ -1,0 +1,468 @@
+{
+  "schema_version": 1,
+  "section": "foundation",
+  "gate": "P1 shared interfaces ready for P2",
+  "revision": "00f3e8e8841d0f4219ed1bf4ff3dbe210a6b6b5c",
+  "release_accepted": false,
+  "unit": {
+    "source_report": ".tmp/next-tests/foundation-final.json",
+    "status": "fail",
+    "commands": [
+      {
+        "command": [
+          "go",
+          "test",
+          "-json",
+          "-count=1",
+          "-timeout=10m",
+          "./cmd/...",
+          "./internal/...",
+          "./shortcuts/common/...",
+          "./extension/...",
+          "./errs/..."
+        ],
+        "status": "pass",
+        "exit_code": 0,
+        "duration_seconds": 159.843,
+        "tests": {
+          "pass": 5776,
+          "fail": 0,
+          "skip": 9
+        }
+      },
+      {
+        "command": [
+          "/opt/homebrew/opt/python@3.14/bin/python3.14",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "tests/next_foundation",
+          "-p",
+          "*_test.py",
+          "-v"
+        ],
+        "status": "fail",
+        "exit_code": 1,
+        "duration_seconds": 0.705,
+        "tests": {
+          "pass": 0,
+          "fail": 0,
+          "skip": 0
+        }
+      }
+    ]
+  },
+  "process": {
+    "source_report": ".tmp/next-tests/foundation-e2e-final.json",
+    "status": "pass",
+    "commands": [
+      {
+        "command": [
+          "/opt/homebrew/opt/python@3.14/bin/python3.14",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "tests/next_foundation",
+          "-p",
+          "*_test.py",
+          "-v"
+        ],
+        "status": "pass",
+        "exit_code": 0,
+        "duration_seconds": 1.127,
+        "tests": {
+          "pass": 0,
+          "fail": 0,
+          "skip": 0
+        }
+      },
+      {
+        "command": [
+          "go",
+          "test",
+          "-json",
+          "-count=1",
+          "-timeout=10m",
+          "./tests/next_foundation",
+          "./tests/cli_e2e",
+          "./tests/cli_e2e/config"
+        ],
+        "status": "pass",
+        "exit_code": 0,
+        "duration_seconds": 21.569,
+        "tests": {
+          "pass": 85,
+          "fail": 0,
+          "skip": 4
+        }
+      }
+    ]
+  },
+  "live": {
+    "schema_version": 1,
+    "evidence": "live",
+    "section": "foundation",
+    "scope": "current-account auth and own-user-info read only",
+    "status": "pass",
+    "tests": [
+      {
+        "name": "auth_status_verify",
+        "status": "pass",
+        "reason": "verified_identity_observed",
+        "account_sha256": "acda0c5faa2b869ab912bb7011a8beb1293f2322f02382767749c6b735be4052",
+        "identities": {
+          "bot": {
+            "status": "verify_failed",
+            "verified": false,
+            "available": false,
+            "identity_sha256": null,
+            "scope_count": 0,
+            "scopes_sha256": null
+          },
+          "user": {
+            "status": "ready",
+            "verified": true,
+            "available": true,
+            "identity_sha256": "b911a765b3a7a2ca61d9a7c4dab2fc4a8ae4e8ca2183ad5111f5fef0338bafbe",
+            "scope_count": 193,
+            "scopes_sha256": "3162d8e9c1565380614de999542d141852dcd062b40b1bc4a6fe3fa6feafb0cd"
+          }
+        }
+      },
+      {
+        "name": "own_user_identity",
+        "status": "pass",
+        "identity_sha256": "b911a765b3a7a2ca61d9a7c4dab2fc4a8ae4e8ca2183ad5111f5fef0338bafbe",
+        "account_sha256": "acda0c5faa2b869ab912bb7011a8beb1293f2322f02382767749c6b735be4052",
+        "tenant_sha256": "a6e2c16a79e9a424990692345a4d08f4e46a1d6253bd25b87bdc1f27f9bfb185",
+        "tenant_consistency": "unavailable"
+      }
+    ],
+    "limitations": [
+      "Independent tenant consistency is unavailable from auth status; observed tenant is hashed only."
+    ]
+  },
+  "static": {
+    "base": "0c1ac75",
+    "head_at_start": "d4c705c835985f73b68a5fe188a10d89b61d5520",
+    "environment": "scripts.next_test.isolated_env; public Go module network used only for pinned golangci and license tools",
+    "checks": [
+      {
+        "name": "vet",
+        "command": [
+          "make",
+          "vet"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 3.28,
+        "log": ".tmp/next-evidence/foundation-static-vet.log"
+      },
+      {
+        "name": "fmt",
+        "command": [
+          "make",
+          "fmt-check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.44,
+        "log": ".tmp/next-evidence/foundation-static-fmt.log"
+      },
+      {
+        "name": "scripts",
+        "command": [
+          "make",
+          "script-test"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 4.25,
+        "log": ".tmp/next-evidence/foundation-static-scripts.log"
+      },
+      {
+        "name": "golangci",
+        "command": [
+          "go",
+          "run",
+          "github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.1.6",
+          "run",
+          "--new-from-rev=0c1ac75"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 65.16,
+        "log": ".tmp/next-evidence/foundation-static-golangci-network.log"
+      },
+      {
+        "name": "licenses",
+        "command": [
+          "go",
+          "run",
+          "github.com/google/go-licenses/v2@v2.0.1",
+          "check",
+          "./...",
+          "--disallowed_types=forbidden,restricted,reciprocal,unknown"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 4.58,
+        "log": ".tmp/next-evidence/foundation-static-licenses-network.log"
+      },
+      {
+        "command": [
+          "go",
+          "mod",
+          "tidy"
+        ],
+        "exit_code": 0,
+        "module_diff_exit_code": 0,
+        "log": ".tmp/next-evidence/foundation-static-tidy.log",
+        "name": "tidy"
+      }
+    ],
+    "golangci_issues": {},
+    "head_after_final_checks": "4602bf0c68f7ffdca60c0e8ccdb221a375dc4b54",
+    "final_regressions": [
+      {
+        "name": "affected-vet",
+        "command": [
+          "go",
+          "vet",
+          "./cmd",
+          "./internal/output",
+          "./internal/cmdutil",
+          "./internal/credential",
+          "./internal/qualitygate/cmd/manifest-export",
+          "./tests/next_foundation"
+        ],
+        "exit_code": 0,
+        "log": ".tmp/next-evidence/foundation-static-affected-vet.log"
+      },
+      {
+        "name": "fmt-final",
+        "command": [
+          "make",
+          "fmt-check"
+        ],
+        "exit_code": 0,
+        "log": ".tmp/next-evidence/foundation-static-fmt-final.log"
+      }
+    ]
+  },
+  "quality_gate": {
+    "command": [
+      "make",
+      "quality-gate",
+      "QUALITY_GATE_CHANGED_FROM=0c1ac75"
+    ],
+    "status": "pass",
+    "exit_code": 0,
+    "duration_seconds": 26.48,
+    "tests": {
+      "pass": 0,
+      "fail": 0,
+      "skip": 0
+    }
+  },
+  "host": {
+    "schema_version": 1,
+    "evidence": "offline",
+    "section": "extensions",
+    "status": "pass",
+    "source_revision": "d4c705c835985f73b68a5fe188a10d89b61d5520",
+    "source_note": "Plugin E2E archives this committed revision; examples and sidecar checks compile the working tree.",
+    "commands": [
+      {
+        "command": [
+          "go",
+          "build",
+          "-o",
+          "<isolated-state>/audit-observer",
+          "./extension/platform/examples/audit-observer"
+        ],
+        "status": "pass",
+        "exit_code": 0,
+        "duration_seconds": 1.326,
+        "tests": {
+          "pass": 0,
+          "fail": 0,
+          "skip": 0
+        }
+      },
+      {
+        "command": [
+          "go",
+          "build",
+          "-o",
+          "<isolated-state>/readonly-policy",
+          "./extension/platform/examples/readonly-policy"
+        ],
+        "status": "pass",
+        "exit_code": 0,
+        "duration_seconds": 0.955,
+        "tests": {
+          "pass": 0,
+          "fail": 0,
+          "skip": 0
+        }
+      },
+      {
+        "command": [
+          "go",
+          "test",
+          "-json",
+          "-count=1",
+          "-timeout=15m",
+          "./tests/plugin_e2e"
+        ],
+        "status": "pass",
+        "exit_code": 0,
+        "duration_seconds": 182.226,
+        "tests": {
+          "pass": 54,
+          "fail": 0,
+          "skip": 0
+        }
+      },
+      {
+        "command": [
+          "go",
+          "build",
+          "-tags",
+          "authsidecar",
+          "-o",
+          "<isolated-state>/feishu-cli-next-sidecar",
+          "."
+        ],
+        "status": "pass",
+        "exit_code": 0,
+        "duration_seconds": 1.258,
+        "tests": {
+          "pass": 0,
+          "fail": 0,
+          "skip": 0
+        }
+      },
+      {
+        "command": [
+          "go",
+          "test",
+          "-race",
+          "-json",
+          "-count=1",
+          "-timeout=10m",
+          "-tags",
+          "authsidecar",
+          "./extension/credential/sidecar/",
+          "./extension/transport/sidecar/",
+          "./internal/cmdutil/"
+        ],
+        "status": "pass",
+        "exit_code": 0,
+        "duration_seconds": 20.627,
+        "tests": {
+          "pass": 323,
+          "fail": 0,
+          "skip": 0
+        }
+      },
+      {
+        "command": [
+          "go",
+          "test",
+          "-race",
+          "-json",
+          "-count=1",
+          "-timeout=10m",
+          "-tags",
+          "authsidecar_demo",
+          "./sidecar/server-demo/"
+        ],
+        "status": "pass",
+        "exit_code": 0,
+        "duration_seconds": 27.18,
+        "tests": {
+          "pass": 48,
+          "fail": 0,
+          "skip": 0
+        }
+      },
+      {
+        "command": [
+          "go",
+          "test",
+          "-race",
+          "-json",
+          "-count=1",
+          "-timeout=10m",
+          "-tags",
+          "authsidecar",
+          "./tests/sidecar_e2e/"
+        ],
+        "status": "pass",
+        "exit_code": 0,
+        "duration_seconds": 9.024,
+        "tests": {
+          "pass": 1,
+          "fail": 0,
+          "skip": 0
+        }
+      },
+      {
+        "command": [
+          "go",
+          "test",
+          "-race",
+          "-json",
+          "-count=1",
+          "-timeout=10m",
+          "./sidecar"
+        ],
+        "status": "pass",
+        "exit_code": 0,
+        "duration_seconds": 1.779,
+        "tests": {
+          "pass": 30,
+          "fail": 0,
+          "skip": 0
+        }
+      }
+    ]
+  },
+  "fixture_extraction": {
+    "schema_version": 1,
+    "section": "foundation",
+    "suite": "e2e",
+    "evidence": "offline",
+    "status": "pass",
+    "commands": [
+      {
+        "command": [
+          "go",
+          "test",
+          "-json",
+          "-count=1",
+          "-timeout=10m",
+          "./tests/next_foundation"
+        ],
+        "status": "pass",
+        "exit_code": 0,
+        "duration_seconds": 5.159,
+        "tests": {
+          "pass": 16,
+          "fail": 0,
+          "skip": 0
+        },
+        "selection": {
+          "policy": "all tests in the listed packages"
+        }
+      }
+    ]
+  },
+  "evaluation_report": "evaluation/evidence/foundation/REPORT.md",
+  "limitations": [
+    "unit source report also contains a subsequent failed Python phase, resolved by c39fe3d and the separately passing complete process report; only its unit command is accepted",
+    "9 unit skips and 4 intentional skip-helper E2E cases are not behavior pass claims",
+    "live scope is existing-current-user auth and own-user-info only; bot verification failed and independent tenant consistency is unavailable",
+    "full domain/live/platform coverage, cross-section typed imports, source-diff release reconciliation and final race/release suites remain outstanding",
+    "foundation model evidence is pinned to d873c0d, earlier failures have unknown token costs, and original command traces were discarded"
+  ]
+}

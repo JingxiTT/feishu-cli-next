@@ -1,6 +1,6 @@
 # Implementation ledger
 
-The release criteria remain those in [PLAN.md](PLAN.md). Imported source is implementation reuse, not evidence of live parity. No efficiency claims have been established.
+The release criteria remain those in [PLAN.md](PLAN.md). Imported source is implementation reuse, not evidence of live parity. Scoped foundation measurements are available; no full-product efficiency or release claim is established.
 
 ## Reference and baseline
 
@@ -24,8 +24,26 @@ The release criteria remain those in [PLAN.md](PLAN.md). Imported source is impl
 
 ## Current evidence
 
-Canonical imported build succeeds with the generated catalog. Initial race-enabled upstream unit suite passed shared/authentication packages, but download tests in IM and Minutes depend on external DNS resolving `example.com` as public. These fixture failures are being repaired without changing URL safety checks. Test evidence is retained in `.tmp/next-evidence/` during development and summarized in committed section reports.
+P0 inventory and harness checks pass. The reference remains clean and unchanged;
+the actual next tree preserves all 938 reference command nodes and adds ten
+foundation nodes. Source changes remain explicitly tracked for final review.
+
+[P1 shared interfaces are ready for P2](sections/foundation.md): the full
+foundation unit/process suite, plugin and sidecar checks, static checks and
+quality gate pass, with explicit skips and revision boundaries. Read-only live
+checks verified the current user; private content fixtures are not yet verified.
+The [foundation model report](../evaluation/evidence/foundation/REPORT.md)
+records 18/18 compatible trials, actual token usage, a task-level regression,
+earlier unknown-cost failures and trace limitations. Held-out tasks are untouched.
+
+P2 assigns every independent inventory section concurrently under
+[section ownership](sections/OWNERSHIP.md), preserving imported implementations
+and adding complete behavioral evidence and useful domain improvements.
 
 ## Outstanding release evidence
 
-Real comparative agent trials require an external agent runner with actual model usage and independent backend verification. Controlled harness tests do not provide comparative product measurements. Live tests require verified current-account identity and private fixture visibility, following PLAN.md authorization boundaries. Offline success never counts as live verification. Required blocked/unverified checks keep their sections open.
+P2 domain acceptance, verified private live fixtures, final source reconciliation,
+10,000-row typed transfer, cross-section workflows, platform/lifecycle packaging,
+full release checks and held-out evaluation remain open. Blocked or unverified
+checks remain outstanding; offline or scoped foundation success does not count
+as full live parity or satisfy the complete goal.
