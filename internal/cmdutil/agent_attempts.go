@@ -56,6 +56,9 @@ func (f *Factory) agentAttemptTransport(base http.RoundTripper) http.RoundTrippe
 				return nextattempt.Binding{}, err
 			}
 			identity := f.ResolvedIdentity
+			if requestIdentity, ok := core.RequestIdentityFromContext(req.Context()); ok {
+				identity = requestIdentity
+			}
 			if identity != core.AsUser && identity != core.AsBot {
 				return nextattempt.Binding{}, errs.NewValidationError(errs.SubtypeFailedPrecondition, "mutation identity has not been resolved")
 			}

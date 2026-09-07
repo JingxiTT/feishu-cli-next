@@ -131,6 +131,11 @@ unknown; the declaration never adds retries. Upload bytes, signed URL queries,
 headers and paths are not persisted. Later callback or publication requests keep
 their own receipts, so a stored object does not establish successful publication.
 
+SDK and streaming API calls bind receipts to the identity selected for that
+request's access token. An explicit bot call inside a user workflow records bot
+identity without changing the invocation default or other concurrent requests.
+External requests without API identity metadata retain the invocation binding.
+
 CLI-owned state lives at `<effective-config-dir>/next/receipts`. Directories use
 0700 and files 0600; Unix refuses permissive state and symlinks at the receipt
 storage boundary. Writes sync a temporary file, atomically commit it, and sync

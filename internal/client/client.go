@@ -136,7 +136,9 @@ func (c *APIClient) DoSDKRequest(ctx context.Context, req *larkcore.ApiReq, as c
 		// get the transport-or-internal fallback.
 		return nil, WrapDoAPIError(err)
 	}
+	requestIdentity := core.AsUser
 	if as.IsBot() {
+		requestIdentity = core.AsBot
 		req.SupportedAccessTokenTypes = []larkcore.AccessTokenType{larkcore.AccessTokenTypeTenant}
 		opts = append(opts, larkcore.WithTenantAccessToken(token.Token))
 	} else {
@@ -145,7 +147,7 @@ func (c *APIClient) DoSDKRequest(ctx context.Context, req *larkcore.ApiReq, as c
 	}
 
 	opts = append(opts, extraOpts...)
-	requestCtx := core.WithCredentialSource(ctx, token.Source)
+	requestCtx := core.WithRequestIdentity(core.WithCredentialSource(ctx, token.Source), requestIdentity)
 	resp, err := c.SDK.Do(requestCtx, req, opts...)
 	if err != nil {
 		return nil, WrapDoAPIError(err)
@@ -189,7 +191,11 @@ func (c *APIClient) DoStream(ctx context.Context, req *larkcore.ApiReq, as core.
 	httpClient := *c.HTTP
 	httpClient.Timeout = 0
 	cancel := func() {}
-	requestCtx := core.WithCredentialSource(ctx, token.Source)
+	requestIdentity := core.AsUser
+	if as.IsBot() {
+		requestIdentity = core.AsBot
+	}
+	requestCtx := core.WithRequestIdentity(core.WithCredentialSource(ctx, token.Source), requestIdentity)
 	if cfg.timeout > 0 {
 		if _, hasDeadline := requestCtx.Deadline(); !hasDeadline {
 			requestCtx, cancel = context.WithTimeout(requestCtx, cfg.timeout)
