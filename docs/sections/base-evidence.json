@@ -7,7 +7,7 @@
     "base +record-import"
   ],
   "status": "offline_pass_release_open",
-  "gate_command": "python3 scripts/next_test.py --section base --suite all --binary .tmp/base-cli --report .tmp/base-section-gate.json",
+  "gate_command": "python3 scripts/next_test.py --section base --suite all --binary .tmp/base-cli --report .tmp/base-duplicate-section-gate.json",
   "commands": [
     {
       "command": [
@@ -20,9 +20,9 @@
       ],
       "status": "pass",
       "exit_code": 0,
-      "duration_seconds": 3.669,
+      "duration_seconds": 3.613,
       "tests": {
-        "pass": 1095,
+        "pass": 1096,
         "fail": 0,
         "skip": 0
       }
@@ -40,7 +40,7 @@
       ],
       "status": "pass",
       "exit_code": 0,
-      "duration_seconds": 5.466,
+      "duration_seconds": 7.405,
       "tests": {
         "pass": 160,
         "fail": 0,
@@ -58,9 +58,9 @@
       ],
       "status": "pass",
       "exit_code": 0,
-      "duration_seconds": 27.022,
+      "duration_seconds": 26.64,
       "tests": {
-        "pass": 171,
+        "pass": 177,
         "fail": 0,
         "skip": 1
       }
@@ -101,7 +101,11 @@
     ".tmp/base-build.json",
     ".tmp/base-vet.json",
     ".tmp/base-live-gate.json",
-    ".tmp/base-guide-recovery.json"
+    ".tmp/base-guide-recovery.json",
+    ".tmp/base-duplicate-build.json",
+    ".tmp/base-duplicate-unit.json",
+    ".tmp/base-duplicate-process.json",
+    ".tmp/base-duplicate-section-gate.json"
   ],
   "commits": [
     {
@@ -212,6 +216,14 @@
         "shortcuts/base/field_ops.go",
         "tests/next_sections/base/field_types_e2e_test.go"
       ]
+    },
+    {
+      "revision": "f080e43",
+      "files": [
+        "shortcuts/base/record_import.go",
+        "shortcuts/base/record_import_test.go",
+        "tests/next_sections/base/import_e2e_test.go"
+      ]
     }
   ],
   "followup_guide_recovery": {
@@ -235,5 +247,19 @@
       "skip": 0
     },
     "shared_distribution_commit": "b7833ae"
+  },
+  "cross_batch_duplicate_recovery": {
+    "product_commit": "f080e43",
+    "shared_receipt_commit": "d91e695",
+    "confirmed_rows": 200,
+    "completed_batches": 1,
+    "requested_rows": 401,
+    "dispatched_batches": 2,
+    "exit_code": 22,
+    "durable_receipts": {
+      "confirmed_applied": 1,
+      "unknown": 1
+    },
+    "retains_unresolved_response": true
   }
 }

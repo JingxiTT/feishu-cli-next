@@ -145,7 +145,7 @@ Views retain filter/group/sort/visibility/timebar/card native structures. Dashbo
 - NDJSON no longer changes null selections/users to `[]`, null checkboxes to false, or local datetime strings to RFC3339. Manifest physical types describe nullable arrays/booleans; null and empty counts are separate. Numeric bounds preserve exact source values, approximate averages are marked; unparsed datetime statistics are explicit. Name collisions (including a user field named `record_id`) and duplicate field IDs fail instead of dropping values. Raw JSON reads still preserve those native matrices.
 - List/search NDJSON requires explicit `has_more`; missing continuation evidence fails instead of treating the result as complete. Batch-get remains explicitly selected-record scoped. The 2,000 requested-row NDJSON ceiling remains; continuation metadata is retained and larger workflows page explicitly.
 - `+record-import` consumes the existing shared result artifact containing `sheets-data/v1`, verifies current observed identity/tenant binding, checks exact complete source extent and destination field identity/type, and appends in 200-row batches. Every column is explicitly mapped. Unformatted primitive text/number/checkbox cells are supported; typed import rejects decimals that cannot round-trip through the documented Base double storage (including 9007199254740993); formulas, formatting (including date styles), rich/identity/object cells or unsupported conversion types are rejected before any write. Null, empty and omitted values remain distinct; a destination default that would fill an omitted source cell is rejected. It creates records every invocation, with no implicit business-key matching or deletion.
-- Optional import `--output` saves all observed record IDs via existing invocation-scoped exclusive FileIO, keeping the 10,000-row payload outside stdout. Destination collision is checked before writes and races cannot overwrite files. If final report save fails, full observed effects remain on stdout with a typed failure. Unknown batches stop; receipts are evidence, never automatic replay inputs.
+- Optional import `--output` saves all observed record IDs via existing invocation-scoped exclusive FileIO, keeping the 10,000-row payload outside stdout. Destination collision is checked before writes and races cannot overwrite files. If final report save fails, full observed effects remain on stdout with a typed failure. Unknown batches stop; IDs must be unique across the entire import, and an ID repeated from an earlier batch leaves the later batch unresolved without dispatching the next batch. Receipts are evidence, never automatic replay inputs.
 
 ## Dependencies and acceptance
 
@@ -161,13 +161,13 @@ Comparative development trials are coordinator-scheduled and not yet run. No hel
 
 Canonical build: `make build BINARY=.tmp/base-cli`, executed through `scripts/next_test.py`'s isolated environment. This uses the frozen metadata restore and standard build flags without replacing other sections' binaries.
 
-`python3 scripts/next_test.py --section base --suite all --binary .tmp/base-cli --report .tmp/base-section-gate.json` passed:
+`python3 scripts/next_test.py --section base --suite all --binary .tmp/base-cli --report .tmp/base-duplicate-section-gate.json` passed:
 
 | Suite | Passed test events | Failed | Skipped |
 | --- | ---: | ---: | ---: |
-| `./shortcuts/base/...` | 1095 | 0 | 0 |
+| `./shortcuts/base/...` | 1096 | 0 | 0 |
 | `./tests/cli_e2e/base -run DryRun\|Regression` | 160 | 0 | 0 |
-| `./tests/next_sections/base` | 171 | 0 | 1 |
+| `./tests/next_sections/base` | 177 | 0 | 1 |
 
 The skip is the explicit live private-fixture blocker. Counts include Go subtests. The process suite verifies all 117 reference commands plus typed import; full source details are in [base-process.md](base-process.md). It also exercises 27 native field definitions/style variants and a 10,000-row import in 50 batches, with record IDs written to the domain report instead of stdout. Destination defaults cannot manufacture values for omitted source cells. Malformed, ignored-field or incomplete batch results stop the transfer, and simultaneous API/report-save failures preserve both error causes and full observed effects.
 
@@ -178,3 +178,5 @@ The first canonical dry-run run exposed inherited assertions that depended on pr
 Commits owned by this section: `7c9c12b`, `72b932e`, `543fa68`, `8c63250`, `b16453c`, `a8e9983`, `e0b042f`, `b9529e9`, `1226fe4`; shared receipt and binding dependencies are tracked by the foundation owner. [Machine-readable gate summary](base-evidence.json) retains commands, counts and explicit limitations. Raw synthetic logs remain in `.tmp`.
 
 Formula/lookup guide recovery is integrated: field validation retains the acknowledgement flag and names executable `feishu-cli-next skills read lark-base references/lark-base-field-formula.md` or `lark-base-field-lookup.md` recovery commands in the structured error hint. Base affordances and the concise project skill route to the same existing embedded references. The foundation owner verified installation and byte-identical full reference reads in `b7833ae`; Base recovery commit `79fa235` passed 54 focused test events, including four real-process create/update error cases. This follow-up does not change the open live or release gates.
+
+Cross-section testing found that IDs unique inside one response could repeat a previously confirmed batch. `f080e43` validates IDs across the whole import before accepting a batch; shared receipt fix `d91e695` checks invocation-scoped evidence for the same identity and table before finalization. The mixed-overlap process regression confirms only the first 200 of 401 requested rows, retains the ambiguous second response, dispatches exactly two batches, exits 22, and records one applied plus one unknown receipt. Stdout and stderr also report unknown. The full Base gate above was rerun after both fixes.
