@@ -1,0 +1,503 @@
+{
+  "schema_version": 1,
+  "reviewer": "/root/p3_domain_review",
+  "review_type": "narrow immutable follow-up semantic closure",
+  "verdict": "approved_offline",
+  "historical_review": {
+    "path": "docs/reference/reviews/p3-domain-review.json",
+    "sha256": "8760bf0896692507ecce309e5065dc43258ff285cff151591f18d46b73381e2d",
+    "checkpoint": "0084501742edb1ee87bdf9623adf7da37267f142",
+    "preserved": true,
+    "note": "Original source-bound findings and verdicts remain unchanged. This separate report closes only the listed findings at listed fix revisions."
+  },
+  "reviews": [
+    {
+      "assignment": "okr",
+      "fix_revision": "344a1a201de1ca1ee493a6c48d42a3254957d568",
+      "historical_finding_ids": [
+        "P3-MAIL-MISC-001"
+      ],
+      "closure_status": "closed_offline",
+      "verdict": "approved_offline",
+      "paths": [
+        {
+          "path": "shortcuts/okr/okr_pagination.go",
+          "review_revision": "344a1a201de1ca1ee493a6c48d42a3254957d568",
+          "review_sha256": "4a83626a8ed6cf911b9485d039e8ebf6b849b112589146bc6257be1ef34a0a51",
+          "verdict": "approved_offline",
+          "findings": [],
+          "semantic_assessment": "Entire new validation helper inspected: parses native IDs as positive int64, rejects repeated exact ID strings, retains valid strings verbatim and parse causes. No fetch/read-only callers acquire validation.",
+          "historical_review_sha256": "5b426ee2375fe80482f98639fd00119af492f8fe1b1c0e1c58ceb0d8a5dfaf63"
+        },
+        {
+          "path": "shortcuts/okr/okr_reorder.go",
+          "review_revision": "344a1a201de1ca1ee493a6c48d42a3254957d568",
+          "review_sha256": "31a8ab17d8204249b1839d94c0e42fde676e5604583ab8e262fa9184e523f16a",
+          "verdict": "approved_offline",
+          "findings": [],
+          "semantic_assessment": "Complete collected snapshot is validated before ID maps. Existing parseReorderOps requires unique operation IDs and positions; together with unique native IDs, all validated IDs appear exactly once in derived order, closing both no-op indexing panic branches.",
+          "historical_review_sha256": "030127f1d8041a2ead4e378847bee35ec0703ed67e86a710b79f9ac0ef746d52"
+        },
+        {
+          "path": "shortcuts/okr/okr_weight.go",
+          "review_revision": "344a1a201de1ca1ee493a6c48d42a3254957d568",
+          "review_sha256": "55506cf437420107009cabb98c9f51ac6c3da17e151f1cfac78073afd1a10928",
+          "verdict": "approved_offline",
+          "findings": [],
+          "semantic_assessment": "Both objective and key-result snapshots are validated before matching assignments and normalization; no write or false no-op on invalid IDs.",
+          "historical_review_sha256": "b4f144c0fc6c42bfb9ff6b7b43ed9865e3ed7d408ebbf5ad622688309a550dee"
+        },
+        {
+          "path": "shortcuts/okr/okr_pagination_test.go",
+          "review_revision": "344a1a201de1ca1ee493a6c48d42a3254957d568",
+          "review_sha256": "672a616598e1adc923dfaf9abf278360ca9fc05c989950de67b89b61441abc52",
+          "verdict": "approved_offline",
+          "findings": [],
+          "semantic_assessment": "Revert-failing exact duplicate-ID example asserts typed invalid_response/empty stdout. Validator tests check malformed IDs, leading-zero identity preservation and strconv.NumError cause."
+        },
+        {
+          "path": "shortcuts/okr/okr_reorder_test.go",
+          "review_revision": "344a1a201de1ca1ee493a6c48d42a3254957d568",
+          "review_sha256": "4632b507aed560641824f00fe97f2da0fa5cb6cd9ee41defe99699af002e0eab",
+          "verdict": "approved_offline",
+          "findings": [],
+          "semantic_assessment": "Successful key-result fixture IDs changed to positive numeric native IDs; expected relationships, order and collection size remain asserted."
+        },
+        {
+          "path": "shortcuts/okr/okr_weight_test.go",
+          "review_revision": "344a1a201de1ca1ee493a6c48d42a3254957d568",
+          "review_sha256": "fb1d82d016e868bf875cecaf39ea3c381e7b9851cdbf70752006e812a3ceabbf",
+          "verdict": "approved_offline",
+          "findings": [],
+          "semantic_assessment": "Synthetic key-result IDs changed to numeric form without removing relationship or weighting assertions."
+        },
+        {
+          "path": "tests/next_sections/okr/okr_e2e_test.go",
+          "review_revision": "344a1a201de1ca1ee493a6c48d42a3254957d568",
+          "review_sha256": "b396349ab29e428875d191637cbea2422f7591a7b12f95d204e73ff0dd77b0c5",
+          "verdict": "approved_offline",
+          "findings": [],
+          "semantic_assessment": "24 operation/level/corruption scenarios assert exit5, internal/invalid_response, recovery hint, empty stdout, zero writes and exact one/two reads, including cross-page duplicates."
+        },
+        {
+          "path": "docs/sections/okr.md",
+          "review_revision": "344a1a201de1ca1ee493a6c48d42a3254957d568",
+          "review_sha256": "8e13fccde95bbee572c79d0db59ea937bb1b3f6ca9a9e9e7cc66cdf8a62eda1d",
+          "verdict": "approved_offline",
+          "findings": [],
+          "semantic_assessment": "Documents reproduced panic, mutation-specific validation, counts and explicit live/evaluation limitations."
+        }
+      ],
+      "evidence": [
+        {
+          "path": "shortcuts/okr/okr_pagination_test.go",
+          "review_revision": "344a1a201de1ca1ee493a6c48d42a3254957d568",
+          "sha256": "672a616598e1adc923dfaf9abf278360ca9fc05c989950de67b89b61441abc52",
+          "scope": "Exact duplicate-ID panic regression and identity/cause assertions.",
+          "tested_revision": "not executed by reviewer; exact test/source inspected at 344a1a201de1ca1ee493a6c48d42a3254957d568"
+        },
+        {
+          "path": "tests/next_sections/okr/okr_e2e_test.go",
+          "review_revision": "344a1a201de1ca1ee493a6c48d42a3254957d568",
+          "sha256": "b396349ab29e428875d191637cbea2422f7591a7b12f95d204e73ff0dd77b0c5",
+          "scope": "TestOKRReplacementRejectsMalformedNativeIDs covers both operations at both levels with zero mutation requests.",
+          "tested_revision": "not executed by reviewer; exact test/source inspected at 344a1a201de1ca1ee493a6c48d42a3254957d568"
+        },
+        {
+          "path": ".tmp/okr-duplicate-repro.json",
+          "sha256": "716f1658b34e1df66057a702cac2abb47d8cc12ec2b6316546f2ca03835f9959",
+          "status": "fail",
+          "tested_revision": "explicitly unbound: retained owner execution report has no immutable tested revision or binary digest; not rerun by reviewer",
+          "scope": "Observed owner red report contains index out of range [1] with length 1 at no-op comparison; original finding independently reproduced by owner.",
+          "observed_commands": [
+            {
+              "command": [
+                "go",
+                "test",
+                "./shortcuts/okr",
+                "-run",
+                "^TestReorderRejectsDuplicateNativeIDs$",
+                "-count=1"
+              ],
+              "status": "fail",
+              "exit_code": 1,
+              "tests": {
+                "pass": 0,
+                "fail": 0,
+                "skip": 0
+              }
+            }
+          ]
+        },
+        {
+          "path": ".tmp/okr-duplicate-section.json",
+          "sha256": "c756964a659b8dd8e50a1f93b8db2f106d65d0c12397d7998c4cda745822a22d",
+          "status": "pass",
+          "tested_revision": "explicitly unbound: retained owner execution report has no immutable tested revision or binary digest; not rerun by reviewer",
+          "scope": "Owner green report contains 24 malformed snapshot subcases plus parent pass and 8 focused unit pass events; all command totals inspected.",
+          "observed_commands": [
+            {
+              "command": [
+                "go",
+                "test",
+                "-json",
+                "-count=1",
+                "-timeout=10m",
+                "./shortcuts/okr/..."
+              ],
+              "status": "pass",
+              "exit_code": 0,
+              "tests": {
+                "pass": 357,
+                "fail": 0,
+                "skip": 0
+              }
+            },
+            {
+              "command": [
+                "go",
+                "test",
+                "-json",
+                "-count=1",
+                "-timeout=10m",
+                "./tests/cli_e2e/okr",
+                "-run",
+                "DryRun|Regression"
+              ],
+              "status": "pass",
+              "exit_code": 0,
+              "tests": {
+                "pass": 42,
+                "fail": 0,
+                "skip": 0
+              }
+            },
+            {
+              "command": [
+                "go",
+                "test",
+                "-json",
+                "-count=1",
+                "-timeout=10m",
+                "./tests/next_sections/okr"
+              ],
+              "status": "pass",
+              "exit_code": 0,
+              "tests": {
+                "pass": 154,
+                "fail": 0,
+                "skip": 1
+              }
+            }
+          ]
+        }
+      ],
+      "limitations": [
+        "Static independent source/test review; no tests executed by this reviewer.",
+        "Owner logs are hash-pinned supporting evidence but explicitly unbound to immutable source/binary; semantic closure binds exact reviewed source blobs.",
+        "No live backend, platform, release or model evaluation acceptance."
+      ]
+    },
+    {
+      "assignment": "task",
+      "fix_revision": "d6090378426e465195fa10dbe314dae2df144d77",
+      "historical_finding_ids": [
+        "P3-TASK-INPUT-PARAM"
+      ],
+      "closure_status": "closed_offline",
+      "verdict": "approved_offline",
+      "paths": [
+        {
+          "path": "shortcuts/task/task_update.go",
+          "review_revision": "d6090378426e465195fa10dbe314dae2df144d77",
+          "review_sha256": "8cb3524e261b2b1356141f195eed31dd993b84956e5f4e112ad68c0c1c12c803",
+          "verdict": "approved_offline",
+          "findings": [],
+          "semantic_assessment": "Summary provenance defaults to --data and switches to --summary exactly when the explicit summary overwrites taskObj; invalid null/empty/nonstring JSON attributes --data. No request/body normalization change.",
+          "historical_review_sha256": "92a3133eb38aef882004509e9ad915932f121cf6c639b1321487ff4f68db0ffe"
+        },
+        {
+          "path": "shortcuts/task/shortcuts.go",
+          "review_revision": "d6090378426e465195fa10dbe314dae2df144d77",
+          "review_sha256": "1f17d8f28fb1b2df94c907580869457e73c699bed966dacb52db383b04f21a6c",
+          "verdict": "approved_offline",
+          "findings": [],
+          "semantic_assessment": "Analogous create provenance initializes --summary for a missing required value, switches to --data when JSON owns summary, then back for explicit override; explicit empty overrides retain their own error provenance.",
+          "historical_review_sha256": "f9a4f3efcc17f8c5aff1f3af8be7c697146753de91aa17ae0b1e3304ec51fbfe"
+        },
+        {
+          "path": "tests/next_sections/task/task_e2e_test.go",
+          "review_revision": "d6090378426e465195fa10dbe314dae2df144d77",
+          "review_sha256": "7ff06bc3dc980f2b18c4f05da11c15e017289f4b4846c34de38d9c1143afce14",
+          "verdict": "approved_offline",
+          "findings": [],
+          "semantic_assessment": "Fourteen create/update subcases each run dry-run and Execute. Null/empty/numeric JSON summaries and invalid empty overrides assert validation exit2 and correct param with no request; valid overrides assert exact dispatched summary and one write."
+        },
+        {
+          "path": "docs/sections/task.md",
+          "review_revision": "d6090378426e465195fa10dbe314dae2df144d77",
+          "review_sha256": "6d45fc9acc98719bbbc8a569334a75167b3a65af2637ed9c2ed95db8c616de0b",
+          "verdict": "approved_offline",
+          "findings": [],
+          "semantic_assessment": "Documents provenance behavior and retains live/evaluation limitations."
+        }
+      ],
+      "evidence": [
+        {
+          "path": "tests/next_sections/task/task_e2e_test.go",
+          "review_revision": "d6090378426e465195fa10dbe314dae2df144d77",
+          "sha256": "7ff06bc3dc980f2b18c4f05da11c15e017289f4b4846c34de38d9c1143afce14",
+          "scope": "TestTaskSummaryInputProvenance independently verifies error.param and exact override behavior for both command modes.",
+          "tested_revision": "not executed by reviewer; exact test/source inspected at d6090378426e465195fa10dbe314dae2df144d77"
+        },
+        {
+          "path": ".tmp/task-summary-provenance.json",
+          "sha256": "bb883641fbc5ce6c7856acbd86b4e372e98742915a749edb0eb3b63229867c24",
+          "status": "pass",
+          "tested_revision": "explicitly unbound: retained owner execution report has no immutable tested revision or binary digest; not rerun by reviewer",
+          "scope": "Owner green report contains all 14 provenance subcases plus parent pass; 228 unit/event,14 legacy,77 process pass events inspected.",
+          "observed_commands": [
+            {
+              "command": [
+                "go",
+                "test",
+                "-json",
+                "-count=1",
+                "-timeout=10m",
+                "./shortcuts/task/...",
+                "./events/task/..."
+              ],
+              "status": "pass",
+              "exit_code": 0,
+              "tests": {
+                "pass": 228,
+                "fail": 0,
+                "skip": 0
+              }
+            },
+            {
+              "command": [
+                "go",
+                "test",
+                "-json",
+                "-count=1",
+                "-timeout=10m",
+                "./tests/cli_e2e/task",
+                "-run",
+                "DryRun|Regression"
+              ],
+              "status": "pass",
+              "exit_code": 0,
+              "tests": {
+                "pass": 14,
+                "fail": 0,
+                "skip": 0
+              }
+            },
+            {
+              "command": [
+                "go",
+                "test",
+                "-json",
+                "-count=1",
+                "-timeout=10m",
+                "./tests/next_sections/task"
+              ],
+              "status": "pass",
+              "exit_code": 0,
+              "tests": {
+                "pass": 77,
+                "fail": 0,
+                "skip": 0
+              }
+            }
+          ]
+        }
+      ],
+      "limitations": [
+        "Static independent source/test review; no tests executed by this reviewer.",
+        "Owner logs are hash-pinned supporting evidence but explicitly unbound to immutable source/binary; semantic closure binds exact reviewed source blobs.",
+        "No live backend, platform, release or model evaluation acceptance."
+      ]
+    },
+    {
+      "assignment": "drive",
+      "fix_revision": "6fcd52e8ff5be0a52d9a1d33fd0083052211b223",
+      "historical_finding_ids": [],
+      "closure_status": "approved_offline",
+      "verdict": "approved_offline",
+      "paths": [
+        {
+          "path": "shortcuts/drive/list_remote.go",
+          "review_revision": "6fcd52e8ff5be0a52d9a1d33fd0083052211b223",
+          "review_sha256": "28bc575e43a4d2d9a140bda419d88bc80b3ee76d4941e8fa1c1dd2cbf282d0fb",
+          "verdict": "approved_offline",
+          "findings": [],
+          "semantic_assessment": "New explicit-listing argument propagates through every recursive child and loop page. Deleting mirror requires actual files array and boolean has_more before collecting or applying effects. Missing/null files or missing has_more becomes failed_precondition; malformed present has_more retains invalid_response. Existing continuation/cycle/entry checks remain. False argument preserves optional files/has_more semantics; explicit empty array+false is accepted.",
+          "historical_review_sha256": "8aa2f0671954f3695f9722801ba83c330ba3e4a0b74209e47b029f67ff0e7cdc"
+        },
+        {
+          "path": "shortcuts/drive/drive_pull.go",
+          "review_revision": "6fcd52e8ff5be0a52d9a1d33fd0083052211b223",
+          "review_sha256": "676e6498aafe23f298e6aee23d7eea4f7b9f616ad4628f01c5a5e121827987ed",
+          "verdict": "approved_offline",
+          "findings": [],
+          "semantic_assessment": "Passes deleteLocal as strictness flag after read-only path resolution and before remote views, transfers and local deletion. Incomplete listing aborts before local modifications."
+        },
+        {
+          "path": "shortcuts/drive/drive_push.go",
+          "review_revision": "6fcd52e8ff5be0a52d9a1d33fd0083052211b223",
+          "review_sha256": "67299194bacd6170a11731c681d8c66f57e7126283615e6cf981fcf4d59d18f4",
+          "verdict": "approved_offline",
+          "findings": [],
+          "semantic_assessment": "Passes deleteRemote after read-only local walk and before folder creation/uploads/deletion. Incomplete listing aborts all mirror effects."
+        },
+        {
+          "path": "shortcuts/drive/drive_status.go",
+          "review_revision": "6fcd52e8ff5be0a52d9a1d33fd0083052211b223",
+          "review_sha256": "592ac1414206e29e66bc2a3a0a3da2f2c1b757730423deff4a0562ab4828ea15",
+          "verdict": "approved_offline",
+          "findings": [],
+          "semantic_assessment": "Explicit false preserves ordinary read optional-field semantics."
+        },
+        {
+          "path": "shortcuts/drive/drive_sync.go",
+          "review_revision": "6fcd52e8ff5be0a52d9a1d33fd0083052211b223",
+          "review_sha256": "cf5fbfc2b77178ccb979066b605bc41b66308da7dab5871356545654e73c4343",
+          "verdict": "approved_offline",
+          "findings": [],
+          "semantic_assessment": "Explicit false preserves existing non-deleting synchronization behavior; this workflow has no orphan deletion flag."
+        },
+        {
+          "path": "tests/next_sections/drive/mirror_listing_test.go",
+          "review_revision": "6fcd52e8ff5be0a52d9a1d33fd0083052211b223",
+          "review_sha256": "c65e3fc92f9034af7dc41916718c52722cd9d4ac8bb1d3cf628f530787c5b6f3",
+          "verdict": "approved_offline",
+          "findings": [],
+          "semantic_assessment": "Entire new file inspected. Fourteen deletion cases span pull/push and absent/null root fields, later page and child listing; assert typed error, exact read count, zero transfers/mutations and exact local bytes. Compatibility tests cover missing/null optional listing for status and nondeleting pull, plus successful explicit-empty local deletion."
+        },
+        {
+          "path": "docs/sections/drive.md",
+          "review_revision": "6fcd52e8ff5be0a52d9a1d33fd0083052211b223",
+          "review_sha256": "fd0abb04bcd133f1c188c31d835c525e9aa7f25584ac977baa254751039b6db1",
+          "verdict": "approved_offline",
+          "findings": [],
+          "semantic_assessment": "States destructive workflow precondition separately from optional upstream API fields, records evidence and avoids claiming snapshot consistency."
+        }
+      ],
+      "evidence": [
+        {
+          "path": "tests/next_sections/drive/mirror_listing_test.go",
+          "review_revision": "6fcd52e8ff5be0a52d9a1d33fd0083052211b223",
+          "sha256": "c65e3fc92f9034af7dc41916718c52722cd9d4ac8bb1d3cf628f530787c5b6f3",
+          "scope": "TestDeletingMirrorRequiresExplicitListingBeforeChanges and TestOptionalEmptyListingCompatibilityAndExplicitMirrorDeletion assert effect absence, byte preservation, recursion/page strictness and valid empty deletion.",
+          "tested_revision": "not executed by reviewer; exact test/source inspected at 6fcd52e8ff5be0a52d9a1d33fd0083052211b223"
+        },
+        {
+          "path": ".tmp/drive-p3-all.json",
+          "sha256": "3e6dafc6290635cd996fc38a04555bd67607e78a4029103dc98801aa0d7d31f9",
+          "status": "pass",
+          "tested_revision": "explicitly unbound: retained owner execution report has no immutable tested revision or binary digest; not rerun by reviewer",
+          "scope": "Owner green report contains all 19 new mirror test/subtest pass events; 1353 unit,232 legacy,116 process events and no skips inspected.",
+          "observed_commands": [
+            {
+              "command": [
+                "go",
+                "test",
+                "-json",
+                "-count=1",
+                "-timeout=10m",
+                "./shortcuts/drive/..."
+              ],
+              "status": "pass",
+              "exit_code": 0,
+              "tests": {
+                "pass": 1353,
+                "fail": 0,
+                "skip": 0
+              }
+            },
+            {
+              "command": [
+                "go",
+                "test",
+                "-json",
+                "-count=1",
+                "-timeout=10m",
+                "./tests/cli_e2e/drive",
+                "-run",
+                "DryRun|Regression"
+              ],
+              "status": "pass",
+              "exit_code": 0,
+              "tests": {
+                "pass": 232,
+                "fail": 0,
+                "skip": 0
+              }
+            },
+            {
+              "command": [
+                "go",
+                "test",
+                "-json",
+                "-count=1",
+                "-timeout=10m",
+                "./tests/next_sections/drive"
+              ],
+              "status": "pass",
+              "exit_code": 0,
+              "tests": {
+                "pass": 116,
+                "fail": 0,
+                "skip": 0
+              }
+            }
+          ]
+        },
+        {
+          "path": ".tmp/drive-p3-vet.json",
+          "sha256": "75fdffe4230cbe2927e491d8ce636c067f556048a2e4a1ace96977389910c66b",
+          "status": "pass",
+          "tested_revision": "explicitly unbound: retained owner execution report has no immutable tested revision or binary digest; not rerun by reviewer",
+          "scope": "Owner scoped vet report exit0 inspected; not rerun.",
+          "observed_commands": [
+            {
+              "command": [
+                "go",
+                "vet",
+                "./shortcuts/drive/...",
+                "./tests/next_sections/drive"
+              ],
+              "status": "pass",
+              "exit_code": 0,
+              "tests": {
+                "pass": 0,
+                "fail": 0,
+                "skip": 0
+              }
+            }
+          ]
+        }
+      ],
+      "limitations": [
+        "Static independent source/test review; no tests executed by this reviewer.",
+        "Owner logs are hash-pinned supporting evidence but explicitly unbound to immutable source/binary; semantic closure binds exact reviewed source blobs.",
+        "No live backend, platform, release or model evaluation acceptance.",
+        "Drive was a recorded ambiguity/limitation in the historical report, not a confirmed P1 defect. This approval covers the additional destructive-workflow precondition without retroactively reclassifying optional native fields as invalid.",
+        "No snapshot/concurrency guarantee; existing nondestructive operations keep their prior listing behavior. Push successful explicit-empty deletion is not directly covered by the new file; root-level explicit arrays are accepted symmetrically by the shared helper, and existing delete-remote tests remain separate."
+      ]
+    }
+  ],
+  "summary": {
+    "closed_historical_findings": 2,
+    "additional_drive_precondition_reviewed": true,
+    "reviewed_fix_paths": 19,
+    "new_findings": 0
+  },
+  "limitations": [
+    "Not a fresh whole-domain or whole-repository approval.",
+    "Exact fix-commit blobs reviewed; later changes require their own review.",
+    "No broad tests rerun, live activity, product edits or model evaluations performed."
+  ]
+}
