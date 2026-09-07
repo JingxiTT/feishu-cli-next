@@ -108,6 +108,23 @@ var SlidesReplacePages = common.Shortcut{
 				// always says slide 1. It is appended only on the returning path:
 				// the per-item records already say which items ran and how each
 				// ended, so the batch that keeps going has no use for a position.
+				if result.NewSlideID != "" || countReplacedPages(results) > 0 {
+					// Preserve observed resource IDs outside the error hint: the
+					// mutation wrapper removes generic retry hints from causes.
+					// Return the original typed API error below, rather than the
+					// partial-output control signal. Check the separately tracked
+					// output failure before returning the original API cause.
+					_ = runtime.OutPartialFailure(map[string]interface{}{
+						"xml_presentation_id": resolved.PresentationID,
+						"pages_count":         len(resolved.Plan),
+						"results":             replacePageResultsOutput(results),
+						"status":              "partial_failure",
+						"summary":             replacePagesSummaryOutput(results),
+					}, nil)
+					if outputErr := runtime.OutputError(); outputErr != nil {
+						return outputErr
+					}
+				}
 				if result.NewSlideID != "" {
 					err = appendSlidesProgressHint(err, fmt.Sprintf("replacement slide %s was created before old slide %s; read the presentation to establish the deletion outcome before retrying", result.NewSlideID, result.OldSlideID))
 				}
