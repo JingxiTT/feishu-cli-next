@@ -7,9 +7,11 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"strings"
 	"testing"
 
+	"github.com/larksuite/cli/errs"
 	"github.com/larksuite/cli/internal/cmdmeta"
 	"github.com/larksuite/cli/internal/cmdutil"
 	"github.com/larksuite/cli/internal/output"
@@ -136,8 +138,10 @@ func TestAgentRawReadCannotPersistCredentialArtifacts(t *testing.T) {
 			t.Fatal(err)
 		}
 		opts := output.AgentOptions{SaveResult: "credentials.json"}
-		if err := validateAgentOutput(f, c, &opts); err == nil {
-			t.Fatalf("raw credential artifact allowed: %s", path)
+		err := validateAgentOutput(f, c, &opts)
+		var validation *errs.ValidationError
+		if !errors.As(err, &validation) || validation.Subtype != errs.SubtypeInvalidArgument || validation.Param != "--save-result" || !strings.Contains(validation.Message, "non-raw read operation") {
+			t.Fatalf("raw credential artifact guard for %s: %#v", path, err)
 		}
 	}
 }
