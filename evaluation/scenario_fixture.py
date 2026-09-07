@@ -12,7 +12,11 @@ from section_fixture import SectionFixture
 SECTIONS = frozenset(('base', 'docs', 'drive', 'events', 'extensions', 'markdown', 'packaging', 'sheets', 'task'))
 
 
-def load_scenario(section, row_count=None):
+def load_scenario(section, row_count=None, case_id=None):
+    if section == "generated-business-v1":
+        module = importlib.import_module("scenarios.generated_business")
+        task = module.task(case_id)
+        return SimpleNamespace(TASK=task, Scenario=lambda: module.make_scenario(task["id"]), verify=module.verify)
     if section in ("scaling-base", "scaling-sheets"):
         if type(row_count) is not int or row_count not in (100, 1000, 10000):
             raise ValueError("unsupported development row count")
@@ -101,7 +105,7 @@ print(json.dumps(result))
 
 def run_scenario(request, codex, auth_home, expected_version, run_agent):
     section = request['fixture'].get('scenario_section', request['fixture']['scenario'])
-    module = load_scenario(section, request['fixture'].get('row_count'))
+    module = load_scenario(section, request['fixture'].get('row_count'), request['fixture'].get('case_id'))
     if request['task_id'] != module.TASK['id'] or request['fixture']['scenario'] != module.TASK['fixture']['scenario']:
         raise ValueError('scenario task mismatch')
     scenario = module.Scenario()

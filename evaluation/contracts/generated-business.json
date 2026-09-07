@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "section": "business",
-  "status": "supplemental_development_proposals_not_registered_or_run",
+  "status": "executable_controlled_coverage_representative_models_pending",
   "source_task": "evaluation/tasks.development.json",
   "predeclared_representation": {
     "matching_tasks": [],
@@ -151,7 +151,7 @@
   "proposals": [
     {
       "id": "approval-flow",
-      "prompt": "Find the synthetic Travel approval definition; create one instance with amount string 001.00 and Unicode comment 出差, using uuid business-eval-once. Report its ID and form after reading it back.",
+      "prompt": "Find the synthetic Travel approval definition; create one instance with amount string 001.00 and Unicode comment \u51fa\u5dee, using uuid business-eval-once. Report its ID and form after reading it back.",
       "routes": [
         {
           "command": "approval approvals search",
@@ -188,7 +188,7 @@
           "request": {
             "approval_code": "definition_eval",
             "uuid": "business-eval-once",
-            "form": "[{\"id\":\"amount\",\"type\":\"input\",\"value\":\"001.00\"},{\"id\":\"comment\",\"type\":\"textarea\",\"value\":\"出差\"}]"
+            "form": "[{\"id\":\"amount\",\"type\":\"input\",\"value\":\"001.00\"},{\"id\":\"comment\",\"type\":\"textarea\",\"value\":\"\u51fa\u5dee\"}]"
           },
           "response": {
             "code": 0,
@@ -214,7 +214,7 @@
     },
     {
       "id": "approval-actions",
-      "prompt_template": "On synthetic instance_eval/task_eval perform only the explicitly requested action below, with comment 保留. Other participants and unrelated instances must remain unchanged. Report the observed outcome; never automatically replay an unknown request.",
+      "prompt_template": "On synthetic instance_eval/task_eval perform only the explicitly requested action below, with comment \u4fdd\u7559. Other participants and unrelated instances must remain unchanged. Report the observed outcome; never automatically replay an unknown request.",
       "setup": "Fresh pending instance/task and empty immutable effect ledger per action; each variant explicitly authorizes its synthetic action.",
       "variants": [
         {
@@ -235,7 +235,7 @@
             "cc_user_ids": [
               "ou_eval_recipient"
             ],
-            "comment": "保留"
+            "comment": "\u4fdd\u7559"
           },
           "query": {
             "user_id_type": "open_id"
@@ -255,7 +255,7 @@
             ],
             "add_sign_type": 3,
             "approval_method": 3,
-            "comment": "保留"
+            "comment": "\u4fdd\u7559"
           },
           "query": {
             "user_id_type": "open_id"
@@ -270,7 +270,7 @@
           "request": {
             "instance_code": "instance_eval",
             "task_id": "task_eval",
-            "comment": "保留"
+            "comment": "\u4fdd\u7559"
           },
           "query": {},
           "response": {
@@ -283,7 +283,7 @@
           "request": {
             "instance_code": "instance_eval",
             "task_id": "task_eval",
-            "comment": "保留"
+            "comment": "\u4fdd\u7559"
           },
           "query": {},
           "response": {
@@ -298,7 +298,7 @@
             "task_ids": [
               "task_eval"
             ],
-            "comment": "保留"
+            "comment": "\u4fdd\u7559"
           },
           "query": {},
           "response": {
@@ -314,7 +314,7 @@
             "node_ids": [
               "START"
             ],
-            "comment": "保留"
+            "comment": "\u4fdd\u7559"
           },
           "query": {},
           "response": {
@@ -328,7 +328,7 @@
             "instance_code": "instance_eval",
             "task_id": "task_eval",
             "transfer_user_id": "ou_eval_recipient",
-            "comment": "保留"
+            "comment": "\u4fdd\u7559"
           },
           "query": {
             "user_id_type": "open_id"
@@ -426,18 +426,18 @@
       "invariants": [
         "Both routes enumerate both pages using exact opaque cursor; each unique ID/status reported.",
         "Zero mutations and unchanged initial state. Failure variant replaces second page with code99991679; report partial/failed, never complete success.",
-        "Current shared pagination regression is under repair; adapter/trials must await section boundary pass."
+        "Shared pagination failure/cursor handling passed the committed section boundary; model sampling is separate from deterministic route coverage."
       ]
     },
     {
       "id": "attendance-partial",
-      "prompt": "Read synthetic employee 0001 for 20260901–20260907 with overtime excluded; identify which requested employees could not be returned. Keep leading zeros and do not claim all employees were returned.",
+      "prompt": "Read synthetic employee 0001 for 20260901\u201320260907 with overtime excluded; identify which requested employees could not be returned. Keep leading zeros and do not claim all employees were returned.",
       "routes": [
         {
           "command": "attendance user_tasks query",
           "query": {
             "employee_type": "employee_no",
-            "ignore_invalid_users": "false",
+            "ignore_invalid_users": "true",
             "include_terminated_user": "true"
           },
           "request": {
@@ -476,7 +476,7 @@
     },
     {
       "id": "mindnote-edit",
-      "prompt": "In synthetic mind_eval set node_eval text to 旅行 and finish=false, preserving its note, image and highlight. Use client_token mind-eval-once and read back complete content.",
+      "prompt": "In synthetic mind_eval set node_eval text to \u65c5\u884c and finish=false, preserving its note, image and highlight. Use client_token mind-eval-once and read back complete content.",
       "routes": [
         {
           "command": "mindnotes nodes list",
@@ -501,7 +501,7 @@
                     {
                       "element_type": "text",
                       "text": {
-                        "content": "保留"
+                        "content": "\u4fdd\u7559"
                       }
                     }
                   ],
@@ -517,7 +517,7 @@
         },
         {
           "command": "mindnotes nodes create",
-          "request_rule": "client_token=mind-eval-once; nodes contains only node_eval with finish=false and text content=旅行; fixture merges supplied properties into owned node, preserving omitted fields. Explicitly copied unchanged fields are accepted.",
+          "request_rule": "client_token=mind-eval-once; nodes contains only node_eval with finish=false and text content=\u65c5\u884c; fixture merges supplied properties into owned node, preserving omitted fields. Explicitly copied unchanged fields are accepted.",
           "response": {
             "code": 0,
             "data": {
@@ -553,9 +553,9 @@
     "internal/client/client.go:paginateLoop"
   ],
   "limitations": [
-    "Proposal data only: evaluator must register supplementary development tasks, implement adapters and independent verifiers, and run balanced trials. Existing23 tasks are unchanged; held-out tasks were not read.",
-    "No model/token/live run occurred. Reference schemas and synthetic preservation tests cannot establish backend atomicity, actual notification delivery, visibility, read privileges or idempotency.",
-    "These variants cover every17 method as development sampling; they do not replace exhaustive section tests or require all comparative trials to follow one route.",
-    "Shared pagination later-page error handling and mindnote mixed create/update receipt interpretation remain coordinated correctness work before acceptance."
+    "Executable adapter covers all17 methods through12 controlled cases. Only approval-flow and mindnote-edit are selected for representative balanced model comparison; other methods retain deterministic evidence only. Original23 tasks and held-out files remain unchanged.",
+    "No supplemental model trials or live calls have run. Synthetic state/proofs cannot establish backend atomicity, actual notifications, live visibility/privileges or idempotency.",
+    "Mindnote existing-node updates conservatively return unknown until readback; the task permits recovery through observed native state. Lost-response injection remains in product process tests, not these representative tasks.",
+    "Attendance partial fixture now uses ignore_invalid_users=true, matching the frozen request description; earlier false-mode proposal was corrected before models, with overtime exclusion unchanged."
   ]
 }

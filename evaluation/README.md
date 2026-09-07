@@ -417,3 +417,19 @@ reports must retain failures, cached input, input/output totals, paired outcomes
 and size-dependent variation without a fixed improvement target. These fresh
 fixtures derive from the public plan's scaling requirement; they do not reuse
 quarantined held-out examples.
+
+## Supplemental generated business sampling
+
+`tasks.business.json` adds two representative development tasks: an approval
+creation/readback workflow and a native mindnote edit/readback workflow. Twelve
+controlled cases cover all 17 generated methods; the remaining methods have no
+model comparison claim. `run_read_batch.py --task-kind business` runs only the
+two declared tasks, for 18 balanced fresh trials after the existing queue.
+
+These domains have no separate frozen domain skill. Both reference arms receive
+the same complete `lark-shared` distribution; the concise arm replaces its entry
+with the reviewed shared English guidance also used by the packaging comparison.
+The candidate receives its pinned entry skill. This is source-matched general
+CLI guidance, not an invented official business skill. The adapter uses the same
+signed loopback transport, provider accounting and independent state verifier.
+No supplemental model trials have run yet.

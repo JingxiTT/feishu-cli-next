@@ -148,6 +148,16 @@ class ScenarioIntegrationTests(unittest.TestCase):
         for invalid in (None, True, '100', 0, 101):
             with self.assertRaises(ValueError): load_scenario('scaling-base', invalid)
 
+    def test_business_loader_binds_two_representative_cases(self):
+        manifest = json.loads((ROOT / 'evaluation/tasks.business.json').read_text())
+        self.assertEqual(len(manifest['tasks']), 2)
+        for task in manifest['tasks']:
+            module = load_scenario(task['fixture']['scenario'], case_id=task['fixture']['case_id'])
+            self.assertEqual(module.TASK, task)
+            self.assertEqual(module.Scenario().case_id, task['expected']['case_id'])
+        with self.assertRaises(ValueError):
+            load_scenario('generated-business-v1', case_id='untrusted-case')
+
     def test_loader_and_protected_socket_profile_are_explicit(self):
         with self.assertRaises(ValueError): load_scenario('../arbitrary')
         with tempfile.TemporaryDirectory() as directory:

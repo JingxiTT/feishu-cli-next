@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "kind": "controlled_process_checks_not_model_trials",
+  "reference_revision": "7fd6ef3c07182257ce776cdc5a614e122d5bd4b3",
+  "candidate_revision": "8d92e5253aa9d0582314180d51cdec1b10778897",
+  "candidate_binary_sha256": "b2e848a3c9c0742a416a3b72d042f2166cec694bc35c06bbf748139f69e3e263",
+  "tests_passed": 11,
+  "tests_skipped": 0,
+  "native_workflows": 24,
+  "native_methods_covered_per_binary": 17,
+  "deterministic_cases": 12,
+  "representative_model_tasks": [
+    "business-dev-approval-flow",
+    "business-dev-mindnote-edit"
+  ],
+  "planned_model_trials": 18,
+  "model_trials_run": 0,
+  "independent_review": "No actionable blockers; manifest/loader agreement and independent mutation state/effect/readback verified",
+  "integration_checks": {
+    "tests_passed": 8,
+    "optional_native_skip": 1,
+    "prepare_only": "passed without models"
+  },
+  "limits": [
+    "Unselected methods have deterministic coverage only, not model comparison results.",
+    "Synthetic notifications/visibility/merge behavior does not prove live backend behavior.",
+    "Candidate existing-node mindnote update returns exit22 conservatively; native readback verifies requested state without replay.",
+    "Attendance partial mode corrected to ignore_invalid_users=true before any models; overtime excluded.",
+    "Existing162-attempt queue remains frozen at evaluator117d76a; supplemental work is a separate future evaluator version."
+  ]
+}
