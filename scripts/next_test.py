@@ -25,7 +25,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DOMAIN_DIRS = {"docs": "doc", "events": "event"}
 E2E_DIRS = {"events": "event"}
 DOMAINS = tuple(sorted(p.name for p in (ROOT / "shortcuts").iterdir()
-                       if p.is_dir() and p.name != "common" and p.name not in ("doc", "event"))) + ("docs", "events",)
+                       if p.is_dir() and p.name != "common" and p.name not in ("doc", "event"))) + ("docs", "events", "business",)
 
 
 def isolated_env(directory, parent, proxy):
@@ -89,10 +89,13 @@ def commands_for(section, suite):
             packages = ["./extension/..."]
         elif section == "packaging":
             packages = []
+        elif section == "business":
+            packages = ["./cmd/service/...", "./internal/apicatalog/...", "./internal/registry/...",
+                        "./internal/schema/...", "./internal/client/...", "./internal/nextattempt/..."]
         else:
             packages = ["./shortcuts/" + DOMAIN_DIRS.get(section, section) + "/..."]
             if section == "events":
-                packages.append("./events/...")
+                packages.extend(["./events/...", "./cmd/event/...", "./internal/event/..."])
             elif (ROOT / "events" / section).is_dir():
                 packages.append("./events/" + section + "/...")
         if packages:

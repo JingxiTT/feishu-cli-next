@@ -196,6 +196,30 @@ urllib.request.urlopen('http://must-not-resolve.invalid',timeout=0.2)
             self.assertEqual(report["status"], "pass")
 
 
+    def test_events_unit_suite_covers_command_and_runtime_owners(self):
+        command = next_test.commands_for("events", "unit")[0]
+        for package in ("./shortcuts/event/...", "./events/...", "./cmd/event/...", "./internal/event/..."):
+            self.assertIn(package, command)
+
+    def test_business_selects_shared_generated_owners_without_a_shortcut_package(self):
+        self.assertIn("business", next_test.DOMAINS)
+        command = next_test.commands_for("business", "unit")[0]
+        for package in ("./cmd/service/...", "./internal/apicatalog/...", "./internal/registry/...",
+                        "./internal/schema/...", "./internal/client/...", "./internal/nextattempt/..."):
+            self.assertIn(package, command)
+        self.assertFalse(any("shortcuts/business" in arg for arg in command))
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            with patch.object(next_test, "ROOT", root):
+                self.assertIn({"section": "business", "package": "./tests/next_sections/business", "status": "missing"}, next_test.section_suites("all"))
+            self.make_section_suite(root, "business")
+            with patch.object(next_test, "ROOT", root):
+                commands = next_test.commands_for("business", "e2e")
+                self.assertEqual(len(commands), 1)
+                self.assertIn("./tests/next_sections/business", commands[0])
+                self.assertNotIn("-run", commands[0])
+
+
 
 if __name__ == "__main__":
     unittest.main()
