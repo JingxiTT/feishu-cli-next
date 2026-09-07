@@ -1,0 +1,11 @@
+# Interrupted archive-preparation probe
+
+Two model attempts started before a graceful stop. The first attempt has unavailable total provider usage. The second has **237,389 actual provider tokens**:234,515 input, including207,488 cached input, plus2,874 output. The complete cost of the two-attempt series is unknown;237,389 is only its known lower bound. All raw verdicts and costs remain in the batch file.
+
+The evaluator archive was incorrectly prepared from evaluation/ alone. Its sanitized command parser also requires the committed docs/reference/registrations.json.gz file. A controlled synthetic command event reproduced FileNotFoundError without a model call; restoring the exact c61ad62 registry blob made that event parse successfully. The absent dependency raised after the first provider run, before its usage could be returned. That discarded provider stream and temporary workspace cannot be recovered; null usage does not mean zero cost or zero calls.
+
+After stopping future starts, the exact registry blob was restored while the already-active second attempt ran, allowing its actual accounting to be retained. It made27 recorded API calls and28 command executions but remained nonverified with request_outside_fixture. The exact rejected request/payload is unavailable, so its outcome cannot be attributed to a product or fixture defect from that code alone. No paid diagnostic or replay was run.
+
+The process terminated after those two attempts.25 remaining Base slots and27 untouched Sheets slots were canceled before model launch; the later18 business slots also never started. These are not failed product trials. The preparation changed during the active second attempt, and the two starts are unbalanced across tasks and arms, so no token-per-success comparison or scaling curve is reported.
+
+A subsequent minimal correction validates the pinned trace vocabulary before any provider launch, both at batch preparation and at direct adapter entry.16 controlled runner tests passed, including an incomplete archive prepare-only case and proof that the provider process is never spawned when the dependency is missing. Fresh balanced trials use a separately pinned complete dependency manifest; product8d92e52, modelgpt-6-astra/high, task/input/native state semantics and budgets are unchanged.
