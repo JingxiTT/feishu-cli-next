@@ -1,0 +1,597 @@
+[
+  {
+    "command": [
+      "drive",
+      "quota_details",
+      "get"
+    ],
+    "method": "GET",
+    "path": "/open-apis/drive/v2/quota_details/fixture",
+    "params": {
+      "quota_detail_id": "fixture"
+    },
+    "body": {},
+    "query": {},
+    "risk": "read"
+  },
+  {
+    "command": [
+      "drive",
+      "files",
+      "copy"
+    ],
+    "method": "POST",
+    "path": "/open-apis/drive/v1/files/fixture/copy",
+    "params": {
+      "file_token": "fixture",
+      "user_id_type": "user_id"
+    },
+    "body": {
+      "name": "fixture",
+      "type": "file",
+      "folder_token": "fixture",
+      "extra": [
+        {
+          "key": "fixture",
+          "value": "fixture"
+        }
+      ]
+    },
+    "query": {
+      "user_id_type": "user_id"
+    },
+    "risk": "write"
+  },
+  {
+    "command": [
+      "drive",
+      "files",
+      "create_folder"
+    ],
+    "method": "POST",
+    "path": "/open-apis/drive/v1/files/create_folder",
+    "params": {},
+    "body": {
+      "name": "fixture",
+      "folder_token": "fixture"
+    },
+    "query": {},
+    "risk": "write"
+  },
+  {
+    "command": [
+      "drive",
+      "files",
+      "list"
+    ],
+    "method": "GET",
+    "path": "/open-apis/drive/v1/files",
+    "params": {
+      "order_by": "EditedTime",
+      "direction": "ASC",
+      "option": "fixture",
+      "user_id_type": "user_id",
+      "page_size": 1,
+      "page_token": "fixture",
+      "folder_token": "fixture"
+    },
+    "body": {},
+    "query": {
+      "order_by": "EditedTime",
+      "direction": "ASC",
+      "option": "fixture",
+      "user_id_type": "user_id",
+      "page_size": 1,
+      "page_token": "fixture",
+      "folder_token": "fixture"
+    },
+    "risk": "read"
+  },
+  {
+    "command": [
+      "drive",
+      "files",
+      "patch"
+    ],
+    "method": "PATCH",
+    "path": "/open-apis/drive/v1/files/fixture",
+    "params": {
+      "type": "doc",
+      "file_token": "fixture"
+    },
+    "body": {
+      "new_title": "fixture"
+    },
+    "query": {
+      "type": "doc"
+    },
+    "risk": "write"
+  },
+  {
+    "command": [
+      "drive",
+      "file.comment.replys",
+      "create"
+    ],
+    "method": "POST",
+    "path": "/open-apis/drive/v1/files/fixture/comments/fixture/replies",
+    "params": {
+      "comment_id": "fixture",
+      "file_type": "doc",
+      "user_id_type": "user_id",
+      "file_token": "fixture"
+    },
+    "body": {
+      "content": {
+        "elements": [
+          {
+            "type": "text_run",
+            "text_run": {},
+            "docs_link": {},
+            "person": {}
+          }
+        ]
+      },
+      "extra": "fixture"
+    },
+    "query": {
+      "file_type": "doc",
+      "user_id_type": "user_id"
+    },
+    "risk": "write"
+  },
+  {
+    "command": [
+      "drive",
+      "file.comment.replys",
+      "delete"
+    ],
+    "method": "DELETE",
+    "path": "/open-apis/drive/v1/files/fixture/comments/fixture/replies/fixture",
+    "params": {
+      "reply_id": "fixture",
+      "file_type": "doc",
+      "file_token": "fixture",
+      "comment_id": "fixture"
+    },
+    "body": {},
+    "query": {
+      "file_type": "doc"
+    },
+    "risk": "high-risk-write"
+  },
+  {
+    "command": [
+      "drive",
+      "file.comment.replys",
+      "list"
+    ],
+    "method": "GET",
+    "path": "/open-apis/drive/v1/files/fixture/comments/fixture/replies",
+    "params": {
+      "file_token": "fixture",
+      "comment_id": "fixture",
+      "page_size": 1,
+      "page_token": "fixture",
+      "file_type": "doc",
+      "need_reaction": false,
+      "user_id_type": "user_id"
+    },
+    "body": {},
+    "query": {
+      "page_size": 1,
+      "page_token": "fixture",
+      "file_type": "doc",
+      "need_reaction": false,
+      "user_id_type": "user_id"
+    },
+    "risk": "read"
+  },
+  {
+    "command": [
+      "drive",
+      "file.comment.replys",
+      "update"
+    ],
+    "method": "PUT",
+    "path": "/open-apis/drive/v1/files/fixture/comments/fixture/replies/fixture",
+    "params": {
+      "comment_id": "fixture",
+      "reply_id": "fixture",
+      "file_type": "doc",
+      "user_id_type": "user_id",
+      "file_token": "fixture"
+    },
+    "body": {
+      "content": {
+        "elements": [
+          {
+            "type": "text_run",
+            "text_run": {},
+            "docs_link": {},
+            "person": {}
+          }
+        ]
+      }
+    },
+    "query": {
+      "file_type": "doc",
+      "user_id_type": "user_id"
+    },
+    "risk": "write"
+  },
+  {
+    "command": [
+      "drive",
+      "metas",
+      "batch_query"
+    ],
+    "method": "POST",
+    "path": "/open-apis/drive/v1/metas/batch_query",
+    "params": {
+      "user_id_type": "user_id"
+    },
+    "body": {
+      "request_docs": [
+        {
+          "doc_token": "fixture",
+          "doc_type": "doc"
+        }
+      ],
+      "with_url": false
+    },
+    "query": {
+      "user_id_type": "user_id"
+    },
+    "risk": "read"
+  },
+  {
+    "command": [
+      "drive",
+      "file.statistics",
+      "get"
+    ],
+    "method": "GET",
+    "path": "/open-apis/drive/v1/files/fixture/statistics",
+    "params": {
+      "file_token": "fixture",
+      "file_type": "doc"
+    },
+    "body": {},
+    "query": {
+      "file_type": "doc"
+    },
+    "risk": "read"
+  },
+  {
+    "command": [
+      "drive",
+      "file.view_records",
+      "list"
+    ],
+    "method": "GET",
+    "path": "/open-apis/drive/v1/files/fixture/view_records",
+    "params": {
+      "file_token": "fixture",
+      "page_size": 1,
+      "page_token": "fixture",
+      "file_type": "doc",
+      "viewer_id_type": "user_id"
+    },
+    "body": {},
+    "query": {
+      "page_size": 1,
+      "page_token": "fixture",
+      "file_type": "doc",
+      "viewer_id_type": "user_id"
+    },
+    "risk": "read"
+  },
+  {
+    "command": [
+      "drive",
+      "file.comments",
+      "patch"
+    ],
+    "method": "PATCH",
+    "path": "/open-apis/drive/v1/files/fixture/comments/fixture",
+    "params": {
+      "file_token": "fixture",
+      "comment_id": "fixture",
+      "file_type": "doc"
+    },
+    "body": {
+      "is_solved": false
+    },
+    "query": {
+      "file_type": "doc"
+    },
+    "risk": "write"
+  },
+  {
+    "command": [
+      "drive",
+      "file.comments",
+      "batch_query"
+    ],
+    "method": "POST",
+    "path": "/open-apis/drive/v1/files/fixture/comments/batch_query",
+    "params": {
+      "file_token": "fixture",
+      "file_type": "doc",
+      "user_id_type": "user_id"
+    },
+    "body": {
+      "comment_ids": [
+        "fixture"
+      ],
+      "need_reaction": false,
+      "need_relation": false
+    },
+    "query": {
+      "file_type": "doc",
+      "user_id_type": "user_id"
+    },
+    "risk": "read"
+  },
+  {
+    "command": [
+      "drive",
+      "file.comments",
+      "create_v2"
+    ],
+    "method": "POST",
+    "path": "/open-apis/drive/v1/files/fixture/new_comments",
+    "params": {
+      "file_token": "fixture"
+    },
+    "body": {
+      "file_type": "docx",
+      "anchor": {
+        "slide_block_type": "fixture",
+        "base_record_id": "fixture",
+        "base_view_id": "fixture",
+        "file_page_num": "fixture",
+        "file_extra": "fixture",
+        "parent_file_token": "fixture",
+        "parent_file_type": "fixture",
+        "sheet_col": 1,
+        "content_anchor_id": "fixture",
+        "block_id": "fixture",
+        "sheet_row": 1
+      },
+      "reply_elements": [
+        {
+          "link": "fixture",
+          "type": "docx",
+          "text": "fixture",
+          "mention_user": "fixture"
+        }
+      ],
+      "extra": "fixture"
+    },
+    "query": {},
+    "risk": "write"
+  },
+  {
+    "command": [
+      "drive",
+      "file.comments",
+      "list"
+    ],
+    "method": "GET",
+    "path": "/open-apis/drive/v1/files/fixture/comments",
+    "params": {
+      "file_token": "fixture",
+      "is_whole": false,
+      "page_token": "fixture",
+      "file_type": "doc",
+      "is_solved": false,
+      "page_size": 1,
+      "user_id_type": "user_id",
+      "need_reaction": false,
+      "need_relation": false
+    },
+    "body": {},
+    "query": {
+      "is_whole": false,
+      "page_token": "fixture",
+      "file_type": "doc",
+      "is_solved": false,
+      "page_size": 1,
+      "user_id_type": "user_id",
+      "need_reaction": false,
+      "need_relation": false
+    },
+    "risk": "read"
+  },
+  {
+    "command": [
+      "drive",
+      "permission.members",
+      "auth"
+    ],
+    "method": "GET",
+    "path": "/open-apis/drive/v1/permissions/fixture/members/auth",
+    "params": {
+      "token": "fixture",
+      "type": "doc",
+      "action": "view"
+    },
+    "body": {},
+    "query": {
+      "type": "doc",
+      "action": "view"
+    },
+    "risk": "read"
+  },
+  {
+    "command": [
+      "drive",
+      "permission.members",
+      "create"
+    ],
+    "method": "POST",
+    "path": "/open-apis/drive/v1/permissions/fixture/members",
+    "params": {
+      "token": "fixture",
+      "type": "doc",
+      "need_notification": false
+    },
+    "body": {
+      "member_type": "email",
+      "member_id": "fixture",
+      "perm": "view",
+      "perm_type": "container",
+      "type": "user"
+    },
+    "query": {
+      "type": "doc",
+      "need_notification": false
+    },
+    "risk": "high-risk-write"
+  },
+  {
+    "command": [
+      "drive",
+      "permission.members",
+      "transfer_owner"
+    ],
+    "method": "POST",
+    "path": "/open-apis/drive/v1/permissions/fixture/members/transfer_owner",
+    "params": {
+      "stay_put": false,
+      "old_owner_perm": "fixture",
+      "token": "fixture",
+      "type": "doc",
+      "need_notification": false,
+      "remove_old_owner": false
+    },
+    "body": {
+      "member_type": "email",
+      "member_id": "fixture"
+    },
+    "query": {
+      "stay_put": false,
+      "old_owner_perm": "fixture",
+      "type": "doc",
+      "need_notification": false,
+      "remove_old_owner": false
+    },
+    "risk": "high-risk-write"
+  },
+  {
+    "command": [
+      "drive",
+      "permission.public",
+      "get"
+    ],
+    "method": "GET",
+    "path": "/open-apis/drive/v1/permissions/fixture/public",
+    "params": {
+      "token": "fixture",
+      "type": "doc"
+    },
+    "body": {},
+    "query": {
+      "type": "doc"
+    },
+    "risk": "read"
+  },
+  {
+    "command": [
+      "drive",
+      "permission.public",
+      "patch"
+    ],
+    "method": "PATCH",
+    "path": "/open-apis/drive/v1/permissions/fixture/public",
+    "params": {
+      "token": "fixture",
+      "type": "doc"
+    },
+    "body": {
+      "comment_entity": "anyone_can_view",
+      "share_entity": "anyone",
+      "link_share_entity": "tenant_readable",
+      "invite_external": false,
+      "external_access": false,
+      "security_entity": "anyone_can_view"
+    },
+    "query": {
+      "type": "doc"
+    },
+    "risk": "high-risk-write"
+  },
+  {
+    "command": [
+      "drive",
+      "user",
+      "remove_subscription"
+    ],
+    "method": "DELETE",
+    "path": "/open-apis/drive/v1/user/remove_subscription",
+    "params": {
+      "event_type": "drive.notice.comment_add_v1"
+    },
+    "body": {},
+    "query": {
+      "event_type": "drive.notice.comment_add_v1"
+    },
+    "risk": "write"
+  },
+  {
+    "command": [
+      "drive",
+      "user",
+      "subscription"
+    ],
+    "method": "POST",
+    "path": "/open-apis/drive/v1/user/subscription",
+    "params": {},
+    "body": {
+      "event_type": "drive.notice.comment_add_v1"
+    },
+    "query": {},
+    "risk": "write"
+  },
+  {
+    "command": [
+      "drive",
+      "user",
+      "subscription_status"
+    ],
+    "method": "GET",
+    "path": "/open-apis/drive/v1/user/subscription_status",
+    "params": {
+      "event_type": "drive.notice.comment_add_v1"
+    },
+    "body": {},
+    "query": {
+      "event_type": "drive.notice.comment_add_v1"
+    },
+    "risk": "read"
+  },
+  {
+    "command": [
+      "drive",
+      "file.comment.reply.reactions",
+      "update_reaction"
+    ],
+    "method": "POST",
+    "path": "/open-apis/drive/v2/files/fixture/comments/reaction",
+    "params": {
+      "file_token": "fixture",
+      "file_type": "docx"
+    },
+    "body": {
+      "action": "add",
+      "reply_id": "fixture",
+      "reaction_type": "fixture"
+    },
+    "query": {
+      "file_type": "docx"
+    },
+    "risk": "write"
+  }
+]
