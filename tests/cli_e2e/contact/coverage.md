@@ -19,3 +19,14 @@
 | ✓ | contact +get-user | shortcut | contact_lookup_workflow_test.go::TestContact_LookupWorkflowAsUser/get self as user; contact_lookup_workflow_test.go::TestContact_LookupWorkflowAsUser/get self by open id as user; contact_lookup_workflow_test.go::TestContact_LookupWorkflowAsBot/get user by open id as bot | self lookup; `--user-id <open_id>` | |
 | ✓ | contact +search-bot | shortcut | contact_search_bot_workflow_test.go::TestContactSearchBotWorkflowAsUser; contact_search_bot_workflow_test.go::TestContactSearchBotRejectsFilterOnlyAsUser | `--query <keyword>`; `--has-chatted` alone (rejected); `--format json`; user identity | tenant-independent: no minimum row count asserted |
 | ✕ | contact +search-user | shortcut |  | none | UAT did not reliably return the current user for self-derived queries, so stable write-after-read style proof is not available |
+
+## Next distribution evidence
+
+The metrics above describe inherited live workflows only. The complete frozen
+next mapping has four executable leaves, adding the generated
+`contact user_profiles batch_query` read. The isolated real-process suite in
+`tests/next_sections/contact` verifies all four leaves, with its exact mapping,
+options, assertions and limitations in `docs/sections/contact.md`.
+`TestContactNextLiveCurrentAccountReads` is a separately selectable account/tenant
+bound read-only live workflow. It has not been run and does not increase live
+coverage. No offline or skipped result should be counted as live verification.
