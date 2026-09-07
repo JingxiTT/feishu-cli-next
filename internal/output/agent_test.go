@@ -561,3 +561,81 @@ func TestAgentScalarResultsRemainUnprojected(t *testing.T) {
 		}
 	}
 }
+
+func TestNativeJSONHTMLEscapeControlPreservesLegacyShapes(t *testing.T) {
+	t.Setenv("LARKSUITE_CLI_CONTENT_SAFETY_MODE", "off")
+	data := map[string]interface{}{"document_id": "doc_fixture", "content": "<document>你好 & 😀\n</document>", "number": json.Number("900719925474099312345")}
+	for _, jq := range []string{"", ".data"} {
+		var legacy, native bytes.Buffer
+		if err := output.NewEmitter(output.EmitterConfig{Out: &legacy}).Success(data, output.EmitOptions{Raw: true, JQ: jq}); err != nil {
+			t.Fatal(err)
+		}
+		if err := output.NewEmitter(output.EmitterConfig{Out: &native}).Success(data, output.EmitOptions{DisableHTMLEscape: true, JQ: jq}); err != nil {
+			t.Fatal(err)
+		}
+		if !bytes.Equal(legacy.Bytes(), native.Bytes()) {
+			t.Fatalf("native encoding changed legacy shape: %s != %s", native.String(), legacy.String())
+		}
+	}
+}
+
+func TestNativeJSONSupportsProjectionWithoutChangingXMLOrNumbers(t *testing.T) {
+	t.Setenv("LARKSUITE_CLI_CONTENT_SAFETY_MODE", "off")
+	for _, fields := range []string{"", "content,number"} {
+		opts := &output.AgentOptions{Fields: fields}
+		var stdout bytes.Buffer
+		emitter := output.NewEmitter(output.EmitterConfig{Out: output.WithAgentOptions(&stdout, opts)})
+		data := map[string]interface{}{"document_id": "doc_fixture", "content": "<document>你好 & 😀\n</document>", "number": json.Number("900719925474099312345"), "unused": "drop"}
+		if err := emitter.Success(data, output.EmitOptions{DisableHTMLEscape: true, Format: "json"}); err != nil {
+			t.Fatal(err)
+		}
+		if err := opts.Finish(); err != nil {
+			t.Fatal(err)
+		}
+		if strings.Count(stdout.String(), "\n") != 1 || !strings.Contains(stdout.String(), "<document>你好 & 😀") || !strings.Contains(stdout.String(), "900719925474099312345") {
+			t.Fatalf("native structured output changed: %s", stdout.String())
+		}
+		if fields != "" && strings.Contains(stdout.String(), "unused") {
+			t.Fatalf("native projection ignored: %s", stdout.String())
+		}
+	}
+}
+
+func TestNativeJSONArtifactPreservesFullRichContent(t *testing.T) {
+	t.Setenv("LARKSUITE_CLI_CONTENT_SAFETY_MODE", "off")
+	opts := artifactOptions(t)
+	opts.Fields = "document_id"
+	var stdout bytes.Buffer
+	emitter := output.NewEmitter(output.EmitterConfig{Out: output.WithAgentOptions(&stdout, opts)})
+	xml := "<document><paragraph>你好 &amp; 😀</paragraph>\n<table><cell/></table></document>"
+	data := map[string]interface{}{"document_id": "doc_fixture", "content": xml, "number": json.Number("900719925474099312345")}
+	if err := emitter.Success(data, output.EmitOptions{DisableHTMLEscape: true, Format: "json"}); err != nil {
+		t.Fatal(err)
+	}
+	if err := opts.Finish(); err != nil {
+		t.Fatal(err)
+	}
+	if strings.Count(stdout.String(), "\n") != 1 || strings.Contains(stdout.String(), "paragraph") || !strings.Contains(stdout.String(), `"artifact"`) {
+		t.Fatalf("native artifact not a compact reference: %s", stdout.String())
+	}
+	saved, err := os.ReadFile(opts.SaveResult)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var artifact output.ResultArtifact
+	if err := json.Unmarshal(saved, &artifact); err != nil {
+		t.Fatal(err)
+	}
+	var envelope struct {
+		Data struct {
+			Content string      `json:"content"`
+			Number  json.Number `json:"number"`
+		} `json:"data"`
+	}
+	if err := json.Unmarshal(artifact.Result, &envelope); err != nil {
+		t.Fatal(err)
+	}
+	if envelope.Data.Content != xml || envelope.Data.Number.String() != "900719925474099312345" {
+		t.Fatalf("full rich content changed: %s", artifact.Result)
+	}
+}

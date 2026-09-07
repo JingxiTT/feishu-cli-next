@@ -110,7 +110,7 @@ func validField(s string) bool {
 
 // RawMessage avoids a float64 round trip: arbitrary JSON numbers, explicit
 // nulls, empty values, and Unicode remain semantically unchanged.
-func renderAgentJSON(w io.Writer, data interface{}, opts *AgentOptions) error {
+func renderAgentJSON(w io.Writer, data interface{}, opts *AgentOptions, escapeHTML bool) error {
 	encoded, err := json.Marshal(data)
 	if err != nil {
 		return &outputMarshalError{err: err}
@@ -130,6 +130,22 @@ func renderAgentJSON(w io.Writer, data interface{}, opts *AgentOptions) error {
 	}
 	if err != nil {
 		return err
+	}
+	if !escapeHTML {
+		// Decode only the final representation to restore literal XML/HTML
+		// characters after projections. UseNumber preserves decimal precision.
+		var value interface{}
+		dec := json.NewDecoder(bytes.NewReader(encoded))
+		dec.UseNumber()
+		if err := dec.Decode(&value); err != nil {
+			return &outputMarshalError{err: err}
+		}
+		enc := json.NewEncoder(agentDestination(w))
+		enc.SetEscapeHTML(false)
+		if opts.Detail {
+			enc.SetIndent("", "  ")
+		}
+		return enc.Encode(value)
 	}
 	if opts.Detail {
 		var value json.RawMessage = encoded

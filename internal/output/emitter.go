@@ -44,13 +44,16 @@ type EmitterConfig struct {
 // JQSafetyWarning preserves the legacy difference between RuntimeContext.emit
 // (false) and WriteSuccessEnvelope (true) until their callers are migrated.
 type EmitOptions struct {
-	Raw             bool
-	Meta            *Meta
-	Format          string
-	JQ              string
-	DryRun          bool
-	Pretty          PrettyRenderer
-	JQSafetyWarning bool
+	Raw bool
+	// DisableHTMLEscape keeps native structured XML/HTML readable while still
+	// supporting agent result controls. It is not an explicit raw output mode.
+	DisableHTMLEscape bool
+	Meta              *Meta
+	Format            string
+	JQ                string
+	DryRun            bool
+	Pretty            PrettyRenderer
+	JQSafetyWarning   bool
 }
 
 // StreamOptions describes one streamed page's wire representation. Streaming
@@ -242,7 +245,7 @@ func (e *Emitter) emitEnvelope(data interface{}, ok bool, opts EmitOptions) erro
 		// an internal output error.
 		var buf bytes.Buffer
 		var jqErr error
-		if opts.Raw {
+		if opts.Raw || opts.DisableHTMLEscape {
 			jqErr = JqFilterRaw(&buf, renderedEnv, opts.JQ)
 		} else {
 			jqErr = JqFilter(&buf, renderedEnv, opts.JQ)
@@ -263,7 +266,7 @@ func (e *Emitter) emitEnvelope(data interface{}, ok bool, opts EmitOptions) erro
 			enc.SetIndent("", "  ")
 			return enc.Encode(renderedEnv)
 		}
-		return WriteJSON(w, env)
+		return writeJSON(w, env, !opts.DisableHTMLEscape)
 	})
 }
 

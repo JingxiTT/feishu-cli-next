@@ -48,13 +48,23 @@ func legacyStderrf(format string, args ...interface{}) {
 
 // WriteJSON writes data as formatted JSON to w and returns marshal or write errors.
 func WriteJSON(w io.Writer, data interface{}) error {
+	return writeJSON(w, data, true)
+}
+
+func writeJSON(w io.Writer, data interface{}, escapeHTML bool) error {
 	if opts := agentOptions(w); opts != nil {
-		err := renderAgentJSON(w, data, opts)
+		err := renderAgentJSON(w, data, opts, escapeHTML)
 		opts.recordError(err)
 		if err == nil {
 			opts.structuredWrites++
 		}
 		return err
+	}
+	if !escapeHTML {
+		enc := json.NewEncoder(w)
+		enc.SetEscapeHTML(false)
+		enc.SetIndent("", "  ")
+		return enc.Encode(data)
 	}
 	b, err := json.MarshalIndent(data, "", "  ")
 	if err != nil {

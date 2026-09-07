@@ -32,6 +32,11 @@ by an upstream decoder cannot be recovered here.
 Projection and result artifacts require non-streaming JSON without `--raw` or
 `--jq`. Explicit CSV, NDJSON, table and pretty renderers retain their contracts.
 Default agent formatting does not intercept arbitrary raw, jq or stream bytes.
+Native structured XML/HTML renderers (`OutRaw`/`OutFormatRaw`) use an internal
+`DisableHTMLEscape` encoding option, distinct from explicit raw mode. Their JSON
+supports result controls, keeps inline XML/HTML unescaped, and preserves full
+string values in artifacts. This does not permit user `--raw` combinations or
+raw API artifact saves.
 The command validates flag compatibility before execution. The emitter checks
 again for embedded callers. `AgentOptions.Finish()` catches ignored legacy output
 errors and commands that do not produce a structured result; arbitrary text

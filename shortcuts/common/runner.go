@@ -812,10 +812,10 @@ func (ctx *RuntimeContext) Out(data interface{}, meta *output.Meta) {
 // that should be preserved as-is in JSON output.
 func (ctx *RuntimeContext) OutRaw(data interface{}, meta *output.Meta) {
 	ctx.handleEmitterError(ctx.newEmitter().Success(data, output.EmitOptions{
-		Format: "",
-		Raw:    true,
-		JQ:     ctx.JqExpr,
-		Meta:   meta,
+		Format:            "",
+		DisableHTMLEscape: true,
+		JQ:                ctx.JqExpr,
+		Meta:              meta,
 	}))
 }
 
@@ -860,11 +860,11 @@ func (ctx *RuntimeContext) OutFormat(data interface{}, meta *output.Meta, pretty
 // Use this when the data contains XML/HTML content that should be preserved as-is.
 func (ctx *RuntimeContext) OutFormatRaw(data interface{}, meta *output.Meta, prettyFn func(w io.Writer)) {
 	ctx.handleEmitterError(ctx.newEmitter().Success(data, output.EmitOptions{
-		Format: ctx.Format,
-		Raw:    true,
-		JQ:     ctx.JqExpr,
-		Meta:   meta,
-		Pretty: wrapLegacyPrettyRenderer(prettyFn),
+		Format:            ctx.Format,
+		DisableHTMLEscape: true,
+		JQ:                ctx.JqExpr,
+		Meta:              meta,
+		Pretty:            wrapLegacyPrettyRenderer(prettyFn),
 	}))
 }
 
