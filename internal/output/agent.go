@@ -208,7 +208,7 @@ func projectValue(raw json.RawMessage, fields fieldSelection) (json.RawMessage, 
 
 func collectionField(key string) bool {
 	switch key {
-	case "items", "records", "rows", "files":
+	case "items", "records", "rows", "files", "messages":
 		return true
 	}
 	return false
@@ -219,7 +219,7 @@ func protectedField(key string) bool {
 		return true
 	}
 	switch key {
-	case "id", "guid", "token", "url", "identity", "resource", "binding", "ok", "status", "state", "outcome", "type", "unsupported", "unsupported_types", "error", "errors", "warning", "warnings", "missing_scopes", "summary", "meta", "pagination", "has_more", "complete", "completeness", "partial", "truncated", "unknown", "count", "total", "receipt", "recovery", "artifact", "_notice", "_content_safety_alert":
+	case "id", "guid", "token", "url", "identity", "resource", "binding", "ok", "status", "state", "outcome", "type", "unsupported", "unsupported_types", "error", "errors", "warning", "warnings", "missing_scopes", "summary", "meta", "pagination", "has_more", "complete", "completeness", "partial", "truncated", "unknown", "count", "total", "receipt", "recovery", "artifact", "notice", "_notice", "_content_safety_alert":
 		return true
 	}
 	return false

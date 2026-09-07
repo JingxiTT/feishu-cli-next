@@ -141,3 +141,64 @@ func TestOutputArtifactRejectsMutationBeforeRequest(t *testing.T) {
 		t.Fatalf("artifact mutation guard: %+v, requests=%d", result, requests.Load())
 	}
 }
+
+func TestOutputArtifactRejectsCredentialPayload(t *testing.T) {
+	f := NewFixture(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = fmt.Fprint(w, `{"code":0,"data":{"info":{"api_key":"synthetic-secret"}}}`)
+	}))
+	path := filepath.Join(f.WorkDir, "credential-result.json")
+	result := runOutputRead(f, "--save-result", path)
+	if result.ExitCode != 2 || result.Stdout != "" || !strings.Contains(result.Stderr, "credential-bearing") {
+		t.Fatalf("credential artifact: %+v", result)
+	}
+	if _, err := os.Stat(path); !os.IsNotExist(err) {
+		t.Fatalf("credential file created: %v", err)
+	}
+}
+
+func TestOutputArtifactBareMailPagination(t *testing.T) {
+	f := NewFixture(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		switch {
+		case r.Method == "GET" && strings.HasSuffix(r.URL.Path, "/messages"):
+			_, _ = fmt.Fprint(w, `{"code":0,"data":{"items":["message_fixture"],"has_more":true,"page_token":"next_fixture"}}`)
+		case r.Method == "POST" && strings.HasSuffix(r.URL.Path, "/messages/batch_get"):
+			_, _ = fmt.Fprint(w, `{"code":0,"data":{"messages":[{"message_id":"message_fixture","subject":"synthetic mail subject"}]}}`)
+		default:
+			t.Errorf("unexpected bare mail request: %s %s", r.Method, r.URL.Path)
+		}
+	}))
+	path := filepath.Join(f.WorkDir, "mail-result.json")
+	result := f.Run("mail", "+triage", "--as", "bot", "--mailbox", "fixture@example.invalid", "--format", "json", "--max", "1", "--save-result", path)
+	if result.ExitCode != 0 {
+		t.Fatalf("bare mail artifact: %+v", result)
+	}
+	var response map[string]json.RawMessage
+	if err := json.Unmarshal([]byte(result.Stdout), &response); err != nil {
+		t.Fatal(err)
+	}
+	if _, exists := response["ok"]; exists {
+		t.Fatalf("invented ok: %s", result.Stdout)
+	}
+	if string(response["mailbox_id"]) != `"fixture@example.invalid"` || string(response["has_more"]) != "true" || string(response["count"]) != "1" || len(response["page_token"]) < 3 {
+		t.Fatalf("lost native pagination: %s", result.Stdout)
+	}
+	if _, exists := response["messages"]; exists {
+		t.Fatalf("record content not handed to file: %s", result.Stdout)
+	}
+	var ref output.ArtifactReference
+	if err := json.Unmarshal(response["artifact"], &ref); err != nil {
+		t.Fatal(err)
+	}
+	if ref.Count == nil || *ref.Count != 1 || ref.Complete == nil || *ref.Complete {
+		t.Fatalf("bare artifact extent: %+v", ref)
+	}
+	saved, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(string(saved), "synthetic mail subject") {
+		t.Fatalf("mail record lost: %s", saved)
+	}
+}

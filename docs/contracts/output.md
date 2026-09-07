@@ -13,7 +13,7 @@ with `--result-fields`. Existing domain flags named `--fields` and `--detail`
 keep their original semantics.
 
 `--result-fields title,owner.name` selects business data fields. Selection applies
-to `data`, or to each item in an array or an `items`, `records`, `rows`, or `files`
+to `data`, or to each item in an array or an `items`, `records`, `rows`, `files`, or `messages`
 collection. Dotted paths preserve nested structure; arrays need no `[]` syntax.
 Names may contain letters, digits, `_`, or `-`; wildcard, jq, and bracket syntax
 are rejected before execution. Missing fields are omitted, not manufactured as
@@ -50,7 +50,10 @@ the receipt/command layer. Read-only output has no mutation field.
 JSON result regardless of `--result-fields`. Authentication/lifecycle results and
 mutations cannot use it. This avoids confusing a remote mutation with failure to
 save its local output. Known authentication credential fields in result data are
-also rejected; resource and pagination tokens remain supported.
+also rejected, including API keys, PATs, passwords, credential containers and
+Git credentials. Field matching is case-insensitive. Resource and pagination
+tokens remain supported. Generic raw API calls cannot save result artifacts
+because their response sensitivity is unknown; their raw stdout stays available.
 
 The invocation's `FileIO` provider must implement `fileio.ExclusiveFileIO`.
 Preflight validates the path and refuses an existing destination. Commit is
@@ -73,7 +76,11 @@ Completeness comes from explicit pagination metadata, `has_more`, or `complete`;
 serializing a response to EOF never implies completeness. Continuations stay
 available in result metadata or retained data fields and in the full artifact.
 Failed/partial/unknown results keep their full decision-critical data on stdout
-as well, even when this makes the reference response longer.
+as well, even when this makes the reference response longer. Bare object results
+retain their native top-level metadata and never acquire a fabricated `ok:true`.
+For a safe bare result only recognized collections are removed from stdout;
+unknown fields remain visible. Mail `messages` collections contribute their
+observed count, and mailbox identity, continuation and notices remain intact.
 
 Binding records environment, app ID, effective identity, optional profile and
 resolved user ID. User identity requires a user ID. Binding contains no token or

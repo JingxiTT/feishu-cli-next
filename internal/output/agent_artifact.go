@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"errors"
 	"io/fs"
+	"strings"
 
 	"github.com/larksuite/cli/errs"
 	"github.com/larksuite/cli/extension/fileio"
@@ -115,12 +116,23 @@ func (o *AgentOptions) saveArtifact(result json.RawMessage) (json.RawMessage, er
 	if json.Unmarshal(result, &response) != nil || response == nil {
 		response = map[string]json.RawMessage{}
 	}
-	if _, envelope := response["ok"]; !envelope {
-		response = map[string]json.RawMessage{"ok": json.RawMessage("true")}
+	_, envelope := response["ok"]
+	// Bare command results keep their native metadata and outcome. Only known
+	// collections may be omitted from an otherwise safe result; never manufacture
+	// ok:true merely because serializing the result succeeded.
+	unsafe := unsafeProjection(result)
+	if !envelope && !unsafe {
+		for key := range response {
+			if collectionField(key) {
+				delete(response, key)
+			}
+		}
+	} else if !envelope && unsafe && len(response) == 0 {
+		response["data"] = result
 	}
 	// An incomplete/failed/unknown result keeps its decision-critical payload on
 	// stdout as well as in the artifact. Never let saving turn failure into success.
-	if !unsafeProjection(result) {
+	if envelope && !unsafe {
 		var data map[string]json.RawMessage
 		_ = json.Unmarshal(response["data"], &data)
 		summary := map[string]json.RawMessage{}
@@ -178,11 +190,16 @@ func artifactExtent(result json.RawMessage) (*int, *bool) {
 		Records  []json.RawMessage `json:"records"`
 		Rows     []json.RawMessage `json:"rows"`
 		Files    []json.RawMessage `json:"files"`
+		Messages []json.RawMessage `json:"messages"`
+		Count    *int              `json:"count"`
 		HasMore  *bool             `json:"has_more"`
 		Complete *bool             `json:"complete"`
 	}
 	_ = json.Unmarshal(data, &page)
-	for _, records := range [][]json.RawMessage{page.Items, page.Records, page.Rows, page.Files} {
+	if page.Count != nil {
+		count = page.Count
+	}
+	for _, records := range [][]json.RawMessage{page.Items, page.Records, page.Rows, page.Files, page.Messages} {
 		if records != nil {
 			n := len(records)
 			count = &n
@@ -202,9 +219,19 @@ func artifactExtent(result json.RawMessage) (*int, *bool) {
 func containsCredentialField(raw json.RawMessage) bool {
 	var object map[string]json.RawMessage
 	if json.Unmarshal(raw, &object) == nil && object != nil {
+		gitCredential := false
+		for key := range object {
+			switch strings.ToLower(key) {
+			case "giturl", "git_url", "git_http_url", "repository_url":
+				gitCredential = true
+			}
+		}
 		for key, value := range object {
-			switch key {
-			case "access_token", "refresh_token", "tenant_access_token", "app_access_token", "app_secret", "client_secret", "authorization", "private_key":
+			if gitCredential && strings.EqualFold(key, "token") && string(value) != "null" && string(value) != `""` {
+				return true
+			}
+			switch strings.ToLower(key) {
+			case "access_token", "refresh_token", "tenant_access_token", "app_access_token", "user_access_token", "user_refresh_token", "app_secret", "client_secret", "authorization", "private_key", "api_key", "apikey", "api_secret", "secret_key", "secret", "pat", "password", "passwd", "session_key", "session_token", "credential", "credentials", "git_credential", "git_info", "gitinfo":
 				if string(value) != "null" && string(value) != `""` {
 					return true
 				}

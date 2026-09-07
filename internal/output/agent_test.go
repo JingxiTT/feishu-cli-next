@@ -392,3 +392,114 @@ func TestAgentMutationRawAndJQRemainHonest(t *testing.T) {
 		}
 	}
 }
+
+func TestAgentArtifactRejectsAPICredentialsBeforeCreatingFile(t *testing.T) {
+	for _, payload := range []string{
+		`{"info":{"api_key":"synthetic-api-key"}}`,
+		`{"info":{"API_KEY":"synthetic-api-key"}}`,
+		`{"items":[{"pat":"synthetic-pat"}]}`,
+		`{"password":"synthetic-password"}`,
+		`{"GitURL":"https://example.invalid/repo","Token":"synthetic-token"}`,
+		`{"git_info":{"token":"synthetic-token"}}`,
+		`{"credential":{"token":"synthetic-token"}}`,
+		`{"private_key":"synthetic-key"}`,
+	} {
+		opts := artifactOptions(t)
+		var stdout bytes.Buffer
+		err := output.WriteJSON(output.WithAgentOptions(&stdout, opts), json.RawMessage(payload))
+		var validation *errs.ValidationError
+		if !errors.As(err, &validation) || validation.Param != "--save-result" || stdout.Len() != 0 {
+			t.Fatalf("credential refusal: %v, stdout=%s", err, stdout.String())
+		}
+		if _, err := os.Stat(opts.SaveResult); !errors.Is(err, fs.ErrNotExist) {
+			t.Fatalf("credential artifact created: %v", err)
+		}
+	}
+}
+
+func TestAgentArtifactBarePaginationPreservesMetadata(t *testing.T) {
+	opts := artifactOptions(t)
+	raw := json.RawMessage(`{"messages":[{"message_id":"001","subject":"large content"}],"mailbox_id":"mailbox_fixture","count":1,"has_more":true,"page_token":"next","notice":"results may change","future_metadata":{"version":2}}`)
+	var stdout bytes.Buffer
+	if err := output.WriteJSON(output.WithAgentOptions(&stdout, opts), raw); err != nil {
+		t.Fatal(err)
+	}
+	var response map[string]json.RawMessage
+	if err := json.Unmarshal(stdout.Bytes(), &response); err != nil {
+		t.Fatal(err)
+	}
+	if _, exists := response["ok"]; exists {
+		t.Fatalf("invented envelope: %s", stdout.String())
+	}
+	if _, exists := response["messages"]; exists {
+		t.Fatalf("copied collection to stdout: %s", stdout.String())
+	}
+	for _, key := range []string{"mailbox_id", "count", "has_more", "page_token", "notice", "future_metadata"} {
+		var original map[string]json.RawMessage
+		_ = json.Unmarshal(raw, &original)
+		if !bytes.Equal(response[key], original[key]) {
+			t.Fatalf("lost %s: %s", key, stdout.String())
+		}
+	}
+	var ref output.ArtifactReference
+	if err := json.Unmarshal(response["artifact"], &ref); err != nil {
+		t.Fatal(err)
+	}
+	if ref.Count == nil || *ref.Count != 1 || ref.Complete == nil || *ref.Complete {
+		t.Fatalf("bare extent: %+v", ref)
+	}
+	saved, err := os.ReadFile(opts.SaveResult)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var artifact output.ResultArtifact
+	if err := json.Unmarshal(saved, &artifact); err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(artifact.Result, raw) {
+		t.Fatalf("changed original: %s", saved)
+	}
+}
+
+func TestAgentArtifactBareUnsafeOutcomeNeverInventsSuccess(t *testing.T) {
+	for _, raw := range []json.RawMessage{
+		json.RawMessage(`{"messages":[{"id":"1","outcome":"unknown"}],"partial":true,"page_token":"next"}`),
+		json.RawMessage(`{"error":{"type":"api","message":"synthetic failure"},"mailbox_id":"1"}`),
+		json.RawMessage(`{"status":"unknown","messages":[{"id":"1"}]}`),
+		json.RawMessage(`[{"id":"1","outcome":"unknown"}]`),
+	} {
+		opts := artifactOptions(t)
+		var stdout bytes.Buffer
+		if err := output.WriteJSON(output.WithAgentOptions(&stdout, opts), raw); err != nil {
+			t.Fatal(err)
+		}
+		var response map[string]json.RawMessage
+		if err := json.Unmarshal(stdout.Bytes(), &response); err != nil {
+			t.Fatal(err)
+		}
+		if _, exists := response["ok"]; exists {
+			t.Fatalf("invented success: %s", stdout.String())
+		}
+		var original map[string]json.RawMessage
+		if json.Unmarshal(raw, &original) == nil {
+			for key, value := range original {
+				if !bytes.Equal(response[key], value) {
+					t.Fatalf("lost %s: %s", key, stdout.String())
+				}
+			}
+		} else if !bytes.Equal(response["data"], raw) {
+			t.Fatalf("lost unsafe records: %s", stdout.String())
+		}
+	}
+}
+
+func TestAgentArtifactResourceTokensRemainSupported(t *testing.T) {
+	opts := artifactOptions(t)
+	raw := json.RawMessage(`{"files":[{"token":"resource_id","document_token":"document_id"}],"page_token":"next"}`)
+	if err := output.WriteJSON(output.WithAgentOptions(io.Discard, opts), raw); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := os.Stat(opts.SaveResult); err != nil {
+		t.Fatalf("resource token artifact missing: %v", err)
+	}
+}
