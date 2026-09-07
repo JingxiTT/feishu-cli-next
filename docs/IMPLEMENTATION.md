@@ -83,6 +83,16 @@ passed 9/9 after a demonstrated fixture gap was fixed; historical failures and
 diagnostic costs remain separate. The guide clarification in `43bdff2` has no
 measured improvement claim. Remaining development comparisons and controlled
 100/1,000/10,000-row scaling experiments use separately frozen candidates.
+The [Calendar, Mail and OKR comparison](../evaluation/evidence/read-8d92e5/REPORT.md)
+at `8d92e52` completed 27/27 successful trials and 3,647,948 provider tokens.
+Each task has three fresh trials per arm; Next used fewer tokens per success
+than both baselines on these workloads. Independent recount verifies the
+balanced counts, input-plus-output totals, cached-input accounting and API sums.
+This small development sample does not establish a full-product improvement.
+The following scenario queue stopped on a provider-rejected Base answer schema,
+before any Base CLI calls. Its nine starts retain unknown usage; the one completed
+Docs trial and its cost remain separately recorded in the
+[stopped-series report](../evaluation/evidence/scenarios-8d92e5/REPORT.md).
 Held-out trials have not run. A coordinator search exposed fragments of the Base
 and Sheets held-out prompts and one size field. The
 [exposure record](../evaluation/evidence/held-out-exposure.json) quarantines those
