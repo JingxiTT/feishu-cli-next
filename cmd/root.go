@@ -105,7 +105,7 @@ func executeWithOptions(opts []BuildOption) int {
 	}
 
 	// --- Notices (non-blocking) ---
-	if !isCompletionCommand(os.Args) {
+	if !cfg.agentMode && !isCompletionCommand(os.Args) {
 		setupNotices(runtime.surface)
 	}
 
@@ -119,10 +119,29 @@ func executeWithOptions(opts []BuildOption) int {
 		_ = hook.Emit(ctx, reg, platform.Shutdown, runErr)
 	}
 
+	exitCode := 0
 	if runErr != nil {
-		return handleRootError(f, runErr, runtime.recovery)
+		exitCode = handleRootError(f, runErr, runtime.recovery)
 	}
-	return 0
+	if cfg.agentMode {
+		summary := f.AgentAttemptSummary()
+		if len(summary.Receipts) > 0 {
+			// Mutation evidence is diagnostic, never mixed into user content.
+			ids := make([]string, 0, len(summary.Receipts))
+			for _, receipt := range summary.Receipts {
+				ids = append(ids, receipt.ID)
+			}
+			diagnostic := map[string]any{"outcome": summary.Outcome, "receipts": ids, "applied": summary.Applied, "unapplied": summary.Unapplied, "unknown": summary.Unknown}
+			if summary.PersistenceFailed {
+				diagnostic["persistence_failed"] = true
+			}
+			_ = output.WriteJSON(output.WithAgentOptions(f.IOStreams.ErrOut, &output.AgentOptions{}), map[string]any{"mutation": diagnostic})
+			if attemptExit := f.AgentAttemptExitCode(); attemptExit != 0 {
+				exitCode = attemptExit
+			}
+		}
+	}
+	return exitCode
 }
 
 func newExecutionContext(parent context.Context) (context.Context, context.CancelFunc) {

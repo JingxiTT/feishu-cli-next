@@ -1,7 +1,7 @@
 # Copyright (c) 2026 Lark Technologies Pte. Ltd.
 # SPDX-License-Identifier: MIT
 
-BINARY   := lark-cli
+BINARY   := feishu-cli-next
 MODULE   := github.com/larksuite/cli
 VERSION  := $(shell git describe --tags --always --dirty 2>/dev/null || echo dev)
 DATE     := $(shell date +%Y-%m-%d)
@@ -28,7 +28,7 @@ RACE_FLAG := $(if $(filter riscv64,$(TEST_GOARCH)),,-race)
 all: test
 
 fetch_meta:
-	python3 scripts/fetch_meta.py
+	python3 scripts/next_meta.py
 
 build: fetch_meta
 	go build -trimpath -ldflags "$(LDFLAGS)" -o $(BINARY) .
@@ -74,7 +74,7 @@ examples-build:
 # binaries (~1 min warm; a cold module cache also downloads via GOPROXY).
 # Deliberate: local `make test` exercises the L4 plugin contract by default.
 integration-test: build
-	go test -v -count=1 ./tests/...
+	python3 scripts/next_test.py --section all --suite e2e --binary ./$(BINARY) --report .tmp/next-tests/integration.json
 
 test: vet fmt-check script-test unit-test examples-build integration-test
 

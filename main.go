@@ -13,5 +13,5 @@ import (
 )
 
 func main() {
-	os.Exit(cmd.Execute())
+	os.Exit(cmd.ExecuteWithOptions(cmd.WithAgentMode()))
 }

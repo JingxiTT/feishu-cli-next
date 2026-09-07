@@ -31,6 +31,7 @@ import (
 	"github.com/larksuite/cli/internal/core"
 	"github.com/larksuite/cli/internal/hook"
 	"github.com/larksuite/cli/internal/keychain"
+	"github.com/larksuite/cli/internal/output"
 	internalplatform "github.com/larksuite/cli/internal/platform"
 	"github.com/larksuite/cli/internal/recovery"
 	"github.com/larksuite/cli/internal/registry"
@@ -46,6 +47,7 @@ import (
 type BuildOption func(*buildConfig)
 
 type buildConfig struct {
+	agentMode       bool
 	streams         *cmdutil.IOStreams
 	keychain        keychain.KeychainAccess
 	globals         GlobalOptions
@@ -261,10 +263,14 @@ func buildInternalWithConfig(ctx context.Context, inv cmdutil.InvocationContext,
 		Long:    rootLong,
 		Version: build.Version,
 	}
+	var agentOutput *output.AgentOptions
+	if cfg.agentMode {
+		agentOutput = configureAgentFoundation(f, rootCmd)
+	}
 
 	rootCmd.SetContext(ctx)
 	rootCmd.SetIn(cfg.streams.In)
-	rootCmd.SetOut(cfg.streams.Out)
+	rootCmd.SetOut(f.IOStreams.Out)
 	rootCmd.SetErr(cfg.streams.ErrOut)
 
 	// Root-only usage template (curated Usage synopsis + skills footer); see
@@ -416,6 +422,9 @@ func buildInternalWithConfig(ctx context.Context, inv cmdutil.InvocationContext,
 	}
 
 	recordInventory(installResult)
+	if cfg.agentMode {
+		finalizeAgentFoundation(f, rootCmd, agentOutput)
+	}
 	return runtime, rootCmd, hookRegistry
 }
 
