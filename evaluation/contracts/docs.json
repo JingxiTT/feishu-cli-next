@@ -2,11 +2,11 @@
   "schema_version": 1,
   "section": "docs",
   "task_id": "docs-dev-01",
-  "scenario": "docs-rich-status-v1",
+  "scenario": "docs-rich-status-v2",
   "source_manifest": "evaluation/tasks.development.json",
   "reference_revision": "7fd6ef3c07182257ce776cdc5a614e122d5bd4b3",
-  "adapter_status": "contract_ready_server_implementation_required",
-  "model_evaluation_status": "not_run",
+  "adapter_status": "bounded_adapter_implemented",
+  "model_evaluation_status": "v2_not_run_v1_history_preserved",
   "concrete_prompt": "In the private synthetic document doxcnEvalRichStatus (https://docs.example.invalid/docx/doxcnEvalRichStatus), change only the exact phrase Old status to New status. Preserve the existing native bold formatting and link on status, the Unicode text, and every other block and resource. Do not create, share, or delete any resource. Return JSON with document_id and paragraph_text, where paragraph_text is the resulting complete text of the changed paragraph.",
   "valid_ids": {
     "document_id": "doxcnEvalRichStatus",
@@ -156,7 +156,7 @@
         },
         "complete": true
       },
-      "response_semantics": "Render current state. XML full detail uses stable block-id attributes; simple detail may omit IDs without deleting native identity. Markdown renders the native bold/link as [**status**](synthetic://reference), preserving Unicode. A bounded response marks complete:false for document extent and includes returned block IDs; full response complete:true."
+      "response_semantics": "Render current state. XML full detail uses current block-id attributes, including new paragraph IDs after replacement; simple detail may omit IDs without deleting native identity. Markdown renders the native bold/link as [**status**](synthetic://reference), preserving Unicode. A bounded response marks complete:false for document extent and includes returned block IDs; full response complete:true."
     },
     {
       "name": "native_precise_edit",
@@ -185,7 +185,7 @@
           "block_move_after"
         ],
         "revision_id": "omitted or -1 means current fixture state; nonnegative means exact expected fixture revision; mismatches reject without effect (a synthetic conditional contract only)",
-        "reference_map": "optional object; preserve unknown values and explicit distinctions; empty or absent is equal here",
+        "reference_map": "Absent or empty object is supported in this fixture; nonempty reference maps are unsupported, never silently dropped.",
         "block_addressing": "block_id single or comma-separated; supported block_replace/block_delete inclusive start_block_id/end_block_id; source IDs for move/copy; end sentinel -1"
       },
       "data_example": {
@@ -199,12 +199,16 @@
         ]
       },
       "transition_semantics": {
-        "str_replace": "Flatten each paragraph into a character stream with a native run/style/link identity per character. Find exact case-sensitive literal pattern occurrences; do not regex-substitute XML bytes. For this fixture Old status spans run_prefix and run_status. Compute longest common prefix/suffix of each matched old/new pair, alter only differing characters, and retain run identities/styles for all unaffected characters. Old→New changes only run_prefix text from Old[space] to New[space]; status, link_reference, run_status and run_unicode remain byte-for-byte unchanged. Apply actual arbitrary literal patterns, not only the expected payload. Reject zero matches or ambiguous multi-block matches without effect rather than return a false success. Multiple matches within this fixture should require explicit disambiguation; the supplied target phrase occurs once.",
-        "block_replace": "Parse the supplied XML/Markdown representation and change only addressed blocks; preserve identity only for explicitly retained native block IDs. Recreated nodes/runs receive new ledger identities, so destructive rewrite strategies can legitimately fail fidelity invariants. Do not secretly restore dropped formatting or unrelated content to make a request pass. If actual native identity behavior cannot be faithfully modeled for an alternative strategy, classify that trial unsupported instead of asserting product failure.",
-        "overwrite": "Replace the actual complete document representation; preserve explicitly retained native IDs only when representation/identity mapping is unambiguous. Dropped blocks, resources or styles remain dropped and must fail final invariants. An exact same full native XML/reference-map submission is unchanged and does not increment revision.",
+        "str_replace": "Find one exact case-sensitive literal pattern across the native paragraph text. Plain text replacement retains the existing unaffected character styles; changed plain characters inherit the affected run style. For format xml decode predefined/numeric XML entities. A fragment containing supported inline b, attribute-free span, or a href supplies its own actual native bold/link styles for the complete replacement span; omitted styles are cleared, not restored from expected state. Preserve untouched text outside the match. Unknown tags/attributes, declarations, custom entities, malformed XML and ambiguous/missing matches reject before mutation. The bounded parser accepts at most 65536 characters and nesting depth 32. Ledger run/link IDs and segmentation are synthetic implementation details, not fidelity conditions or claims of backend object reuse.",
+        "block_replace": "Support one native paragraph addressed by its current block_id or an inclusive range whose start and end are the same current paragraph ID. Parse exactly one p element with bounded inline XML as above; optional exported block-id does not retain identity. Replace only that paragraph in its existing parent and sibling slot. Assign fresh synthetic block/run/link IDs, update block_order, fetch and native block lookup consistently, and reject stale IDs. Apply submitted formatting/Unicode exactly. Unknown multi-block, cross-container, Markdown reconstruction and unsupported content remain fixture limitations, never converted into the desired edit.",
+        "overwrite": "General overwrite is unsupported by this bounded adapter. Frozen update guidance states overwrite clears/rebuilds content and replacement invalidates IDs; explicit XML block-id attributes do not establish identity retention. Rebuilding unrelated blocks/resources can violate this task, but an unsupported request is inconclusive rather than a fabricated modeled failure. No general backend reconstruction is guessed.",
         "append_copy_move_delete": "Implement requested native block operations against the supplied IDs or reject as unsupported before comparative scoring; these are not expected to satisfy the task but must never be converted into the desired phrase edit.",
-        "effect_count": "Increment revision once per request with an actual semantic change. Record before/after hashes, target IDs, changed character spans and newly created/deleted native identities under the fixture lock. Repeated requests with no effect are not duplicate successful replacements."
-      }
+        "effect_count": "Increment revision once per request with an actual state change. Record complete before/after state hashes and changed old/new block IDs under the fixture lock. Exact no-effect inline edits do not increment revision. A paragraph replacement changes native block identity even when its visible content is identical."
+      },
+      "modeled_commands": [
+        "str_replace",
+        "block_replace (one XML paragraph)"
+      ]
     },
     {
       "name": "equivalent_docx_metadata",
@@ -317,7 +321,7 @@
           ]
         }
       },
-      "response_semantics": "Apply complete submitted text elements for the existing block; preserve an existing internal run/link identity only where unchanged content/style/link identity mapping is unique. Omitted styles are actually cleared; other blocks never mutate. Return {block:<updated block>,document_revision_id:<current revision>}. Identity alignment is a synthetic fixture policy and does not prove backend run object reuse."
+      "response_semantics": "Apply complete submitted native text elements to the requested existing block. Omitted styles are actually cleared; other blocks never mutate. Return the current typed block and revision. Run segmentation and ledger run/link IDs are not task acceptance criteria; preserve the actual character-level native bold and hyperlink URL representation. Synthetic identity allocation does not claim real backend run object reuse."
     }
   ],
   "independent_verifier": {
@@ -328,51 +332,47 @@
         "equals": "doxcnEvalRichStatus"
       },
       {
-        "path": "blocks[target].text",
+        "path": "blocks[target slot].text",
         "equals": "New status — 你好"
       },
       {
-        "path": "blocks[target].runs[0].native_identity",
-        "equals": "run_prefix"
+        "path": "blocks[target slot] native characters",
+        "exactly": "New and following space plain; status native bold=true and native link.url=synthetic://reference; space/em dash/space/你好 plain. Compare typed character/bold/link URL tuples, independent of run segmentation and hidden IDs."
       },
       {
-        "path": "blocks[target].runs[0].text",
-        "equals": "New "
-      },
-      {
-        "path": "blocks[target].runs[1]",
+        "path": "blocks[target slot] kind,parent_id,sibling position",
         "deep_equals_initial": true
       },
       {
-        "path": "blocks[target].runs[2]",
-        "deep_equals_initial": true
+        "path": "blocks[target slot] block_id and hidden run/link IDs",
+        "policy": "May change; require nonempty unique block ID consistent with current block_order, rendered XML and lookups. Paragraph replacement is not creation of a document/media resource."
       },
       {
-        "path": "blocks excluding target",
+        "path": "blocks excluding target slot",
         "deep_equals_initial": true
       },
       {
         "path": "block_order",
+        "policy": "Exactly initial order with only target-slot block ID substitution allowed."
+      },
+      {
+        "path": "reference_map,owner_id,tenant_key,visibility,permissions,title,document_id",
         "deep_equals_initial": true
       },
       {
-        "path": "reference_map",
-        "deep_equals_initial": true
+        "path": "resources",
+        "policy": "Every original resource block, token, dimensions, content and ID remains unchanged; no new document/media resource is created, shared or deleted."
       },
       {
-        "path": "owner_id,tenant_key,visibility,permissions",
-        "deep_equals_initial": true
+        "path": "ledger",
+        "policy": "Exact initial state; hash-linked before/after state; revision increments once; successful signed mutation proof matches hashes and changed old/new IDs; each mutation preserves all state outside target representation; final state equals last event."
       },
       {
-        "path": "resource_registry",
-        "equals_initial": true
-      },
-      {
-        "path": "ledger semantic changed character spans",
-        "exactly": "One Old→New substitution in run_prefix; no inserted/deleted/reparented native block, run or link identity; no unrelated changes"
+        "path": "rendered XML",
+        "policy": "Must reflect actual current native state, but serialization order/run boundaries/target ID are not independent task fidelity requirements."
       }
     ],
-    "success_policy": "Score final state and answer independently of command sequence. A correct equivalent approach may use more reads or mutations; no fixed call-count requirement. Report rejected/unsupported requests separately; never make unsupported valid strategies look like proven CLI failures. Final state must demonstrate a real edit from the fresh initial fixture."
+    "success_policy": "Score final native character/style/link representation and answer independently of the chosen supported command sequence. Allow equivalent native run segmentation, target paragraph replacement and multiple edits. Every intermediate mutation must preserve unrelated blocks/resources/permissions. Signed state evidence must demonstrate a real edit. Unsupported strategies remain explicitly inconclusive, not proven CLI failure."
   },
   "answer_schema": {
     "type": "object",
@@ -445,14 +445,51 @@
     {
       "path": "docs/sections/docs.md",
       "evidence": "Full parity mapping and unresolved native backend guarantees."
+    },
+    {
+      "path": "tests/next_evaluation/test_scenario_docs.py",
+      "evidence": "V2 regression checks native per-character semantics independent of run segmentation and edited paragraph ID; bounded XML and paragraph replacement, tampered state, negative fidelity controls, and optional four-strategy replay against both archived binaries."
     }
   ],
   "limitations": [
     "This is a development-only synthetic task, never a live Feishu object. It does not prove live str_replace formatting behavior, native run/link reuse, or revision concurrency guarantees.",
-    "Fixture stable inline identities are independent verifier ledger fields; do not inject invented run IDs into public DocxXML/Docx API responses.",
+    "Run/link ledger IDs are internal bookkeeping, never public Docx API fields and never task fidelity requirements. Exact native typed bold/link URL representation remains required.",
     "Bounded scopes must be implemented semantically or reported unsupported. Full response fixtures must not silently stand in for every scope.",
     "The adapter needs deterministic XML/typed-block rendering from common state and actual text edit transitions; golden-response request matching alone is not valid evaluation.",
-    "Before comparative runs, replay CLI examples through both built binaries and verify initial/final states without a model; also test wrong document, missing/ambiguous phrase, style-dropping overwrite and revision mismatch as negative controls. No model runs or fixture server implementation were performed while producing this contract.",
-    "General XML rewrite/native identity correspondence is not fully validated. A valid alternative strategy unsupported by the adapter requires adapter expansion or an explicitly inconclusive trial, not an efficiency or capability claim."
-  ]
+    "Controlled tests replay four supported edit strategies through both clean archived CLIs (official 7fd6ef3 and Next 8d92e52), inspect independent initial/final native state and include missing styles, wrong URL/Unicode, unrelated block/resource changes, stale IDs, revision mismatch and unsupported reconstruction controls. No model or live calls were performed for v2.",
+    "The bounded adapter models inline XML and single-paragraph replacement only. General reconstruction and rich Markdown replacement semantics remain unvalidated fixture limitations. Source warning supports new paragraph IDs on replacement, not backend run/link GUID reuse."
+  ],
+  "fixture_version": 2,
+  "version_change": {
+    "previous_scenario": "docs-rich-status-v1",
+    "prompt_and_answer": "unchanged",
+    "reason": "Correct unrequested hidden target run/link GUID, run segmentation, target block ID, and exact XML serialization constraints. Native typed character/style/link semantics and every unrelated block/resource identity remain required. V1 trial history is not rescored or replaced.",
+    "source_evidence": [
+      {
+        "path": "skills/lark-doc/references/lark-doc-update.md",
+        "lines": "67,70,74,78",
+        "evidence": "Rich-text string edits, single-block replacement, overwrite loss, and replacement invalidating old block IDs."
+      },
+      {
+        "path": "skills/lark-doc/references/lark-doc-xml.md",
+        "lines": "9,47-53",
+        "evidence": "Native b/span/a syntax and XML text escaping."
+      }
+    ],
+    "controlled_validation": {
+      "official_revision": "7fd6ef3c07182257ce776cdc5a614e122d5bd4b3",
+      "next_revision": "8d92e5253aa9d0582314180d51cdec1b10778897",
+      "strategies": [
+        "literal_str_replace",
+        "native_text_patch",
+        "inline_xml_str_replace",
+        "single_paragraph_block_replace"
+      ],
+      "workflows": 8,
+      "cli_calls": 24,
+      "model_calls": 0,
+      "live_calls": 0,
+      "status": "passed"
+    }
+  }
 }

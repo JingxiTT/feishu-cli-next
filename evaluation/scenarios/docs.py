@@ -1,8 +1,8 @@
 """Synthetic native Docs edits; no network or live-account access.
 
-Inline identities belong only to the verifier ledger. Public API responses use
-existing DocxXML/text-run fields. General block reconstruction is deliberately
-unsupported until its native identity behavior can be modeled faithfully.
+Inline identities belong only to the verifier ledger, not task acceptance.
+Public responses use native DocxXML/text-run fields. Only a single paragraph
+replacement is modeled; general document reconstruction remains unsupported.
 """
 import copy
 import hashlib
@@ -10,6 +10,7 @@ from html import escape
 import json
 from pathlib import Path
 import threading
+import xml.etree.ElementTree as ET
 from urllib.parse import parse_qs, urlsplit
 
 from scenario_protocol import Reply, ScenarioBase
@@ -22,6 +23,8 @@ UNRELATED = CONTRACT["valid_ids"]["unrelated_block_id"]
 AI_PATH = "/open-apis/docs_ai/v1/documents/" + DOCUMENT
 DOCX_PATH = "/open-apis/docx/v1/documents/" + DOCUMENT
 EXPECTED_ANSWER = CONTRACT["expected_answer"]
+UNSUPPORTED_XML = "unsupported strategy: XML replacement fragments require native inline parsing"
+UNSUPPORTED_RECONSTRUCTION = "unsupported strategy: general reconstruction needs validated native identity semantics"
 TASK = {"id": CONTRACT["task_id"], "section": "docs", "prompt": CONTRACT["concrete_prompt"],
         "fixture": {"scenario": CONTRACT["scenario"], "answer_schema": CONTRACT["answer_schema"],
                     "allow_synthetic_mutations": True},
@@ -118,6 +121,88 @@ def integer(value, label, minimum=-1):
     return result
 
 
+def parse_inline_xml(content, paragraph=False):
+    """Decode the documented inline subset, never resolve DTDs or entities.
+
+    XML predefined/numeric character references are decoded by ElementTree.
+    Unsupported syntax fails before mutation; it is not silently flattened.
+    """
+    if len(content) > 65536 or "<!" in content or "<?" in content:
+        raise ValueError(UNSUPPORTED_XML)
+    try:
+        root = ET.fromstring("<fragment>" + content + "</fragment>")
+    except ET.ParseError as error:
+        raise ValueError(UNSUPPORTED_XML) from error
+    explicit = bool(len(root))
+    if paragraph:
+        if (root.text or "").strip() or len(root) != 1 or root[0].tag != "p" or (root[0].tail or "").strip():
+            raise ValueError(UNSUPPORTED_RECONSTRUCTION)
+        root = root[0]
+        # Exported IDs address old content; they do not retain identity on replace.
+        if set(root.attrib) - {"block-id"}:
+            raise ValueError(UNSUPPORTED_XML)
+    characters = []
+
+    def visit(node, bold=False, url=None, depth=0):
+        if depth > 32:
+            raise ValueError(UNSUPPORTED_XML)
+        characters.extend((char, bold, url) for char in node.text or "")
+        for child in node:
+            child_bold, child_url = bold, url
+            if child.tag in ("b", "span") and not child.attrib:
+                child_bold = bold or child.tag == "b"
+            elif child.tag == "a" and set(child.attrib) == {"href"} and url is None:
+                child_url = child.attrib["href"]
+            else:
+                raise ValueError(UNSUPPORTED_XML)
+            visit(child, child_bold, child_url, depth + 1)
+            characters.extend((char, bold, url) for char in child.tail or "")
+
+    visit(root)
+    return characters, explicit
+
+
+def native_characters(block):
+    """Compare native typed styles independently of run segmentation or IDs."""
+    characters = []
+    for run in block.get("runs", [{"text": block["text"], "style": {"bold": False, "link": None}}]):
+        if set(run) - {"native_identity", "text", "style"} or not isinstance(run["text"], str):
+            raise ValueError("invalid native run")
+        style = run["style"]
+        if set(style) != {"bold", "link"} or type(style["bold"]) is not bool:
+            raise ValueError("invalid native style")
+        link = style["link"]
+        if link is not None and (set(link) - {"native_identity", "url"} or not isinstance(link.get("url"), str)):
+            raise ValueError("invalid native link")
+        characters.extend((char, style["bold"], link["url"] if link is not None else None) for char in run["text"])
+    if "".join(char for char, _, _ in characters) != block["text"]:
+        raise ValueError("native text mismatch")
+    return characters
+
+
+def runs_from_characters(characters, generation):
+    runs = []
+    for char, bold, url in characters:
+        if runs and runs[-1]["style"]["bold"] == bold and (runs[-1]["style"]["link"] or {}).get("url") == url:
+            runs[-1]["text"] += char
+            continue
+        identity = str(generation) + "_" + str(len(runs))
+        runs.append({"native_identity": "generated_run_" + identity, "text": char,
+                     "style": {"bold": bold, "link": None if url is None else
+                               {"url": url, "native_identity": "generated_link_" + identity}}})
+    return runs
+
+
+def changed_block_ids(before, after):
+    changed = []
+    for old, new in zip(before["blocks"], after["blocks"]):
+        if canonical(old) != canonical(new):
+            for identity in (old["block_id"], new["block_id"]):
+                if identity not in changed:
+                    changed.append(identity)
+    return changed
+
+
 class Scenario(ScenarioBase):
     def __init__(self):
         self.state = copy.deepcopy(INITIAL)
@@ -142,9 +227,10 @@ class Scenario(ScenarioBase):
             return {"mutation": False, "document_id": DOCUMENT}
         before = copy.deepcopy(self.state)
         candidate["revision_id"] += 1
+        candidate["block_order"] = [block["block_id"] for block in candidate["blocks"]]
         candidate["full_xml"] = "".join(xml_block(block, True) for block in candidate["blocks"])
         event = {"before": before, "after": copy.deepcopy(candidate), "before_hash": digest(before),
-                 "after_hash": digest(candidate), "changed_block_ids": [a["block_id"] for a, b in zip(candidate["blocks"], before["blocks"]) if canonical(a) != canonical(b)]}
+                 "after_hash": digest(candidate), "changed_block_ids": changed_block_ids(before, candidate)}
         self.state = candidate
         self.mutations.append(event)
         return {"mutation": True, "document_id": DOCUMENT, "before_hash": event["before_hash"],
@@ -217,25 +303,38 @@ class Scenario(ScenarioBase):
         return self._reply("docs_fetch", {"document": {"document_id": DOCUMENT, "revision_id": self.state["revision_id"], "content": content, "reference_map": copy.deepcopy(self.state["reference_map"])}, "complete": mode == "full", "returned_block_ids": [block["block_id"] for block in blocks]})
 
     def _replace(self, data):
+        if data.get("command") == "block_replace":
+            return self._replace_paragraph(data)
+        if data.get("command") != "str_replace":
+            raise ValueError(UNSUPPORTED_RECONSTRUCTION)
         if set(data) - {"command", "format", "pattern", "content", "revision_id", "scene", "reference_map"}:
             raise ValueError("unsupported precise edit input")
-        if data.get("command") != "str_replace":
-            raise ValueError("unsupported strategy: general reconstruction needs validated native identity semantics")
         if data.get("format", "xml") not in ("xml", "markdown") or data.get("reference_map", {}) != {}:
             raise ValueError("unsupported precise edit format/reference map")
         self._revision(data.get("revision_id", -1))
         pattern, content = data.get("pattern"), data.get("content", "")
         if not isinstance(pattern, str) or not pattern or not isinstance(content, str):
             raise ValueError("literal pattern/content required")
-        if any(char in content for char in "<>"):
-            raise ValueError("unsupported strategy: XML replacement fragments require native inline parsing")
+        explicit = False
+        if data.get("format", "xml") == "xml":
+            replacement, explicit = parse_inline_xml(content)
+            content = "".join(char for char, _, _ in replacement)
+        elif any(char in content for char in "<>"):
+            # Markdown rich input is not an XML fragment or plain literal text.
+            raise ValueError(UNSUPPORTED_XML)
         matches = [(n, text_of(block).find(pattern)) for n, block in enumerate(self.state["blocks"]) if block["kind"] != "image" for _ in range(text_of(block).count(pattern))]
         if len(matches) != 1:
             raise ValueError("missing or ambiguous literal match")
         candidate = copy.deepcopy(self.state)
         index, start = matches[0]
         block = candidate["blocks"][index]
-        if "runs" not in block:
+        if explicit:
+            characters = native_characters(block)
+            characters[start:start + len(pattern)] = replacement
+            if characters != native_characters(block):
+                block["runs"] = runs_from_characters(characters, self.state["revision_id"] + 1)
+                block["text"] = text_of(block)
+        elif "runs" not in block:
             block["text"] = block["text"].replace(pattern, content, 1)
         else:
             prefix = 0
@@ -254,6 +353,39 @@ class Scenario(ScenarioBase):
             block["text"] = text_of(block)
         proof = self._commit(candidate, "docs_update")
         return self._reply("docs_update", {"result": "success", "document": {"document_id": DOCUMENT, "revision_id": self.state["revision_id"]}}, proof)
+
+    def _replace_paragraph(self, data):
+        if set(data) - {"command", "format", "content", "revision_id", "scene", "reference_map", "block_id", "start_block_id", "end_block_id"}:
+            raise ValueError("unsupported precise edit input")
+        if data.get("format", "xml") != "xml" or data.get("reference_map", {}) != {}:
+            raise ValueError(UNSUPPORTED_RECONSTRUCTION)
+        self._revision(data.get("revision_id", -1))
+        if "block_id" in data:
+            if "start_block_id" in data or "end_block_id" in data:
+                raise ValueError("conflicting block addressing")
+            target = data["block_id"]
+        elif data.get("start_block_id") == data.get("end_block_id"):
+            target = data.get("start_block_id")
+        else:
+            raise ValueError(UNSUPPORTED_RECONSTRUCTION)
+        block = next((item for item in self.state["blocks"] if item["block_id"] == target), None)
+        if block is None:
+            raise ValueError("unknown block ID")
+        if block["kind"] != "paragraph":
+            raise ValueError(UNSUPPORTED_RECONSTRUCTION)
+        content = data.get("content")
+        if not isinstance(content, str):
+            raise ValueError("XML paragraph content required")
+        characters, _ = parse_inline_xml(content, paragraph=True)
+        candidate = copy.deepcopy(self.state)
+        replacement = candidate["blocks"][self.state["blocks"].index(block)]
+        generation = self.state["revision_id"] + 1
+        replacement["block_id"] = "doxcnEvalReplacement" + str(generation)
+        replacement["runs"] = runs_from_characters(characters, generation)
+        replacement["text"] = text_of(replacement)
+        proof = self._commit(candidate, "docs_update")
+        return self._reply("docs_update", {"result": "success", "document": {"document_id": DOCUMENT,
+            "revision_id": self.state["revision_id"]}, "affected_block_ids": [replacement["block_id"]]}, proof)
 
     def _patch(self, block_id, data, query):
         if set(data) != {"update_text_elements"} or not isinstance(data["update_text_elements"], dict) or set(data["update_text_elements"]) != {"elements"}:
@@ -334,18 +466,28 @@ class Scenario(ScenarioBase):
             raise ValueError("unsupported route or foreign resource ID")
 
 
-def preserved_except_prefix(state):
+def preserved_outside_target(state):
     value = copy.deepcopy(state)
     value.pop("revision_id")
     value.pop("full_xml")
+    if len(value["blocks"]) != len(INITIAL["blocks"]):
+        raise ValueError("block count changed")
+    identities = [block["block_id"] for block in value["blocks"]]
+    if len(set(identities)) != len(identities) or value["block_order"] != identities:
+        raise ValueError("invalid block order or identity")
     block = value["blocks"][1]
+    if not isinstance(block["block_id"], str) or not block["block_id"]:
+        raise ValueError("missing target identity")
+    native_characters(block)
+    block["block_id"] = TARGET
+    value["block_order"][1] = TARGET
     block.pop("text")
-    block["runs"][0].pop("text")
+    block.pop("runs")
     return canonical(value)
 
 
 def verify(workspace, answer, receipt, expected):
-    """Trust only framework-owned final state, native identities and proof chain."""
+    """Verify native text/style semantics and untouched state, not hidden GUIDs."""
     try:
         if canonical(answer) != canonical(EXPECTED_ANSWER) or receipt.get("scenario") != TASK["fixture"]["scenario"]:
             return False
@@ -353,7 +495,7 @@ def verify(workspace, answer, receipt, expected):
         initial, final, mutations = snapshot["initial"], snapshot["final"], snapshot["mutations"]
         if canonical(initial) != canonical(INITIAL) or not mutations:
             return False
-        preserved = preserved_except_prefix(INITIAL)
+        preserved = preserved_outside_target(INITIAL)
         previous = initial
         for event in mutations:
             before, after = event["before"], event["after"]
@@ -361,18 +503,18 @@ def verify(workspace, answer, receipt, expected):
                 return False
             if type(after["revision_id"]) is not int or after["revision_id"] != before["revision_id"] + 1:
                 return False
-            if preserved_except_prefix(after) != preserved or event["changed_block_ids"] != [TARGET]:
+            if preserved_outside_target(after) != preserved or event["changed_block_ids"] != changed_block_ids(before, after):
                 return False
-            if not any(request.get("status") == 200 and request.get("route") in ("docs_update", "docs_block_patch") and request.get("proof", {}).get("mutation") is True and request["proof"].get("document_id") == DOCUMENT and request["proof"].get("before_hash") == event["before_hash"] and request["proof"].get("after_hash") == event["after_hash"] for request in receipt["requests"]):
+            if not event["changed_block_ids"] or after["full_xml"] != "".join(xml_block(block, True) for block in after["blocks"]):
+                return False
+            if not any(request.get("status") == 200 and request.get("route") in ("docs_update", "docs_block_patch") and request.get("proof", {}).get("mutation") is True and request["proof"].get("document_id") == DOCUMENT and request["proof"].get("before_hash") == event["before_hash"] and request["proof"].get("after_hash") == event["after_hash"] and request["proof"].get("changed_block_ids") == event["changed_block_ids"] for request in receipt["requests"]):
                 return False
             previous = after
         if canonical(final) != canonical(previous):
             return False
         desired = copy.deepcopy(INITIAL)
-        desired["revision_id"] = final["revision_id"]
         desired["blocks"][1]["text"] = EXPECTED_ANSWER["paragraph_text"]
         desired["blocks"][1]["runs"][0]["text"] = "New "
-        desired["full_xml"] = INITIAL["full_xml"].replace("Old <a", "New <a", 1)
-        return canonical(final) == canonical(desired)
+        return native_characters(final["blocks"][1]) == native_characters(desired["blocks"][1])
     except (KeyError, TypeError, ValueError, IndexError, AttributeError):
         return False

@@ -55,6 +55,114 @@ class DocsScenarioTests(unittest.TestCase):
         self.call("PATCH", docs.DOCX_PATH + "/blocks/" + docs.TARGET, {"update_text_elements": {"elements": elements}})
         self.assertTrue(docs.verify(None, docs.EXPECTED_ANSWER, self.receipt(), docs.TASK["expected"]))
 
+    def test_equivalent_native_run_segmentation_is_not_a_hidden_requirement(self):
+        elements = []
+        for run in docs.INITIAL["blocks"][1]["runs"]:
+            text = "New " if run["text"] == "Old " else run["text"]
+            style = {"bold": run["style"]["bold"]}
+            if run["style"]["link"]:
+                style["link"] = {"url": run["style"]["link"]["url"]}
+            elements.extend({"text_run": {"content": char, "text_element_style": style}} for char in text)
+        self.call("PATCH", docs.DOCX_PATH + "/blocks/" + docs.TARGET, {"update_text_elements": {"elements": elements}})
+        self.assertTrue(docs.verify(None, docs.EXPECTED_ANSWER, self.receipt(), docs.TASK["expected"]))
+
+    def test_inline_xml_preserves_native_semantics_across_markup_order_and_entities(self):
+        for content in ['New <a href="synthetic://reference"><b>status</b></a>',
+                        '<span>New </span><b><a href="synthetic://reference">sta&#116;us</a></b>']:
+            with self.subTest(content=content):
+                self.setUp()
+                self.edit(content=content)
+                self.assertTrue(docs.verify(None, docs.EXPECTED_ANSWER, self.receipt(), docs.TASK["expected"]))
+
+    def test_explicit_xml_wrong_styles_are_applied_and_fail_verification(self):
+        for content in ['<span>New status</span>', 'New <b>status</b>',
+                        'New <a href="synthetic://wrong"><b>status</b></a>',
+                        '<b>New </b><a href="synthetic://reference"><b>status</b></a>']:
+            with self.subTest(content=content):
+                self.setUp()
+                self.edit(content=content)
+                self.assertEqual(len(self.scenario.mutations), 1)
+                self.assertFalse(docs.verify(None, docs.EXPECTED_ANSWER, self.receipt(), docs.TASK["expected"]))
+
+    def test_block_replace_changes_only_target_identity_and_new_id_is_readable(self):
+        for addressing in [{"block_id": docs.TARGET},
+                           {"start_block_id": docs.TARGET, "end_block_id": docs.TARGET}]:
+            with self.subTest(addressing=addressing):
+                self.setUp()
+                self.call("PUT", docs.AI_PATH, {"command": "block_replace", "format": "xml", **addressing,
+                    "content": '<p>New <b><a href="synthetic://reference">status</a></b> — 你好</p>'})
+                final = self.scenario.snapshot()["final"]
+                new_id = final["blocks"][1]["block_id"]
+                self.assertNotEqual(new_id, docs.TARGET)
+                self.assertEqual(final["block_order"][1], new_id)
+                self.assertEqual(final["blocks"][2:], docs.INITIAL["blocks"][2:])
+                self.assertIn(new_id, self.call("POST", docs.AI_PATH + "/fetch", {"format": "xml", "export_option": {"export_block_id": True}})["document"]["content"])
+                self.assertEqual(self.call("GET", docs.DOCX_PATH + "/blocks/" + new_id)["block"]["block_id"], new_id)
+                with self.assertRaises(ValueError):
+                    self.call("GET", docs.DOCX_PATH + "/blocks/" + docs.TARGET)
+                self.assertTrue(docs.verify(None, docs.EXPECTED_ANSWER, self.receipt(), docs.TASK["expected"]))
+
+    def test_bad_block_replacement_content_is_not_repaired(self):
+        for content in ['<p>New status — 你好</p>',
+                        '<p>New <a href="synthetic://reference"><b>status</b></a> — 你坏</p>']:
+            with self.subTest(content=content):
+                self.setUp()
+                self.call("PUT", docs.AI_PATH, {"command": "block_replace", "block_id": docs.TARGET,
+                    "content": content})
+                self.assertFalse(docs.verify(None, docs.EXPECTED_ANSWER, self.receipt(), docs.TASK["expected"]))
+
+    def test_unmodeled_xml_and_reconstruction_reject_without_effect(self):
+        for content in ['<em>New status</em>', '<span bold="true">New status</span>',
+                        '<a href="x" title="unknown">New status</a>', '<b>unclosed',
+                        '<!DOCTYPE x [<!ENTITY y "New">]>&y; status',
+                        '<span>&unknown;</span>', '<p>New status</p>']:
+            with self.subTest(content=content):
+                before = self.scenario.snapshot()
+                with self.assertRaises(ValueError):
+                    self.edit(content=content)
+                self.assertEqual(before, self.scenario.snapshot())
+        for content in ["<span>" * 34 + "New status" + "</span>" * 34, "x" * 65537]:
+            with self.assertRaises(ValueError):
+                self.edit(content=content)
+        for command in ["overwrite", "block_insert_after"]:
+            with self.assertRaises(ValueError):
+                self.edit(command=command)
+
+    def test_xml_entities_literal_text_and_explicit_noop(self):
+        self.edit(content='Old <b><a href="synthetic://reference">status</a></b>')
+        self.assertEqual(self.scenario.snapshot()["mutations"], [])
+        self.edit(pattern="Old", content="A &amp; B &lt; C &gt; D")
+        self.assertEqual(self.scenario.state["blocks"][1]["text"], "A & B < C > D status — 你好")
+        self.assertFalse(docs.verify(None, docs.EXPECTED_ANSWER, self.receipt(), docs.TASK["expected"]))
+
+    def test_replaced_paragraph_supports_followup_edit_and_rejects_stale_write(self):
+        self.call("PUT", docs.AI_PATH, {"command": "block_replace", "block_id": docs.TARGET,
+            "content": '<p block-id="doxcnEvalTargetBlock">Temporary <b><a href="synthetic://reference">status</a></b> — 你好</p>'})
+        before = self.scenario.snapshot()
+        with self.assertRaises(ValueError):
+            self.call("PUT", docs.AI_PATH, {"command": "block_replace", "block_id": docs.TARGET,
+                "content": "<p>stale</p>"})
+        self.assertEqual(before, self.scenario.snapshot())
+        self.edit(pattern="Temporary status")
+        self.assertTrue(docs.verify(None, docs.EXPECTED_ANSWER, self.receipt(), docs.TASK["expected"]))
+
+    def test_other_block_identity_resource_and_state_remain_required(self):
+        # _commit creates internally consistent signed-style proofs, so these
+        # failures exercise task invariants rather than only hash tamper checks.
+        for mutate in [lambda s: s["blocks"][2].update(block_id="replacementOther"),
+                       lambda s: s["blocks"][3].update(token="replacementToken"),
+                       lambda s: s["blocks"][3].update(width=1),
+                       lambda s: s["permissions"].update(public=True),
+                       lambda s: s["blocks"].reverse()]:
+            with self.subTest(mutate=mutate):
+                self.setUp()
+                self.edit()
+                candidate = copy.deepcopy(self.scenario.state)
+                mutate(candidate)
+                proof = self.scenario._commit(candidate, "docs_update")
+                self.requests.append({"route": "docs_update", "status": 200, "proof": proof})
+                self.assertFalse(docs.verify(None, docs.EXPECTED_ANSWER, self.receipt(), docs.TASK["expected"]))
+
     def test_wrong_answer_and_success_claim_without_effect_fail(self):
         self.assertFalse(docs.verify(None, docs.EXPECTED_ANSWER, self.receipt(), docs.TASK["expected"]))
         self.edit()
@@ -150,7 +258,7 @@ class DocsBinaryTests(unittest.TestCase):
         from section_fixture import SectionFixture
         from codex_runner import cli_environment
         for binary in json.loads(os.environ["EVAL_DOCS_BINARIES"]):
-            for strategy in ("shortcut", "native_patch"):
+            for strategy in ("shortcut", "native_patch", "inline_xml", "block_replace"):
                 scenario = docs.Scenario()
                 proofs = []
                 def bridge(method, uri, body, headers):
@@ -168,6 +276,10 @@ class DocsBinaryTests(unittest.TestCase):
                     self.assertIn("Old", before.stdout)
                     if strategy == "shortcut":
                         write = [binary, "docs", "+update", "--doc", docs.DOCUMENT, "--command", "str_replace", "--pattern", "Old status", "--content", "New status", "--as", "user"]
+                    elif strategy == "inline_xml":
+                        write = [binary, "docs", "+update", "--doc", docs.DOCUMENT, "--command", "str_replace", "--pattern", "Old status", "--content", 'New <a href="synthetic://reference"><b>status</b></a>', "--doc-format", "xml", "--revision-id", "7", "--as", "user"]
+                    elif strategy == "block_replace":
+                        write = [binary, "docs", "+update", "--doc", docs.DOCUMENT, "--command", "block_replace", "--block-id", docs.TARGET, "--content", '<p>New <a href="synthetic://reference"><b>status</b></a> — 你好</p>', "--doc-format", "xml", "--revision-id", "7", "--as", "user"]
                     else:
                         elements = docs.wire_block(scenario.snapshot()["initial"]["blocks"][1])["text"]["elements"]
                         elements[0]["text_run"]["content"] = "New "
