@@ -6,7 +6,6 @@ package base
 import (
 	"encoding/json"
 	"fmt"
-	"math"
 	"sort"
 	"strings"
 
@@ -362,8 +361,8 @@ func validateRankingDataConfig(cfg map[string]interface{}) []string {
 		}
 	}
 
-	limit, ok := cfg["limit_size"].(float64)
-	if !ok || limit != math.Trunc(limit) || limit < 1 || limit > 500 {
+	limit, ok := toIntStrict(cfg["limit_size"])
+	if !ok || limit < 1 || limit > 500 {
 		problems = append(problems, "ranking.limit_size 必须是 1..500 的整数")
 	}
 	if filter, ok := cfg["filter"].(map[string]interface{}); ok {

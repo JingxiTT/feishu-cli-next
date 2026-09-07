@@ -1981,7 +1981,7 @@ func TestParseFormSubmitJSON(t *testing.T) {
 		if err != nil {
 			t.Fatalf("unexpected error: %v", err)
 		}
-		if len(fields) != 2 || fields["Rating"] != float64(5) || fields["Review"] != "Good" {
+		if len(fields) != 2 || toInt(fields["Rating"]) != 5 || fields["Review"] != "Good" {
 			t.Fatalf("fields=%v", fields)
 		}
 		if attMap != nil {
@@ -2010,7 +2010,7 @@ func TestParseFormSubmitJSON(t *testing.T) {
 		if err != nil {
 			t.Fatalf("unexpected error: %v", err)
 		}
-		if fields["Rating"] != float64(5) {
+		if toInt(fields["Rating"]) != 5 {
 			t.Fatalf("missing Rating field")
 		}
 		if len(attMap) != 2 {

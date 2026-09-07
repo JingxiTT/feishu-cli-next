@@ -246,6 +246,9 @@ func executeRecordListNDJSON(
 		if err != nil {
 			return err
 		}
+		if !page.HasMoreKnown {
+			return errs.NewInternalError(errs.SubtypeInvalidResponse, "record page is missing has_more; complete extent cannot be established")
+		}
 		if len(page.Dataset.Records) > pageLimit {
 			return errs.NewInternalError(
 				errs.SubtypeInvalidResponse,
@@ -287,6 +290,9 @@ func executeRecordSearchNDJSON(runtime *common.RuntimeContext, requestBody map[s
 		page, err := parseRecordExportPage(data)
 		if err != nil {
 			return err
+		}
+		if !page.HasMoreKnown {
+			return errs.NewInternalError(errs.SubtypeInvalidResponse, "record page is missing has_more; complete extent cannot be established")
 		}
 		if len(page.Dataset.Records) > pageLimit {
 			return errs.NewInternalError(

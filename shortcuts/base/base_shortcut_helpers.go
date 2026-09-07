@@ -143,7 +143,7 @@ func parseJSONValue(pc *parseCtx, raw string, flagName string) (interface{}, err
 		return nil, err
 	}
 	var value interface{}
-	if err := common.ParseJSON([]byte(raw), &value); err != nil {
+	if err := parseBaseJSON([]byte(raw), &value); err != nil {
 		return nil, formatJSONError(flagName, "value", err)
 	}
 	switch value.(type) {
