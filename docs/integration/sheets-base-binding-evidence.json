@@ -1,0 +1,113 @@
+{
+  "schema_version": 1,
+  "tested_revision": "1f1ce4e3f62226a79aa93655a0fb6084586a14f6",
+  "source_status_after": "",
+  "test_source_sha256": "996871f54f8a17f3ef99d8eba74fc3e073eb7a89e42d7fb8042add6f9c221380",
+  "canonical_binary_sha256": "ed8676ffaa55750a2a52144899b0111c167bf071aedd9cddd3d6899d85d6a18f",
+  "status": "pass",
+  "counts": {
+    "pass": 18,
+    "fail": 0,
+    "skip": 0
+  },
+  "command": [
+    "python3",
+    "scripts/next_test.py",
+    "--integration",
+    "sheets_base",
+    "--suite",
+    "e2e",
+    "--binary",
+    "./feishu-cli-next",
+    "--report",
+    "REPORT_PATH"
+  ],
+  "source_isolation": "Detached local clone; origin removed; frozen metadata; canonical build and process runner use isolated HOME/config and non-forwarding synthetic authsidecars.",
+  "events": [
+    {
+      "test": "TestTenThousandRowsThroughSheetsAndBaseCLI",
+      "status": "pass"
+    },
+    {
+      "test": "TestExportedUnsupportedCellsRejectBeforeDestinationWrites/formula",
+      "status": "pass"
+    },
+    {
+      "test": "TestExportedUnsupportedCellsRejectBeforeDestinationWrites/style",
+      "status": "pass"
+    },
+    {
+      "test": "TestExportedUnsupportedCellsRejectBeforeDestinationWrites/precision",
+      "status": "pass"
+    },
+    {
+      "test": "TestExportedUnsupportedCellsRejectBeforeDestinationWrites",
+      "status": "pass"
+    },
+    {
+      "test": "TestPartialExportCannotBecomeAnImportArtifact",
+      "status": "pass"
+    },
+    {
+      "test": "TestActualExportRejectsChangedEffectiveBindingBeforeDestinationAccess/unchanged",
+      "status": "pass"
+    },
+    {
+      "test": "TestActualExportRejectsChangedEffectiveBindingBeforeDestinationAccess/tenant",
+      "status": "pass"
+    },
+    {
+      "test": "TestActualExportRejectsChangedEffectiveBindingBeforeDestinationAccess/user",
+      "status": "pass"
+    },
+    {
+      "test": "TestActualExportRejectsChangedEffectiveBindingBeforeDestinationAccess/app",
+      "status": "pass"
+    },
+    {
+      "test": "TestActualExportRejectsChangedEffectiveBindingBeforeDestinationAccess/environment",
+      "status": "pass"
+    },
+    {
+      "test": "TestActualExportRejectsChangedEffectiveBindingBeforeDestinationAccess/identity",
+      "status": "pass"
+    },
+    {
+      "test": "TestActualExportRejectsChangedEffectiveBindingBeforeDestinationAccess",
+      "status": "pass"
+    },
+    {
+      "test": "TestHandoffStopsAtPartialRejectedOrLostBatch/partial",
+      "status": "pass"
+    },
+    {
+      "test": "TestHandoffStopsAtPartialRejectedOrLostBatch/rejected",
+      "status": "pass"
+    },
+    {
+      "test": "TestHandoffStopsAtPartialRejectedOrLostBatch/lost",
+      "status": "pass"
+    },
+    {
+      "test": "TestHandoffStopsAtPartialRejectedOrLostBatch/duplicate-ids",
+      "status": "pass"
+    },
+    {
+      "test": "TestHandoffStopsAtPartialRejectedOrLostBatch",
+      "status": "pass"
+    }
+  ],
+  "raw_report": {
+    "path": ".tmp/sheets-base/binding-immutable-ready.json",
+    "sha256": "0ceb5068b2d2b0fa77edcae2225b7eea96e2865dcff33fba264c179bb95486d2"
+  },
+  "prior_setup_failure": {
+    "path": ".tmp/sheets-base/binding-immutable.json",
+    "reason": "CLI was not yet built in the clone; runner rejected before executing tests. Preserved separately from completed run."
+  },
+  "limitations": [
+    "No live Feishu writes or provider-model trials.",
+    "The fixture binding switches do not establish live auth-provider or privacy behavior.",
+    "Later changes are not attributed to this immutable run."
+  ]
+}

@@ -49,7 +49,8 @@ Five further process cases consume an actual exported artifact after changing th
 effective tenant, user, app, environment, or user/bot identity. The artifact itself
 is never edited. Each case requires typed `--artifact` validation before any Base
 schema read or write, with no destination report or mutation receipt. Both the
-source state and artifact bytes must remain identical.
+source state and artifact bytes must remain identical. An unchanged-identity
+control through the replacement sidecar must successfully import the same file.
 
 For a 401-row handoff, batch one confirms 200 records. Batch two then exercises
 four independent backend behaviors:
@@ -99,7 +100,11 @@ is provided by `312af93`.
 
 The binding follow-up suite passed all 17 test/subtest events, with no failures
 or skips, in `.tmp/sheets-base/binding-followup.json`. This initial run used the
-shared working tree and is not an immutable release-candidate result.
+shared working tree and is not an immutable release-candidate result. After
+adding the unchanged-binding control, a detached clone at `1f1ce4e` passed all
+18 events with zero failures or skips. The [binding evidence](sheets-base-binding-evidence.json)
+records exact source/binary hashes and independently recounted test outcomes.
+An initial missing-binary setup rejection is retained separately.
 
 ## Limits
 
