@@ -8,12 +8,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"sync/atomic"
 	"testing"
 	"time"
 )
@@ -57,10 +59,11 @@ func TestMain(m *testing.M) {
 // Handler requests carry the real API paths and sidecar target/identity headers.
 // No request is forwarded to the target named in those headers.
 type Fixture struct {
-	Env       map[string]string
-	ConfigDir string
-	WorkDir   string
-	t         *testing.T
+	Env              map[string]string
+	ConfigDir        string
+	WorkDir          string
+	IdentityRequests atomic.Int32
+	t                *testing.T
 }
 
 func NewFixture(t *testing.T, handler http.Handler) *Fixture {
@@ -71,17 +74,31 @@ func NewFixture(t *testing.T, handler http.Handler) *Fixture {
 			http.Error(w, "unexpected fixture request", http.StatusInternalServerError)
 		})
 	}
-	server := httptest.NewServer(handler)
-	t.Cleanup(server.Close)
 	config := t.TempDir()
-	return &Fixture{t: t, ConfigDir: config, WorkDir: t.TempDir(), Env: map[string]string{
+	fixture := &Fixture{t: t, ConfigDir: config, WorkDir: t.TempDir()}
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// The sidecar credential source enriches the current account before the
+		// invocation selects bot/user. Keep that read visible separately from
+		// business requests, whose handlers and request counts stay unchanged.
+		if r.Method == http.MethodGet && r.URL.Path == "/open-apis/authen/v1/user_info" && r.URL.RawQuery == "" {
+			fixture.IdentityRequests.Add(1)
+			w.Header().Set("Content-Type", "application/json")
+			_, _ = io.WriteString(w, `{"code":0,"data":{"open_id":"ou_foundation_fixture","name":"Synthetic Fixture","tenant_key":"foundation-fixture-tenant"}}`)
+			return
+		}
+		handler.ServeHTTP(w, r)
+	}))
+	t.Cleanup(server.Close)
+	t.Cleanup(func() { t.Logf("fixture identity requests: %d", fixture.IdentityRequests.Load()) })
+	fixture.Env = map[string]string{
 		"LARKSUITE_CLI_CONFIG_DIR": config,
 		"LARKSUITE_CLI_AUTH_PROXY": server.URL,
 		"LARKSUITE_CLI_PROXY_KEY":  "synthetic-foundation-proxy-key",
 		"LARKSUITE_CLI_APP_ID":     "synthetic-foundation-app",
 		"LARKSUITE_CLI_BRAND":      "feishu",
 		"LARKSUITE_CLI_DEFAULT_AS": "bot",
-	}}
+	}
+	return fixture
 }
 
 type Result struct {

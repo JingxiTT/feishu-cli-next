@@ -4,6 +4,7 @@
 package nextfoundation
 
 import (
+	"encoding/json"
 	"io"
 	"net/http"
 	"strings"
@@ -28,7 +29,58 @@ func TestFixtureRoutesToSyntheticBackend(t *testing.T) {
 	if result.ExitCode != 0 {
 		t.Fatalf("fixture CLI failed: %d stdout=%s stderr=%s", result.ExitCode, result.Stdout, result.Stderr)
 	}
+	if fixture.IdentityRequests.Load() != 1 {
+		t.Fatalf("identity enrichment requests=%d, want 1", fixture.IdentityRequests.Load())
+	}
 	if requests.Load() != 1 || !strings.Contains(result.Stdout, `"synthetic-fixture-result"`) {
 		t.Fatalf("fixture result not independently observed: requests=%d stdout=%s", requests.Load(), result.Stdout)
+	}
+}
+
+func TestFixtureOnlyInterceptsExactIdentityRead(t *testing.T) {
+	var business atomic.Int32
+	fixture := NewFixture(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		business.Add(1)
+		w.WriteHeader(http.StatusTeapot)
+	}))
+	base := fixture.Env["LARKSUITE_CLI_AUTH_PROXY"]
+	response, err := http.Get(base + "/open-apis/authen/v1/user_info")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer response.Body.Close()
+	var payload struct {
+		Code int `json:"code"`
+		Data struct {
+			OpenID string `json:"open_id"`
+			Tenant string `json:"tenant_key"`
+		} `json:"data"`
+	}
+	if err := json.NewDecoder(response.Body).Decode(&payload); err != nil {
+		t.Fatal(err)
+	}
+	if response.StatusCode != http.StatusOK || payload.Code != 0 || payload.Data.OpenID != "ou_foundation_fixture" || payload.Data.Tenant != "foundation-fixture-tenant" {
+		t.Fatalf("unexpected identity binding response: status=%d payload=%+v", response.StatusCode, payload)
+	}
+	for _, request := range []struct{ method, path string }{
+		{http.MethodPost, "/open-apis/authen/v1/user_info"},
+		{http.MethodGet, "/open-apis/authen/v1/user_info/other"},
+		{http.MethodGet, "/open-apis/authen/v1/user_info?query=business"},
+	} {
+		req, err := http.NewRequest(request.method, base+request.path, nil)
+		if err != nil {
+			t.Fatal(err)
+		}
+		res, err := http.DefaultClient.Do(req)
+		if err != nil {
+			t.Fatal(err)
+		}
+		_ = res.Body.Close()
+		if res.StatusCode != http.StatusTeapot {
+			t.Errorf("business request intercepted: %s %s", request.method, request.path)
+		}
+	}
+	if fixture.IdentityRequests.Load() != 1 || business.Load() != 3 {
+		t.Fatalf("request counts: identity=%d business=%d", fixture.IdentityRequests.Load(), business.Load())
 	}
 }
