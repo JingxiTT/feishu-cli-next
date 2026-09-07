@@ -6,15 +6,15 @@ package cmdutil
 import (
 	"context"
 	"errors"
-	"github.com/larksuite/cli/errs"
-	"github.com/larksuite/cli/internal/nextattempt"
-	"github.com/larksuite/cli/internal/output"
 	"io"
 	"net/http"
 	"strings"
 	"testing"
 
+	"github.com/larksuite/cli/errs"
 	"github.com/larksuite/cli/internal/core"
+	"github.com/larksuite/cli/internal/nextattempt"
+	"github.com/larksuite/cli/internal/output"
 	"github.com/spf13/cobra"
 )
 

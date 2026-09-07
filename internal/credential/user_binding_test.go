@@ -5,12 +5,13 @@ package credential
 
 import (
 	"context"
-	extcred "github.com/larksuite/cli/extension/credential"
-	"github.com/larksuite/cli/internal/core"
 	"io"
 	"net/http"
 	"strings"
 	"testing"
+
+	extcred "github.com/larksuite/cli/extension/credential"
+	"github.com/larksuite/cli/internal/core"
 )
 
 type bindingRoundTrip func(*http.Request) (*http.Response, error)

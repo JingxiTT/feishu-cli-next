@@ -5,6 +5,7 @@ package credential
 
 import (
 	"context"
+
 	"github.com/larksuite/cli/errs"
 	"github.com/larksuite/cli/internal/core"
 )

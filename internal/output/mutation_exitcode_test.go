@@ -7,8 +7,9 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/larksuite/cli/errs"
 	"testing"
+
+	"github.com/larksuite/cli/errs"
 )
 
 func TestMutationOutcomeExitAndEnvelope(t *testing.T) {
