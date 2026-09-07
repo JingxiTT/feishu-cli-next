@@ -90,3 +90,47 @@ func TestDiscoveryValidatesBoundsAndEmptyResults(t *testing.T) {
 		t.Fatalf("want empty array: %s", out)
 	}
 }
+
+func TestDiscoveryMatchesPublicFlagsWithoutChangingOutputShape(t *testing.T) {
+	root := &cobra.Command{Use: "test-cli"}
+	root.PersistentFlags().String("identity-type", "", "user_id or open_id identity namespace")
+	contact := &cobra.Command{Use: "contact", Short: "Contacts"}
+	lookup := &cobra.Command{Use: "lookup", Short: "Read a person"}
+	lookup.Flags().String("user-ids", "", "CSV identifiers including union_id")
+	lookup.Flags().String("private-selector", "", "hidden-canary")
+	_ = lookup.Flags().MarkHidden("private-selector")
+	lookup.Flags().String("known-default", "default-canary", "ordinary option")
+	contact.AddCommand(lookup)
+	root.AddCommand(contact)
+	for _, query := range []string{"contact USER-IDS", "contact UNION_ID", "contact lookup OPEN_ID"} {
+		entries := collect(root, query, false)
+		if len(entries) != 1 || entries[0].Command != "contact lookup" {
+			t.Fatalf("query %q: %+v", query, entries)
+		}
+		if len(entries[0].Flags) != 0 {
+			t.Fatalf("matching added unsolicited flag output: %+v", entries[0])
+		}
+		encoded, err := json.Marshal(entries[0])
+		if err != nil {
+			t.Fatal(err)
+		}
+		var shape map[string]any
+		if err := json.Unmarshal(encoded, &shape); err != nil {
+			t.Fatal(err)
+		}
+		if len(shape) != 2 || shape["command"] == nil || shape["description"] == nil {
+			t.Fatalf("output shape changed: %s", encoded)
+		}
+	}
+	for _, query := range []string{"hidden-canary", "private-selector", "default-canary", "contact union_id missingword"} {
+		if found := collect(root, query, true); len(found) != 0 {
+			t.Fatalf("query %q leaked hidden/default text or ignored a term: %+v", query, found)
+		}
+	}
+	entries := collect(root, "contact user-ids", true)
+	for _, flag := range entries[0].Flags {
+		if flag.Name == "private-selector" {
+			t.Fatal("hidden flag leaked into output")
+		}
+	}
+}

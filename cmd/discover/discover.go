@@ -38,8 +38,8 @@ func NewCmd(f *cmdutil.Factory, root *cobra.Command) *cobra.Command {
 	var withFlags bool
 	cmd := &cobra.Command{
 		Use:   "discover [query...]",
-		Short: "Find commands by task or domain; no query lists command groups",
-		Long:  "Search registered command paths and descriptions. Use '*' for all commands. Results describe the local command surface; they do not verify live permissions or backend behavior.",
+		Short: "Find commands by literal keywords; no query lists command groups",
+		Long:  "Match every whitespace-separated keyword as a case-insensitive substring of command paths, aliases, descriptions, or public flag names and descriptions. Use '*' for all commands. Results describe the local command surface; they do not verify live permissions or backend behavior.",
 		RunE: func(c *cobra.Command, args []string) error {
 			if limit < 1 || limit > 1000 || offset < 0 {
 				return errs.NewValidationError(errs.SubtypeInvalidArgument, "limit must be 1..1000 and offset must be nonnegative")
@@ -73,7 +73,13 @@ func collect(root *cobra.Command, query string, withFlags bool) []entry {
 		}
 		path := strings.TrimSpace(strings.TrimPrefix(c.CommandPath(), root.Name()))
 		if c != root && (query != "" || c.Parent() == root) {
-			haystack := strings.ToLower(path + " " + c.Short + " " + strings.Join(c.Aliases, " "))
+			flags := publicFlags(c)
+			var searchable strings.Builder
+			searchable.WriteString(path + " " + c.Short + " " + strings.Join(c.Aliases, " "))
+			for _, flag := range flags {
+				searchable.WriteString(" --" + flag.Name + " " + flag.Usage)
+			}
+			haystack := strings.ToLower(searchable.String())
 			match := true
 			for _, term := range terms {
 				if term != "*" && !strings.Contains(haystack, term) {
@@ -85,18 +91,10 @@ func collect(root *cobra.Command, query string, withFlags bool) []entry {
 				risk, _ := cmdmeta.Risk(c)
 				e := entry{Command: path, Description: c.Short, Risk: risk, Identities: cmdmeta.Identities(c)}
 				if withFlags {
-					seen := map[string]bool{}
-					visit := func(f *pflag.Flag) {
-						if f.Hidden || seen[f.Name] {
-							return
-						}
-						seen[f.Name] = true
+					for _, f := range flags {
 						_, required := f.Annotations[cobra.BashCompOneRequiredFlag]
 						e.Flags = append(e.Flags, flag{Name: f.Name, Type: f.Value.Type(), Default: f.DefValue, Required: required})
 					}
-					c.LocalNonPersistentFlags().VisitAll(visit)
-					c.PersistentFlags().VisitAll(visit)
-					c.InheritedFlags().VisitAll(visit)
 					sort.Slice(e.Flags, func(i, j int) bool { return e.Flags[i].Name < e.Flags[j].Name })
 				}
 				entries = append(entries, e)
@@ -109,4 +107,24 @@ func collect(root *cobra.Command, query string, withFlags bool) []entry {
 	walk(root)
 	sort.Slice(entries, func(i, j int) bool { return entries[i].Command < entries[j].Command })
 	return entries
+}
+
+// publicFlags shares visibility and local-shadowing rules between matching and
+// optional flag output. Hidden flag descriptions must not reveal a match.
+func publicFlags(c *cobra.Command) []*pflag.Flag {
+	flags := []*pflag.Flag{}
+	seen := map[string]bool{}
+	visit := func(f *pflag.Flag) {
+		if seen[f.Name] {
+			return
+		}
+		seen[f.Name] = true
+		if !f.Hidden {
+			flags = append(flags, f)
+		}
+	}
+	c.LocalNonPersistentFlags().VisitAll(visit)
+	c.PersistentFlags().VisitAll(visit)
+	c.InheritedFlags().VisitAll(visit)
+	return flags
 }

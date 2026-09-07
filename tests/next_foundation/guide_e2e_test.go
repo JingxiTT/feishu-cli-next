@@ -181,3 +181,51 @@ func TestInstalledGuideBaseReferencesReadableFromBinary(t *testing.T) {
 		t.Fatalf("installed skill remains: %v", err)
 	}
 }
+
+func TestGuideLiteralDiscoveryReachesContactIDFlags(t *testing.T) {
+	fixture := NewFixture(t, nil)
+	guide := fixture.Run("guide", "show")
+	if guide.ExitCode != 0 || guide.Stderr != "" {
+		t.Fatalf("guide: %+v", guide)
+	}
+	source, err := os.ReadFile(filepath.Join("..", "..", "agent-skills", "feishu-cli-next", "SKILL.md"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if guide.Stdout != string(source) {
+		t.Fatal("guide does not expose the current discovery instructions")
+	}
+	for _, test := range []struct{ query, command string }{
+		{"contact open_id", "contact +get-user"},
+		{"contact union_id", "contact +get-user"},
+		{"contact user-id-type", "contact +get-user"},
+		{"contact user-ids", "contact +search-user"},
+	} {
+		query := test.query
+		result := fixture.Run("discover", query, "--limit", "1000")
+		if result.ExitCode != 0 || result.Stderr != "" {
+			t.Fatalf("discover %q: %+v", query, result)
+		}
+		var payload struct {
+			Data []struct {
+				Command string          `json:"command"`
+				Flags   json.RawMessage `json:"flags"`
+			} `json:"data"`
+		}
+		if err := json.Unmarshal([]byte(result.Stdout), &payload); err != nil {
+			t.Fatal(err)
+		}
+		found := false
+		for _, entry := range payload.Data {
+			if entry.Command == test.command {
+				found = true
+			}
+			if len(entry.Flags) != 0 {
+				t.Fatal("discovery added flag output without --flags")
+			}
+		}
+		if !found {
+			t.Fatalf("query %q misses public ID lookup: %s", query, result.Stdout)
+		}
+	}
+}
