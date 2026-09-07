@@ -4,6 +4,7 @@
 import contextlib
 import io
 import json
+import locale
 import os
 from pathlib import Path
 import socket
@@ -94,6 +95,28 @@ urllib.request.urlopen('http://must-not-resolve.invalid',timeout=0.2)
                 report = json.loads(report_path.read_text())
                 self.assertEqual(len(report["commands"]), 1)
                 self.assertEqual(report["evidence"], "offline")
+
+    def test_utf8_process_output_ignores_parent_locale_and_child_settings(self):
+        with tempfile.TemporaryDirectory() as directory:
+            env = next_test.isolated_env(directory, dict(os.environ, PYTHONUTF8="0", PYTHONIOENCODING="cp1252"), "http://127.0.0.1:1")
+            self.assertEqual(env["PYTHONUTF8"], "1")
+            self.assertEqual(env["PYTHONIOENCODING"], "utf-8")
+            source = "import sys;print('正文不');print('错误',file=sys.stderr)"
+            with patch.object(locale, "getencoding", return_value="cp1252"):
+                result = next_test.run_command([sys.executable, "-c", source], env, 10)
+            self.assertEqual(result["stdout"], "正文不\n")
+            self.assertEqual(result["stderr"], "错误\n")
+            self.assertEqual(result["exit_code"], 0)
+
+    def test_selection_reads_committed_unicode_source_as_utf8(self):
+        original_open = Path.open
+        def check_encoding(path, *args, **kwargs):
+            self.assertEqual(kwargs.get("encoding"), "utf-8")
+            return original_open(path, *args, **kwargs)
+        with patch.object(Path, "open", check_encoding):
+            result = next_test.selection_evidence(next_test.commands_for("apps", "e2e")[0])
+        self.assertTrue(result["selected_tests"])
+        self.assertTrue(result["excluded_tests"])
 
     def test_timeout_is_failure(self):
         with tempfile.TemporaryDirectory() as directory:

@@ -56,6 +56,7 @@ def isolated_env(directory, parent, proxy):
                 "LARKSUITE_CLI_NO_SKILLS_NOTIFIER": "1",
                 "CI": "1",
                 "PYTHONNOUSERSITE": "1", "PYTHONDONTWRITEBYTECODE": "1",
+                "PYTHONUTF8": "1", "PYTHONIOENCODING": "utf-8",
                 "GIT_CONFIG_NOSYSTEM": "1", "GIT_TERMINAL_PROMPT": "0"})
     for name in ("HTTP_PROXY", "HTTPS_PROXY", "ALL_PROXY", "http_proxy", "https_proxy", "all_proxy"):
         env[name] = proxy
@@ -143,7 +144,7 @@ def selection_evidence(command):
         if not package.startswith("./tests/cli_e2e/"):
             continue
         for path in sorted((ROOT / package).glob("*_test.go")):
-            for name in re.findall(r"^func (Test\w+)\(", path.read_text(), re.MULTILINE):
+            for name in re.findall(r"^func (Test\w+)\(", path.read_text(encoding="utf-8"), re.MULTILINE):
                 entry = {"file": str(path.relative_to(ROOT)), "test": name}
                 (selected if re.search(selector, name) else excluded).append(entry)
     return {"policy": "official CI deterministic name selector; excluded tests remain unverified",
@@ -154,7 +155,7 @@ def run_command(command, env, timeout, cwd=ROOT):
     started = time.monotonic()
     try:
         process = subprocess.Popen(command, cwd=cwd, env=env, stdout=subprocess.PIPE,
-                                   stderr=subprocess.PIPE, text=True, start_new_session=os.name == "posix")
+                                   stderr=subprocess.PIPE, text=True, encoding="utf-8", errors="replace", start_new_session=os.name == "posix")
     except OSError as error:
         return {"command": command, "status": "fail", "exit_code": 127,
                 "duration_seconds": 0, "stdout": "", "stderr": str(error), "tests": {}}
@@ -259,7 +260,7 @@ def main(argv=None):
             report.update(status="blocked", reason="Missing requested E2E suites remain unverified; inherited regressions are only a subset.")
             code = 2
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(report, indent=2) + "\n")
+    args.report.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({"status": report["status"], "evidence": report["evidence"],
                       "section": report["section"], "suite": args.suite, "report": str(args.report), "exit_code": code}))
     return code
