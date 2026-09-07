@@ -1,0 +1,132 @@
+{
+  "kind": "controlled_packaging_path_normalization",
+  "old_scenario": "packaging-project-skill-install-v1",
+  "new_scenario": "packaging-project-skill-install-v2",
+  "prior_observation_reproduced": true,
+  "limits": "Filesystem/verifier controls only. Synthetic isolation proof supplied to exercise artifact predicates; these controls do not prove native OS isolation or historical model success. No model calls, no source rebuilds, no live-service calls.",
+  "controls": [
+    {
+      "arm": "official",
+      "strategy": "copy",
+      "cli_revision": "7fd6ef3c07182257ce776cdc5a614e122d5bd4b3",
+      "binary_sha256": "ab8b101b5f68418c8df02752a5ef19947d311d2e9a91fd685c0e5be24f723020",
+      "source_entry_sha256": "9fa68bb1f3ce564602c6df6c303ea4d2759de02442772f332fe5041d65720a1f",
+      "reference_files": 6,
+      "cli_exit": null,
+      "path_forms": [
+        {
+          "form": "directory",
+          "previous_verifier": false,
+          "fixed_verifier": true
+        },
+        {
+          "form": "directory_slash",
+          "previous_verifier": false,
+          "fixed_verifier": true
+        },
+        {
+          "form": "entry",
+          "previous_verifier": true,
+          "fixed_verifier": true
+        },
+        {
+          "form": "dot_directory",
+          "previous_verifier": false,
+          "fixed_verifier": true
+        },
+        {
+          "form": "dot_directory_slash",
+          "previous_verifier": false,
+          "fixed_verifier": true
+        },
+        {
+          "form": "dot_entry",
+          "previous_verifier": false,
+          "fixed_verifier": true
+        }
+      ]
+    },
+    {
+      "arm": "next",
+      "strategy": "copy",
+      "cli_revision": "8d92e5253aa9d0582314180d51cdec1b10778897",
+      "binary_sha256": "b2e848a3c9c0742a416a3b72d042f2166cec694bc35c06bbf748139f69e3e263",
+      "source_entry_sha256": "c0de66cb47e62ca389a691ca7c9549d68e262702cb692d45dd2a5965779c9f1b",
+      "reference_files": 0,
+      "cli_exit": null,
+      "path_forms": [
+        {
+          "form": "directory",
+          "previous_verifier": false,
+          "fixed_verifier": true
+        },
+        {
+          "form": "directory_slash",
+          "previous_verifier": false,
+          "fixed_verifier": true
+        },
+        {
+          "form": "entry",
+          "previous_verifier": true,
+          "fixed_verifier": true
+        },
+        {
+          "form": "dot_directory",
+          "previous_verifier": false,
+          "fixed_verifier": true
+        },
+        {
+          "form": "dot_directory_slash",
+          "previous_verifier": false,
+          "fixed_verifier": true
+        },
+        {
+          "form": "dot_entry",
+          "previous_verifier": false,
+          "fixed_verifier": true
+        }
+      ]
+    },
+    {
+      "arm": "next",
+      "strategy": "native_guide_install",
+      "cli_revision": "8d92e5253aa9d0582314180d51cdec1b10778897",
+      "binary_sha256": "b2e848a3c9c0742a416a3b72d042f2166cec694bc35c06bbf748139f69e3e263",
+      "source_entry_sha256": "c0de66cb47e62ca389a691ca7c9549d68e262702cb692d45dd2a5965779c9f1b",
+      "reference_files": 0,
+      "cli_exit": 0,
+      "path_forms": [
+        {
+          "form": "directory",
+          "previous_verifier": false,
+          "fixed_verifier": true
+        },
+        {
+          "form": "directory_slash",
+          "previous_verifier": false,
+          "fixed_verifier": true
+        },
+        {
+          "form": "entry",
+          "previous_verifier": true,
+          "fixed_verifier": true
+        },
+        {
+          "form": "dot_directory",
+          "previous_verifier": false,
+          "fixed_verifier": true
+        },
+        {
+          "form": "dot_directory_slash",
+          "previous_verifier": false,
+          "fixed_verifier": true
+        },
+        {
+          "form": "dot_entry",
+          "previous_verifier": false,
+          "fixed_verifier": true
+        }
+      ]
+    }
+  ]
+}

@@ -78,6 +78,46 @@ class PackagingScenarioTests(unittest.TestCase):
         self.install()
         self.assertTrue(self.check())
 
+    def assert_installation_path_forms(self, name):
+        self.prepare(name)
+        self.install()
+        destination = self.scenario.destination
+        receipt = self.receipt()
+        for path in (destination, destination + '/', destination + '/SKILL.md',
+                     './' + destination, './' + destination + '/', './' + destination + '/SKILL.md'):
+            with self.subTest(path=path):
+                self.assertTrue(self.check({**self.answer(), 'installed_path': path}, receipt))
+        for path in ('project/.agents/skills', destination + '/SKILL.md/',
+                     '../' + destination, '/'+destination, destination + '/../' + name,
+                     destination + '-other', 0, None):
+            answer = {**self.answer(), 'installed_path': path}
+            with self.subTest(path=path):
+                self.assertFalse(self.check(answer, receipt))
+                self.assertEqual(packaging.verification_diagnostics(self.workspace, answer, receipt,
+                    packaging.TASK['expected']), ['packaging_answer_path_mismatch'])
+        self.assertEqual(self.receipt(), receipt)
+        (self.workspace / destination / 'SKILL.md').write_bytes(b'corrupt')
+        self.assertFalse(self.check({**self.answer(), 'installed_path': destination}))
+
+    def test_official_directory_and_entry_path_have_identical_artifact_checks(self):
+        self.assert_installation_path_forms('lark-shared')
+
+    def test_next_directory_and_entry_path_have_identical_artifact_checks(self):
+        self.assert_installation_path_forms('feishu-cli-next')
+
+    def test_failure_diagnostics_are_fixed_without_private_content(self):
+        self.prepare()
+        self.install()
+        receipt = self.receipt()
+        receipt['state']['isolation_proof'] = None
+        self.assertEqual(packaging.verification_diagnostics(self.workspace, self.answer(), receipt,
+            packaging.TASK['expected']), ['packaging_isolation_missing'])
+        (self.workspace / 'inputs/install.json').write_text('private changed content')
+        reasons = packaging.verification_diagnostics(self.workspace, self.answer(), self.receipt(),
+            packaging.TASK['expected'])
+        self.assertEqual(reasons, ['packaging_protected_changed'])
+        self.assertNotIn('private', json.dumps(reasons))
+
     def test_next_managed_footer_is_valid_and_exact(self):
         self.prepare('feishu-cli-next')
         destination = self.install(managed=True)

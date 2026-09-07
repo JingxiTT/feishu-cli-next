@@ -10,7 +10,7 @@ import stat
 
 from scenario_protocol import ScenarioBase
 
-SCENARIO = 'packaging-project-skill-install-v1'
+SCENARIO = 'packaging-project-skill-install-v2'
 README = b'keep me'
 UNRELATED = b'---\nname: unrelated\ndescription: Unrelated fixture skill.\n---\nKeep these exact bytes.\n'
 MARKER = b'\n<!-- feishu-cli-next managed v1 sha256:'
@@ -134,50 +134,61 @@ class Scenario(ScenarioBase):
                          'isolation_proof': self.isolation_proof})
 
 
-def verify(workspace, answer, receipt, expected):
+def verify(workspace, answer, receipt, expected, *, _diagnostics=None):
     """Trust only evaluator receipt state; re-read final artifacts independently."""
+    def fail(code):
+        if _diagnostics is not None:
+            _diagnostics.append(code)
+        return False
     try:
         if receipt.get('scenario') != SCENARIO or receipt.get('requests') != []:
-            return False
+            return fail('packaging_receipt_invalid')
         state = receipt['state']
         if not _isolation_valid(state.get('isolation_proof')):
-            return False
+            return fail('packaging_isolation_missing')
         name = state['skill_name']
         destination = 'project/.agents/skills/' + name
         if name not in ('lark-shared', 'feishu-cli-next') or state['destination'] != destination:
-            return False
+            return fail('packaging_install_invalid')
         if (not isinstance(answer, dict) or set(answer) != {'installed_path', 'skill_name', 'preserved_readme'}
-                or answer['installed_path'] != destination + '/SKILL.md'
                 or answer['skill_name'] != name or answer['preserved_readme'] is not True):
-            return False
+            return fail('packaging_answer_mismatch')
+        reported = answer['installed_path']
+        # Permit one leading ./ and a trailing slash on the exact directory only.
+        if isinstance(reported, str) and reported.startswith('./'):
+            reported = reported[2:]
+        if reported == destination + '/':
+            reported = destination
+        if reported not in (destination, destination + '/SKILL.md'):
+            return fail('packaging_answer_path_mismatch')
         workspace = Path(workspace)
         actual_project = tree(workspace / 'project')
         if actual_project != state['final_project']:
-            return False
+            return fail('packaging_install_invalid')
         for directory in PROTECTED:
             actual = tree(workspace / directory)
             if actual != state['initial_protected'][directory] or actual != state['final_protected'][directory]:
-                return False
+                return fail('packaging_protected_changed')
         initial = state['initial_project']
         if (initial['README.md']['sha256'] != expected['readme_sha256']
                 or initial['.agents/skills/unrelated/SKILL.md']['sha256'] != expected['unrelated_sha256']):
-            return False
+            return fail('packaging_install_invalid')
         if any(actual_project.get(path) != item for path, item in initial.items()):
-            return False
+            return fail('packaging_project_changed')
         relative = '.agents/skills/' + name
         if any(path not in initial and path != relative and not path.startswith(relative + '/')
                for path in actual_project):
-            return False
+            return fail('packaging_install_invalid')
         installed = tree(workspace / destination)
         if not installed or installed['']['type'] != 'directory':
-            return False
+            return fail('packaging_install_invalid')
         if any(item['type'] not in ('file', 'directory') or item.get('links', 1) != 1
                for item in installed.values()):
-            return False
+            return fail('packaging_install_invalid')
         files = _regular_files(installed)
         sources = state['source_files']
         if files.keys() != sources.keys() or 'SKILL.md' not in sources:
-            return False
+            return fail('packaging_install_invalid')
         # Also reject extra empty directories and altered directory structure.
         expected_dirs = {''}
         for path in sources:
@@ -186,20 +197,26 @@ def verify(workspace, answer, receipt, expected):
                 expected_dirs.add(parent.as_posix())
                 parent = parent.parent
         if {path for path, item in installed.items() if item['type'] == 'directory'} != expected_dirs:
-            return False
+            return fail('packaging_install_invalid')
         for path, item in files.items():
             source = sources[path]
             if item['sha256'] == source['sha256'] and item['size'] == source['size']:
                 continue
             if path != 'SKILL.md' or name != 'feishu-cli-next':
-                return False
+                return fail('packaging_install_invalid')
             data = (workspace / destination / path).read_bytes()
             prefix = data[:source['size']]
             digest = hashlib.sha256(prefix).hexdigest()
             if (digest != source['sha256'] or data != prefix + MARKER + digest.encode('ascii') + b' -->\n'):
-                return False
+                return fail('packaging_install_invalid')
         if source_name((workspace / destination / 'SKILL.md').read_bytes()) != name:
-            return False
+            return fail('packaging_install_invalid')
         return True
     except (KeyError, TypeError, ValueError, OSError):
-        return False
+        return fail('packaging_receipt_invalid')
+
+
+def verification_diagnostics(workspace, answer, receipt, expected):
+    reasons = []
+    verify(workspace, answer, receipt, expected, _diagnostics=reasons)
+    return reasons
