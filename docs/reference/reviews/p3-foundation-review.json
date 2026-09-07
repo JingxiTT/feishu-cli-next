@@ -1,0 +1,1078 @@
+{
+  "schema_version": 1,
+  "reviewer": "/root/foundation_review",
+  "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+  "assignment_revision": "052357e22479f4ad0d9fc6b62215353dc68dd8cb",
+  "reference_import_revision": "0c1ac7570543db3117ba5bdc6a66b69f87c4a62e",
+  "verdict": "changes_requested",
+  "scope": {
+    "assignment_ids": [
+      "generated_pagination",
+      "invocation_identity",
+      "mutation_receipts",
+      "output_artifacts"
+    ],
+    "path_count": 38,
+    "method": "Whole assigned source bodies plus import-to-checkpoint diffs; focused dependency and regression source inspection, prior bounded reviews reused; exact SHA-256 recomputed against immutable git blobs.",
+    "product_files_modified": false,
+    "tests_executed_by_this_review": false
+  },
+  "assignments": [
+    {
+      "schema_version": 1,
+      "reviewer": "/root/foundation_review",
+      "assignment_id": "generated_pagination",
+      "verdict": "changes_requested",
+      "paths": [
+        {
+          "path": "cmd/service/service.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "c8d16123b140991939c79f2bac5bad9070ff32113786b9bc024ddecfecb3f43b",
+          "verdict": "approved_offline",
+          "review_scope": "Generated method assembly, flags/scopes and preflight; exact POST-read opt-in; aggregate and streamed pagination output/error routing. HTTP-status omission in the client remains an integration blocker.",
+          "evidence": [
+            {
+              "path": "cmd/service/service_paginate_test.go",
+              "scope": "Generated method assembly, flags/scopes and preflight; exact POST-read opt-in; aggregate and streamed pagination output/error routing. HTTP-status omission in the client remains an integration blocker.",
+              "sha256": "a7dbdadccc840e532a2bb361793798b1fae788e0c39b0ad0ae862dfe4778aa1f",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            },
+            {
+              "path": "docs/contracts/output.md",
+              "scope": "Contract cross-check; no execution evidence inferred.",
+              "sha256": "57d621f11b119b2692793a1d3af28d156ad22ee370cf63eb2d8929631ecf0fc3",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "internal/client/client.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "42dcc57e3c66cde1b9a44c0290470b4ed7aadb43397dfd720854510c96345842",
+          "verdict": "changes_requested",
+          "review_scope": "Full request/token/SDK/stream path and pagination loop; preserve per-request identity, later typed errors and callback failures; reject missing/repeated cursor, retain page-limit has_more. HTTP status is lost in CallAPI (finding F1).",
+          "evidence": [
+            {
+              "path": "internal/client/client_test.go",
+              "scope": "Full request/token/SDK/stream path and pagination loop; preserve per-request identity, later typed errors and callback failures; reject missing/repeated cursor, retain page-limit has_more. HTTP status is lost in CallAPI (finding F1).",
+              "sha256": "38ab5d0dde19952df0b8d8e27ea83abf4a2ee08d7f8db2201f6feb2f66b60034",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            },
+            {
+              "path": "docs/contracts/output.md",
+              "scope": "Contract cross-check; no execution evidence inferred.",
+              "sha256": "57d621f11b119b2692793a1d3af28d156ad22ee370cf63eb2d8929631ecf0fc3",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            }
+          ],
+          "findings": [
+            {
+              "id": "P3-FOUNDATION-F1",
+              "priority": 1,
+              "title": "Preserve HTTP failure status in paginated CallAPI responses",
+              "line": 371,
+              "end_line": 380,
+              "status": "open_at_review_revision",
+              "scenario": "Page1 returns HTTP200 with one item, has_more:true and next token; page2 returns HTTP500 or403 with valid JSON {} or code:0. CallAPI drops StatusCode; paginateLoop treats the page as success/exhaustion, and mergePagedResults emits the earlier prefix with has_more:false. Generated JSON/page-all can publish and save a falsely complete artifact; NDJSON exits successfully after a partial stream. A first error page is also accepted.",
+              "evidence": "SDK v3.7.2 core/httptransport.go doSend returns ApiResp for these HTTP statuses (504 alone is special); internal/client/response.go HandleResponse already rejects HTTP errors with no nonzero business code. Existing pagination_e2e covers a nonzero business code only.",
+              "requested_change": "Reject HTTP errors in CallAPI while retaining nonzero business-code diagnostics; add first/later error-page regressions for valid JSON with missing/zero code and no successful aggregate/artifact."
+            }
+          ]
+        },
+        {
+          "path": "internal/client/client_test.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "38ab5d0dde19952df0b8d8e27ea83abf4a2ee08d7f8db2201f6feb2f66b60034",
+          "verdict": "approved_offline",
+          "review_scope": "Full test fixture and assertions for query arrays, pagination count/limit, callback stopping, stream deadlines and error causes. Updated page-limit fixture uses distinct tokens, so it tests a limit rather than a repeated-cursor failure. HTTP-status error pages are absent; F1 identifies the missing regression.",
+          "evidence": [
+            {
+              "path": "tests/next_foundation/pagination_e2e_test.go",
+              "scope": "Full test fixture and assertions for query arrays, pagination count/limit, callback stopping, stream deadlines and error causes. Updated page-limit fixture uses distinct tokens, so it tests a limit rather than a repeated-cursor failure. HTTP-status error pages are absent; F1 identifies the missing regression.",
+              "sha256": "866a677d6f53273662fb4506467bf0406f2c6a2f8cf58d8798b5103d2ee36687",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            },
+            {
+              "path": "docs/contracts/output.md",
+              "scope": "Contract cross-check; no execution evidence inferred.",
+              "sha256": "57d621f11b119b2692793a1d3af28d156ad22ee370cf63eb2d8929631ecf0fc3",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "cmd/service/request_effect.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "e2574a9cdcbd28d6a087ab1883c4dbb24306fd9adea61eb3e1b5be7388c66d8c",
+          "verdict": "approved_offline",
+          "review_scope": "Only two frozen POST query coordinates opt into read semantics; ID, service base, relative path, HTTP verb and frozen write risk all participate.",
+          "evidence": [
+            {
+              "path": "cmd/service/request_effect_test.go",
+              "scope": "Only two frozen POST query coordinates opt into read semantics; ID, service base, relative path, HTTP verb and frozen write risk all participate.",
+              "sha256": "84756a905ed6e505420b09bd803248a4c3e2c5163f56195fd0c42726c8f10f7d",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            },
+            {
+              "path": "docs/contracts/output.md",
+              "scope": "Contract cross-check; no execution evidence inferred.",
+              "sha256": "57d621f11b119b2692793a1d3af28d156ad22ee370cf63eb2d8929631ecf0fc3",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "internal/cmdutil/read_request.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "b95fa6aab68d9d09dac9d4e0caa4b83430e06b53478c68c5191ab5a0090b5c08",
+          "verdict": "approved_offline",
+          "review_scope": "Exact method/decoded-path context assertion; other tuples retain journaling and original context; explicit mutation override in a read workflow; storage marker delegates to shared protocol.",
+          "evidence": [
+            {
+              "path": "internal/cmdutil/read_request_test.go",
+              "scope": "Exact method/decoded-path context assertion; other tuples retain journaling and original context; explicit mutation override in a read workflow; storage marker delegates to shared protocol.",
+              "sha256": "2dd52a1e83c0d027ab9032e296b32c5db4c3a166ccdb8d4aeac81b1cbaed0919",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            },
+            {
+              "path": "docs/contracts/output.md",
+              "scope": "Contract cross-check; no execution evidence inferred.",
+              "sha256": "57d621f11b119b2692793a1d3af28d156ad22ee370cf63eb2d8929631ecf0fc3",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "shortcuts/common/read_request.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "0cb242d12a3c021befeb269098a70e78b77f912023336428e7be7506a1cff9c5",
+          "verdict": "approved_offline",
+          "review_scope": "Thin RuntimeContext wrappers preserve selected identity and classification while adding an exact request-local effect marker.",
+          "evidence": [
+            {
+              "path": "internal/cmdutil/read_request_test.go",
+              "scope": "Thin RuntimeContext wrappers preserve selected identity and classification while adding an exact request-local effect marker.",
+              "sha256": "2dd52a1e83c0d027ab9032e296b32c5db4c3a166ccdb8d4aeac81b1cbaed0919",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            },
+            {
+              "path": "docs/contracts/output.md",
+              "scope": "Contract cross-check; no execution evidence inferred.",
+              "sha256": "57d621f11b119b2692793a1d3af28d156ad22ee370cf63eb2d8929631ecf0fc3",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            }
+          ],
+          "findings": []
+        }
+      ],
+      "cross_assignment_dependencies": [
+        {
+          "assignment_id": "invocation_identity",
+          "scope": "Factory request-local effect classification and token-selected identity; F2 blocks normal cold-TAT writes."
+        },
+        {
+          "assignment_id": "output_artifacts",
+          "scope": "Structured output and artifacts depend on truthful completion from pagination. F1 is an unresolved producer defect at this checkpoint."
+        },
+        {
+          "assignment_id": "command_recovery",
+          "scope": "Root/build/agent option compatibility and command error finalization are a separately assigned review."
+        }
+      ],
+      "limitations": [
+        "Required live/platform/release/evaluation gates remain separate.",
+        "This is independent source/test-contract review, not a new execution of the broad suites. Test-source evidence is explicitly execution-unbound; historical passing reports are not claimed to exercise all checkpoint blobs.",
+        "Approval applies only to named immutable blobs and stated module contracts. Cross-assignment dependencies and new findings prevent an overall release or whole-workflow approval."
+      ]
+    },
+    {
+      "schema_version": 1,
+      "reviewer": "/root/foundation_review",
+      "assignment_id": "invocation_identity",
+      "verdict": "changes_requested",
+      "paths": [
+        {
+          "path": "internal/cmdutil/error_presenter_test.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "dbe9058e97e99c1474edad507f8ea76e9bd5ac076de7f8809ec673fefa526fa1",
+          "verdict": "approved_offline",
+          "review_scope": "Full assertions preserve typed permission extensions/cause and producer immutability; next command/profile projection changes hints only.",
+          "evidence": [
+            {
+              "path": "internal/cmdutil/error_presenter_test.go",
+              "scope": "Full assertions preserve typed permission extensions/cause and producer immutability; next command/profile projection changes hints only.",
+              "sha256": "dbe9058e97e99c1474edad507f8ea76e9bd5ac076de7f8809ec673fefa526fa1",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            },
+            {
+              "path": "docs/contracts/receipts.md",
+              "scope": "Contract cross-check; no execution evidence inferred.",
+              "sha256": "426746c1bc26d97caffb3ab4a0a6efae9c1a547aaa7f982ba846e65543c2fb3b",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "internal/cmdutil/factory.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "7e53e4402af55c1278687e0f37d82062a83833c19498c0de2ff217898199b26a",
+          "verdict": "approved_offline",
+          "review_scope": "Factory journal is invocation-owned; effective identity selection and strict-mode behavior retained; ExternalHTTPClient clones routed client rather than bypassing provider policy.",
+          "evidence": [
+            {
+              "path": "internal/cmdutil/factory_external_attempt_test.go",
+              "scope": "Factory journal is invocation-owned; effective identity selection and strict-mode behavior retained; ExternalHTTPClient clones routed client rather than bypassing provider policy.",
+              "sha256": "0937928545b5a4be4cd687cba7233b689bc0d4bb62e25b0e06607b5f8edb097b",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            },
+            {
+              "path": "docs/contracts/receipts.md",
+              "scope": "Contract cross-check; no execution evidence inferred.",
+              "sha256": "426746c1bc26d97caffb3ab4a0a6efae9c1a547aaa7f982ba846e65543c2fb3b",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "internal/cmdutil/factory_default.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "c0a83ca28f787de3c2cc3ec1c3ef4d4bb631c9a76fb931ab9b1e4846e72973d2",
+          "verdict": "approved_offline",
+          "review_scope": "Direct and SDK clients wrap existing routing with invocation journal; credentials, request-class routing, redirect stripping, timeouts and provider construction retained. Exact unified-token exclusion is missing in the delegated classifier, F2.",
+          "evidence": [
+            {
+              "path": "internal/cmdutil/factory_external_attempt_test.go",
+              "scope": "Direct and SDK clients wrap existing routing with invocation journal; credentials, request-class routing, redirect stripping, timeouts and provider construction retained. Exact unified-token exclusion is missing in the delegated classifier, F2.",
+              "sha256": "0937928545b5a4be4cd687cba7233b689bc0d4bb62e25b0e06607b5f8edb097b",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            },
+            {
+              "path": "docs/contracts/receipts.md",
+              "scope": "Contract cross-check; no execution evidence inferred.",
+              "sha256": "426746c1bc26d97caffb3ab4a0a6efae9c1a547aaa7f982ba846e65543c2fb3b",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "internal/core/types.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "63a0e2ec91fffe19a6e98bd6c0d74c56589864064691a00f2c77f550cf0d298e",
+          "verdict": "approved_offline",
+          "review_scope": "Bounded credential source and explicit user/bot request context metadata; invalid values do not become a valid identity; existing brand/profile/endpoint semantics retained.",
+          "evidence": [
+            {
+              "path": "internal/cmdutil/agent_request_identity_test.go",
+              "scope": "Bounded credential source and explicit user/bot request context metadata; invalid values do not become a valid identity; existing brand/profile/endpoint semantics retained.",
+              "sha256": "52d3a436784d7dcb1abb507b86420518caf0a5df803b56553bcf2f887be85d50",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            },
+            {
+              "path": "docs/contracts/receipts.md",
+              "scope": "Contract cross-check; no execution evidence inferred.",
+              "sha256": "426746c1bc26d97caffb3ab4a0a6efae9c1a547aaa7f982ba846e65543c2fb3b",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "internal/credential/credential_provider.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "82d4af42104cde4e225b0d3be6ec643c66c771fa30c07c65e9403dc9ee7a794f",
+          "verdict": "approved_offline",
+          "review_scope": "Selected credential source remains stable; account enrichment records observed tenant/user proof; receipt and artifact caches are separate and invocation scoped; no credential serialization added.",
+          "evidence": [
+            {
+              "path": "internal/credential/user_binding_test.go",
+              "scope": "Selected credential source remains stable; account enrichment records observed tenant/user proof; receipt and artifact caches are separate and invocation scoped; no credential serialization added.",
+              "sha256": "c550ff04ded41595a39f184260b7afe857d9ae07618f54e0e5c013c792608279",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            },
+            {
+              "path": "docs/contracts/receipts.md",
+              "scope": "Contract cross-check; no execution evidence inferred.",
+              "sha256": "426746c1bc26d97caffb3ab4a0a6efae9c1a547aaa7f982ba846e65543c2fb3b",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "internal/credential/types.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "a785d83ad80e761b1d181c1885d5dbb37a0aa79091396f42d8447aecc8e0ec29",
+          "verdict": "approved_offline",
+          "review_scope": "Added non-secret tenant and verification fields do not upgrade legacy CliConfig identities; token-source selection and runtime secret placeholder contract retained.",
+          "evidence": [
+            {
+              "path": "internal/cmdutil/artifact_lifecycle_test.go",
+              "scope": "Added non-secret tenant and verification fields do not upgrade legacy CliConfig identities; token-source selection and runtime secret placeholder contract retained.",
+              "sha256": "bfe90a38a2dc47c61475e9b239e72b1da7288ebbede9423cf6c5f881d3b9b930",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            },
+            {
+              "path": "docs/contracts/receipts.md",
+              "scope": "Contract cross-check; no execution evidence inferred.",
+              "sha256": "426746c1bc26d97caffb3ab4a0a6efae9c1a547aaa7f982ba846e65543c2fb3b",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "internal/credential/user_info.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "3a599352e8562cd29a274f530cef0271966c15ba21a849eebf27b0b0959b0302",
+          "verdict": "approved_offline",
+          "review_scope": "Selected bearer performs read-only user_info lookup; HTTP and business failure reject; observed tenant is returned, never inferred from app/profile.",
+          "evidence": [
+            {
+              "path": "internal/credential/user_binding_test.go",
+              "scope": "Selected bearer performs read-only user_info lookup; HTTP and business failure reject; observed tenant is returned, never inferred from app/profile.",
+              "sha256": "c550ff04ded41595a39f184260b7afe857d9ae07618f54e0e5c013c792608279",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            },
+            {
+              "path": "docs/contracts/receipts.md",
+              "scope": "Contract cross-check; no execution evidence inferred.",
+              "sha256": "426746c1bc26d97caffb3ab4a0a6efae9c1a547aaa7f982ba846e65543c2fb3b",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "shortcuts/common/drive_meta.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "a057aa2736234214ed6be7637cd9d728a0b8a8af539bd4b282e07e48fe8c90f9",
+          "verdict": "approved_offline",
+          "review_scope": "Metadata POST read avoids write receipt; selection matches requested token and type; rejects duplicates, unbound or malformed rows; legacy empty metadata stays empty.",
+          "evidence": [
+            {
+              "path": "shortcuts/common/drive_meta_test.go",
+              "scope": "Metadata POST read avoids write receipt; selection matches requested token and type; rejects duplicates, unbound or malformed rows; legacy empty metadata stays empty.",
+              "sha256": "0d262a1df739c4902e0777799cc2794da65f51bd845ea5a86614808b6e77351f",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            },
+            {
+              "path": "docs/contracts/receipts.md",
+              "scope": "Contract cross-check; no execution evidence inferred.",
+              "sha256": "426746c1bc26d97caffb3ab4a0a6efae9c1a547aaa7f982ba846e65543c2fb3b",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "shortcuts/common/drive_meta_test.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "0d262a1df739c4902e0777799cc2794da65f51bd845ea5a86614808b6e77351f",
+          "verdict": "approved_offline",
+          "review_scope": "Full tests inspect request token/type/with_url and exact matching, malformed, missing, null, duplicate and unrelated rows, plus API error propagation.",
+          "evidence": [
+            {
+              "path": "shortcuts/common/drive_meta_test.go",
+              "scope": "Full tests inspect request token/type/with_url and exact matching, malformed, missing, null, duplicate and unrelated rows, plus API error propagation.",
+              "sha256": "0d262a1df739c4902e0777799cc2794da65f51bd845ea5a86614808b6e77351f",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            },
+            {
+              "path": "docs/contracts/receipts.md",
+              "scope": "Contract cross-check; no execution evidence inferred.",
+              "sha256": "426746c1bc26d97caffb3ab4a0a6efae9c1a547aaa7f982ba846e65543c2fb3b",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "shortcuts/common/runner.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "25740cd758dad5f609985653ceadca31e4d0eee1e62539a0c3c514e1706e7c78",
+          "verdict": "approved_offline",
+          "review_scope": "Whole runtime/mount/input/output lifecycle inspected. Request-local context helper preserves auth and typed response classification; native HTML/XML escaping option retains legacy shapes and supports structured controls. Shared client pagination depends on F1.",
+          "evidence": [
+            {
+              "path": "internal/output/agent_test.go",
+              "scope": "Whole runtime/mount/input/output lifecycle inspected. Request-local context helper preserves auth and typed response classification; native HTML/XML escaping option retains legacy shapes and supports structured controls. Shared client pagination depends on F1.",
+              "sha256": "2d63fc4eca0a49a9c70cc80625f4c8c2f2635e5b38b05e4f5cb8615b108c1a84",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            },
+            {
+              "path": "docs/contracts/receipts.md",
+              "scope": "Contract cross-check; no execution evidence inferred.",
+              "sha256": "426746c1bc26d97caffb3ab4a0a6efae9c1a547aaa7f982ba846e65543c2fb3b",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "internal/cmdutil/agent_attempts.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "ec35045ddaac36a7dc05ac98db67a1a0f29bf7b02594ea448bff021414bafb70",
+          "verdict": "changes_requested",
+          "review_scope": "Read and credential bypass, exact request effect overrides, actual request identity precedence, user binding, local receipt path and typed finalization. Unified OAuth token endpoint is missing from auth exclusion (F2).",
+          "evidence": [
+            {
+              "path": "internal/cmdutil/agent_attempts_test.go",
+              "scope": "Read and credential bypass, exact request effect overrides, actual request identity precedence, user binding, local receipt path and typed finalization. Unified OAuth token endpoint is missing from auth exclusion (F2).",
+              "sha256": "51477a276791447fa2d976a5b733c95f50085ded1e15ec5a7e67c0c5708294fa",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            },
+            {
+              "path": "docs/contracts/receipts.md",
+              "scope": "Contract cross-check; no execution evidence inferred.",
+              "sha256": "426746c1bc26d97caffb3ab4a0a6efae9c1a547aaa7f982ba846e65543c2fb3b",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            }
+          ],
+          "findings": [
+            {
+              "id": "P3-FOUNDATION-F2",
+              "priority": 1,
+              "title": "Exclude unified OAuth token acquisition from content receipts",
+              "line": 37,
+              "end_line": 42,
+              "status": "open_at_review_revision",
+              "scenario": "A bot write with no cached TAT uses FetchTAT via Factory.HttpClient at accounts host /oauth/v3/token. Only legacy /open-apis auth prefixes are bypassed. Token acquisition is therefore treated as content mutation: standard access_token response without code becomes durable unknown and forces exit22 even after a successful business write; a code:0 token response still creates a false content receipt. Before identity resolution it can fail the mutation identity precondition.",
+              "evidence": "internal/credential/tat_fetch.go FetchTAT builds endpoint from core.OAuthTokenV3Path; factory_default.go wraps direct credential client in agentAttemptTransport. TestAgentAttemptsReadAndAuthDoNotResolveCredentials covers only legacy token paths. Artifact lifecycle token tests use a custom unwrapped client and do not exercise this integration.",
+              "requested_change": "Bypass the exact unified token endpoint before account/receipt resolution and add a cold-TAT real Factory transport regression proving only the business request creates a receipt."
+            }
+          ]
+        },
+        {
+          "path": "internal/cmdutil/recovery_context.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "1d48206e74572bfa12f1076b3796a887d32be1f1f5c9018db2d53de0420414e7",
+          "verdict": "approved_offline",
+          "review_scope": "Nil factory and nil projector behavior retain defaults; invocation profile fills only absent projected profile without rewriting arbitrary error text.",
+          "evidence": [
+            {
+              "path": "internal/cmdutil/error_presenter_test.go",
+              "scope": "Nil factory and nil projector behavior retain defaults; invocation profile fills only absent projected profile without rewriting arbitrary error text.",
+              "sha256": "dbe9058e97e99c1474edad507f8ea76e9bd5ac076de7f8809ec673fefa526fa1",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            },
+            {
+              "path": "docs/contracts/receipts.md",
+              "scope": "Contract cross-check; no execution evidence inferred.",
+              "sha256": "426746c1bc26d97caffb3ab4a0a6efae9c1a547aaa7f982ba846e65543c2fb3b",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "internal/credential/user_binding.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "43fa7555096dee2e791f3297432a8a19975d41a4497f92c03c0d047805dddc17",
+          "verdict": "approved_offline",
+          "review_scope": "Receipt identity cache reuses account enrichment; persisted identity remains explicitly unverified; absent user resolves using selected UAT without inventing tenant evidence.",
+          "evidence": [
+            {
+              "path": "internal/credential/user_binding_test.go",
+              "scope": "Receipt identity cache reuses account enrichment; persisted identity remains explicitly unverified; absent user resolves using selected UAT without inventing tenant evidence.",
+              "sha256": "c550ff04ded41595a39f184260b7afe857d9ae07618f54e0e5c013c792608279",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            },
+            {
+              "path": "docs/contracts/receipts.md",
+              "scope": "Contract cross-check; no execution evidence inferred.",
+              "sha256": "426746c1bc26d97caffb3ab4a0a6efae9c1a547aaa7f982ba846e65543c2fb3b",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            }
+          ],
+          "findings": []
+        }
+      ],
+      "cross_assignment_dependencies": [
+        {
+          "assignment_id": "mutation_receipts",
+          "scope": "Journal/store/classifier and typed mutation result consumed by Factory."
+        },
+        {
+          "assignment_id": "generated_pagination",
+          "scope": "Runtime PaginateAll/StreamPages/RawAPI delegate to client.CallAPI; F1 remains an integration blocker."
+        },
+        {
+          "assignment_id": "output_artifacts",
+          "scope": "Native structured rich-content renderer and verified artifact identity caches."
+        },
+        {
+          "assignment_id": "command_recovery",
+          "scope": "Build owns invocation lifetime, CurrentCommand and ResolvedIdentity finalization; not a reusable concurrent command-tree guarantee."
+        }
+      ],
+      "limitations": [
+        "Required live/platform/release/evaluation gates remain separate.",
+        "This is independent source/test-contract review, not a new execution of the broad suites. Test-source evidence is explicitly execution-unbound; historical passing reports are not claimed to exercise all checkpoint blobs.",
+        "Approval applies only to named immutable blobs and stated module contracts. Cross-assignment dependencies and new findings prevent an overall release or whole-workflow approval."
+      ]
+    },
+    {
+      "schema_version": 1,
+      "reviewer": "/root/foundation_review",
+      "assignment_id": "mutation_receipts",
+      "verdict": "approved_offline",
+      "paths": [
+        {
+          "path": "errs/ERROR_CONTRACT.md",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "1289bfd0543fb6572a2e73f790bcc57fc41269ab44da9908963ee102488aeb6e",
+          "verdict": "approved_offline",
+          "review_scope": "Whole error contract reviewed against subtype/predicate/constructor/exit integration. Mutation outcome is a documented opt-in exception, preserves Go cause and removes nested replay guidance.",
+          "evidence": [
+            {
+              "path": "errs/mutation_test.go",
+              "scope": "Whole error contract reviewed against subtype/predicate/constructor/exit integration. Mutation outcome is a documented opt-in exception, preserves Go cause and removes nested replay guidance.",
+              "sha256": "360fd6c9404be2a18b7da0dc3d89d9a5de81499af7d5dd6a8342e9b90205d3ce",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            },
+            {
+              "path": "docs/contracts/receipts.md",
+              "scope": "Contract cross-check; no execution evidence inferred.",
+              "sha256": "426746c1bc26d97caffb3ab4a0a6efae9c1a547aaa7f982ba846e65543c2fb3b",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "errs/predicates.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "fa253ff7011bc1af4546cd9e62b692f811a6bb1a29293f88f6ab2be5437cfcad",
+          "verdict": "approved_offline",
+          "review_scope": "Additive mutation predicate follows errors.As; existing retry/category/predicate behavior retained, including documented diagnostic RetryAfter through cause.",
+          "evidence": [
+            {
+              "path": "errs/mutation_test.go",
+              "scope": "Additive mutation predicate follows errors.As; existing retry/category/predicate behavior retained, including documented diagnostic RetryAfter through cause.",
+              "sha256": "360fd6c9404be2a18b7da0dc3d89d9a5de81499af7d5dd6a8342e9b90205d3ce",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            },
+            {
+              "path": "docs/contracts/receipts.md",
+              "scope": "Contract cross-check; no execution evidence inferred.",
+              "sha256": "426746c1bc26d97caffb3ab4a0a6efae9c1a547aaa7f982ba846e65543c2fb3b",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "errs/subtypes.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "26637a4ee8ced77319990db8331d6113b1fdb29b79365923fa553727a354b998",
+          "verdict": "approved_offline",
+          "review_scope": "Only additive mutation_outcome subtype; categories and existing subtype wire names retained.",
+          "evidence": [
+            {
+              "path": "internal/output/mutation_exitcode_test.go",
+              "scope": "Only additive mutation_outcome subtype; categories and existing subtype wire names retained.",
+              "sha256": "0201cd9dcd4addea1c8a261bbdba2e7e04544d09ad67c301711a25006b60b108",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            },
+            {
+              "path": "docs/contracts/receipts.md",
+              "scope": "Contract cross-check; no execution evidence inferred.",
+              "sha256": "426746c1bc26d97caffb3ab4a0a6efae9c1a547aaa7f982ba846e65543c2fb3b",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "internal/output/exitcode.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "415b6ce43b5eec03162625e510fc9dadb32e09b3dd5b3c50317c345e156f59de",
+          "verdict": "approved_offline",
+          "review_scope": "Mutation concrete type precedes ordinary category and silent-exit signals; unapplied20/partial21/unknown-or-persistence22, legacy category mappings unchanged.",
+          "evidence": [
+            {
+              "path": "internal/output/mutation_exitcode_test.go",
+              "scope": "Mutation concrete type precedes ordinary category and silent-exit signals; unapplied20/partial21/unknown-or-persistence22, legacy category mappings unchanged.",
+              "sha256": "0201cd9dcd4addea1c8a261bbdba2e7e04544d09ad67c301711a25006b60b108",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            },
+            {
+              "path": "docs/contracts/receipts.md",
+              "scope": "Contract cross-check; no execution evidence inferred.",
+              "sha256": "426746c1bc26d97caffb3ab4a0a6efae9c1a547aaa7f982ba846e65543c2fb3b",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "cmd/receipts/receipts.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "63893f8bb453f64402f0f5b8cd50b1ba559ea7d46b47fb331ab874fdfc0d6537",
+          "verdict": "approved_offline",
+          "review_scope": "List/inspect/explicit cleanup use local Store only and no-auth annotation; no replay or backend mutation introduced; structured PrintJson errors finalized by command boundary.",
+          "evidence": [
+            {
+              "path": "tests/next_foundation/receipts_e2e_test.go",
+              "scope": "List/inspect/explicit cleanup use local Store only and no-auth annotation; no replay or backend mutation introduced; structured PrintJson errors finalized by command boundary.",
+              "sha256": "bc0359b03e468b4a41903ec77cad1eabf989c8aa7d195ee043dbe83fa9306091",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            },
+            {
+              "path": "docs/contracts/receipts.md",
+              "scope": "Contract cross-check; no execution evidence inferred.",
+              "sha256": "426746c1bc26d97caffb3ab4a0a6efae9c1a547aaa7f982ba846e65543c2fb3b",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "errs/mutation.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "f1159d82bff45c9ca73e08d4f37ef27a3a8d7fa7400c1836f082e002f5994631",
+          "verdict": "approved_offline",
+          "review_scope": "Conservative outcome constructor, copied receipt IDs, idempotent wrapping, original error cause and typed wire diagnostics preserved; removes hint/retryability fields and omits untyped raw cause.",
+          "evidence": [
+            {
+              "path": "errs/mutation_test.go",
+              "scope": "Conservative outcome constructor, copied receipt IDs, idempotent wrapping, original error cause and typed wire diagnostics preserved; removes hint/retryability fields and omits untyped raw cause.",
+              "sha256": "360fd6c9404be2a18b7da0dc3d89d9a5de81499af7d5dd6a8342e9b90205d3ce",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            },
+            {
+              "path": "docs/contracts/receipts.md",
+              "scope": "Contract cross-check; no execution evidence inferred.",
+              "sha256": "426746c1bc26d97caffb3ab4a0a6efae9c1a547aaa7f982ba846e65543c2fb3b",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "internal/nextattempt/base_create_evidence.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "f8433ff4bd2865b42eb89153e546f9512b67169822c4d8ed601c30ca02c4d2ed",
+          "verdict": "approved_offline",
+          "review_scope": "Mutex protects exact binding/origin/table-path prior-ID set; verification flags do not split actor scope. 10000-ID and 4MiB string ceilings stop confirmations without eviction; IDs/paths remain memory only.",
+          "evidence": [
+            {
+              "path": "internal/nextattempt/base_create_evidence_test.go",
+              "scope": "Mutex protects exact binding/origin/table-path prior-ID set; verification flags do not split actor scope. 10000-ID and 4MiB string ceilings stop confirmations without eviction; IDs/paths remain memory only.",
+              "sha256": "07fbf50756e54ab607b64579878c1fa7f4fcd4da6cc6c6bbe8bb84a74068d456",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            },
+            {
+              "path": "docs/contracts/receipts.md",
+              "scope": "Contract cross-check; no execution evidence inferred.",
+              "sha256": "426746c1bc26d97caffb3ab4a0a6efae9c1a547aaa7f982ba846e65543c2fb3b",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "internal/nextattempt/response_evidence.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "01872064867b69936cd406cd4afeecd49cb888aa33da320d4cc4d234170af29f",
+          "verdict": "approved_offline",
+          "review_scope": "Full cohesive endpoint classifiers and helpers reviewed. Exact method/path match, bounded GetBody copy, IM presence checks, VC selected recipient equality, Base unique counts and invocation overlap; async/batch/unsupported evidence remains unknown.",
+          "evidence": [
+            {
+              "path": "internal/nextattempt/response_evidence_test.go",
+              "scope": "Full cohesive endpoint classifiers and helpers reviewed. Exact method/path match, bounded GetBody copy, IM presence checks, VC selected recipient equality, Base unique counts and invocation overlap; async/batch/unsupported evidence remains unknown.",
+              "sha256": "10bc1c2932c898fc73906e7939cb635ce3c95950bec50bb760f1b77f7a043e93",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            },
+            {
+              "path": "docs/contracts/receipts.md",
+              "scope": "Contract cross-check; no execution evidence inferred.",
+              "sha256": "426746c1bc26d97caffb3ab4a0a6efae9c1a547aaa7f982ba846e65543c2fb3b",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "internal/nextattempt/storage_request.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "b963a031d0aa5a8c025a2c58d1d6e063aecf017be13226a0d0f8f5e8f22ff9f6",
+          "verdict": "approved_offline",
+          "review_scope": "Only explicit PUT plus exact nonempty decoded path receives storage-protocol acknowledgement semantics; marker contains no persisted signature/URL/body. Callers must separately prevent redirect replay.",
+          "evidence": [
+            {
+              "path": "internal/nextattempt/storage_request_test.go",
+              "scope": "Only explicit PUT plus exact nonempty decoded path receives storage-protocol acknowledgement semantics; marker contains no persisted signature/URL/body. Callers must separately prevent redirect replay.",
+              "sha256": "e7ff1a3b09cf70d871d47189246b4d345437f144fdd882c522877015c91f1cfe",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            },
+            {
+              "path": "docs/contracts/receipts.md",
+              "scope": "Contract cross-check; no execution evidence inferred.",
+              "sha256": "426746c1bc26d97caffb3ab4a0a6efae9c1a547aaa7f982ba846e65543c2fb3b",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "internal/nextattempt/store.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "be8241d05fa5094e595c7754ec31a0cc748648e502cea38b8e77389a52924fc5",
+          "verdict": "approved_offline",
+          "review_scope": "Full receipt lifecycle: pre-dispatch atomic exclusive creation, synced temp and directory, private state boundary, held per-ID lock through finalize, corrupt state refusal, explicit locked cleanup with retained lock inode.",
+          "evidence": [
+            {
+              "path": "internal/nextattempt/transport_test.go",
+              "scope": "Full receipt lifecycle: pre-dispatch atomic exclusive creation, synced temp and directory, private state boundary, held per-ID lock through finalize, corrupt state refusal, explicit locked cleanup with retained lock inode.",
+              "sha256": "117bc5ab343f8fc16fc3df71bcec68949097082f0bb96129e4ad81a1043b618c",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            },
+            {
+              "path": "docs/contracts/receipts.md",
+              "scope": "Contract cross-check; no execution evidence inferred.",
+              "sha256": "426746c1bc26d97caffb3ab4a0a6efae9c1a547aaa7f982ba846e65543c2fb3b",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "internal/nextattempt/transport.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "5220a653b3054bf7ddecd4204aab265893c5d5efe9c3952ccbd4f927ec0c1e90",
+          "verdict": "approved_offline",
+          "review_scope": "Persist unknown before dispatch, preserve body bytes/read errors, bound response evidence to1MiB, reject HTTP202/non-2xx/ambiguous effects, retain remote outcome on finalize failure and summarize20/21/22. No independent request retry.",
+          "evidence": [
+            {
+              "path": "internal/nextattempt/transport_test.go",
+              "scope": "Persist unknown before dispatch, preserve body bytes/read errors, bound response evidence to1MiB, reject HTTP202/non-2xx/ambiguous effects, retain remote outcome on finalize failure and summarize20/21/22. No independent request retry.",
+              "sha256": "117bc5ab343f8fc16fc3df71bcec68949097082f0bb96129e4ad81a1043b618c",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            },
+            {
+              "path": "docs/contracts/receipts.md",
+              "scope": "Contract cross-check; no execution evidence inferred.",
+              "sha256": "426746c1bc26d97caffb3ab4a0a6efae9c1a547aaa7f982ba846e65543c2fb3b",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            }
+          ],
+          "findings": []
+        }
+      ],
+      "cross_assignment_dependencies": [
+        {
+          "assignment_id": "invocation_identity",
+          "scope": "Factory determines request effect and binding; F2 must be resolved before complete normal-config mutation acceptance."
+        },
+        {
+          "assignment_id": "command_recovery",
+          "scope": "Root/agent layer emits diagnostics and finalizes typed outcome. Review here does not approve those unassigned blobs."
+        },
+        {
+          "assignment_id": "apps",
+          "scope": "Prior storage202/redirect advancement finding was closed by dcfe8af upload-only no-redirect and final200/201/204 checks plus process303/307 target-not-reached assertions. Secondary callsite evidence only; no whole Apps file verdict in this report."
+        },
+        {
+          "assignment_id": "base",
+          "scope": "Native importer preflight and per-batch caller workflow are separate. Shared uniqueness only covers the current invocation; no backend atomicity or cross-invocation idempotency claim."
+        }
+      ],
+      "limitations": [
+        "Required live/platform/release/evaluation gates remain separate.",
+        "This is independent source/test-contract review, not a new execution of the broad suites. Test-source evidence is explicitly execution-unbound; historical passing reports are not claimed to exercise all checkpoint blobs.",
+        "Approval applies only to named immutable blobs and stated module contracts. Cross-assignment dependencies and new findings prevent an overall release or whole-workflow approval."
+      ]
+    },
+    {
+      "schema_version": 1,
+      "reviewer": "/root/foundation_review",
+      "assignment_id": "output_artifacts",
+      "verdict": "approved_offline",
+      "paths": [
+        {
+          "path": "internal/output/emitter.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "de10bdd84f103ebaa208d67220c38110db5f5007b1343e82a50558b0a991824f",
+          "verdict": "approved_offline",
+          "review_scope": "Whole emitter scans before rendering, carries invocation output options through buffers, preserves legacy records/raw/jq and native escaping, attaches mutation status and propagates typed rendering failures.",
+          "evidence": [
+            {
+              "path": "internal/output/agent_test.go",
+              "scope": "Whole emitter scans before rendering, carries invocation output options through buffers, preserves legacy records/raw/jq and native escaping, attaches mutation status and propagates typed rendering failures.",
+              "sha256": "2d63fc4eca0a49a9c70cc80625f4c8c2f2635e5b38b05e4f5cb8615b108c1a84",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            },
+            {
+              "path": "docs/contracts/output.md",
+              "scope": "Contract cross-check; no execution evidence inferred.",
+              "sha256": "57d621f11b119b2692793a1d3af28d156ad22ee370cf63eb2d8929631ecf0fc3",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "internal/output/print.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "c042d6cf46b2a01b1d641c8636f28e8a182519c41f5ea06cbf13791b92e3e698",
+          "verdict": "approved_offline",
+          "review_scope": "Compact rendering is writer opt-in; legacy JSON indentation and record renderers retained; ignored PrintJson failures are recorded for AgentOptions.Finish.",
+          "evidence": [
+            {
+              "path": "internal/output/agent_test.go",
+              "scope": "Compact rendering is writer opt-in; legacy JSON indentation and record renderers retained; ignored PrintJson failures are recorded for AgentOptions.Finish.",
+              "sha256": "2d63fc4eca0a49a9c70cc80625f4c8c2f2635e5b38b05e4f5cb8615b108c1a84",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            },
+            {
+              "path": "docs/contracts/output.md",
+              "scope": "Contract cross-check; no execution evidence inferred.",
+              "sha256": "57d621f11b119b2692793a1d3af28d156ad22ee370cf63eb2d8929631ecf0fc3",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "internal/cmdutil/artifact_binding.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "3168fc5bcc62f4dfeeea9dd5cf4e767fdfb2252e4071525d1a8b4ea8364fd234",
+          "verdict": "approved_offline",
+          "review_scope": "Requires explicit user/bot, selected config and credential provider; shared read-only verified identity supplies tenant and user proof; no direct filesystem or auth fallback.",
+          "evidence": [
+            {
+              "path": "internal/cmdutil/artifact_lifecycle_test.go",
+              "scope": "Requires explicit user/bot, selected config and credential provider; shared read-only verified identity supplies tenant and user proof; no direct filesystem or auth fallback.",
+              "sha256": "bfe90a38a2dc47c61475e9b239e72b1da7288ebbede9423cf6c5f881d3b9b930",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            },
+            {
+              "path": "docs/contracts/output.md",
+              "scope": "Contract cross-check; no execution evidence inferred.",
+              "sha256": "57d621f11b119b2692793a1d3af28d156ad22ee370cf63eb2d8929631ecf0fc3",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "internal/credential/artifact_identity.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "e985b6397b8c8160682eb81b5591fb9abcc3273a78fa6d9461b13c9825d7f87b",
+          "verdict": "approved_offline",
+          "review_scope": "Per-identity once cache verifies current selected UAT/TAT; normal persisted config supported; rejects configured user/tenant mismatch, incomplete identity, missing scope and non-200; no unsolicited grants or unverified fallback.",
+          "evidence": [
+            {
+              "path": "internal/cmdutil/artifact_lifecycle_test.go",
+              "scope": "Per-identity once cache verifies current selected UAT/TAT; normal persisted config supported; rejects configured user/tenant mismatch, incomplete identity, missing scope and non-200; no unsolicited grants or unverified fallback.",
+              "sha256": "bfe90a38a2dc47c61475e9b239e72b1da7288ebbede9423cf6c5f881d3b9b930",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            },
+            {
+              "path": "docs/contracts/output.md",
+              "scope": "Contract cross-check; no execution evidence inferred.",
+              "sha256": "57d621f11b119b2692793a1d3af28d156ad22ee370cf63eb2d8929631ecf0fc3",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "internal/output/agent.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "6271e31228dd1cc51bfb180da6e0750296096116f64434e46579bc76bdd12dbf",
+          "verdict": "approved_offline",
+          "review_scope": "Compact/projection behavior preserves raw numbers, Unicode, nulls, identities, continuation and outcome metadata; uncertain nested results retain full payload; unsupported modes/plain writes fail and deferred errors finalize.",
+          "evidence": [
+            {
+              "path": "internal/output/agent_test.go",
+              "scope": "Compact/projection behavior preserves raw numbers, Unicode, nulls, identities, continuation and outcome metadata; uncertain nested results retain full payload; unsupported modes/plain writes fail and deferred errors finalize.",
+              "sha256": "2d63fc4eca0a49a9c70cc80625f4c8c2f2635e5b38b05e4f5cb8615b108c1a84",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            },
+            {
+              "path": "docs/contracts/output.md",
+              "scope": "Contract cross-check; no execution evidence inferred.",
+              "sha256": "57d621f11b119b2692793a1d3af28d156ad22ee370cf63eb2d8929631ecf0fc3",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "internal/output/agent_artifact.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "010ab2083b0d31a6e58bbca85cb52606517a7b2073d44fd1fcf079bccec5b5fc",
+          "verdict": "approved_offline",
+          "review_scope": "Versioned full-result artifact uses host ExclusiveFileIO and rechecks destination; credential-shaped results rejected, exact bytes and known extent retained, failed/native bare result metadata preserved without invented success/completeness. Materialized JSON memory cost is documented.",
+          "evidence": [
+            {
+              "path": "internal/output/agent_test.go",
+              "scope": "Versioned full-result artifact uses host ExclusiveFileIO and rechecks destination; credential-shaped results rejected, exact bytes and known extent retained, failed/native bare result metadata preserved without invented success/completeness. Materialized JSON memory cost is documented.",
+              "sha256": "2d63fc4eca0a49a9c70cc80625f4c8c2f2635e5b38b05e4f5cb8615b108c1a84",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            },
+            {
+              "path": "docs/contracts/output.md",
+              "scope": "Contract cross-check; no execution evidence inferred.",
+              "sha256": "57d621f11b119b2692793a1d3af28d156ad22ee370cf63eb2d8929631ecf0fc3",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "internal/output/artifact_binding.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "6c15e64a95e5b2eddc968efccf7457e8d9d432362864b87e54e9c061f4344d0c",
+          "verdict": "approved_offline",
+          "review_scope": "Strict/non-strict comparisons require nonempty matching environment, endpoint, app, identity and user; known tenant never matches absent tenant; strict mode requires observed proof on both sides; profile is local label only.",
+          "evidence": [
+            {
+              "path": "internal/output/artifact_binding_test.go",
+              "scope": "Strict/non-strict comparisons require nonempty matching environment, endpoint, app, identity and user; known tenant never matches absent tenant; strict mode requires observed proof on both sides; profile is local label only.",
+              "sha256": "3ab67a23d216621720738d8ea5ed03ce87fe32dc4ad45a07ec59ffa5623a3faa",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            },
+            {
+              "path": "docs/contracts/output.md",
+              "scope": "Contract cross-check; no execution evidence inferred.",
+              "sha256": "57d621f11b119b2692793a1d3af28d156ad22ee370cf63eb2d8929631ecf0fc3",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            }
+          ],
+          "findings": []
+        },
+        {
+          "path": "shortcuts/common/artifact_binding.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "d69f36e8595c399176a7f699cc9487bddc8c8e15fcf4c75882471a08b6bfc8ed",
+          "verdict": "approved_offline",
+          "review_scope": "Runtime adapter uses shared verified binding and comparison, rejects offline identity resolution, preserves domain responsibility for schema/extent/type validation.",
+          "evidence": [
+            {
+              "path": "internal/cmdutil/artifact_lifecycle_test.go",
+              "scope": "Runtime adapter uses shared verified binding and comparison, rejects offline identity resolution, preserves domain responsibility for schema/extent/type validation.",
+              "sha256": "bfe90a38a2dc47c61475e9b239e72b1da7288ebbede9423cf6c5f881d3b9b930",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            },
+            {
+              "path": "docs/contracts/output.md",
+              "scope": "Contract cross-check; no execution evidence inferred.",
+              "sha256": "57d621f11b119b2692793a1d3af28d156ad22ee370cf63eb2d8929631ecf0fc3",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": "unbound: test/contract source inspected; not executed by this review"
+            }
+          ],
+          "findings": []
+        }
+      ],
+      "cross_assignment_dependencies": [
+        {
+          "assignment_id": "invocation_identity",
+          "scope": "Normal config selected credentials provide verified read-only binding; F2 applies to token acquisition inside write invocations, not ordinary read-artifact mode."
+        },
+        {
+          "assignment_id": "generated_pagination",
+          "scope": "Artifact extent trusts explicit producer metadata; F1 currently allows a paginated producer to supply false complete metadata."
+        },
+        {
+          "assignment_id": "command_recovery",
+          "scope": "Command preflight restricts artifacts to supported business reads and rejects raw/lifecycle/mutation combinations; finalizer surfaces ignored leaf errors."
+        },
+        {
+          "scope": "Host ExclusiveFileIO owns atomic no-clobber and path policy. The local provider implementation is a separately verified dependency outside these assigned ledger paths.",
+          "path": "extension/fileio/"
+        }
+      ],
+      "limitations": [
+        "Required live/platform/release/evaluation gates remain separate.",
+        "This is independent source/test-contract review, not a new execution of the broad suites. Test-source evidence is explicitly execution-unbound; historical passing reports are not claimed to exercise all checkpoint blobs.",
+        "Approval applies only to named immutable blobs and stated module contracts. Cross-assignment dependencies and new findings prevent an overall release or whole-workflow approval."
+      ]
+    }
+  ]
+}
