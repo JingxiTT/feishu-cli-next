@@ -1,0 +1,75 @@
+#!/usr/bin/env python3
+"""Run the frozen read-only section workloads serially with per-section guidance."""
+import argparse
+import json
+import shutil
+import subprocess
+import sys
+import tempfile
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    for name in ('official-source', 'official-cli', 'next-source', 'next-cli', 'codex', 'auth-home', 'output-root'):
+        parser.add_argument('--' + name, type=Path, required=True)
+    parser.add_argument('--section', action='append')
+    parser.add_argument('--prepare-only', action='store_true')
+    args = parser.parse_args()
+    manifest = json.loads((ROOT / 'evaluation/tasks.read-sections.json').read_text())
+    sections = [task['section'] for task in manifest['tasks'] if not args.section or task['section'] in args.section]
+    if not sections or args.section and set(args.section) - set(sections):
+        raise ValueError('unknown section')
+    failed = False
+    with tempfile.TemporaryDirectory(prefix='eval-read-config-') as directory:
+        temporary = Path(directory)
+        for section in sections:
+            index = next(i for i, task in enumerate(manifest["tasks"]) if task["section"] == section)
+            official_entry = args.official_source / 'skills' / ('lark-' + section) / 'SKILL.md'
+            # An absent skill is a documented source-matched affordance fallback.
+            if not official_entry.is_file():
+                distribution = temporary / section / 'official'
+                shutil.copytree(args.official_source / 'skills', distribution)
+                official_entry = distribution / ('lark-' + section) / 'SKILL.md'
+                official_entry.parent.mkdir()
+                shutil.copyfile(args.official_source / 'affordance' / (section + '.md'), official_entry)
+            concise_distribution = temporary / section / 'concise'
+            shutil.copytree(args.official_source / 'skills', concise_distribution)
+            concise_entry = concise_distribution / ('lark-' + section) / 'SKILL.md'
+            concise_entry.parent.mkdir(exist_ok=True)
+            shutil.copyfile(ROOT / 'evaluation/concise' / section / 'SKILL.md', concise_entry)
+            config = {'mode': 'real', 'backend': 'synthetic-read-v1', 'model': 'gpt-6-astra',
+                      'reasoning': 'high', 'tokenizer': 'provider-undisclosed', 'tools': ['shell', 'files'],
+                      'permissions': 'workspace-write; managed proxy loopback-only with local binding; isolated synthetic sidecar',
+                      'budget': {'timeout_seconds': 180}, 'timeout_seconds': 210,
+                      'accounting_method': 'codex-cli 0.153.4 provider turn.completed; cached input included in full',
+                      'runner': [sys.executable, str(ROOT / 'evaluation/codex_runner.py'), '--codex', str(args.codex),
+                                 '--auth-home', str(args.auth_home), '--codex-version', 'codex-cli 0.153.4'],
+                      'verifier': [sys.executable, str(ROOT / 'evaluation/read_verifier.py')],
+                      'arms': {'official': {'cli': str(args.official_cli), 'skill': str(official_entry)},
+                               'official_concise': {'cli': str(args.official_cli), 'skill': str(concise_entry)},
+                               'next': {'cli': str(args.next_cli), 'skill': str(args.next_source / 'agent-skills/feishu-cli-next/SKILL.md')}}}
+            from harness import validate_config
+            validate_config(config)
+            path = temporary / (section + '.json')
+            path.write_text(json.dumps(config), encoding='utf-8')
+            path.chmod(0o600)
+            if args.prepare_only:
+                continue
+            if (args.output_root / section / 'batch-01.json').exists():
+                raise ValueError('refusing to overwrite completed or partial model evidence')
+            print(json.dumps({'section': section, 'status': 'starting', 'planned_attempts': 9}), flush=True)
+            result = subprocess.run([sys.executable, str(ROOT / 'evaluation/harness.py'),
+                                     '--tasks', str(ROOT / 'evaluation/tasks.read-sections.json'), '--section', section,
+                                     '--config', str(path), '--output', str(args.output_root / section / 'batch-01.json'),
+                                     '--seed', str(20260910 + index), '--repeats', '3'], check=False)
+            failed |= result.returncode != 0
+    print(json.dumps({'status': 'prepared' if args.prepare_only else 'complete_with_failures' if failed else 'complete',
+                      'sections': sections}), flush=True)
+    return int(failed)
+
+
+if __name__ == '__main__':
+    sys.exit(main())

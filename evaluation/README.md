@@ -284,3 +284,41 @@ set `EVAL_CONTACT_BINARIES` to a JSON array of the two archived binary paths and
 configuration template specifies a three-repeat balanced real batch; resolve
 its local path placeholders in a temporary file, including the existing Codex
 auth home without reading or copying its credentials. Held-out tasks stay closed.
+
+### Other bounded read-only sections
+
+`runtime/*.json` normalizes nine section-owner contracts into reviewed signed
+read response tables; `tasks.read-sections.json` contains only public prompts/type
+schemas plus hidden verifier expectations. The server data stays outside agent
+workspaces. GET and explicitly reviewed POST reads are allowed; other routes are
+rejected without forwarding. Selectors distinguish IDs, formats, revisions and
+identities. This is a bounded fixture, not a general mock of the whole service.
+Unknown valid strategies may expose a fixture limitation and require a separately
+versioned balanced rerun; do not silently call that a product defect.
+
+`read_verifier.py` compares typed values (false differs from zero), optional
+unordered answer arrays, required independent signed-read groups and rejected
+request absence. Static route state has no mutation implementation. It permits
+local `next/receipts` journals created for conservative raw POST accounting while
+rejecting auth/profile/config changes. The post-run server receipt remains outside
+the model's control during execution. Expected output constants are never placed
+in the model-facing answer schema.
+
+`run_read_batch.py` accepts explicit archived source/binary paths and the pinned
+native Codex/auth-home paths, stages original references, and runs each section's
+three-arm/three-repeat batch serially. It refuses existing output to preserve
+failed and partial attempts. `--prepare-only` validates/stages without model calls.
+Use a frozen evaluator code snapshot as well as frozen product binaries when
+preparing later adapters concurrently. The evidence must identify both revisions.
+All official skill siblings remain available for relative dependencies, including
+Note/Minutes/VC compatibility routing through `lark-meeting`; only the selected
+entry is injected. Concise English entries replace that main entry while retaining
+the same original reference files. Application has no official domain skill: its
+unchanged upstream affordance is the documented Arm1 fallback. Differences in
+language, reference-loading and domain coverage limit interface-only attribution.
+
+Set `EVAL_READ_BINARIES` to the JSON array of archived authsidecar binaries to run
+all reviewed CLI examples and independent proofs as controlled tests. No provider
+calls occur during this test. Native loopback/external-denial checks use the
+same sandbox profile as Contact. A completed small read task does not establish
+section-wide safety, mutation fidelity, live privacy or held-out generalization.

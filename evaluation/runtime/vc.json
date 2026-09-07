@@ -1,0 +1,294 @@
+{
+  "schema_version": 1,
+  "section": "vc",
+  "source_contract": "evaluation/contracts/vc.json",
+  "task": {
+    "id": "vc-dev-01",
+    "section": "vc",
+    "prompt": "Read the private fixture meeting record with meeting ID 7651377260537433044. Report its exact meeting ID and elapsed meeting duration in seconds, calculated from its start and end instants. Distinguish the long meeting ID from the 9-digit meeting number. Do not join, invite, send messages, change settings, or change any resource. Return JSON with exactly meeting_id (string) and duration_seconds (integer).",
+    "fixture": {
+      "scenario": "vc-exact-meeting-duration-v1",
+      "answer_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "meeting_id",
+          "duration_seconds"
+        ],
+        "properties": {
+          "meeting_id": {
+            "type": "string"
+          },
+          "duration_seconds": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "expected": {
+      "answer": {
+        "meeting_id": "7651377260537433044",
+        "duration_seconds": 90
+      },
+      "required_reads": [
+        [
+          "meeting_record"
+        ]
+      ],
+      "unordered_answer_paths": []
+    }
+  },
+  "routes": [
+    {
+      "id": "identity",
+      "method": "GET",
+      "path": "/open-apis/authen/v1/user_info",
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "data": {
+            "open_id": "ou_vc_fixture_self",
+            "name": "Synthetic VC Fixture",
+            "tenant_key": "vc-fixture-tenant"
+          }
+        }
+      }
+    },
+    {
+      "id": "meeting_record",
+      "method": "GET",
+      "path": "/open-apis/vc/v1/meetings/7651377260537433044",
+      "request": {
+        "optional_query": {
+          "query_mode": [
+            "0"
+          ],
+          "with_meeting_ability": [
+            "false"
+          ],
+          "with_participants": [
+            "false"
+          ],
+          "user_id_type": [
+            "open_id",
+            "user_id",
+            "union_id"
+          ]
+        }
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "data": {
+            "meeting": {
+              "id": "7651377260537433044",
+              "meeting_no": "012345678",
+              "topic": "Private VC development fixture",
+              "start_time": "1700000000",
+              "end_time": "1700000090",
+              "status": 3,
+              "participant_count": 1,
+              "note_id": ""
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "meeting_record",
+      "method": "GET",
+      "path": "/open-apis/vc/v1/meetings/7651377260537433044",
+      "request": {
+        "query": {
+          "with_participants": "true"
+        },
+        "optional_query": {
+          "query_mode": [
+            "0"
+          ],
+          "with_meeting_ability": [
+            "false"
+          ],
+          "user_id_type": [
+            "open_id"
+          ]
+        }
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "data": {
+            "meeting": {
+              "id": "7651377260537433044",
+              "meeting_no": "012345678",
+              "topic": "Private VC development fixture",
+              "start_time": "1700000000",
+              "end_time": "1700000090",
+              "status": 3,
+              "participant_count": 1,
+              "note_id": "",
+              "participants": [
+                {
+                  "id": "ou_vc_fixture_self",
+                  "user_type": 1
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "meeting_record",
+      "method": "GET",
+      "path": "/open-apis/vc/v1/meetings/7651377260537433044",
+      "request": {
+        "query": {
+          "with_participants": "true",
+          "user_id_type": "user_id"
+        },
+        "optional_query": {
+          "query_mode": [
+            "0"
+          ],
+          "with_meeting_ability": [
+            "false"
+          ]
+        }
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "data": {
+            "meeting": {
+              "id": "7651377260537433044",
+              "meeting_no": "012345678",
+              "topic": "Private VC development fixture",
+              "start_time": "1700000000",
+              "end_time": "1700000090",
+              "status": 3,
+              "participant_count": 1,
+              "note_id": "",
+              "participants": [
+                {
+                  "id": "vcself01",
+                  "user_type": 1
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "meeting_record",
+      "method": "GET",
+      "path": "/open-apis/vc/v1/meetings/7651377260537433044",
+      "request": {
+        "query": {
+          "with_participants": "true",
+          "user_id_type": "union_id"
+        },
+        "optional_query": {
+          "query_mode": [
+            "0"
+          ],
+          "with_meeting_ability": [
+            "false"
+          ]
+        }
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "data": {
+            "meeting": {
+              "id": "7651377260537433044",
+              "meeting_no": "012345678",
+              "topic": "Private VC development fixture",
+              "start_time": "1700000000",
+              "end_time": "1700000090",
+              "status": 3,
+              "participant_count": 1,
+              "note_id": "",
+              "participants": [
+                {
+                  "id": "on_vc_fixture_self",
+                  "user_type": 1
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "recording_supplement",
+      "method": "GET",
+      "path": "/open-apis/vc/v1/meetings/7651377260537433044/recording",
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "data": {
+            "recording": {
+              "url": "https://example.invalid/minutes/vcfixtureminute",
+              "duration": "90"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "examples": [
+    [
+      "vc",
+      "meeting",
+      "get",
+      "--meeting-id",
+      "7651377260537433044",
+      "--as",
+      "user"
+    ],
+    [
+      "vc",
+      "+detail",
+      "--meeting-ids",
+      "7651377260537433044",
+      "--as",
+      "user"
+    ],
+    [
+      "api",
+      "GET",
+      "/open-apis/vc/v1/meetings/7651377260537433044",
+      "--as",
+      "user"
+    ],
+    [
+      "vc",
+      "meeting",
+      "get",
+      "--meeting-id",
+      "7651377260537433044",
+      "--with-participants",
+      "--user-id-type",
+      "union_id",
+      "--as",
+      "user"
+    ]
+  ],
+  "limitations": [
+    "One ended synthetic meeting, no pagination or mutation state. Exact meeting ID and integer elapsed duration are verified independently from start/end timestamps; this does not evaluate live behavior or recipient authorization.",
+    "Only a successful meeting_record signed read satisfies required_reads. user_info and recording_supplement do not satisfy it. The recording route exists solely to accommodate the existing vc +detail supplemental lookup; recording duration is not proof of meeting elapsed duration.",
+    "query_mode is limited to omitted/0: artifact-only query_mode=1 is outside the task and rejected. with_participants omitted/false returns no participant collection; explicit true uses tested participant shapes with distinct synthetic open/user/union identifiers. Invalid known selector values are rejected; unrelated query keys remain allowed by the common static table.",
+    "with_meeting_ability=true is unsupported by this static fixture: the real API returns ability only for bot identity, and FORMAT v1 cannot select a response by signed identity header. Both user and bot metadata reads with that option omitted/false remain supported. An identity selector would be required to model optional ability statistics faithfully; it is not needed for the elapsed-duration task.",
+    "No response data or expected values are present in the model-facing output schema. CLI examples use existing public syntax, previously covered by VC process tests and tests/next_foundation/fixture_e2e_test.go. The evaluator must still run its controlled binary tests before marking this runtime table executable.",
+    "No model runs, live calls, server/product edits or staging/commits were performed to author this normalized JSON."
+  ]
+}

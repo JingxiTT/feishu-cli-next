@@ -1,0 +1,147 @@
+{
+  "schema_version": 1,
+  "section": "whiteboard",
+  "source_contract": "evaluation/contracts/whiteboard.json",
+  "task": {
+    "id": "whiteboard-dev-01",
+    "section": "whiteboard",
+    "prompt": "Read the two text nodes in the synthetic whiteboard wbcnWhiteboardDev01. Return JSON with exactly a nodes array; each entry must contain exactly id and text. Preserve each native node ID and its exact text, including Unicode and an empty string. Do not recreate nodes, modify the board, change permissions, or subscribe to events.",
+    "fixture": {
+      "scenario": "whiteboard-native-text-v1",
+      "answer_schema": {
+        "type": "object",
+        "required": [
+          "nodes"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "nodes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "id",
+                "text"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "text": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "expected": {
+      "answer": {
+        "nodes": [
+          {
+            "id": "n1",
+            "text": "你好"
+          },
+          {
+            "id": "n2",
+            "text": ""
+          }
+        ]
+      },
+      "required_reads": [
+        [
+          "whiteboard_nodes"
+        ]
+      ],
+      "unordered_answer_paths": [
+        "nodes"
+      ]
+    }
+  },
+  "routes": [
+    {
+      "id": "identity",
+      "method": "GET",
+      "path": "/open-apis/authen/v1/user_info",
+      "request": {
+        "query": {}
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "data": {
+            "open_id": "ou_whiteboard_fixture_self",
+            "name": "Synthetic Whiteboard Fixture",
+            "tenant_key": "whiteboard-fixture-tenant"
+          }
+        }
+      }
+    },
+    {
+      "id": "whiteboard_nodes",
+      "method": "GET",
+      "path": "/open-apis/board/v1/whiteboards/wbcnWhiteboardDev01/nodes",
+      "request": {
+        "query": {}
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "data": {
+            "nodes": [
+              {
+                "id": "n1",
+                "text": "你好"
+              },
+              {
+                "id": "n2",
+                "text": ""
+              }
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "examples": [
+    [
+      "whiteboard",
+      "+export",
+      "--whiteboard-token",
+      "wbcnWhiteboardDev01",
+      "--output-type",
+      "raw",
+      "--as",
+      "user"
+    ],
+    [
+      "whiteboard",
+      "+query",
+      "--whiteboard-token",
+      "wbcnWhiteboardDev01",
+      "--output_as",
+      "raw",
+      "--as",
+      "bot"
+    ],
+    [
+      "api",
+      "GET",
+      "/open-apis/board/v1/whiteboards/wbcnWhiteboardDev01/nodes",
+      "--as",
+      "user"
+    ]
+  ],
+  "limitations": [
+    "Read-only static raw-node fixture. The two native IDs, Unicode text and empty string are preserved exactly; this does not prove complete live node schema, rich-text extraction, rendering, node creation or identity preservation after updates.",
+    "The existing export shortcut, hidden query alias and generic API GET all read the same complete two-node response. No query selector or pagination is defined by the frozen shortcut for this endpoint. Unknown query handling in the common table is not evidence of backend query compatibility.",
+    "Required whiteboard_nodes read proof must come from the evaluator-owned signed request ledger. Identity-only reads cannot satisfy it. The exact answer comparison must retain empty strings and native IDs, reject duplicate/missing nodes, and ignore only top-level nodes array order.",
+    "Unlisted writes and subscription attempts are rejected and ledgered by the common server. Independent verification checks no rejected requests or config changes; static state plus the absence of mutation attempts is bounded fixture evidence, not proof of live ACL or tenant guarantees.",
+    "Both user and bot identities are valid for this synthetic read. All arms share the same binding and response table; the model-facing fixture contains only scenario and a type-only answer schema.",
+    "Examples are real existing CLI forms drawn from the reviewed contract and section regression evidence. Evaluator-controlled archived binary checks remain required before declaring this runtime fixture executable. No model runs, product edits or live actions were performed during normalization."
+  ]
+}

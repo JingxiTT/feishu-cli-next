@@ -44,6 +44,12 @@ class CodexAccountingTests(unittest.TestCase):
         self.assertEqual(runner.command_choices('feishu-cli-next discover "private query" --limit 5'),
                          [{"kind": "cli", "command": ["discover"], "flags": ["--limit"]}])
 
+    def test_new_public_guide_and_output_choices_are_retained(self):
+        self.assertEqual(runner.command_choices('feishu-cli-next guide install --project private/path'),
+                         [{"kind": "cli", "command": ["guide", "install"], "flags": ["--project"]}])
+        self.assertEqual(runner.command_choices('feishu-cli-next discover private --flags --result-fields private'),
+                         [{"kind": "cli", "command": ["discover"], "flags": ["--flags", "--result-fields"]}])
+
     def test_incomplete_and_failed_turns_are_unknown(self):
         for tail in ([{"type": "turn.started"}], [{"type": "turn.failed"}],
                      [{"type": "item.completed", "item": {"type": "mcp_tool_call"}}]):

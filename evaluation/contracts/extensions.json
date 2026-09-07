@@ -88,6 +88,12 @@
     "This task verifies public host command integration, structured-zero preservation and trial isolation. It does not evaluate plugins, remote sidecar deployment, FileIO atomicity or platform-native keychains.",
     "A closed proxy and isolated environment alone do not prove that no developer path was read; enforcing/recording tool filesystem boundaries is required for that check.",
     "host-result.json is a shell-captured JSON result, not --save-result binding-container semantics. No tenant-lookup route is required for this task.",
-    "Contract authored only; evaluator must compile and smoke-check each pinned archive adapter before model trials. No model trial or held-out task was run."
-  ]
+    "The exact wrapper has been smoke-tested against the sibling reference and current candidate. Evaluator must still build/check each pinned clean archive adapter before model trials; this is not evidence for model performance or held-out tasks."
+  ],
+  "smoke_evidence": {
+    "report": ".tmp/extensions-eval-contract-smoke.json",
+    "reference": "Clean sibling reference 7fd6ef3c07182257ce776cdc5a614e122d5bd4b3",
+    "candidate": "Current shared candidate working tree",
+    "result": "Both external-module builds and exact fixture commands pass with exit 0, empty stderr, and numeric data.value 0; legacy indented JSON and candidate compact JSON. No model or live runs."
+  }
 }

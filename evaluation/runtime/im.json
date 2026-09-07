@@ -1,0 +1,300 @@
+{
+  "schema_version": 1,
+  "section": "im",
+  "source_contract": "evaluation/contracts/im.json",
+  "task": {
+    "id": "im-dev-01",
+    "section": "im",
+    "prompt": "Read message om_11111111111111111111111111111111 in the synthetic private self-chat oc_22222222222222222222222222222222. It contains Unicode and an empty rich-text segment. Preserve both values exactly. Return JSON with exactly message_id, chat_id, msg_type, text (the first text segment), and empty_segment (the second text segment). Do not send, edit, reply, react, mark read, invite, or change anything.",
+    "fixture": {
+      "scenario": "im-native-empty-post-v1",
+      "answer_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "message_id",
+          "chat_id",
+          "msg_type",
+          "text",
+          "empty_segment"
+        ],
+        "properties": {
+          "message_id": {
+            "type": "string"
+          },
+          "chat_id": {
+            "type": "string"
+          },
+          "msg_type": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          },
+          "empty_segment": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "expected": {
+      "answer": {
+        "message_id": "om_11111111111111111111111111111111",
+        "chat_id": "oc_22222222222222222222222222222222",
+        "msg_type": "post",
+        "text": "你好 👋",
+        "empty_segment": ""
+      },
+      "required_reads": [
+        [
+          "message_get",
+          "message_mget"
+        ]
+      ],
+      "unordered_answer_paths": []
+    }
+  },
+  "routes": [
+    {
+      "id": "identity",
+      "method": "GET",
+      "path": "/open-apis/authen/v1/user_info",
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "data": {
+            "open_id": "ou_33333333333333333333333333333333",
+            "name": "Synthetic Self",
+            "tenant_key": "im-fixture-tenant"
+          }
+        }
+      }
+    },
+    {
+      "id": "message_get",
+      "method": "GET",
+      "path": "/open-apis/im/v1/messages/om_11111111111111111111111111111111",
+      "request": {
+        "optional_query": {
+          "user_id_type": [
+            "open_id"
+          ],
+          "card_msg_content_type": [
+            "raw_card_content"
+          ],
+          "with_sender_name": [
+            "true",
+            "false"
+          ]
+        }
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "data": {
+            "items": [
+              {
+                "message_id": "om_11111111111111111111111111111111",
+                "chat_id": "oc_22222222222222222222222222222222",
+                "msg_type": "post",
+                "body": {
+                  "content": "{\"zh_cn\":{\"title\":\"\",\"content\":[[{\"tag\":\"text\",\"text\":\"你好 👋\"},{\"tag\":\"text\",\"text\":\"\"}]]}}"
+                },
+                "sender": {
+                  "id": "ou_33333333333333333333333333333333",
+                  "id_type": "open_id",
+                  "sender_type": "user",
+                  "sender_name": "Synthetic Self",
+                  "tenant_key": "im-fixture-tenant"
+                },
+                "create_time": "1893546000000",
+                "deleted": false,
+                "updated": false,
+                "mentions": []
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "message_mget",
+      "method": "GET",
+      "path": "/open-apis/im/v1/messages/mget",
+      "request": {
+        "query": {
+          "message_ids": "om_11111111111111111111111111111111"
+        },
+        "optional_query": {
+          "user_id_type": [
+            "open_id"
+          ],
+          "card_msg_content_type": [
+            "raw_card_content"
+          ],
+          "with_sender_name": [
+            "true",
+            "false"
+          ]
+        }
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "data": {
+            "items": [
+              {
+                "message_id": "om_11111111111111111111111111111111",
+                "chat_id": "oc_22222222222222222222222222222222",
+                "msg_type": "post",
+                "body": {
+                  "content": "{\"zh_cn\":{\"title\":\"\",\"content\":[[{\"tag\":\"text\",\"text\":\"你好 👋\"},{\"tag\":\"text\",\"text\":\"\"}]]}}"
+                },
+                "sender": {
+                  "id": "ou_33333333333333333333333333333333",
+                  "id_type": "open_id",
+                  "sender_type": "user",
+                  "sender_name": "Synthetic Self",
+                  "tenant_key": "im-fixture-tenant"
+                },
+                "create_time": "1893546000000",
+                "deleted": false,
+                "updated": false,
+                "mentions": []
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "reactions_read",
+      "method": "POST",
+      "path": "/open-apis/im/v1/messages/reactions/batch_query",
+      "request": {
+        "optional_query": {
+          "user_id_type": [
+            "open_id"
+          ]
+        },
+        "body_contains": {
+          "queries": [
+            {
+              "message_id": "om_11111111111111111111111111111111"
+            }
+          ]
+        }
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "data": {
+            "success_msg_reaction_counts": [
+              {
+                "message_id": "om_11111111111111111111111111111111",
+                "reaction_count": []
+              }
+            ],
+            "success_msg_reaction_details": [
+              {
+                "message_id": "om_11111111111111111111111111111111",
+                "message_reaction_items": []
+              }
+            ],
+            "fail_msg_reaction_details": []
+          }
+        }
+      }
+    },
+    {
+      "id": "reactions_read",
+      "method": "POST",
+      "path": "/open-apis/im/v1/messages/reactions/batch_query",
+      "request": {
+        "optional_query": {
+          "user_id_type": [
+            "open_id"
+          ]
+        },
+        "body_contains": {
+          "queries": [
+            {
+              "message_id": "om_11111111111111111111111111111111",
+              "page_token": ""
+            }
+          ]
+        }
+      },
+      "response": {
+        "http_status": 200,
+        "json": {
+          "code": 0,
+          "data": {
+            "success_msg_reaction_counts": [
+              {
+                "message_id": "om_11111111111111111111111111111111",
+                "reaction_count": []
+              }
+            ],
+            "success_msg_reaction_details": [
+              {
+                "message_id": "om_11111111111111111111111111111111",
+                "message_reaction_items": []
+              }
+            ],
+            "fail_msg_reaction_details": []
+          }
+        }
+      }
+    }
+  ],
+  "examples": [
+    [
+      "api",
+      "GET",
+      "/open-apis/im/v1/messages/om_11111111111111111111111111111111",
+      "--as",
+      "user"
+    ],
+    [
+      "api",
+      "GET",
+      "/open-apis/im/v1/messages/mget",
+      "--params",
+      "{\"message_ids\":[\"om_11111111111111111111111111111111\"],\"card_msg_content_type\":\"raw_card_content\",\"with_sender_name\":true}",
+      "--as",
+      "user"
+    ],
+    [
+      "im",
+      "+messages-mget",
+      "--message-ids",
+      "om_11111111111111111111111111111111",
+      "--no-reactions",
+      "--as",
+      "user"
+    ],
+    [
+      "im",
+      "+messages-mget",
+      "--message-ids",
+      "om_11111111111111111111111111111111",
+      "--as",
+      "user"
+    ]
+  ],
+  "limitations": [
+    "This exact-message read fixture deliberately excludes message-list/search pagination. A static response table that permits unknown query keys cannot faithfully filter arbitrary start_time/end_time, changing page_token, page_size or search criteria. Supporting those alternatives requires small predicate/filter handling in the shared server, not a constant one-message response.",
+    "The exact GET and singleton mget native responses contain data.items, with body.content as a JSON-serialized rich-text object. They do not fabricate has_more or page_token for these non-paginated reads. Singleton message_ids is required so another message cannot select this fixture.",
+    "The existing human-readable +messages-mget formatter concatenates post elements and omits raw body.content, so an empty segment is invisible in its rendered content. Native api GET or api GET mget remains available equally to all arms. --raw or --result-detail on that shortcut does not restore discarded structure.",
+    "The exact expected answer requires the empty_segment key with an empty string, not omission, null, whitespace or a placeholder, and exact Unicode code points. Type-only schema is model-visible; expected values and response/native data remain evaluator-only.",
+    "Successful signed read observations plus exact answer/no-change checks establish this bounded task outcome. A backend ledger alone cannot prove that a lossy shortcut exposed native element structure to the model; do not describe this as a general losslessness benchmark.",
+    "The optional reaction POST is an existing read endpoint, not a mutation. Its two exact body variants cover a single message with an omitted or empty reaction cursor. It cannot substitute for the required native message read. Sender names are included in the native message to avoid extra contact lookups; there are no threads, mentions, folders or attachments to enrich.",
+    "Request shapes derive from shortcuts/im/helpers.go:buildMGetURL, shortcuts/im/convert_lib/reactions.go:fetchReactionsBatch and the passing tests/next_sections/im process suite. Evaluator-controlled tests of these normalized signed routes and both CLI binaries are still required; authoring ran no model or live requests.",
+    "Controlled archived-binary tests rejected the original raw mget example on BOTH official and next because the api positional path contained a query string. The corrected example passes query values through --params JSON; preserve that initial failure in evaluation evidence. This was an invalid authored fixture example, not a product regression. Targeted scripted checks after repair passed all four examples on the archived official-cli and prior candidate 4ce36da next-cli; both native API examples exposed the exact Unicode and empty segment, and independent signed-read/no-rejected-request verification passed. This does not validate the upcoming candidate freeze and involved no model call."
+  ]
+}

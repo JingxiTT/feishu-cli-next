@@ -27,8 +27,8 @@ def trace_vocabulary():
     snapshot = Path(__file__).resolve().parents[1] / "docs/reference/registrations.json.gz"
     with gzip.open(snapshot, "rt", encoding="utf-8") as stream:
         registrations = json.load(stream)
-    paths = {("discover",)}
-    flags = {"--help", "-h"}
+    paths = {("discover",), ("guide",)} | {("guide", action) for action in ("show", "install", "update", "uninstall")}
+    flags = {"--help", "-h", "--flags", "--project", "--result-detail", "--result-fields", "--save-result"}
     for variant in registrations.values():
         for command, descriptor in variant["commands"].items():
             paths.add(tuple(command.split()))
@@ -162,9 +162,16 @@ def parse_events(stdout, returncode):
 
 def run(request, codex, auth_home, expected_version):
     backend = request["settings"]["backend"]
-    if backend == "synthetic-contact-v1":
+    if backend in ("synthetic-contact-v1", "synthetic-read-v1"):
         from section_fixture import SectionFixture
-        with SectionFixture(request["fixture"]["scenario"]) as fixture:
+        dispatch = None
+        if backend == "synthetic-read-v1":
+            from read_fixture import dispatcher, load_runtime
+            runtime = load_runtime(request["fixture"]["runtime_section"])
+            if runtime["task"]["fixture"]["scenario"] != request["fixture"]["scenario"]:
+                raise ValueError("runtime scenario mismatch")
+            dispatch = dispatcher(runtime)
+        with SectionFixture(request["fixture"]["scenario"], dispatch) as fixture:
             try:
                 response, code = run_agent(request, codex, auth_home, expected_version, fixture.environment())
                 response["api_calls"] = len(fixture.receipt()["requests"])
@@ -184,9 +191,13 @@ def run_agent(request, codex, auth_home, expected_version, fixture_env=None):
     for name in ("lark-cli", "feishu-cli-next"):
         (workspace / "bin" / name).symlink_to(request["cli"])
     shutil.copytree(Path(request["skill"]).parent, workspace / "guidance")
-    shared = Path(request["skill"]).parent.parent / "lark-shared"
-    if Path(request["skill"]).parent.name == "lark-contact" and shared.is_dir():
-        shutil.copytree(shared, workspace / "lark-shared")
+    # Frozen official distributions use cross-skill relative references (including
+    # compatibility entries). Make those files available without injecting them.
+    distribution = Path(request["skill"]).parent.parent
+    if (distribution / "lark-shared").is_dir():
+        for dependency in distribution.iterdir():
+            if dependency.is_dir() and dependency.name.startswith("lark-"):
+                shutil.copytree(dependency, workspace / dependency.name)
     env = {**cli_environment(workspace), **(fixture_env or {})}
     env["CODEX_HOME"] = str(auth_home)
     # Auth is consumed by Codex itself. This adapter neither reads nor copies credentials.

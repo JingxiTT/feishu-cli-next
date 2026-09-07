@@ -90,9 +90,11 @@ def contact_read(method, uri, body):
 
 
 class SectionFixture:
-    def __init__(self, scenario):
-        if scenario != "contact-exact-id-v1":
+    def __init__(self, scenario, dispatch=None):
+        if scenario != "contact-exact-id-v1" and dispatch is None:
             raise ValueError("unsupported fixture scenario")
+        self.scenario = scenario
+        self.dispatch = dispatch
         self.records = []
         self.lock = threading.Lock()
         fixture = self
@@ -110,9 +112,12 @@ class SectionFixture:
                     body = self.rfile.read(length)
                     if not valid_signature(self.command, self.path, body, self.headers):
                         raise ValueError("invalid signature")
-                    route, data, ids = contact_read(self.command, self.path, body)
+                    if fixture.dispatch is None:
+                        route, data, ids = contact_read(self.command, self.path, body)
+                        response = {"code": 0, "msg": "success", "data": data}
+                    else:
+                        route, response, ids = fixture.dispatch(self.command, self.path, body, self.headers)
                     status = 200
-                    response = {"code": 0, "msg": "success", "data": data}
                 except (ValueError, KeyError, TypeError):
                     response = {"code": 403, "msg": "synthetic fixture rejected request"}
                 with fixture.lock:
@@ -145,7 +150,7 @@ class SectionFixture:
 
     def receipt(self):
         with self.lock:
-            return {"scenario": "contact-exact-id-v1", "requests": list(self.records)}
+            return {"scenario": self.scenario, "requests": list(self.records)}
 
     def write_receipt(self, workspace):
         # Called only after the agent process has ended. Never trust an agent-written ledger.

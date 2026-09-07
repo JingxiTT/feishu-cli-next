@@ -1,0 +1,446 @@
+{
+  "schema_version": 1,
+  "split": "development",
+  "backend": "synthetic-read-v1",
+  "tasks": [
+    {
+      "id": "application-dev-01",
+      "section": "application",
+      "prompt": "Inspect the slash commands actually registered on the currently bound synthetic app synthetic-evaluation-app. In this fixture, enabled means currently registered; there is no separate enable/disable state. List the registered commands and identify the enabled command. Do not create, update, delete, install, or change anything. Return JSON with commands (an array of objects containing command_id and command) and enabled_command (the command name without its leading slash).",
+      "fixture": {
+        "scenario": "application-registered-command-v1",
+        "answer_schema": {
+          "type": "object",
+          "properties": {
+            "commands": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "command_id": {
+                    "type": "string"
+                  },
+                  "command": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "command_id",
+                  "command"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "enabled_command": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "commands",
+            "enabled_command"
+          ],
+          "additionalProperties": false
+        },
+        "runtime_section": "application"
+      },
+      "expected": {
+        "answer": {
+          "commands": [
+            {
+              "command_id": "cmd_application_status_001",
+              "command": "status"
+            }
+          ],
+          "enabled_command": "status"
+        },
+        "required_reads": [
+          [
+            "application_slash_command_list"
+          ]
+        ],
+        "unordered_answer_paths": [
+          "commands"
+        ]
+      }
+    },
+    {
+      "id": "apps-dev-01",
+      "section": "apps",
+      "prompt": "Find the synthetic aPaaS app named Journal and report its app ID and owner without changing any app, code, data, access, or automation. Write answer.json in the task workspace with exactly {\"app_id\":\"...\",\"name\":\"...\",\"owner\":\"...\"}. The current account is the fixture account; owner \"self\" means that account.",
+      "fixture": {
+        "scenario": "apps-owner-lookup-v1",
+        "answer_schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "app_id",
+            "name",
+            "owner"
+          ],
+          "properties": {
+            "app_id": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "owner": {
+              "type": "string"
+            }
+          }
+        },
+        "runtime_section": "apps"
+      },
+      "expected": {
+        "answer": {
+          "app_id": "app_fixture",
+          "name": "Journal",
+          "owner": "self"
+        },
+        "required_reads": [
+          [
+            "apps-list",
+            "app-get"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "im-dev-01",
+      "section": "im",
+      "prompt": "Read message om_11111111111111111111111111111111 in the synthetic private self-chat oc_22222222222222222222222222222222. It contains Unicode and an empty rich-text segment. Preserve both values exactly. Return JSON with exactly message_id, chat_id, msg_type, text (the first text segment), and empty_segment (the second text segment). Do not send, edit, reply, react, mark read, invite, or change anything.",
+      "fixture": {
+        "scenario": "im-native-empty-post-v1",
+        "answer_schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "message_id",
+            "chat_id",
+            "msg_type",
+            "text",
+            "empty_segment"
+          ],
+          "properties": {
+            "message_id": {
+              "type": "string"
+            },
+            "chat_id": {
+              "type": "string"
+            },
+            "msg_type": {
+              "type": "string"
+            },
+            "text": {
+              "type": "string"
+            },
+            "empty_segment": {
+              "type": "string"
+            }
+          }
+        },
+        "runtime_section": "im"
+      },
+      "expected": {
+        "answer": {
+          "message_id": "om_11111111111111111111111111111111",
+          "chat_id": "oc_22222222222222222222222222222222",
+          "msg_type": "post",
+          "text": "你好 👋",
+          "empty_segment": ""
+        },
+        "required_reads": [
+          [
+            "message_get",
+            "message_mget"
+          ]
+        ],
+        "unordered_answer_paths": []
+      }
+    },
+    {
+      "id": "minutes-dev-01",
+      "section": "minutes",
+      "prompt": "Read the transcript of synthetic minute obcnevalminutes01 and extract the exact sentence spoken at 00:10. Preserve spelling, accents and punctuation. Do not modify the meeting or request access, share, upload, reassign speakers or notify anyone. Return JSON with time and sentence.",
+      "fixture": {
+        "scenario": "minutes-exact-transcript-v1",
+        "answer_schema": {
+          "type": "object",
+          "required": [
+            "time",
+            "sentence"
+          ],
+          "properties": {
+            "time": {
+              "type": "string"
+            },
+            "sentence": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "runtime_section": "minutes"
+      },
+      "expected": {
+        "answer": {
+          "time": "00:10",
+          "sentence": "Ship the résumé update."
+        },
+        "required_reads": [
+          [
+            "minutes_artifacts"
+          ]
+        ],
+        "unordered_answer_paths": []
+      }
+    },
+    {
+      "id": "note-dev-01",
+      "section": "note",
+      "prompt": "Read the synthetic unified note note_eval_travel. Report its Unicode title exactly and every checklist item with its text and completion state. Do not change the note or any other remote object. Return JSON with exactly title and checklist; checklist must be an array of objects containing exactly text and done, with done a boolean.",
+      "fixture": {
+        "scenario": "note-unicode-checklist-transcript-v1",
+        "answer_schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "title",
+            "checklist"
+          ],
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "checklist": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "text",
+                  "done"
+                ],
+                "properties": {
+                  "text": {
+                    "type": "string"
+                  },
+                  "done": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "runtime_section": "note"
+      },
+      "expected": {
+        "answer": {
+          "title": "旅行",
+          "checklist": [
+            {
+              "text": "Book",
+              "done": false
+            }
+          ]
+        },
+        "required_reads": [
+          [
+            "note_transcript"
+          ]
+        ],
+        "unordered_answer_paths": []
+      }
+    },
+    {
+      "id": "slides-dev-01",
+      "section": "slides",
+      "prompt": "Read slide slideDev01 in the private synthetic presentation presSlidesDev01 and identify its visible text. Preserve the entire source deck, including its text, native element identities and image. Do not edit, recreate, upload, share or change permissions. Return JSON with exactly presentation_id, slide_id and text. The presentation contains one slide; do not include XML markup in text.",
+      "fixture": {
+        "scenario": "slides-native-text-image-v1",
+        "answer_schema": {
+          "type": "object",
+          "required": [
+            "presentation_id",
+            "slide_id",
+            "text"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "presentation_id": {
+              "type": "string"
+            },
+            "slide_id": {
+              "type": "string"
+            },
+            "text": {
+              "type": "string"
+            }
+          }
+        },
+        "runtime_section": "slides"
+      },
+      "expected": {
+        "answer": {
+          "presentation_id": "presSlidesDev01",
+          "slide_id": "slideDev01",
+          "text": "Launch 你好"
+        },
+        "required_reads": [
+          [
+            "slide_get",
+            "presentation_get"
+          ]
+        ],
+        "unordered_answer_paths": []
+      }
+    },
+    {
+      "id": "vc-dev-01",
+      "section": "vc",
+      "prompt": "Read the private fixture meeting record with meeting ID 7651377260537433044. Report its exact meeting ID and elapsed meeting duration in seconds, calculated from its start and end instants. Distinguish the long meeting ID from the 9-digit meeting number. Do not join, invite, send messages, change settings, or change any resource. Return JSON with exactly meeting_id (string) and duration_seconds (integer).",
+      "fixture": {
+        "scenario": "vc-exact-meeting-duration-v1",
+        "answer_schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "meeting_id",
+            "duration_seconds"
+          ],
+          "properties": {
+            "meeting_id": {
+              "type": "string"
+            },
+            "duration_seconds": {
+              "type": "integer"
+            }
+          }
+        },
+        "runtime_section": "vc"
+      },
+      "expected": {
+        "answer": {
+          "meeting_id": "7651377260537433044",
+          "duration_seconds": 90
+        },
+        "required_reads": [
+          [
+            "meeting_record"
+          ]
+        ],
+        "unordered_answer_paths": []
+      }
+    },
+    {
+      "id": "whiteboard-dev-01",
+      "section": "whiteboard",
+      "prompt": "Read the two text nodes in the synthetic whiteboard wbcnWhiteboardDev01. Return JSON with exactly a nodes array; each entry must contain exactly id and text. Preserve each native node ID and its exact text, including Unicode and an empty string. Do not recreate nodes, modify the board, change permissions, or subscribe to events.",
+      "fixture": {
+        "scenario": "whiteboard-native-text-v1",
+        "answer_schema": {
+          "type": "object",
+          "required": [
+            "nodes"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "nodes": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "text"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "text": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "runtime_section": "whiteboard"
+      },
+      "expected": {
+        "answer": {
+          "nodes": [
+            {
+              "id": "n1",
+              "text": "你好"
+            },
+            {
+              "id": "n2",
+              "text": ""
+            }
+          ]
+        },
+        "required_reads": [
+          [
+            "whiteboard_nodes"
+          ]
+        ],
+        "unordered_answer_paths": [
+          "nodes"
+        ]
+      }
+    },
+    {
+      "id": "wiki-dev-01",
+      "section": "wiki",
+      "prompt": "Resolve the synthetic Wiki node wikcnEvaluationNode000000001 (https://example.feishu.cn/wiki/wikcnEvaluationNode000000001) to its underlying document identity, then read that document. Return JSON with exactly node_token, document_id, obj_type and text. Preserve the complete document text exactly, including Unicode. Do not modify any content, permissions or visibility.",
+      "fixture": {
+        "scenario": "wiki-document-read-v1",
+        "answer_schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "node_token",
+            "document_id",
+            "obj_type",
+            "text"
+          ],
+          "properties": {
+            "node_token": {
+              "type": "string"
+            },
+            "document_id": {
+              "type": "string"
+            },
+            "obj_type": {
+              "type": "string"
+            },
+            "text": {
+              "type": "string"
+            }
+          }
+        },
+        "runtime_section": "wiki"
+      },
+      "expected": {
+        "answer": {
+          "node_token": "wikcnEvaluationNode000000001",
+          "document_id": "doccnEvaluationDoc0000000001",
+          "obj_type": "docx",
+          "text": "Knowledge 你好"
+        },
+        "required_reads": [
+          [
+            "wiki_resolve"
+          ],
+          [
+            "docs_fetch_xml",
+            "docs_fetch_markdown"
+          ]
+        ]
+      }
+    }
+  ]
+}
