@@ -52,12 +52,23 @@ real replacement and refuses changes without explicit update.
   npm pack/install/upgrade/uninstall, native executable launch and guide lifecycle,
   checksum tampering, missing release channel, symlinks, package identity/tagging
   guard, and prefix ownership lifecycle. No live Feishu resources are required.
-- Full cross-build matrix evidence is recorded separately after completion;
-  foreign compilation is not native platform runtime evidence.
+- Full matrix: fourteen successful cross-compiles (seven pairs, normal and
+  authsidecar). All fourteen SHA-256 entries independently rechecked. Both
+  macOS arm64 variants passed version and embedded-guide execution; a configured
+  sidecar endpoint made the normal binary fail closed while the sidecar binary
+  accepted its own build mode. Linux, Windows and macOS amd64 were not executed.
+- The current final builder separately rebuilt macOS arm64 normal and produced
+  a real npm tarball; required shipped files, install, version, project-skill
+  setup and uninstall preservation passed. Seven final Python scenarios passed,
+  including incomplete ownership, malformed manifest and existing lock refusal.
+- [Sanitized evidence](packaging-evidence.json) records checksums, test counts
+  and limitations. The matrix ran against the active shared P2 checkout; it is
+  not an immutable release candidate. Final documentation was repacked without
+  changing compiled binary bytes after the full matrix completed.
 
 Native Windows runtime (ZIP fallbacks and recovery), native Linux runtime,
 macOS Intel runtime, signing/notarization, remote-channel install/update and
-comparative/held-out evaluation remain unverified. This section is locally
+Node 16 runtime, and comparative/held-out evaluation remain unverified. This section is locally
 implemented and testable; these required release checks keep final acceptance
 open. Public repository/npm ownership, matching update/download URLs, publisher
 credentials, Apple identity and release approval are prerequisites. No publishing,

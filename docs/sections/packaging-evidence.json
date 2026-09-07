@@ -1,0 +1,197 @@
+{
+  "schema_version": 1,
+  "section": "packaging",
+  "implementation_commit": "2212980",
+  "reference_commit": "7fd6ef3c07182257ce776cdc5a614e122d5bd4b3",
+  "evidence": "offline",
+  "release_acceptance": "open",
+  "script_tests": {
+    "command": "make script-test",
+    "status": "pass",
+    "javascript_pass": 166,
+    "javascript_skip": 0,
+    "shell_workflow_tests": "pass"
+  },
+  "section_e2e": {
+    "command": "python3 scripts/next_test.py --section packaging --suite e2e --binary ./feishu-cli-next --report .tmp/packaging-e2e.json",
+    "status": "pass",
+    "go_wrappers": 1,
+    "python_tests_pass": 7,
+    "python_tests_skip": 0
+  },
+  "cross_build": {
+    "schema_version": 1,
+    "evidence": "offline",
+    "status": "pass",
+    "cross_compile_count": 14,
+    "runtime_platform": "darwin/arm64",
+    "cases": [
+      {
+        "target": "darwin/amd64",
+        "variant": "normal",
+        "archive": "feishu-cli-next-0.1.0-beta.1-darwin-amd64.tar.gz",
+        "sha256": "6933c47244feccf0b9fc2a4aa8c760736b4570732d6122179f15b3be641b3b43",
+        "binary_sha256": "3d31a17b9cdaf9db2c99e358dadf80968d27967b1b013ad82a67ce5fbcd44416",
+        "cross_compile": "pass",
+        "runtime": "not_executed"
+      },
+      {
+        "target": "darwin/amd64",
+        "variant": "authsidecar",
+        "archive": "feishu-cli-next-0.1.0-beta.1-darwin-amd64-authsidecar.tar.gz",
+        "sha256": "3b1d162bbc3e68f1b935afff41522cfcea2f0eecd07d793dfd2802279ca792dd",
+        "binary_sha256": "014e3d941101b3fd53585941219f8a3c78e5ca244bd20bb27cc19ae707f33348",
+        "cross_compile": "pass",
+        "runtime": "not_executed"
+      },
+      {
+        "target": "darwin/arm64",
+        "variant": "normal",
+        "archive": "feishu-cli-next-0.1.0-beta.1-darwin-arm64.tar.gz",
+        "sha256": "af1279599371044f7e2e9d48c7d9ce444a9326c006a2ec6ccf9d931b047f1851",
+        "binary_sha256": "b8c332c6611298726a5135cb1e46a0886d639fcabe43efc2cc7b4ff792cec91a",
+        "cross_compile": "pass",
+        "runtime": "pass: version, embedded guide, normal/sidecar startup distinction"
+      },
+      {
+        "target": "darwin/arm64",
+        "variant": "authsidecar",
+        "archive": "feishu-cli-next-0.1.0-beta.1-darwin-arm64-authsidecar.tar.gz",
+        "sha256": "4c7ebe0ea627a0ba0ed98d55f8559a5b1cefdd28a21d31a28d912c6d6a17b518",
+        "binary_sha256": "c1f16a578d3ddee7ea9d4d05061e8a6601c378c85b5e32cf037a4dda073bf945",
+        "cross_compile": "pass",
+        "runtime": "pass: version, embedded guide, normal/sidecar startup distinction"
+      },
+      {
+        "target": "linux/amd64",
+        "variant": "normal",
+        "archive": "feishu-cli-next-0.1.0-beta.1-linux-amd64.tar.gz",
+        "sha256": "7b84c44023832f18992005a1f75dd26eec07386d2bc901384195befdefe12ec8",
+        "binary_sha256": "54ed4c02420d31d31dd5161134e71e6d4288ebad5f831a35e9d883b1b7ed2b32",
+        "cross_compile": "pass",
+        "runtime": "not_executed"
+      },
+      {
+        "target": "linux/amd64",
+        "variant": "authsidecar",
+        "archive": "feishu-cli-next-0.1.0-beta.1-linux-amd64-authsidecar.tar.gz",
+        "sha256": "986e645445bfa3d99b6608741d77e83155dc6a0221c61444522d1684e329379d",
+        "binary_sha256": "8052bf38a7dc53f141e61e2c0070a33756f53443c681b8889a282d7e1faedecd",
+        "cross_compile": "pass",
+        "runtime": "not_executed"
+      },
+      {
+        "target": "linux/arm64",
+        "variant": "normal",
+        "archive": "feishu-cli-next-0.1.0-beta.1-linux-arm64.tar.gz",
+        "sha256": "d237d3a2d3117280dea91a19367ac1db97a7f7e9946b99821370446934586c13",
+        "binary_sha256": "d0d03ac42ce34e4a4ba3eb7211ee3fbdab1d3556ec42a1ef709483b36573cbe9",
+        "cross_compile": "pass",
+        "runtime": "not_executed"
+      },
+      {
+        "target": "linux/arm64",
+        "variant": "authsidecar",
+        "archive": "feishu-cli-next-0.1.0-beta.1-linux-arm64-authsidecar.tar.gz",
+        "sha256": "d620464eca644c3a9255fe283dd8fc2fefc5838ccb235a09c4e2e24399bc74b2",
+        "binary_sha256": "62e7b706b15376d9c33a43fbae1a8e39757c9cfe4007b869bf173ab65077e504",
+        "cross_compile": "pass",
+        "runtime": "not_executed"
+      },
+      {
+        "target": "linux/riscv64",
+        "variant": "normal",
+        "archive": "feishu-cli-next-0.1.0-beta.1-linux-riscv64.tar.gz",
+        "sha256": "d94a50a2012f4ef5ce0c7338be4074b139bc936960199b1e86e07abb050ce669",
+        "binary_sha256": "3b5010ad2ae774fe77998a70ac54229a79da87479af2b0e3ef56f5596f0252a8",
+        "cross_compile": "pass",
+        "runtime": "not_executed"
+      },
+      {
+        "target": "linux/riscv64",
+        "variant": "authsidecar",
+        "archive": "feishu-cli-next-0.1.0-beta.1-linux-riscv64-authsidecar.tar.gz",
+        "sha256": "6d0b140f76b4d65b58e09bd18d6ba17a32243080beb9130bf804c56619e82d6d",
+        "binary_sha256": "275dd68920ed63576322ab0bf3ef6a49436626bb745da8134e82329617131ece",
+        "cross_compile": "pass",
+        "runtime": "not_executed"
+      },
+      {
+        "target": "windows/amd64",
+        "variant": "normal",
+        "archive": "feishu-cli-next-0.1.0-beta.1-windows-amd64.zip",
+        "sha256": "9ce18a5bed6ece2df45e11a88b010df8a731de4979fa66b948022ee43e79eccd",
+        "binary_sha256": "83fe07c8bcfb32d668633503f2be5c57639858c5f8b355d45cc705e47f291e49",
+        "cross_compile": "pass",
+        "runtime": "not_executed"
+      },
+      {
+        "target": "windows/amd64",
+        "variant": "authsidecar",
+        "archive": "feishu-cli-next-0.1.0-beta.1-windows-amd64-authsidecar.zip",
+        "sha256": "d0ce5d57e8dc201c97614615259f3ad48933d9a10fd51fdf152166a5ac1b4b1c",
+        "binary_sha256": "a0f1500741cd291560025f5e7cd6bbbfd7fc8f03e9d58cee00dd676f4b1d6660",
+        "cross_compile": "pass",
+        "runtime": "not_executed"
+      },
+      {
+        "target": "windows/arm64",
+        "variant": "normal",
+        "archive": "feishu-cli-next-0.1.0-beta.1-windows-arm64.zip",
+        "sha256": "6eb9498a56275c13dde07deeaea7b015fa8f4252482d34bae5f1a40d421151d7",
+        "binary_sha256": "c419dd357744d76bc171f6bdc2ec5c7dcad68b9863d6ebac3c9f56e9e11a9bda",
+        "cross_compile": "pass",
+        "runtime": "not_executed"
+      },
+      {
+        "target": "windows/arm64",
+        "variant": "authsidecar",
+        "archive": "feishu-cli-next-0.1.0-beta.1-windows-arm64-authsidecar.zip",
+        "sha256": "f42e5939fe3c18fd04beba0709375bfdfadf72cfeb05871204dd185a1bf9d50a",
+        "binary_sha256": "3bdb98b2c20d439ee0cbc1f8b9269a0959497e9038a0c55b0ecbdc3d9cfd942b",
+        "cross_compile": "pass",
+        "runtime": "not_executed"
+      }
+    ],
+    "limitations": [
+      "Cross-build ran in shared active P2 checkout, not an immutable release candidate.",
+      "Final documentation repacked with byte-identical compiled binaries after matrix completion.",
+      "Native Linux, Windows, macOS amd64 and signing/notarization are unexecuted."
+    ]
+  },
+  "generated_npm": {
+    "status": "pass",
+    "evidence": "offline",
+    "version_output": "feishu-cli-next 0.1.0-beta.1 (reference: larksuite/cli@7fd6ef3)",
+    "package": "feishu-cli-next-0.1.0-beta.1.tgz",
+    "integrity": "sha512-jXrgdO5vWlR08S5x9ScXNDCbWBGqf28zbWiJaisvDubFe5Z8US13sZOo0m2AP6MBJSY5MjXmV4nikJY+6fnvmw==",
+    "sha256": "ee404088a9496bec53519e54221f6a75bca4b4c27a77c8b667a695851afbef0b",
+    "cases": [
+      "production builder with final code",
+      "npm pack required shipped files",
+      "actual generated npm install",
+      "packaged version execution",
+      "project skill installation",
+      "npm uninstall preserves project skill"
+    ]
+  },
+  "artifact_paths": {
+    "matrix": ".tmp/packaging-matrix-final",
+    "current_host_package": ".tmp/packaging-current-builder"
+  },
+  "checksum_reverification": {
+    "command": "shasum -a 256 -c checksums.txt",
+    "matrix_pass": 14,
+    "current_host_pass": 1
+  },
+  "unexecuted": [
+    "native Linux runtime",
+    "native Windows runtime including ZIP fallback and .old recovery",
+    "macOS amd64 runtime",
+    "macOS signing and notarization",
+    "remote channel installation and self-update",
+    "public npm/GitHub/preview publishing",
+    "Node 16 runtime",
+    "comparative and held-out evaluation"
+  ]
+}

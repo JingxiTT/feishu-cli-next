@@ -191,6 +191,35 @@ class PackagingTests(unittest.TestCase):
             invoke('uninstall', success=False)
             self.assertEqual(sentinel.read_text(), 'keep')
 
+    def test_prefix_refuses_incomplete_ownership_and_busy_lock(self):
+        prefix = self.base / 'prefix'
+        directory = prefix / 'bin'
+        directory.mkdir(parents=True)
+        binary = directory / self.binary_name
+        marker = directory / ('.' + self.binary_name + '.sha256')
+        lock = directory / ('.' + self.binary_name + '.install.lock')
+        script = ROOT / 'scripts/next_binary.py'
+        def invoke(action, success=True):
+            return self.run_cmd('python3', script, action, '--prefix', prefix,
+                                '--source', self.binary, success=success)
+        marker.write_text('0' * 64 + '\n')
+        invoke('install', success=False)
+        invoke('uninstall', success=False)
+        self.assertFalse(binary.exists())
+        self.assertTrue(marker.exists())
+        marker.unlink()
+        lock.write_text('another installation owns this lock')
+        invoke('install', success=False)
+        self.assertFalse(binary.exists())
+        self.assertEqual(lock.read_text(), 'another installation owns this lock')
+        lock.unlink()
+        invoke('install')
+        before = binary.read_bytes()
+        marker.write_text('malformed')
+        invoke('update', success=False)
+        invoke('uninstall', success=False)
+        self.assertEqual(binary.read_bytes(), before)
+
     def test_package_identity_and_publication_guards(self):
         package = json.loads((ROOT / 'package.json').read_text())
         self.assertEqual(package['name'], 'feishu-cli-next')
