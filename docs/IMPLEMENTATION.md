@@ -65,11 +65,20 @@ account and the sequential user reads. The full test failed on bot search; a
 single bounded diagnosis identified missing `search:bot` user scope. No permission
 was granted and no content was written. This remains an unmet live prerequisite.
 
-P3's actual 10,000-row Sheets-to-Base process workflow preserves 80,000 cells
-through 16 source pages and 50 write batches in its successful scenario. Failure
-injection exposed cross-batch duplicate IDs being accepted by the importer; the
-integration gate remains open until the importer and durable receipts agree on
-that uncertain outcome. This is separate from Base's earlier import-only test.
+The [P3 Sheets-to-Base process suite](integration/sheets-base.md) passes all 11
+test/subtest events without skips. Its actual 10,000-row transfer preserves
+80,000 cells through 16 source pages and 50 write batches. Failure injection
+exposed cross-batch duplicate IDs being accepted by the importer; `f080e43` and
+`d91e695` now stop the operation with consistent unknown report and receipt
+evidence. This is separate from Base's earlier import-only test and does not
+establish live conversion behavior.
+
+The [complete isolated race gate](sections/p3-unit-evidence.json) at `32183054`
+passes 18,499 tests with no failures or races and 12 explained skips. Later fixes
+have their own focused unit/process checks. Vet, formatting, dependency/license
+checks, quality gate, source guards and pinned Go lint have passed at their
+recorded development boundaries; final release verification still needs an
+immutable candidate after remaining changes settle.
 
 [Packaging evidence](sections/packaging-evidence.json) covers all 14 cross-built
 platform/variant archives, local installation/update/removal, and actual Node 16
