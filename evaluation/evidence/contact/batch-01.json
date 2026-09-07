@@ -1,0 +1,1092 @@
+{
+  "protocol": 1,
+  "mode": "real",
+  "split": "development",
+  "performance_claims_supported": true,
+  "completed": true,
+  "planned_runs": 9,
+  "seed": 20260908,
+  "repeats": 3,
+  "fresh_context": true,
+  "task_manifest_sha256": "54a18423f10fb4755ac484708dcdc4c5c46f1de4002860a8d03f47e6f95fcf37",
+  "config_sha256": "d95cf3f0ca6a07a3e2ed3a5b84ee98dbeb6a6db666d7d6bcd86da12eb86aa747",
+  "environment": {
+    "backend": "synthetic-contact-v1",
+    "model": "gpt-6-astra",
+    "tokenizer": "provider-undisclosed",
+    "reasoning": "high",
+    "tools": [
+      "shell",
+      "files"
+    ],
+    "permissions": "workspace-write; managed proxy loopback-only with local binding enabled; isolated sentinel Feishu authsidecar",
+    "budget": {
+      "timeout_seconds": 180
+    },
+    "accounting_method": "codex-cli 0.153.4 turn.completed provider usage, aggregate per user turn"
+  },
+  "arms": {
+    "official": {
+      "cli_sha256": "ab8b101b5f68418c8df02752a5ef19947d311d2e9a91fd685c0e5be24f723020",
+      "skill_sha256": "79041173aad9df428f51adc0435a9bdec2b45366b2003447c18af1ea1f55e7b6"
+    },
+    "official_concise": {
+      "cli_sha256": "ab8b101b5f68418c8df02752a5ef19947d311d2e9a91fd685c0e5be24f723020",
+      "skill_sha256": "37f47511a67f84bcc2b4dd11da66be1696ddfa9da6a2d4cd15100cebc76412b8"
+    },
+    "next": {
+      "cli_sha256": "9610c610f58cbb5f85b68345a78514522fb31b1a1442f05213e20e5be80f0e56",
+      "skill_sha256": "02e00bd401026e4e7efd9c6de8d394c4451ed250f71fe9cd0b668076233ac951"
+    }
+  },
+  "runs": [
+    {
+      "task_id": "contact-dev-01",
+      "section": "contact",
+      "trial": 0,
+      "arm": "official",
+      "success": true,
+      "usage": {
+        "input_tokens": 55153,
+        "cached_input_tokens": 39424,
+        "output_tokens": 265,
+        "total_tokens": 55418
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 55153,
+        "cached_input_tokens": 39424,
+        "output_tokens": 265,
+        "total_tokens": 55418
+      },
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 127
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "contact"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "contact",
+                "+search-user"
+              ],
+              "flags": [
+                "--as",
+                "--format",
+                "--user-ids"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 35.46523941701162,
+      "verification_seconds": 0.051748583995504305,
+      "api_calls": 3,
+      "retries": null,
+      "command_executions": 6
+    },
+    {
+      "task_id": "contact-dev-01",
+      "section": "contact",
+      "trial": 2,
+      "arm": "official",
+      "success": true,
+      "usage": {
+        "input_tokens": 65504,
+        "cached_input_tokens": 51072,
+        "output_tokens": 266,
+        "total_tokens": 65770
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 65504,
+        "cached_input_tokens": 51072,
+        "output_tokens": 266,
+        "total_tokens": 65770
+      },
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 127
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "contact"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "contact",
+                "+get-user"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "contact",
+                "+get-user"
+              ],
+              "flags": [
+                "--as",
+                "--format",
+                "--user-id",
+                "--user-id-type"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 30.423981416999595,
+      "verification_seconds": 0.030679082992719486,
+      "api_calls": 4,
+      "retries": null,
+      "command_executions": 6
+    },
+    {
+      "task_id": "contact-dev-01",
+      "section": "contact",
+      "trial": 1,
+      "arm": "official_concise",
+      "success": true,
+      "usage": {
+        "input_tokens": 38045,
+        "cached_input_tokens": 24320,
+        "output_tokens": 189,
+        "total_tokens": 38234
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 38045,
+        "cached_input_tokens": 24320,
+        "output_tokens": 189,
+        "total_tokens": 38234
+      },
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "contact"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "contact",
+                "+get-user"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "contact",
+                "+search-user"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "contact",
+                "+get-user"
+              ],
+              "flags": [
+                "--as",
+                "--format",
+                "--user-id",
+                "--user-id-type"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 29.501678792003077,
+      "verification_seconds": 0.04083687500678934,
+      "api_calls": 5,
+      "retries": null,
+      "command_executions": 4
+    },
+    {
+      "task_id": "contact-dev-01",
+      "section": "contact",
+      "trial": 2,
+      "arm": "official_concise",
+      "success": true,
+      "usage": {
+        "input_tokens": 36553,
+        "cached_input_tokens": 23552,
+        "output_tokens": 164,
+        "total_tokens": 36717
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 36553,
+        "cached_input_tokens": 23552,
+        "output_tokens": 164,
+        "total_tokens": 36717
+      },
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "contact"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "contact",
+                "+get-user"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "contact",
+                "+get-user"
+              ],
+              "flags": [
+                "--as",
+                "--user-id",
+                "--user-id-type"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 25.031452041992452,
+      "verification_seconds": 0.02879254100844264,
+      "api_calls": 4,
+      "retries": null,
+      "command_executions": 3
+    },
+    {
+      "task_id": "contact-dev-01",
+      "section": "contact",
+      "trial": 1,
+      "arm": "next",
+      "success": true,
+      "usage": {
+        "input_tokens": 62516,
+        "cached_input_tokens": 36224,
+        "output_tokens": 272,
+        "total_tokens": 62788
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 62516,
+        "cached_input_tokens": 36224,
+        "output_tokens": 272,
+        "total_tokens": 62788
+      },
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "contact",
+                "+get-user"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "contact",
+                "+get-user"
+              ],
+              "flags": [
+                "--as",
+                "--user-id",
+                "--user-id-type"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 34.20536291599274,
+      "verification_seconds": 0.10777237499132752,
+      "api_calls": 5,
+      "retries": null,
+      "command_executions": 4
+    },
+    {
+      "task_id": "contact-dev-01",
+      "section": "contact",
+      "trial": 0,
+      "arm": "official_concise",
+      "success": true,
+      "usage": {
+        "input_tokens": 48575,
+        "cached_input_tokens": 35456,
+        "output_tokens": 172,
+        "total_tokens": 48747
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 48575,
+        "cached_input_tokens": 35456,
+        "output_tokens": 172,
+        "total_tokens": 48747
+      },
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "contact"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "contact",
+                "+get-user"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "contact",
+                "+get-user"
+              ],
+              "flags": [
+                "--as",
+                "--user-id",
+                "--user-id-type"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 27.750304415996652,
+      "verification_seconds": 0.034734582994133234,
+      "api_calls": 4,
+      "retries": null,
+      "command_executions": 3
+    },
+    {
+      "task_id": "contact-dev-01",
+      "section": "contact",
+      "trial": 0,
+      "arm": "next",
+      "success": true,
+      "usage": {
+        "input_tokens": 75409,
+        "cached_input_tokens": 48256,
+        "output_tokens": 321,
+        "total_tokens": 75730
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 75409,
+        "cached_input_tokens": 48256,
+        "output_tokens": 321,
+        "total_tokens": 75730
+      },
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "contact",
+                "+get-user"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "contact",
+                "+get-user"
+              ],
+              "flags": [
+                "--as",
+                "--user-id",
+                "--user-id-type"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "contact",
+                "+search-user"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 45.506297707994236,
+      "verification_seconds": 0.03163099999073893,
+      "api_calls": 6,
+      "retries": null,
+      "command_executions": 5
+    },
+    {
+      "task_id": "contact-dev-01",
+      "section": "contact",
+      "trial": 2,
+      "arm": "next",
+      "success": true,
+      "usage": {
+        "input_tokens": 61616,
+        "cached_input_tokens": 56704,
+        "output_tokens": 300,
+        "total_tokens": 61916
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 61616,
+        "cached_input_tokens": 56704,
+        "output_tokens": 300,
+        "total_tokens": 61916
+      },
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "contact",
+                "+get-user"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "contact",
+                "+get-user"
+              ],
+              "flags": [
+                "--as",
+                "--user-id",
+                "--user-id-type"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 32.23326700000325,
+      "verification_seconds": 0.020415833976585418,
+      "api_calls": 5,
+      "retries": null,
+      "command_executions": 4
+    },
+    {
+      "task_id": "contact-dev-01",
+      "section": "contact",
+      "trial": 1,
+      "arm": "official",
+      "success": true,
+      "usage": {
+        "input_tokens": 57015,
+        "cached_input_tokens": 50048,
+        "output_tokens": 251,
+        "total_tokens": 57266
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 57015,
+        "cached_input_tokens": 50048,
+        "output_tokens": 251,
+        "total_tokens": 57266
+      },
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "contact"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "contact",
+                "+search-user"
+              ],
+              "flags": [
+                "--as",
+                "--format",
+                "--user-ids"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "contact",
+                "+get-user"
+              ],
+              "flags": [
+                "--as",
+                "--format",
+                "--user-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 39.45584458397934,
+      "verification_seconds": 0.023159332980867475,
+      "api_calls": 5,
+      "retries": null,
+      "command_executions": 4
+    }
+  ],
+  "groups": [
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 3,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 200434,
+      "tokens_per_success": 66811.33333333333,
+      "token_distribution": {
+        "min": 61916,
+        "median": 62788,
+        "max": 75730,
+        "stdev": 7736.0879864007065
+      },
+      "latency_median_seconds": 34.20536291599274,
+      "api_calls": 16,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 3,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 178454,
+      "tokens_per_success": 59484.666666666664,
+      "token_distribution": {
+        "min": 55418,
+        "median": 57266,
+        "max": 65770,
+        "stdev": 5521.126455111614
+      },
+      "latency_median_seconds": 35.46523941701162,
+      "api_calls": 12,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "official_concise",
+      "attempts": 3,
+      "successes": 3,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 123698,
+      "tokens_per_success": 41232.666666666664,
+      "token_distribution": {
+        "min": 36717,
+        "median": 38234,
+        "max": 48747,
+        "stdev": 6551.658288810042
+      },
+      "latency_median_seconds": 27.750304415996652,
+      "api_calls": 13,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "section",
+      "name": "contact",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 3,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 200434,
+      "tokens_per_success": 66811.33333333333,
+      "token_distribution": {
+        "min": 61916,
+        "median": 62788,
+        "max": 75730,
+        "stdev": 7736.0879864007065
+      },
+      "latency_median_seconds": 34.20536291599274,
+      "api_calls": 16,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "section",
+      "name": "contact",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 3,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 178454,
+      "tokens_per_success": 59484.666666666664,
+      "token_distribution": {
+        "min": 55418,
+        "median": 57266,
+        "max": 65770,
+        "stdev": 5521.126455111614
+      },
+      "latency_median_seconds": 35.46523941701162,
+      "api_calls": 12,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "section",
+      "name": "contact",
+      "arm": "official_concise",
+      "attempts": 3,
+      "successes": 3,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 123698,
+      "tokens_per_success": 41232.666666666664,
+      "token_distribution": {
+        "min": 36717,
+        "median": 38234,
+        "max": 48747,
+        "stdev": 6551.658288810042
+      },
+      "latency_median_seconds": 27.750304415996652,
+      "api_calls": 13,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "task_id",
+      "name": "contact-dev-01",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 3,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 200434,
+      "tokens_per_success": 66811.33333333333,
+      "token_distribution": {
+        "min": 61916,
+        "median": 62788,
+        "max": 75730,
+        "stdev": 7736.0879864007065
+      },
+      "latency_median_seconds": 34.20536291599274,
+      "api_calls": 16,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "task_id",
+      "name": "contact-dev-01",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 3,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 178454,
+      "tokens_per_success": 59484.666666666664,
+      "token_distribution": {
+        "min": 55418,
+        "median": 57266,
+        "max": 65770,
+        "stdev": 5521.126455111614
+      },
+      "latency_median_seconds": 35.46523941701162,
+      "api_calls": 12,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "task_id",
+      "name": "contact-dev-01",
+      "arm": "official_concise",
+      "attempts": 3,
+      "successes": 3,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 123698,
+      "tokens_per_success": 41232.666666666664,
+      "token_distribution": {
+        "min": 36717,
+        "median": 38234,
+        "max": 48747,
+        "stdev": 6551.658288810042
+      },
+      "latency_median_seconds": 27.750304415996652,
+      "api_calls": 13,
+      "retries": null,
+      "failure_categories": {}
+    }
+  ],
+  "matched_success": [
+    {
+      "baseline": "official",
+      "pairs": [
+        {
+          "task_id": "contact-dev-01",
+          "trial": 1,
+          "baseline_tokens": 57266,
+          "next_tokens": 62788
+        },
+        {
+          "task_id": "contact-dev-01",
+          "trial": 0,
+          "baseline_tokens": 55418,
+          "next_tokens": 75730
+        },
+        {
+          "task_id": "contact-dev-01",
+          "trial": 2,
+          "baseline_tokens": 65770,
+          "next_tokens": 61916
+        }
+      ]
+    },
+    {
+      "baseline": "official_concise",
+      "pairs": [
+        {
+          "task_id": "contact-dev-01",
+          "trial": 1,
+          "baseline_tokens": 38234,
+          "next_tokens": 62788
+        },
+        {
+          "task_id": "contact-dev-01",
+          "trial": 0,
+          "baseline_tokens": 48747,
+          "next_tokens": 75730
+        },
+        {
+          "task_id": "contact-dev-01",
+          "trial": 2,
+          "baseline_tokens": 36717,
+          "next_tokens": 61916
+        }
+      ]
+    }
+  ]
+}
