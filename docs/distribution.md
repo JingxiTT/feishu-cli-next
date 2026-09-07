@@ -64,5 +64,9 @@ remain usable through `skills list/read`, and are never rewritten by setup.
 The [skill lifecycle contract](contracts/skill.md) defines collisions, ownership,
 unchanged content, symlinks and cleanup. npm uninstall deliberately preserves
 project skills, profiles, configuration and unrelated files. Build success for a
-foreign architecture does not establish runtime behavior: release acceptance
-requires native Windows/Linux/macOS execution and macOS signing verification.
+foreign architecture does not establish runtime behavior. Acceptance requires
+applicable OS and lifecycle evidence, not physical hardware per architecture.
+Both macOS amd64 variants passed startup and project guide smoke under Rosetta on
+macOS arm64; Linux/Windows OS-specific behavior remains unverified. The retained
+automated public release channel also requires macOS signing/notarization
+verification. See the [packaging evidence](sections/packaging.md) for exact scope.

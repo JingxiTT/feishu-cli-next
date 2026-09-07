@@ -513,7 +513,36 @@
         "-x86_64"
       ],
       "isolation": "Reused clean-source scripts/next_test.py isolated_env; isolated HOME/config/temp directories and unavailable external proxy. No credentials or live API calls."
-    }
+    },
+    "source_relocation": {
+      "source_revision": "8ce0688b303eb646e1b79a329002dddcb6403be4",
+      "source_archive_sha256": "82c49d2e5d7c43785b217b51d53930070ef1e6df481f483b0b12814c06373eb3",
+      "old_location": "/Users/jingxi/Desktop/temp/feishu-cli-next/.tmp/packaging-release-8ce0688/source",
+      "new_location": "/var/folders/zs/67gq3b8s0f122fqv9w0b9ycm0000gn/T/feishu-cli-next-packaging-8ce0688-8prwkb1q/source",
+      "tracked_file_count": 3663,
+      "tracked_file_hashes_verified_before_move": true,
+      "tracked_file_hashes_verified_after_move": true,
+      "entire_tree_bytes_modes_and_links_unchanged": true,
+      "source_archive_unchanged": true,
+      "reason": "Move completed source export outside repository to avoid source-guard discovery; archives and logs remain at original paths.",
+      "local_record": ".tmp/source-location.json"
+    },
+    "still_unverified_scope": "Historical status at archive refresh, before the appended Rosetta smoke. See current_acceptance_scope for current applicability; physical Intel hardware is not an acceptance gate."
   },
-  "latest_artifact_refresh": "immutable_refresh_8ce0688"
+  "latest_artifact_refresh": "immutable_refresh_8ce0688",
+  "current_acceptance_scope": {
+    "basis": "docs/PLAN.md platform/build/install coverage and frozen reference 7fd6ef3; no physical hardware requirement per architecture.",
+    "physical_intel_hardware_required": false,
+    "darwin_amd64": "Both immutable 8ce0688 variants executed under Rosetta on macOS arm64: startup/version, exact guide, build-mode distinction, project guide install and unrelated README preservation passed. This is actual translated amd64 execution; it does not cover every lifecycle or signing check.",
+    "historical_status": "Earlier native/unexecuted entries describe the time and execution environment recorded. They are preserved, but do not impose a physical Intel gate.",
+    "remaining_platform_scenarios": [
+      "Linux runtime on shipped architectures, including Linux file-backed key storage and applicable installation/lifecycle behavior; cross-compilation alone does not verify these OS paths.",
+      "Windows runtime on shipped architectures, including named pipes, LockFileEx, path semantics, ZIP extraction fallbacks and updater .old recovery/rollback; cross-compilation alone does not verify these OS paths.",
+      "The Rosetta smoke did not run amd64 npm/prefix collision, upgrade and uninstall scenarios. Existing shared lifecycle evidence must be mapped when assessing coverage; absence of physical Intel hardware is not itself a missing scenario."
+    ],
+    "public_release_checks": "Owned next channel and publisher credentials; candidate checksum/extraction, Developer ID/team, hardened runtime, timestamp, notarization and version verification on both macOS architectures in the retained release workflow. Signing is optional for local source/unsigned archive use.",
+    "execution_environment_rule": "Use an appropriate OS runner, VM or translation environment and label it accurately. macOS Rosetta does not establish Linux or Windows behavior.",
+    "remote_update": "Trusted next repository/package and matching artifact/update identities remain unconfigured.",
+    "audit_validation": "Documentation/evidence correction and source relocation integrity checks only; no new runtime tests or artifact rebuilds."
+  }
 }

@@ -27,12 +27,12 @@ demo build/test coverage and are not native CLI release variants.
 | tar.gz/ZIP, version names, SHA-256 assets | Next-named stable/beta archive names, deterministic archive metadata, normal and sidecar checksums, embedded npm checksum list; checksum mismatch must preserve installed executable |
 | npm install, lazy npx binary installation, platform mapping | Private `feishu-cli-next` wrapper; no official namespace overwrite. Explicit local artifact directory reads archive bytes, never checksum authority. Unsupported OS/arch pairs reject |
 | GitHub binary source, npm/corporate mirror fallback, curl Windows revocation compatibility | Resolution helpers retained under next name, regression tests retained; actual network download channel is unconfigured and fails explicitly pending P4 |
-| Windows ZIP .NET/Expand-Archive/tar fallback and interrupted-update `.old` recovery | Retained installer and launcher paths under next name; requires native Windows execution, not counted from cross-compilation |
+| Windows ZIP .NET/Expand-Archive/tar fallback and interrupted-update `.old` recovery | Retained installer and launcher paths under next name; requires execution on Windows, not counted from cross-compilation |
 | npm setup wizard: install/upgrade binary, skills, config, auth | npm manages package install/upgrade; wrapper `install --project` maps to embedded `guide install`; config init and auth login remain explicit native commands. Setup never rewrites profiles or global upstream skills; no registry-dependent prompts dependency |
 | Project skill install/update/uninstall and collision preservation | Existing guide contract, exercised via packaged executable; repeated install/update, edited content refusal, npm uninstall preserving project skill, explicit guide uninstall preserving unrelated skills |
 | Prefix binary install/uninstall | `next_binary.py` and Makefile install/update-install/uninstall; ownership SHA, exclusive install, explicit update, edited/unmanaged/symlink collision refusal, executable mode, idempotency and unrelated-file preservation |
 | Stable/beta version/tag validation, immutable candidate/npm publish policy | Existing preflight and publish-policy helpers/tests retained; tagging exits before git/network while private, release and preview jobs disabled, GoReleaser publication disabled |
-| macOS signing/notarization, release retry and provenance workflow | Retained next-identity configuration behind publication guard; acceptance requires owned next channel, signing credentials, native verification and P4 approval |
+| macOS signing/notarization, release retry and provenance workflow | Retained next-identity configuration behind publication guard; acceptance requires owned next channel, signing credentials, candidate verification on macOS and P4 approval |
 | Host/plugin distribution contracts | Build variants preserve package assembly; public extension behavior and credential isolation are owned by Extensions and Foundation; no external SDK changes here |
 
 The npm upgrade fixture changes the package version with intentionally identical
@@ -42,6 +42,9 @@ suite. The prefix lifecycle uses different executable fixture bytes to verify a
 real replacement and refuses changes without explicit update.
 
 ## Evidence and remaining gates
+
+The initial P2 results below are historical. The immutable refresh and current
+acceptance scope follow them; later evidence does not rewrite earlier runs.
 
 - `make script-test`: pass, including release/preview publication guard assertions,
   inherited shell workflow tests and all 166 JavaScript tests, zero skips.
@@ -72,13 +75,31 @@ real replacement and refuses changes without explicit update.
   not an immutable release candidate. Final documentation was repacked without
   changing compiled binary bytes after the full matrix completed.
 
-Native Windows runtime (ZIP fallbacks and recovery), native Linux runtime,
-macOS Intel runtime, public-release signing/notarization, remote-channel
-install/update, and comparative/held-out evaluation remain unverified. This
-section is locally implemented and testable; these required release checks keep final acceptance
-open. Public repository/npm ownership, matching update/download URLs, publisher
-credentials, Apple identity and release approval are prerequisites. No publishing,
-external push, global installation or real credential use was performed.
+The final artifact refresh uses immutable product `8ce0688b303eb646e1b79a329002dddcb6403be4`:
+all fourteen normal/authsidecar archives compiled and passed checksum/content
+verification. Both macOS arm64 variants passed startup/version, exact guide,
+build-mode distinction and isolated project guide installation. The generated
+npm package passed local install, launch, guide setup and uninstall preservation.
+Both macOS amd64 variants subsequently passed the same binary/project guide smoke
+under Rosetta on macOS arm64. This is actual translated amd64 execution; the smoke
+did not exercise amd64 npm/prefix collision, upgrade or uninstall scenarios.
+Existing shared lifecycle evidence must be mapped to those scenarios when
+assessing coverage; physical Intel hardware is not an additional acceptance gate.
+
+The completed source export was moved outside the repository after build/smoke
+to prevent source guards discovering a second source tree. All 3,663 tracked file
+hashes were verified before and after the move, and the full tree's bytes, modes
+and links were unchanged. The source archive, fourteen binary archives, npm
+package and logs remain at their original `.tmp/packaging-release-8ce0688` paths.
+The exact old/new source paths and unchanged archive hash are recorded in
+`.tmp/source-location.json` and [packaging-evidence.json](packaging-evidence.json).
+Historical logs may refer to the old source path.
+
+Linux and Windows runtime behavior and the public-release/channel checks below
+remain unverified. This section is locally implemented and testable; final
+release acceptance remains open. No publishing, external push, global installation
+or real credential use was performed. Comparative/held-out evaluation is recorded
+by its own owner and is not inferred from packaging tests.
 
 ## Reference applicability of remaining release checks
 
@@ -92,11 +113,22 @@ publication depend on that verification. Next preserves this public-channel
 capability and requirement; missing Apple credentials do not invalidate the
 completed local packaging tests.
 
-The OS/architecture runtime gaps follow the seven pairs the reference ships;
-cross-compilation verifies conditional source selection, not host execution.
-Windows extraction fallback and `.old` recovery are retained existing behavior,
-so they remain Windows runtime checks. A macOS arm64 execution does not substitute
-for macOS Intel, Linux or Windows runtime evidence.
+PLAN requires applicable platform, architecture, build-variant and installation
+coverage; it does not require physical hardware for each architecture. The
+reference release workflow uses `macos-15-intel` and `macos-15` runners for its
+signed-candidate checks. Those checks remain public-release requirements; the
+runner labels do not create a separate physical Intel hardware gate. Appropriate
+OS runners, VMs or translation environments can provide behavioral evidence when
+the execution mode and checked scenarios are stated accurately.
+
+Cross-compilation verifies conditional source selection, not OS behavior. Linux
+file-backed key storage and applicable installation/lifecycle behavior still need
+Linux execution evidence. Windows named pipes, LockFileEx, path semantics,
+extraction fallback and `.old` recovery/rollback still need Windows execution
+evidence. These runtime gaps apply across the shipped targets and cannot be
+closed by macOS Rosetta. The successful Rosetta smoke establishes only its listed
+macOS amd64 checks; signing/notarization and unexecuted lifecycle scenarios remain
+separate coverage questions rather than hardware requirements.
 
 There is no configured trusted remote next update source: the npm package is
 private and `scripts/install.js` has `REPO = null`. Re-enabling the inherited
