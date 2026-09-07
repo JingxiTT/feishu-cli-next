@@ -191,7 +191,35 @@
     "macOS signing and notarization",
     "remote channel installation and self-update",
     "public npm/GitHub/preview publishing",
-    "Node 16 runtime",
     "comparative and held-out evaluation"
-  ]
+  ],
+  "node16_runtime": {
+    "status": "pass",
+    "platform": "darwin/arm64",
+    "node_version": "v16.20.2",
+    "npm_version": "8.19.4",
+    "archive_url": "https://nodejs.org/dist/v16.20.2/node-v16.20.2-darwin-arm64.tar.gz",
+    "checksum_source": "https://nodejs.org/dist/v16.20.2/SHASUMS256.txt",
+    "sha256": "6a5c4108475871362d742b988566f3fe307f6a67ce14634eb3fbceb4f9eea88c",
+    "installation": "Temporary workspace extraction; no global installation or PATH mutation outside test subprocesses. Download verified against official checksum manifest before execution.",
+    "e2e_command": "Prepend the extracted Node 16 bin directory to subprocess PATH; python3 scripts/next_test.py --section packaging --suite e2e --binary ./feishu-cli-next --report .tmp/packaging-node16/e2e.json",
+    "e2e": {
+      "python_tests_pass": 7,
+      "python_tests_skip": 0,
+      "go_wrappers_pass": 1
+    },
+    "unit_command": "node --test scripts/install.test.js scripts/release-preflight.test.js scripts/release-publish-policy.test.js",
+    "unit_files_pass": 3,
+    "unit_files_skip": 0,
+    "isolation": "Every test runs with synthetic isolated HOME/config/temp/npm cache and unavailable external proxy. Only runtime bootstrap fetched public Node assets; package tests use local archives and npm offline mode.",
+    "limitations": [
+      "Executed Node 16.20.2 on macOS arm64, not every Node minor version or foreign platform."
+    ]
+  },
+  "release_gate_applicability": {
+    "reference_revision": "7fd6ef3c07182257ce776cdc5a614e122d5bd4b3",
+    "local_source_and_archives": "Apple signing/notarization optional, matching reference .goreleaser.yml conditional MACOS_SIGN_P12 enablement.",
+    "automated_public_release": "Reference release workflow requires Apple inputs and both macOS notarization verification jobs before publication. This is a public-channel parity gate, not a local packaging prerequisite.",
+    "remote_update": "No configured trusted next release repository/package; inherited updater remains blocked. No speculative source or new updater framework introduced."
+  }
 }

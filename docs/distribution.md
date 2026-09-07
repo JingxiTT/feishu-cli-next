@@ -4,7 +4,9 @@ The npm package and executable are `feishu-cli-next`. This derivative never
 installs or publishes `@larksuite/cli`, and retains the upstream MIT license.
 The npm package is private and publishing workflows are disabled pending P4.
 A public repository, owned npm name, release credentials, trusted publishing,
-and signing/notarization identities must be accepted before enabling a channel.
+and signing/notarization identities must be accepted before enabling the
+reference-equivalent automated public release channel. Apple signing is optional
+for source builds and unsigned local archives.
 The native `update` command currently reports an unconfigured release channel.
 
 Build the current host with `./build.sh` or `make build`. Python 3 and Go are

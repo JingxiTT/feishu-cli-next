@@ -61,18 +61,63 @@ real replacement and refuses changes without explicit update.
   a real npm tarball; required shipped files, install, version, project-skill
   setup and uninstall preservation passed. Seven final Python scenarios passed,
   including incomplete ownership, malformed manifest and existing lock refusal.
+- Actual Node 16 compatibility: downloaded official Node 16.20.2/npm 8.19.4
+  for macOS arm64, verified SHA-256 before execution, and ran all seven packaging
+  Python scenarios with that runtime first in subprocess PATH. All passed with
+  zero skips; installer/release JavaScript tests also passed in all three files.
+  No global runtime installation was performed. The official archive and checksum
+  URLs, digest, versions and exact command are recorded in the evidence JSON.
 - [Sanitized evidence](packaging-evidence.json) records checksums, test counts
   and limitations. The matrix ran against the active shared P2 checkout; it is
   not an immutable release candidate. Final documentation was repacked without
   changing compiled binary bytes after the full matrix completed.
 
 Native Windows runtime (ZIP fallbacks and recovery), native Linux runtime,
-macOS Intel runtime, signing/notarization, remote-channel install/update and
-Node 16 runtime, and comparative/held-out evaluation remain unverified. This section is locally
-implemented and testable; these required release checks keep final acceptance
+macOS Intel runtime, public-release signing/notarization, remote-channel
+install/update, and comparative/held-out evaluation remain unverified. This
+section is locally implemented and testable; these required release checks keep final acceptance
 open. Public repository/npm ownership, matching update/download URLs, publisher
 credentials, Apple identity and release approval are prerequisites. No publishing,
 external push, global installation or real credential use was performed.
+
+## Reference applicability of remaining release checks
+
+The reference's `.goreleaser.yml` makes signing/notarization conditional on
+`MACOS_SIGN_P12`. Neither plain source builds nor unsigned local archives require
+Apple credentials. Its automated public release workflow is stricter:
+`.github/workflows/release.yml` at frozen `7fd6ef3` requires six Apple inputs in
+`Prepare Apple notarization key`, verifies Developer ID/team/hardened runtime,
+timestamp and notarization on both macOS architectures, and makes public
+publication depend on that verification. Next preserves this public-channel
+capability and requirement; missing Apple credentials do not invalidate the
+completed local packaging tests.
+
+The OS/architecture runtime gaps follow the seven pairs the reference ships;
+cross-compilation verifies conditional source selection, not host execution.
+Windows extraction fallback and `.old` recovery are retained existing behavior,
+so they remain Windows runtime checks. A macOS arm64 execution does not substitute
+for macOS Intel, Linux or Windows runtime evidence.
+
+There is no configured trusted remote next update source: the npm package is
+private and `scripts/install.js` has `REPO = null`. Re-enabling the inherited
+`update` command alone would still query/install the official product. The small
+future integration, once an owned package and release URL can be verified, must
+reuse the existing owners while changing the following bound product identities:
+
+- `internal/update/update.go` registry URL and `internal/selfupdate/updater.go`
+  npm/pnpm package name, package-manager invocation and binary lookup.
+- `VerifyBinary` must read the actual next version token; the inherited final-token
+  parser cannot parse next's trailing reference annotation.
+- `cmd/update/update.go` release/changelog URLs, help and recovery text, and
+  upstream global skills synchronization must be mapped to explicit project guide
+  lifecycle without changing unrelated skills/profiles.
+- `scripts/install.js` must use the same accepted next artifact repository and
+  package-embedded checksums, followed by isolated upgrade/failure/verification
+  tests before the root command's unconfigured-channel guard can be removed.
+
+No new remote updater or channel configuration mechanism is introduced without
+that source. The existing local npm upgrade and `make update-install` are tested
+installation paths; they do not establish a remote automatic-update channel.
 
 The binary/checksum ownership pair is fail-closed after interruption; only the
 binary replacement is atomic. It does not promise a two-file transaction,
