@@ -26,6 +26,13 @@ class ReviewCoverageTest(unittest.TestCase):
         self.assertEqual(effective_status("old", [objection, closure]), "recorded_approval_at_current_hash")
         self.assertEqual(objection["verdict"], "changes_requested")
 
+    def test_explicit_closure_resolves_string_finding_references(self):
+        objection = {**self.record(verdict="changes_requested"), "findings": ["CI1", "CI2"]}
+        closure = {**self.record(), "prior_review_sha256": "old", "findings": [{"id": "CI1", "status": "closed_at_review_revision"}, {"id": "CI2", "status": "closed_at_review_revision"}]}
+        self.assertEqual(effective_status("old", [objection, closure]), "recorded_approval_at_current_hash")
+        closure["findings"].pop()
+        self.assertEqual(effective_status("old", [objection, closure]), "changes_requested_at_current_hash")
+
     def test_invalid_hash_is_not_approval(self):
         self.assertEqual(effective_status("old", [self.record(verified=False)]), "changed_after_review")
 

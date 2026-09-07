@@ -36,7 +36,7 @@ def effective_status(current_hash, records):
     exact = [r for r in records if r["hash_verified"] and r["review_sha256"] == current_hash]
     verdicts = {r["verdict"] for r in exact}
     for objection in (r for r in exact if r["verdict"] == "changes_requested"):
-        ids = {f["id"] for f in objection.get("findings", []) if "id" in f}
+        ids = {f if isinstance(f, str) else f["id"] for f in objection.get("findings", []) if isinstance(f, str) or "id" in f}
         closed = set()
         for approval in exact:
             if approval["verdict"] != "approved_offline" or approval.get("prior_review_sha256") != objection["review_sha256"]:
