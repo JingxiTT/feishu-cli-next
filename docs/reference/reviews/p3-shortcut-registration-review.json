@@ -1,0 +1,141 @@
+{
+  "schema_version": 1,
+  "assignment_id": "command_recovery",
+  "reviewer": "/root/p2_contact",
+  "report_kind": "hash_bound_additional_path_review",
+  "import_revision": "0c1ac7570543db3117ba5bdc6a66b69f87c4a62e",
+  "review_revision": "74b6b5346ca4efbd03564045f4f3e01746f18878",
+  "verdict": "approved_offline",
+  "scope": {
+    "path_count": 1,
+    "whole_file_review": true,
+    "reason": "Root explicitly extended the command-recovery assignment to shortcuts/register.go, a later changed reference path outside the initial 213-path checkpoint. Prior CR-1 report only inspected this file as a dependency.",
+    "product_files_modified": false,
+    "tests_executed_in_this_follow_up": false
+  },
+  "review_method": "Read the complete 269-line immutable registration file and complete import-to-review diff, then the relevant snapshot, mount, plugin-order and special service dependencies and test bodies. Verified its bytes match the independently tested 94e4afc snapshot. No product edits, live/model requests, broad reruns or inferred latest-worktree approval.",
+  "paths": [
+    {
+      "path": "shortcuts/register.go",
+      "review_revision": "74b6b5346ca4efbd03564045f4f3e01746f18878",
+      "review_sha256": "896319f0e1e3702187952feee5ac8f8623f88e52c0241bc79c60feff8648a152",
+      "import_revision": "0c1ac7570543db3117ba5bdc6a66b69f87c4a62e",
+      "import_sha256": "1ff8550b7e1a4001ee5d2bf9b16e00945145eac9ee7e03ca6852468a77d34fe4",
+      "verdict": "approved_offline",
+      "review_scope": "Whole-file semantic review plus entire import diff; this supplies the explicit per-path verdict missing from the earlier dependency-only inspection.",
+      "evidence": [
+        {
+          "path": "shortcuts/register_external_test.go",
+          "source_revision": "74b6b5346ca4efbd03564045f4f3e01746f18878",
+          "sha256": "7b43ea1984665e9f25ae237f5d1f6102c362fa237c5f34da7a5cb5d43dff0632",
+          "tested_revision": "not executed in this follow-up; exact committed source inspected",
+          "scope": "Read all three tests: caller mutable slices are isolated; collisions against built-ins or earlier external declarations reject the entire returned contribution."
+        },
+        {
+          "path": "shortcuts/register_test.go",
+          "source_revision": "74b6b5346ca4efbd03564045f4f3e01746f18878",
+          "sha256": "295c4a17e652963e8e20ce8547f364f11b2134858f429d087361cb58f3b823cc",
+          "tested_revision": "not executed in this follow-up; exact committed source inspected",
+          "scope": "Read full registration test source: service reuse, inherited domain metadata, mounted standard/hidden commands, visible versus compatibility flags, mail-only flag hook, sheets grouping and removed aliases, and structured sheets hints. The opt-in export helper is not an execution test and was not run."
+        },
+        {
+          "path": "shortcuts/register_brand_guard_test.go",
+          "source_revision": "74b6b5346ca4efbd03564045f4f3e01746f18878",
+          "sha256": "cb6b95789644f9e862bb9a2afac1b4f7774b9528dd873e69b30d2a43f9a62746",
+          "tested_revision": "not executed in this follow-up; exact committed source inspected",
+          "scope": "Read full source: restricted apps remains addressable but hidden recursively; RunE and real Cobra dispatch return typed failed_precondition; Feishu remains executable; both startup brands forbid Config during registration."
+        },
+        {
+          "path": "shortcuts/register_markdown_test.go",
+          "source_revision": "74b6b5346ca4efbd03564045f4f3e01746f18878",
+          "sha256": "b9be4b5fc4a9ffd11ff7465588228303a8b359d56714101348fc73ce0742f44c",
+          "tested_revision": "not executed in this follow-up; exact committed source inspected",
+          "scope": "Read all four expected Markdown registration assertions, using zero-value Factory; bootstrap registration remains possible."
+        },
+        {
+          "path": "cmd/command_sets_test.go",
+          "source_revision": "74b6b5346ca4efbd03564045f4f3e01746f18878",
+          "sha256": "48890c379f0d570f02a1405aa1f33d440bac2339ae0069ad8c964fb8c6352265",
+          "tested_revision": "not executed in this follow-up; exact committed source inspected",
+          "scope": "Read relevant mount/atomic/governance scenarios: captured external command metadata, all-or-nothing invalid contribution and plugin denial that never reaches business Execute."
+        },
+        {
+          "path": "shortcuts/common/clone.go",
+          "source_revision": "74b6b5346ca4efbd03564045f4f3e01746f18878",
+          "sha256": "3772547079c7edd205ee7a57b0e2814aa673063671455e2d0724075e6fb127a6",
+          "tested_revision": "not executed in this follow-up; exact committed source inspected",
+          "scope": "Dependency inspection: CloneHostedShortcuts copies declaration/compiled metadata, while Execute/OnInvoke/PostMount and business closure captures deliberately remain function values; registration does not wrap, call early or replace them."
+        },
+        {
+          "path": "shortcuts/common/runner.go",
+          "source_revision": "74b6b5346ca4efbd03564045f4f3e01746f18878",
+          "sha256": "25740cd758dad5f609985653ceadca31e4d0eee1e62539a0c3c514e1706e7c78",
+          "tested_revision": "not executed in this follow-up; exact committed source inspected",
+          "scope": "Dependency inspection of MountWithContext/mountDeclarative: caller context and Factory are forwarded unchanged; mounting declares flags/risk/scopes, preserves execution callbacks and post-mount order, with typed post-mount validation retained."
+        },
+        {
+          "path": "cmd/build.go",
+          "source_revision": "74b6b5346ca4efbd03564045f4f3e01746f18878",
+          "sha256": "52cc1661c2352b230143f60ac5ef4fe2e48074ee75ddeade08e09f25f8e8f245",
+          "tested_revision": "not executed in this follow-up; exact committed source inspected",
+          "scope": "Dependency inspection: one resolved shortcut snapshot is shared with auth help, then mounted after generated services and before plugin policy/hook installation; Factory.StartupBrand is populated before registration."
+        },
+        {
+          "path": "shortcuts/mail/flag_suggest.go",
+          "source_revision": "74b6b5346ca4efbd03564045f4f3e01746f18878",
+          "sha256": "64401c48ed1344e907421694fbfccf40168ec9bdcb2c4fd67d2e9716eca2a688",
+          "tested_revision": "not executed in this follow-up; exact committed source inspected",
+          "scope": "Dependency inspection of InstallOnMail: only mail gets unknown-flag suggestions and other errors delegate to inherited flag handling."
+        },
+        {
+          "path": "shortcuts/apps/git_credential.go",
+          "source_revision": "74b6b5346ca4efbd03564045f4f3e01746f18878",
+          "sha256": "3c7e7ce899ef26c0f41a6cd64845c39d1639d33d78ba58cd1d4624bbb995f59b",
+          "tested_revision": "not executed in this follow-up; exact committed source inspected",
+          "scope": "Dependency inspection of InstallOnApps: hidden Git-protocol helper is attached before the service brand guard and therefore included in recursive restrictions."
+        }
+      ],
+      "findings": [],
+      "assessment": {
+        "import_diff": "The only delta is replacing registration-time Factory.Config brand resolution with Factory.StartupBrand and its explanatory comment. No shortcut imports, service aliases, callbacks, mounting order, flags or special-domain hooks change.",
+        "snapshot_and_external_commands": "Built-ins are initialized once. AllShortcuts returns an isolated snapshot via the existing clone owner; external declarations are separately cloned, then duplicate canonical paths reject the whole external contribution. Registration groups the provided snapshot without mutating the global declarations or adding another clone.",
+        "callbacks_and_runtime": "Each declaration still mounts exactly through MountWithContext using the supplied context and Factory. Callback values and captured business state remain governed by the existing mount/clone machinery. Registration introduces no execution wrapper, direct platform request or new credential/config resolution.",
+        "user_visible_and_plugin_semantics": "Existing service nodes are reused; domain tags and singular slide alias are applied to both reused and newly created nodes. This preserves parent-domain resolution for plugin selection. Apps helper, mail flag hook and sheets grouping/hints remain installed at the same points. Root plugin enforcement/hooks continue to run after registration over the mounted tree.",
+        "brand_and_flags": "Empty startup brand retains the documented unrestricted bootstrap behavior. Known brand restrictions run after all service children are installed, recursively hide the service and replace parsing/pre-run/run paths with the existing typed rejection; unsupported-brand business callbacks remain unreachable. Supported-brand flag declarations and runtime paths are untouched. The startup brand is a build-local input rather than credential-backed help work."
+      },
+      "limitations": [
+        "Review is of this registration file and its direct dependency interactions; it is not a whole-file reapproval of common runtime, credential, plugin, or individual domain implementations.",
+        "Direct internal Factory callers must populate StartupBrand to request a known-brand projection; empty metadata intentionally preserves unrestricted bootstrap behavior. Shipped Execute/Build wiring and constructor regressions are covered by the earlier CR-1 review.",
+        "Callback closure state remains shared by design; this review does not claim deep isolation of arbitrary values captured inside business functions."
+      ]
+    }
+  ],
+  "execution_evidence": [
+    {
+      "report_path": "docs/reference/reviews/p3-command-follow-up.json",
+      "report_commit": "acbf626a6014ffe863863cc1490536a3c791f037",
+      "report_sha256": "bf6e4d228ac18412d87b54e3ef9ecd4b72ef12e544f2280d53a2f1665dc2bd91",
+      "tested_revision": "94e4afc032b803ad17a6efbcdb2573361ed2b38a",
+      "source_path": "shortcuts/register.go",
+      "source_sha256": "896319f0e1e3702187952feee5ac8f8623f88e52c0241bc79c60feff8648a152",
+      "source_equal_to_review_revision": true,
+      "status": "pass",
+      "scope": "Earlier independently executed immutable-snapshot check included TestRegisterBrandGuardDoesNotResolveCredentialConfig (parent plus Feishu/Lark child events) and eight local process cases with zero user/tenant/business requests. The prior report records 16 total pass events across its two selected commands. Those runs are not claimed as newly executed at 74b6b53.",
+      "limitation": "Additional external/plugin/mount regression sources in this report were inspected but not rerun."
+    }
+  ],
+  "prior_reports_preserved": [
+    {
+      "path": "docs/reference/reviews/p3-command-review.json",
+      "scope": "Original CR-1 evidence and all original findings remain unchanged."
+    },
+    {
+      "path": "docs/reference/reviews/p3-command-follow-up.json",
+      "scope": "Existing three-path CR-1 closure remains unchanged; this report adds only registration whole-file coverage."
+    }
+  ],
+  "limitations": [
+    "No broad tests, live account checks, model trials, release packaging or platform matrix were run in this follow-up.",
+    "Approval is bound to the exact file SHA-256 at 74b6b53, which equals its 94e4afc bytes; unrelated later changes are not approved."
+  ]
+}
