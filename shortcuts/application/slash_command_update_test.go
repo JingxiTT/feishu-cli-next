@@ -37,7 +37,7 @@ func TestSlashCommandUpdate_ByName(t *testing.T) {
 	reg.Register(patchOKStub("id9"))
 
 	err := mountAndRun(t, SlashCommandUpdate, []string{"+slash-command-update",
-		"--command", "greet", "--icon-key", "skill_outlined", "--format", "json", "--as", "bot"}, f, stdout)
+		"--command", "greet", "--icon-key", "new_icon", "--format", "json", "--as", "bot"}, f, stdout)
 	if err != nil {
 		t.Fatalf("execute: %v", err)
 	}

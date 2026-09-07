@@ -7,25 +7,16 @@ import (
 	"testing"
 
 	"github.com/larksuite/cli/errs"
+	"github.com/larksuite/cli/internal/cmdutil"
 )
 
-func TestMatchCommandID(t *testing.T) {
-	items := []interface{}{
-		sampleItem("greet", "id1"),
-		sampleItem("weather", "id2"),
-	}
-	id := matchCommandID(items, "weather")
-	if id != "id2" {
-		t.Fatalf("got id=%q", id)
-	}
-	id = matchCommandID(items, "nope")
-	if id != "" {
-		t.Fatalf("miss should return empty, got id=%q", id)
-	}
-	// 精确匹配：大小写与空白不做宽容
-	id = matchCommandID(items, "Greet")
-	if id != "" {
-		t.Fatalf("match must be exact, got %q", id)
+func TestResolveCommandNameRequiresExactMatch(t *testing.T) {
+	f, stdout, _, reg := cmdutil.TestFactory(t, appTestConfig())
+	reg.Register(listStub([]interface{}{sampleItem("greet", "id1")}))
+	err := mountAndRun(t, SlashCommandUpdate, []string{"+slash-command-update", "--command", "Greet", "--description", "new", "--as", "bot"}, f, stdout)
+	p, ok := errs.ProblemOf(err)
+	if !ok || p.Category != errs.CategoryAPI || p.Subtype != errs.SubtypeNotFound {
+		t.Fatalf("exact match required: %v", err)
 	}
 }
 

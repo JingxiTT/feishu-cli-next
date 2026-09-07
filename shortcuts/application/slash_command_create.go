@@ -89,11 +89,19 @@ var SlashCommandCreate = common.Shortcut{
 				return rewrapped
 			}
 			// --force: name collision -> resolve id -> PATCH (idempotent re-run).
-			id, rerr := resolveCommandID(runtime, name)
+			current, rerr := resolveCommand(runtime, name)
 			if rerr != nil {
 				return rerr
 			}
 			patchBody := buildSlashCommandBody("", runtime.Str("description"), i18n, runtime.Str("icon-key"))
+			if unchangedCommand(current, patchBody) {
+				return outputUnchanged(runtime, current)
+			}
+			state, rerr := decodeCommandState(current)
+			if rerr != nil {
+				return rerr
+			}
+			id := state.ID
 			data, err = runtime.CallAPITyped("PATCH", slashCommandBasePath+"/"+encodeCommandIDPathSegment(id), nil, patchBody)
 			if err != nil {
 				return err

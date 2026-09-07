@@ -36,7 +36,8 @@ Use this to change description, localized descriptions, or icon while retaining 
 - Pass `--command-id` from [[+slash-command-list]], or pass `--command` to let the CLI resolve the current id by name with a live list request.
 
 ### Tips
-- PATCH is field-level partial: fields you do not pass are preserved server-side.
+- PATCH preserves omitted top-level fields. A supplied description replaces its whole object, including localized descriptions; omitted languages are removed.
+- By-name updates skip an unchanged replacement after resolving the current command. Direct-id updates retain the write-only path and send PATCH without an extra read.
 - The command name cannot be changed. Renaming means deleting and recreating the command, which produces a new `command_id`.
 
 ### Examples

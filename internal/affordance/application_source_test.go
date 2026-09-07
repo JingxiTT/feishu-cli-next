@@ -115,3 +115,15 @@ func containsItem(items []string, want string) bool {
 	}
 	return false
 }
+
+func TestApplicationReplacementAndNoopGuidance(t *testing.T) {
+	prev := mdSource
+	t.Cleanup(func() { SetSource(prev) })
+	SetSource(os.DirFS("../../affordance"))
+	update := parsedApplicationAffordance(t, "+slash-command-update")
+	for _, want := range []string{"whole object", "omitted languages", "unchanged replacement", "write-only path"} {
+		if !containsItem(update.Tips, want) {
+			t.Errorf("missing %q in %v", want, update.Tips)
+		}
+	}
+}

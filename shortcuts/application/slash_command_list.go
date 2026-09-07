@@ -25,27 +25,18 @@ var SlashCommandList = common.Shortcut{
 			GET(slashCommandBasePath)
 	},
 	Execute: func(ctx context.Context, runtime *common.RuntimeContext) error {
-		data, err := runtime.CallAPITyped("GET", slashCommandBasePath, nil, nil)
+		data, items, err := commandList(runtime)
 		if err != nil {
 			return err
 		}
-		items, _ := data["items"].([]interface{})
-		if items == nil {
-			items = []interface{}{}
-		}
-		out := map[string]interface{}{"items": items, "count": len(items)}
+		data["items"] = items
+		data["count"] = len(items)
+		out := data
 		runtime.OutFormat(out, nil, func(w io.Writer) {
 			fmt.Fprintf(w, "%d slash command(s)\n", len(items))
 			for _, it := range items {
-				m, ok := it.(map[string]interface{})
-				if !ok {
-					continue
-				}
-				desc := ""
-				if d, ok := m["description"].(map[string]interface{}); ok {
-					desc, _ = d["default_value"].(string)
-				}
-				fmt.Fprintf(w, "  /%v\t%v\t%s\n", m["command"], m["command_id"], desc)
+				state, _ := decodeCommandState(it) // validated before emitting
+				fmt.Fprintf(w, "  /%s\t%s\t%s\n", state.Command, state.ID, state.Description.DefaultValue)
 			}
 		})
 		return nil

@@ -90,18 +90,27 @@ var SlashCommandUpdate = common.Shortcut{
 	},
 	Execute: func(ctx context.Context, runtime *common.RuntimeContext) error {
 		id := strings.TrimSpace(runtime.Str("command-id"))
+		var current map[string]interface{}
 		if id == "" {
-			resolved, err := resolveCommandID(runtime, strings.TrimSpace(runtime.Str("command")))
+			resolved, err := resolveCommand(runtime, strings.TrimSpace(runtime.Str("command")))
 			if err != nil {
 				return err
 			}
-			id = resolved
+			current = resolved
+			state, err := decodeCommandState(current)
+			if err != nil {
+				return err
+			}
+			id = state.ID
 		}
 		i18n, err := parseDescriptionI18n(runtime.StrArray("description-i18n"))
 		if err != nil {
 			return err
 		}
 		body := buildSlashCommandBody("", runtime.Str("description"), i18n, runtime.Str("icon-key"))
+		if current != nil && unchangedCommand(current, body) {
+			return outputUnchanged(runtime, current)
+		}
 		data, err := runtime.CallAPITyped("PATCH", slashCommandBasePath+"/"+encodeCommandIDPathSegment(id), nil, body)
 		if err != nil {
 			return err
