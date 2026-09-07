@@ -65,6 +65,26 @@ class InventoryTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             inventory.exporter_source('invalid')
 
+    def test_exporter_configures_actual_startup_brand_and_captures_guard(self):
+        for mode in ('next', 'legacy'):
+            source = inventory.exporter_source(mode)
+            self.assertIn('WithStartupBrand(core.LarkBrand(os.Getenv("LARKSUITE_CLI_BRAND")))', source)
+            self.assertIn('_ "github.com/larksuite/cli/extension/credential/env"', source)
+            self.assertIn('"disable_flag_parsing": c.DisableFlagParsing', source)
+        reference = {'commands': {'apps': {'hidden': True, 'disable_flag_parsing': True}}}
+        target = {'commands': {'apps': {'hidden': False, 'disable_flag_parsing': False}}}
+        self.assertEqual(len(inventory.compare_contract(reference, target)), 2)
+
+    def test_brand_supplement_rejects_unconfigured_lark_capture(self):
+        bootstrap = {'commands': {'apps': {'hidden': False, 'disable_flag_parsing': False}}}
+        with self.assertRaises(RuntimeError):
+            inventory.validate_brand_surface('lark', bootstrap)
+        inventory.validate_brand_surface('feishu', bootstrap)
+        guarded = {'commands': {'apps': {'hidden': True, 'disable_flag_parsing': True}}}
+        inventory.validate_brand_surface('lark', guarded)
+        with self.assertRaises(RuntimeError):
+            inventory.validate_brand_surface('feishu', guarded)
+
     def test_next_additions_do_not_hide_removed_legacy_flags(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
@@ -86,6 +106,11 @@ class InventoryTests(unittest.TestCase):
                 self.assertIn('/feishu/commands//flags/result-fields', result['additions'])
                 self.assertIn('/feishu/commands/guide', result['additions'])
                 self.assertEqual(inventory.check(root, root, 'legacy')['status'], 'pass')
+                configured = root / 'configured.json.gz'
+                inventory.save(configured, {'feishu': next_surface})
+                alternate = inventory.check(root, root, 'next', configured)
+                self.assertEqual(alternate['status'], 'pass')
+                self.assertEqual(alternate['reference_registrations_sha256'], inventory.digest(configured.read_bytes()))
                 states = [{'revision': 'fixture-revision', 'tracked_tree_sha256': value}
                           for value in ('before', 'before', 'after', 'after')]
                 with mock.patch.object(inventory, 'repository_state', side_effect=states):
@@ -98,7 +123,7 @@ class InventoryTests(unittest.TestCase):
             with mock.patch.object(inventory, 'check', return_value={'status': 'pass'}) as check:
                 with mock.patch('builtins.print'):
                     self.assertEqual(inventory.main(['check', *arguments]), 0)
-                self.assertEqual(check.call_args.args[-1], surface)
+                self.assertEqual(check.call_args.args[2], surface)
 
     def test_repository_state_records_dirty_tracked_bytes(self):
         with tempfile.TemporaryDirectory() as temporary:

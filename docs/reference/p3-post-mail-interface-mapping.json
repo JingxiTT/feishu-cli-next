@@ -1,0 +1,166 @@
+{
+  "candidate_revision": "10588248080a91412b0718eb0aa921cff6a90f10",
+  "configured_brand_reference": "docs/reference/configured-brand-registrations.json.gz",
+  "configured_brand_reference_sha256": "726dedbbd8eb68c43743252a04c24eb8b4395012a6a1b22841d788210fd8e6d0",
+  "execution_evidence": {
+    "checks": [
+      {
+        "command": [
+          "go",
+          "test",
+          "-json",
+          "-count=1",
+          "-timeout=10m",
+          "./shortcuts/mail/..."
+        ],
+        "exit_code": 0,
+        "focused_events": [],
+        "independently_counted_test_events": {
+          "pass": 1643
+        }
+      },
+      {
+        "command": [
+          "go",
+          "test",
+          "-json",
+          "-count=1",
+          "-timeout=10m",
+          "./tests/cli_e2e/mail",
+          "-run",
+          "DryRun|Regression"
+        ],
+        "exit_code": 0,
+        "focused_events": [],
+        "independently_counted_test_events": {
+          "pass": 14
+        }
+      },
+      {
+        "command": [
+          "go",
+          "test",
+          "-json",
+          "-count=1",
+          "-timeout=10m",
+          "./tests/next_sections/mail"
+        ],
+        "exit_code": 0,
+        "focused_events": [
+          {
+            "action": "pass",
+            "test": "TestMailGeneratedBatchGetReadContract/user/ordinary_read"
+          },
+          {
+            "action": "pass",
+            "test": "TestMailGeneratedBatchGetReadContract/user/full_artifact_with_projection"
+          },
+          {
+            "action": "pass",
+            "test": "TestMailGeneratedBatchGetReadContract/user"
+          },
+          {
+            "action": "pass",
+            "test": "TestMailGeneratedBatchGetReadContract/bot/ordinary_read"
+          },
+          {
+            "action": "pass",
+            "test": "TestMailGeneratedBatchGetReadContract/bot/full_artifact_with_projection"
+          },
+          {
+            "action": "pass",
+            "test": "TestMailGeneratedBatchGetReadContract/bot"
+          },
+          {
+            "action": "pass",
+            "test": "TestMailGeneratedBatchGetReadContract"
+          },
+          {
+            "action": "pass",
+            "test": "TestMailGeneratedReadExceptionDoesNotCoverWritesOrRawPOST/neighboring_mutation"
+          },
+          {
+            "action": "pass",
+            "test": "TestMailGeneratedReadExceptionDoesNotCoverWritesOrRawPOST/raw_POST"
+          },
+          {
+            "action": "pass",
+            "test": "TestMailGeneratedReadExceptionDoesNotCoverWritesOrRawPOST"
+          },
+          {
+            "action": "pass",
+            "test": "TestMailGeneratedSearchReadContracts/contact_search"
+          },
+          {
+            "action": "pass",
+            "test": "TestMailGeneratedSearchReadContracts/message_search"
+          },
+          {
+            "action": "pass",
+            "test": "TestMailGeneratedSearchReadContracts"
+          }
+        ],
+        "independently_counted_test_events": {
+          "pass": 215,
+          "skip": 1
+        }
+      }
+    ],
+    "path": ".tmp/mail-generated-read-boundary.json",
+    "sha256": "fd24e40dba58350c4f4128033191a8f28280234d4da742d05cf02c97bb1723eb"
+  },
+  "focused_semantic_review": [
+    "docs/reference/reviews/p3-mail-native-read-review.json"
+  ],
+  "implementation_commit": "10588248080a91412b0718eb0aa921cff6a90f10",
+  "limits": [
+    "Configured brand supplement corrects inventory setup; it does not change frozen broad capability files or the reference checkout.",
+    "No live mailbox verification, native platform guarantee or provider-token claim is made.",
+    "192 changed reference source hashes and later new dependencies require exact effective review, separately from registration retention."
+  ],
+  "mappings": [
+    {
+      "command": "mail multi_entity search",
+      "frozen_risk": "write",
+      "http_method": "POST",
+      "legacy_contract": "Configured reference command risk and frozen native schema risk remain write; exact next annotation and transport intent are deliberate corrections.",
+      "metadata_method_sha256": "8e6b6852632098956192bbaa74524579251afb24c83263b081dde1bd3bcf795f",
+      "method_id": "multi_entity.search",
+      "method_path": "multi_entity/search",
+      "next_command_risk": "read",
+      "service_path": "/open-apis/mail/v1"
+    },
+    {
+      "command": "mail user_mailbox.messages batch_get",
+      "frozen_risk": "write",
+      "http_method": "POST",
+      "legacy_contract": "Configured reference command risk and frozen native schema risk remain write; exact next annotation and transport intent are deliberate corrections.",
+      "metadata_method_sha256": "d1fc89b8798d7652b0319808dc3d6e715c3a7c27d97a0fa75c788c6444428c8d",
+      "method_id": "user_mailbox.message.batch_get",
+      "method_path": "user_mailboxes/{user_mailbox_id}/messages/batch_get",
+      "next_command_risk": "read",
+      "service_path": "/open-apis/mail/v1"
+    },
+    {
+      "command": "mail user_mailboxes search",
+      "frozen_risk": "write",
+      "http_method": "POST",
+      "legacy_contract": "Configured reference command risk and frozen native schema risk remain write; exact next annotation and transport intent are deliberate corrections.",
+      "metadata_method_sha256": "94c2306e1e7dfd0f6df33c3600ce6ed5678eac1b75881c81766d914d986617f3",
+      "method_id": "user_mailbox.search",
+      "method_path": "user_mailboxes/{user_mailbox_id}/search",
+      "next_command_risk": "read",
+      "service_path": "/open-apis/mail/v1"
+    }
+  ],
+  "owner_evidence_commit": "0a17534930ef4033999932e0342a2bbe9110fc4e",
+  "registration_report": "docs/reference/p3-next-post-mail-reconciliation.json",
+  "registration_report_sha256": "7f9b9d5e7763536959ccb6e11725683e0ce9a53504944182078f64853cd1babf",
+  "schema_version": 1,
+  "semantics": "Exact service prefix, native method ID/template, HTTP POST and original write-risk are required. Concrete decoded path must match the template. Arbitrary raw POST, neighboring writes and substituted URLs retain their original risk. User/bot batch-get and permitted search outputs can be read without mutation receipts or false exit22 and can produce verified artifacts.",
+  "source_checkpoint_counts": {
+    "changed": 60,
+    "changed_source_requires_review": 192
+  },
+  "status": "explicit_interface_mapping_requires_semantic_review"
+}

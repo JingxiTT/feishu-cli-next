@@ -104,6 +104,10 @@ def export(root, metadata, brand, surface='legacy'):
         env = {k: v for k, v in os.environ.items() if not k.startswith(('LARKSUITE_CLI_', 'FEISHU_'))}
         env.update(LARKSUITE_CLI_CONFIG_DIR=str(Path(temporary) / 'config'),
                    LARKSUITE_CLI_REMOTE_META='off', LARKSUITE_CLI_BRAND=brand,
+                   LARKSUITE_CLI_APP_ID='inventory-synthetic-app',
+                   LARKSUITE_CLI_APP_SECRET='inventory-synthetic-secret',
+                   HTTP_PROXY='http://127.0.0.1:9', HTTPS_PROXY='http://127.0.0.1:9',
+                   ALL_PROXY='http://127.0.0.1:9', NO_PROXY='',
                    LARKSUITE_CLI_NO_UPDATE_NOTIFIER='1', LARKSUITE_CLI_NO_SKILLS_NOTIFIER='1')
         result = subprocess.run(['go', 'run', 'scripts/next_inventory_export.go'], cwd=work,
                                 env=env, capture_output=True, timeout=240)
@@ -237,8 +241,9 @@ def presence(reference, current):
             'raw_api_present': 'api' in current['commands']}
 
 
-def check(reference_dir, target, surface='next'):
-    frozen = read(reference_dir / 'registrations.json.gz')
+def check(reference_dir, target, surface='next', reference_registrations=None):
+    registration_path = reference_registrations or reference_dir / 'registrations.json.gz'
+    frozen = read(registration_path)
     metadata = gzip.decompress((reference_dir / 'meta_data.json.gz').read_bytes())
     coverage = read(reference_dir / 'coverage.json')
     if digest(metadata) != coverage['reference']['metadata_sha256']:
@@ -277,12 +282,53 @@ def check(reference_dir, target, surface='next'):
         errors.append({'path': '/', 'kind': 'tracked_source_changed_during_check'})
     return {'schema_version': 1, 'status': 'pass' if not errors else 'review_required',
             'surface': surface, 'reference_surface': 'legacy', 'counts': counts,
+            'candidate_brand_context': 'explicit startup brand and isolated synthetic environment account',
+            'reference_registrations': str(registration_path),
+            'reference_context_notice': ('Explicit alternate registration supplement; inspect its capture context.' if reference_registrations else 'Original frozen bootstrap inventory; use the configured-brand supplement for runtime brand conditions.'),
+            'reference_registrations_sha256': digest(registration_path.read_bytes()),
+            'exporter_source_sha256': digest(exporter_source(surface).encode()),
             'candidate_revision': initial_state['revision'],
             'candidate_state_before': initial_state, 'candidate_state_after': final_state,
             'brand_snapshot_observations': states, 'tracked_source_consistent': consistent,
             'reference_presence': retained,
             'new_commands': new_commands, 'new_root_flags': new_root_flags,
             'differences': errors, 'additions': sorted(added), 'live_verification': 'not_run'}
+
+
+
+def validate_brand_surface(brand, values):
+    commands = values['commands']
+    apps = [value for path, value in commands.items() if path == 'apps' or path.startswith('apps ')]
+    if not apps or 'apps' not in commands:
+        raise RuntimeError('configured Apps registration missing')
+    if brand == 'lark' and not all(value['hidden'] and value['disable_flag_parsing'] for value in apps):
+        raise RuntimeError('configured Lark Apps deny subtree was not captured')
+    if brand == 'feishu' and (commands['apps']['hidden'] or commands['apps']['disable_flag_parsing']):
+        raise RuntimeError('configured Feishu Apps registration is unexpectedly guarded')
+
+
+def capture_brands(reference_dir, reference, output):
+    coverage = read(reference_dir / 'coverage.json')
+    if git(reference, 'rev-parse', 'HEAD') != coverage['reference']['revision']:
+        raise ValueError('brand supplement must use the frozen reference revision')
+    if source_inventory(reference)['files'] != read(reference_dir / 'sources.json')['files']:
+        raise ValueError('brand supplement reference bytes differ from frozen source inventory')
+    metadata = gzip.decompress((reference_dir / 'meta_data.json.gz').read_bytes())
+    if digest(metadata) != coverage['reference']['metadata_sha256']:
+        raise ValueError('frozen metadata checksum does not match coverage.json')
+    variants = {brand: export(reference, metadata, brand) for brand in ('feishu', 'lark')}
+    for brand, values in variants.items():
+        validate_brand_surface(brand, values)
+    save(output, variants)
+    return {'schema_version': 1, 'status': 'captured',
+            'reference_revision': coverage['reference']['revision'],
+            'reference_local_changes': git(reference, 'status', '--porcelain=v1'),
+            'metadata_sha256': digest(metadata), 'registrations': str(output),
+            'registrations_sha256': digest(output.read_bytes()),
+            'exporter_source_sha256': digest(exporter_source('legacy').encode()),
+            'brand_context': 'Production environment credential provider plus explicit WithStartupBrand and an isolated synthetic app account; no command executes; remote metadata disabled and external proxies point to an unreachable loopback port.',
+            'frozen_snapshot_boundary': 'Existing registrations.json.gz is an unrestricted bootstrap inventory: setting brand environment alone did not configure the legacy registration guard. This supplement preserves it and captures configured runtime brand conditions.',
+            'hidden_commands': {brand: sorted(p for p, c in value['commands'].items() if c['hidden']) for brand, value in variants.items()}}
 
 
 def main(argv=None):
@@ -297,9 +343,20 @@ def main(argv=None):
     checker.add_argument('--target', type=Path, default=ROOT)
     checker.add_argument('--surface', choices=('next', 'legacy'), default='next',
                          help='candidate distribution Build options (default: next); use legacy for upstream self-reconciliation')
+    checker.add_argument('--reference-registrations', type=Path, help='explicit configured-brand supplement; original frozen bootstrap snapshot stays unchanged')
+    brands = sub.add_parser('capture-brands')
+    brands.add_argument('--reference-dir', type=Path, default=ROOT / 'docs/reference')
+    brands.add_argument('--reference', type=Path, required=True)
+    brands.add_argument('--out', type=Path, required=True)
     args = parser.parse_args(argv)
     try:
-        result = freeze(args.reference.resolve(), args.metadata.resolve(), args.out.resolve()) if args.action == 'freeze' else check(args.reference_dir.resolve(), args.target.resolve(), args.surface)
+        if args.action == 'freeze':
+            result = freeze(args.reference.resolve(), args.metadata.resolve(), args.out.resolve())
+        elif args.action == 'capture-brands':
+            result = capture_brands(args.reference_dir.resolve(), args.reference.resolve(), args.out.resolve())
+        else:
+            result = check(args.reference_dir.resolve(), args.target.resolve(), args.surface,
+                           args.reference_registrations.resolve() if args.reference_registrations else None)
         print(json.dumps(result, sort_keys=True))
         return 1 if result.get('status') == 'review_required' else 0
     except (OSError, ValueError, RuntimeError, subprocess.SubprocessError) as error:

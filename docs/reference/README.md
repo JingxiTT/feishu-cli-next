@@ -1,5 +1,7 @@
 # Frozen reference inventory
 
+For configured Feishu/Lark guard coverage, use the [separate brand supplement](BRANDS.md) and pass `--reference-registrations docs/reference/configured-brand-registrations.json.gz` to the checker. The original frozen registration file is an unrestricted bootstrap inventory; its two brand labels do not establish configured runtime conditions.
+
 The source reference is `7fd6ef3c07182257ce776cdc5a614e122d5bd4b3` of
 `github.com/larksuite/cli`, with no tracked or untracked local changes at capture.
 The checkout is never modified by the inventory scripts. Copyright notices and

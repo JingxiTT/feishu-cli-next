@@ -17,9 +17,11 @@ import (
 
 	rootcmd "github.com/larksuite/cli/cmd"
 	"github.com/larksuite/cli/events"
+	_ "github.com/larksuite/cli/extension/credential/env" // match the production entry point
 	"github.com/larksuite/cli/internal/cmdmeta"
 	"github.com/larksuite/cli/internal/cmdutil"
 	"github.com/larksuite/cli/internal/commandbridge"
+	"github.com/larksuite/cli/internal/core"
 	"github.com/larksuite/cli/internal/event/catalog"
 	"github.com/larksuite/cli/internal/flagalias"
 	"github.com/larksuite/cli/internal/registry"
@@ -32,6 +34,7 @@ import (
 func main() {
 	root := rootcmd.Build(context.Background(), cmdutil.InvocationContext{},
 		rootcmd.WithIO(strings.NewReader(""), io.Discard, io.Discard),
+		rootcmd.WithStartupBrand(core.LarkBrand(os.Getenv("LARKSUITE_CLI_BRAND"))),
 		rootcmd.WithoutPlugins(), rootcmd.WithoutStrictMode(),
 		rootcmd.WithServiceCatalog(registry.EmbeddedCatalog()))
 	commands := map[string]any{}
@@ -51,7 +54,7 @@ func main() {
 		risk, _ := cmdmeta.Risk(c)
 		path := strings.TrimSpace(strings.TrimPrefix(c.CommandPath(), root.Name()))
 		commands[path] = map[string]any{"aliases": c.Aliases, "flags": flags,
-			"runnable": c.Runnable(), "hidden": c.Hidden, "source": source,
+			"runnable": c.Runnable(), "hidden": c.Hidden, "disable_flag_parsing": c.DisableFlagParsing, "source": source,
 			"domain": cmdmeta.Domain(c), "risk": risk, "identities": cmdmeta.Identities(c)}
 		for _, child := range c.Commands() {
 			walk(child)
