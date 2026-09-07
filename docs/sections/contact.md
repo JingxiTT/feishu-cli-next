@@ -173,8 +173,8 @@ exact-ID get-user round-trip, ID-restricted user-search shape and returned
 identities, and self personal-profile array/returned-identity checks. Those
 assertions do not establish full Contact live coverage or completeness of every
 profile field. The generic failure deliberately omits upstream response content;
-its backend cause remains unclassified. No additional live retry, login or scope
-change was performed after the failure.
+the initial failure did not classify its cause. A subsequently authorized single
+read diagnostic is recorded below; no login or scope change was performed.
 
 The selected test recorded zero passes, one failure and zero skips. Full Contact
 live acceptance, bot-search success and bot-identity tenant binding remain open.
@@ -183,3 +183,16 @@ hashes, revision, status, binding booleans and the code failure location. Raw
 auth/profile data, identifiers, tokens and test output were kept in memory only
 and discarded; the temporary build directory was removed. No content was
 created, changed, sent or shared.
+
+
+The coordinator then authorized one bounded diagnostic of the same final
+`+search-bot` command on the same committed candidate and current account. It
+returned exit 3 with typed `authorization/missing_scope` and
+`missing_scopes:["search:bot"]`; no numeric error code was present. This
+establishes a missing-scope blocker for the selected user identity, not a
+demonstrated bot-search response/projection defect. The original complete live
+test still counts as failed. The separately recorded diagnostic also failed,
+and neither is converted into a pass. It issued no login, scope request or
+content mutation; its raw output was discarded after extracting only the typed
+error fields. Bot-search live success remains unverified until authorized
+credentials already possess the required scope.

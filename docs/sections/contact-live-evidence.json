@@ -52,5 +52,24 @@
     "typed_retryable_read_errors": "existing bounded retry policy",
     "test_credential_fallbacks": "TEST_* removed from child environment",
     "config": "effective current-account config preserved; normal token refresh allowed"
+  },
+  "single_read_diagnostic": {
+    "timestamp_utc": "2026-09-07T05:54:53.804518+00:00",
+    "candidate_revision": "312af93804a44fe38cbaf1fb7ffea36a24b60357",
+    "attempts": 1,
+    "command": "contact +search-bot --as user --query next-contact-read-fixture --page-size 1",
+    "status": "failed",
+    "preserves_original_test_failure": true,
+    "raw_output_persisted": false,
+    "build_exit": 0,
+    "binary_sha256": "da2b2228400132a979eed5962edaa01e71e79bca9e2b2efe1ee64abd7b625560",
+    "exit_code": 3,
+    "error": {
+      "type": "authorization",
+      "subtype": "missing_scope",
+      "missing_scopes": [
+        "search:bot"
+      ]
+    }
   }
 }
