@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"io"
 	"math"
+	"math/big"
 	"net/http"
 	"net/url"
 	"sort"
@@ -569,11 +570,25 @@ func toIntStrict(v interface{}) (int, bool) {
 	case int64:
 		return int(n), true
 	case json.Number:
-		i, err := n.Int64()
-		if err != nil {
+		// JSON integers may use decimal/exponent spelling. Preserve the prior
+		// numeric acceptance without rounding them through a float64.
+		probe, err := n.Float64()
+		if err != nil || math.IsNaN(probe) || math.IsInf(probe, 0) || math.Trunc(probe) != probe {
 			return 0, false
 		}
-		return int(i), true
+		if probe == 0 {
+			mantissa := strings.Split(strings.ToLower(string(n)), "e")[0]
+			return 0, strings.Trim(mantissa, "-+.0") == ""
+		}
+		exact, ok := new(big.Rat).SetString(string(n))
+		if !ok || !exact.IsInt() || !exact.Num().IsInt64() {
+			return 0, false
+		}
+		value := exact.Num().Int64()
+		if strconv.IntSize == 32 && (value > math.MaxInt32 || value < math.MinInt32) {
+			return 0, false
+		}
+		return int(value), true
 	case float64:
 		if math.IsNaN(n) || math.IsInf(n, 0) || n != math.Trunc(n) {
 			return 0, false

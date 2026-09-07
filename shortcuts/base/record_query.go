@@ -338,11 +338,11 @@ func recordSearchInteger(raw any, name string) (int, error) {
 	case int64:
 		return int(value), nil
 	case json.Number:
-		parsed, err := value.Int64()
-		if err != nil {
+		parsed, valid := toIntStrict(value)
+		if !valid {
 			return 0, baseFlagErrorf("%s must be an integer; got %v", name, raw)
 		}
-		return int(parsed), nil
+		return parsed, nil
 	case float64:
 		if math.Trunc(value) != value {
 			return 0, baseFlagErrorf("%s must be an integer; got %v", name, raw)

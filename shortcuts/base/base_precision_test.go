@@ -52,3 +52,25 @@ func TestBaseRoleResponsePreservesNestedLargeNumbers(t *testing.T) {
 		t.Fatalf("precision lost: %s", stdout.String())
 	}
 }
+
+func TestBaseIntegerControlsKeepExactDecimalAndExponentSpellings(t *testing.T) {
+	for _, number := range []json.Number{"2.0", "2e0", "0e-99999999"} {
+		expected := 2
+		if strings.HasPrefix(string(number), "0") {
+			expected = 0
+		}
+		actual, ok := toIntStrict(number)
+		if !ok || actual != expected {
+			t.Fatalf("changed integer acceptance: %s => %d %v", number, actual, ok)
+		}
+		actual, err := recordSearchInteger(number, "limit")
+		if err != nil || actual != expected {
+			t.Fatalf("changed query integer: %s => %d %v", number, actual, err)
+		}
+	}
+	for _, number := range []json.Number{"2.0000000000000000001", "1e-99999999", "9223372036854775808"} {
+		if _, ok := toIntStrict(number); ok {
+			t.Fatalf("rounded or overflowed integer %s", number)
+		}
+	}
+}
