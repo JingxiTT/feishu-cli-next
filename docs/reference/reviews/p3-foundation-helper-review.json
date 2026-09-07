@@ -1,0 +1,111 @@
+{
+  "schema_version": 1,
+  "reviewer": "/root/foundation_review",
+  "report_kind": "additional_path_review",
+  "review_revision": "74b6b5346ca4efbd03564045f4f3e01746f18878",
+  "reference_import_revision": "0c1ac7570543db3117ba5bdc6a66b69f87c4a62e",
+  "verdict": "approved_offline",
+  "scope": {
+    "assignment_ids": [
+      "invocation_identity"
+    ],
+    "path_count": 1,
+    "method": "Entire immutable test-factory helper, complete reference-import diff and focused transport/metadata dependencies plus regression-source checks. Root explicitly assigned this additional path after initial inventory.",
+    "product_files_modified": false,
+    "tests_executed_by_this_review": false
+  },
+  "assignments": [
+    {
+      "schema_version": 1,
+      "reviewer": "/root/foundation_review",
+      "assignment_id": "invocation_identity",
+      "verdict": "approved_offline",
+      "paths": [
+        {
+          "path": "internal/cmdutil/testing.go",
+          "review_revision": "74b6b5346ca4efbd03564045f4f3e01746f18878",
+          "review_sha256": "4e0058b510174ce5b9fab19cff601f65a77a7313922c566dba13544d91adcd55",
+          "verdict": "approved_offline",
+          "review_scope": "Whole helper and import delta. Only change is nil-guarded copy of supplied config.Brand into StartupBrand. Scalar snapshot preserves selected synthetic brand without Config or credential resolution. Nil config remains tolerated. Both direct and SDK HTTP clients use the same explicit mock registry; supplied account resolver and constant synthetic token provider do not probe extension/environment providers. Keychain stub and existing process-wide cwd/FileIO behavior remain understood test constraints.",
+          "evidence": [
+            {
+              "path": "internal/httpmock/registry.go",
+              "sha256": "1ae666caba864afa37d921b21674fb9c6669354369c36d9d6a63750270d38733",
+              "source_revision": "74b6b5346ca4efbd03564045f4f3e01746f18878",
+              "tested_revision": "unbound: source inspected; not executed by this review",
+              "scope": "Dependency scope only: Registry.RoundTrip returns a stub or error, never a live-network fallback; NewClient fixes Transport to registry."
+            },
+            {
+              "path": "internal/cmdutil/transport.go",
+              "sha256": "659b6c3953540963f9d0522539d88dd1523ebb924da538db709c002ed3c503ad",
+              "source_revision": "74b6b5346ca4efbd03564045f4f3e01746f18878",
+              "tested_revision": "unbound: source inspected; not executed by this review",
+              "scope": "Dependency scope only: UserAgentTransport.RoundTrip delegates to the explicitly nonnil registry Base; fallback branch is not used by TestFactory."
+            },
+            {
+              "path": "cmd/auth/login_brand_filter_test.go",
+              "sha256": "5d2c7e902513bd31e15b712663fb0e47ba3503ba64180b8965cc2702dbae9ae5",
+              "source_revision": "74b6b5346ca4efbd03564045f4f3e01746f18878",
+              "tested_revision": "unbound: source inspected; not executed by this review",
+              "scope": "TestLoginHelpBrandDoesNotResolveCredentialConfig uses TestFactory for both brands, replaces Config with fatal callback, verifies help and completion use correct brand without resolving credentials."
+            },
+            {
+              "path": "cmd/agent_startup_brand_test.go",
+              "sha256": "f5152967497160b0a0801a39ef0a02d818e867a11dc4a2a71fa52e19a8d02012",
+              "source_revision": "74b6b5346ca4efbd03564045f4f3e01746f18878",
+              "tested_revision": "unbound: source inspected; not executed by this review",
+              "scope": "Build-level comparison test confirms startup brand reaches the runtime Factory and login help; secondary evidence only, not direct TestFactory execution."
+            },
+            {
+              "path": "internal/cmdutil/factory_metadata_test.go",
+              "sha256": "fe75ad5b9694d6e3fc6a250c89567e0388515f2a262e91602657a53f5217ada2",
+              "source_revision": "74b6b5346ca4efbd03564045f4f3e01746f18878",
+              "tested_revision": "unbound: source inspected; not executed by this review",
+              "scope": "Metadata strict-mode boundary rejects token resolution and HTTP construction. Dependency source inspected; does not use TestFactory or establish helper execution provenance."
+            },
+            {
+              "path": "internal/credential/credential_provider.go",
+              "sha256": "4e70028580edaf4872c24db84dacab7293f87bc1006d0b4a4acf2ba3266e95d2",
+              "source_revision": "74b6b5346ca4efbd03564045f4f3e01746f18878",
+              "tested_revision": "unbound: source inspected; not executed by this review",
+              "scope": "Dependency scope only: no extension providers are registered by TestFactory; default resolver uses supplied account and test token. Existing default identity hint may query stored-token state, so this helper is not a blanket credential-storage isolation boundary."
+            },
+            {
+              "path": ".tmp/next-tests/local-discovery-no-identity.json",
+              "sha256": "f53583e4846565906268f71a040ed490158c0a09a2b32f6b23d46f862745d7c6",
+              "scope": "Existing discovery process evidence inspected as secondary startup integration context only; eight scenario leaves and one parent pass. Does not execute TestFactory or establish exact reviewed-helper execution.",
+              "command": [
+                "go",
+                "test",
+                "-json",
+                "-count=1",
+                "-timeout=10m",
+                "./tests/next_foundation",
+                "-run",
+                "^TestLocalDiscoveryDoesNotResolveUserOrTenantIdentity$"
+              ],
+              "status": "pass",
+              "exit_code": 0,
+              "test_pass_events": 9,
+              "package_pass_events": 1,
+              "failure_events": 0,
+              "tested_revision": "unbound: existing report has no source revision/hash binding"
+            }
+          ],
+          "findings": []
+        }
+      ],
+      "cross_assignment_dependencies": [
+        {
+          "assignment_id": "command_recovery",
+          "scope": "CR-1 auth/help/shortcut callsite closure remains with /root/p2_contact; this report grants only the TestFactory helper path verdict."
+        }
+      ],
+      "limitations": [
+        "No broad tests, new process runs or live requests were performed. Regression test source was inspected; secondary process evidence is explicitly unbound and does not directly cover this helper.",
+        "Only three StartupBrand assignment lines differ from reference import at this path. Inventory confirmed earlier AccountMetadata shorthand was inaccurate; no sidecar, tenant, or environment changes exist in this file at this revision.",
+        "TestFactory is not a general host-state sandbox: callers can replace factory fields, default identity hint can inspect stored-token state, FileIO uses its registered provider, buffers are ordinary bytes.Buffer, and TestChdir is explicitly incompatible with parallel tests. The reviewed delta adds none of these existing behaviors."
+      ]
+    }
+  ]
+}
