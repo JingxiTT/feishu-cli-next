@@ -100,7 +100,7 @@ func TestNativeNoopPreservesOmittedEmptyNullAndPrecision(t *testing.T) {
 }
 
 func TestNativeWriteRejectsUnsupportedBeforeAnyPlan(t *testing.T) {
-	for _, bad := range []string{`{"value":null}`, `{"unsupported":{"x":1}}`, `{"formula":true}`, `{"value":{"nested":"unsupported"}}`, `{"cell_styles":{"font_size":"large"}}`} {
+	for _, bad := range []string{`{"value":null}`, `{"unsupported":{"x":1}}`, `{"formula":true}`, `{"value":{"nested":"unsupported"}}`, `{"cell_styles":{"font_size":"large"}}`, `{"value":"keep","rich_text":[]}`, `{"value":"keep","multiple_values":null}`} {
 		want := nativeCells(t, `[[{"value":"valid change"},`+bad+`]]`)
 		current := nativeCells(t, `[[{},{}]]`)
 		writes, _, err := nativeWritePlan(want, current)

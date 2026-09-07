@@ -240,6 +240,16 @@ func nativeWriteCell(cell nativeCell) (nativeCell, error) {
 			delete(out, "value") // backend cached value is not a second content write
 		}
 	}
+	// An empty structured-content read field can mean absent rich content,
+	// while an empty write can clear content. Do not guess this conversion.
+	for _, key := range []string{"rich_text", "multiple_values"} {
+		if raw, ok := out[key]; ok {
+			var parts []json.RawMessage
+			if json.Unmarshal(raw, &parts) != nil || len(parts) == 0 {
+				return nil, errs.NewValidationError(errs.SubtypeInvalidArgument, "empty or invalid %s has no verified native write conversion", key).WithParam("--artifact")
+			}
+		}
+	}
 	contentFields := 0
 	for _, key := range []string{"formula", "rich_text", "multiple_values"} {
 		if _, ok := out[key]; ok {
