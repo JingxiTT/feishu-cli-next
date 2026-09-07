@@ -17,11 +17,14 @@ def load_scenario(section, row_count=None, case_id=None):
         module = importlib.import_module("scenarios.generated_business")
         task = module.task(case_id)
         return SimpleNamespace(TASK=task, Scenario=lambda: module.make_scenario(task["id"]), verify=module.verify)
-    if section in ("scaling-base", "scaling-sheets"):
+    if section in ("scaling-base", "scaling-sheets", "scaling-sheets-v2"):
         if type(row_count) is not int or row_count not in (100, 1000, 10000):
             raise ValueError("unsupported development row count")
-        module = importlib.import_module("scaling." + section.removeprefix("scaling-"))
-        return SimpleNamespace(TASK=module.task(row_count), Scenario=lambda: module.Scenario(row_count), verify=module.verify)
+        module = importlib.import_module("scaling.base" if section == "scaling-base" else "scaling.sheets")
+        result = SimpleNamespace(TASK=module.task(row_count), Scenario=lambda: module.Scenario(row_count), verify=module.verify)
+        if hasattr(module, 'verification_diagnostics'):
+            result.verification_diagnostics = module.verification_diagnostics
+        return result
     if section not in SECTIONS:
         raise ValueError('unknown executable section')
     return importlib.import_module('scenarios.' + section)

@@ -1,0 +1,303 @@
+{
+  "schema_version": 1,
+  "evidence_id": "scaling-base-fixture-v2-controlled",
+  "kind": "sanitized_existing_controlled_evidence",
+  "fixture_version": 2,
+  "scope": "Fixture repair checks only; this record preserves already-executed results without rerunning tests, models or live calls.",
+  "binary_manifest": [
+    {
+      "arm": "official",
+      "revision": "7fd6ef3c07182257ce776cdc5a614e122d5bd4b3",
+      "binary_sha256": null,
+      "hash_status": "not recorded in available controlled evidence"
+    },
+    {
+      "arm": "next",
+      "revision": "8d92e5253aa9d0582314180d51cdec1b10778897",
+      "binary_sha256": "b2e848a3c9c0742a416a3b72d042f2166cec694bc35c06bbf748139f69e3e263",
+      "hash_status": "previously supplied clean binary manifest"
+    }
+  ],
+  "executed_command": "EVAL_SCALING_BASE_CLI=1 python3 -m unittest discover -s tests/next_evaluation -p test_scaling_base.py -v",
+  "suite_result": {
+    "status": "pass",
+    "tests": 15,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0,
+    "duration_seconds": 10.154
+  },
+  "six_size_binary_flows": [
+    {
+      "arm": "official",
+      "row_count": 100,
+      "status": "pass",
+      "actual_created_rows": 100,
+      "actual_create_batches": 1,
+      "metadata_reads": [
+        "base +table-get with complete native table, seven fields and views",
+        "base +base-get",
+        "base +table-list",
+        "base +view-list",
+        "base +view-get"
+      ],
+      "import_strategy": "captured native batch-create file helper",
+      "independent_full_state_verification": "pass",
+      "report_variants": {
+        "arm_produced_report": "pass",
+        "required_fields_only": "pass",
+        "same_required_fields_plus_status_success": "pass",
+        "same_required_fields_plus_client_completed_batches_extra": "pass"
+      },
+      "wrong_required_count": "rejected",
+      "missing_required_record_id": "rejected"
+    },
+    {
+      "arm": "next",
+      "row_count": 100,
+      "status": "pass",
+      "actual_created_rows": 100,
+      "actual_create_batches": 1,
+      "metadata_reads": [
+        "base +table-get with complete native table, seven fields and views",
+        "base +base-get",
+        "base +table-list",
+        "base +view-list",
+        "base +view-get"
+      ],
+      "import_strategy": "typed base +record-import",
+      "independent_full_state_verification": "pass",
+      "report_variants": {
+        "arm_produced_report": "pass",
+        "required_fields_only": "pass",
+        "same_required_fields_plus_status_success": "pass",
+        "same_required_fields_plus_client_completed_batches_extra": "pass"
+      },
+      "wrong_required_count": "rejected",
+      "missing_required_record_id": "rejected"
+    },
+    {
+      "arm": "official",
+      "row_count": 1000,
+      "status": "pass",
+      "actual_created_rows": 1000,
+      "actual_create_batches": 5,
+      "metadata_reads": [
+        "base +table-get with complete native table, seven fields and views",
+        "base +base-get",
+        "base +table-list",
+        "base +view-list",
+        "base +view-get"
+      ],
+      "import_strategy": "captured native batch-create file helper",
+      "independent_full_state_verification": "pass",
+      "report_variants": {
+        "arm_produced_report": "pass",
+        "required_fields_only": "pass",
+        "same_required_fields_plus_status_success": "pass",
+        "same_required_fields_plus_client_completed_batches_extra": "pass"
+      },
+      "wrong_required_count": "rejected",
+      "missing_required_record_id": "rejected"
+    },
+    {
+      "arm": "next",
+      "row_count": 1000,
+      "status": "pass",
+      "actual_created_rows": 1000,
+      "actual_create_batches": 5,
+      "metadata_reads": [
+        "base +table-get with complete native table, seven fields and views",
+        "base +base-get",
+        "base +table-list",
+        "base +view-list",
+        "base +view-get"
+      ],
+      "import_strategy": "typed base +record-import",
+      "independent_full_state_verification": "pass",
+      "report_variants": {
+        "arm_produced_report": "pass",
+        "required_fields_only": "pass",
+        "same_required_fields_plus_status_success": "pass",
+        "same_required_fields_plus_client_completed_batches_extra": "pass"
+      },
+      "wrong_required_count": "rejected",
+      "missing_required_record_id": "rejected"
+    },
+    {
+      "arm": "official",
+      "row_count": 10000,
+      "status": "pass",
+      "actual_created_rows": 10000,
+      "actual_create_batches": 50,
+      "metadata_reads": [
+        "base +table-get with complete native table, seven fields and views",
+        "base +base-get",
+        "base +table-list",
+        "base +view-list",
+        "base +view-get"
+      ],
+      "import_strategy": "captured native batch-create file helper",
+      "independent_full_state_verification": "pass",
+      "report_variants": {
+        "arm_produced_report": "pass",
+        "required_fields_only": "pass",
+        "same_required_fields_plus_status_success": "pass",
+        "same_required_fields_plus_client_completed_batches_extra": "pass"
+      },
+      "wrong_required_count": "rejected",
+      "missing_required_record_id": "rejected"
+    },
+    {
+      "arm": "next",
+      "row_count": 10000,
+      "status": "pass",
+      "actual_created_rows": 10000,
+      "actual_create_batches": 50,
+      "metadata_reads": [
+        "base +table-get with complete native table, seven fields and views",
+        "base +base-get",
+        "base +table-list",
+        "base +view-list",
+        "base +view-get"
+      ],
+      "import_strategy": "typed base +record-import",
+      "independent_full_state_verification": "pass",
+      "report_variants": {
+        "arm_produced_report": "pass",
+        "required_fields_only": "pass",
+        "same_required_fields_plus_status_success": "pass",
+        "same_required_fields_plus_client_completed_batches_extra": "pass"
+      },
+      "wrong_required_count": "rejected",
+      "missing_required_record_id": "rejected"
+    }
+  ],
+  "before_repair_observations": {
+    "table_get": [
+      {
+        "arm": "official",
+        "exit_code": 1,
+        "request_summary": [
+          {
+            "kind": "identity_read",
+            "http_status": 200
+          },
+          {
+            "kind": "table_metadata_read",
+            "http_status": 403,
+            "classification": "rejected_request"
+          }
+        ]
+      },
+      {
+        "arm": "next",
+        "exit_code": 1,
+        "request_summary": [
+          {
+            "kind": "identity_read",
+            "http_status": 200
+          },
+          {
+            "kind": "table_metadata_read",
+            "http_status": 403,
+            "classification": "rejected_request"
+          }
+        ]
+      }
+    ],
+    "optional_report_conventions": [
+      {
+        "arm": "official",
+        "independently_created_rows": 100,
+        "arm_produced_report_accepted": true,
+        "required_fields_only_accepted": true,
+        "same_required_fields_plus_status_success_accepted": false,
+        "same_required_fields_plus_completed_batches_2_accepted": false
+      },
+      {
+        "arm": "next",
+        "independently_created_rows": 100,
+        "arm_produced_report_accepted": true,
+        "required_fields_only_accepted": true,
+        "same_required_fields_plus_status_success_accepted": false,
+        "same_required_fields_plus_completed_batches_2_accepted": false
+      }
+    ],
+    "source_findings": [
+      "Native table-get reads table metadata, then all fields, then all views. The original fixture lacked table/views routes.",
+      "Native listAllFields consumes the fields response member, while the original fixture returned items.",
+      "The task requires created and record_ids in the report but imposes no native status, batching or binding convention on additional JSON metadata."
+    ]
+  },
+  "after_repair_observations": {
+    "metadata": "Both clean binaries successfully read exact Base/table metadata, all seven fields and native views at every size before import.",
+    "report_rule": "Only requested report path, required integer created count and exact unique created IDs supply report evidence; optional JSON extras are ignored as evidence. Independent backend integrity requirements remain enforced.",
+    "known_unmodeled_read": "On both clean binaries an exact known-view filter read is rejected as unsupported_strategy with safe unsupported_strategy_other reason, without changing backend state.",
+    "unknown_or_invalid_reads": "Unknown routes, foreign resource IDs, invalid selectors and query mismatches remain ordinary rejections; no blanket unknown-read acceptance.",
+    "versioning": "FIXTURE_VERSION=2 is recorded in the independent snapshot."
+  },
+  "negative_checks": {
+    "required_report_count_and_ids": [
+      "wrong integer count",
+      "string or boolean count",
+      "missing ID",
+      "duplicate ID",
+      "sentinel or foreign ID"
+    ],
+    "report_path_and_format": [
+      "wrong report path",
+      "non-JSON report",
+      "symlink report"
+    ],
+    "native_integrity": [
+      "missing or duplicate source row",
+      "numeric/string/boolean type corruption",
+      "omitted cell replaced by null",
+      "null replaced by empty text",
+      "Unicode changes",
+      "numeric-looking text normalization",
+      "sentinel modifications",
+      "schema and Base/table/view metadata modifications"
+    ],
+    "effects_and_authority": [
+      "missing signed requests",
+      "invalid signature evidence",
+      "wrong native route",
+      "missing or altered mutation proof",
+      "corrupted historical create effects despite restored final state",
+      "transient unintended mutation attempts followed by otherwise correct import"
+    ],
+    "source_and_local_claims": [
+      "changed input bytes",
+      "forged local backend receipt without actual backend writes"
+    ],
+    "outcome": "All relevant controlled negative cases failed verification or were atomically rejected as expected."
+  },
+  "unchanged_task_checks": {
+    "compared_to": "committed pre-repair fixture",
+    "sizes": [
+      100,
+      1000,
+      10000
+    ],
+    "full_task_dict_equal": true,
+    "input_bytes_equal": true,
+    "prompt_and_public_fixture_equal": true,
+    "expected_values_equal": true,
+    "guidance_edited": false
+  },
+  "diagnostics": "Fixed enumerated reason codes distinguish report format/path, missing rows, typed cells, metadata/input changes, API rejection, supported-but-unmodeled strategy and bad mutation proof; no IDs, paths, input contents or backend payloads are embedded in diagnostic codes.",
+  "limitations": [
+    "These controlled reproductions establish specific fixture defects; discarded historical payloads and receipts prevent attributing every previous unsuccessful model trial to these defects.",
+    "Historical model-attempt token costs are not changed or rescored by this evidence.",
+    "Bounded stdout checks are diagnostic bytes, not provider token scaling evidence.",
+    "The official binary hash was not previously recorded in the available manifest and is not inferred."
+  ],
+  "new_execution_for_this_record": {
+    "tests": 0,
+    "model_calls": 0,
+    "live_calls": 0
+  },
+  "sanitization": "No private filesystem paths, raw request/response payloads, row values, credentials or model traces included."
+}

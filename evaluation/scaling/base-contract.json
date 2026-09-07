@@ -1,4 +1,14 @@
 {
+  "condition_v2": {
+    "fixture_version": 2,
+    "status": "controlled_verified_fresh_balanced_models_pending",
+    "supersedes": "The v1 proposal below is historical where it conflicts with this overlay; evaluation/scaling/base.py is the executable v2 condition.",
+    "native_metadata": "Add exact Base/table/views reads and the native fields/total/has_more field-list envelope. Known documented unmodeled reads stay explicitly unsupported; unknown resources, selectors and routes remain invalid.",
+    "report_evidence": "Require only the task-mandated report path, integer created count and exact unique created record_ids. Arbitrary optional JSON extras supply no evidence and do not inherit undocumented native status, batching or binding conventions. All full backend row/type/presence, sentinel/schema/metadata, immutable input and signed-effect checks remain required.",
+    "unchanged": "Full task dictionaries and input bytes remain identical at all three sizes. Product native-report correctness tests are unchanged.",
+    "history": "evaluation/evidence/scaling-8d-schema02 preserves seven unbalanced v1 starts and all known costs; no retrospective success or per-trial cause is inferred.",
+    "controls": "evaluation/evidence/scaling-base-v2-controlled.json"
+  },
   "schema_version": 1,
   "experiment_id": "base-file-import-scaling-development-v1",
   "split": "development",
@@ -162,7 +172,7 @@
         }
       }
     },
-    "generator_python": "def source_row(i):\n    # Deterministic prefix family; row count is the only varied parameter.\n    number = 9007199254740991 if i % 31 == 30 else (0 if i % 5 == 0 else -(i % 97) / 4)\n    return [\n        {\"value\": f\"\u6e2c\u5b9a-{i:05d}-caf\u00e9-\ud83e\uddea\"},\n        {\"value\": number},\n        {\"value\": i % 2 == 0},\n        {\"value\": None if i % 3 == 0 else f\"note-{i:05d}\"},\n        {} if i % 4 == 0 else {\"value\": f\"optional-{i:05d}\"},\n        {\"value\": \"\"},\n        {\"value\": f\"{i:06d}\"},\n    ]\n",
+    "generator_python": "def source_row(i):\n    # Deterministic prefix family; row count is the only varied parameter.\n    number = 9007199254740991 if i % 31 == 30 else (0 if i % 5 == 0 else -(i % 97) / 4)\n    return [\n        {\"value\": f\"測定-{i:05d}-café-🧪\"},\n        {\"value\": number},\n        {\"value\": i % 2 == 0},\n        {\"value\": None if i % 3 == 0 else f\"note-{i:05d}\"},\n        {} if i % 4 == 0 else {\"value\": f\"optional-{i:05d}\"},\n        {\"value\": \"\"},\n        {\"value\": f\"{i:06d}\"},\n    ]\n",
     "semantic_guarantees": [
       "all columns are mapped exactly once; no style, formula or extra native cell keys",
       "every numeric value is exact within supported Base double semantics: zero, quarter fractions, maximum safe integer",
@@ -348,7 +358,7 @@
       "per arm and size: all raw trial token totals, success counts, median/range and descriptive variation",
       "total tokens spent across all attempts divided by verified successes; no finite score if none succeed",
       "matched-success arm comparisons within each size; report unmatched failures and their spent tokens",
-      "paired size ratios/differences for100\u21921000 and1000\u219210000 within each arm; clearly descriptive with this sample size",
+      "paired size ratios/differences for100→1000 and1000→10000 within each arm; clearly descriptive with this sample size",
       "plot actual provider tokens against row count separately from controlled file-byte diagnostics and actual per-trial API counts; three points do not establish asymptotic complexity"
     ],
     "decision_policy": "No reduction percentage, token ceiling, mandatory flatness or predetermined winner. Explain flat/growing/inconclusive measured behavior alongside correctness and flexibility; a successful bounded stdout test alone does not satisfy token-scaling evidence."

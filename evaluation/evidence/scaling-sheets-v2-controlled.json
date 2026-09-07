@@ -1,0 +1,63 @@
+{
+  "schema": "scaling-sheets-v2-controlled-evidence/v1",
+  "scenario": "scaling-sheets-v2",
+  "scope": "synthetic offline controls; no models or live calls",
+  "prior_full_controlled_run": {
+    "passed": 19,
+    "failed": 0,
+    "skipped": 0,
+    "elapsed_seconds": 33.139,
+    "reported_by": "/root/p2_sheets/sheets_eval_adapter",
+    "source_sha256": "d1cba56effd3f5fc39ea949b2b5a7818096452af92dca941492ae69f302121d3",
+    "tests_sha256": "2262a0e880eb5b1f6ff7d4eaeb4f8f4a8230ee604e94b23e607c53f62707abdb",
+    "native_export_cases": 9,
+    "metadata_flows": 6,
+    "row_counts": [
+      100,
+      1000,
+      10000
+    ],
+    "metadata_api_reads": {
+      "official": [
+        20,
+        20,
+        20
+      ],
+      "next": [
+        20,
+        21,
+        35
+      ]
+    },
+    "coverage": [
+      "source current_region independent of emission budgets",
+      "actual_range and row_count match emitted records",
+      "prefix=false exact multiline first field through both clean binaries",
+      "complete native export proof and exact typed artifact verification"
+    ]
+  },
+  "final_focused_run": {
+    "command": "python3 -m unittest tests.next_evaluation.test_scaling_sheets.ScalingSheetsTests.test_structure_enum_invalid_and_documented_unsupported_are_distinct",
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "elapsed_seconds": 0.01,
+    "change": "Unknown or malformed info_type is invalid request; three documented unmodeled categories remain unsupported strategy. Full native controls intentionally not rerun for this diagnostic-only change."
+  },
+  "current_files_sha256": {
+    "evaluation/scaling/sheets.py": "22d2cae1fb3c0e81780b1cecb86ea3f082e6664f4b3ca68c2edbd3d81fb48c43",
+    "tests/next_evaluation/test_scaling_sheets.py": "47e90fe2fea509254517ae40ed4191aa765b689d2525e56e9be937a8b7234d88"
+  },
+  "synthetic_assumptions": [
+    "merged_cells=[] is declared synthetic no-merges state; frozen reference names the merged_cells field but does not establish its JSON array schema; no live schema claim",
+    "frozen row and column counts are declared zero",
+    "only bounded declared eight-column source is modeled; whole-column requests clip to that grid"
+  ],
+  "explicit_unsupported": [
+    "row_heights_column_widths",
+    "hidden_infos",
+    "group_infos",
+    "empty-only CSV source region"
+  ],
+  "unchanged_contract": "Task/prompt, native source row generation, native tokens/hash and final typed artifact verifier AST were compared unchanged before the diagnostic-only edit."
+}

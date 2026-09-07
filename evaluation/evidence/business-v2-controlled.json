@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "kind": "controlled-development-fixture-verification",
+  "fixture_revision_label": "business-v2",
+  "evidence_basis": "Previously completed controlled test execution; this record does not represent a new run.",
+  "command": "EVAL_GENERATED_BUSINESS_BINARIES=1 python3 -m unittest discover -s tests/next_evaluation -p test_scenario_generated_business.py -v",
+  "result": {
+    "tests": 14,
+    "passed": 14,
+    "failed": 0,
+    "skipped": 0,
+    "exit_code": 0,
+    "elapsed_seconds": 14.397
+  },
+  "binaries": {
+    "official": {
+      "source_revision": "7fd6ef3c07182257ce776cdc5a614e122d5bd4b3",
+      "binary_sha256": null,
+      "hash_limitation": "Official binary SHA-256 was not recorded or checked by the completed test."
+    },
+    "next": {
+      "source_revision": "8d92e5253aa9d0582314180d51cdec1b10778897",
+      "binary_sha256": "b2e848a3c9c0742a416a3b72d042f2166cec694bc35c06bbf748139f69e3e263",
+      "hash_checked_by_completed_test": true
+    }
+  },
+  "coverage": {
+    "deterministic_cases": 12,
+    "distinct_native_methods_per_binary": 17,
+    "methods": [
+      "approval approvals get",
+      "approval approvals search",
+      "approval instances create",
+      "approval instances cancel",
+      "approval instances cc",
+      "approval instances get",
+      "approval instances initiated",
+      "approval tasks approve",
+      "approval tasks reject",
+      "approval tasks transfer",
+      "approval tasks query",
+      "approval tasks add_sign",
+      "approval tasks rollback",
+      "approval tasks remind",
+      "attendance user_tasks query",
+      "mindnotes nodes create",
+      "mindnotes nodes list"
+    ],
+    "representative_process_checks": [
+      "Approval definition search with an empty optional keyword succeeds.",
+      "Native initiated definition filtering returns an empty list before creation and the created instance afterward.",
+      "An equivalent reserialized final form verifies after actual instance readback.",
+      "Existing-node Mindnote update returns unknown exit 22 in next; subsequent native readback proves intended content and preservation."
+    ],
+    "adversarial_checks": [
+      "Form whitespace, object-key order, and Unicode escaping may vary without changing decoded values.",
+      "Numeric-looking strings, false, null, and Unicode retain their distinct values and types.",
+      "Changed scalar types or values, reordered arrays, duplicate keys, nonfinite values including overflow, and trailing JSON garbage fail verification.",
+      "Claims without readback or effect evidence, altered unrelated state, wrong case, invalid signatures and cross-case proofs fail."
+    ],
+    "native_schema_checks": "List row required fields and enum values were checked directly against frozen docs/reference/meta_data.json.gz."
+  },
+  "pagination_expectation_correction": {
+    "scope": "Deterministic approval-pagination fixture and verifier; not a newly sampled model task.",
+    "instances": "Native instance_status strings 1 and 2 replace fabricated PENDING and APPROVED list fields; definition_code is present and task_id is absent from initiated rows.",
+    "tasks": "Unread copied tasks use native status string 17 and required definition_code, instance_status, user_id, title, topic and task_id fields.",
+    "representative_public_prompts_schemas_and_expected_case_bindings": "Unchanged."
+  },
+  "constraints": {
+    "model_calls": 0,
+    "live_calls": 0,
+    "heldout_access": false,
+    "product_changes": false,
+    "test_rerun_for_record": false
+  },
+  "limitations": [
+    "Local signed synthetic fixtures establish controlled behavior, not live Feishu backend behavior.",
+    "Business-v2 names the reviewed fixture correction; immutable integration commit and historical contract overlay are recorded separately by the evaluator.",
+    "Only next binary content was SHA-256 checked by this completed test; both source revisions came from the clean-binary manifest."
+  ]
+}

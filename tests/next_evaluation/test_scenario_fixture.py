@@ -18,6 +18,39 @@ from codex_runner import run_agent, configuration
 
 
 class ScenarioIntegrationTests(unittest.TestCase):
+    def test_unsupported_strategy_cannot_hide_known_shared_failure(self):
+        import scenario_verifier
+        with tempfile.TemporaryDirectory() as directory:
+            workspace = Path(directory)
+            (workspace / 'answer.json').write_text('{}')
+            request = {'task_id': 'controlled', 'workspace': directory,
+                       'fixture': {'scenario': 'events'}, 'expected': {}}
+            module = SimpleNamespace(TASK={'id': 'controlled'}, verify=lambda *args: False,
+                verification_diagnostics=lambda *args: ['execution_proof_unavailable'])
+            unsupported = {'route': 'rejected', 'rejection': 'unsupported_strategy',
+                           'unsupported_reason': 'unsupported_strategy_other', 'signature_valid': True}
+            with patch.object(scenario_verifier, 'load_scenario', return_value=module):
+                for known in (None, {'route': 'normal', 'signature_valid': False},
+                              {'route': 'rejected', 'rejection': 'rejected_request'},
+                              {'route': 'fixture_error'}):
+                    with self.subTest(known=known):
+                        receipt = {'requests': [unsupported] + ([known] if known else [])}
+                        (workspace / 'backend-receipt.json').write_text(json.dumps(receipt))
+                        result = scenario_verifier.evaluate(request)
+                        self.assertFalse(result['success'])
+                        self.assertEqual(result['fixture_unsupported'], known is None)
+                        self.assertEqual(result['verification_failures'],
+                                         ['request_outside_fixture', 'unsupported_strategy_other'])
+                (workspace / 'backend-receipt.json').write_text(json.dumps({'requests': [unsupported]}))
+                mismatch = scenario_verifier.evaluate({**request, 'task_id': 'wrong'})
+                self.assertFalse(mismatch['fixture_unsupported'])
+                self.assertEqual(mismatch['verification_failures'], ['scenario_mismatch', 'unsupported_strategy_other'])
+                # Missing/malformed answer is a known input failure, not an unsupported route limitation.
+                (workspace / 'answer.json').write_text('invalid')
+                invalid = scenario_verifier.evaluate(request)
+                self.assertFalse(invalid['fixture_unsupported'])
+                self.assertEqual(invalid['verification_failures'], ['invalid_verification_input', 'unsupported_strategy_other'])
+
     def test_scenario_diagnostics_keep_only_fixed_codes_and_no_private_answer(self):
         import scenario_verifier
         import harness
@@ -35,8 +68,10 @@ class ScenarioIntegrationTests(unittest.TestCase):
             with patch.object(scenario_verifier, 'load_scenario', return_value=module):
                 # Even an otherwise-normal event route cannot hide a rejected signature.
                 invalid = {'requests': [{'route': 'event_preflight', 'status': 200, 'signature_valid': False}]}
-                self.assertEqual(scenario_verifier.outcome_diagnostics(request, invalid), [])
-                self.assertEqual(scenario_verifier.outcome_diagnostics({**request, 'task_id': 'wrong'}, {}), [])
+                self.assertEqual(scenario_verifier.outcome_diagnostics(request, invalid), ['request_outside_fixture'])
+                self.assertEqual(scenario_verifier.outcome_diagnostics({**request, 'task_id': 'wrong'}, {}), ['scenario_mismatch'])
+            self.assertEqual(harness.sanitized_verification_failures(sorted(scenario_verifier.SCENARIO_DIAGNOSTICS)),
+                             sorted(scenario_verifier.SCENARIO_DIAGNOSTICS))
 
     def test_binary_reply_state_and_unsigned_attempt_ledger(self):
         class Fixture(ScenarioBase):
@@ -166,6 +201,8 @@ class ScenarioIntegrationTests(unittest.TestCase):
             module = load_scenario(task['fixture']['scenario'], task['fixture']['row_count'])
             self.assertEqual(module.TASK, task)
             self.assertEqual(module.TASK['fixture']['answer_schema']['type'], 'object')
+            if task['section'] == 'base':
+                self.assertTrue(callable(module.verification_diagnostics))
         for invalid in (None, True, '100', 0, 101):
             with self.assertRaises(ValueError): load_scenario('scaling-base', invalid)
 

@@ -1,4 +1,16 @@
 {
+  "condition_v2": {
+    "fixture_version": 2,
+    "scenario": "scaling-sheets-v2",
+    "status": "controlled_verified_fresh_balanced_models_pending",
+    "supersedes": "Earlier v1 proposal below is historical where conflicting; evaluation/scaling/sheets.py defines the executable v2 condition.",
+    "metadata": "Model exact get_sheet_structure and get_range_as_csv requests used by ordinary sheet-info, CSV previews and table discovery, including matching ID/name selectors. Preserve actual source current_region independently of emitted row/character limits and use native comma-delimited row annotation.",
+    "synthetic_assumption": "The immutable fixture explicitly contains an empty merged_cells range collection and zero frozen row/column counts. Empty collection representation is a bounded synthetic modeling assumption, not a live response capture. Private expected source snapshots include this declared metadata.",
+    "unsupported": "Documented but unsourced row_heights_column_widths/hidden_infos/group_infos structure categories and empty-only source CSV regions remain explicitly unsupported. Unknown enum values and malformed or foreign selectors are invalid requests.",
+    "unchanged": "Public prompt/answer schema, row generator, native typed values/hash and final typed artifact plus full native read-coverage requirements remain unchanged. CSV/metadata-only artifacts cannot replace required native content proof.",
+    "history": "No Sheets model trial started against v1. Historical Base starts and cancellations stay separate.",
+    "controls": "evaluation/evidence/scaling-sheets-v2-controlled.json"
+  },
   "schema_version": 1,
   "experiment_id": "sheets-export-size-development-v1",
   "split": "development",
@@ -86,7 +98,7 @@
       {
         "column": "A",
         "native_cell": "{value: string}",
-        "value_rule": "nonce + ':' + six-digit zero-padded i + ':\u4f60\u597d\\n\u2713'",
+        "value_rule": "nonce + ':' + six-digit zero-padded i + ':你好\\n✓'",
         "purpose": "unique row identity, Unicode and embedded newline"
       },
       {

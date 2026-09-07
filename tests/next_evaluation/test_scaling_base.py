@@ -12,7 +12,8 @@ from urllib.parse import urlsplit
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "evaluation"))
 from scaling.base import (Scenario, SCENARIO, SIZES, BASE, TABLE, PREFIX, SENTINEL,
-                          INITIAL, FIELDS, MAPPING, task, source_row, native_row, verify)
+                          INITIAL, FIELDS, MAPPING, BASE_PREFIX, BASE_META, TABLE_META, VIEWS, VIEW_ID, FIXTURE_VERSION,
+                          VERIFICATION_DIAGNOSTICS, verification_diagnostics, task, source_row, native_row, verify)
 from section_fixture import SectionFixture, signed_headers, valid_signature
 
 
@@ -32,8 +33,9 @@ class BaseScalingTests(unittest.TestCase):
         record = {"method": method, "uri": urlsplit(uri).path, "signature_valid": valid_signature(method, uri, body, headers)}
         try:
             reply = self.scenario.dispatch(method, uri, body, headers)
-        except ValueError:
-            self.requests.append(dict(record, route="rejected", status=403))
+        except ValueError as error:
+            rejection = "unsupported_strategy" if str(error).startswith("unsupported strategy:") else "rejected_request"
+            self.requests.append(dict(record, route="rejected", status=403, rejection=rejection))
             raise
         self.requests.append(dict(record, route=reply.route, status=reply.status, proof=deepcopy(reply.proof)))
         return reply.json["data"]
@@ -114,7 +116,7 @@ class BaseScalingTests(unittest.TestCase):
     def test_schema_projection_pagination_and_missing_ids(self):
         self.start()
         fields = self.call("GET", PREFIX + "/fields?offset=1&limit=2")
-        self.assertEqual(fields["items"], FIELDS[1:3])
+        self.assertEqual(fields["fields"], FIELDS[1:3])
         self.assertIs(fields["has_more"], True)
         self.assertEqual(self.call("GET", PREFIX + "/fields/fld_scale_checked"), FIELDS[2])
         ids = self.fill()
@@ -220,8 +222,8 @@ class BaseScalingTests(unittest.TestCase):
             modify(altered)
             self.assertFalse(self.accepted(receipt=altered))
         for report in ({"created": 100, "record_ids": ids[:-1]}, {"created": 100, "record_ids": ids[:-1]+[ids[0]]},
-                       {"created": 100, "record_ids": ids[:-1]+[SENTINEL]}, {"created": 100, "record_ids": ids, "status": "unknown"},
-                       {"created": 100, "record_ids": ids, "completed_batches": 2}):
+                       {"created": 100, "record_ids": ids[:-1]+[SENTINEL]}, {"created": 99, "record_ids": ids},
+                       {"created": "100", "record_ids": ids}):
             (self.workspace / "import-report.json").write_text(json.dumps(report))
             self.assertFalse(self.accepted())
         self.report(ids)
@@ -235,6 +237,82 @@ class BaseScalingTests(unittest.TestCase):
         report.rename(self.workspace / "alternate.json")
         report.symlink_to(self.workspace / "alternate.json")
         self.assertFalse(self.accepted(), "report must be the requested regular file")
+
+    def test_metadata_read_prerequisites_are_native_and_preserved(self):
+        self.start()
+        self.assertEqual(self.scenario.snapshot()["fixture_version"], FIXTURE_VERSION)
+        self.assertEqual(self.call("GET", BASE_PREFIX), BASE_META)
+        self.assertEqual(self.call("GET", PREFIX), TABLE_META)
+        tables = self.call("GET", BASE_PREFIX + "/tables?offset=0&limit=50")
+        self.assertEqual(tables, {"tables": [TABLE_META], "total": 1, "has_more": False})
+        fields = self.call("GET", PREFIX + "/fields?offset=0&limit=100")
+        self.assertEqual(fields, {"fields": FIELDS, "total": 7, "has_more": False})
+        views = self.call("GET", PREFIX + "/views?offset=0&limit=100")
+        self.assertEqual(views, {"views": VIEWS, "total": 1, "has_more": False})
+        self.assertEqual(self.call("GET", PREFIX + "/views/" + VIEW_ID), VIEWS[0])
+        self.fill()
+        self.call("GET", PREFIX + "/records?view_id=" + VIEW_ID + "&limit=2000")
+        self.assertTrue(self.accepted())
+        for kind in ("base", "table", "views"):
+            altered = self.receipt()
+            if kind == "views":
+                altered["state"][kind][0]["name"] = "changed"
+            else:
+                altered["state"][kind]["name"] = "changed"
+            self.assertFalse(self.accepted(receipt=altered))
+        for uri in (PREFIX + "?foreign=1", BASE_PREFIX + "/tables?limit=101", PREFIX + "/views?limit=201", PREFIX + "/views?offset=0&offset=1", PREFIX + "/views/foreign", PREFIX + "/records?view_id=foreign", PREFIX + "/records?view_id=" + VIEW_ID + "&view_id=" + VIEW_ID):
+            with self.subTest(uri=uri), self.assertRaises(ValueError):
+                self.call("GET", uri)
+        self.assertFalse(self.accepted(), "valid metadata reads never excuse rejected requests")
+
+    def test_known_unsupported_read_is_distinct_from_unknown_or_invalid_route(self):
+        self.start()
+        with self.assertRaisesRegex(ValueError, "^unsupported strategy:"):
+            self.call("GET", PREFIX + "/views/" + VIEW_ID + "/filter")
+        self.assertEqual(self.requests[-1]["rejection"], "unsupported_strategy")
+        for method, uri in (("GET", PREFIX + "/views/foreign/filter"), ("GET", PREFIX + "/views/" + VIEW_ID + "/filter?invalid=1"), ("GET", PREFIX + "/unrecognized"), ("PUT", PREFIX + "/views/" + VIEW_ID + "/filter")):
+            with self.assertRaises(ValueError):
+                self.call(method, uri)
+            self.assertEqual(self.requests[-1]["rejection"], "rejected_request")
+        self.assertEqual(self.scenario.snapshot()["records"], INITIAL)
+
+    def test_optional_report_metadata_is_not_a_native_schema_requirement(self):
+        self.start()
+        ids = self.fill(batch_size=50)
+        minimal = {"created": 100, "record_ids": ids}
+        for report in (minimal, dict(minimal, status="success"), dict(minimal, completed_batches=1),
+                       dict(minimal, binding="local batch client", table_id="display label", requested="all input rows")):
+            (self.workspace / "import-report.json").write_text(json.dumps(report))
+            self.assertTrue(self.accepted(), "only required report fields contribute evidence")
+        for report in ({"created": 99, "record_ids": ids}, {"created": 100, "record_ids": ids[:-1]}, {"created": True, "record_ids": ids}):
+            (self.workspace / "import-report.json").write_text(json.dumps(report))
+            self.assertFalse(self.accepted())
+
+    def test_fixed_diagnostics_discriminate_failures_without_content(self):
+        self.start()
+        ids = self.fill()
+        good = self.receipt()
+        answer = {"imported_count": 100, "report_path": "import-report.json"}
+        def reasons(receipt=good, claimed=answer):
+            result = verification_diagnostics(self.workspace, claimed, receipt, self.spec["expected"])
+            self.assertTrue(set(result).issubset(VERIFICATION_DIAGNOSTICS))
+            return result
+        self.assertEqual(reasons(), [])
+        self.assertEqual(reasons(claimed=dict(answer, report_path="elsewhere")), ["base_scaling_report_path"])
+        (self.workspace / "import-report.json").write_text("not JSON: private content")
+        self.assertEqual(reasons(), ["base_scaling_report_format"])
+        self.report(ids)
+        for code, modify in (
+            ("base_scaling_missing_rows", lambda r: r["state"]["records"].pop(ids[-1])),
+            ("base_scaling_typed_cells", lambda r: r["state"]["records"][ids[0]].update(fld_scale_optional=None)),
+            ("base_scaling_metadata_changed", lambda r: r["state"]["table"].update(name="private content")),
+            ("base_scaling_bad_mutation_proof", lambda r: r["requests"][0].update(proof={})),
+            ("base_scaling_api_rejected", lambda r: r["requests"].append({"route": "rejected", "status": 403, "rejection": "rejected_request"})),
+            ("base_scaling_unsupported_strategy", lambda r: r["requests"].append({"route": "rejected", "status": 403, "rejection": "unsupported_strategy"})),
+        ):
+            altered = deepcopy(good)
+            modify(altered)
+            self.assertEqual(reasons(receipt=altered), [code])
 
     def test_generator_matches_fresh_contract_and_all_batches_fit_server(self):
         contract = json.loads((ROOT / "evaluation/scaling/base-contract.json").read_text())
@@ -265,6 +343,16 @@ class BaseScalingBinaryTests(unittest.TestCase):
                     scenario.setup(workspace)
                     with SectionFixture(SCENARIO, dispatch=scenario.dispatch, snapshot=scenario.snapshot) as server:
                         env = {**cli_environment(workspace), **server.environment()}
+                        common = ["--base-token", BASE, "--as", "user", "--format", "json"]
+                        table_get = subprocess.run([binary, "base", "+table-get", "--table-id", TABLE, *common], cwd=workspace, env=env, capture_output=True, text=True, timeout=20)
+                        self.assertEqual(table_get.returncode, 0, table_get.stderr)
+                        detail = json.loads(table_get.stdout)["data"]
+                        self.assertEqual(detail["table"], TABLE_META)
+                        self.assertEqual(detail["fields"], FIELDS)
+                        self.assertEqual(detail["views"], VIEWS)
+                        for args in (("+base-get",), ("+table-list",), ("+view-list", "--table-id", TABLE), ("+view-get", "--table-id", TABLE, "--view-id", VIEW_ID)):
+                            read = subprocess.run([binary, "base", *args, *common], cwd=workspace, env=env, capture_output=True, text=True, timeout=20)
+                            self.assertEqual(read.returncode, 0, read.stderr)
                         if arm == "official":
                             # Admissible local file batching, with one CLI output
                             # captured per batch and only a bounded summary printed.
@@ -276,8 +364,37 @@ class BaseScalingBinaryTests(unittest.TestCase):
                         self.assertEqual(process.returncode, 0, process.stderr)
                         answer = {"imported_count": n, "report_path": "import-report.json"}
                         self.assertTrue(verify(workspace, answer, server.receipt(), task(n)["expected"]), process.stdout[:1000])
+                        native = json.loads((workspace / "import-report.json").read_text())
+                        minimal = {key: native[key] for key in ("created", "record_ids")}
+                        for report in (native, minimal, dict(minimal, status="success"), dict(minimal, completed_batches=len(scenario.effects)+1)):
+                            (workspace / "import-report.json").write_text(json.dumps(report))
+                            self.assertTrue(verify(workspace, answer, server.receipt(), task(n)["expected"]))
+                        for report in (dict(minimal, created=n-1), dict(minimal, record_ids=minimal["record_ids"][:-1])):
+                            (workspace / "import-report.json").write_text(json.dumps(report))
+                            self.assertFalse(verify(workspace, answer, server.receipt(), task(n)["expected"]))
+                        (workspace / "import-report.json").write_text(json.dumps(native))
                         self.assertEqual(len(scenario.effects), (n+199)//200)
                         self.assertLess(len(process.stdout.encode()), 10000, "output-bound check is not provider token evidence")
+
+    def test_clean_binaries_mark_known_unmodeled_view_read_as_fixture_unsupported(self):
+        from codex_runner import cli_environment
+        paths = json.loads((ROOT / ".tmp/evaluation-paths.json").read_text())
+        for arm in ("official", "next"):
+            with self.subTest(arm=arm), tempfile.TemporaryDirectory() as directory:
+                workspace = Path(directory)
+                for name in ("home", "tmp", "feishu-config", "bin"):
+                    (workspace / name).mkdir()
+                scenario = Scenario(100)
+                scenario.setup(workspace)
+                with SectionFixture(SCENARIO, dispatch=scenario.dispatch, snapshot=scenario.snapshot) as server:
+                    process = subprocess.run([paths[arm+"_cli"], "base", "+view-get-filter", "--base-token", BASE, "--table-id", TABLE, "--view-id", VIEW_ID, "--as", "user"], cwd=workspace, env={**cli_environment(workspace), **server.environment()}, capture_output=True, text=True, timeout=20)
+                    self.assertNotEqual(process.returncode, 0)
+                    receipt = server.receipt()
+                    rejected = [r for r in receipt["requests"] if r["route"] == "rejected"]
+                    self.assertEqual(len(rejected), 1)
+                    self.assertEqual(rejected[0]["rejection"], "unsupported_strategy")
+                    self.assertEqual(rejected[0]["unsupported_reason"], "unsupported_strategy_other")
+                    self.assertEqual(receipt["state"]["records"], INITIAL)
 
 
 if __name__ == "__main__":

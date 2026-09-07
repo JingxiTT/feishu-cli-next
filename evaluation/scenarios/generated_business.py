@@ -38,7 +38,7 @@ def _same(left, right):
         right, sort_keys=True, ensure_ascii=False, allow_nan=False)
 
 
-def _object(raw):
+def _json_value(raw):
     def pairs(entries):
         result = {}
         for key, value in entries:
@@ -48,7 +48,11 @@ def _object(raw):
         return result
     def constant(_):
         raise ValueError("nonfinite number")
-    value = json.loads(raw or b"{}", object_pairs_hook=pairs, parse_constant=constant)
+    return json.loads(raw, object_pairs_hook=pairs, parse_constant=constant)
+
+
+def _object(raw):
+    value = _json_value(raw or b"{}")
     if not isinstance(value, dict):
         raise ValueError("body must be a JSON object")
     return value
@@ -106,7 +110,23 @@ def _initial(case_id):
     if case_id.startswith("approval-action-"):
         result["instances"]["instance_eval"] = {"instance_code": "instance_eval", "status": "PENDING",
                                                 "form": "[]", "tasks": [{"id": "task_eval", "status": "PENDING"}]}
+    if case_id == "approval-pagination":
+        result["instances"] = {
+            "instance_1": {"instance_code": "instance_1", "definition_code": "definition_eval", "status": "PENDING"},
+            "instance_2": {"instance_code": "instance_2", "definition_code": "definition_eval", "status": "APPROVED"},
+        }
     return result
+
+
+def _form_equal(left, right):
+    # The public answer reports a JSON-encoded form, not its byte serialization.
+    # Keep arrays ordered and every decoded scalar type/value intact.
+    if not isinstance(left, str) or not isinstance(right, str):
+        return False
+    try:
+        return _same(_json_value(left), _json_value(right))
+    except (ValueError, TypeError):
+        return False
 
 
 def _form_valid(value):
@@ -222,7 +242,7 @@ class Scenario(ScenarioBase):
         if command == "approval approvals search":
             if query or set(body) - {"keyword", "locale", "page_size", "page_token"}:
                 raise ValueError("invalid definition search")
-            if body.get("keyword", "Travel") != "Travel" or body.get("page_token", "") != "":
+            if body.get("keyword", "") not in ("", "Travel") or body.get("page_token", "") != "":
                 raise ValueError("invalid search or cursor")
             _page_size(body.get("page_size", 20))
             _locale(body.get("locale", "en-US"))
@@ -247,7 +267,7 @@ class Scenario(ScenarioBase):
                     raise ValueError("unread copied tasks required")
             if set(query) - allowed:
                 raise ValueError("unknown list query")
-            if any(query.get(key, "") for key in ("definition_code", "start_timestamp", "end_timestamp", "keyword")):
+            if any(query.get(key, "") for key in ("start_timestamp", "end_timestamp", "keyword")):
                 raise ValueError("unfiltered fixture enumeration required")
             _locale(query.get("locale", "en-US"))
             size = _page_size(query.get("page_size", "20"), string=True)
@@ -255,8 +275,21 @@ class Scenario(ScenarioBase):
             if token not in ("", "cursor_eval"):
                 raise ValueError("invalid continuation")
             collection = "tasks" if command.endswith("query") else "instances"
-            items = [{"instance_code": "instance_1", "task_id": "task_1", "status": "PENDING"},
-                     {"instance_code": "instance_2", "task_id": "task_2", "status": "APPROVED"}]
+            # Frozen approval/v4 schemas use ProcessStatus numeric strings for
+            # instances and TaskStatus numeric strings for unread copied tasks.
+            statuses = {"PENDING": "1", "APPROVED": "2", "REJECTED": "3", "CANCELED": "4"}
+            items = [{"instance_code": instance["instance_code"],
+                      "definition_code": instance.get("definition_code", "definition_eval"),
+                      "instance_status": statuses[instance["status"]]}
+                     for instance in self.state["instances"].values()]
+            if collection == "tasks":
+                # Only the pagination case owns these synthetic copied tasks;
+                # creating an instance does not imply notifying any participant.
+                items = [dict(item, task_id="task_" + str(index + 1), status="17",
+                              user_id=SELF, title="Travel", topic="17")
+                         for index, item in enumerate(items)] if self.case_id == "approval-pagination" else []
+            if query.get("definition_code", ""):
+                items = [item for item in items if item["definition_code"] == query["definition_code"]]
             offset = 1 if token else 0
             selected = items[offset:offset + size]
             more = offset + len(selected) < len(items)
@@ -372,7 +405,7 @@ def verify(workspace, answer, receipt, expected):
             if set(body) - {"approval_code", "uuid", "form", "node_approver_list", "node_cc_list"} or body.get("node_approver_list", []) != [] or body.get("node_cc_list", []) != []:
                 return False
             wanted["instances"]["instance_eval"] = _instance(body["form"])
-            return (_same(final, wanted) and _same(answer, {"instance_id": "instance_eval", "form": body["form"]}) and
+            return (_same(final, wanted) and set(answer) == {"instance_id", "form"} and answer["instance_id"] == "instance_eval" and _form_equal(answer["form"], body["form"]) and
                     read("approval instances get", wanted["instances"]["instance_eval"]))
         if case_id.startswith("approval-action-"):
             action = case_id.removeprefix("approval-action-")
@@ -404,8 +437,8 @@ def verify(workspace, answer, receipt, expected):
         if case_id == "attendance-partial":
             result = {"returned_ids": ["0001"], "invalid_ids": ["0002"], "unauthorized_ids": ["0003"]}
             return _same(answer, result) and read("attendance user_tasks query", _ATTENDANCE["response"]["data"])
-        expected_answer = {"instances": [{"instance_id": "instance_1", "status": "PENDING"}, {"instance_id": "instance_2", "status": "APPROVED"}],
-                           "tasks": [{"task_id": "task_1", "status": "PENDING"}, {"task_id": "task_2", "status": "APPROVED"}]}
+        expected_answer = {"instances": [{"instance_id": "instance_1", "status": "1"}, {"instance_id": "instance_2", "status": "2"}],
+                           "tasks": [{"task_id": "task_1", "status": "17"}, {"task_id": "task_2", "status": "17"}]}
         if set(answer) != set(expected_answer):
             return False
         for collection, route in (("instances", "approval instances initiated"), ("tasks", "approval tasks query")):
@@ -413,8 +446,10 @@ def verify(workspace, answer, receipt, expected):
             if not _same(sorted(answer[collection], key=lambda item: item[key]), expected_answer[collection]):
                 return False
             data = [proof.get("data", {}) for item, proof in zip(requests, proofs) if item["route"] == route and proof["operation"] == "read"]
-            for index, status in ((1, "PENDING"), (2, "APPROVED")):
-                row = {"instance_code": "instance_" + str(index), "task_id": "task_" + str(index), "status": status}
+            for index, status in ((1, "1"), (2, "2")):
+                row = {"instance_code": "instance_" + str(index), "definition_code": "definition_eval", "instance_status": status}
+                if collection == "tasks":
+                    row.update(task_id="task_" + str(index), status="17", user_id=SELF, title="Travel", topic="17")
                 if not any(any(_same(item, row) for item in page.get(collection, [])) for page in data):
                     return False
             if not any(page.get("has_more") is False for page in data):

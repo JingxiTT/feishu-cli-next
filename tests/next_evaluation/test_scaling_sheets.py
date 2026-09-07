@@ -1,10 +1,13 @@
 """Controlled scaling fixture tests; optional clean CLI runs never invoke a model."""
 from copy import deepcopy
+import csv
 from decimal import Decimal
 import hashlib
+import io
 import json
 import os
 from pathlib import Path
+import re
 import subprocess
 import sys
 import tempfile
@@ -19,6 +22,14 @@ from scenario_fixture import ScenarioFixture
 READ_PATH = "/open-apis/sheet_ai/v2/spreadsheets/shtScaleDev01/tools/invoke_read"
 IDENTITY_PATH = "/open-apis/authen/v1/user_info"
 SIZES = (100, 1000, 10000)
+
+
+def csv_records(annotated):
+    # The frozen prefix-removal implementation strips a comma after the marker.
+    records = list(csv.reader(io.StringIO(annotated)))
+    if any(not record or re.fullmatch(r"\[row=[1-9][0-9]*\]", record[0]) is None for record in records):
+        raise ValueError("invalid native CSV row prefix")
+    return [record[1:] for record in records]
 
 
 def payload_matrix(payload):
@@ -81,8 +92,10 @@ class ScalingSheetsTests(unittest.TestCase):
         data = {"excel_id": "shtScaleDev01"}
         if tool == "get_cell_ranges":
             data.update(sheet_id="shscale01", ranges=["A1:H" + str(self.count)])
+        elif tool in ("get_sheet_structure", "get_range_as_csv"):
+            data["sheet_id"] = "shscale01"
         data.update(kwargs)
-        if "sheet_name" in kwargs:
+        if "sheet_name" in kwargs and "sheet_id" not in kwargs:
             data.pop("sheet_id", None)
         body = json.dumps({"tool_name": tool, "input": json.dumps(data)}).encode()
         reply = self.scenario.dispatch("POST", READ_PATH, body, {"X-Lark-Proxy-Identity": "user"})
@@ -121,7 +134,7 @@ class ScalingSheetsTests(unittest.TestCase):
             task = sheets.task(count)
             fixture = task["fixture"]
             self.assertEqual(set(fixture), {"scenario", "row_count", "answer_schema"})
-            self.assertEqual(fixture["scenario"], "scaling-sheets")
+            self.assertEqual(fixture["scenario"], "scaling-sheets-v2")
             self.assertEqual(fixture["row_count"], count)
             self.assertEqual(fixture["answer_schema"], {"type": "object", "properties": {"artifact_path": {"type": "string"}},
                                                       "required": ["artifact_path"], "additionalProperties": False})
@@ -330,9 +343,199 @@ class ScalingSheetsTests(unittest.TestCase):
             with self.subTest(changes=changes), self.assertRaises(ValueError):
                 self.call(**changes)
 
+    def test_sheet_metadata_is_read_only_and_has_no_invented_merges(self):
+        before = self.scenario.snapshot()
+        for info_type in ("all", "merged_cells_infos"):
+            metadata = self.call(tool="get_sheet_structure", info_type=info_type, range="A1:H2")
+            self.assertEqual(metadata["sheet_id"], "shscale01")
+            self.assertEqual(metadata["sheet_name"], "Scale")
+            self.assertEqual(metadata["revision"], 1)
+            self.assertEqual(metadata["row_count"], 100)
+            self.assertEqual(metadata["column_count"], 8)
+            self.assertEqual(metadata["frozen_row_count"], 0)
+            self.assertEqual(metadata["frozen_column_count"], 0)
+            if info_type in ("all", "merged_cells_infos"):
+                self.assertEqual(metadata["merged_cells"], [])
+        named = self.call(tool="get_sheet_structure", sheet_name="Scale", info_type="merged_cells_infos")
+        self.assertEqual(named["merged_cells"], [])
+        self.assertEqual(before, self.scenario.snapshot())
+        for changes in ({"info_type": "unknown"}, {"info_type": "row_heights_column_widths"},
+                        {"info_type": "hidden_infos"}, {"info_type": "group_infos"},
+                        {"sheet_id": "foreign"}, {"sheet_name": "foreign"},
+                        {"range": "A1:H101"}, {"extra": True}):
+            with self.subTest(changes=changes), self.assertRaises(ValueError):
+                self.call(tool="get_sheet_structure", **changes)
+
+    def test_structure_enum_invalid_and_documented_unsupported_are_distinct(self):
+        before = self.scenario.snapshot()
+        for info in ("row_heights_column_widths", "hidden_infos", "group_infos"):
+            with self.subTest(info=info), self.assertRaisesRegex(ValueError, "^unsupported strategy:"):
+                self.call(tool="get_sheet_structure", info_type=info)
+        for info in ("unknown", "", None, True, 1, [], {}, ["all"]):
+            with self.subTest(info=info), self.assertRaisesRegex(ValueError, "^invalid sheet structure info_type$"):
+                self.call(tool="get_sheet_structure", info_type=info)
+        self.assertEqual(before, self.scenario.snapshot())
+
+    def test_matching_discovered_id_and_name_can_be_sent_together(self):
+        for tool, options in (("get_sheet_structure", {"info_type": "merged_cells_infos"}),
+                              ("get_range_as_csv", {"range": "B1:B2"}), ("get_cell_ranges", {})):
+            with self.subTest(tool=tool):
+                result = self.call(tool=tool, sheet_id="shscale01", sheet_name="Scale", **options)
+                self.assertEqual(result["sheet_id"], "shscale01")
+                for selectors in ({"sheet_id": "foreign", "sheet_name": "Scale"},
+                                  {"sheet_id": "shscale01", "sheet_name": "foreign"}):
+                    with self.assertRaises(ValueError):
+                        self.call(tool=tool, **selectors, **options)
+
+    def test_csv_numeric_subset_whole_column_clipping_and_multiline_records(self):
+        before = self.scenario.snapshot()
+        selected = self.call(tool="get_range_as_csv", range="B1:B2")
+        self.assertEqual(selected["range"], "B1:B2")
+        self.assertEqual(selected["actual_range"], "B1:B2")
+        self.assertEqual(selected["current_region"], "A1:C100")
+        self.assertEqual(selected["row_indices"], [1, 2])
+        self.assertEqual(selected["col_indices"], ["B"])
+        self.assertEqual(csv_records(selected["annotated_csv"]), [["0"], ["-3.5"]])
+        self.assertIs(selected["has_more"], False)
+        full = self.call(tool="get_range_as_csv", sheet_name="Scale", range="A:ZZZ", max_chars=20000000)
+        self.assertEqual(full["actual_range"], "A1:H100")
+        self.assertEqual(full["current_region"], "A1:H100")
+        records = csv_records(full["annotated_csv"])
+        self.assertEqual(len(records), 100, "quoted embedded newlines are part of logical CSV records")
+        self.assertTrue(all(len(record) == 8 for record in records))
+        self.assertEqual(records[0][0], "scale-native-v1:000000:你好\n✓")
+        self.assertEqual(records[-1][0], "scale-native-v1:000099:你好\n✓")
+        with self.assertRaises(ValueError):
+            self.call(tool="get_range_as_csv", range="F1:F100")
+        self.assertEqual(before, self.scenario.snapshot())
+
+    def test_csv_limits_and_csv_only_files_cannot_supply_native_proof(self):
+        native = self.call()
+        self.records.clear()
+        for limits in ({"max_rows": 1}, {"max_chars": 1}):
+            result = self.call(tool="get_range_as_csv", range="A1:H100", **limits)
+            self.assertIs(result["has_more"], True)
+            self.assertIs(result["truncated"], True)
+            self.assertLessEqual(len(csv_records(result["annotated_csv"])), 1)
+        full = self.call(tool="get_range_as_csv", range="A:ZZZ", max_chars=20000000)
+        self.assertFalse(self.check(full), "CSV output cannot preserve all native cell identities")
+        self.assertFalse(self.check(native), "CSV observations do not count as signed native-cell observations")
+        self.call()
+        self.assertTrue(self.check(native))
+        for changes in ({"sheet_id": "foreign"}, {"sheet_name": "foreign"}, {"range": "bad"},
+                        {"max_rows": 0}, {"max_rows": True}, {"max_chars": -1},
+                        {"skip_hidden": "true"}, {"value_render_option": "formula"}):
+            arguments = {"range": "B1:B2", **changes}
+            with self.subTest(changes=changes), self.assertRaises(ValueError):
+                self.call(tool="get_range_as_csv", **arguments)
+
+    def test_csv_source_region_is_independent_of_subset_and_emission_limits(self):
+        for count in SIZES:
+            self.reset(count)
+            before = self.scenario.snapshot()
+            for limits, actual, emitted in (({}, "B1:B2", 2), ({"max_rows": 1}, "B1:B1", 1),
+                                             ({"max_chars": 1}, "", 0)):
+                with self.subTest(count=count, scope="subset", limits=limits):
+                    result = self.call(tool="get_range_as_csv", range="B1:B2", **limits)
+                    self.assertEqual(result["current_region"], f"A1:C{count}")
+                    self.assertEqual(result["actual_range"], actual)
+                    self.assertEqual(len(csv_records(result["annotated_csv"])), emitted)
+            one_row = self.call(tool="get_range_as_csv", range="A1:H1")
+            first_row_chars = len(one_row["annotated_csv"])
+            for limits, actual, emitted in (({"max_rows": 1}, "A1:H1", 1),
+                                             ({"max_chars": first_row_chars}, "A1:H1", 1),
+                                             ({"max_chars": 1}, "", 0)):
+                with self.subTest(count=count, scope="whole", limits=limits):
+                    result = self.call(tool="get_range_as_csv", range=f"A1:H{count}", **limits)
+                    self.assertEqual(result["current_region"], f"A1:H{count}")
+                    self.assertEqual(result["actual_range"], actual)
+                    self.assertEqual(len(csv_records(result["annotated_csv"])), emitted)
+                    self.assertEqual(result["row_count"], emitted)
+                    self.assertIs(result["has_more"], True)
+                    self.assertIs(result["truncated"], True)
+            self.assertEqual(before, self.scenario.snapshot())
+
 
 @unittest.skipUnless(os.environ.get("EVAL_SCALING_SHEETS_BINARIES"), "set EVAL_SCALING_SHEETS_BINARIES to clean archive binary paths")
 class ScalingSheetsBinaryTests(unittest.TestCase):
+    def test_metadata_csv_and_table_reads_before_final_native_export(self):
+        evidence = []
+        for binary in json.loads(os.environ["EVAL_SCALING_SHEETS_BINARIES"]):
+            for count in SIZES:
+                with self.subTest(binary=binary["path"], count=count), tempfile.TemporaryDirectory() as directory:
+                    workspace = Path(directory)
+                    for name in ("home", "tmp", "feishu-config"):
+                        (workspace / name).mkdir()
+                    scenario, task = sheets.Scenario(count), sheets.task(count)
+                    with ScenarioFixture(task["fixture"]["scenario"], scenario) as server:
+                        environment = {**cli_environment(workspace), **server.environment()}
+
+                        def execute(command, *flags):
+                            result = subprocess.run([binary["path"], "sheets", command, "--spreadsheet-token", "shtScaleDev01",
+                                                     "--as", "user", *flags], cwd=workspace, env=environment,
+                                                    capture_output=True, text=True, timeout=90)
+                            self.assertEqual(result.returncode, 0, result.stderr)
+                            output = json.loads(result.stdout)
+                            self.assertIs(output["ok"], True)
+                            return output["data"]
+
+                        workbook = execute("+workbook-info")
+                        listed = execute("+sheet-list")
+                        revision = execute("+revision-get")
+                        self.assertEqual(listed, workbook["sheets"])
+                        self.assertEqual(revision, {"revision": 1})
+                        self.assertEqual(listed[0]["row_count"], count)
+                        self.assertEqual(listed[0]["column_count"], 8)
+                        metadata = execute("+sheet-info", "--sheet-id", "shscale01", "--include", "merges")
+                        self.assertEqual(metadata["merged_cells"], [])
+                        selected = execute("+csv-get", "--sheet-id", "shscale01", "--range", "B1:B2")
+                        self.assertEqual(selected["actual_range"], "B1:B2")
+                        self.assertEqual(selected["current_region"], f"A1:C{count}")
+                        self.assertEqual(selected["row_indices"], [1, 2])
+                        self.assertEqual(selected["col_indices"], ["B"])
+                        self.assertEqual(csv_records(selected["annotated_csv"]), [["0"], ["-3.5"]])
+                        plain = execute("+csv-get", "--sheet-id", "shscale01", "--range", "A1:H2", "--include-row-prefix=false")
+                        plain_records = list(csv.reader(io.StringIO(plain["annotated_csv"])))
+                        self.assertEqual(plain_records, [
+                            ["scale-native-v1:000000:你好\n✓", "0", "false", "", "", "", "00000000", "1"],
+                            ["scale-native-v1:000001:你好\n✓", "-3.5", "true", "", "", "", "=literal-000001", "-2.5"],
+                        ], "prefix removal must preserve the exact quoted multiline first field without a leading space")
+                        table_rows = []
+                        for explicit in (True, False):
+                            filename = "table-explicit.json" if explicit else "table-default.json"
+                            flags = ["--sheet-id", "shscale01", "--no-header", "--output-path", filename]
+                            if explicit:
+                                flags += ["--range", "A1:H" + str(count)]
+                            before = len(server.receipt()["requests"])
+                            confirmation = execute("+table-get", *flags)
+                            self.assertIs(confirmation["complete"], True)
+                            table = json.loads((workspace / filename).read_text())
+                            self.assertEqual(len(table["sheets"]), 1)
+                            data = table["sheets"][0]
+                            self.assertEqual(data["range"], "A1:H" + str(count))
+                            self.assertEqual(len(data["columns"]), 8)
+                            self.assertEqual(len(data["data"]), count)
+                            self.assertEqual(data["data"][0][0], "scale-native-v1:000000:你好\n✓")
+                            self.assertEqual(data["data"][-1][0], f"scale-native-v1:{count - 1:06d}:你好\n✓")
+                            table_rows.append(len(data["data"]))
+                            requests = server.receipt()["requests"][before:]
+                            operations = [record.get("proof", {}).get("operation") for record in requests]
+                            self.assertIn("get_cell_ranges", operations)
+                            self.assertEqual("get_range_as_csv" in operations, not explicit)
+                            self.assertFalse(sheets.verify(workspace, {"artifact_path": filename}, server.receipt(), task["expected"]),
+                                             "typed table output is not a native-cell artifact")
+                        final_flags = (["--save-result", "sheet.json"] if binary.get("next") else
+                                       ["--include", "value,formula,truncation", "--output-path", "sheet.json"])
+                        final_command = "+data-export" if binary.get("next") else "+cells-get"
+                        execute(final_command, "--sheet-id", "shscale01", "--range", "A1:H" + str(count), *final_flags)
+                        receipt = server.receipt()
+                        self.assertTrue(sheets.verify(workspace, {"artifact_path": "sheet.json"}, receipt, task["expected"]))
+                        self.assertTrue(all(record["status"] == 200 and record["signature_valid"] for record in receipt["requests"]))
+                        evidence.append({"arm": "next" if binary.get("next") else "official", "rows": count,
+                                         "table_rows": table_rows, "final_command": final_command,
+                                         "api_reads": len(receipt["requests"])})
+        print(json.dumps({"sheets_scaling_metadata_controlled": evidence}, sort_keys=True))
+
     def test_all_sizes_from_clean_official_and_next_cli(self):
         family_hashes = {}
         evidence = []

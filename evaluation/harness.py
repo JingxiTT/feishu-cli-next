@@ -197,7 +197,11 @@ def sanitized_verification_failures(values):
                "unsupported_reconstruction", "unsupported_xml_fragment", "unsupported_strategy_other",
                "execution_proof_unavailable", "packaging_receipt_invalid", "packaging_isolation_missing",
                "packaging_answer_mismatch", "packaging_answer_path_mismatch", "packaging_protected_changed",
-               "packaging_project_changed", "packaging_install_invalid"}
+               "packaging_project_changed", "packaging_install_invalid",
+               "base_scaling_answer_invalid", "base_scaling_report_path", "base_scaling_report_format",
+               "base_scaling_report_ids", "base_scaling_missing_rows", "base_scaling_typed_cells",
+               "base_scaling_metadata_changed", "base_scaling_input_changed", "base_scaling_api_rejected",
+               "base_scaling_unsupported_strategy", "base_scaling_bad_mutation_proof", "base_scaling_fixture_state_invalid"}
     return values if isinstance(values, list) and all(isinstance(value, str) and value in allowed for value in values) else None
 
 

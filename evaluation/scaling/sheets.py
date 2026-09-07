@@ -1,7 +1,9 @@
 """Development-only native export scaling on the existing signed scenario protocol."""
 from copy import deepcopy
 from decimal import Decimal, InvalidOperation
+import csv
 import hashlib
+import io
 import json
 from pathlib import Path
 import re
@@ -9,7 +11,7 @@ from urllib.parse import parse_qs, urlsplit
 
 from scenario_protocol import Reply, ScenarioBase
 
-SCENARIO = "scaling-sheets"
+SCENARIO = "scaling-sheets-v2"
 SIZES = (100, 1000, 10000)
 TOKEN, SHEET = "shtScaleDev01", "shscale01"
 READ_PATH = f"/open-apis/sheet_ai/v2/spreadsheets/{TOKEN}/tools/invoke_read"
@@ -123,10 +125,13 @@ def semantic_hash(matrix):
     return _hash_cells((r + 1, c, cell) for r, row in enumerate(matrix) for c, cell in enumerate(row))
 
 
+# Synthetic structure declaration: the frozen reference names merged_cells
+# but does not publish its JSON schema; [] represents this fixture's no merges.
 def _source(count):
     return {"spreadsheet_token": TOKEN, "sheet_id": SHEET, "range": f"A1:H{count}",
             "revision": 1, "row_count": count, "column_count": 8, "cells": source_rows(count),
             "permissions": {"visibility": "self_only", "owner_id": BINDING["user_id"], "collaborators": []},
+            "structure": {"merged_cells": [], "frozen_row_count": 0, "frozen_column_count": 0},
             "notifications": [], "sentinels": {"outside_range": "preserve synthetic neighbour", "sheet_schema": "native-eight-v1"}}
 
 
@@ -214,18 +219,129 @@ class Scenario(ScenarioBase):
         elif body["tool_name"] == "get_cell_ranges":
             output, proof = self._cells(data)
             route = "sheets_cells_read"
+        elif body["tool_name"] == "get_sheet_structure":
+            output = self._structure(data)
+            route, proof = "sheet_structure", {"operation": "get_sheet_structure", "identity": "user"}
+        elif body["tool_name"] == "get_range_as_csv":
+            output = self._csv(data)
+            route, proof = "sheets_csv_preview", {"operation": "get_range_as_csv", "identity": "user"}
         else:
             raise ValueError("unsupported read operation")
         return Reply(route, {"code": 0, "msg": "success", "data": {"output": json.dumps(output, ensure_ascii=False)}}, proof=proof)
+
+    def _selector(self, data):
+        selectors = set(data) & {"sheet_id", "sheet_name"}
+        if not selectors or data.get("sheet_id", SHEET) != SHEET or data.get("sheet_name", "Scale") != "Scale":
+            raise ValueError("wrong sheet selector")
+
+    def _structure(self, data):
+        self._selector(data)
+        if set(data) - {"excel_id", "sheet_id", "sheet_name", "range", "info_type"}:
+            raise ValueError("unknown structure input")
+        if "range" in data:
+            _range(data["range"], self.row_count)
+        info = data.get("info_type", "all")
+        if type(info) is not str or info not in ("all", "merged_cells_infos", "row_heights_column_widths", "hidden_infos", "group_infos"):
+            raise ValueError("invalid sheet structure info_type")
+        if info in ("row_heights_column_widths", "hidden_infos", "group_infos"):
+            # The frozen reference names other categories but supplies no native
+            # response shape for their overrides. Do not invent empty objects.
+            raise ValueError("unsupported strategy: sheet structure category has no sourced fixture representation")
+        return {"sheet_id": SHEET, "sheet_name": "Scale", "revision": self.current["revision"],
+                "row_count": self.row_count, "column_count": 8, **deepcopy(self.current["structure"])}
+
+    def _csv(self, data):
+        self._selector(data)
+        if set(data) - {"excel_id", "sheet_id", "sheet_name", "range", "max_rows", "max_chars", "skip_hidden"}:
+            raise ValueError("unknown CSV input")
+        if "skip_hidden" in data and type(data["skip_hidden"]) is not bool:
+            raise ValueError("boolean skip_hidden required")
+        for key in ("max_rows", "max_chars"):
+            if key in data and (type(data[key]) is not int or data[key] < 1):
+                raise ValueError("positive CSV limit required")
+        region = data.get("range")
+        whole = re.fullmatch(r"([A-Z]{1,3}):([A-Z]{1,3})", region) if isinstance(region, str) else None
+        if whole:
+            def column(label):
+                result = 0
+                for letter in label:
+                    result = result * 26 + ord(letter) - 64
+                return result - 1
+            left, requested_right = column(whole[1]), column(whole[2])
+            if left > requested_right or left > 7:
+                raise ValueError("CSV columns outside fixture")
+            first, last, right = 1, self.row_count, min(7, requested_right)
+        else:
+            first, last, left, right = _range(region, self.row_count)
+        remaining = data.get("max_chars", 500000)
+        max_rows = data.get("max_rows", 1000000000)
+        used = self._current_region(first, last, left, right)
+        records = []
+        for row in range(first, last + 1):
+            if len(records) >= max_rows:
+                break
+            values = []
+            for col in range(left, right + 1):
+                cell = self.current["cells"][row - 1][col]
+                value = cell.get("value")
+                if value is None:
+                    text = ""
+                elif type(value) is bool:
+                    text = "true" if value else "false"
+                elif type(value) in (int, float):
+                    text = _number(value)
+                else:
+                    text = value
+                values.append(text)
+            stream = io.StringIO(newline="")
+            csv.writer(stream, lineterminator="\n").writerow(values)
+            # Match frozen stripRowPrefixFromCsvOutput, which removes a comma.
+            rendered = f"[row={row}]," + stream.getvalue()
+            if len(rendered) > remaining:
+                break
+            remaining -= len(rendered)
+            records.append(rendered)
+        actual = _extent(first, first + len(records) - 1, left, right) if records else ""
+        truncated = len(records) != last - first + 1
+        return {"spreadsheet_token": TOKEN, "sheet_id": SHEET, "range": region,
+                "actual_range": actual, "current_region": used, "row_count": len(records),
+                "row_indices": list(range(first, first + len(records))),
+                "col_indices": [chr(65 + col) for col in range(left, right + 1)] if records else [],
+                "warning_message": "Read truncated; use actual_range and narrower ranges to continue." if truncated else "Use row_indices and col_indices for source coordinates.",
+                "annotated_csv": "".join(records), "has_more": truncated, "truncated": truncated}
+
+    def _current_region(self, first, last, left, right):
+        # Frozen read-data reference: expand the requested source region to
+        # surrounding blank rows/columns. Preview budgets do not limit it.
+        def occupied(row, col):
+            cell = self.current["cells"][row - 1][col]
+            return "formula" in cell or cell.get("value") is not None and cell.get("value") != ""
+
+        used = [(row, col) for row in range(first, last + 1)
+                for col in range(left, right + 1) if occupied(row, col)]
+        if not used:
+            raise ValueError("unsupported strategy: empty-only CSV source region has no sourced fixture representation")
+        first, last = min(row for row, _ in used), max(row for row, _ in used)
+        left, right = min(col for _, col in used), max(col for _, col in used)
+        while True:
+            previous = first, last, left, right
+            while first > 1 and any(occupied(first - 1, col) for col in range(left, right + 1)):
+                first -= 1
+            while last < self.row_count and any(occupied(last + 1, col) for col in range(left, right + 1)):
+                last += 1
+            while left > 0 and any(occupied(row, left - 1) for row in range(first, last + 1)):
+                left -= 1
+            while right < 7 and any(occupied(row, right + 1) for row in range(first, last + 1)):
+                right += 1
+            if previous == (first, last, left, right):
+                return _extent(first, last, left, right)
 
     def _cells(self, data):
         optional = {"value_render_option", "include_styles", "include_truncation_info",
                     "include_conditional_format_style", "skip_hidden", "cell_limit", "max_chars"}
         if set(data) - ({"excel_id", "sheet_id", "sheet_name", "ranges"} | optional):
             raise ValueError("unknown cell input")
-        selectors = set(data) & {"sheet_id", "sheet_name"}
-        if selectors not in ({"sheet_id"}, {"sheet_name"}) or data.get("sheet_id", SHEET) != SHEET or data.get("sheet_name", "Scale") != "Scale":
-            raise ValueError("wrong sheet selector")
+        self._selector(data)
         render = data.get("value_render_option", "raw_value")
         if render not in ("raw_value", "formula"):
             raise ValueError("unsupported rendering")

@@ -43,14 +43,30 @@ def steps(case):
             ("mindnotes nodes list", {"mindnote_id": "mind_eval"}, None)]
 
 
+def approval_flow_with_reads():
+    flow = steps("approval-flow")
+    return [flow[0], ("approval approvals search", {}, {"keyword": "", "page_size": 20}), flow[1],
+            ("approval instances initiated", {"definition_code": "definition_eval"}, None),
+            flow[2], ("approval instances initiated", {"definition_code": "definition_eval"}, None), flow[3]]
+
+
+def assert_native_flow_reads(test, receipt):
+    pages = [item["proof"]["data"] for item in receipt["requests"] if item["route"] == "approval instances initiated"]
+    test.assertEqual(pages, [
+        {"instances": [], "has_more": False, "page_token": ""},
+        {"instances": [{"instance_code": "instance_eval", "definition_code": "definition_eval", "instance_status": "1"}],
+         "has_more": False, "page_token": ""},
+    ])
+
+
 def answer(case, scenario):
     if case == "approval-flow":
         return {"instance_id": "instance_eval", "form": scenario.state["instances"]["instance_eval"]["form"]}
     if case.startswith("approval-action-"):
         return {"instance_id": "instance_eval", "action": case.removeprefix("approval-action-"), "outcome": "acknowledged"}
     if case == "approval-pagination":
-        return {"instances": [{"instance_id": "instance_1", "status": "PENDING"}, {"instance_id": "instance_2", "status": "APPROVED"}],
-                "tasks": [{"task_id": "task_1", "status": "PENDING"}, {"task_id": "task_2", "status": "APPROVED"}]}
+        return {"instances": [{"instance_id": "instance_1", "status": "1"}, {"instance_id": "instance_2", "status": "2"}],
+                "tasks": [{"task_id": "task_1", "status": "17"}, {"task_id": "task_2", "status": "17"}]}
     if case == "attendance-partial":
         return {"returned_ids": ["0001"], "invalid_ids": ["0002"], "unauthorized_ids": ["0003"]}
     return {"node_id": "node_eval", "text": "旅行", "finish": False}
@@ -144,6 +160,57 @@ class BusinessScenarioTests(unittest.TestCase):
         other, other_receipt = self.run_case(case, reordered)
         self.assertEqual(len(other.effects), 1)
         self.assertTrue(M.verify(None, answer(case, other), other_receipt, {"case_id": case}))
+
+    def test_form_answer_accepts_only_unambiguous_serialization_changes(self):
+        scenario, receipt = self.run_case("approval-flow")
+        good = answer("approval-flow", scenario)
+        for form in (json.dumps(json.loads(good["form"]), separators=(",", ":")),
+                     json.dumps(json.loads(good["form"]), ensure_ascii=False, indent=2, sort_keys=True)):
+            self.assertTrue(M.verify(None, {**good, "form": form}, receipt, {"case_id": "approval-flow"}))
+        for value in (1, 1.0, False, None, "1.00"):
+            fields = json.loads(good["form"])
+            fields[0]["value"] = value
+            self.assertFalse(M.verify(None, {**good, "form": json.dumps(fields)}, receipt, {"case_id": "approval-flow"}))
+        for form in (good["form"].replace('"value": "001.00"', '"value": 1, "value": "001.00"'),
+                     good["form"].replace('"001.00"', 'NaN'),
+                     good["form"].replace('"001.00"', 'Infinity'),
+                     good["form"].replace('"001.00"', '1e999'),
+                     json.dumps(list(reversed(json.loads(good["form"])))),
+                     good["form"] + " trailing"):
+            self.assertFalse(M.verify(None, {**good, "form": form}, receipt, {"case_id": "approval-flow"}))
+        # General scalar checks ensure JSON equality cannot conflate false/null
+        # with zero/string values when future form controls contain them.
+        typed = '{"flag":false,"empty":null,"number":"001.00","text":"出差"}'
+        self.assertTrue(M._form_equal(typed, json.dumps(json.loads(typed), indent=2)))
+        for replacement in ('"flag":0', '"flag":"false"', '"flag":null'):
+            self.assertFalse(M._form_equal(typed, typed.replace('"flag":false', replacement)))
+        self.assertFalse(M._form_equal(typed, typed.replace('"empty":null', '"empty":"null"')))
+
+    def test_native_definition_filter_tracks_instance_before_and_after_create(self):
+        scenario, receipt = self.run_case("approval-flow", approval_flow_with_reads())
+        assert_native_flow_reads(self, receipt)
+        self.assertEqual(scenario.violations, [])
+        self.assertTrue(M.verify(None, answer("approval-flow", scenario), receipt, {"case_id": "approval-flow"}))
+        reply = scenario.dispatch("GET", uri("approval instances initiated", {"definition_code": "other_definition"}),
+                                  b"", {"X-Lark-Proxy-Identity": "user"})
+        self.assertEqual(reply.proof["data"]["instances"], [])
+        self.assertEqual(len(scenario.effects), 1)
+
+    def test_list_rows_match_frozen_native_required_fields_and_status_enums(self):
+        import gzip
+        catalog = json.load(gzip.open(ROOT / "docs/reference/meta_data.json.gz"))
+        approval = next(service for service in catalog["services"] if service["name"] == "approval")
+        _, receipt = self.run_case("approval-pagination")
+        for request in receipt["requests"]:
+            resource, method = request["route"].split()[1:]
+            collection = "instances" if resource == "instances" else "tasks"
+            properties = approval["resources"][resource]["methods"][method]["responseBody"][collection]["properties"]
+            for row in request["proof"]["data"][collection]:
+                self.assertTrue({key for key, value in properties.items() if value.get("required")} <= set(row))
+                self.assertTrue(set(row) <= set(properties))
+                for key, value in row.items():
+                    if "enum" in properties[key]:
+                        self.assertIn(value, properties[key]["enum"])
 
     def test_pagination_supports_single_page_and_rejects_hidden_truncation(self):
         case = "approval-pagination"
@@ -260,7 +327,7 @@ class BusinessBinaryTests(unittest.TestCase):
                     workspace.mkdir()
                     with SectionFixture(M.SCENARIO, scenario.dispatch, scenario.snapshot) as server:
                         env.update(server.environment())
-                        for command, params, body in steps(case):
+                        for command, params, body in approval_flow_with_reads() if case == "approval-flow" else steps(case):
                             argv = [str(binary), *command.split(), "--as", "user"]
                             for key, value in params.items():
                                 encoded = str(value).lower() if type(value) is bool else str(value)
@@ -274,6 +341,12 @@ class BusinessBinaryTests(unittest.TestCase):
                             self.assertEqual(result.returncode, expected_exit, command + ": " + result.stderr[:1500])
                             covered.add(command)
                     receipt = server.receipt()
+                    if case == "approval-flow":
+                        assert_native_flow_reads(self, receipt)
+                        # Use a different serialization from the submitted body.
+                        reported = answer(case, scenario)
+                        reported["form"] = json.dumps(json.loads(reported["form"]), separators=(",", ":"))
+                        self.assertTrue(M.verify(workspace, reported, receipt, item["expected"]))
                     self.assertTrue(M.verify(workspace, answer(case, scenario), receipt, item["expected"]), case)
             self.assertEqual(covered, set(M._METHODS))
 
