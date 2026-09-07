@@ -1,0 +1,273 @@
+{
+  "schema_version": 1,
+  "reviewer": "/root/foundation_skill",
+  "report_kind": "hash_bound_capability_guard_review",
+  "review_revision": "4b56e1a63bbe136ced28037113a7123e95d12d35",
+  "verdict": "approved_offline",
+  "scope": {
+    "assignment_ids": [
+      "ci_capability_guard"
+    ],
+    "path_count": 8,
+    "implementation_revisions": [
+      "d5b81c4ebc7567afb545b3fa9653c7beb77957ed",
+      "0bedd4f9d125d3bbde9e260919cda0d6371d8944",
+      "4b56e1a63bbe136ced28037113a7123e95d12d35"
+    ],
+    "method": "Independent whole-module/exporter and exact data/workflow review,18 inventory tests and5 workflow tests from committed temporary trees, pinned mapping/reference/value checks, owner actual-checkpoint and workflow-report binding inspection.",
+    "product_files_modified": false,
+    "independence": "Reviewer authored neither guard/exporter/mapping nor workflow implementation. Only this report is changed. Review does not cover unrelated evaluation/docs/test additions or reapprove product behavior."
+  },
+  "assignments": [
+    {
+      "assignment_id": "ci_capability_guard",
+      "verdict": "approved_offline",
+      "paths": [
+        {
+          "path": "scripts/next_inventory.py",
+          "review_revision": "4b56e1a63bbe136ced28037113a7123e95d12d35",
+          "review_sha256": "30ab25e72333aff049c4c679ad37ea80f21efc6a560c1bce1ae369dd2cd2f46b",
+          "verdict": "approved_offline",
+          "review_scope": "Whole owning module reviewed: deterministic canonical serialization, tracked source inventory, actual temporary-copy exporter, bootstrap/configured-brand capture, metadata checksum, source-snapshot consistency, reference presence and recursive changes, exact mapping gate, CLI exits and handled error reporting. Source-review differences are retained separately; no semantic source allowlist introduced.",
+          "findings": []
+        },
+        {
+          "path": "scripts/next_inventory_export.go",
+          "review_revision": "4b56e1a63bbe136ced28037113a7123e95d12d35",
+          "review_sha256": "3cc40a3c1513a0e9dea9d402d187a2fcd58aead22ac7ac49aa2d653f71e8a136",
+          "verdict": "approved_offline",
+          "review_scope": "Whole exporter reviewed: production Build with explicit configured startup brand and synthetic environment credential provider, next agent mode injection by the Python owner, frozen embedded service catalog, all command/inherited flag registrations, shortcut typed/schema/identity/scope/dry-run/validation declarations, compiled events and service list. No business command executes; plugin and strict-mode effects excluded explicitly.",
+          "findings": []
+        },
+        {
+          "path": "scripts/next_inventory_test.py",
+          "review_revision": "4b56e1a63bbe136ced28037113a7123e95d12d35",
+          "review_sha256": "37d797d538416728e89e5fd6a123ad6f60607f3006423515f8e48b91983d3b20",
+          "verdict": "approved_offline",
+          "review_scope": "Whole regression file read and all18 tests independently run from exact committed files in an isolated temporary tree. Covers unchanged semantic status, exact delta values, newly added subtrees, protected flags/guards/missing capabilities, context/snapshot mismatch, source-file loss and saved report/exit outcomes.",
+          "findings": []
+        },
+        {
+          "path": "docs/reference/next-interface-mapping.json.gz",
+          "review_revision": "4b56e1a63bbe136ced28037113a7123e95d12d35",
+          "review_sha256": "3597fe639ab729226de12283f70e002e98f670433f7ee837f18dd52a993b3bd2",
+          "verdict": "approved_offline",
+          "review_scope": "Exact5742 delta rows inspected:5682 added full dictionary values and60 changed leaves with reference/candidate hashes. Context hashes and path sets independently match pinned inputs and immutable1058824 reconciliation; all60 changed reference hashes independently recomputed. No prefix exception or source-semantic approval.",
+          "findings": []
+        },
+        {
+          "path": "docs/reference/ci-capability-checkpoint.json.gz",
+          "review_revision": "4b56e1a63bbe136ced28037113a7123e95d12d35",
+          "review_sha256": "46ad78ec2106edbd07886cff74adcb9aa2f6146bb19d23f31587ba9287801b87",
+          "verdict": "approved_offline",
+          "review_scope": "Existing owner local actual registration evidence inspected: clean immutable8d92e52 product snapshot, consistent tracked hashes, both configured brands, exact mapping rows, full retained reference surfaces, original review_required status. This is not a fresh independent exporter execution or native CI evidence.",
+          "findings": []
+        },
+        {
+          "path": ".github/workflows/next-offline.yml",
+          "review_revision": "4b56e1a63bbe136ced28037113a7123e95d12d35",
+          "review_sha256": "ffa9de0a5e4e0fb3f9f687e39920f963d5d796ad15bd4a489e5ba7ab91da3ac9",
+          "verdict": "approved_offline",
+          "review_scope": "Whole latest workflow read, with focused new capability stage review: actual gate runs after successful prerequisites on all three matrix OSes; no continue-on-error or shell suppression; always summary retains stage outcome and uploaded folder includes report when written. Existing offline suite gates remain required.",
+          "findings": []
+        },
+        {
+          "path": "scripts/next_workflow_test.py",
+          "review_revision": "4b56e1a63bbe136ced28037113a7123e95d12d35",
+          "review_sha256": "57abd16cc88e13f40f7e5cc54738f9cb9196d4b6830f955cba1424d8aa8be152",
+          "verdict": "approved_offline",
+          "review_scope": "Whole workflow contract file read and all5 tests independently executed from an exact-commit temporary tree. Includes running the real summary Python with a synthetic failed capability stage and verifying failure is retained.",
+          "findings": []
+        },
+        {
+          "path": "docs/reference/CI.md",
+          "review_revision": "4b56e1a63bbe136ced28037113a7123e95d12d35",
+          "review_sha256": "1ba96f98114e2becab38b34c4a121fa271e7240acc2fc0fa36dff72f810e02d2",
+          "verdict": "approved_offline",
+          "review_scope": "Registration mapping and CI usage/evidence boundaries reviewed.0bedd4f explicitly qualifies supported error reporting and writable output;4b56e1a distinguishes required workflow wiring from completed native execution and preserves original source review status.",
+          "findings": []
+        }
+      ],
+      "findings": []
+    }
+  ],
+  "verified_contracts": [
+    "Default gate forces next surface, reads configured-brand supplement, checks pinned reference registration and metadata hashes, and requires both Feishu/Lark count keys. It does not accidentally compare the unrestricted bootstrap context.",
+    "Exporter builds actual registrations from tracked candidate source with frozen metadata and explicit startup brand. Repeated tree fingerprints detect mixed tracked snapshots; the report names the tracked-only boundary.",
+    "Reference command, shortcut and event-key loss, missing raw API, missing source files, changed or removed existing flags and hidden/disable_flag_parsing guard changes fail. Mapping entries cannot waive protected reference removal/flag/guard contracts.",
+    "Every accepted changed leaf binds exact old/new values, and each added subtree is hashed in full. Changes, disappearance or extra additions fail the set comparison against the checked-in mapping.",
+    "Mapped interface approval leaves original report status and changed_source_requires_review rows intact. capability_gate.status is separately named; semantic source review and live evidence remain outside this gate.",
+    "Supported success/mismatch/handled-collection outcomes preserve reports and exit0/1/2. Malformed unsupported mapping shapes or unwritable outputs are not promised a JSON report; documentation now says so.",
+    "Native matrix invokes the actual helper directly in fresh CI. Exporter uses temporary source/config and a synthetic account, with remote metadata disabled and blocked external proxies. This is narrower than the separate next_test environment allowlist and is not an OS network sandbox.",
+    "Capability stage nonzero exit fails the job; subsequent always stages preserve the outcome and upload available reports. A passing summary writer does not convert a failed capability stage into a passed job."
+  ],
+  "independent_execution": [
+    {
+      "name": "inventory_tests",
+      "source_revision": "d5b81c4ebc7567afb545b3fa9653c7beb77957ed",
+      "sources": [
+        {
+          "path": "scripts/next_inventory.py",
+          "source_revision": "d5b81c4ebc7567afb545b3fa9653c7beb77957ed",
+          "sha256": "30ab25e72333aff049c4c679ad37ea80f21efc6a560c1bce1ae369dd2cd2f46b",
+          "scope": "Exact committed test/runtime input"
+        },
+        {
+          "path": "scripts/next_inventory_test.py",
+          "source_revision": "d5b81c4ebc7567afb545b3fa9653c7beb77957ed",
+          "sha256": "37d797d538416728e89e5fd6a123ad6f60607f3006423515f8e48b91983d3b20",
+          "scope": "Exact committed test/runtime input"
+        },
+        {
+          "path": "scripts/next_inventory_export.go",
+          "source_revision": "d5b81c4ebc7567afb545b3fa9653c7beb77957ed",
+          "sha256": "3cc40a3c1513a0e9dea9d402d187a2fcd58aead22ac7ac49aa2d653f71e8a136",
+          "scope": "Exact committed test/runtime input"
+        }
+      ],
+      "method": "Copy git-show bytes to a temporary source tree; run python -m unittest discover -s scripts -p next_inventory_test.py -v with existing next_test isolated_env. No Go business or full exporter suite invoked.",
+      "pass": 18,
+      "fail": 0,
+      "skip": 0,
+      "exit_code": 0
+    },
+    {
+      "name": "workflow_tests",
+      "source_revision": "4b56e1a63bbe136ced28037113a7123e95d12d35",
+      "sources": [
+        {
+          "path": "scripts/next_workflow_test.py",
+          "source_revision": "4b56e1a63bbe136ced28037113a7123e95d12d35",
+          "sha256": "57abd16cc88e13f40f7e5cc54738f9cb9196d4b6830f955cba1424d8aa8be152",
+          "scope": "Exact committed workflow test/input"
+        },
+        {
+          "path": ".github/workflows/next-offline.yml",
+          "source_revision": "4b56e1a63bbe136ced28037113a7123e95d12d35",
+          "sha256": "ffa9de0a5e4e0fb3f9f687e39920f963d5d796ad15bd4a489e5ba7ab91da3ac9",
+          "scope": "Exact committed workflow test/input"
+        },
+        {
+          "path": "Makefile",
+          "source_revision": "4b56e1a63bbe136ced28037113a7123e95d12d35",
+          "sha256": "fd8cd713224a41a7127352fd420576de1c32e53d833fc9b33f946aa63f57f9d2",
+          "scope": "Exact committed workflow test/input"
+        }
+      ],
+      "method": "Copy git-show bytes to a temporary source tree; run python -m unittest discover -s scripts -p next_workflow_test.py -v with existing next_test isolated_env. Summary-script test uses only synthetic stage outcomes.",
+      "pass": 5,
+      "fail": 0,
+      "skip": 0,
+      "exit_code": 0
+    }
+  ],
+  "independent_data_checks": {
+    "mapping_candidate_revision": "10588248080a91412b0718eb0aa921cff6a90f10",
+    "mapping_reference_sha256_matches_configured_asset": true,
+    "mapping_metadata_sha256_matches_decompressed_frozen_asset": true,
+    "changed_rows": 60,
+    "added_rows": 5682,
+    "unique_rows": 5742,
+    "changed_path_set_matches_immutable_reconciliation": true,
+    "added_path_set_matches_immutable_reconciliation": true,
+    "all_changed_reference_value_hashes_recomputed": true,
+    "checkpoint_rows_equal_entire_mapping": true,
+    "checkpoint_next_exporter_sha256_matches_reviewed_source": true
+  },
+  "supporting_inputs": [
+    {
+      "path": "docs/reference/configured-brand-registrations.json.gz",
+      "source_revision": "4b56e1a63bbe136ced28037113a7123e95d12d35",
+      "sha256": "726dedbbd8eb68c43743252a04c24eb8b4395012a6a1b22841d788210fd8e6d0",
+      "scope": "Pinned configured-brand reference, including Lark Apps hidden/flag-parsing guards."
+    },
+    {
+      "path": "docs/reference/meta_data.json.gz",
+      "source_revision": "4b56e1a63bbe136ced28037113a7123e95d12d35",
+      "sha256": "c3717197efc20093b4b9eb737bbe3f5f5e6acb75c19b86071ccf5acf62f588d7",
+      "scope": "Frozen generated metadata bytes; decompressed SHA checked against mapping and coverage."
+    },
+    {
+      "path": "docs/reference/coverage.json",
+      "source_revision": "4b56e1a63bbe136ced28037113a7123e95d12d35",
+      "sha256": "12f6f7e65a45dfb00c73f33ee8cb5a51d63f8dd7c1df9f1fc917c1f0f06d44a2",
+      "scope": "Frozen reference metadata checksum and coverage boundary."
+    },
+    {
+      "path": "docs/reference/sources.json",
+      "source_revision": "4b56e1a63bbe136ced28037113a7123e95d12d35",
+      "sha256": "34727270c514b490e140cf842ce13d88c97a47d541789aa7de7d069efff09b6d",
+      "scope": "Frozen source-presence/hash baseline; changed implementation remains separately reviewed."
+    },
+    {
+      "path": "docs/reference/p3-next-post-mail-reconciliation.json",
+      "source_revision": "4b56e1a63bbe136ced28037113a7123e95d12d35",
+      "sha256": "7f9b9d5e7763536959ccb6e11725683e0ce9a53504944182078f64853cd1babf",
+      "scope": "Immutable1058824 report whose complete changed/addition path sets were compared to mapping."
+    }
+  ],
+  "owner_actual_registration_evidence": {
+    "path": "docs/reference/ci-capability-checkpoint.json.gz",
+    "sha256": "46ad78ec2106edbd07886cff74adcb9aa2f6146bb19d23f31587ba9287801b87",
+    "artifact_revision": "d5b81c4ebc7567afb545b3fa9653c7beb77957ed",
+    "candidate_product_revision": "8d92e5253aa9d0582314180d51cdec1b10778897",
+    "source_snapshot_clean": true,
+    "tracked_source_consistent": true,
+    "tracked_tree_sha256": "a55c691c75511ce14ccec607e54e472891d167254f213cfbbc37ecb3b09a44b4",
+    "next_exporter_sha256": "ff0c0ac0b6486bfb8efbfb25739321de6ff5465146964bb4b9dea656264302d5",
+    "counts": {
+      "feishu": {
+        "candidate_commands": 951,
+        "candidate_event_keys": 25,
+        "candidate_shortcuts": 538,
+        "reference_commands": 938,
+        "reference_event_keys": 25,
+        "reference_shortcuts": 535
+      },
+      "lark": {
+        "candidate_commands": 951,
+        "candidate_event_keys": 25,
+        "candidate_shortcuts": 538,
+        "reference_commands": 938,
+        "reference_event_keys": 25,
+        "reference_shortcuts": 535
+      }
+    },
+    "original_status": "review_required",
+    "capability_gate_status": "pass",
+    "failures": [],
+    "execution_binding": "Existing local actual registration capture on the stated immutable product revision; exporter source hash and checkpoint mapping rows verified. Not independently rerun by this reviewer and not evidence of a completed remote CI matrix."
+  },
+  "owner_workflow_evidence": {
+    "binding_path": ".tmp/next-evidence/ci-capabilities-wiring-binding.json",
+    "binding_sha256": "41a975f03d1f45d964657af49c066aa7335ba12381d973f065f9a58e2094096b",
+    "revision": "4b56e1a63bbe136ced28037113a7123e95d12d35",
+    "report_path": ".tmp/next-evidence/ci-capabilities-wiring-scripts.json",
+    "report_sha256": "73806d34eb9a8b3383c9c4db40128c692d7a59dbcf25cf27b76119dce9d3fc7d",
+    "source_hashes": {
+      ".github/workflows/next-offline.yml": "ffa9de0a5e4e0fb3f9f687e39920f963d5d796ad15bd4a489e5ba7ab91da3ac9",
+      "scripts/next_workflow_test.py": "57abd16cc88e13f40f7e5cc54738f9cb9196d4b6830f955cba1424d8aa8be152",
+      "docs/reference/CI.md": "1ba96f98114e2becab38b34c4a121fa271e7240acc2fc0fa36dff72f810e02d2",
+      "scripts/next_inventory.py": "30ab25e72333aff049c4c679ad37ea80f21efc6a560c1bce1ae369dd2cd2f46b",
+      "scripts/next_test.py": "2a8222b60269ae4250dabc1e44efb9a3d3af9fb4108adf77f3044b533e906a8d"
+    },
+    "source_and_report_hashes_verified": true,
+    "tests": {
+      "pass": 60,
+      "fail": 0,
+      "skip": 0
+    },
+    "exit_code": 0,
+    "execution_binding": "Owner complete60-pass scripts run inspected with explicit binding for listed sources/report. Only18 inventory and5 workflow tests independently rerun here; no native CI attribution."
+  },
+  "limitations": [
+    "Approved offline means this guard and its stated evidence boundary were reviewed; it is not semantic approval for every accepted interface change, a live-equivalence conclusion, or release acceptance.",
+    "No native Linux/Windows GitHub job or complete macOS CI job was executed by this review. Native platform behavior requires actual workflow artifacts.",
+    "The exporter captures declarations and command registration presence, not every dynamic behavior, HTTP effect, help description or plugin-supplied command. Separate exact-source reviews and operation tests remain required.",
+    "The mapping is controlled repository data requiring review for intentional changes. Passing a regenerated mapping does not independently justify a change; the documented exact-review process is part of its maintenance boundary.",
+    "Snapshot evidence covers tracked source bytes. Untracked source is disclosed and excluded by the exporter; invocation-time cleanup/report failures outside supported handled outcomes remain explicit.",
+    "Environment/proxy isolation is not a network sandbox. The capability stage relies on fresh credential-free CI plus synthetic exporter account/config and executes no business commands.",
+    "Prior CI1\u2013CI4 review and closure artifacts remain unchanged. Their native-cleanup/report destination limitations continue to apply to the separate suite runner."
+  ],
+  "review_platform": "Darwin arm64"
+}
