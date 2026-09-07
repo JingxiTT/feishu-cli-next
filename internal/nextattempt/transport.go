@@ -115,7 +115,7 @@ func (t *Transport) RoundTrip(req *http.Request) (*http.Response, error) {
 		receipt.Outcome, receipt.Evidence = Unapplied, "canceled_before_dispatch"
 	} else {
 		response, err = t.Base.RoundTrip(req)
-		classifyResponse(&receipt, response, err, req.URL.Path)
+		classifyResponse(&receipt, response, err, req)
 	}
 	saveErr := store.finish(receipt)
 	if saveErr != nil {
@@ -134,7 +134,7 @@ type replayBody struct {
 
 const responseEvidenceLimit = 1 << 20
 
-func classifyResponse(r *Receipt, resp *http.Response, requestErr error, path string) {
+func classifyResponse(r *Receipt, resp *http.Response, requestErr error, req *http.Request) {
 	r.Outcome, r.Evidence = Unknown, "transport_error"
 	if resp != nil {
 		r.HTTPStatus = resp.StatusCode
@@ -184,9 +184,17 @@ func classifyResponse(r *Receipt, resp *http.Response, requestErr error, path st
 		return
 	}
 	if *envelope.Code == 0 {
+		if hasItemFailure(envelope.Data) {
+			r.Evidence = "item_failure_requires_reconciliation"
+			return
+		}
+		if classifyKnownResponse(r, req, envelope.Data) {
+			return
+		}
+		path := req.URL.Path
 		// A successful batch envelope may contain per-item errors or async work.
 		// Domain owners must interpret these before claiming complete application.
-		if strings.Contains(strings.ToLower(path), "batch") || strings.Contains(strings.ToLower(path), "async") || hasItemFailure(envelope.Data) {
+		if strings.Contains(strings.ToLower(path), "batch") || strings.Contains(strings.ToLower(path), "async") {
 			r.Evidence = "batch_or_async_response_requires_reconciliation"
 			return
 		}

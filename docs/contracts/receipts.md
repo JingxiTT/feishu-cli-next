@@ -62,6 +62,35 @@ Embedded hosts receive a typed `api/mutation_outcome` error with the same
 returned an API success envelope. The original typed cause and its scope/code
 diagnostics remain available; its retry guidance does not authorize replay.
 
+## Known endpoint evidence
+
+The shared classifier recognizes the following established response shapes in
+addition to generic code/status evidence. Its exact method/path matching does
+not generalize field names to unrelated endpoints.
+
+- Docs native create/update `result:failed` and all history/revert acknowledgements
+  stay unknown; there is no verified completed status for the history operation.
+- IM urgency, membership, settings, and join-request handling retain unknown for
+  rejected, nonexistent, pending-approval, or failed recipients. Empty failure
+  arrays preserve the normal acknowledgement semantics.
+- Minutes word replacement requires positive numeric counts covering exactly the
+  requested source words. Missing, zero, duplicate, or unmatched counts stay unknown.
+- Base v3 batch-create requires one unique nonempty returned record ID per input
+  row and no ignored fields or unrecognized response extensions. Missing proof
+  stays unknown. The SDK request body's bounded `GetBody` copy supplies counts;
+  unclonable/oversized bodies stay unknown and are never consumed or persisted.
+- Apps SQL string results must decode to nonempty statement results without an
+  ERROR entry. Mixed or malformed results stay unknown; no SQL text is parsed.
+- VC invitations require matching successful recipient statuses/counts with no
+  failed or truncated results. Incomplete evidence stays unknown.
+- Wiki move/delete task acknowledgements stay unknown even if a separate status
+  read later succeeds; generic receipt reconciliation is not implemented.
+- Slides native replacement's failed-part index/reason stays unknown; advisory
+  issues alone do not turn a successful response into a failure.
+
+These are request evidence rules backed by existing domain contracts and
+synthetic regression tests, not live backend or conditional-write verification.
+
 ## Classification and storage boundary
 
 GET, HEAD, OPTIONS, credential acquisition endpoints, and commands explicitly
