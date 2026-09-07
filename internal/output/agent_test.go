@@ -639,3 +639,16 @@ func TestNativeJSONArtifactPreservesFullRichContent(t *testing.T) {
 		t.Fatalf("full rich content changed: %s", artifact.Result)
 	}
 }
+
+func TestAgentProjectionRetainsUnchangedNoopMetadata(t *testing.T) {
+	for _, value := range []string{"true", "false"} {
+		raw := json.RawMessage(`{"ok":true,"data":{"message_id":"message_fixture","unchanged":` + value + `,"unused":"drop","items":[{"id":"item_fixture","unchanged":` + value + `,"unused":"drop"}]}}`)
+		var stdout bytes.Buffer
+		if err := output.WriteJSON(output.WithAgentOptions(&stdout, &output.AgentOptions{Fields: "id"}), raw); err != nil {
+			t.Fatal(err)
+		}
+		if strings.Count(stdout.String(), `"unchanged":`+value) != 2 || strings.Contains(stdout.String(), "unused") || !strings.Contains(stdout.String(), "message_fixture") {
+			t.Fatalf("no-op evidence lost: %s", stdout.String())
+		}
+	}
+}

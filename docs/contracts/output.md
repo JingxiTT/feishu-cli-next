@@ -20,7 +20,7 @@ are rejected before execution. Missing fields are omitted, not manufactured as
 null. A missing field cannot be schema-validated generically before a response.
 
 The complete envelope, resource IDs (`id`, `guid`, `token`, `*_id`, `*_ids`, `*_token`),
-URLs, types, identity, status, pagination, counts, errors, warnings, recovery,
+URLs, types, identity, status, `unchanged` no-op markers, pagination, counts, errors, warnings, recovery,
 notices and safety alerts remain visible. Results containing failed, partial,
 unknown or unsupported outcomes retain their full data. This conservative shared
 projection must not replace a domain-specific schema that has more outcome fields.
