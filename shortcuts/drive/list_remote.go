@@ -100,7 +100,10 @@ func listRemoteFolderTree(ctx context.Context, runtime *common.RuntimeContext, f
 		if err != nil {
 			return nil, err
 		}
-		rawFiles, _ := result["files"].([]interface{})
+		rawFiles, validFiles := result["files"].([]interface{})
+		if result["files"] != nil && !validFiles {
+			return nil, errs.NewInternalError(errs.SubtypeInvalidResponse, "Drive listing files must be an array")
+		}
 		for _, item := range rawFiles {
 			f, ok := item.(map[string]interface{})
 			if !ok {
@@ -131,6 +134,11 @@ func listRemoteFolderTree(ctx context.Context, runtime *common.RuntimeContext, f
 					return nil, err
 				}
 				out = append(out, sub...)
+			}
+		}
+		if value, present := result["has_more"]; present {
+			if _, valid := value.(bool); !valid {
+				return nil, errs.NewInternalError(errs.SubtypeInvalidResponse, "Drive listing has_more must be a boolean")
 			}
 		}
 		hasMore, nextToken := common.PaginationMeta(result)

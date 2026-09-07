@@ -13,13 +13,19 @@ import (
 )
 
 func TestDriveMirrorRejectsIncompleteListing(t *testing.T) {
-	for _, scenario := range []string{"missing_cursor", "repeated_cursor", "folder_cycle", "malformed_entry"} {
+	for _, scenario := range []string{"missing_cursor", "repeated_cursor", "folder_cycle", "malformed_entry", "malformed_collection", "malformed_pagination"} {
 		t.Run(scenario, func(t *testing.T) {
 			f, stdout, _, reg := cmdutil.TestFactory(t, driveTestConfig())
 			calls := 0
 			data := map[string]interface{}{"files": []interface{}{}, "has_more": true}
 			if scenario == "repeated_cursor" {
 				data["next_page_token"] = "same"
+			}
+			if scenario == "malformed_pagination" {
+				data = map[string]interface{}{"files": []interface{}{}, "has_more": "true"}
+			}
+			if scenario == "malformed_collection" {
+				data = map[string]interface{}{"files": "invalid", "has_more": false}
 			}
 			if scenario == "malformed_entry" {
 				data = map[string]interface{}{"files": []interface{}{map[string]interface{}{"token": "broken"}}, "has_more": false}
