@@ -21,6 +21,7 @@ import (
 
 func collectHandAuthored(ctx context.Context) (manifest.Manifest, error) {
 	root := rootcmd.Build(ctx, cmdutil.InvocationContext{},
+		rootcmd.WithAgentMode(),
 		rootcmd.WithIO(strings.NewReader(""), io.Discard, io.Discard),
 		rootcmd.WithoutPlugins(),
 		rootcmd.WithoutStrictMode(),
@@ -32,6 +33,7 @@ func collectHandAuthored(ctx context.Context) (manifest.Manifest, error) {
 
 func collectCommandIndex(ctx context.Context) (manifest.Manifest, error) {
 	root := rootcmd.Build(ctx, cmdutil.InvocationContext{},
+		rootcmd.WithAgentMode(),
 		rootcmd.WithIO(strings.NewReader(""), io.Discard, io.Discard),
 		rootcmd.WithoutPlugins(),
 		rootcmd.WithoutStrictMode(),
@@ -82,7 +84,7 @@ func walkCommands(root *cobra.Command, visit func(*cobra.Command)) {
 }
 
 func commandFromCobra(c *cobra.Command, defaultFields map[string][]string) manifest.Command {
-	path := strings.TrimPrefix(c.CommandPath(), "lark-cli ")
+	path := strings.TrimPrefix(c.CommandPath(), c.Root().Name()+" ")
 	source := manifest.SourceBuiltin
 	if s, ok := cmdmeta.SourceOf(c); ok {
 		source = manifest.Source(s)
