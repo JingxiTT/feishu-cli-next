@@ -226,7 +226,9 @@ func fetchWikiNodes(runtime *common.RuntimeContext, spaceID, parentNodeToken str
 		lastHasMore   bool
 		lastPageToken string
 	)
+	seenTokens := map[string]bool{}
 	for page := 0; ; page++ {
+		seenTokens[pageToken] = true
 		params := map[string]interface{}{"page_size": pageSize}
 		if parentNodeToken != "" {
 			params["parent_node_token"] = parentNodeToken
@@ -250,6 +252,10 @@ func fetchWikiNodes(runtime *common.RuntimeContext, spaceID, parentNodeToken str
 			break
 		}
 		if !lastHasMore || lastPageToken == "" {
+			break
+		}
+		if seenTokens[lastPageToken] {
+			fmt.Fprintln(runtime.IO().ErrOut, "Stopping pagination: server returned a repeated page_token; results are incomplete.")
 			break
 		}
 		if pageLimit > 0 && page+1 >= pageLimit {

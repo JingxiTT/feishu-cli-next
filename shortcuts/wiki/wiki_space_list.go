@@ -98,7 +98,9 @@ func fetchWikiSpaces(runtime *common.RuntimeContext) ([]map[string]interface{}, 
 		lastHasMore   bool
 		lastPageToken string
 	)
+	seenTokens := map[string]bool{}
 	for page := 0; ; page++ {
+		seenTokens[pageToken] = true
 		params := map[string]interface{}{"page_size": pageSize}
 		if pageToken != "" {
 			params["page_token"] = pageToken
@@ -119,6 +121,10 @@ func fetchWikiSpaces(runtime *common.RuntimeContext) ([]map[string]interface{}, 
 			break
 		}
 		if !lastHasMore || lastPageToken == "" {
+			break
+		}
+		if seenTokens[lastPageToken] {
+			fmt.Fprintln(runtime.IO().ErrOut, "Stopping pagination: server returned a repeated page_token; results are incomplete.")
 			break
 		}
 		if pageLimit > 0 && page+1 >= pageLimit {

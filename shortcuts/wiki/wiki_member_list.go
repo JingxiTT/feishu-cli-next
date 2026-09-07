@@ -116,7 +116,9 @@ func fetchWikiMembers(runtime *common.RuntimeContext, spaceID string) ([]map[str
 		lastHasMore   bool
 		lastPageToken string
 	)
+	seenTokens := map[string]bool{}
 	for page := 0; ; page++ {
+		seenTokens[pageToken] = true
 		params := map[string]interface{}{"page_size": pageSize}
 		if pageToken != "" {
 			params["page_token"] = pageToken
@@ -139,10 +141,9 @@ func fetchWikiMembers(runtime *common.RuntimeContext, spaceID string) ([]map[str
 		if !lastHasMore || lastPageToken == "" {
 			break
 		}
-		if lastPageToken == pageToken {
-			// Guard against a buggy server echoing the same cursor with
-			// has_more=true: without --page-limit we would loop forever.
-			fmt.Fprintf(runtime.IO().ErrOut, "Stopping pagination: server returned a non-advancing page_token.\n")
+
+		if seenTokens[lastPageToken] {
+			fmt.Fprintln(runtime.IO().ErrOut, "Stopping pagination: server returned a repeated page_token; results are incomplete.")
 			break
 		}
 		if pageLimit > 0 && page+1 >= pageLimit {
