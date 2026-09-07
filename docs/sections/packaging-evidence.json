@@ -463,7 +463,57 @@
       "pass": 14,
       "fail": 0
     },
-    "historical_evidence_policy": "Earlier cross_build, generated_npm, node16_runtime and script/E2E sections are preserved as historical evidence. This entry supplies the current immutable product artifact set."
+    "historical_evidence_policy": "Earlier cross_build, generated_npm, node16_runtime and script/E2E sections are preserved as historical evidence. This entry supplies the current immutable product artifact set.",
+    "rosetta_amd64_smoke": {
+      "source_revision": "8ce0688b303eb646e1b79a329002dddcb6403be4",
+      "host": "Darwin/arm64",
+      "execution": "darwin/amd64 via Rosetta translation on arm64 host; not native Intel hardware",
+      "cases": [
+        {
+          "variant": "normal",
+          "archive": "feishu-cli-next-0.1.0-beta.1-darwin-amd64.tar.gz",
+          "archive_sha256": "f8cdcf8f0287dbc971fbd9abb79551c5467fd49c1df3dae0b9df637cd8be1903",
+          "status": "pass",
+          "version_output": "feishu-cli-next 0.1.0-beta.1 (reference: larksuite/cli@7fd6ef3)",
+          "guide_sha256": "c0de66cb47e62ca389a691ca7c9549d68e262702cb692d45dd2a5965779c9f1b",
+          "checks": [
+            "translated startup/version",
+            "exact embedded guide",
+            "normal/sidecar startup distinction",
+            "project guide installation",
+            "unrelated README byte preservation"
+          ]
+        },
+        {
+          "variant": "authsidecar",
+          "archive": "feishu-cli-next-0.1.0-beta.1-darwin-amd64-authsidecar.tar.gz",
+          "archive_sha256": "db3fb2f95872cdb40041d4f3f4888509143c6c4533a36386231658dfd4d79a29",
+          "status": "pass",
+          "version_output": "feishu-cli-next 0.1.0-beta.1 (reference: larksuite/cli@7fd6ef3)",
+          "guide_sha256": "c0de66cb47e62ca389a691ca7c9549d68e262702cb692d45dd2a5965779c9f1b",
+          "checks": [
+            "translated startup/version",
+            "exact embedded guide",
+            "normal/sidecar startup distinction",
+            "project guide installation",
+            "unrelated README byte preservation"
+          ]
+        }
+      ],
+      "scope": "Existing immutable amd64 archives only; no runtime installation or OS debugging. Project skills installed only inside temporary isolated fixtures. Does not establish native Intel hardware or full macOS Intel acceptance.",
+      "status": "pass",
+      "availability": {
+        "command": "pkgutil --pkg-info com.apple.pkg.RosettaUpdateAuto",
+        "package_id": "com.apple.pkg.RosettaUpdateAuto",
+        "version": "1.0.0.0.1786586848",
+        "already_installed": true
+      },
+      "invocation_prefix": [
+        "/usr/bin/arch",
+        "-x86_64"
+      ],
+      "isolation": "Reused clean-source scripts/next_test.py isolated_env; isolated HOME/config/temp directories and unavailable external proxy. No credentials or live API calls."
+    }
   },
   "latest_artifact_refresh": "immutable_refresh_8ce0688"
 }
