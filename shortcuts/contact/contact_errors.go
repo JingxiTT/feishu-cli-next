@@ -45,11 +45,23 @@ func contactFanoutErrorSummary(err error) string {
 // cause, so a single-query problem object is not rewritten into an aggregate one.
 func contactFanoutAllFailedError(err error, msg string) error {
 	var (
-		apiErr *errs.APIError
-		netErr *errs.NetworkError
-		intErr *errs.InternalError
+		apiErr            *errs.APIError
+		netErr            *errs.NetworkError
+		intErr            *errs.InternalError
+		permissionErr     *errs.PermissionError
+		authenticationErr *errs.AuthenticationError
 	)
 	switch {
+	case errors.As(err, &permissionErr):
+		c := *permissionErr
+		c.Message = msg
+		c.Cause = err
+		return &c
+	case errors.As(err, &authenticationErr):
+		c := *authenticationErr
+		c.Message = msg
+		c.Cause = err
+		return &c
 	case errors.As(err, &apiErr):
 		c := *apiErr
 		c.Message = msg
