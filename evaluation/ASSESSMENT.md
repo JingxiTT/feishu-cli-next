@@ -61,8 +61,37 @@ The [10,000-row cross-section process test](../docs/integration/sheets-base.md)
 separately verifies preservation of 80,000 cells through actual export/import
 commands. It supports the implemented artifact handoff's controlled correctness.
 It does not measure agent tokens as data grows. The small Sheets task above and
-bounded CLI output sizes cannot substitute for the pending provider-token scaling
-series.
+bounded CLI output sizes cannot substitute for provider-token measurements.
+
+## Completed size comparison
+
+The [fresh size comparison](evidence/scaling-8d-archive04/REPORT.md) completed
+54 attempts under evaluator `4b3abc6`: 51 verified, two Base attempts nonverified,
+and one Sheets timeout with unknown total usage. The 9,780,669 recorded provider
+tokens are a lower bound, including 499,819 tokens from the nonverified Base
+attempts. Each cell below is all-attempt tokens per verified success; parentheses
+give verified attempts out of three. Unknown total usage prevents a finite score.
+
+| Task and rows | Official | Concise official | Next |
+| --- | ---: | ---: | ---: |
+| Base, 100 | 127,404.33 (3/3) | 112,461.33 (3/3) | 300,151.50 (2/3) |
+| Base, 1,000 | 140,715.33 (3/3) | 126,638.00 (3/3) | 271,262.00 (2/3) |
+| Base, 10,000 | 221,430.33 (3/3) | 166,207.33 (3/3) | 140,433.33 (3/3) |
+| Sheets, 100 | 295,636.33 (3/3) | 222,044.33 (3/3) | 100,604.67 (3/3) |
+| Sheets, 1,000 | 277,664.67 (3/3) | Unknown (2/3) | 106,845.00 (3/3) |
+| Sheets, 10,000 | 328,489.33 (3/3) | 256,691.00 (3/3) | 117,159.00 (3/3) |
+
+![All recorded size-trial token totals; unknown usage explicitly disclosed](evidence/scaling-8d-archive04/usage-by-size.png)
+
+Next's Base result improves against both baselines at 10,000 rows but regresses
+at the smaller tested sizes. Its Sheets tokens are lower in all complete
+comparisons, while its 10,000-row API count is higher: 51 across three attempts,
+against official 9 and concise official 13. Lower tokens therefore do not imply
+fewer API requests. The two Base failures record `request_outside_fixture`
+without the exact rejected payload, preventing a precise causal attribution.
+The Sheets timeout retains its declared 180-second limit and unknown usage;
+it was not replayed. Three tested sizes and three repeats support these
+descriptive observations, not a uniform scaling or asymptotic claim.
 
 ## Earlier product conditions remain separate
 
@@ -97,9 +126,9 @@ are unavailable in several conditions. Concurrent correctness work limits some
 latency comparisons. Unknown accounting prevents a finite efficiency score;
 early failure is not evidence of efficiency.
 
-The fresh scaling and representative business comparisons remain pending under
-the repaired, immutable evaluator condition. Their results must retain ordinary
-nonverified attempts, variability and failed-run costs. Held-out evaluation remains
+The representative business comparison remains pending under the repaired,
+immutable evaluator condition. Its results must retain ordinary nonverified
+attempts, variability and failed-run costs. Held-out evaluation remains
 reserved for the final release gate, with independently replaced examples for the
 previously disclosed limited exposure. No live backend claims or complete
 capability acceptance follow from these development measurements.

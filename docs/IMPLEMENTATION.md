@@ -134,9 +134,8 @@ limitations. Sheets' final enum distinction has a separate focused pass. The
 shared loader/diagnostic follow-up passes 10 tests with one explicit optional skip
 on independent rerun; known failures cannot be promoted to inconclusive by a
 separate unsupported read. Committed control copies and reviewed hashes were
-checked. No Go runtime source or shipped guide changed. Fresh balanced size
-54 and representative business 18 trials remain required under this new evaluator
-condition; earlier costs and outcomes remain separate.
+checked. No Go runtime source or shipped guide changed. Earlier costs and outcomes
+remain separate from fresh comparisons under this new evaluator condition.
 The [interrupted archive probe](../evaluation/evidence/scaling-8d-fixture03/REPORT.md)
 (`8a566f7`) preserves two later nonverified starts: one has unknown usage and the
 other has 237,389 actual provider tokens. Independent recount confirms those
@@ -146,8 +145,20 @@ model completed; the second's rejection cannot be attributed from retained data.
 The stopped process is terminal; 52 remaining size slots and all 18 business
 slots never started. The minimal `4b3abc6` preflight checks that dependency before
 provider startup, with 16 independently rerun controlled tests passing. New
-balanced trials require the complete pinned archive; these two interrupted
+balanced trials use the complete pinned archive; these two interrupted
 attempts remain outside its comparison and cannot establish a size curve.
+The [completed fresh size series](../evaluation/evidence/scaling-8d-archive04/REPORT.md)
+under `4b3abc6` contains 54 attempts: Base 25/27 and Sheets 26/27 verified.
+Known provider cost is 9,780,669 tokens, including 499,819 from two nonverified
+Base attempts. One concise-official Sheets 1,000-row attempt timed out under the
+declared 180-second budget with unknown total usage, so the cost is a lower bound
+and affected efficiency scores remain null. Independent recount verifies all
+30 groups, 31 matched-success pairs, cached-input accounting, distributions and
+API totals. The exported all-attempt plot passed visual inspection after correcting
+overlapping labels. Next improves Base tokens at 10,000 rows but regresses at
+smaller sizes; Sheets token savings coexist with more Next API requests at 10,000
+rows. No uniform scaling claim follows. Representative business 18 trials remain
+in progress under the same immutable evaluator; runtime and guide remain frozen.
 Held-out trials have not run. A coordinator search exposed fragments of the Base
 and Sheets held-out prompts and one size field. The
 [exposure record](../evaluation/evidence/held-out-exposure.json) quarantines those
@@ -227,7 +238,7 @@ unverified or unavailable. Local evidence does not establish public release read
 ## Outstanding release evidence
 
 P2 domain acceptance, verified private live fixtures,
-remaining development comparisons and provider-token scaling measurements,
+remaining development comparisons,
 remaining OS-specific and remote lifecycle checks, full release checks and held-out
 evaluation remain open. The [source review aggregate](reference/p3-effective-review-current.json)
 records exact-hash offline approvals for all runtime/build paths; it grants no
@@ -246,7 +257,7 @@ complete goal.
 | Contact bot search | Current-user authorization for `search:bot`, followed by the failed live scenario and bot binding checks. |
 | OS-specific runtime coverage | Linux arm64 runtime suites and platform comparison pass; delivered archive lifecycles pass on arm64 and under amd64/riscv64 translation. Broader amd64/riscv64 runtime suites have not run. Execute the retained Windows behavior checks and native reference capture on an appropriate OS runner or VM; cross-built archives do not substitute. Darwin/amd64 smoke checks already ran under Rosetta. Additional gaps must name the unverified scenario, not require physical hardware absent from PLAN. |
 | Remote release ownership | An owned Next repository/download destination and package identity, then the documented updater identity integration and remote install/update checks. Public signing/notarization and publication retain their separate prerequisites. |
-| Comparative release evidence | Finish the serialized development/scaling comparisons, review their tradeoffs, and perform independently replaced held-out tasks only at the final release gate. |
+| Comparative release evidence | Finish the representative business comparison, review measured tradeoffs including the completed size series, and perform independently replaced held-out tasks only at the final release gate. |
 
 The read-only Windows-environment check found VirtualBox `7.1.6r167084`, but
 `VBoxManage list vms` and `VBoxManage list runningvms` both returned empty lists
