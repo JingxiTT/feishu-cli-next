@@ -66,6 +66,9 @@ func TestFixtureOnlyInterceptsExactIdentityRead(t *testing.T) {
 		{http.MethodPost, "/open-apis/authen/v1/user_info"},
 		{http.MethodGet, "/open-apis/authen/v1/user_info/other"},
 		{http.MethodGet, "/open-apis/authen/v1/user_info?query=business"},
+		{http.MethodPost, "/open-apis/tenant/v2/tenant/query"},
+		{http.MethodGet, "/open-apis/tenant/v2/tenant/query/other"},
+		{http.MethodGet, "/open-apis/tenant/v2/tenant/query?query=business"},
 	} {
 		req, err := http.NewRequest(request.method, base+request.path, nil)
 		if err != nil {
@@ -80,7 +83,18 @@ func TestFixtureOnlyInterceptsExactIdentityRead(t *testing.T) {
 			t.Errorf("business request intercepted: %s %s", request.method, request.path)
 		}
 	}
-	if fixture.IdentityRequests.Load() != 1 || business.Load() != 3 {
+	if fixture.IdentityRequests.Load() != 1 || business.Load() != 6 {
 		t.Fatalf("request counts: identity=%d business=%d", fixture.IdentityRequests.Load(), business.Load())
+	}
+}
+
+func TestFixtureTenantReadIsCountedSeparately(t *testing.T) {
+	fixture := NewFixture(t, nil)
+	result := fixture.Run("api", "GET", "/open-apis/tenant/v2/tenant/query", "--as", "bot")
+	if result.ExitCode != 0 || !strings.Contains(result.Stdout, `"tenant_key":"foundation-fixture-tenant"`) {
+		t.Fatalf("tenant binding response: exit=%d stdout=%s stderr=%s", result.ExitCode, result.Stdout, result.Stderr)
+	}
+	if fixture.IdentityRequests.Load() != 1 || fixture.TenantIdentityRequests.Load() != 1 {
+		t.Fatalf("identity counts: user=%d tenant=%d", fixture.IdentityRequests.Load(), fixture.TenantIdentityRequests.Load())
 	}
 }

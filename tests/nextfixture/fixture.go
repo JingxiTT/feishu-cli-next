@@ -63,11 +63,12 @@ func RunMain(m *testing.M, repoRoot string) int {
 // Handler requests carry the real API paths and sidecar target/identity headers.
 // No request is forwarded to the target named in those headers.
 type Fixture struct {
-	Env              map[string]string
-	ConfigDir        string
-	WorkDir          string
-	IdentityRequests atomic.Int32
-	t                *testing.T
+	Env                    map[string]string
+	ConfigDir              string
+	WorkDir                string
+	IdentityRequests       atomic.Int32
+	TenantIdentityRequests atomic.Int32
+	t                      *testing.T
 }
 
 // NewFixture creates a private working/config directory pair and local backend.
@@ -92,10 +93,18 @@ func NewFixture(t *testing.T, handler http.Handler) *Fixture {
 			_, _ = io.WriteString(w, `{"code":0,"data":{"open_id":"ou_foundation_fixture","name":"Synthetic Fixture","tenant_key":"foundation-fixture-tenant"}}`)
 			return
 		}
+		if r.Method == http.MethodGet && r.URL.Path == "/open-apis/tenant/v2/tenant/query" && r.URL.RawQuery == "" {
+			fixture.TenantIdentityRequests.Add(1)
+			w.Header().Set("Content-Type", "application/json")
+			_, _ = io.WriteString(w, `{"code":0,"data":{"tenant":{"tenant_key":"foundation-fixture-tenant"}}}`)
+			return
+		}
 		handler.ServeHTTP(w, r)
 	}))
 	t.Cleanup(server.Close)
-	t.Cleanup(func() { t.Logf("fixture identity requests: %d", fixture.IdentityRequests.Load()) })
+	t.Cleanup(func() {
+		t.Logf("fixture identity requests: user=%d tenant=%d", fixture.IdentityRequests.Load(), fixture.TenantIdentityRequests.Load())
+	})
 	fixture.Env = map[string]string{
 		"LARKSUITE_CLI_CONFIG_DIR": config,
 		"LARKSUITE_CLI_AUTH_PROXY": server.URL,
