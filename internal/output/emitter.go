@@ -98,6 +98,9 @@ func NewEmitter(config EmitterConfig) *Emitter {
 // primitives. JSON and jq use the standard envelope; record formats keep their
 // stdout payload free of envelope metadata.
 func (e *Emitter) Success(data interface{}, opts EmitOptions) error {
+	if err := e.validateAgentMode(opts.Format, opts.JQ, opts.Raw, false); err != nil {
+		return err
+	}
 	if err := e.requireOutput(); err != nil {
 		return err
 	}
@@ -132,6 +135,9 @@ func (e *Emitter) Success(data interface{}, opts EmitOptions) error {
 // caller owns the non-zero exit signal, keeping the Emitter free of exit
 // semantics.
 func (e *Emitter) PartialFailure(data interface{}, opts EmitOptions) error {
+	if err := e.validateAgentMode(opts.Format, opts.JQ, opts.Raw, false); err != nil {
+		return err
+	}
 	if err := e.requireOutput(); err != nil {
 		return err
 	}
@@ -146,6 +152,9 @@ func (e *Emitter) PartialFailure(data interface{}, opts EmitOptions) error {
 // jq from the type makes "jq requires aggregated output" a compile-time fact
 // instead of a runtime rejection.
 func (e *Emitter) StreamPage(data interface{}, opts StreamOptions) error {
+	if err := e.validateAgentMode(opts.Format, "", false, true); err != nil {
+		return err
+	}
 	if err := e.requireOutput(); err != nil {
 		return err
 	}
@@ -206,6 +215,21 @@ func (e *Emitter) emitEnvelope(data interface{}, ok bool, opts EmitOptions) erro
 		env.ContentSafetyAlert = scanResult.Alert
 	}
 
+	var renderedEnv interface{} = env
+	// Raw and jq encode outside WriteJSON. Carry the same honest mutation
+	// outcome while retaining their encoding and filtering contracts.
+	if opts.Raw || opts.JQ != "" {
+		if mutation := agentOptions(e.out).mutation(); mutation != nil {
+			if mutation.unsuccessful() {
+				env.OK = false
+			}
+			renderedEnv = struct {
+				Envelope
+				Mutation *mutationResult `json:"mutation"`
+			}{env, mutation}
+		}
+	}
+
 	if opts.JQ != "" {
 		if scanResult.Alert != nil && opts.JQSafetyWarning {
 			if err := WriteAlertWarning(e.errOut, scanResult.Alert); err != nil {
@@ -219,14 +243,14 @@ func (e *Emitter) emitEnvelope(data interface{}, ok bool, opts EmitOptions) erro
 		var buf bytes.Buffer
 		var jqErr error
 		if opts.Raw {
-			jqErr = JqFilterRaw(&buf, env, opts.JQ)
+			jqErr = JqFilterRaw(&buf, renderedEnv, opts.JQ)
 		} else {
-			jqErr = JqFilter(&buf, env, opts.JQ)
+			jqErr = JqFilter(&buf, renderedEnv, opts.JQ)
 		}
 		if jqErr != nil {
 			return jqErr
 		}
-		if _, err := io.Copy(e.out, &buf); err != nil {
+		if _, err := io.Copy(agentDestination(e.out), &buf); err != nil {
 			return wrapOutputError("write", err)
 		}
 		return nil
@@ -237,7 +261,7 @@ func (e *Emitter) emitEnvelope(data interface{}, ok bool, opts EmitOptions) erro
 			enc := json.NewEncoder(w)
 			enc.SetEscapeHTML(false)
 			enc.SetIndent("", "  ")
-			return enc.Encode(env)
+			return enc.Encode(renderedEnv)
 		}
 		return WriteJSON(w, env)
 	})
@@ -329,16 +353,19 @@ func writePaginationSummary(w io.Writer, meta *Meta) error {
 
 func (e *Emitter) emit(render func(io.Writer) error) error {
 	var buf bytes.Buffer
-	if err := render(&buf); err != nil {
+	if err := render(WithAgentOptions(&buf, agentOptions(e.out))); err != nil {
 		return wrapOutputError("render", err)
 	}
-	if _, err := io.Copy(e.out, &buf); err != nil {
+	if _, err := io.Copy(agentDestination(e.out), &buf); err != nil {
 		return wrapOutputError("write", err)
 	}
 	return nil
 }
 
 func wrapOutputError(op string, err error) error {
+	if _, typed := errs.ProblemOf(err); typed {
+		return err
+	}
 	return errs.NewInternalError(errs.SubtypeUnknown, "failed to %s command output", op).WithCause(err)
 }
 

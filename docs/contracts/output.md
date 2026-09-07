@@ -1,0 +1,96 @@
+# Agent JSON and result artifacts
+
+Owner: `internal/output` (`AgentOptions`, `WriteJSON`, `Emitter`). Root command
+registration opts the next distribution into this contract. Existing SDK callers
+retain legacy formatting unless they explicitly wrap their invocation's writer.
+
+## JSON
+
+JSON results are compact by default without dropping any fields. Success remains
+on stdout; typed errors remain on stderr with the existing error category and
+exit code. `--result-detail` indents the full JSON result. It cannot be combined
+with `--result-fields`. Existing domain flags named `--fields` and `--detail`
+keep their original semantics.
+
+`--result-fields title,owner.name` selects business data fields. Selection applies
+to `data`, or to each item in an array or an `items`, `records`, `rows`, or `files`
+collection. Dotted paths preserve nested structure; arrays need no `[]` syntax.
+Names may contain letters, digits, `_`, or `-`; wildcard, jq, and bracket syntax
+are rejected before execution. Missing fields are omitted, not manufactured as
+null. A missing field cannot be schema-validated generically before a response.
+
+The complete envelope, resource IDs (`id`, `guid`, `token`, `*_id`, `*_ids`, `*_token`),
+URLs, types, identity, status, pagination, counts, errors, warnings, recovery,
+notices and safety alerts remain visible. Results containing failed, partial,
+unknown or unsupported outcomes retain their full data. This conservative shared
+projection must not replace a domain-specific schema that has more outcome fields.
+Projection never mutates caller data. JSON numbers use their serialized decimal
+representation without a float64 conversion; null, empty string, omitted fields,
+Unicode and leading-zero strings remain distinct. Numeric precision already lost
+by an upstream decoder cannot be recovered here.
+
+Projection and result artifacts require non-streaming JSON without `--raw` or
+`--jq`. Explicit CSV, NDJSON, table and pretty renderers retain their contracts.
+Default agent formatting does not intercept arbitrary raw, jq or stream bytes.
+The command validates flag compatibility before execution. The emitter checks
+again for embedded callers. `AgentOptions.Finish()` catches ignored legacy output
+errors and commands that do not produce a structured result; arbitrary text
+writes with projection/artifact controls are rejected rather than silently ignored.
+
+For tracked mutations, the envelope includes `mutation.outcome`, receipt IDs and
+`persistence_failed` when applicable. Unknown, partial, confirmed-unapplied and
+receipt-persistence failures force `ok:false` even if a legacy command interpreted
+the transport response as success. Raw and jq envelope rendering receives this
+same status; jq remains an explicitly requested filter. Exit status is owned by
+the receipt/command layer. Read-only output has no mutation field.
+
+## Artifacts
+
+`--save-result PATH` is available for declared business reads. It saves the full
+JSON result regardless of `--result-fields`. Authentication/lifecycle results and
+mutations cannot use it. This avoids confusing a remote mutation with failure to
+save its local output. Known authentication credential fields in result data are
+also rejected; resource and pagination tokens remain supported.
+
+The invocation's `FileIO` provider must implement `fileio.ExclusiveFileIO`.
+Preflight validates the path and refuses an existing destination. Commit is
+atomic and exclusive, including a target created concurrently after validation.
+The local provider creates parent directories with mode 0700 and files with mode
+0600. The host provider's path policy remains authoritative; no direct filesystem
+fallback bypasses it. Provider failures retain their cause and typed error.
+
+The file is a versioned container, not a lossy projection:
+
+```json
+{"schema":"feishu-cli-next/result/v1","binding":{"environment":"feishu","app_id":"cli_example","identity":"bot"},"result":{"ok":true,"identity":"bot","data":{"items":[{"id":"1","title":"Example"}],"has_more":false}}}
+```
+
+Stdout keeps envelope fields, relevant resource/continuation facts, and an
+`artifact` object with `schema`, canonical host `ref`, `bytes`, `binding`, and
+`count`/`complete` only when known. Count comes from the returned collection or
+explicit result metadata; it is not assumed to equal the entire backend resource.
+Completeness comes from explicit pagination metadata, `has_more`, or `complete`;
+serializing a response to EOF never implies completeness. Continuations stay
+available in result metadata or retained data fields and in the full artifact.
+Failed/partial/unknown results keep their full decision-critical data on stdout
+as well, even when this makes the reference response longer.
+
+Binding records environment, app ID, effective identity, optional profile and
+resolved user ID. User identity requires a user ID. Binding contains no token or
+secret; no tenant ID is inferred. This is app/account binding, not verified tenant
+binding. Domain artifact consumers must validate schema and current binding
+before reusing data; the generic result container is not an import command.
+
+Artifacts remain until the user removes their chosen files; there is no implicit
+cleanup or overwrite. Large result payloads stay out of model context, but the
+current shared JSON emitter still serializes an already materialized result in
+process memory. This is not a bounded-memory backend streaming export, and the
+artifact is not a proof of snapshot-consistent pagination.
+
+## Verification
+
+Focused tests: `go test ./internal/output`.
+Process scenarios: `tests/next_foundation/output_e2e_test.go`, run by
+`python3 scripts/next_test.py --section foundation --suite e2e` at the completed
+foundation gate. The fixture uses the real authsidecar build against a local
+synthetic backend. Offline tests do not verify live pagination or tenant binding.
