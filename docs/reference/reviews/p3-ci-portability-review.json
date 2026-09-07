@@ -1,0 +1,309 @@
+{
+  "schema_version": 1,
+  "reviewer": "/root/foundation_skill",
+  "report_kind": "hash_bound_ci_portability_review",
+  "verdict": "changes_requested",
+  "review_revision": "5e461776592b62a71b0fbae59d29893592425b0a",
+  "scope": {
+    "assignment_ids": [
+      "ci_portability_follow_up"
+    ],
+    "path_count": 13,
+    "implementation_commits": [
+      "36326dc144d8aa5d072b6a7fb5fb371a0ac6bd64",
+      "ba2af28a39281e3d3229ac6200b5d6f52ccb12dd",
+      "d698e73e123a30138745da25be19ddf9f9f330fb",
+      "5e461776592b62a71b0fbae59d29893592425b0a"
+    ],
+    "method": "Independent exact-commit diffs and cohesive source/test reading; seven focused static/isolation regressions plus bounded synthetic locale and descendant-pipe probes. No product or test changes.",
+    "independence": "Reviewer did not author any of these four implementation commits. Prior skill/startup work by this reviewer is outside this assignment.",
+    "product_files_modified": false
+  },
+  "assignments": [
+    {
+      "assignment_id": "ci_portability_follow_up",
+      "verdict": "changes_requested",
+      "paths": [
+        {
+          "path": "tests/cli_e2e/core.go",
+          "review_revision": "36326dc144d8aa5d072b6a7fb5fb371a0ac6bd64",
+          "review_sha256": "23ea5ee0ebdfc155d0e669e35b160630134b52a27f27129925b4a5a416620c30",
+          "verdict": "approved_offline",
+          "review_scope": "Native executable path validation and .exe project-binary resolution; previous POSIX resolution retained.",
+          "findings": [],
+          "execution_binding": "Exact committed source inspected. Only explicitly listed focused tests/probes below were independently executed; no native CI execution attributed."
+        },
+        {
+          "path": "tests/cli_e2e/core_test.go",
+          "review_revision": "36326dc144d8aa5d072b6a7fb5fb371a0ac6bd64",
+          "review_sha256": "788d93806d7643c9bdd8c5f01c920c1cda3b08f2ff5068a31d8e051b136f37a6",
+          "verdict": "approved_offline",
+          "review_scope": "Native test-binary fake process replaces shell fixtures; argument/stdin/auth/error/retry semantics preserved; synthetic file bytes are used only by path checks.",
+          "findings": [],
+          "execution_binding": "Exact committed source inspected. Only explicitly listed focused tests/probes below were independently executed; no native CI execution attributed."
+        },
+        {
+          "path": "tests/nextfixture/fixture.go",
+          "review_revision": "36326dc144d8aa5d072b6a7fb5fb371a0ac6bd64",
+          "review_sha256": "2d8de954e461ccf68b736d24fa6533cdfa9ffcf452bfcd5e3aa858d66bf7b094",
+          "verdict": "approved_offline",
+          "review_scope": "Authsidecar fixture binary uses .exe on Windows; existing isolated HOME/config requirement and loopback fixture behavior preserved.",
+          "findings": [],
+          "execution_binding": "Exact committed source inspected. Only explicitly listed focused tests/probes below were independently executed; no native CI execution attributed."
+        },
+        {
+          "path": "tests/plugin_e2e/harness.go",
+          "review_revision": "36326dc144d8aa5d072b6a7fb5fb371a0ac6bd64",
+          "review_sha256": "00eea4dda34b05fa993d01cec8c8950c1ea251500a73f7b81235473699e94bac",
+          "verdict": "approved_offline",
+          "review_scope": "Committed git archive, quoted slash-normalized Go module replacement and native .exe output; external hosts inherit the isolated runner environment.",
+          "findings": [],
+          "execution_binding": "Exact committed source inspected. Only explicitly listed focused tests/probes below were independently executed; no native CI execution attributed."
+        },
+        {
+          "path": ".github/workflows/next-offline.yml",
+          "review_revision": "ba2af28a39281e3d3229ac6200b5d6f52ccb12dd",
+          "review_sha256": "be90e82e603065ff7736df3bd20b201eb15cb11f8a304b67edde6fa47a265736",
+          "verdict": "changes_requested",
+          "review_scope": "Pinned read-only native three-OS matrix; prerequisite outcomes, nonzero step failures, always-uploaded evidence, public dependency preload and four isolated gates. Dependent runner findings remain open.",
+          "findings": [
+            "CI1",
+            "CI2",
+            "CI3"
+          ],
+          "execution_binding": "Exact committed source inspected. Only explicitly listed focused tests/probes below were independently executed; no native CI execution attributed."
+        },
+        {
+          "path": "Makefile",
+          "review_revision": "ba2af28a39281e3d3229ac6200b5d6f52ccb12dd",
+          "review_sha256": "fd8cd713224a41a7127352fd420576de1c32e53d833fc9b33f946aa63f57f9d2",
+          "verdict": "approved_offline",
+          "review_scope": "Latest committed Makefile; existing checks retained and isolated Python/cross-domain targets added. New all-offline matrix selects packages through scripts/next_test.py.",
+          "findings": [],
+          "execution_binding": "Exact committed source inspected. Only explicitly listed focused tests/probes below were independently executed; no native CI execution attributed."
+        },
+        {
+          "path": "scripts/next_test.py",
+          "review_revision": "ba2af28a39281e3d3229ac6200b5d6f52ccb12dd",
+          "review_sha256": "6bd3343aa7929cdf09d09c5058dcbb9f1176b22437b877214dc394a0762dd914",
+          "verdict": "changes_requested",
+          "review_scope": "Read complete environment allowlist, command selection, process timeout/reporting, offline selection and live block. Three reproduced/confirmed findings below.",
+          "findings": [
+            "CI1",
+            "CI2",
+            "CI3"
+          ],
+          "execution_binding": "Exact committed source inspected. Only explicitly listed focused tests/probes below were independently executed; no native CI execution attributed."
+        },
+        {
+          "path": "scripts/next_test_test.py",
+          "review_revision": "ba2af28a39281e3d3229ac6200b5d6f52ccb12dd",
+          "review_sha256": "c444a6a53af028b7354a52d2dc13c7f56ab99c320768163bb95b09d43a718bf3",
+          "verdict": "approved_offline",
+          "review_scope": "Read complete runner regressions; independently executed four bounded isolation/failure/count tests. Missing root-package, non-UTF-8 and descendant-timeout cases are identified below.",
+          "findings": [],
+          "execution_binding": "Exact committed source inspected. Only explicitly listed focused tests/probes below were independently executed; no native CI execution attributed."
+        },
+        {
+          "path": "scripts/next_workflow_test.py",
+          "review_revision": "ba2af28a39281e3d3229ac6200b5d6f52ccb12dd",
+          "review_sha256": "30d8aad9b9481f081a527a03fe7b1caa7e4dcc4a96035485688bbbc43e342ed9",
+          "verdict": "approved_offline",
+          "review_scope": "Read and independently execute all three static workflow/Makefile checks from an exact-commit temporary tree.",
+          "findings": [],
+          "execution_binding": "Exact committed source inspected. Only explicitly listed focused tests/probes below were independently executed; no native CI execution attributed."
+        },
+        {
+          "path": "tests/next_foundation/README.md",
+          "review_revision": "ba2af28a39281e3d3229ac6200b5d6f52ccb12dd",
+          "review_sha256": "e5f9d12f1d249ac1a5b7966f6a9805dc50a57cead6e345c1c2e3d5e2dfa45fca",
+          "verdict": "approved_offline",
+          "review_scope": "Offline environment-isolation boundary, inherited deterministic subset, live blocking, per-platform execution and skip limits are explicit.",
+          "findings": [],
+          "execution_binding": "Exact committed source inspected. Only explicitly listed focused tests/probes below were independently executed; no native CI execution attributed."
+        },
+        {
+          "path": "tests/next_sections/extensions/host_e2e_test.go",
+          "review_revision": "d698e73e123a30138745da25be19ddf9f9f330fb",
+          "review_sha256": "2b3ba0a7b1db177ab276e2ef0966b301441a957ec367967be1ecc0b42429e96c",
+          "verdict": "approved_offline",
+          "review_scope": "External host replacement path quoted and slash-normalized; .exe output on Windows. Reviewed surrounding build, process and contract assertions; no native execution claimed.",
+          "findings": [],
+          "execution_binding": "Exact committed source inspected. Only explicitly listed focused tests/probes below were independently executed; no native CI execution attributed."
+        },
+        {
+          "path": "tests/next_sections/packaging/packaging_e2e_test.go",
+          "review_revision": "5e461776592b62a71b0fbae59d29893592425b0a",
+          "review_sha256": "3bb28e4353cc11cfc720f743671e9c6640736feb25c0c08e5509cf8179a371f9",
+          "verdict": "approved_offline",
+          "review_scope": "Windows selects python, POSIX python3; failed nested Python suite fails Go wrapper.",
+          "findings": [],
+          "execution_binding": "Exact committed source inspected. Only explicitly listed focused tests/probes below were independently executed; no native CI execution attributed."
+        },
+        {
+          "path": "tests/next_sections/packaging/packaging_test.py",
+          "review_revision": "5e461776592b62a71b0fbae59d29893592425b0a",
+          "review_sha256": "f64abb3bce4ce9c00c040b480d775fb6f442ba42a72a787a6583bd7b84979b4c",
+          "verdict": "approved_offline",
+          "review_scope": "Resolve native executable launchers; reuse sys.executable; release-block assertion runs bash from repository cwd. Local artifacts and offline npm lifecycle remain synthetic; Windows symlink skip explicit. Locale-default text handling depends on runner UTF-8 fix.",
+          "findings": [],
+          "execution_binding": "Exact committed source inspected. Only explicitly listed focused tests/probes below were independently executed; no native CI execution attributed."
+        }
+      ],
+      "findings": [
+        {
+          "id": "CI1",
+          "priority": "P2",
+          "title": "Native offline unit selection omits the root package",
+          "status": "open",
+          "path": "scripts/next_test.py",
+          "line": 97,
+          "related_paths": [
+            ".github/workflows/next-offline.yml"
+          ],
+          "evidence": "commands_for(\"all\", \"all\") selects cmd/internal/shortcuts/extension/events/errs but never \".\". Root package tests agent_content_embed_test.go, content_embed_affordance_test.go, lark_suite_assets_test.go and main_noauthsidecar_test.go are committed and not selected by the later E2E package commands.",
+          "impact": "The new Linux/macOS/Windows gate can pass without running portable root embedding and startup-guard regressions. The inherited Ubuntu coverage job does select root; this finding concerns completeness of the new native matrix, not total absence from CI.",
+          "requested_change": "Include the root package in all-offline unit selection and add a command-selection regression."
+        },
+        {
+          "id": "CI2",
+          "priority": "P2",
+          "title": "Locale-default decoding breaks UTF-8 fixture output and selection evidence",
+          "status": "open",
+          "path": "scripts/next_test.py",
+          "line": 156,
+          "related_paths": [
+            "scripts/next_test.py:146",
+            ".github/workflows/next-offline.yml",
+            "tests/next_sections/packaging/packaging_test.py"
+          ],
+          "evidence": "Exact ba2af28 run_command with locale.getencoding mocked to cp1252 returns mojibake for UTF-8 正文 and raises uncaught UnicodeDecodeError for UTF-8 不. Twenty committed inherited Go test source files also fail cp1252 decoding; selection_evidence uses Path.read_text() without encoding. Isolated environment neither preserves nor establishes Python UTF-8 configuration.",
+          "impact": "A non-UTF-8 Python 3.12 locale, relevant to the newly selected Windows runner, can corrupt test data or abort before the JSON report is written. This is a reproduced locale-condition bug; no claim is made that a native GitHub Windows run has been observed failing.",
+          "requested_change": "Establish deterministic UTF-8 for the runner and isolated Python children, and explicitly decode UTF-8 process/source/report content where needed. Test a non-UTF-8 parent locale and actual Unicode fixture output."
+        },
+        {
+          "id": "CI3",
+          "priority": "P2",
+          "title": "Non-POSIX timeout leaves descendants holding output pipes",
+          "status": "open",
+          "path": "scripts/next_test.py",
+          "line": 169,
+          "related_paths": [
+            "scripts/next_test.py:170"
+          ],
+          "evidence": "With exact ba2af28 runner and only its os.name branch simulated as nt, a synthetic parent spawned a grandchild holding stdout/stderr for 0.7s. A 0.05s timeout returned after 0.742s: process.kill() terminated only the parent, then communicate() waited without a timeout for descendant-held pipes.",
+          "impact": "On the Windows branch, a stuck go-test or Python descendant can defeat the per-command deadline and prevent report publication until the outer CI job timeout. The simulation demonstrates the process/pipe failure mode on macOS; it is not native Windows cleanup evidence.",
+          "requested_change": "Use bounded native process-tree termination and pipe cleanup for Windows timeouts, with a descendant-holding-pipes regression and preserved timeout exit 124."
+        }
+      ]
+    }
+  ],
+  "positive_findings": [
+    "All four isolated gates are wired to every matrix OS, with fail-fast disabled and no continue-on-error. Actual nonzero command/step outcomes fail the gate; later stages and artifact upload use explicit always() conditions.",
+    "Checkout credentials are not persisted; workflow has read-only contents permission and no secrets or live selectors. Public Go dependencies are preloaded before suites disable downloads.",
+    "Runner allowlist replaces HOME/config/temp state, strips credential/test/loader settings, disables remote metadata/notifiers and Go saved environment/downloads. Four independently rerun focused tests verify credential stripping, loopback proxy targeting, nonzero child exit and separate skip/failure counts.",
+    "Inherited domain selection and omitted live tests are documented and included in reports. Platform skips retain reasons; documentation distinguishes workflow definition from a completed native execution.",
+    "Portability edits retain real CLI/customer-host builds and real local npm lifecycle. The native fake process replaces only the old shell-based test fixture; no real domain test is replaced by a canned success."
+  ],
+  "independent_execution": [
+    {
+      "name": "committed_static_workflow_checks",
+      "source_revision": "ba2af28a39281e3d3229ac6200b5d6f52ccb12dd",
+      "sources": [
+        {
+          "path": "scripts/next_workflow_test.py",
+          "source_revision": "ba2af28a39281e3d3229ac6200b5d6f52ccb12dd",
+          "sha256": "30d8aad9b9481f081a527a03fe7b1caa7e4dcc4a96035485688bbbc43e342ed9"
+        },
+        {
+          "path": ".github/workflows/next-offline.yml",
+          "source_revision": "ba2af28a39281e3d3229ac6200b5d6f52ccb12dd",
+          "sha256": "be90e82e603065ff7736df3bd20b201eb15cb11f8a304b67edde6fa47a265736"
+        },
+        {
+          "path": "Makefile",
+          "source_revision": "ba2af28a39281e3d3229ac6200b5d6f52ccb12dd",
+          "sha256": "fd8cd713224a41a7127352fd420576de1c32e53d833fc9b33f946aa63f57f9d2"
+        }
+      ],
+      "method": "Copied exact git-show bytes into a temporary tree and ran python -m unittest discover -s scripts -p next_workflow_test.py -v.",
+      "pass": 3,
+      "fail": 0,
+      "skip": 0,
+      "exit_code": 0
+    },
+    {
+      "name": "focused_runner_isolation_and_failure_checks",
+      "source_revision": "ba2af28a39281e3d3229ac6200b5d6f52ccb12dd",
+      "sources": [
+        {
+          "path": "scripts/next_test.py",
+          "source_revision": "ba2af28a39281e3d3229ac6200b5d6f52ccb12dd",
+          "sha256": "6bd3343aa7929cdf09d09c5058dcbb9f1176b22437b877214dc394a0762dd914"
+        },
+        {
+          "path": "scripts/next_test_test.py",
+          "source_revision": "ba2af28a39281e3d3229ac6200b5d6f52ccb12dd",
+          "sha256": "c444a6a53af028b7354a52d2dc13c7f56ab99c320768163bb95b09d43a718bf3"
+        }
+      ],
+      "method": "Compiled exact git-show module bytes and selected only the four named tests; synthetic child environments and a local non-listening proxy, no CLI or Go suites.",
+      "tests": [
+        "test_child_cannot_inherit_credentials_or_state",
+        "test_proxy_blocks_external_http_without_contacting_target",
+        "test_exit_and_go_test_skip_evidence",
+        "test_python_unittest_counts_keep_skips_and_failures_separate"
+      ],
+      "pass": 4,
+      "fail": 0,
+      "skip": 0,
+      "exit_code": 0
+    },
+    {
+      "name": "locale_condition_probe",
+      "source_revision": "ba2af28a39281e3d3229ac6200b5d6f52ccb12dd",
+      "method": "Compile exact scripts/next_test.py blob; call run_command for synthetic sys.stdout.buffer.write UTF-8 bytes with unittest.mock.patch.object(locale, \"getencoding\", return_value=\"cp1252\").",
+      "utf8_hex_mojibake": "e6ada3e69687",
+      "expected": "正文",
+      "actual": "æ­£æ–‡",
+      "status_returned": "pass",
+      "utf8_hex_exception": "e4b88d",
+      "exception": "UnicodeDecodeError: cp1252 cannot decode byte 0x8d at position 2",
+      "committed_source_read_probe": {
+        "revision": "ba2af28a39281e3d3229ac6200b5d6f52ccb12dd",
+        "method": "Decode committed tests/cli_e2e/**/*_test.go blobs with cp1252; no source execution.",
+        "unreadable_files": 20,
+        "examples": [
+          {
+            "path": "tests/cli_e2e/apps/apps_db_env_create_dryrun_test.go",
+            "byte_offset": 369,
+            "byte": "0x8f"
+          },
+          {
+            "path": "tests/cli_e2e/apps/apps_db_execute_dryrun_test.go",
+            "byte_offset": 312,
+            "byte": "0x8d"
+          }
+        ]
+      }
+    },
+    {
+      "name": "nonposix_descendant_pipe_probe",
+      "source_revision": "ba2af28a39281e3d3229ac6200b5d6f52ccb12dd",
+      "method": "Replace reviewed module os binding only with SimpleNamespace(name=\"nt\") on macOS, then run synthetic Python parent that starts a 0.7s sleeping grandchild with inherited pipes and sleeps itself. All processes finish within one second.",
+      "configured_timeout_seconds": 0.05,
+      "observed_duration_seconds": 0.742,
+      "returned_status": "timeout",
+      "returned_exit_code": 124,
+      "native_windows_execution": false
+    }
+  ],
+  "limitations": [
+    "No broad unit/E2E suite, native GitHub workflow or remote/live request was run by this review. Native Linux, Windows and macOS CI success remain unverified until actual job artifacts exist.",
+    "The locale and non-POSIX timeout probes exercise exact committed runner logic with controlled inputs on Darwin arm64 / Python 3.14.6. Simulated conditions are labeled; they are not native Windows evidence.",
+    "Environment isolation is not an OS network sandbox. Shared dependency caches/tool locations and custom test transports remain an explicit boundary; no stronger guarantee is claimed.",
+    "The inherited Ubuntu coverage job includes root package tests; the new native offline matrix does not at the reviewed hash.",
+    "Seven focused tests pass despite the three findings. Static string checks cannot establish successful native execution. Nested Go/Python reports can contain parent/subtest events; counts are not a distinct business-capability count.",
+    "Later fixes, uncommitted source edits, live APIs, real model comparisons, held-out trials, signing and release acceptance are outside these reviewed hashes. Findings require separately hash-bound closure."
+  ]
+}
