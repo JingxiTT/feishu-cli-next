@@ -109,6 +109,9 @@ func NewDefault(streams *IOStreams, inv InvocationContext) *Factory {
 // other credential-bearing request bodies from being replayed to another
 // origin. HTTPS requests can never be downgraded to HTTP.
 func safeRedirectPolicy(req *http.Request, via []*http.Request) error {
+	if len(via) > 0 && isDriveImportStatusRequest(via[0]) {
+		return http.ErrUseLastResponse
+	}
 	if len(via) >= 10 {
 		return errs.NewNetworkError(errs.SubtypeNetworkTransport, "too many redirects")
 	}

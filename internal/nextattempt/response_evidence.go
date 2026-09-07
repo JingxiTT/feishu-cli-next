@@ -24,7 +24,13 @@ func classifyKnownResponse(r *Receipt, req *http.Request, data json.RawMessage, 
 		}
 		return unknown("mindnote_node_effects_require_reconciliation")
 	}
-	if requestMatches(req, "POST", "/open-apis/slides_ai/v1/xml_presentations/{presentation}/history/revert") || requestMatches(req, "POST", "/open-apis/drive/v1/import_tasks") {
+	if requestMatches(req, "POST", "/open-apis/drive/v1/import_tasks") {
+		if journal.captureDriveImport(*r, req, data) {
+			return unknown("drive_import_task_pending")
+		}
+		return unknown("async_task_requires_reconciliation")
+	}
+	if requestMatches(req, "POST", "/open-apis/slides_ai/v1/xml_presentations/{presentation}/history/revert") {
 		return unknown("async_task_requires_reconciliation")
 	}
 	if requestMatches(req, "POST", "/open-apis/sheet_ai/v2/spreadsheets/{spreadsheet}/tools/invoke_write") {

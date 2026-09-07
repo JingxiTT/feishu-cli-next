@@ -92,7 +92,8 @@ not generalize field names to unrelated endpoints.
   read later succeeds; generic receipt reconciliation is not implemented.
 - Slides native replacement's failed-part index/reason stays unknown; advisory
   issues alone do not turn a successful response into a failure. Slides history
-  reverts and Drive import task acknowledgements also remain unknown.
+  reverts also remain unknown. Drive import acknowledgements remain unknown until
+  the narrow completion check below succeeds.
 - Sheets invoke-write decodes its nested output only at the known RPC endpoint.
   Malformed/empty output or nested failures remain unknown. Batch-update tool
   responses and history-revert acknowledgements remain unknown until complete
@@ -115,6 +116,29 @@ batches stay applied. This synchronized memory holds at most 10,000 IDs and
 4 MiB of ID/scope strings, matching the import's row ceiling. Exhausted evidence
 capacity remains unknown instead of evicting earlier IDs. These IDs and paths
 are never persisted in receipts; this does not detect reuse across invocations.
+
+Native Drive imports can reconcile only the exact import created in the current
+invocation. The journal retains the ticket, original source/type/destination,
+origin and effective identity binding in memory; none of these content identifiers
+are added to the receipt file. Only a captured native acknowledgement marked
+`drive_import_task_pending` qualifies. The domain polls the exact ticket with
+redirects disabled and requires HTTP 200. Completion requires an explicit integer
+`job_status:0`, a nonempty token, the requested type and any specified existing
+target token. Optional echoed source/destination/ticket fields must match when
+present; malformed, null or contradictory proof leaves the receipt unknown.
+A standalone status read, arbitrary raw GET, HTTP 202, different account or
+unrelated async operation cannot upgrade a receipt.
+
+Matching completion atomically saves `confirmed_applied` with
+`drive_import_task_completed` before updating the invocation summary. Missing,
+corrupt or locked state and save failures retain in-memory unknown with
+`persistence_failed:true`, exit 22 and no replay. A failure syncing the directory
+after replacement can leave the new applied file visible, while the invocation
+still reports failed persistence; it must not claim durable success. The bounded
+capture holds at most 128 imports and 4 MiB of source/ticket/origin strings, with
+no eviction. Exhaustion and duplicate tickets remain unknown. Dependent Drive
+permission changes separately require the same strict completion proof, including
+in compatibility mode, and stop when receipt persistence fails.
 
 ## Classification and storage boundary
 

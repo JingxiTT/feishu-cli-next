@@ -30,6 +30,8 @@ type Journal struct {
 	baseCreated     map[baseCreateScope]map[string]struct{}
 	baseCreatedIDs  int
 	baseCreatedSize int
+	driveImports    map[string]driveImportAttempt
+	driveImportSize int
 }
 
 func (j *Journal) Add(r Receipt) {

@@ -50,37 +50,39 @@ func (f *Factory) agentAttemptTransport(base http.RoundTripper) http.RoundTrippe
 			}
 			return true
 		},
-		Resolve: func(req *http.Request) (nextattempt.Binding, error) {
-			cfg, err := f.Config()
+		Resolve: f.resolveAgentAttemptBinding,
+	}
+}
+
+func (f *Factory) resolveAgentAttemptBinding(req *http.Request) (nextattempt.Binding, error) {
+	cfg, err := f.Config()
+	if err != nil {
+		return nextattempt.Binding{}, err
+	}
+	identity := f.ResolvedIdentity
+	if requestIdentity, ok := core.RequestIdentityFromContext(req.Context()); ok {
+		identity = requestIdentity
+	}
+	if identity != core.AsUser && identity != core.AsBot {
+		return nextattempt.Binding{}, errs.NewValidationError(errs.SubtypeFailedPrecondition, "mutation identity has not been resolved")
+	}
+	binding := nextattempt.Binding{Environment: core.ResolveEndpoints(cfg.Brand).Open, Account: cfg.ProfileName, AppID: cfg.AppID, Identity: string(identity)}
+	if identity == core.AsUser {
+		binding.UserID = cfg.UserOpenId
+		if f.Credential != nil {
+			resolved, err := f.Credential.ResolveUserBinding(req.Context())
 			if err != nil {
 				return nextattempt.Binding{}, err
 			}
-			identity := f.ResolvedIdentity
-			if requestIdentity, ok := core.RequestIdentityFromContext(req.Context()); ok {
-				identity = requestIdentity
-			}
-			if identity != core.AsUser && identity != core.AsBot {
-				return nextattempt.Binding{}, errs.NewValidationError(errs.SubtypeFailedPrecondition, "mutation identity has not been resolved")
-			}
-			binding := nextattempt.Binding{Environment: core.ResolveEndpoints(cfg.Brand).Open, Account: cfg.ProfileName, AppID: cfg.AppID, Identity: string(identity)}
-			if identity == core.AsUser {
-				binding.UserID = cfg.UserOpenId
-				if f.Credential != nil {
-					resolved, err := f.Credential.ResolveUserBinding(req.Context())
-					if err != nil {
-						return nextattempt.Binding{}, err
-					}
-					binding.UserID, binding.TenantKey, binding.UserVerified = resolved.OpenID, resolved.TenantKey, resolved.Verified
-					binding.TenantVerified = resolved.TenantKey != ""
-				}
-				if binding.UserID == "" {
-					return nextattempt.Binding{}, errs.NewValidationError(errs.SubtypeFailedPrecondition, "mutation requires a resolved user identity")
-				}
-			}
-
-			return binding, nil
-		},
+			binding.UserID, binding.TenantKey, binding.UserVerified = resolved.OpenID, resolved.TenantKey, resolved.Verified
+			binding.TenantVerified = resolved.TenantKey != ""
+		}
+		if binding.UserID == "" {
+			return nextattempt.Binding{}, errs.NewValidationError(errs.SubtypeFailedPrecondition, "mutation requires a resolved user identity")
+		}
 	}
+
+	return binding, nil
 }
 
 func isUnifiedOAuthTokenRequest(req *http.Request) bool {
