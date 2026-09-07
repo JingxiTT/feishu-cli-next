@@ -239,6 +239,20 @@ def registration_changes(reference, target, prefix=''):
     return changes
 
 
+def platform_reference(reference_dir, context):
+    """Choose only the three documented platform profiles, never a generic fallback."""
+    goos = context['GOOS']
+    if goos not in ('darwin', 'linux', 'windows') or goos != context['GOHOSTOS']:
+        raise ValueError('capability gate requires matching Go target/host OS: darwin, linux, or windows')
+    profiles_path = reference_dir / 'configured-brand-platforms.json'
+    profile = read(profiles_path)['platforms'][goos]
+    path = reference_dir / profile['reference_file']
+    if digest(path.read_bytes()) != profile['reference_sha256']:
+        raise ValueError('configured platform reference checksum mismatch')
+    return path, {**profile, 'GOOS': goos,
+                  'profiles_sha256': digest(profiles_path.read_bytes())}
+
+
 def capability_gate(report, mapping):
     """Exact interface reconciliation; source review remains independent."""
     failures = []
@@ -430,10 +444,20 @@ def main(argv=None):
             result = freeze(args.reference.resolve(), args.metadata.resolve(), args.out.resolve())
         elif args.action == 'gate':
             reference_dir = args.reference_dir.resolve()
-            result = check(reference_dir, args.target.resolve(), 'next',
-                           reference_dir / 'configured-brand-registrations.json.gz')
-            result['capability_gate'] = capability_gate(result, read(args.mapping))
+            context = build_context()
+            reference_path, profile = platform_reference(reference_dir, context)
+            result = check(reference_dir, args.target.resolve(), 'next', reference_path)
+            if result['build_context'] != context:
+                raise ValueError('Go build context changed during capability collection')
+            result['platform_reference'] = profile
+            mapping = read(args.mapping)
+            # Only the exact reference hash changes by platform. All intentional
+            # interface delta values remain the reviewed, shared mapping.
+            mapping = {**mapping, 'reference_registrations_sha256': profile['reference_sha256']}
+            result['capability_gate'] = capability_gate(result, mapping)
             result['capability_gate']['mapping_sha256'] = digest(args.mapping.read_bytes())
+            result['capability_gate']['reference_provenance'] = profile.get('provenance')
+            result['capability_gate']['native_reference_capture'] = profile.get('native_reference_capture')
             save(args.out, result)
             print(json.dumps({'report': str(args.out), **result['capability_gate']}, sort_keys=True))
             return 0 if result['capability_gate']['status'] == 'pass' else 1

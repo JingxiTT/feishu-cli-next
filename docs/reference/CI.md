@@ -6,7 +6,7 @@ Run the real next-mode command registration guard after the pinned metadata buil
 python3 scripts/next_inventory.py gate --target . --out .tmp/next-capability-gate.json
 ```
 
-The guard exports both configured Feishu and Lark surfaces with the existing temporary-copy exporter and the frozen metadata. It executes no business commands, uses a synthetic environment account, and disables remote metadata and outbound proxy access. No live credentials are needed. The normal Go dependency cache must already be populated.
+The guard exports both configured Feishu and Lark surfaces with the existing temporary-copy exporter and the frozen metadata. It selects an exact reference hash from `configured-brand-platforms.json` for the actual Go target/host OS; only Darwin, Linux, and Windows are supported, and a target/host OS mismatch fails closed. It executes no business commands, uses a synthetic environment account, and disables remote metadata and outbound proxy access. No live credentials are needed. The normal Go dependency cache must already be populated.
 
 Exit 0 means interface reconciliation passed; exit 1 means a capability mismatch; exit 2 means a handled collection or mapping error. With a writable output path, the requested JSON report records these outcomes, including handled exporter errors. Malformed local mapping structures and output-write failures may terminate without that report. Successful collection retains the full original report, every changed reference source hash, and its original `review_required` status. `capability_gate.status` is a separate result. This guard grants no source-semantic, native-platform, model-evaluation, or live verification approval.
 
@@ -38,3 +38,11 @@ uploaded `.tmp/next-ci/` artifact includes `capabilities.json` when the guard
 could write it. The source report's `review_required` status remains unchanged;
 only `capability_gate.status` determines interface reconciliation success.
 A workflow definition is not evidence of a completed native CI run.
+
+## Platform reference boundary
+
+The original configured reference was executed on Darwin. On Linux, its `config keychain-downgrade` risk annotation produced a false mismatch: Darwin registers a supported write operation, while the unchanged `!darwin` file registers an unsupported stub with an empty risk annotation. Both files remain byte-identical to frozen reference `7fd6ef3c07182257ce776cdc5a614e122d5bd4b3`.
+
+`configured-brand-registrations-linux.json.gz` is a separate actual Linux/arm64 reference capture, using the frozen metadata and reference source in the same offline test image as candidate `8ce0688b303eb646e1b79a329002dddcb6403be4`. Its exhaustive difference from the original Darwin reference is exactly those two risk values, one per configured brand. The Linux candidate comparison contains the original 5,742 mapped interface deltas, and the unchanged mapping predicate passes when given the Linux reference's exact hash. See `configured-brand-context-linux.json`, `configured-brand-linux-evidence.json`, and the full `ci-capability-linux-checkpoint.json.gz` report. The original capture, original checkpoint, and all 5,742 intentional mapping rows remain unchanged.
+
+The Windows profile currently reuses the Linux registration baseline based on the same `!darwin` command source. It is explicitly **source-derived; native Windows reference capture is not run**. A Windows candidate passing this guard establishes comparison against that baseline only. Full Windows acceptance still requires an actual Windows reference capture and candidate comparison; neither Linux execution nor shared source proves it. Unknown OSes have no fallback. Target/host OS and architecture are recorded separately in `build_context`; OS matching does not assert physical native architecture.

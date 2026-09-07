@@ -170,6 +170,7 @@ class InventoryTests(unittest.TestCase):
         changes = inventory.registration_changes(before, after, '/feishu')
         report = {'surface': 'next', 'reference_registrations_sha256': 'reference',
                   'metadata_sha256': 'metadata', 'tracked_source_consistent': True,
+                  'build_context': {'GOOS': 'darwin', 'GOHOSTOS': 'darwin'},
                   'counts': {'feishu': {}, 'lark': {}},
                   'reference_presence': {'feishu': inventory.presence(before, after)},
                   'registration_changes': changes, 'status': 'review_required',
@@ -177,6 +178,41 @@ class InventoryTests(unittest.TestCase):
         mapping = {**{key: report[key] for key in ('surface', 'reference_registrations_sha256', 'metadata_sha256')},
                    'candidate_revision': 'reviewed', 'registration_changes': changes}
         return before, after, report, mapping
+
+    def test_platform_reference_selects_only_exact_documented_profiles(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            for name in ('darwin', 'linux'):
+                (root / (name + '.gz')).write_bytes(name.encode())
+            profiles = {name: {'reference_file': ('linux' if name == 'windows' else name) + '.gz',
+                               'reference_sha256': inventory.digest(('linux' if name == 'windows' else name).encode()),
+                               'provenance': 'source-derived' if name == 'windows' else 'actual-capture'}
+                        for name in ('darwin', 'linux', 'windows')}
+            inventory.save(root / 'configured-brand-platforms.json', {'platforms': profiles})
+            for name in profiles:
+                path, profile = inventory.platform_reference(root, {'GOOS': name, 'GOHOSTOS': name})
+                self.assertEqual(path.name, profiles[name]['reference_file'])
+                self.assertEqual(profile['provenance'], profiles[name]['provenance'])
+            for context in ({'GOOS': 'freebsd', 'GOHOSTOS': 'freebsd'}, {'GOOS': 'linux', 'GOHOSTOS': 'darwin'}):
+                with self.assertRaises(ValueError):
+                    inventory.platform_reference(root, context)
+            (root / 'linux.gz').write_bytes(b'changed')
+            with self.assertRaises(ValueError):
+                inventory.platform_reference(root, {'GOOS': 'linux', 'GOHOSTOS': 'linux'})
+
+    def test_matching_non_darwin_reference_removes_only_platform_false_positive(self):
+        before, after, report, mapping = self.gate_fixture()
+        before['commands']['config keychain-downgrade'] = {'risk': 'write', 'flags': {}}
+        after['commands']['config keychain-downgrade'] = {'risk': '', 'flags': {}}
+        report['registration_changes'] = inventory.registration_changes(before, after, '/feishu')
+        self.assertEqual(inventory.capability_gate(report, mapping)['status'], 'fail')
+        # The separately captured !darwin baseline has the same unsupported stub.
+        before['commands']['config keychain-downgrade']['risk'] = ''
+        report['registration_changes'] = inventory.registration_changes(before, after, '/feishu')
+        self.assertEqual(inventory.capability_gate(report, mapping)['status'], 'pass')
+        after['commands']['config keychain-downgrade']['risk'] = 'read'
+        report['registration_changes'] = inventory.registration_changes(before, after, '/feishu')
+        self.assertEqual(inventory.capability_gate(report, mapping)['status'], 'fail')
 
     def test_capability_gate_preserves_separate_source_review(self):
         _, _, report, mapping = self.gate_fixture()
@@ -239,15 +275,17 @@ class InventoryTests(unittest.TestCase):
             mapping_path = Path(temporary) / 'mapping.json'
             _, _, report, mapping = self.gate_fixture()
             inventory.save(mapping_path, mapping)
+            context = report['build_context']
+            profile = {'reference_sha256': mapping['reference_registrations_sha256']}
             for fail in (False, True):
                 report['tracked_source_consistent'] = not fail
-                with mock.patch.object(inventory, 'check', return_value=report), mock.patch('builtins.print'):
+                with mock.patch.object(inventory, 'check', return_value=report), mock.patch.object(inventory, 'build_context', return_value=context), mock.patch.object(inventory, 'platform_reference', return_value=(mapping_path, profile)), mock.patch('builtins.print'):
                     code = inventory.main(['gate', '--mapping', str(mapping_path), '--out', str(output)])
                 self.assertEqual(code, int(fail))
                 saved = inventory.read(output)
                 self.assertEqual(saved['status'], 'review_required')
                 self.assertEqual(saved['capability_gate']['status'], 'fail' if fail else 'pass')
-            with mock.patch.object(inventory, 'check', side_effect=RuntimeError('export failed')), mock.patch('builtins.print'):
+            with mock.patch.object(inventory, 'check', side_effect=RuntimeError('export failed')), mock.patch.object(inventory, 'build_context', return_value=context), mock.patch.object(inventory, 'platform_reference', return_value=(mapping_path, profile)), mock.patch('builtins.print'):
                 code = inventory.main(['gate', '--mapping', str(mapping_path), '--out', str(output)])
             self.assertEqual(code, 2)
             self.assertEqual(inventory.read(output), {'status': 'error', 'error': 'export failed'})

@@ -1,0 +1,158 @@
+{
+  "build_context": {
+    "GOARCH": "arm64",
+    "GOHOSTARCH": "arm64",
+    "GOHOSTOS": "linux",
+    "GOOS": "linux",
+    "go_version": "go version go1.26.4 linux/arm64"
+  },
+  "capture": {
+    "candidate_revision": "8ce0688b303eb646e1b79a329002dddcb6403be4",
+    "capture_command": [
+      "python3",
+      "/workspace/export-tool/scripts/next_inventory.py",
+      "capture-brands",
+      "--reference-dir",
+      "/workspace/export-tool/docs/reference",
+      "--reference",
+      "/workspace/reference",
+      "--out",
+      "/evidence/reference-linux/configured-brand-registrations-linux.json.gz"
+    ],
+    "check_command": [
+      "python3",
+      "/workspace/export-tool/scripts/next_inventory.py",
+      "check",
+      "--reference-dir",
+      "/workspace/export-tool/docs/reference",
+      "--target",
+      "/workspace/source",
+      "--reference-registrations",
+      "/evidence/reference-linux/configured-brand-registrations-linux.json.gz"
+    ],
+    "check_exit_code": 1,
+    "check_status": "review_required",
+    "export_tool_revision": "c7c9f7b",
+    "export_tool_sha256": "dbd1a49d8635932560e63700a895f5135c0d2aebf02379f24c6c5d5bf2c7ef97",
+    "exporter_sha256": "3cc40a3c1513a0e9dea9d402d187a2fcd58aead22ac7ac49aa2d653f71e8a136",
+    "mapped_capability_result": {
+      "checked_registration_changes": 5742,
+      "failures": [
+        {
+          "field": "reference_registrations_sha256",
+          "kind": "context_mismatch"
+        }
+      ],
+      "live_verification": "not_run",
+      "mapping_revision": "10588248080a91412b0718eb0aa921cff6a90f10",
+      "semantic_review": "separate; source differences and original report status remain unchanged",
+      "status": "fail"
+    },
+    "reference_platform_deltas": [
+      {
+        "darwin": "write",
+        "linux": "",
+        "path": "/feishu/commands/config keychain-downgrade/risk"
+      },
+      {
+        "darwin": "write",
+        "linux": "",
+        "path": "/lark/commands/config keychain-downgrade/risk"
+      }
+    ],
+    "reference_revision": "7fd6ef3c07182257ce776cdc5a614e122d5bd4b3",
+    "reference_shallow_boundary": "7fd6ef3c07182257ce776cdc5a614e122d5bd4b3",
+    "schema_version": 1
+  },
+  "capture_files": [
+    {
+      "path": "docs/reference/configured-brand-registrations-linux.json.gz",
+      "sha256": "dacdbc087857ee0c3d4e3f3f665a24ea3b0519bc5f9b0d049272b3fb90b099df"
+    },
+    {
+      "path": "docs/reference/configured-brand-context-linux.json",
+      "sha256": "d60fd75a65ee2a80dc02e0ccdf6d8ab9cf5dea2cbbda66f51b473eca6d12e2d6"
+    },
+    {
+      "path": "docs/reference/ci-capability-linux-checkpoint.json.gz",
+      "sha256": "59a487734d31d90c937b80bba56659d2819308e8cbec50c14bb464fae80819da"
+    }
+  ],
+  "container_configuration": {
+    "image": "sha256:342d42770f458569d2327f681b2365aa675aed2b9f80d2c5bdbc664530b10557",
+    "network": "none",
+    "note": "Pre-execution configuration snapshot; capture report supplies executed command outcomes.",
+    "user": "10001:10001"
+  },
+  "limits": [
+    "Original Darwin and frozen bootstrap snapshots remain unchanged.",
+    "Only Linux arm64 reference/candidate registrations were executed here. Windows native reference capture and comparison remain unverified.",
+    "Two failed shallow Git checkout setup attempts preceded successful capture; they are not registration evidence.",
+    "No product risk annotation or intentional mapping row was changed; source semantic review remains separate."
+  ],
+  "platform_differences": [
+    {
+      "candidate_sha256": "12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126",
+      "kind": "changed",
+      "path": "/feishu/commands/config keychain-downgrade/risk",
+      "reference_sha256": "bc2434a12fecfa191ab66b56a67f8fe2507216b76be96a72b1f866562cdc3567"
+    },
+    {
+      "candidate_sha256": "12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126",
+      "kind": "changed",
+      "path": "/lark/commands/config keychain-downgrade/risk",
+      "reference_sha256": "bc2434a12fecfa191ab66b56a67f8fe2507216b76be96a72b1f866562cdc3567"
+    }
+  ],
+  "raw_evidence": [
+    {
+      "path": ".tmp/next-evidence/linux-8ce0688/reference/output/report.json",
+      "sha256": "cce03c5b8ba499ab760f4af66b5112ef62a95522df9c824718b19dd86546c8c2"
+    },
+    {
+      "path": ".tmp/next-evidence/linux-8ce0688/reference/output/candidate-linux-check.json",
+      "sha256": "7715fa1f6d85d949154e1f65dacc96c66794e131cc2daf6fd69dab6deb705761"
+    },
+    {
+      "path": ".tmp/next-evidence/linux-8ce0688/reference/source-proof.json",
+      "sha256": "9a47b3c0e62964c4c430e09f256b7214d01f657b10ca1def566dfe5bc195e1ab"
+    },
+    {
+      "path": ".tmp/next-evidence/linux-8ce0688/reference/container-inspect.json",
+      "sha256": "244485afbee9caf7524a8091a97afe058da4152d75e0986b6cebd9d72de6104f"
+    },
+    {
+      "path": ".tmp/next-evidence/linux-8ce0688/reference/runtime.log",
+      "sha256": "8be5caaf5031f12c8ed295b6093388abb4b1b7ccb2da2877290db5cd3f754069"
+    },
+    {
+      "path": ".tmp/next-evidence/linux-8ce0688/reference/runtime-retry.log",
+      "sha256": "cc71f903f69d4fbdb448f2d6269c68e3938b1ac1590959dc45f077d37217ef86"
+    },
+    {
+      "path": ".tmp/next-evidence/linux-8ce0688/reference/runtime-shallow.log",
+      "sha256": "39f7d0c0833efea7c359410c2ef685ecfae3e54a5e6f1635ecbdb00d20d75ad1"
+    }
+  ],
+  "reference_revision": "7fd6ef3c07182257ce776cdc5a614e122d5bd4b3",
+  "schema_version": 1,
+  "selected_profile_gate": {
+    "checked_registration_changes": 5742,
+    "failures": [],
+    "live_verification": "not_run",
+    "mapping_revision": "10588248080a91412b0718eb0aa921cff6a90f10",
+    "semantic_review": "separate; source differences and original report status remain unchanged",
+    "status": "pass"
+  },
+  "selected_profile_gate_note": "Local predicate applied to actual Linux reference/candidate exports; final gate CLI process is a separate follow-up.",
+  "source_boundary": {
+    "cmd/config/keychain_downgrade.go": {
+      "candidate_sha256": "033ca12ff4ba9ad53b975bc376669bf80e6abc02920ecf19de27a20c57fe92b8",
+      "reference_sha256": "033ca12ff4ba9ad53b975bc376669bf80e6abc02920ecf19de27a20c57fe92b8"
+    },
+    "cmd/config/keychain_downgrade_other.go": {
+      "candidate_sha256": "7f375c6d9c862d655f3117e8db36bf046f68479ef79c3a153097dd74853b0184",
+      "reference_sha256": "7f375c6d9c862d655f3117e8db36bf046f68479ef79c3a153097dd74853b0184"
+    }
+  }
+}

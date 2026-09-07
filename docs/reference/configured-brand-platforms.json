@@ -1,0 +1,27 @@
+{
+  "evidence": "configured-brand-linux-evidence.json",
+  "platforms": {
+    "darwin": {
+      "acceptance_limit": "Registration comparison only; semantic, live and release gates remain separate.",
+      "native_reference_capture": "captured",
+      "provenance": "actual configured reference registration execution on darwin",
+      "reference_file": "configured-brand-registrations.json.gz",
+      "reference_sha256": "726dedbbd8eb68c43743252a04c24eb8b4395012a6a1b22841d788210fd8e6d0"
+    },
+    "linux": {
+      "acceptance_limit": "Registration comparison only; semantic, live and release gates remain separate.",
+      "native_reference_capture": "captured",
+      "provenance": "actual configured reference registration execution on linux",
+      "reference_file": "configured-brand-registrations-linux.json.gz",
+      "reference_sha256": "dacdbc087857ee0c3d4e3f3f665a24ea3b0519bc5f9b0d049272b3fb90b099df"
+    },
+    "windows": {
+      "acceptance_limit": "Windows candidate comparison against a source-derived baseline only; full Windows acceptance requires actual Windows reference capture and comparison.",
+      "native_reference_capture": "not_run",
+      "provenance": "source-derived from actual Linux reference capture and shared !darwin registration source",
+      "reference_file": "configured-brand-registrations-linux.json.gz",
+      "reference_sha256": "dacdbc087857ee0c3d4e3f3f665a24ea3b0519bc5f9b0d049272b3fb90b099df"
+    }
+  },
+  "schema_version": 1
+}
