@@ -128,14 +128,25 @@ suites, the 18-event transfer suite, scripts and controlled evaluator ran.
 Optional native evaluator checks have their own separately recorded execution;
 the default harness skips are not counted as passes.
 
+The [actual Linux runtime checkpoint](sections/linux-runtime-evidence.json) at
+`8ce0688` records 18,641 race-test passes and 14 skips, plus 3,544 offline
+E2E/harness pass events and 57 skips across all 23 section suites and supporting
+checks. The script gate also passes, including 166 Node tests. These runs used
+the existing Linux aarch64 VM with no external network access or host mounts.
+Independent recount verifies the suite totals and twelve evidence-report hashes.
+Initial setup failures remain recorded. The original capability gate still fails
+because its Darwin reference differs on two platform-specific keychain risk
+fields. An actual Linux reference capture confirms exactly those two differences;
+the platform selector correction and its capability-only follow-up remain pending.
+
 [Packaging evidence](sections/packaging-evidence.json) covers all 14 cross-built
 platform/variant archives, local installation/update/removal, and actual Node 16
 runtime tests. The final `8ce0688` refresh also verifies both darwin/amd64 variants
 under existing Rosetta, including startup and project guide installation. That
 is translated execution, not an additional physical-hardware requirement.
-Linux/Windows OS-specific behavior, signed public-release checks and a trusted
-remote Next release channel remain unverified or unavailable. Local evidence
-does not establish public release readiness.
+Linux runtime evidence is recorded separately above. Windows OS-specific behavior,
+signed public-release checks and a trusted remote Next release channel remain
+unverified or unavailable. Local evidence does not establish public release readiness.
 
 ## Outstanding release evidence
 
@@ -155,6 +166,6 @@ complete goal.
 | --- | --- |
 | Private live fixtures | Verify current-account and tenant binding plus account-only creation visibility before writing; run the owning live suites and clean up only their resources. |
 | Contact bot search | Current-user authorization for `search:bot`, followed by the failed live scenario and bot binding checks. |
-| OS-specific runtime coverage | Execute the retained Linux and Windows behavior checks on appropriate OS runners or VMs; cross-built archives do not substitute. Darwin/amd64 smoke checks already ran under Rosetta. Additional gaps must name the unverified scenario, not require physical hardware absent from PLAN. |
+| OS-specific runtime coverage | Finish the Linux capability comparison against its captured platform reference; Linux runtime suites already ran. Execute the retained Windows behavior checks on an appropriate OS runner or VM; cross-built archives do not substitute. Darwin/amd64 smoke checks already ran under Rosetta. Additional gaps must name the unverified scenario, not require physical hardware absent from PLAN. |
 | Remote release ownership | An owned Next repository/download destination and package identity, then the documented updater identity integration and remote install/update checks. Public signing/notarization and publication retain their separate prerequisites. |
 | Comparative release evidence | Finish the serialized development/scaling comparisons, review their tradeoffs, and perform independently replaced held-out tasks only at the final release gate. |
