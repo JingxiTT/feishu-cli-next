@@ -66,7 +66,13 @@ diagnostics remain available; its retry guidance does not authorize replay.
 
 GET, HEAD, OPTIONS, credential acquisition endpoints, and commands explicitly
 marked read-only bypass the journal before credential resolution. This includes
-known POST reads on generated and shortcut commands. Raw API POST/custom methods
+known POST reads on generated and shortcut commands. A write workflow can
+mark an individual domain-known read with
+`common.WithReadOnlyRequest(ctx, method, apiPath)` or
+`runtime.CallReadOnlyAPITyped(method, apiPath, params, data)`. The marker matches
+only the exact method and URL path; other requests retain normal journaling.
+It preserves cancellation and command risk, and must never be derived from
+arbitrary raw API input or request content. Raw API POST/custom methods
 are conservatively potential mutations; an unclassified raw read may receive a
 receipt. Auth/config lifecycle effects are preserved from the reference and are
 not content mutation receipts. This is a documented foundation ceiling, not

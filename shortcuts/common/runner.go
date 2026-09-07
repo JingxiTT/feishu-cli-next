@@ -330,11 +330,15 @@ func (ctx *RuntimeContext) Changed(name string) bool {
 // so log_id surfaces on the typed error even when the server returns it only in
 // the header.
 func (ctx *RuntimeContext) CallAPITyped(method, url string, params map[string]interface{}, data interface{}) (map[string]interface{}, error) {
+	return ctx.callAPITypedWithContext(ctx.ctx, method, url, params, data)
+}
+
+func (ctx *RuntimeContext) callAPITypedWithContext(callCtx context.Context, method, url string, params map[string]interface{}, data interface{}) (map[string]interface{}, error) {
 	ac, err := ctx.getAPIClient()
 	if err != nil {
 		return nil, typedOrInternal(err)
 	}
-	resp, err := ac.DoAPI(ctx.ctx, ctx.buildRequest(method, url, params, data))
+	resp, err := ac.DoAPI(callCtx, ctx.buildRequest(method, url, params, data))
 	if err != nil {
 		return nil, typedOrInternal(err)
 	}

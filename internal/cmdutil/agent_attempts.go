@@ -24,7 +24,7 @@ func (f *Factory) agentAttemptTransport(base http.RoundTripper) http.RoundTrippe
 	return &nextattempt.Transport{
 		Base: base, Store: f.AgentReceiptStore, Journal: &f.agentAttempts,
 		IsMutation: func(req *http.Request) bool {
-			if !f.EnableAgentAttempts {
+			if !f.EnableAgentAttempts || isDeclaredReadRequest(req) {
 				return false
 			}
 			switch req.Method {
