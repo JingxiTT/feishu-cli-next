@@ -83,6 +83,12 @@ explicit result metadata; it is not assumed to equal the entire backend resource
 Completeness comes from explicit pagination metadata, `has_more`, or `complete`;
 serializing a response to EOF never implies completeness. Continuations stay
 available in result metadata or retained data fields and in the full artifact.
+Generic `--page-all` fails on any later-page API or transport error and on a
+missing or repeated continuation token. Aggregated JSON and artifact output are
+not published after these failures. Streaming formats may already have emitted
+earlier successful pages; their nonzero exit and typed stderr error indicate that
+the stream is incomplete. An explicit page limit retains `has_more:true` when
+more pages exist; the aggregate is not a snapshot or a resumable cursor container.
 Failed/partial/unknown results keep their full decision-critical data on stdout
 as well, even when this makes the reference response longer. Bare object results
 retain their native top-level metadata and never acquire a fabricated `ok:true`.

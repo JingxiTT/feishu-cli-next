@@ -8,6 +8,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"net"
 	"net/http"
@@ -252,7 +253,7 @@ func TestPaginateAll_PageLimitStopsPagination(t *testing.T) {
 			"data": map[string]interface{}{
 				"items":      []interface{}{map[string]interface{}{"id": apiCalls}},
 				"has_more":   true,
-				"page_token": "next",
+				"page_token": fmt.Sprintf("next-%d", apiCalls),
 			},
 		}), nil
 	})

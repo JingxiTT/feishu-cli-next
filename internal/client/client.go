@@ -385,6 +385,17 @@ func (c *APIClient) CallAPI(ctx context.Context, request RawApiRequest) (interfa
 func (c *APIClient) paginateLoop(ctx context.Context, request RawApiRequest, opts PaginationOptions, onResult func(interface{}) error) ([]interface{}, error) {
 	var allResults []interface{}
 	var pageToken string
+	seenTokens := make(map[string]bool)
+	if initial, ok := request.Params["page_token"].(string); ok && initial != "" {
+		seenTokens[initial] = true
+	}
+	identity := opts.Identity
+	if identity == "" {
+		identity = request.As
+	}
+	if identity == "" {
+		identity = core.AsUser
+	}
 	page := 0
 	pageDelay := opts.PageDelay
 	if pageDelay == 0 {
@@ -411,11 +422,8 @@ func (c *APIClient) paginateLoop(ctx context.Context, request RawApiRequest, opt
 			ExtraOpts: request.ExtraOpts,
 		})
 		if err != nil {
-			if page == 1 {
-				return nil, err
-			}
 			fmt.Fprintf(c.ErrOut, "[page %d] error, stopping pagination\n", page)
-			break
+			return allResults, err
 		}
 
 		if resultMap, ok := result.(map[string]interface{}); ok {
@@ -426,7 +434,7 @@ func (c *APIClient) paginateLoop(ctx context.Context, request RawApiRequest, opt
 					return allResults, nil
 				}
 				fmt.Fprintf(c.ErrOut, "[page %d] API error (code=%.0f), stopping pagination\n", page, code)
-				break
+				return allResults, c.CheckResponse(result, identity)
 			}
 		}
 
@@ -447,6 +455,10 @@ func (c *APIClient) paginateLoop(ctx context.Context, request RawApiRequest, opt
 					} else if pt, ok := data["next_page_token"].(string); ok && pt != "" {
 						pageToken = pt
 					}
+					if pageToken == "" {
+						return allResults, errs.NewInternalError(errs.SubtypeInvalidResponse,
+							"pagination response has_more is true without a continuation token")
+					}
 				}
 			}
 		}
@@ -454,6 +466,11 @@ func (c *APIClient) paginateLoop(ctx context.Context, request RawApiRequest, opt
 		if pageToken == "" {
 			break
 		}
+		if seenTokens[pageToken] {
+			return allResults, errs.NewInternalError(errs.SubtypeInvalidResponse,
+				"pagination response repeats a continuation token")
+		}
+		seenTokens[pageToken] = true
 
 		if opts.PageLimit > 0 && page >= opts.PageLimit {
 			fmt.Fprintf(c.ErrOut, "[pagination] reached page limit (%d), stopping. Use --page-all --page-limit 0 to fetch all pages.\n", opts.PageLimit)
