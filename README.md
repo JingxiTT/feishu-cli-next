@@ -4,7 +4,7 @@ A Feishu/Lark CLI for capable shell and file agents. This development build reus
 
 Implementation and verification are in progress. [The implementation ledger](docs/IMPLEMENTATION.md) distinguishes passing offline checks and scoped foundation measurements from outstanding live, capability and comparative evaluation requirements. Full-product efficiency and release acceptance remain unverified.
 
-Measured results are mixed: [foundation trials](evaluation/evidence/foundation/REPORT.md) show lower average usage for Next on the tested tasks, while [Contact trials](evaluation/evidence/contact/REPORT.md) show higher usage than both comparison arms despite all nine runs succeeding. These scoped results do not establish an overall performance improvement.
+Measured results are mixed: [foundation trials](evaluation/evidence/foundation/REPORT.md) show lower average usage for Next on the tested tasks, while [Contact trials](evaluation/evidence/contact/REPORT.md) show higher usage than both comparison arms despite all nine runs succeeding. The [nine-section development batch](evaluation/evidence/read-312af93/REPORT.md) also records savings against many original guides but regressions against concise guidance, with Wiki attribution limits. These scoped results do not establish an overall performance improvement.
 
 ## Build and setup
 
@@ -48,7 +48,8 @@ python3 -m unittest discover -s scripts -p 'next_*test.py'
 python3 -m unittest discover -s tests/next_evaluation
 python3 scripts/next_test.py --section foundation --suite all \
   --binary ./feishu-cli-next --report .tmp/next-tests/foundation.json
-python3 scripts/next_inventory.py check --target .
+python3 scripts/next_inventory.py check --target . \
+  --reference-registrations docs/reference/configured-brand-registrations.json.gz
 ```
 
 [The offline runner](tests/next_foundation/README.md) isolates local configuration and credentials. Its inherited domain selector reports excluded tests; that subset is not full domain acceptance. Live tests require separately verified authorized fixtures. Ordinary CI must not use personal credentials. [Evaluation tooling](evaluation/README.md) supports three balanced arms with actual model usage and independent effect verification; controlled tests are not product measurements.
