@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "reviewer": "coordinator independent of inventory implementation",
+  "candidate_revision": "8d92e5253aa9d0582314180d51cdec1b10778897",
+  "reviewed_scope": "Whole two-file review join helper and regression suite. Read archive hashing, tracked review extraction, per-path traversal, hash verification, current-hash matching, explicit same-hash finding closure, scope categorization and report-only CLI. No product changes.",
+  "paths": [
+    {
+      "path": "scripts/next_inventory_reviews.py",
+      "review_revision": "8d92e5253aa9d0582314180d51cdec1b10778897",
+      "review_sha256": "7b18f5d047b91622e10c0b8cdf2c05d29ed53f1656255b9a002077009b15a650",
+      "verdict": "approved_offline",
+      "review_scope": "Whole immutable file; report generation and exact per-path review aggregation, not product acceptance."
+    },
+    {
+      "path": "scripts/next_inventory_reviews_test.py",
+      "review_revision": "8d92e5253aa9d0582314180d51cdec1b10778897",
+      "review_sha256": "a1b30e9b9da19155410efca7c940ba3d314e5da95941f9dd3e2303716d82e92c",
+      "verdict": "approved_offline",
+      "review_scope": "Whole immutable file; report generation and exact per-path review aggregation, not product acceptance."
+    }
+  ],
+  "findings": [],
+  "checks": [
+    {
+      "command": "python3 -m unittest discover -s scripts -p next_inventory_reviews_test.py -v",
+      "pass": 8,
+      "fail": 0,
+      "skip": 0,
+      "source_binding": "Run in shared checkout; both exact file bytes verified equal to reviewed commit before report creation. Not a detached-checkout execution."
+    },
+    {
+      "command": "python3 scripts/next_inventory_reviews.py --revision 8d92e52 --out .tmp/p3-effective-review-8d92e52.json",
+      "exit_code": 0,
+      "invalid_review_hashes": 0,
+      "initial_exact_approved_paths": 213,
+      "total_exact_approved_paths": 248
+    }
+  ],
+  "limits": [
+    "This joins explicit reviewer declarations to exact committed hashes; it does not review or approve code itself.",
+    "Malformed local review schemas may raise an exception; they cannot become a passing acceptance report.",
+    "A recorded approval retains the recorded scope and dependency limits; exact source equality is not proof of live behavior, fresh execution or whole release acceptance.",
+    "No CI capability waiver or runtime policy is introduced."
+  ]
+}
