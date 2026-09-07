@@ -1,0 +1,509 @@
+{
+  "schema_version": 1,
+  "base_revision": "0c1ac7570543db3117ba5bdc6a66b69f87c4a62e",
+  "checkpoint": "0084501742edb1ee87bdf9623adf7da37267f142",
+  "assignments": [
+    {
+      "schema_version": 1,
+      "assignment_id": "mail_okr_vc_whiteboard_wiki",
+      "reviewer": "/root/p3_domain_review/mail_misc_review",
+      "verdict": "changes_requested",
+      "paths": [
+        {
+          "path": "shortcuts/mail/draft/patch.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "f08e80890bc9f296b9edcc95b5ec111cf3c8615094975181947a859a9d5cfac0",
+          "review_scope": "Full import-to-checkpoint diff and affected implementation/caller context; entire new implementation where applicable.",
+          "analysis": "Encoded Subject comparison preserves a single matching encoded word and still replaces duplicates. Body Dirty flags change only on exact decoded-body differences; coupled summary repair updates only the changed part. Existing body selection, protected header checks, recipient normalization and post-processing remain.",
+          "evidence": [
+            {
+              "path": "shortcuts/mail/draft/patch_noop_test.go",
+              "scope": "Static source review only; NOT executed. Both coupled-body unchanged/repair/changed cases and encoded Subject duplicate handling assert exact values/Dirty flags.",
+              "sha256": "a4364a6a8caeb4b1e0c617c3ab657ecffdaff120e9265a002de20527ab7943b2",
+              "tested_revision": "not_executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            },
+            {
+              "path": "shortcuts/mail/draft/patch_body_test.go",
+              "scope": "Static source review only; NOT executed. TestApplyReplaceBodyPlainTextOnly asserts changed final body bytes.",
+              "sha256": "bf7417579cee22d1c69e7738c5f1a89715f27115a9359b3166008409cf0ee127",
+              "tested_revision": "not_executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            },
+            {
+              "path": "tests/next_sections/mail/mail_e2e_test.go",
+              "scope": "Static source review only; NOT executed. TestMailDraftNoOpAndMIMEPreservingReplacement checks no PUT for matching subject and preservation of attachment/base64/header/Unicode body after changed subject.",
+              "sha256": "cfefcc7f02add111474a29e07d501b284004f27b7ef2f906bff3d5dc1bb1c248",
+              "tested_revision": "not_executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            }
+          ],
+          "findings": [],
+          "verdict": "approved_offline",
+          "limitations": [
+            "Static source/test review only; no tests executed by this reviewer."
+          ]
+        },
+        {
+          "path": "shortcuts/mail/mail_draft_edit.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "fe34a131579500098ce8c40ebaced3116526a93f890082b85262ff851e6dc5d9",
+          "review_scope": "Full import-to-checkpoint diff and affected implementation/caller context; entire new implementation where applicable.",
+          "analysis": "Before/after use the same serializer; replacement-only allowlist excludes attachment, append, signature and calendar effects. No-op retains draft identity, projection and lint output. Mutating path still uses UpdateWithRaw and preserves returned reference.",
+          "evidence": [
+            {
+              "path": "tests/next_sections/mail/mail_e2e_test.go",
+              "scope": "Static source review only; NOT executed. TestMailDraftNoOpAndMIMEPreservingReplacement checks no-op/inspect write counts and changed MIME PUT.",
+              "sha256": "cfefcc7f02add111474a29e07d501b284004f27b7ef2f906bff3d5dc1bb1c248",
+              "tested_revision": "not_executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            },
+            {
+              "path": "shortcuts/mail/mail_draft_edit_reference_test.go",
+              "scope": "Static source review only; NOT executed. TestMailDraftEditOutputsReference asserts returned draft_id and reference after mutation.",
+              "sha256": "d9d20ce922e1312e69bb748ff0bf6ab9db413cc0f4e1215cc58e23184dc48b55",
+              "tested_revision": "not_executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            }
+          ],
+          "findings": [],
+          "verdict": "approved_offline",
+          "limitations": [
+            "Static source/test review only; no tests executed by this reviewer."
+          ]
+        },
+        {
+          "path": "shortcuts/mail/mail_template_update.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "13cf52bb40cc429dd76e8feab9fc124456d07de0d30f0b19adc7262075d8025c",
+          "review_scope": "Full import-to-checkpoint diff and affected implementation/caller context; entire new implementation where applicable.",
+          "analysis": "Template comparison happens after flags, patch, body transformation and attachment merging, before attachment-body transport fallback. newAtts prevents suppressing attachment effects. Omitted values remain from fetched template; patch pointer presence and explicit recipient clears remain inherited.",
+          "evidence": [
+            {
+              "path": "tests/next_sections/mail/mail_e2e_test.go",
+              "scope": "Static source review only; NOT executed. TestMailTemplateAndRuleNoOpPreserveOmittedValues supplies BCC and matching subject and rejects any non-GET request; asserts template no_op.",
+              "sha256": "cfefcc7f02add111474a29e07d501b284004f27b7ef2f906bff3d5dc1bb1c248",
+              "tested_revision": "not_executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            }
+          ],
+          "findings": [],
+          "verdict": "approved_offline",
+          "limitations": [
+            "Static source/test review only; no tests executed by this reviewer."
+          ]
+        },
+        {
+          "path": "shortcuts/mail/mail_watch.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "1ea29e22aa4d26f6e7473a11e02fbaba9d184c550b3e650cdd381d0c71e1b962",
+          "review_scope": "Full import-to-checkpoint diff and affected implementation/caller context; entire new implementation where applicable.",
+          "analysis": "Only subscribe/unsubscribe switch to exact method/path mutation context. Existing sync.Once and deferred cleanup remain, with normal auth and typed API classification delegated to common owner.",
+          "evidence": [
+            {
+              "path": "tests/next_sections/mail/mail_e2e_test.go",
+              "scope": "Static source review only; NOT executed. TestMailWatchLifecycleReceiptsAndCleanupOnSetupFailure asserts one subscribe and unsubscribe plus two applied receipts after profile rejection.",
+              "sha256": "cfefcc7f02add111474a29e07d501b284004f27b7ef2f906bff3d5dc1bb1c248",
+              "tested_revision": "not_executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            },
+            {
+              "path": "shortcuts/common/read_request.go",
+              "scope": "Static source review only; NOT executed. CallMutationAPITyped delegates normal typed API call with an exact mutation context marker.",
+              "sha256": "0cb242d12a3c021befeb269098a70e78b77f912023336428e7be7506a1cff9c5",
+              "tested_revision": "not_executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            }
+          ],
+          "findings": [],
+          "verdict": "approved_offline",
+          "limitations": [
+            "Static source/test review only; no tests executed by this reviewer."
+          ]
+        },
+        {
+          "path": "shortcuts/okr/okr_comment_detail.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "1bf96e75672a03816c02145430b97f62ae4231a134afe20e60e2b04922500915",
+          "review_scope": "Full import-to-checkpoint diff and affected implementation/caller context; entire new implementation where applicable.",
+          "analysis": "Each target read owns a fresh seen-token map; missing/repeated continuations return typed error before aggregate output. Concurrent group failure remains propagated; existing target/thread/richtext projections are unchanged.",
+          "evidence": [
+            {
+              "path": "tests/next_sections/okr/okr_e2e_test.go",
+              "scope": "Static source review only; NOT executed. TestOKRPaginationFailurePreventsReplacement checks typed invalid_response/no stdout for comment-detail, and TestOKRCycleAndCommentDetail checks hierarchy dispatch.",
+              "sha256": "d992b496c371eff10db1a4f0e32750ee83de2756eff4511c64909854a892aa24",
+              "tested_revision": "not_executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            }
+          ],
+          "findings": [],
+          "verdict": "approved_offline",
+          "limitations": [
+            "Static source/test review only; no tests executed by this reviewer."
+          ]
+        },
+        {
+          "path": "shortcuts/okr/okr_cycle_detail.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "58ca715ed347264befb10d7abdad6392c0556d1f6e4f901237f9cc18e5d26e3e",
+          "review_scope": "Full import-to-checkpoint diff and affected implementation/caller context; entire new implementation where applicable.",
+          "analysis": "Item JSON conversion errors now return typed invalid_response with cause rather than continue; missing/repeated continuation fails before final output. Existing simple/rich projections and key-result traversal remain.",
+          "evidence": [
+            {
+              "path": "tests/next_sections/okr/okr_e2e_test.go",
+              "scope": "Static source review only; NOT executed. TestOKRPaginationFailurePreventsReplacement rejects malformed item/missing/repeated token; TestOKRCompletePaginationKeepsOpaqueToken asserts both pages and exact opaque token.",
+              "sha256": "d992b496c371eff10db1a4f0e32750ee83de2756eff4511c64909854a892aa24",
+              "tested_revision": "not_executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            }
+          ],
+          "findings": [],
+          "verdict": "approved_offline",
+          "limitations": [
+            "Static source/test review only; no tests executed by this reviewer."
+          ]
+        },
+        {
+          "path": "shortcuts/okr/okr_cycle_list.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "729bbc98a7a70bc789ea18638b354cc17c7c666093d6ccadf7fda44587860cac",
+          "review_scope": "Full import-to-checkpoint diff and affected implementation/caller context; entire new implementation where applicable.",
+          "analysis": "Changed per-item marshal/unmarshal failures now propagate with typed cause; single-page time filtering and current-active-cycle projections preserve previous semantics and continuation.",
+          "evidence": [
+            {
+              "path": "shortcuts/okr/okr_cycle_list_test.go",
+              "scope": "Static source review only; NOT executed. TestCycleListExecute_Pagination asserts exact input page size/token and output count/has_more/page_token.",
+              "sha256": "ae89a6388ca8252c8ff94ec40c00f4f3a6b71c5d903f1dd528ecad35ae1327ba",
+              "tested_revision": "not_executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            }
+          ],
+          "findings": [],
+          "verdict": "approved_offline",
+          "limitations": [
+            "Static source/test review only; no tests executed by this reviewer."
+          ]
+        },
+        {
+          "path": "shortcuts/okr/okr_progress_list.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "492b77c773a37434448f63cd484787d2ef8d448630044b17124b141835eb028e",
+          "review_scope": "Full import-to-checkpoint diff and affected implementation/caller context; entire new implementation where applicable.",
+          "analysis": "Changed per-item marshal/unmarshal failures now propagate with typed cause; single-page progress conversion and output continuation remain unchanged.",
+          "evidence": [
+            {
+              "path": "shortcuts/okr/okr_progress_list_test.go",
+              "scope": "Static source review only; NOT executed. TestProgressListExecute_Success_Objective checks pagination request, one result, absence of invented total, and returned continuation.",
+              "sha256": "e4ede1a2a2f3df132b0d897af5da641dc28bdff0a447ff2179681c7f3445d995",
+              "tested_revision": "not_executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            }
+          ],
+          "findings": [],
+          "verdict": "approved_offline",
+          "limitations": [
+            "Static source/test review only; no tests executed by this reviewer."
+          ]
+        },
+        {
+          "path": "shortcuts/okr/okr_reorder.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "030127f1d8041a2ead4e378847bee35ec0703ed67e86a710b79f9ac0ef746d52",
+          "review_scope": "Full import-to-checkpoint diff and affected implementation/caller context; entire new implementation where applicable.",
+          "analysis": "Read helpers reject decode errors and incomplete continuation; changed no-op requires known contiguous positions and matching ordered IDs. However its unguarded index assumes fetched IDs are unique, which fetch helpers never establish.",
+          "evidence": [
+            {
+              "path": "tests/next_sections/okr/okr_e2e_test.go",
+              "scope": "Static source review only; NOT executed. TestOKRCompositionAndNoop covers both levels, equal and changed order; TestOKRPaginationFailurePreventsReplacement covers objective-level bad token/id, not duplicate fetched IDs.",
+              "sha256": "d992b496c371eff10db1a4f0e32750ee83de2756eff4511c64909854a892aa24",
+              "tested_revision": "not_executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            },
+            {
+              "path": "shortcuts/okr/okr_reorder_test.go",
+              "scope": "Static source review only; NOT executed. TestBuildReorderedIDs demonstrates map placement; fixtures use unique fetched IDs and do not cover the new panic.",
+              "sha256": "1bc7b399c96bc0186ca5572cac879996fd7fd977548eeb34228ad7bf2ef5dfe1",
+              "tested_revision": "not_executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            }
+          ],
+          "findings": [
+            {
+              "id": "P3-MAIL-MISC-001",
+              "priority": "P2",
+              "title": "Reject duplicate fetched IDs before indexing the no-op order",
+              "line_start": 400,
+              "line_end": 400,
+              "also_affected_lines": [
+                435
+              ],
+              "description": "The new no-op loops index reorderedIDs[i] for every fetched item without proving equal lengths. fetchObjectives/fetchKeyResults append duplicate IDs (including overlaps across otherwise advancing pages), but buildReorderedIDs puts specified IDs in a map and omits every fetched occurrence from unused. With fetched items [{\"id\":\"1\",\"position\":1},{\"id\":\"1\",\"position\":2}] and --ops [{\"id\":\"1\",\"position\":1}], buildReorderedIDs returns [\"1\"]; the first comparison matches and the second evaluates reorderedIDs[1], panicking. This replaces the typed error contract with a process panic before mutation and affects both objective and key-result branches.",
+              "evidence": "Static hand-trace of exact checkpoint buildReorderedIDs lines 201-255 and no-op loops 398-405 / 433-440. Existing tests cover duplicate user ops but not duplicate backend IDs. No reproducer executed.",
+              "requested_change": "Reject duplicate/invalid fetched identities with typed invalid_response before replacement/no-op evaluation, and add a regression for overlapping fetched IDs for both levels; ensure the no-op loop cannot index past the derived order."
+            }
+          ],
+          "verdict": "changes_requested",
+          "limitations": [
+            "Static source/test review only; no tests executed by this reviewer."
+          ]
+        },
+        {
+          "path": "shortcuts/okr/okr_weight.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "b4f144c0fc6c42bfb9ff6b7b43ed9865e3ed7d408ebbf5ad622688309a550dee",
+          "review_scope": "Full import-to-checkpoint diff and affected implementation/caller context; entire new implementation where applicable.",
+          "analysis": "No-op compares complete normalized cardinality and known current weights, and preserves numeric request values as json.Number from the existing fixed-point algorithm. Both level paths keep full replacement calls when unequal or weight evidence absent.",
+          "evidence": [
+            {
+              "path": "tests/next_sections/okr/okr_e2e_test.go",
+              "scope": "Static source review only; NOT executed. TestOKRCompositionAndNoop checks both level paths, changed weight dispatch and equal normalized no-op.",
+              "sha256": "d992b496c371eff10db1a4f0e32750ee83de2756eff4511c64909854a892aa24",
+              "tested_revision": "not_executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            },
+            {
+              "path": "shortcuts/okr/okr_weight_test.go",
+              "scope": "Static source review only; NOT executed. TestNormalizeWeights_AllSpecified and PartialSpecified_Proportional check exact result count, sum and assigned weight.",
+              "sha256": "403afb80ea5292a0580a1e6f6d9fcf3273d1528b6cfc1642200e5e86ce22e734",
+              "tested_revision": "not_executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            }
+          ],
+          "findings": [],
+          "verdict": "approved_offline",
+          "limitations": [
+            "Static source/test review only; no tests executed by this reviewer."
+          ]
+        },
+        {
+          "path": "shortcuts/whiteboard/whiteboard_update.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "0eeb5ebd79d9f88245d7f7cf374c4e9aed1056e02d99c70f613a1c0dd79ea583",
+          "review_scope": "Full import-to-checkpoint diff and affected implementation/caller context; entire new implementation where applicable.",
+          "analysis": "UseNumber preserves nested raw numeric tokens; second decode requires EOF and rejects trailing values/garbage. Both raw envelopes retain existing shape checks. Dry-run client_token matches execution for raw/code formats. Append/overwrite/clear action semantics and write-only scope remain.",
+          "evidence": [
+            {
+              "path": "tests/next_sections/whiteboard/whiteboard_e2e_test.go",
+              "scope": "Static source review only; NOT executed. TestUpdateEveryFormatAliasAndIdentity compares source/body/query across all formats, aliases and identities; raw export/import and state tests check fidelity, append, overwrite and explicit clear.",
+              "sha256": "b33947f061ebe20b705071521782d81631592eb5b94917d3146a8d02ca19cbbc",
+              "tested_revision": "not_executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            },
+            {
+              "path": "shortcuts/whiteboard/whiteboard_update_test.go",
+              "scope": "Static source review only; NOT executed. New tests assert large integer/decimal, Unicode/empty/null/opaque nested values, typed trailing-input rejection and dry-run client_token.",
+              "sha256": "5c3906f4f9f4c206bb24c8a6bbe05fc6071e21188884d56039b9220eb03c5123",
+              "tested_revision": "not_executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            }
+          ],
+          "findings": [],
+          "verdict": "approved_offline",
+          "limitations": [
+            "Static source/test review only; no tests executed by this reviewer."
+          ]
+        },
+        {
+          "path": "shortcuts/whiteboard/whiteboard_update_test.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "5c3906f4f9f4c206bb24c8a6bbe05fc6071e21188884d56039b9220eb03c5123",
+          "review_scope": "Full import-to-checkpoint diff and affected implementation/caller context; entire new implementation where applicable.",
+          "analysis": "New regressions assert observable decoded/serialized values, exact trailing-input error parameter and every format idempotency query. They do not replace or weaken old assertions.",
+          "evidence": [
+            {
+              "path": "shortcuts/whiteboard/whiteboard_update_test.go",
+              "scope": "Static source review only; NOT executed. TestParseWBcliNodesPreservesNumericAndRichValues, TestParseWBcliNodesRejectsTrailingInput and TestWBUpdateDryRunPreservesIdempotentToken inspected.",
+              "sha256": "5c3906f4f9f4c206bb24c8a6bbe05fc6071e21188884d56039b9220eb03c5123",
+              "tested_revision": "not_executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            },
+            {
+              "path": "tests/next_sections/whiteboard/whiteboard_e2e_test.go",
+              "scope": "Static source review only; NOT executed. Independent HTTP fixture body comparison and artifact/import rejection exercise the parser through command execution.",
+              "sha256": "b33947f061ebe20b705071521782d81631592eb5b94917d3146a8d02ca19cbbc",
+              "tested_revision": "not_executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            }
+          ],
+          "findings": [],
+          "verdict": "approved_offline",
+          "limitations": [
+            "Static source/test review only; no tests executed by this reviewer."
+          ]
+        },
+        {
+          "path": "shortcuts/wiki/wiki_member_list.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "37a18fa22b433ab285db7d5bcedd30b24d48e1840804c5e78b124662c5839a0b",
+          "review_scope": "Full import-to-checkpoint diff and affected implementation/caller context; entire new implementation where applicable.",
+          "analysis": "Visited-token set detects non-adjacent cycles in auto mode; preserves accumulated members and has_more/page_token with stderr warning. Existing one-page/page-limit behavior and selected member fields remain.",
+          "evidence": [
+            {
+              "path": "tests/next_sections/wiki/wiki_e2e_test.go",
+              "scope": "Static source review only; NOT executed. TestWikiPaginationArtifactAndCycle checks all three lists stop A/B/A in three calls, retain has_more in stdout and artifact, and ignore page-all with explicit start token.",
+              "sha256": "36096107fe48ab106f079101d40667fe8e6a47b56c3164bf70178473731b015f",
+              "tested_revision": "not_executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            }
+          ],
+          "findings": [],
+          "verdict": "approved_offline",
+          "limitations": [
+            "Static source/test review only; no tests executed by this reviewer."
+          ]
+        },
+        {
+          "path": "shortcuts/wiki/wiki_node_list.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "c7fb43b3284e06c9dd664acf74afbf5b3d1542296e8b77e27fe0b192408f86b1",
+          "review_scope": "Full import-to-checkpoint diff and affected implementation/caller context; entire new implementation where applicable.",
+          "analysis": "Visited-token set bounds repeated pagination in auto mode without changing node projection, scope, alias resolution or request parent token. The partial aggregate explicitly retains has_more and token.",
+          "evidence": [
+            {
+              "path": "tests/next_sections/wiki/wiki_e2e_test.go",
+              "scope": "Static source review only; NOT executed. TestWikiPaginationArtifactAndCycle verifies repeated-cycle stop, warning, artifact has_more and one-page explicit token behavior.",
+              "sha256": "36096107fe48ab106f079101d40667fe8e6a47b56c3164bf70178473731b015f",
+              "tested_revision": "not_executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            }
+          ],
+          "findings": [],
+          "verdict": "approved_offline",
+          "limitations": [
+            "Static source/test review only; no tests executed by this reviewer."
+          ]
+        },
+        {
+          "path": "shortcuts/wiki/wiki_space_list.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "3d2de4195a2496fe90e7530beb271ac21de100506592b03585e5dd6c127651da",
+          "review_scope": "Full import-to-checkpoint diff and affected implementation/caller context; entire new implementation where applicable.",
+          "analysis": "Visited-token set bounds non-adjacent cycles; successful bounded partial result retains has_more/page_token. Existing space projection and page-limit behavior unchanged.",
+          "evidence": [
+            {
+              "path": "tests/next_sections/wiki/wiki_e2e_test.go",
+              "scope": "Static source review only; NOT executed. TestWikiPaginationArtifactAndCycle verifies repeated-cycle stop, warning, artifact has_more and one-page explicit token behavior.",
+              "sha256": "36096107fe48ab106f079101d40667fe8e6a47b56c3164bf70178473731b015f",
+              "tested_revision": "not_executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            }
+          ],
+          "findings": [],
+          "verdict": "approved_offline",
+          "limitations": [
+            "Static source/test review only; no tests executed by this reviewer."
+          ]
+        },
+        {
+          "path": "tests/cli_e2e/okr/okr_shortcuts_test.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "d4285f31e7b618727191c85dbf6e191ed4efd5d019691cdf198e922a10d110ba",
+          "review_scope": "Full import-to-checkpoint diff and affected implementation/caller context; entire new implementation where applicable.",
+          "analysis": "Only two whitespace-dependent assertions change to exact gjson user_id_type path assertions; objective/key-result method/path and field tests are retained.",
+          "evidence": [
+            {
+              "path": "tests/cli_e2e/okr/okr_shortcuts_test.go",
+              "scope": "Static source review only; NOT executed. Changed Objective_AllFields and KeyResult dry-run assertions address data.api.0.params.user_id_type with exact expected ID type.",
+              "sha256": "d4285f31e7b618727191c85dbf6e191ed4efd5d019691cdf198e922a10d110ba",
+              "tested_revision": "not_executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            }
+          ],
+          "findings": [],
+          "verdict": "approved_offline",
+          "limitations": [
+            "Static source/test review only; no tests executed by this reviewer."
+          ]
+        },
+        {
+          "path": "tests/cli_e2e/vc/coverage.md",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "bb6896994b5500e50e8181f3f45d652ec6b2d0fae96e79752bf1b44e569410c4",
+          "review_scope": "Full import-to-checkpoint diff and affected implementation/caller context; entire new implementation where applicable.",
+          "analysis": "Documentation links synthetic process evidence and explicitly separates historical live evidence from current authorization. Blocked live prerequisites remain a skip, never passing acceptance.",
+          "evidence": [
+            {
+              "path": "tests/next_sections/vc/vc_e2e_test.go",
+              "scope": "Static source review only; NOT executed. Inspected request equality for mutating workflows, unknown/rejection single dispatch and receipts, screenshot exact bytes/collision, 200-page bound and explicit blocked-live skip.",
+              "sha256": "971ee574858811b6069bbb9e58983e3f1925ec08bd5c10effe0e19088533bdc1",
+              "tested_revision": "not_executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            }
+          ],
+          "findings": [],
+          "verdict": "approved_offline",
+          "limitations": [
+            "Static source/test review only; no tests executed by this reviewer."
+          ]
+        },
+        {
+          "path": "tests/cli_e2e/whiteboard/whiteboard_export_dryrun_test.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "2c3eb3c026d72c6f19cc36a5725c5d729257eb24f452287ef9b8ba031edd4c61",
+          "review_scope": "Full import-to-checkpoint diff and affected implementation/caller context; entire new implementation where applicable.",
+          "analysis": "Only Regression suffix changes selector discoverability; required output selector validation assertions stay intact and do not dispatch live work.",
+          "evidence": [
+            {
+              "path": "tests/cli_e2e/whiteboard/whiteboard_export_dryrun_test.go",
+              "scope": "Static source review only; NOT executed. Renamed test asserts validation exit 2 for missing export/legacy selectors before auth.",
+              "sha256": "2c3eb3c026d72c6f19cc36a5725c5d729257eb24f452287ef9b8ba031edd4c61",
+              "tested_revision": "not_executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            }
+          ],
+          "findings": [],
+          "verdict": "approved_offline",
+          "limitations": [
+            "Static source/test review only; no tests executed by this reviewer."
+          ]
+        },
+        {
+          "path": "tests/cli_e2e/wiki/helpers_test.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "acd61c32f1837fe0265806bd733788cd84790f198522c3dca380b773a5357bf9",
+          "review_scope": "Full import-to-checkpoint diff and affected implementation/caller context; entire new implementation where applicable.",
+          "analysis": "Four test names gain Regression suffix only; backing-object versus shortcut deletion targets, node identity uncertainty and transient/deleted error classification retain exact assertions.",
+          "evidence": [
+            {
+              "path": "tests/cli_e2e/wiki/helpers_test.go",
+              "scope": "Static source review only; NOT executed. Inspected four renamed tests and their target/identity/transient/deleted cases. No helper behavior changes in diff.",
+              "sha256": "acd61c32f1837fe0265806bd733788cd84790f198522c3dca380b773a5357bf9",
+              "tested_revision": "not_executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            }
+          ],
+          "findings": [],
+          "verdict": "approved_offline",
+          "limitations": [
+            "Static source/test review only; no tests executed by this reviewer."
+          ]
+        },
+        {
+          "path": "shortcuts/okr/okr_pagination.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "5b426ee2375fe80482f98639fd00119af492f8fe1b1c0e1c58ceb0d8a5dfaf63",
+          "review_scope": "Full import-to-checkpoint diff and affected implementation/caller context; entire new implementation where applicable.",
+          "analysis": "Entire new implementation inspected. Final pages return nil; ongoing pages require a nonempty unseen opaque token, store it unchanged and return typed invalid_response with recovery hint otherwise.",
+          "evidence": [
+            {
+              "path": "shortcuts/okr/okr_pagination_test.go",
+              "scope": "Static source review only; NOT executed. Direct missing/repeated/final/opaque-token tests and known-position/known-weight no-op tests inspected via exact diff.",
+              "sha256": "8bfa1a58b1d7db62720071c06b1338bbb3af78dfeae324439caf10328fcfd14a",
+              "tested_revision": "not_executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            },
+            {
+              "path": "tests/next_sections/okr/okr_e2e_test.go",
+              "scope": "Static source review only; NOT executed. TestOKRPaginationFailurePreventsReplacement and TestOKRCompletePaginationKeepsOpaqueToken cover caller propagation and opaque token preservation.",
+              "sha256": "d992b496c371eff10db1a4f0e32750ee83de2756eff4511c64909854a892aa24",
+              "tested_revision": "not_executed; source inspected at 0084501742edb1ee87bdf9623adf7da37267f142"
+            }
+          ],
+          "findings": [],
+          "verdict": "approved_offline",
+          "limitations": [
+            "Static source/test review only; no tests executed by this reviewer."
+          ]
+        }
+      ],
+      "cross_assignment_dependencies": [
+        {
+          "owner": "shared runtime/output/mutation receipts",
+          "paths": [
+            "shortcuts/common/read_request.go",
+            "shortcuts/common/runner.go",
+            "internal/cmdutil"
+          ],
+          "scope": "Watch lifecycle mutation marker, typed classification, all mutation receipt outcomes, artifact binding and retained no-op fields depend on shared owners. Only direct context marker inspected; no whole shared-owner approval implied."
+        },
+        {
+          "owner": "docs",
+          "paths": [
+            "shortcuts/whiteboard/whiteboard_update.go"
+          ],
+          "scope": "Docs compatibility whiteboard-update uses this same parser and command implementation."
+        }
+      ],
+      "limitations": [
+        "Required live/platform/release/evaluation gates remain separate.",
+        "No Go tests, process scenarios, live APIs, models or broad checks executed. Evidence is hash-bound static source review, not passing test evidence.",
+        "Reviewed exactly 20 manifest paths (19 changed-reference and one new implementation) at checkpoint, not later working-tree changes or all repository code.",
+        "Inherited typed domain projections are preserved; arbitrary unknown fields and decimal precision in preexisting OKR float64 models are not claimed as raw lossless output.",
+        "Wiki intentionally retains bounded partial-success semantics with has_more:true and warning rather than generic page-all failure semantics; this is pinned by its domain process test.",
+        "Existing collection decoders still do not universally validate null/missing items or duplicate identities; the newly introduced reorder panic is recorded as actionable."
+      ]
+    }
+  ]
+}
