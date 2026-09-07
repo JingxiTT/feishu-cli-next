@@ -2,7 +2,7 @@
 
 A Feishu/Lark CLI for capable shell and file agents. This development build reuses the pinned upstream CLI's domain commands, generated service catalog, raw API, authentication, events and extension SDK. It adds bounded command discovery, compact JSON, selected result fields, file artifacts, durable mutation evidence, and one project-installable English skill.
 
-Implementation and verification are in progress. [The implementation ledger](docs/IMPLEMENTATION.md) distinguishes passing offline checks from outstanding live, capability and comparative evaluation requirements. No token-efficiency improvement or full release acceptance is claimed yet.
+Implementation and verification are in progress. [The implementation ledger](docs/IMPLEMENTATION.md) distinguishes passing offline checks and scoped foundation measurements from outstanding live, capability and comparative evaluation requirements. Full-product efficiency and release acceptance remain unverified.
 
 ## Build and setup
 
@@ -17,7 +17,7 @@ make build
 
 Authentication retains the upstream configuration, profiles, credential providers, Feishu/Lark brands and `LARKSUITE_CLI_*` environment variables. See [upstream setup and authentication](README.upstream.md) for account configuration. Existing domain command names and flags are preserved. The binary is called `feishu-cli-next`; the Go module remains `github.com/larksuite/cli` for source and extension compatibility.
 
-`make install PREFIX=/your/prefix` installs the binary; `make uninstall` removes that binary. `guide update` and `guide uninstall` manage only the intact CLI-owned project skill and preserve unrelated files and local edits. The development build has no published next update channel; it cannot replace itself from the official upstream npm package. Packaging remains an open release section.
+`make install PREFIX=/your/prefix` installs an owned binary; `make update-install` updates it and `make uninstall` removes it using the same prefix. These commands refuse unrelated or edited files. `guide update` and `guide uninstall` manage only the intact CLI-owned project skill. [Distribution instructions](docs/distribution.md) cover checksummed archives and local npm installation. The development build has no published next update channel; it cannot replace itself from the official upstream npm package. Release packaging remains open.
 
 ## Use
 
@@ -25,7 +25,7 @@ Authentication retains the upstream configuration, profiles, credential provider
 feishu-cli-next discover docs --limit 8
 feishu-cli-next discover 'docs +fetch' --flags
 feishu-cli-next docs +fetch --help
-feishu-cli-next schema calendar.calendar.list
+feishu-cli-next schema drive files list
 feishu-cli-next guide
 ```
 
