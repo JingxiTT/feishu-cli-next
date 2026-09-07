@@ -1,0 +1,468 @@
+{
+  "schema_version": 1,
+  "reviewer": "/root (independent of packaging and skill implementation; authored the notice/documentation correction identified here)",
+  "import_revision": "0c1ac7570543db3117ba5bdc6a66b69f87c4a62e",
+  "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+  "verdict": "approved_offline_with_followup",
+  "review_method": "Read immutable implementation blobs and import-to-checkpoint diffs, verify all 15 assignment hashes, inspect lifecycle and installer tests and declared distribution boundaries. Existing execution reports are cited as owner evidence, not independently rerun or retrospectively bound to the checkpoint.",
+  "assignments": [
+    {
+      "assignment_id": "packaging_build_scripts",
+      "verdict": "approved_offline",
+      "paths": [
+        {
+          "path": ".github/workflows/pkg-pr-new.yml",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "4098f76324cb4bdaf5d2c29dbc3875f69c300136f94d0224e93b5e46fe38941b",
+          "verdict": "approved_offline",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "tests/next_sections/packaging/packaging_test.py",
+              "scope": "Real local npm lifecycle and binary/skill preservation, archive reproducibility, checksum tampering and explicit missing-channel failure; source inspection.",
+              "sha256": "425be4f035950ddc22367b17612039f3469e3acd6373e3274ebb436a2273b7b8",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": null,
+              "execution_binding": "Source inspection only; no test execution attributed to this source revision."
+            },
+            {
+              "path": "docs/sections/packaging.md",
+              "scope": "Owner capability mapping and explicit native/remote release evidence limits.",
+              "sha256": "8b7d4c00b3c9fe3c27e1ccaf4a5040a3caef34b9998981e04e34b70bb9b4d568",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": null,
+              "execution_binding": "Source inspection only; no test execution attributed to this source revision."
+            }
+          ]
+        },
+        {
+          "path": ".github/workflows/release.yml",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "836c5acdea64b3ae0c7de5a5f2f2298a68d6e02896ce68d62ee74c07bee6d60a",
+          "verdict": "approved_offline",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "tests/next_sections/packaging/packaging_test.py",
+              "scope": "Real local npm lifecycle and binary/skill preservation, archive reproducibility, checksum tampering and explicit missing-channel failure; source inspection.",
+              "sha256": "425be4f035950ddc22367b17612039f3469e3acd6373e3274ebb436a2273b7b8",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": null,
+              "execution_binding": "Source inspection only; no test execution attributed to this source revision."
+            },
+            {
+              "path": "docs/sections/packaging.md",
+              "scope": "Owner capability mapping and explicit native/remote release evidence limits.",
+              "sha256": "8b7d4c00b3c9fe3c27e1ccaf4a5040a3caef34b9998981e04e34b70bb9b4d568",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": null,
+              "execution_binding": "Source inspection only; no test execution attributed to this source revision."
+            }
+          ]
+        },
+        {
+          "path": ".goreleaser.yml",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "e3191a651b20a7233c50462f49a50e068418d39ecc73bc9013f79609e5f03e75",
+          "verdict": "approved_offline",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "tests/next_sections/packaging/packaging_test.py",
+              "scope": "Real local npm lifecycle and binary/skill preservation, archive reproducibility, checksum tampering and explicit missing-channel failure; source inspection.",
+              "sha256": "425be4f035950ddc22367b17612039f3469e3acd6373e3274ebb436a2273b7b8",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": null,
+              "execution_binding": "Source inspection only; no test execution attributed to this source revision."
+            },
+            {
+              "path": "docs/sections/packaging.md",
+              "scope": "Owner capability mapping and explicit native/remote release evidence limits.",
+              "sha256": "8b7d4c00b3c9fe3c27e1ccaf4a5040a3caef34b9998981e04e34b70bb9b4d568",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": null,
+              "execution_binding": "Source inspection only; no test execution attributed to this source revision."
+            }
+          ]
+        },
+        {
+          "path": "Makefile",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "350bc0a2a524c21a904a75680d69b8f7920e290f963b4d7507bef5dd6e5784eb",
+          "verdict": "approved_offline",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "tests/next_sections/packaging/packaging_test.py",
+              "scope": "Real local npm lifecycle and binary/skill preservation, archive reproducibility, checksum tampering and explicit missing-channel failure; source inspection.",
+              "sha256": "425be4f035950ddc22367b17612039f3469e3acd6373e3274ebb436a2273b7b8",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": null,
+              "execution_binding": "Source inspection only; no test execution attributed to this source revision."
+            },
+            {
+              "path": "docs/sections/packaging.md",
+              "scope": "Owner capability mapping and explicit native/remote release evidence limits.",
+              "sha256": "8b7d4c00b3c9fe3c27e1ccaf4a5040a3caef34b9998981e04e34b70bb9b4d568",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": null,
+              "execution_binding": "Source inspection only; no test execution attributed to this source revision."
+            }
+          ]
+        },
+        {
+          "path": "build.sh",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "c8ed1d8d213c7337e641b0e0a7e77c37ae11e216beeebc75a0bef68a9a34183c",
+          "verdict": "approved_offline",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "tests/next_sections/packaging/packaging_test.py",
+              "scope": "Real local npm lifecycle and binary/skill preservation, archive reproducibility, checksum tampering and explicit missing-channel failure; source inspection.",
+              "sha256": "425be4f035950ddc22367b17612039f3469e3acd6373e3274ebb436a2273b7b8",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": null,
+              "execution_binding": "Source inspection only; no test execution attributed to this source revision."
+            },
+            {
+              "path": "docs/sections/packaging.md",
+              "scope": "Owner capability mapping and explicit native/remote release evidence limits.",
+              "sha256": "8b7d4c00b3c9fe3c27e1ccaf4a5040a3caef34b9998981e04e34b70bb9b4d568",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": null,
+              "execution_binding": "Source inspection only; no test execution attributed to this source revision."
+            }
+          ]
+        },
+        {
+          "path": "package.json",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "897a2c67222727eba4c1e0dfee8df25da83d5a1a53af6a180efbb059e5c3365e",
+          "verdict": "approved_offline",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "tests/next_sections/packaging/packaging_test.py",
+              "scope": "Real local npm lifecycle and binary/skill preservation, archive reproducibility, checksum tampering and explicit missing-channel failure; source inspection.",
+              "sha256": "425be4f035950ddc22367b17612039f3469e3acd6373e3274ebb436a2273b7b8",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": null,
+              "execution_binding": "Source inspection only; no test execution attributed to this source revision."
+            },
+            {
+              "path": "docs/sections/packaging.md",
+              "scope": "Owner capability mapping and explicit native/remote release evidence limits.",
+              "sha256": "8b7d4c00b3c9fe3c27e1ccaf4a5040a3caef34b9998981e04e34b70bb9b4d568",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": null,
+              "execution_binding": "Source inspection only; no test execution attributed to this source revision."
+            }
+          ]
+        },
+        {
+          "path": "scripts/build-pkg-pr-new.sh",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "b869a9d6f6242a1e9c7682cef9796ca4a91b31bfe0c90eeb6cea21d3a338761d",
+          "verdict": "approved_offline",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "tests/next_sections/packaging/packaging_test.py",
+              "scope": "Real local npm lifecycle and binary/skill preservation, archive reproducibility, checksum tampering and explicit missing-channel failure; source inspection.",
+              "sha256": "425be4f035950ddc22367b17612039f3469e3acd6373e3274ebb436a2273b7b8",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": null,
+              "execution_binding": "Source inspection only; no test execution attributed to this source revision."
+            },
+            {
+              "path": "docs/sections/packaging.md",
+              "scope": "Owner capability mapping and explicit native/remote release evidence limits.",
+              "sha256": "8b7d4c00b3c9fe3c27e1ccaf4a5040a3caef34b9998981e04e34b70bb9b4d568",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": null,
+              "execution_binding": "Source inspection only; no test execution attributed to this source revision."
+            }
+          ]
+        },
+        {
+          "path": "scripts/install-wizard.js",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "f93f18548e248648c9966fc840dc366ae96c32735bd6989a0d6dc90b365dc9e5",
+          "verdict": "changes_requested_at_checkpoint",
+          "findings": [
+            {
+              "id": "PK1",
+              "severity": "notice",
+              "description": "Simplified installer wrapper dropped the inherited copyright/SPDX notice, contrary to the plan license-preservation requirement.",
+              "status": "fixed_in_followup",
+              "fix_revision": "25e00c55b44ca7ce670e8967ad9fce371cc2e665"
+            }
+          ],
+          "evidence": [
+            {
+              "path": "tests/next_sections/packaging/packaging_test.py",
+              "scope": "Real local npm lifecycle and binary/skill preservation, archive reproducibility, checksum tampering and explicit missing-channel failure; source inspection.",
+              "sha256": "425be4f035950ddc22367b17612039f3469e3acd6373e3274ebb436a2273b7b8",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": null,
+              "execution_binding": "Source inspection only; no test execution attributed to this source revision."
+            },
+            {
+              "path": "docs/sections/packaging.md",
+              "scope": "Owner capability mapping and explicit native/remote release evidence limits.",
+              "sha256": "8b7d4c00b3c9fe3c27e1ccaf4a5040a3caef34b9998981e04e34b70bb9b4d568",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": null,
+              "execution_binding": "Source inspection only; no test execution attributed to this source revision."
+            }
+          ]
+        },
+        {
+          "path": "scripts/install.js",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "935bdcbf30779284fe9a0ea0b562757e7f5380409fe21f9d570b2357c4864646",
+          "verdict": "approved_offline",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "tests/next_sections/packaging/packaging_test.py",
+              "scope": "Real local npm lifecycle and binary/skill preservation, archive reproducibility, checksum tampering and explicit missing-channel failure; source inspection.",
+              "sha256": "425be4f035950ddc22367b17612039f3469e3acd6373e3274ebb436a2273b7b8",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": null,
+              "execution_binding": "Source inspection only; no test execution attributed to this source revision."
+            },
+            {
+              "path": "docs/sections/packaging.md",
+              "scope": "Owner capability mapping and explicit native/remote release evidence limits.",
+              "sha256": "8b7d4c00b3c9fe3c27e1ccaf4a5040a3caef34b9998981e04e34b70bb9b4d568",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": null,
+              "execution_binding": "Source inspection only; no test execution attributed to this source revision."
+            }
+          ]
+        },
+        {
+          "path": "scripts/install.test.js",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "c0793ef41f1ad6f78d86f0ebe1514cdeca1e920bfd7e36a139a2a8071038a145",
+          "verdict": "approved_offline",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "tests/next_sections/packaging/packaging_test.py",
+              "scope": "Real local npm lifecycle and binary/skill preservation, archive reproducibility, checksum tampering and explicit missing-channel failure; source inspection.",
+              "sha256": "425be4f035950ddc22367b17612039f3469e3acd6373e3274ebb436a2273b7b8",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": null,
+              "execution_binding": "Source inspection only; no test execution attributed to this source revision."
+            },
+            {
+              "path": "docs/sections/packaging.md",
+              "scope": "Owner capability mapping and explicit native/remote release evidence limits.",
+              "sha256": "8b7d4c00b3c9fe3c27e1ccaf4a5040a3caef34b9998981e04e34b70bb9b4d568",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": null,
+              "execution_binding": "Source inspection only; no test execution attributed to this source revision."
+            }
+          ]
+        },
+        {
+          "path": "scripts/release-workflow.test.sh",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "36ab21c5b224a1a565394f30317f83dfabfa310c2d71afb343466990057fa2e0",
+          "verdict": "approved_offline",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "tests/next_sections/packaging/packaging_test.py",
+              "scope": "Real local npm lifecycle and binary/skill preservation, archive reproducibility, checksum tampering and explicit missing-channel failure; source inspection.",
+              "sha256": "425be4f035950ddc22367b17612039f3469e3acd6373e3274ebb436a2273b7b8",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": null,
+              "execution_binding": "Source inspection only; no test execution attributed to this source revision."
+            },
+            {
+              "path": "docs/sections/packaging.md",
+              "scope": "Owner capability mapping and explicit native/remote release evidence limits.",
+              "sha256": "8b7d4c00b3c9fe3c27e1ccaf4a5040a3caef34b9998981e04e34b70bb9b4d568",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": null,
+              "execution_binding": "Source inspection only; no test execution attributed to this source revision."
+            }
+          ]
+        },
+        {
+          "path": "scripts/run.js",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "87c2c17fdce45dfe69162e19fa116c24200797b926792274629a4df27bcd9610",
+          "verdict": "approved_offline",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "tests/next_sections/packaging/packaging_test.py",
+              "scope": "Real local npm lifecycle and binary/skill preservation, archive reproducibility, checksum tampering and explicit missing-channel failure; source inspection.",
+              "sha256": "425be4f035950ddc22367b17612039f3469e3acd6373e3274ebb436a2273b7b8",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": null,
+              "execution_binding": "Source inspection only; no test execution attributed to this source revision."
+            },
+            {
+              "path": "docs/sections/packaging.md",
+              "scope": "Owner capability mapping and explicit native/remote release evidence limits.",
+              "sha256": "8b7d4c00b3c9fe3c27e1ccaf4a5040a3caef34b9998981e04e34b70bb9b4d568",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": null,
+              "execution_binding": "Source inspection only; no test execution attributed to this source revision."
+            }
+          ]
+        },
+        {
+          "path": "scripts/tag-release.sh",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "a4731ba0b9da6dcd175965b9e171732dce6535b4ea0af251898ada29ec5052fb",
+          "verdict": "approved_offline",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "tests/next_sections/packaging/packaging_test.py",
+              "scope": "Real local npm lifecycle and binary/skill preservation, archive reproducibility, checksum tampering and explicit missing-channel failure; source inspection.",
+              "sha256": "425be4f035950ddc22367b17612039f3469e3acd6373e3274ebb436a2273b7b8",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": null,
+              "execution_binding": "Source inspection only; no test execution attributed to this source revision."
+            },
+            {
+              "path": "docs/sections/packaging.md",
+              "scope": "Owner capability mapping and explicit native/remote release evidence limits.",
+              "sha256": "8b7d4c00b3c9fe3c27e1ccaf4a5040a3caef34b9998981e04e34b70bb9b4d568",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": null,
+              "execution_binding": "Source inspection only; no test execution attributed to this source revision."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "assignment_id": "skill_lifecycle",
+      "verdict": "approved_offline",
+      "paths": [
+        {
+          "path": "cmd/guide/guide.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "56b1742db5d9f2075b2b4d68f08f7184f750622a499bfc08d67878f0c3869d17",
+          "verdict": "approved_offline",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "internal/nextskill/skill_test.go",
+              "scope": "Ownership checksum, install/update/uninstall, edited or unowned file refusal, symlink and lock handling, failed atomic update preservation.",
+              "sha256": "4bd69afbbc5143b07494a5aa6bfa34ce9755da628b1839020270414121113797",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": null,
+              "execution_binding": "Source inspection only; no test execution attributed to this source revision."
+            },
+            {
+              "path": "tests/next_foundation/guide_e2e_test.go",
+              "scope": "Actual guide process install, update and uninstall behavior; source inspection.",
+              "sha256": "fe633e59a0cbe7f6b29de06ffbeef7e5985180464023bff70c5d90f4773584bb",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": null,
+              "execution_binding": "Source inspection only; no test execution attributed to this source revision."
+            }
+          ]
+        },
+        {
+          "path": "internal/nextskill/skill.go",
+          "review_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+          "review_sha256": "597ea5e4fdc26ecf160ceb4d17b3997c3bc8527a55b0099dc88501591803acca",
+          "verdict": "approved_offline",
+          "findings": [],
+          "evidence": [
+            {
+              "path": "internal/nextskill/skill_test.go",
+              "scope": "Ownership checksum, install/update/uninstall, edited or unowned file refusal, symlink and lock handling, failed atomic update preservation.",
+              "sha256": "4bd69afbbc5143b07494a5aa6bfa34ce9755da628b1839020270414121113797",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": null,
+              "execution_binding": "Source inspection only; no test execution attributed to this source revision."
+            },
+            {
+              "path": "tests/next_foundation/guide_e2e_test.go",
+              "scope": "Actual guide process install, update and uninstall behavior; source inspection.",
+              "sha256": "fe633e59a0cbe7f6b29de06ffbeef7e5985180464023bff70c5d90f4773584bb",
+              "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+              "tested_revision": null,
+              "execution_binding": "Source inspection only; no test execution attributed to this source revision."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "followups": [
+    {
+      "id": "PK1",
+      "verdict": "approved_offline",
+      "review_revision": "25e00c55b44ca7ce670e8967ad9fce371cc2e665",
+      "path": "scripts/install-wizard.js",
+      "review_sha256": "1c3a46966275e3f9a29c16c0b9ab793a7e5fb00e382241d0b783e80de9795f4e",
+      "finding_closed": "Restores inherited copyright and SPDX notice without changing executable behavior.",
+      "additional_documentation_correction": "docs/contracts/skill.md now names the executable e2e suite instead of nonexistent offline suite.",
+      "independence": "Correction was authored by this reviewer; exact comment-only diff inspected."
+    }
+  ],
+  "cross_assignment_dependencies": [
+    {
+      "path": "scripts/next_binary.py",
+      "scope": "Invoked by Make lifecycle targets; local prefix ownership checks, exclusive install, replace/update and refuse-on-mismatch recovery.",
+      "sha256": "08cae17e6afafcf2a5d7bbdfa17cf765c0bafba4bb76ea01703a259b316c9c26",
+      "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+      "tested_revision": null,
+      "execution_binding": "Source inspection only; no test execution attributed to this source revision."
+    },
+    {
+      "path": "scripts/next_package.py",
+      "scope": "Builds seven platform pairs and both variants, archives deterministic bytes and checksums, local npm packaging.",
+      "sha256": "7c692a867f13ae0040acc99dacba3e2aac942b757059add73b163d41a7aa1779",
+      "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+      "tested_revision": null,
+      "execution_binding": "Source inspection only; no test execution attributed to this source revision."
+    },
+    {
+      "path": "internal/nextskill/skill_test.go",
+      "scope": "Skill lifecycle implementation regression coverage.",
+      "sha256": "4bd69afbbc5143b07494a5aa6bfa34ce9755da628b1839020270414121113797",
+      "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+      "tested_revision": null,
+      "execution_binding": "Source inspection only; no test execution attributed to this source revision."
+    },
+    {
+      "path": "docs/contracts/skill.md",
+      "scope": "Host-local managed path boundary and lifecycle contract.",
+      "sha256": "43255214f766d266b1fdacbb4449aaf20ac1025f4975370827b0ee811d8de787",
+      "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+      "tested_revision": null,
+      "execution_binding": "Source inspection only; no test execution attributed to this source revision."
+    }
+  ],
+  "limitations": [
+    "This is a source semantic review, not release acceptance or proof of live behavior.",
+    "Native Windows/Linux/macOS Intel execution, trusted remote install/update channel and public signing/notarization remain unverified. Cross-compilation does not establish native execution.",
+    "Local prefix binary and ownership checksum publication is fail-closed after interruption but is not a two-file atomic transaction. No adversarial directory replacement guarantee is asserted.",
+    "Project skill lifecycle uses validated host-local CLI-managed state, cooperative locks and atomic replacement. Its checksum detects local edits; it is not an authenticity signature.",
+    "Guide startup identity lookup was independently reviewed under command_recovery; later startup fixes are outside these two unchanged skill implementation blobs.",
+    "Later CI/Makefile/test portability changes are outside this historical checkpoint and require separate follow-up coverage."
+  ],
+  "owner_execution_reports": [
+    {
+      "path": "docs/sections/packaging-evidence.json",
+      "sha256": "899b2fbe0b04d77b28d45a97826b8e00fc681f0930f77713c9ae6392f9bae86a",
+      "source_revision": "0084501742edb1ee87bdf9623adf7da37267f142",
+      "tested_revision": null,
+      "scope": "Owner reports shared-working-tree matrix and native macOS arm64/Node compatibility, explicitly not an immutable release candidate."
+    }
+  ]
+}
