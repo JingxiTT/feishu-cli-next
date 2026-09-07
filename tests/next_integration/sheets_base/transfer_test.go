@@ -444,7 +444,7 @@ func TestPartialExportCannotBecomeAnImportArtifact(t *testing.T) {
 }
 
 func TestActualExportRejectsChangedEffectiveBindingBeforeDestinationAccess(t *testing.T) {
-	for _, changed := range []string{"tenant", "user", "app", "environment", "identity"} {
+	for _, changed := range []string{"unchanged", "tenant", "user", "app", "environment", "identity"} {
 		t.Run(changed, func(t *testing.T) {
 			f, b := newTransfer(t, 2, "")
 			before := fingerprint(b.source)
@@ -480,6 +480,14 @@ func TestActualExportRejectsChangedEffectiveBindingBeforeDestinationAccess(t *te
 			t.Cleanup(server.Close)
 			f.Env["LARKSUITE_CLI_AUTH_PROXY"] = server.URL
 			result := f.Run(args...)
+			if changed == "unchanged" {
+				resultObject(t, result)
+				if len(b.fields) != 8 || b.writes != 1 {
+					t.Fatal("equivalent identity through replacement sidecar did not import")
+				}
+				verifyStoredPrefix(t, b, 2)
+				return
+			}
 			var failure struct {
 				Error struct {
 					Type    string `json:"type"`
