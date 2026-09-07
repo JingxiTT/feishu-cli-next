@@ -1,0 +1,238 @@
+{
+  "schema_version": 1,
+  "reviewer": "/root/foundation_skill",
+  "report_kind": "hash_bound_platform_capability_follow_up",
+  "review_revision": "cb3a7500f62c53ecb9b1bd893d4953d9652b3e54",
+  "verdict": "approved_offline",
+  "scope": {
+    "assignment_ids": [
+      "ci_capability_guard"
+    ],
+    "path_count": 8,
+    "implementation_revisions": [
+      "c7c9f7b6e3df2e59a4118c57ae56fe8f19fbc566",
+      "cb3a7500f62c53ecb9b1bd893d4953d9652b3e54"
+    ],
+    "method": "Whole current helper/provenance call path plus exact commit diffs, full platform data/profile comparison,21 exact-source isolated inventory tests, independent selected-Linux predicate, verified existing capture/tool/source hashes. No product edits or broad suite.",
+    "independence": "Reviewer did not author either platform implementation/capture commit. Only this report is changed."
+  },
+  "prior_review_preserved": {
+    "path": "docs/reference/reviews/p3-capability-guard-review.json",
+    "commit": "65b3b859db8f9879d0dd7f164cfc5aa8356e854d",
+    "sha256": "f043c79ea6134a0ab3fb4cf4022ca555259b783ed8e65fe5e08e8d035f16d80e",
+    "scope_note": "Original guard review and checkpoint retained. This follow-up corrects the newly observed platform-reference mismatch without rewriting historical evidence."
+  },
+  "assignments": [
+    {
+      "assignment_id": "ci_capability_guard",
+      "verdict": "approved_offline",
+      "paths": [
+        {
+          "path": "scripts/next_inventory.py",
+          "review_revision": "cb3a7500f62c53ecb9b1bd893d4953d9652b3e54",
+          "review_sha256": "e2760eab86d4dfadfac8a75ff25d49dc18ecf26354f8ac626a73a8a3e6e25d16",
+          "verdict": "approved_offline",
+          "review_scope": "Whole current module reviewed by composing prior whole-module review with c7c9f7b build-context capture and cb3a750 profile selection/reporting. Exact GOOS profiles and reference file hashes selected before collection; target/host OS mismatch and context drift rejected. Only selected reference hash changes in the in-memory mapping context; all intentional rows and existing protected-contract predicates remain unchanged.",
+          "findings": []
+        },
+        {
+          "path": "scripts/next_inventory_test.py",
+          "review_revision": "cb3a7500f62c53ecb9b1bd893d4953d9652b3e54",
+          "review_sha256": "64eab516cd6bbc98ce975069fd44848f3cc6316fd6a9a1c5f4114736450d7831",
+          "verdict": "approved_offline",
+          "review_scope": "Full current file and new platform/provenance regressions read; all21 independently executed from exact source. Exact profiles, checksum mismatch, unsupported/cross-OS targets, platform false-positive correction and continued rejection of new risk drift are covered.",
+          "findings": []
+        },
+        {
+          "path": "docs/reference/configured-brand-platforms.json",
+          "review_revision": "cb3a7500f62c53ecb9b1bd893d4953d9652b3e54",
+          "review_sha256": "864f50f065fd3e8e404dd61569a1834e59c2e022c8be1a43f71366d75286fa74",
+          "verdict": "approved_offline",
+          "review_scope": "Exactly three profiles; Darwin keeps original reference, Linux pins actual Linux capture, Windows reuses Linux reference with explicit source-derived provenance and native_reference_capture:not_run. No generic non-Darwin fallback.",
+          "findings": []
+        },
+        {
+          "path": "docs/reference/configured-brand-registrations-linux.json.gz",
+          "review_revision": "cb3a7500f62c53ecb9b1bd893d4953d9652b3e54",
+          "review_sha256": "dacdbc087857ee0c3d4e3f3f665a24ea3b0519bc5f9b0d049272b3fb90b099df",
+          "verdict": "approved_offline",
+          "review_scope": "Whole decoded snapshot recursively compared with original Darwin snapshot: exactly two keychain-downgrade risk leaves differ, with equal remaining registrations. File hash matches actual Linux capture receipt and selected profile.",
+          "findings": []
+        },
+        {
+          "path": "docs/reference/configured-brand-context-linux.json",
+          "review_revision": "cb3a7500f62c53ecb9b1bd893d4953d9652b3e54",
+          "review_sha256": "d60fd75a65ee2a80dc02e0ccdf6d8ab9cf5dea2cbbda66f51b473eca6d12e2d6",
+          "verdict": "approved_offline",
+          "review_scope": "Actual Linux/arm64 Go1.26.4 capture provenance inspected: clean frozen7fd source, frozen metadata hash, exact exporter hash, configured Feishu/Lark guards and captured file hash.",
+          "findings": []
+        },
+        {
+          "path": "docs/reference/ci-capability-linux-checkpoint.json.gz",
+          "review_revision": "cb3a7500f62c53ecb9b1bd893d4953d9652b3e54",
+          "review_sha256": "59a487734d31d90c937b80bba56659d2819308e8cbec50c14bb464fae80819da",
+          "verdict": "approved_offline",
+          "review_scope": "Existing actual Linux candidate8ce0688 registration check inspected, retaining review_required and5742 intended rows. Independent predicate with selected Linux reference hash passes. Final platform-aware gate CLI process is pending separately.",
+          "findings": []
+        },
+        {
+          "path": "docs/reference/configured-brand-linux-evidence.json",
+          "review_revision": "cb3a7500f62c53ecb9b1bd893d4953d9652b3e54",
+          "review_sha256": "bbca93038fb6f7f9ad0b46e42ad2543264ddcd84ee391bb5731bd755a410f444",
+          "verdict": "approved_offline",
+          "review_scope": "Capture/source/tool/context hashes, exactly two platform differences, unchanged product source, failed setup attempts and successful capture boundaries inspected; selected-profile result accurately labeled local predicate on actual exports.",
+          "findings": []
+        },
+        {
+          "path": "docs/reference/CI.md",
+          "review_revision": "cb3a7500f62c53ecb9b1bd893d4953d9652b3e54",
+          "review_sha256": "2e686879d416ce9c943d30bb5307b070fc0390795bc10ec982fab151628bbc58",
+          "verdict": "approved_offline",
+          "review_scope": "Platform reference documentation checked against implementation and actual evidence. Explicit Windows source-derived/native-unverified caveat appears without runtime/product parity or semantic approval claims; architecture is recorded separately from OS matching.",
+          "findings": []
+        }
+      ],
+      "findings": []
+    }
+  ],
+  "observed_problem_and_resolution": {
+    "problem": "Actual Linux candidate8ce0688 compared against the Darwin reference produced two extra risk metadata differences, despite unchanged product source. Darwin marks the supported keychain-downgrade operation write; the !darwin stub has no risk annotation.",
+    "affected_paths": [
+      "/feishu/commands/config keychain-downgrade/risk",
+      "/lark/commands/config keychain-downgrade/risk"
+    ],
+    "reference_source_revision": "7fd6ef3c07182257ce776cdc5a614e122d5bd4b3",
+    "resolution": "Use a separately captured full Linux reference, selected by exact profile/file hash, with the same5742 intentional interface rows. No risk value is ignored or rewritten and no product file changes. New differing risk values still fail the gate.",
+    "pre_fix_report": {
+      "path": ".tmp/next-evidence/linux-8ce0688/followup/capability.json",
+      "sha256": "123d2d053656bcb82ba418898bbe0050dd082386d6b58f5c91595f8bbe5c8e6f",
+      "candidate_revision": "8ce0688b303eb646e1b79a329002dddcb6403be4",
+      "gate_failures": 2,
+      "registration_changes": 5744
+    }
+  },
+  "independent_execution": {
+    "source_revision": "cb3a7500f62c53ecb9b1bd893d4953d9652b3e54",
+    "source_files": [
+      {
+        "path": "scripts/next_inventory.py",
+        "sha256": "e2760eab86d4dfadfac8a75ff25d49dc18ecf26354f8ac626a73a8a3e6e25d16"
+      },
+      {
+        "path": "scripts/next_inventory_test.py",
+        "sha256": "64eab516cd6bbc98ce975069fd44848f3cc6316fd6a9a1c5f4114736450d7831"
+      },
+      {
+        "path": "scripts/next_inventory_export.go",
+        "sha256": "3cc40a3c1513a0e9dea9d402d187a2fcd58aead22ac7ac49aa2d653f71e8a136"
+      }
+    ],
+    "method": "Copied exact git-show bytes to a temporary tree and ran python -m unittest discover -s scripts -p next_inventory_test.py -v under existing next_test isolated_env.",
+    "pass": 21,
+    "fail": 0,
+    "skip": 0,
+    "exit_code": 0,
+    "platform": "Darwin arm64",
+    "selected_linux_predicate": {
+      "inputs": "Actual committed Linux reference/candidate exports and unchanged committed interface mapping, with only selected-profile reference hash substituted.",
+      "status": "pass",
+      "checked_registration_changes": 5742,
+      "failures": []
+    }
+  },
+  "owner_capture_evidence": {
+    "reference_revision": "7fd6ef3c07182257ce776cdc5a614e122d5bd4b3",
+    "reference_local_changes": "",
+    "reference_shallow_boundary": "7fd6ef3c07182257ce776cdc5a614e122d5bd4b3",
+    "candidate_revision": "8ce0688b303eb646e1b79a329002dddcb6403be4",
+    "build_context": {
+      "GOARCH": "arm64",
+      "GOHOSTARCH": "arm64",
+      "GOHOSTOS": "linux",
+      "GOOS": "linux",
+      "go_version": "go version go1.26.4 linux/arm64"
+    },
+    "export_tool_revision": "c7c9f7b6e3df2e59a4118c57ae56fe8f19fbc566",
+    "export_tool_sha256_verified": "dbd1a49d8635932560e63700a895f5135c0d2aebf02379f24c6c5d5bf2c7ef97",
+    "exporter_sha256_verified": "3cc40a3c1513a0e9dea9d402d187a2fcd58aead22ac7ac49aa2d653f71e8a136",
+    "captured_files_hashes_verified": [
+      {
+        "path": "docs/reference/configured-brand-registrations-linux.json.gz",
+        "sha256": "dacdbc087857ee0c3d4e3f3f665a24ea3b0519bc5f9b0d049272b3fb90b099df"
+      },
+      {
+        "path": "docs/reference/configured-brand-context-linux.json",
+        "sha256": "d60fd75a65ee2a80dc02e0ccdf6d8ab9cf5dea2cbbda66f51b473eca6d12e2d6"
+      },
+      {
+        "path": "docs/reference/ci-capability-linux-checkpoint.json.gz",
+        "sha256": "59a487734d31d90c937b80bba56659d2819308e8cbec50c14bb464fae80819da"
+      }
+    ],
+    "raw_evidence_hashes_verified": true,
+    "raw_evidence_index": "docs/reference/configured-brand-linux-evidence.json#/raw_evidence",
+    "container_network": "none",
+    "container_user": "10001:10001",
+    "actual_candidate_check_status": "review_required",
+    "actual_candidate_check_exit_code": 1,
+    "execution_boundary": "Successful Linux registration capture/check after two failed shallow checkout setup attempts; failed attempts are preserved and are not acceptance evidence. Capture uses c7c9f7b tool on frozen reference7fd and candidate8ce. Predicate at cb3a750 is separately checked; final cb3a750 Linux gate CLI invocation is pending, not claimed."
+  },
+  "preserved_exact_bytes": [
+    {
+      "path": "docs/reference/configured-brand-registrations.json.gz",
+      "prior_revision": "4b56e1a63bbe136ced28037113a7123e95d12d35",
+      "current_revision": "cb3a7500f62c53ecb9b1bd893d4953d9652b3e54",
+      "sha256": "726dedbbd8eb68c43743252a04c24eb8b4395012a6a1b22841d788210fd8e6d0"
+    },
+    {
+      "path": "docs/reference/registrations.json.gz",
+      "prior_revision": "4b56e1a63bbe136ced28037113a7123e95d12d35",
+      "current_revision": "cb3a7500f62c53ecb9b1bd893d4953d9652b3e54",
+      "sha256": "cde16a5a99e7336c0983f02e864a157b455250e36d767618d28f86598505dc0a"
+    },
+    {
+      "path": "docs/reference/meta_data.json.gz",
+      "prior_revision": "4b56e1a63bbe136ced28037113a7123e95d12d35",
+      "current_revision": "cb3a7500f62c53ecb9b1bd893d4953d9652b3e54",
+      "sha256": "c3717197efc20093b4b9eb737bbe3f5f5e6acb75c19b86071ccf5acf62f588d7"
+    },
+    {
+      "path": "docs/reference/next-interface-mapping.json.gz",
+      "prior_revision": "4b56e1a63bbe136ced28037113a7123e95d12d35",
+      "current_revision": "cb3a7500f62c53ecb9b1bd893d4953d9652b3e54",
+      "sha256": "3597fe639ab729226de12283f70e002e98f670433f7ee837f18dd52a993b3bd2"
+    },
+    {
+      "path": "docs/reference/ci-capability-checkpoint.json.gz",
+      "prior_revision": "4b56e1a63bbe136ced28037113a7123e95d12d35",
+      "current_revision": "cb3a7500f62c53ecb9b1bd893d4953d9652b3e54",
+      "sha256": "46ad78ec2106edbd07886cff74adcb9aa2f6146bb19d23f31587ba9287801b87"
+    },
+    {
+      "path": "scripts/next_inventory_export.go",
+      "prior_revision": "4b56e1a63bbe136ced28037113a7123e95d12d35",
+      "current_revision": "cb3a7500f62c53ecb9b1bd893d4953d9652b3e54",
+      "sha256": "3cc40a3c1513a0e9dea9d402d187a2fcd58aead22ac7ac49aa2d653f71e8a136"
+    },
+    {
+      "path": "cmd/config/keychain_downgrade.go",
+      "prior_revision": "4b56e1a63bbe136ced28037113a7123e95d12d35",
+      "current_revision": "cb3a7500f62c53ecb9b1bd893d4953d9652b3e54",
+      "sha256": "033ca12ff4ba9ad53b975bc376669bf80e6abc02920ecf19de27a20c57fe92b8"
+    },
+    {
+      "path": "cmd/config/keychain_downgrade_other.go",
+      "prior_revision": "4b56e1a63bbe136ced28037113a7123e95d12d35",
+      "current_revision": "cb3a7500f62c53ecb9b1bd893d4953d9652b3e54",
+      "sha256": "7f375c6d9c862d655f3117e8db36bf046f68479ef79c3a153097dd74853b0184"
+    }
+  ],
+  "limitations": [
+    "Final platform-aware gate CLI execution is pending a separate baseline receipt. This source approval does not claim that cb3a750 gate executed on Linux or Windows.",
+    "Actual Linux evidence is Linux/arm64 registration capture/check in the documented offline image. It is not live API behavior, every architecture, or completed native CI matrix acceptance.",
+    "Windows profile is source-derived from Linux capture and the shared !darwin registration source. Native Windows reference capture and candidate comparison are not run; passing this profile alone cannot establish full Windows acceptance.",
+    "GOOS/GOHOSTOS matching is required. GOARCH/GOHOSTARCH are recorded but their equality is not required, so OS matching does not establish physical native architecture.",
+    "Only exact versioned reference profiles are selected. Profile or reference changes still require review; the configured hash is not an authenticity signature or semantic source approval.",
+    "Original frozen/Darwin snapshots, original checkpoint, mapping rows, exporter and product keychain source remain byte-identical. Original semantic review_required status and earlier reporting/native-execution limits remain preserved."
+  ]
+}
