@@ -48,6 +48,9 @@ func TestNativeDataRejectsIncompletePages(t *testing.T) {
 		`{"ranges":[]}`,
 		`{"has_more":true,"ranges":[{"cells":[[{},{}]]}]}`,
 		`{"ranges":[{"range":"A2:B2","cells":[[{},{}]]}]}`,
+		`{"ranges":[{"actual_range":"C1:D1","cells":[[{},{}]]}]}`,
+		`{"ranges":[{"row_indices":[2],"cells":[[{},{}]]}]}`,
+		`{"ranges":[{"col_indices":["A","C"],"cells":[[{},{}]]}]}`,
 		`{"ranges":[{"cells":[[{}]]}]}`,
 		`{"ranges":[{"cells":[[{},null]]}]}`,
 		`{"ranges":[{"cells":[[{"isRowTruncated":true},{}]]}]}`,
@@ -175,5 +178,20 @@ func TestNativeFormulaNoopIgnoresRecomputedCache(t *testing.T) {
 	writes, changed, err := nativeWritePlan(want, current)
 	if err != nil || changed != 0 || nativePageChanged(writes) {
 		t.Fatalf("formula cache caused write: %d %v", changed, err)
+	}
+}
+
+func TestNativeEmptyFormulaMetadataDoesNotHideStaticChange(t *testing.T) {
+	want := nativeCells(t, `[[{"formula":"","value":"new"}]]`)
+	current := nativeCells(t, `[[{"formula":"","value":"old"}]]`)
+	writes, changed, err := nativeWritePlan(want, current)
+	if err != nil || changed != 1 {
+		t.Fatalf("static change missed: %d %v", changed, err)
+	}
+	if string(writes[0][0]["value"]) != `"new"` {
+		t.Fatalf("value lost: %v", writes)
+	}
+	if _, ok := writes[0][0]["formula"]; ok {
+		t.Fatal("empty read metadata became a formula write")
 	}
 }

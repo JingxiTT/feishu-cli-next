@@ -95,6 +95,9 @@ type nativeRangeResponse struct {
 	HasMore     bool `json:"has_more"`
 	Ranges      []struct {
 		Range       string         `json:"range"`
+		ActualRange string         `json:"actual_range"`
+		RowIndices  []int          `json:"row_indices"`
+		ColIndices  []string       `json:"col_indices"`
 		Truncated   bool           `json:"truncated"`
 		IsTruncated bool           `json:"is_truncated"`
 		HasMore     bool           `json:"has_more"`
@@ -114,10 +117,33 @@ func decodeNativePage(raw string, extent cellRange) ([][]nativeCell, error) {
 	if block.Truncated || block.IsTruncated || block.HasMore || len(block.Cells) != extent.rows {
 		return nil, errs.NewInternalError(errs.SubtypeInvalidResponse, "cell response does not contain the complete requested rows")
 	}
-	if block.Range != "" {
-		actual, err := parseCellRange(block.Range)
+	for _, reported := range []string{block.Range, block.ActualRange} {
+		if reported == "" {
+			continue
+		}
+		actual, err := parseCellRange(reported)
 		if err != nil || actual.col != extent.col || actual.row != extent.row || actual.rows != extent.rows || actual.cols != extent.cols {
 			return nil, errs.NewInternalError(errs.SubtypeInvalidResponse, "backend returned a different cell extent")
+		}
+	}
+	if len(block.RowIndices) > 0 {
+		if len(block.RowIndices) != extent.rows {
+			return nil, errs.NewInternalError(errs.SubtypeInvalidResponse, "backend returned incomplete row indices")
+		}
+		for i, row := range block.RowIndices {
+			if row != extent.row+i+1 {
+				return nil, errs.NewInternalError(errs.SubtypeInvalidResponse, "backend returned noncontiguous row indices")
+			}
+		}
+	}
+	if len(block.ColIndices) > 0 {
+		if len(block.ColIndices) != extent.cols {
+			return nil, errs.NewInternalError(errs.SubtypeInvalidResponse, "backend returned incomplete column indices")
+		}
+		for i, col := range block.ColIndices {
+			if col != columnIndexToLetter(extent.col+i) {
+				return nil, errs.NewInternalError(errs.SubtypeInvalidResponse, "backend returned noncontiguous column indices")
+			}
 		}
 	}
 	for _, row := range block.Cells {
@@ -174,7 +200,7 @@ func equalNativeJSON(a, b json.RawMessage) bool {
 func nativeCellUnchanged(want, current nativeCell) bool {
 	for key, value := range want {
 		if key == "value" {
-			if _, formula := want["formula"]; formula {
+			if nativeFormulaPresent(want) {
 				continue
 			}
 		}
@@ -184,7 +210,7 @@ func nativeCellUnchanged(want, current nativeCell) bool {
 		}
 	}
 	// A static value must not be mistaken for an equal cached formula value.
-	if _, ok := want["value"]; ok && len(want["formula"]) == 0 {
+	if _, ok := want["value"]; ok && !nativeFormulaPresent(want) {
 		if raw, ok := current["formula"]; ok && string(raw) != "null" && string(raw) != `""` {
 			return false
 		}
@@ -205,10 +231,14 @@ func nativeWriteCell(cell nativeCell) (nativeCell, error) {
 	}
 	if raw, ok := out["formula"]; ok {
 		var formula string
-		if json.Unmarshal(raw, &formula) != nil || !strings.HasPrefix(formula, "=") {
+		if json.Unmarshal(raw, &formula) != nil || (formula != "" && !strings.HasPrefix(formula, "=")) {
 			return nil, errs.NewValidationError(errs.SubtypeInvalidArgument, "formula must be a string starting with =").WithParam("--artifact")
 		}
-		delete(out, "value") // backend cached value is not a second content write
+		if formula == "" {
+			delete(out, "formula") // read metadata saying this is a static cell
+		} else {
+			delete(out, "value") // backend cached value is not a second content write
+		}
 	}
 	if raw, ok := out["value"]; ok {
 		if bytes.Equal(bytes.TrimSpace(raw), []byte("null")) {
@@ -408,4 +438,9 @@ func dataReadDryRun(r *common.RuntimeContext) *common.DryRunAPI {
 		dry.POST(toolInvokePath(r.Str("spreadsheet-token"), ToolKindRead)).Desc("read complete native cells in " + region).Body(body)
 	}
 	return dry.Set("complete_extent", r.Str("range"))
+}
+
+func nativeFormulaPresent(cell nativeCell) bool {
+	var formula string
+	return json.Unmarshal(cell["formula"], &formula) == nil && formula != ""
 }
