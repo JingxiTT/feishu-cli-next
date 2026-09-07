@@ -195,3 +195,20 @@ func TestNativeEmptyFormulaMetadataDoesNotHideStaticChange(t *testing.T) {
 		t.Fatal("empty read metadata became a formula write")
 	}
 }
+
+func TestNativeRichContentCacheDoesNotReplaceIdentity(t *testing.T) {
+	cells := nativeCells(t, `[[{"value":"=literal","rich_text":[{"type":"link","text":"=literal","link":"https://example.test"}]}]]`)
+	write, err := nativeWriteCell(cells[0][0])
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, present := write["value"]; present {
+		t.Fatal("cached text became a second content write")
+	}
+	if !equalNativeJSON(write["rich_text"], cells[0][0]["rich_text"]) {
+		t.Fatal("native rich link was replaced by plain literal text")
+	}
+	cells = nativeCells(t, `[[{"formula":"=1+1","rich_text":[{"type":"text","text":"2"}]}]]`)
+	_, err = nativeWriteCell(cells[0][0])
+	requireProblem(t, err, errs.CategoryValidation, errs.SubtypeInvalidArgument, "")
+}

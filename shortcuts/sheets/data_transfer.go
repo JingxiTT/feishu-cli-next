@@ -240,6 +240,18 @@ func nativeWriteCell(cell nativeCell) (nativeCell, error) {
 			delete(out, "value") // backend cached value is not a second content write
 		}
 	}
+	contentFields := 0
+	for _, key := range []string{"formula", "rich_text", "multiple_values"} {
+		if _, ok := out[key]; ok {
+			contentFields++
+		}
+	}
+	if contentFields > 1 {
+		return nil, errs.NewValidationError(errs.SubtypeInvalidArgument, "cell contains conflicting formula, rich-text, or multiple-value content").WithParam("--artifact")
+	}
+	if contentFields == 1 {
+		delete(out, "value")
+	} // structured content owns identity; value is only its read cache
 	if raw, ok := out["value"]; ok {
 		if bytes.Equal(bytes.TrimSpace(raw), []byte("null")) {
 			return nil, errs.NewValidationError(errs.SubtypeInvalidArgument, "null cell values have no verified write conversion; use an explicit clear operation").WithParam("--artifact")
