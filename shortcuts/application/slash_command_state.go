@@ -118,6 +118,7 @@ func unchangedCommand(current, replacement map[string]interface{}) bool {
 
 func outputUnchanged(runtime *common.RuntimeContext, current map[string]interface{}) error {
 	current["action"] = "unchanged"
+	current["unchanged"] = true
 	runtime.OutFormat(current, nil, func(w io.Writer) {
 		fmt.Fprintf(w, "unchanged /%v (command_id: %v)\n", current["command"], current["command_id"])
 	})

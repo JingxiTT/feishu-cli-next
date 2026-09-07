@@ -43,11 +43,14 @@ mechanics remain owned by the accepted P1 foundation.
   backend contract changes, pagination support must be verified before by-name
   writes can use incomplete results. Reads retain the continuation for inspection.
 - By-name updates compare the entire supplied replacement objects with the live
-  state already fetched for resolution and return `action:unchanged` without
+  state already fetched for resolution and return `action:unchanged` and
+  `unchanged:true` without
   PATCH when equal. The force collision path does the same after its existing
   POST/list steps. Description replacement includes the entire i18n map; an
   omitted existing language or an unknown existing replacement field prevents a
-  false no-op. Omitted top-level fields never imply deletion.
+  false no-op. The explicit boolean remains visible with `--result-fields`,
+  preserving no-op evidence even when projection omits `action` and no mutation
+  receipt exists. Omitted top-level fields never imply deletion.
 - Direct-ID updates keep their original write-only permission contract and issue
   PATCH without an additional read. No local lock or comparison claims remote
   concurrency protection. The read/compare/write sequence has no backend ETag or
@@ -91,6 +94,23 @@ Executed with synthetic transports or the real authsidecar CLI against local
 Normal build, full repository unit/vet/lint/license gates and comparative
 measurements are coordinated across sections; these scoped results do not claim
 those release gates. No held-out tasks or live resources were used.
+
+## P3 projected no-op regression
+
+A by-name update returning unchanged content now includes `unchanged:true`, a
+protected result field, in addition to the existing action string. The dedicated
+process test fails against the previous implementation, which projected away the
+only outcome marker, and passes with the fix. It asserts the boolean and command
+ID survive `--result-fields command`, description content is omitted, exactly one
+read occurs, and no write or mutation receipt is reported.
+
+`python3 scripts/next_test.py --section application --suite all --report .tmp/application-projected-noop-all.json`
+passes 57 unit/event, four inherited selected dry-run, and 19 process test events;
+one live scenario remains explicitly skipped. Isolated
+`go test -json -count=1 ./tests/cli_e2e/application` also passes all five inherited
+tests (`.tmp/application-projected-noop-reference.json`). The pre-fix failing
+regression is recorded in `.tmp/application-projected-noop-before.json`.
+No shared projection rules, live resources, or model evaluations changed.
 
 ## Open acceptance work
 

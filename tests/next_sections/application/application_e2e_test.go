@@ -105,6 +105,38 @@ func TestApplicationLifecycleAndNoop(t *testing.T) {
 	}
 }
 
+func TestApplicationProjectedNoopRetainsOutcome(t *testing.T) {
+	var reads, writes atomic.Int32
+	f := nextfixture.NewFixture(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet {
+			writes.Add(1)
+			http.Error(w, "unexpected write", http.StatusBadRequest)
+			return
+		}
+		reads.Add(1)
+		if r.URL.Path != endpoint {
+			t.Errorf("unexpected read path %s", r.URL.Path)
+		}
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = w.Write([]byte(`{"code":0,"data":{"items":[{"command":"greet","command_id":"cmd-001","description":{"default_value":"Hello"}}]}}`))
+	}))
+	result := run(f, "update", "--command", "greet", "--description", "Hello", "--result-fields", "command")
+	expect(t, result, 0, "data.command", "greet")
+	expect(t, result, 0, "data.command_id", "cmd-001")
+	if gjson.Get(result.Stdout, "data.unchanged").Type != gjson.True {
+		t.Fatalf("projection lost boolean no-op evidence: %+v", result)
+	}
+	if gjson.Get(result.Stdout, "data.description").Exists() {
+		t.Fatalf("projection did not omit unselected content: %+v", result)
+	}
+	if result.Stderr != "" || gjson.Get(result.Stdout, "mutation").Exists() {
+		t.Fatalf("read-only no-op reported mutation evidence: %+v", result)
+	}
+	if reads.Load() != 1 || writes.Load() != 0 {
+		t.Fatalf("no-op requests: reads=%d writes=%d", reads.Load(), writes.Load())
+	}
+}
+
 func TestApplicationListArtifactsAndSensitiveFields(t *testing.T) {
 	for _, sensitive := range []bool{false, true} {
 		t.Run(map[bool]string{false: "lossless", true: "credential-rejected"}[sensitive], func(t *testing.T) {
