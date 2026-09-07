@@ -6,6 +6,7 @@ package base
 import (
 	"testing"
 
+	clie2e "github.com/larksuite/cli/tests/cli_e2e"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -16,7 +17,7 @@ func TestBaseShareDryRun(t *testing.T) {
 			"--base-token", "app_x",
 			"--dashboard-id", "dsh_1",
 		)
-		assert.Contains(t, result.Stdout, `"method": "GET"`)
+		assert.Equal(t, "GET", clie2e.DryRunGet(result.Stdout, "api.0.method").String(), result.Stdout)
 		assert.Contains(t, result.Stdout, "/open-apis/base/v3/bases/app_x/dashboards/dsh_1/share")
 	})
 
@@ -27,9 +28,9 @@ func TestBaseShareDryRun(t *testing.T) {
 			"--dashboard-id", "dsh_1",
 			"--show-source=false",
 		)
-		assert.Contains(t, result.Stdout, `"method": "PATCH"`)
+		assert.Equal(t, "PATCH", clie2e.DryRunGet(result.Stdout, "api.0.method").String(), result.Stdout)
 		assert.Contains(t, result.Stdout, "/open-apis/base/v3/bases/app_x/dashboards/dsh_1/share")
-		assert.Contains(t, result.Stdout, `"show_source": false`)
+		assert.Equal(t, "false", clie2e.DryRunGet(result.Stdout, "api.0.body.settings.show_source").Raw, result.Stdout)
 		assert.NotContains(t, result.Stdout, `"enabled":`)
 		assert.NotContains(t, result.Stdout, `"enable_auto_analysis":`)
 	})
@@ -52,7 +53,7 @@ func TestBaseShareDryRun(t *testing.T) {
 			"--table-id", "tbl_1",
 			"--form-id", "vew_1",
 		)
-		assert.Contains(t, result.Stdout, `"method": "GET"`)
+		assert.Equal(t, "GET", clie2e.DryRunGet(result.Stdout, "api.0.method").String(), result.Stdout)
 		assert.Contains(t, result.Stdout, "/open-apis/base/v3/bases/app_x/tables/tbl_1/forms/vew_1/share")
 	})
 
@@ -64,9 +65,9 @@ func TestBaseShareDryRun(t *testing.T) {
 			"--form-id", "vew_1",
 			"--allow-anonymous=true",
 		)
-		assert.Contains(t, result.Stdout, `"method": "PATCH"`)
+		assert.Equal(t, "PATCH", clie2e.DryRunGet(result.Stdout, "api.0.method").String(), result.Stdout)
 		assert.Contains(t, result.Stdout, "/open-apis/base/v3/bases/app_x/tables/tbl_1/forms/vew_1/share")
-		assert.Contains(t, result.Stdout, `"allow_anonymous": true`)
+		assert.Equal(t, "true", clie2e.DryRunGet(result.Stdout, "api.0.body.settings.allow_anonymous").Raw, result.Stdout)
 		assert.NotContains(t, result.Stdout, `"enabled":`)
 		assert.NotContains(t, result.Stdout, `"require_login":`)
 	})

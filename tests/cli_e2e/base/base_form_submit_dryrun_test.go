@@ -36,5 +36,5 @@ func TestBaseFormSubmitDryRun(t *testing.T) {
 	assert.Contains(t, output, "/open-apis/base/v3/bases/tables/forms/submit")
 	assert.Contains(t, output, `"share_token"`)
 	assert.Contains(t, output, "shrXXXX")
-	assert.Contains(t, output, `"method": "POST"`)
+	assert.Equal(t, "POST", clie2e.DryRunGet(output, "api.0.method").String(), output)
 }

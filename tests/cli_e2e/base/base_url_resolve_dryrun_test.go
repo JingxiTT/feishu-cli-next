@@ -24,8 +24,7 @@ func TestBaseURLResolveSelectedBlockDryRun(t *testing.T) {
 			"--url", "https://example.larkoffice.com/base/app_x?table=blk_selected",
 			"--dry-run",
 		},
-		BinaryPath: "../../../lark-cli",
-		DefaultAs:  "bot",
+		DefaultAs: "bot",
 	})
 	require.NoError(t, err)
 	result.AssertExitCode(t, 0)
@@ -47,8 +46,7 @@ func TestBaseURLResolveWikiSelectedBlockDryRun(t *testing.T) {
 			"--url", "https://example.larkoffice.com/wiki/wik_x?table=wkf_selected",
 			"--dry-run",
 		},
-		BinaryPath: "../../../lark-cli",
-		DefaultAs:  "bot",
+		DefaultAs: "bot",
 	})
 	require.NoError(t, err)
 	result.AssertExitCode(t, 0)

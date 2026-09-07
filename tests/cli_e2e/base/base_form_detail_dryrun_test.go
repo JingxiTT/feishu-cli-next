@@ -35,7 +35,7 @@ func TestBaseFormDetailDryRun(t *testing.T) {
 	assert.Contains(t, output, "/open-apis/base/v3/bases/tables/forms/detail")
 	assert.Contains(t, output, `"share_token"`)
 	assert.Contains(t, output, "shrXXXX")
-	assert.Contains(t, output, `"method": "POST"`)
+	assert.Equal(t, "POST", clie2e.DryRunGet(output, "api.0.method").String(), output)
 }
 
 func TestBaseFormDetailDryRun_MissingShareToken(t *testing.T) {
@@ -76,5 +76,5 @@ func TestBaseFormListDryRun_UsesBaseAndTableIdentifiers(t *testing.T) {
 
 	output := strings.TrimSpace(result.Stdout)
 	assert.Contains(t, output, "/open-apis/base/v3/bases/basXXXX/tables/tblXXXX/forms")
-	assert.Contains(t, output, `"method": "GET"`)
+	assert.Equal(t, "GET", clie2e.DryRunGet(output, "api.0.method").String(), output)
 }

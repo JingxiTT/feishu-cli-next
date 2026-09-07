@@ -27,17 +27,16 @@ func TestBaseDashboardBlockGetDataDryRun(t *testing.T) {
 			"--block-id", "blk_chart",
 			"--dry-run",
 		},
-		BinaryPath: "../../../lark-cli",
-		DefaultAs:  "bot",
+		DefaultAs: "bot",
 	})
 	require.NoError(t, err)
 	result.AssertExitCode(t, 0)
 
 	output := strings.TrimSpace(result.Stdout)
 	assert.Contains(t, output, "/open-apis/base/v3/bases/app_x/dashboards/blocks/blk_chart/data")
-	assert.Contains(t, output, `"method": "GET"`)
-	assert.Contains(t, output, `"block_id": "blk_chart"`)
-	assert.Contains(t, output, `"base_token": "app_x"`)
+	assert.Equal(t, "GET", clie2e.DryRunGet(output, "api.0.method").String(), output)
+	assert.Equal(t, "blk_chart", clie2e.DryRunGet(output, "block_id").String(), output)
+	assert.Equal(t, "app_x", clie2e.DryRunGet(output, "base_token").String(), output)
 }
 
 func TestBaseDashboardBlockGetDataDryRun_IgnoresDashboardID(t *testing.T) {
@@ -54,15 +53,14 @@ func TestBaseDashboardBlockGetDataDryRun_IgnoresDashboardID(t *testing.T) {
 			"--block-id", "blk_chart",
 			"--dry-run",
 		},
-		BinaryPath: "../../../lark-cli",
-		DefaultAs:  "bot",
+		DefaultAs: "bot",
 	})
 	require.NoError(t, err)
 	result.AssertExitCode(t, 0)
 
 	output := strings.TrimSpace(result.Stdout)
 	assert.Contains(t, output, "/open-apis/base/v3/bases/app_x/dashboards/blocks/blk_chart/data")
-	assert.Contains(t, output, `"block_id": "blk_chart"`)
+	assert.Equal(t, "blk_chart", clie2e.DryRunGet(output, "block_id").String(), output)
 	assert.NotContains(t, output, "dsh_ignored")
 }
 
@@ -77,8 +75,7 @@ func TestBaseDashboardBlockGetDataDryRun_MissingRequiredFlags(t *testing.T) {
 			"base", "+dashboard-block-get-data",
 			"--dry-run",
 		},
-		BinaryPath: "../../../lark-cli",
-		DefaultAs:  "bot",
+		DefaultAs: "bot",
 	})
 	require.NoError(t, err)
 	assert.NotEqual(t, 0, result.ExitCode)

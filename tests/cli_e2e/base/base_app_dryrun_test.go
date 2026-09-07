@@ -7,6 +7,7 @@ import (
 	"strings"
 	"testing"
 
+	clie2e "github.com/larksuite/cli/tests/cli_e2e"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/tidwall/gjson"
@@ -17,8 +18,8 @@ func TestBaseWorkspaceDryRun(t *testing.T) {
 		result := runBaseDryRun(t, 0, "base", "+workspace-create", "--name", "Growth")
 		output := strings.TrimSpace(result.Stdout)
 		assert.Contains(t, output, "/open-apis/base/v3/workspaces")
-		assert.Contains(t, output, `"method": "POST"`)
-		assert.Contains(t, output, `"name": "Growth"`)
+		assert.Equal(t, "POST", clie2e.DryRunGet(output, "api.0.method").String(), output)
+		assert.Equal(t, "Growth", clie2e.DryRunGet(output, "api.0.body.name").String(), output)
 	})
 
 	t.Run("create rejects unsupported icon", func(t *testing.T) {
@@ -30,8 +31,8 @@ func TestBaseWorkspaceDryRun(t *testing.T) {
 		result := runBaseDryRun(t, 0, "base", "+workspace-entity-list", "--workspace-token", "ws_x", "--type", "baseapp")
 		output := strings.TrimSpace(result.Stdout)
 		assert.Contains(t, output, "/open-apis/base/v3/workspaces/ws_x/entities")
-		assert.Contains(t, output, `"method": "GET"`)
-		assert.Contains(t, output, `"entity_type": "baseapp"`)
+		assert.Equal(t, "GET", clie2e.DryRunGet(output, "api.0.method").String(), output)
+		assert.Equal(t, "baseapp", clie2e.DryRunGet(output, "api.0.params.entity_type").String(), output)
 	})
 
 	t.Run("move-in", func(t *testing.T) {
@@ -39,7 +40,7 @@ func TestBaseWorkspaceDryRun(t *testing.T) {
 			"--workspace-token", "ws_x", "--entity-token", "bascn_1")
 		output := strings.TrimSpace(result.Stdout)
 		assert.Contains(t, output, "/open-apis/base/v3/workspaces/ws_x/move_in")
-		assert.Contains(t, output, `"entity_token": "bascn_1"`)
+		assert.Equal(t, "bascn_1", clie2e.DryRunGet(output, "api.0.body.entity_token").String(), output)
 	})
 
 }
@@ -49,7 +50,7 @@ func TestBaseappDryRun(t *testing.T) {
 		result := runBaseDryRun(t, 0, "base", "+url-resolve", "--url",
 			"https://example.larkoffice.com/app/app_x?pre_pathname=%2Fbase%2Fworkspace%2Fws_x&pageId=pg_1")
 		output := strings.TrimSpace(result.Stdout)
-		assert.Contains(t, output, `"resolution": "local"`)
+		assert.Equal(t, "local", clie2e.DryRunGet(output, "resolution").String(), output)
 		assert.Contains(t, output, `"url"`)
 		assert.NotContains(t, output, `"/open-apis/`)
 	})
@@ -59,8 +60,8 @@ func TestBaseappDryRun(t *testing.T) {
 			"--name", "Sales app", "--workspace-token", "ws_x", "--theme-style", "cloudBlue")
 		output := strings.TrimSpace(result.Stdout)
 		assert.Contains(t, output, "/open-apis/base/v3/base_apps")
-		assert.Contains(t, output, `"method": "POST"`)
-		assert.Contains(t, output, `"theme_style": "cloudBlue"`)
+		assert.Equal(t, "POST", clie2e.DryRunGet(output, "api.0.method").String(), output)
+		assert.Equal(t, "cloudBlue", clie2e.DryRunGet(output, "api.0.body.theme.theme_style").String(), output)
 		assert.NotContains(t, output, "/open-apis/base/v3/bases")
 		assert.NotContains(t, output, "/move_in")
 	})
@@ -97,7 +98,7 @@ func TestBaseappPageDryRun(t *testing.T) {
 		result := runBaseDryRun(t, 0, "base", "+app-page-create", "--app-token", "app_x", "--name", "Overview")
 		output := strings.TrimSpace(result.Stdout)
 		assert.Contains(t, output, "/open-apis/base/v3/base_apps/app_x/pages")
-		assert.Contains(t, output, `"name": "Overview"`)
+		assert.Equal(t, "Overview", clie2e.DryRunGet(output, "api.0.body.name").String(), output)
 		assert.NotContains(t, output, "page_group_id")
 	})
 
@@ -111,14 +112,14 @@ func TestBaseappPageDryRun(t *testing.T) {
 		result := runBaseDryRun(t, 0, "base", "+app-page-update", "--app-token", "app_x", "--page-id", "pg_1", "--name", "Sales")
 		output := strings.TrimSpace(result.Stdout)
 		assert.Contains(t, output, "/open-apis/base/v3/base_apps/app_x/pages/pg_1")
-		assert.Contains(t, output, `"method": "PATCH"`)
+		assert.Equal(t, "PATCH", clie2e.DryRunGet(output, "api.0.method").String(), output)
 	})
 
 	t.Run("delete", func(t *testing.T) {
 		result := runBaseDryRun(t, 0, "base", "+app-page-delete", "--app-token", "app_x", "--page-id", "pg_1")
 		output := strings.TrimSpace(result.Stdout)
 		assert.Contains(t, output, "/open-apis/base/v3/base_apps/app_x/pages/pg_1")
-		assert.Contains(t, output, `"method": "DELETE"`)
+		assert.Equal(t, "DELETE", clie2e.DryRunGet(output, "api.0.method").String(), output)
 	})
 }
 
@@ -127,7 +128,7 @@ func TestAppBlockDryRun(t *testing.T) {
 		result := runBaseDryRun(t, 0, "base", "+app-block-list", "--app-token", "app_x", "--page-id", "pg_1")
 		output := strings.TrimSpace(result.Stdout)
 		assert.Contains(t, output, "/open-apis/base/v3/base_apps/app_x/pages/pg_1/blocks")
-		assert.Contains(t, output, `"page_size": 20`)
+		assert.Equal(t, "20", clie2e.DryRunGet(output, "api.0.params.page_size").Raw, output)
 	})
 
 	t.Run("get", func(t *testing.T) {
@@ -142,10 +143,10 @@ func TestAppBlockDryRun(t *testing.T) {
 			"--data-config", `{"base_token":"basx","data_sources":[{"table_name":"Orders","series":[{"field_name":"Amount","rollup":"sum"}]}]}`)
 		output := strings.TrimSpace(result.Stdout)
 		assert.Contains(t, output, "/open-apis/base/v3/base_apps/app_x/pages/pg_1/blocks")
-		assert.Contains(t, output, `"method": "POST"`)
-		assert.Contains(t, output, `"type": "line"`)
+		assert.Equal(t, "POST", clie2e.DryRunGet(output, "api.0.method").String(), output)
+		assert.Equal(t, "line", clie2e.DryRunGet(output, "api.0.body.type").String(), output)
 		// App 图表：顶层 base_token + 多数据源 data_sources
-		assert.Contains(t, output, `"base_token": "basx"`)
+		assert.Equal(t, "basx", clie2e.DryRunGet(output, "api.0.body.data_config.base_token").String(), output)
 		assert.Contains(t, output, "data_sources")
 		// normalizeAppChartDataConfig 把每个数据源的 rollup 归一化为大写
 		assert.Contains(t, output, "SUM")
@@ -172,7 +173,7 @@ func TestAppBlockDryRun(t *testing.T) {
 			"--name", "Open orders", "--type", "list",
 			"--data-config", `{"base_token":"basx","table_name":"Orders"}`)
 		output := strings.TrimSpace(result.Stdout)
-		assert.Contains(t, output, `"type": "list"`)
+		assert.Equal(t, "list", clie2e.DryRunGet(output, "api.0.body.type").String(), output)
 		assert.Contains(t, output, "basx")
 		assert.NotContains(t, output, `"columns"`)
 		assert.NotContains(t, output, `"sub_type"`)
@@ -211,7 +212,7 @@ func TestAppBlockDryRun(t *testing.T) {
 			"--name", "Sales vs cost", "--type", "combo",
 			"--data-config", `{"base_token":"basx","data_source_mode":"compare","data_sources":[{"table_name":"Sales","series":[{"field_name":"Amount","rollup":"SUM"}]},{"table_name":"Cost","series":[{"field_name":"Cost","rollup":"SUM"}]}],"sort":{"type":"group","order":"asc"}}`)
 		output := strings.TrimSpace(result.Stdout)
-		assert.Contains(t, output, `"type": "combo"`)
+		assert.Equal(t, "combo", clie2e.DryRunGet(output, "api.0.body.type").String(), output)
 		assert.Contains(t, output, `"compare"`)
 		assert.Contains(t, output, "Sales")
 		assert.Contains(t, output, "Cost")
@@ -222,7 +223,7 @@ func TestAppBlockDryRun(t *testing.T) {
 			"--app-token", "app_x", "--page-id", "pg_1", "--block-id", "wid_1", "--name", "Monthly sales")
 		output := strings.TrimSpace(result.Stdout)
 		assert.Contains(t, output, "/open-apis/base/v3/base_apps/app_x/pages/pg_1/blocks/wid_1")
-		assert.Contains(t, output, `"method": "PATCH"`)
+		assert.Equal(t, "PATCH", clie2e.DryRunGet(output, "api.0.method").String(), output)
 	})
 
 	t.Run("update requires name or data_config", func(t *testing.T) {
@@ -250,7 +251,7 @@ func TestAppBlockGetDataDryRun(t *testing.T) {
 		"--app-token", "app_x", "--base-token", "bas_x", "--block-id", "cht_chart")
 	output := strings.TrimSpace(result.Stdout)
 	assert.Contains(t, output, "/open-apis/base/v3/base_apps/app_x/blocks/cht_chart/data")
-	assert.Contains(t, output, `"method": "GET"`)
+	assert.Equal(t, "GET", clie2e.DryRunGet(output, "api.0.method").String(), output)
 
 	for _, tc := range []struct {
 		name string

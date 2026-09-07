@@ -36,7 +36,7 @@ func TestBaseFormQuestionsCreateVisibleRuleDryRun(t *testing.T) {
 
 	output := strings.TrimSpace(result.Stdout)
 	assert.Contains(t, output, "/open-apis/base/v3/bases/bascnXXXX/tables/tblXXXX/forms/vewXXXX/questions")
-	assert.Contains(t, output, `"method": "POST"`)
+	assert.Equal(t, "POST", clie2e.DryRunGet(output, "api.0.method").String(), output)
 	// visible_rule must be transcribed verbatim into the request body.
 	assert.Contains(t, output, "visible_rule")
 	assert.Contains(t, output, "是否需要发票")
@@ -64,7 +64,7 @@ func TestBaseFormQuestionsUpdateVisibleRuleDryRun(t *testing.T) {
 
 	output := strings.TrimSpace(result.Stdout)
 	assert.Contains(t, output, "/open-apis/base/v3/bases/bascnXXXX/tables/tblXXXX/forms/vewXXXX/questions")
-	assert.Contains(t, output, `"method": "PATCH"`)
+	assert.Equal(t, "PATCH", clie2e.DryRunGet(output, "api.0.method").String(), output)
 	assert.Contains(t, output, "visible_rule")
 }
 
@@ -91,8 +91,8 @@ func TestBaseFormQuestionsDeleteKeepFieldDryRun(t *testing.T) {
 
 	output := strings.TrimSpace(result.Stdout)
 	assert.Contains(t, output, "/open-apis/base/v3/bases/bascnXXXX/tables/tblXXXX/forms/vewXXXX/questions")
-	assert.Contains(t, output, `"method": "DELETE"`)
-	assert.Contains(t, output, `"keep_field": true`)
+	assert.Equal(t, "DELETE", clie2e.DryRunGet(output, "api.0.method").String(), output)
+	assert.Equal(t, "true", clie2e.DryRunGet(output, "api.0.body.keep_field").Raw, output)
 	assert.Contains(t, output, `"fldEmail"`)
 }
 

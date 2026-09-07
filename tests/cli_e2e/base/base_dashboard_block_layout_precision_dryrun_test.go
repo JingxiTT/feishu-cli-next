@@ -32,8 +32,7 @@ func TestBaseDashboardBlockCreateDryRun_PositionAndNumberFormat(t *testing.T) {
 			"--position", `{"x":0,"y":0,"w":6,"h":4}`,
 			"--dry-run",
 		},
-		BinaryPath: "../../../lark-cli",
-		DefaultAs:  "bot",
+		DefaultAs: "bot",
 	})
 	require.NoError(t, err)
 	result.AssertExitCode(t, 0)
@@ -68,8 +67,7 @@ func TestBaseDashboardBlockUpdateDryRun_Position(t *testing.T) {
 			"--position", `{"x":6,"y":0,"w":6,"h":4}`,
 			"--dry-run",
 		},
-		BinaryPath: "../../../lark-cli",
-		DefaultAs:  "bot",
+		DefaultAs: "bot",
 	})
 	require.NoError(t, err)
 	result.AssertExitCode(t, 0)
@@ -101,8 +99,7 @@ func TestBaseDashboardBlockCreateDryRun_InvalidNumberFormat(t *testing.T) {
 			"--data-config", `{"table_name":"Orders","count_all":true,"number_format":{"formatName":"bogus","precision":2}}`,
 			"--dry-run",
 		},
-		BinaryPath: "../../../lark-cli",
-		DefaultAs:  "bot",
+		DefaultAs: "bot",
 	})
 	require.NoError(t, err)
 	require.NotEqual(t, 0, result.ExitCode, "stdout:\n%s\nstderr:\n%s", result.Stdout, result.Stderr)
