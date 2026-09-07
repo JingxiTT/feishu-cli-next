@@ -120,6 +120,10 @@ are never persisted in receipts; this does not detect reuse across invocations.
 
 GET, HEAD, OPTIONS, credential acquisition endpoints, and commands explicitly
 marked read-only bypass the journal before credential resolution. This includes
+the unified POST `/oauth/v3/token` endpoint on the two trusted Accounts HTTPS
+origins; the same path on other origins remains subject to mutation evidence.
+Token minting does not create a user-content receipt before a subsequent write.
+This also includes
 known POST reads on generated and shortcut commands. A write workflow can
 mark an individual domain-known read with
 `common.WithReadOnlyRequest(ctx, method, apiPath)` or

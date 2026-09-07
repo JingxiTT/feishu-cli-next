@@ -34,7 +34,7 @@ func (f *Factory) agentAttemptTransport(base http.RoundTripper) http.RoundTrippe
 			// Auth endpoints issue credentials, not user-content mutations. Excluding
 			// these before ResolveAccount prevents recursion while tokens are resolved.
 			path := req.URL.Path
-			if strings.HasPrefix(path, "/open-apis/auth/") || strings.HasPrefix(path, "/open-apis/authen/") || strings.HasPrefix(path, "/open-apis/oauth/") {
+			if isUnifiedOAuthTokenRequest(req) || strings.HasPrefix(path, "/open-apis/auth/") || strings.HasPrefix(path, "/open-apis/authen/") || strings.HasPrefix(path, "/open-apis/oauth/") {
 				return false
 			}
 			if nextattempt.IsStoragePutRequest(req) {
@@ -81,6 +81,14 @@ func (f *Factory) agentAttemptTransport(base http.RoundTripper) http.RoundTrippe
 			return binding, nil
 		},
 	}
+}
+
+func isUnifiedOAuthTokenRequest(req *http.Request) bool {
+	if req.Method != http.MethodPost || !core.IsPlatformEndpointURL(req.URL) || req.URL.EscapedPath() != core.OAuthTokenV3Path {
+		return false
+	}
+	origin := "https://" + strings.ToLower(req.URL.Hostname())
+	return origin == core.ResolveEndpoints(core.BrandFeishu).Accounts || origin == core.ResolveEndpoints(core.BrandLark).Accounts
 }
 
 // FinalizeAgentAttempt makes non-success mutation evidence observable to hosts
