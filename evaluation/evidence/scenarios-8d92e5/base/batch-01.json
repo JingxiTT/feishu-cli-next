@@ -1,0 +1,479 @@
+{
+  "protocol": 1,
+  "mode": "real",
+  "split": "development",
+  "performance_claims_supported": false,
+  "completed": true,
+  "planned_runs": 9,
+  "seed": 20260930,
+  "repeats": 3,
+  "fresh_context": true,
+  "task_manifest_sha256": "87e563bbaed35bd3010925e6fbb40f157091df64f1c5b61a9c09818a9e9f716c",
+  "config_sha256": "253ad0073650252acd0227854368cb2f81ea02e5ef7992ab1cdb5ed446783e4d",
+  "environment": {
+    "backend": "synthetic-scenario-v1",
+    "model": "gpt-6-astra",
+    "tokenizer": "provider-undisclosed",
+    "reasoning": "high",
+    "tools": [
+      "shell",
+      "files"
+    ],
+    "permissions": "workspace-write; managed proxy loopback-only with local binding; isolated synthetic sidecar",
+    "budget": {
+      "timeout_seconds": 180
+    },
+    "accounting_method": "codex-cli 0.153.4 provider turn.completed; cached input included in full"
+  },
+  "arms": {
+    "official": {
+      "cli_sha256": "ab8b101b5f68418c8df02752a5ef19947d311d2e9a91fd685c0e5be24f723020",
+      "skill_sha256": "663f104c93934a9d3e732f865abc835bebed770a33ec9290273d33178edf363c"
+    },
+    "official_concise": {
+      "cli_sha256": "ab8b101b5f68418c8df02752a5ef19947d311d2e9a91fd685c0e5be24f723020",
+      "skill_sha256": "d1a66d496437b1db4aca0a01b958c29c35f81a58649926f93c9cbd8f082374fb"
+    },
+    "next": {
+      "cli_sha256": "b2e848a3c9c0742a416a3b72d042f2166cec694bc35c06bbf748139f69e3e263",
+      "skill_sha256": "c0de66cb47e62ca389a691ca7c9549d68e262702cb692d45dd2a5965779c9f1b"
+    }
+  },
+  "runs": [
+    {
+      "task_id": "base-dev-01",
+      "section": "base",
+      "trial": 0,
+      "arm": "official",
+      "success": false,
+      "outcome_inconclusive": false,
+      "usage": null,
+      "categories": [
+        "runner_failure",
+        "usage_unavailable",
+        "outcome_failure"
+      ],
+      "known_usage": null,
+      "verification_failures": null,
+      "api_request_trace": null,
+      "control_trace": [],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 1,
+      "verifier_exit": 0,
+      "latency_seconds": 6.083815791993402,
+      "verification_seconds": 0.06943025000509806,
+      "api_calls": 0,
+      "retries": null,
+      "command_executions": 0
+    },
+    {
+      "task_id": "base-dev-01",
+      "section": "base",
+      "trial": 1,
+      "arm": "official_concise",
+      "success": false,
+      "outcome_inconclusive": false,
+      "usage": null,
+      "categories": [
+        "runner_failure",
+        "usage_unavailable",
+        "outcome_failure"
+      ],
+      "known_usage": null,
+      "verification_failures": null,
+      "api_request_trace": null,
+      "control_trace": [],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 1,
+      "verifier_exit": 0,
+      "latency_seconds": 6.584708834008779,
+      "verification_seconds": 0.07009529098286293,
+      "api_calls": 0,
+      "retries": null,
+      "command_executions": 0
+    },
+    {
+      "task_id": "base-dev-01",
+      "section": "base",
+      "trial": 1,
+      "arm": "official",
+      "success": false,
+      "outcome_inconclusive": false,
+      "usage": null,
+      "categories": [
+        "runner_failure",
+        "usage_unavailable",
+        "outcome_failure"
+      ],
+      "known_usage": null,
+      "verification_failures": null,
+      "api_request_trace": null,
+      "control_trace": [],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 1,
+      "verifier_exit": 0,
+      "latency_seconds": 7.581314040988218,
+      "verification_seconds": 0.06718124999315478,
+      "api_calls": 0,
+      "retries": null,
+      "command_executions": 0
+    },
+    {
+      "task_id": "base-dev-01",
+      "section": "base",
+      "trial": 0,
+      "arm": "next",
+      "success": false,
+      "outcome_inconclusive": false,
+      "usage": null,
+      "categories": [
+        "runner_failure",
+        "usage_unavailable",
+        "outcome_failure"
+      ],
+      "known_usage": null,
+      "verification_failures": null,
+      "api_request_trace": null,
+      "control_trace": [],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 1,
+      "verifier_exit": 0,
+      "latency_seconds": 9.079310500004794,
+      "verification_seconds": 0.07384141700458713,
+      "api_calls": 0,
+      "retries": null,
+      "command_executions": 0
+    },
+    {
+      "task_id": "base-dev-01",
+      "section": "base",
+      "trial": 0,
+      "arm": "official_concise",
+      "success": false,
+      "outcome_inconclusive": false,
+      "usage": null,
+      "categories": [
+        "runner_failure",
+        "usage_unavailable",
+        "outcome_failure"
+      ],
+      "known_usage": null,
+      "verification_failures": null,
+      "api_request_trace": null,
+      "control_trace": [],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 1,
+      "verifier_exit": 0,
+      "latency_seconds": 7.56928995801718,
+      "verification_seconds": 0.04456191702047363,
+      "api_calls": 0,
+      "retries": null,
+      "command_executions": 0
+    },
+    {
+      "task_id": "base-dev-01",
+      "section": "base",
+      "trial": 2,
+      "arm": "next",
+      "success": false,
+      "outcome_inconclusive": false,
+      "usage": null,
+      "categories": [
+        "runner_failure",
+        "usage_unavailable",
+        "outcome_failure"
+      ],
+      "known_usage": null,
+      "verification_failures": null,
+      "api_request_trace": null,
+      "control_trace": [],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 1,
+      "verifier_exit": 0,
+      "latency_seconds": 8.588852832996054,
+      "verification_seconds": 0.06880291699781083,
+      "api_calls": 0,
+      "retries": null,
+      "command_executions": 0
+    },
+    {
+      "task_id": "base-dev-01",
+      "section": "base",
+      "trial": 1,
+      "arm": "next",
+      "success": false,
+      "outcome_inconclusive": false,
+      "usage": null,
+      "categories": [
+        "runner_failure",
+        "usage_unavailable",
+        "outcome_failure"
+      ],
+      "known_usage": null,
+      "verification_failures": null,
+      "api_request_trace": null,
+      "control_trace": [],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 1,
+      "verifier_exit": 0,
+      "latency_seconds": 6.08120504199178,
+      "verification_seconds": 0.06915729198954068,
+      "api_calls": 0,
+      "retries": null,
+      "command_executions": 0
+    },
+    {
+      "task_id": "base-dev-01",
+      "section": "base",
+      "trial": 2,
+      "arm": "official",
+      "success": false,
+      "outcome_inconclusive": false,
+      "usage": null,
+      "categories": [
+        "runner_failure",
+        "usage_unavailable",
+        "outcome_failure"
+      ],
+      "known_usage": null,
+      "verification_failures": null,
+      "api_request_trace": null,
+      "control_trace": [],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 1,
+      "verifier_exit": 0,
+      "latency_seconds": 6.580830791994231,
+      "verification_seconds": 0.06884070800151676,
+      "api_calls": 0,
+      "retries": null,
+      "command_executions": 0
+    },
+    {
+      "task_id": "base-dev-01",
+      "section": "base",
+      "trial": 2,
+      "arm": "official_concise",
+      "success": false,
+      "outcome_inconclusive": false,
+      "usage": null,
+      "categories": [
+        "runner_failure",
+        "usage_unavailable",
+        "outcome_failure"
+      ],
+      "known_usage": null,
+      "verification_failures": null,
+      "api_request_trace": null,
+      "control_trace": [],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 1,
+      "verifier_exit": 0,
+      "latency_seconds": 9.087443790980615,
+      "verification_seconds": 0.06854004200431518,
+      "api_calls": 0,
+      "retries": null,
+      "command_executions": 0
+    }
+  ],
+  "groups": [
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 0,
+      "inconclusive": 0,
+      "success_rate": 0.0,
+      "usage_complete": false,
+      "known_total_tokens": 0,
+      "tokens_per_success": null,
+      "token_distribution": null,
+      "latency_median_seconds": 8.588852832996054,
+      "api_calls": 0,
+      "retries": null,
+      "failure_categories": {
+        "outcome_failure": 3,
+        "runner_failure": 3,
+        "usage_unavailable": 3
+      }
+    },
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 0,
+      "inconclusive": 0,
+      "success_rate": 0.0,
+      "usage_complete": false,
+      "known_total_tokens": 0,
+      "tokens_per_success": null,
+      "token_distribution": null,
+      "latency_median_seconds": 6.580830791994231,
+      "api_calls": 0,
+      "retries": null,
+      "failure_categories": {
+        "outcome_failure": 3,
+        "runner_failure": 3,
+        "usage_unavailable": 3
+      }
+    },
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "official_concise",
+      "attempts": 3,
+      "successes": 0,
+      "inconclusive": 0,
+      "success_rate": 0.0,
+      "usage_complete": false,
+      "known_total_tokens": 0,
+      "tokens_per_success": null,
+      "token_distribution": null,
+      "latency_median_seconds": 7.56928995801718,
+      "api_calls": 0,
+      "retries": null,
+      "failure_categories": {
+        "outcome_failure": 3,
+        "runner_failure": 3,
+        "usage_unavailable": 3
+      }
+    },
+    {
+      "scope": "section",
+      "name": "base",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 0,
+      "inconclusive": 0,
+      "success_rate": 0.0,
+      "usage_complete": false,
+      "known_total_tokens": 0,
+      "tokens_per_success": null,
+      "token_distribution": null,
+      "latency_median_seconds": 8.588852832996054,
+      "api_calls": 0,
+      "retries": null,
+      "failure_categories": {
+        "outcome_failure": 3,
+        "runner_failure": 3,
+        "usage_unavailable": 3
+      }
+    },
+    {
+      "scope": "section",
+      "name": "base",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 0,
+      "inconclusive": 0,
+      "success_rate": 0.0,
+      "usage_complete": false,
+      "known_total_tokens": 0,
+      "tokens_per_success": null,
+      "token_distribution": null,
+      "latency_median_seconds": 6.580830791994231,
+      "api_calls": 0,
+      "retries": null,
+      "failure_categories": {
+        "outcome_failure": 3,
+        "runner_failure": 3,
+        "usage_unavailable": 3
+      }
+    },
+    {
+      "scope": "section",
+      "name": "base",
+      "arm": "official_concise",
+      "attempts": 3,
+      "successes": 0,
+      "inconclusive": 0,
+      "success_rate": 0.0,
+      "usage_complete": false,
+      "known_total_tokens": 0,
+      "tokens_per_success": null,
+      "token_distribution": null,
+      "latency_median_seconds": 7.56928995801718,
+      "api_calls": 0,
+      "retries": null,
+      "failure_categories": {
+        "outcome_failure": 3,
+        "runner_failure": 3,
+        "usage_unavailable": 3
+      }
+    },
+    {
+      "scope": "task_id",
+      "name": "base-dev-01",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 0,
+      "inconclusive": 0,
+      "success_rate": 0.0,
+      "usage_complete": false,
+      "known_total_tokens": 0,
+      "tokens_per_success": null,
+      "token_distribution": null,
+      "latency_median_seconds": 8.588852832996054,
+      "api_calls": 0,
+      "retries": null,
+      "failure_categories": {
+        "outcome_failure": 3,
+        "runner_failure": 3,
+        "usage_unavailable": 3
+      }
+    },
+    {
+      "scope": "task_id",
+      "name": "base-dev-01",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 0,
+      "inconclusive": 0,
+      "success_rate": 0.0,
+      "usage_complete": false,
+      "known_total_tokens": 0,
+      "tokens_per_success": null,
+      "token_distribution": null,
+      "latency_median_seconds": 6.580830791994231,
+      "api_calls": 0,
+      "retries": null,
+      "failure_categories": {
+        "outcome_failure": 3,
+        "runner_failure": 3,
+        "usage_unavailable": 3
+      }
+    },
+    {
+      "scope": "task_id",
+      "name": "base-dev-01",
+      "arm": "official_concise",
+      "attempts": 3,
+      "successes": 0,
+      "inconclusive": 0,
+      "success_rate": 0.0,
+      "usage_complete": false,
+      "known_total_tokens": 0,
+      "tokens_per_success": null,
+      "token_distribution": null,
+      "latency_median_seconds": 7.56928995801718,
+      "api_calls": 0,
+      "retries": null,
+      "failure_categories": {
+        "outcome_failure": 3,
+        "runner_failure": 3,
+        "usage_unavailable": 3
+      }
+    }
+  ],
+  "matched_success": [
+    {
+      "baseline": "official",
+      "pairs": []
+    },
+    {
+      "baseline": "official_concise",
+      "pairs": []
+    }
+  ]
+}
