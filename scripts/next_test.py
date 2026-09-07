@@ -77,6 +77,18 @@ def section_suites(section):
             for name in sorted(sections)]
 
 
+def integration_name(value):
+    if not re.fullmatch(r"[a-z][a-z0-9_]*", value):
+        raise argparse.ArgumentTypeError("integration must be one lowercase directory name")
+    return value
+
+
+def integration_suite(name):
+    package = "./tests/next_integration/" + name
+    return {"section": name, "package": package,
+            "status": "present" if any((ROOT / package).glob("*_test.go")) else "missing"}
+
+
 def commands_for(section, suite):
     commands = []
     go_test = ["go", "test", "-json", "-count=1", "-timeout=10m"]
@@ -172,17 +184,23 @@ def run_command(command, env, timeout, cwd=ROOT):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--section", choices=("foundation", "extensions", "packaging", "all") + DOMAINS, default="foundation")
+    selection = parser.add_mutually_exclusive_group()
+    selection.add_argument("--section", choices=("foundation", "extensions", "packaging", "all") + DOMAINS, default="foundation")
+    selection.add_argument("--integration", type=integration_name, help="run one complete tests/next_integration package")
     parser.add_argument("--suite", choices=("unit", "e2e", "all", "live"), default="all")
     parser.add_argument("--binary", type=Path, default=ROOT / "feishu-cli-next")
     parser.add_argument("--report", type=Path, default=ROOT / ".tmp/next-tests/report.json")
     parser.add_argument("--timeout", type=int, default=1200, help="maximum seconds per command")
     parser.add_argument("--allow-live", action="store_true", help="explicit intent only; unverified fixtures still block live runs")
     args = parser.parse_args(argv)
-    report = {"schema_version": 1, "section": args.section, "suite": args.suite,
+    if args.integration and args.suite not in ("e2e", "all"):
+        parser.error("--integration requires --suite e2e or all")
+    report = {"schema_version": 1, "section": "integration" if args.integration else args.section, "suite": args.suite,
               "evidence": "offline", "status": "pass", "commands": []}
     if args.suite in ("e2e", "all"):
-        report["section_suites"] = section_suites(args.section)
+        report["section_suites"] = [integration_suite(args.integration)] if args.integration else section_suites(args.section)
+        if args.integration:
+            report["integration"] = args.integration
         report["coverage_note"] = "Offline suite results do not establish live behavior or full capability reconciliation."
     code = 0
     if args.timeout <= 0:
@@ -207,7 +225,12 @@ def main(argv=None):
             proxy = "http://127.0.0.1:" + str(dead_proxy.getsockname()[1])
             env = isolated_env(directory, os.environ, proxy)
             env["LARK_CLI_BIN"] = str(args.binary.resolve())
-            for command in commands_for(args.section, args.suite):
+            if args.integration:
+                selected = report["section_suites"][0]
+                commands = [["go", "test", "-json", "-count=1", "-timeout=10m", selected["package"]]] if selected["status"] == "present" else []
+            else:
+                commands = commands_for(args.section, args.suite)
+            for command in commands:
                 result = run_command(command, env, args.timeout)
                 result["selection"] = selection_evidence(command)
                 for stream in ("stdout", "stderr"):
@@ -219,12 +242,12 @@ def main(argv=None):
                     code = result["exit_code"] if result["exit_code"] > 0 else 128 - result["exit_code"]
                     break
         if report["status"] == "pass" and any(item["status"] == "missing" for item in report.get("section_suites", [])):
-            report.update(status="blocked", reason="Missing next section E2E suites remain unverified; inherited regressions are only a subset.")
+            report.update(status="blocked", reason="Missing requested E2E suites remain unverified; inherited regressions are only a subset.")
             code = 2
     args.report.parent.mkdir(parents=True, exist_ok=True)
     args.report.write_text(json.dumps(report, indent=2) + "\n")
     print(json.dumps({"status": report["status"], "evidence": report["evidence"],
-                      "section": args.section, "suite": args.suite, "report": str(args.report), "exit_code": code}))
+                      "section": report["section"], "suite": args.suite, "report": str(args.report), "exit_code": code}))
     return code
 
 

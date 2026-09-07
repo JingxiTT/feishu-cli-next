@@ -220,6 +220,46 @@ urllib.request.urlopen('http://must-not-resolve.invalid',timeout=0.2)
                 self.assertNotIn("-run", commands[0])
 
 
+    def test_integration_runs_only_the_requested_complete_package(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            package = root / "tests/next_integration/sheets_base"
+            package.mkdir(parents=True)
+            (package / "transfer_test.go").write_text("package integration\n")
+            report_path = root / "report.json"
+            def passed(command, *_args):
+                return {"command": command, "status": "pass", "exit_code": 0,
+                        "stdout": "", "stderr": "", "tests": {"pass": 1, "fail": 0, "skip": 0}}
+            with patch.object(next_test, "ROOT", root), patch.object(next_test, "run_command", side_effect=passed) as run, contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+                code = next_test.main(["--integration", "sheets_base", "--binary", str(Path(__file__).resolve()), "--report", str(report_path)])
+            self.assertEqual(code, 0)
+            self.assertEqual(run.call_count, 1)
+            self.assertEqual(run.call_args.args[0], ["go", "test", "-json", "-count=1", "-timeout=10m", "./tests/next_integration/sheets_base"])
+            report = json.loads(report_path.read_text())
+            self.assertEqual(report["section"], "integration")
+            self.assertEqual(report["integration"], "sheets_base")
+
+    def test_missing_integration_is_blocked_without_running_other_suites(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            report_path = root / "report.json"
+            with patch.object(next_test, "ROOT", root), patch.object(next_test, "run_command") as run, contextlib.redirect_stdout(io.StringIO()):
+                code = next_test.main(["--integration", "sheets_base", "--binary", str(Path(__file__).resolve()), "--report", str(report_path)])
+            self.assertEqual(code, 2)
+            run.assert_not_called()
+            report = json.loads(report_path.read_text())
+            self.assertEqual(report["status"], "blocked")
+            self.assertEqual(report["section_suites"][0]["status"], "missing")
+
+    def test_integration_rejects_paths_and_conflicting_selection(self):
+        import argparse
+        for name in ("../foundation", "/tmp/other", "sheets/base", "sheets-base"):
+            with self.assertRaises(argparse.ArgumentTypeError):
+                next_test.integration_name(name)
+        with contextlib.redirect_stderr(io.StringIO()), self.assertRaises(SystemExit):
+            next_test.main(["--integration", "sheets_base", "--section", "docs"])
+
+
 
 if __name__ == "__main__":
     unittest.main()

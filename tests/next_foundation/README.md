@@ -10,9 +10,13 @@ python3 scripts/next_test_test.py
 python3 scripts/next_test.py --section foundation --suite all --binary ./feishu-cli-next --report .tmp/next-tests/foundation.json
 python3 scripts/next_test.py --section docs --suite all --binary ./feishu-cli-next --report .tmp/next-tests/docs.json
 python3 scripts/next_test.py --section all --suite all --binary ./feishu-cli-next --report .tmp/next-tests/all.json
+python3 scripts/next_test.py --integration sheets_base --binary ./feishu-cli-next --report .tmp/next-tests/sheets-base.json
 ```
 
 `--section` selects the manifest's domain names, `foundation`, or `extensions`.
+`--integration <name>` instead runs the complete matching
+`tests/next_integration/<name>` package as a separate cross-domain gate; a missing
+package is blocked. It does not run unrelated foundation or domain suites.
 `events` maps to the reference `event` packages; `docs` maps to `shortcuts/doc`.
 `--suite unit` and `--suite e2e` run separately. Each existing
 `tests/next_sections/<section>` package runs in full alongside the inherited
