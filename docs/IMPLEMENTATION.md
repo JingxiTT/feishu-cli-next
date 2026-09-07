@@ -160,9 +160,12 @@ unrelated files (`6dda7c0`). Their archive, raw-report and harness hashes were
 independently verified. Linux runtime evidence is recorded separately above.
 Both Linux amd64 archives pass the same lifecycle checks using the VM's existing
 QEMU translation (`b10120e`), with independently verified archive/report hashes.
-This does not imply a full amd64 runtime-suite run. Riscv64 has cross-build
-evidence only: no usable user-mode emulator was present and a direct launch
-returned `ENOEXEC`. Windows OS-specific behavior,
+This does not imply a full amd64 runtime-suite run. Both riscv64 archives also
+pass the eleven lifecycle checks under explicit QEMU invocation (`88ed1cc`),
+using a test-only signed Debian dependency in an isolated container. Archive,
+bootstrap, harness and raw-result hashes were independently verified. The earlier
+`ENOEXEC` probe remains historical evidence; no host emulator or new VM was installed.
+Broader riscv64 runtime suites remain unexecuted. Windows OS-specific behavior,
 signed public-release checks and a trusted remote Next release channel remain
 unverified or unavailable. Local evidence does not establish public release readiness.
 
@@ -186,7 +189,7 @@ complete goal.
 | --- | --- |
 | Private live fixtures | Verify current-account and tenant binding plus account-only creation visibility before writing; run the owning live suites and clean up only their resources. |
 | Contact bot search | Current-user authorization for `search:bot`, followed by the failed live scenario and bot binding checks. |
-| OS-specific runtime coverage | Linux arm64 runtime suites, platform comparison and delivered archive lifecycles pass; Linux amd64 archive lifecycles pass under existing translation. Riscv64 retains cross-build-only evidence. Execute the retained Windows behavior checks and native reference capture on an appropriate OS runner or VM; cross-built archives do not substitute. Darwin/amd64 smoke checks already ran under Rosetta. Additional gaps must name the unverified scenario, not require physical hardware absent from PLAN. |
+| OS-specific runtime coverage | Linux arm64 runtime suites and platform comparison pass; delivered archive lifecycles pass on arm64 and under amd64/riscv64 translation. Broader amd64/riscv64 runtime suites have not run. Execute the retained Windows behavior checks and native reference capture on an appropriate OS runner or VM; cross-built archives do not substitute. Darwin/amd64 smoke checks already ran under Rosetta. Additional gaps must name the unverified scenario, not require physical hardware absent from PLAN. |
 | Remote release ownership | An owned Next repository/download destination and package identity, then the documented updater identity integration and remote install/update checks. Public signing/notarization and publication retain their separate prerequisites. |
 | Comparative release evidence | Finish the serialized development/scaling comparisons, review their tradeoffs, and perform independently replaced held-out tasks only at the final release gate. |
 
