@@ -99,7 +99,7 @@ func buildFetchBody(runtime *common.RuntimeContext) map[string]interface{} {
 		"format":      effectiveFetchFormat(runtime),
 		"extra_param": docsFetchCommentsExtraParam,
 	}
-	if v := runtime.Int("revision-id"); v > 0 {
+	if v := runtime.Int("revision-id"); v > 0 || runtime.Changed("revision-id") {
 		body["revision_id"] = v
 	}
 	if lang := resolveFetchLang(runtime); lang != "" {
@@ -278,8 +278,8 @@ func addFetchDetailDowngradeWarning(runtime *common.RuntimeContext, data map[str
 // validateReadModeFlags 客户端前置校验，服务端也会再校验一次。
 func validateReadModeFlags(runtime *common.RuntimeContext) error {
 	mode := effectiveFetchReadMode(runtime)
-	if mode == "" || mode == "full" {
-		return nil
+	if runtime.Int("revision-id") < -1 {
+		return errs.NewValidationError(errs.SubtypeInvalidArgument, "--revision-id must be >= -1").WithParam("--revision-id")
 	}
 
 	if v := runtime.Int("context-before"); v < 0 {
@@ -293,6 +293,13 @@ func validateReadModeFlags(runtime *common.RuntimeContext) error {
 	}
 
 	switch mode {
+	case "", "full":
+		for _, name := range []string{"start-block-id", "end-block-id", "keyword", "context-before", "context-after", "max-depth"} {
+			if runtime.Changed(name) {
+				return errs.NewValidationError(errs.SubtypeInvalidArgument, "--%s requires a bounded --scope", name).WithParam("--" + name)
+			}
+		}
+		return nil
 	case "outline":
 		return nil
 	case "range":

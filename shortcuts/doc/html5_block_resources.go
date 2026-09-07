@@ -165,11 +165,7 @@ func parseReferenceMapObject(raw string, label string) (map[string]interface{}, 
 	if len(bytes.TrimSpace([]byte(raw))) == 0 || string(bytes.TrimSpace([]byte(raw))) == "null" {
 		return nil, nil
 	}
-	var refMap map[string]interface{}
-	if err := json.Unmarshal([]byte(raw), &refMap); err != nil {
-		return nil, common.ValidationErrorf("%s is not valid reference_map JSON: %v", label, err).WithParam(label).WithCause(err)
-	}
-	return refMap, nil
+	return parseDocsInputObject(raw, label)
 }
 
 func parseHTML5BlockReferenceMapBytes(raw []byte, label string) (html5BlockReferenceMap, error) {

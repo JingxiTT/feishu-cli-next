@@ -33,6 +33,10 @@ var DocsSearch = common.Shortcut{
 		{Name: "page-token", Desc: "page token"},
 		{Name: "page-size", Default: "15", Desc: "page size (default 15, max 20)"},
 	},
+	Validate: func(_ context.Context, runtime *common.RuntimeContext) error {
+		_, err := buildDocsSearchRequest(runtime.Str("query"), runtime.Str("filter"), runtime.Str("page-token"), runtime.Str("page-size"))
+		return err
+	},
 	DryRun: func(ctx context.Context, runtime *common.RuntimeContext) *common.DryRunAPI {
 		requestData, err := buildDocsSearchRequest(
 			runtime.Str("query"),
@@ -161,9 +165,9 @@ func buildDocsSearchRequest(query, filterStr, pageToken, pageSizeStr string) (ma
 		return requestData, nil
 	}
 
-	var filter map[string]interface{}
-	if err := json.Unmarshal([]byte(filterStr), &filter); err != nil {
-		return nil, errs.NewValidationError(errs.SubtypeInvalidArgument, "--filter is not valid JSON").WithParam("--filter").WithCause(err)
+	filter, err := parseDocsInputObject(filterStr, "--filter")
+	if err != nil {
+		return nil, err
 	}
 	if err := convertTimeRangeInFilter(filter, "open_time"); err != nil {
 		return nil, err
@@ -225,7 +229,7 @@ func convertTimeRangeInFilter(filter map[string]interface{}, key string) error {
 		return nil
 	}
 
-	result := make(map[string]interface{})
+	result := cloneFilterMap(rangeMap)
 	if start, ok := rangeMap["start"].(string); ok && start != "" {
 		startTime, err := toUnixSeconds(start)
 		if err != nil {

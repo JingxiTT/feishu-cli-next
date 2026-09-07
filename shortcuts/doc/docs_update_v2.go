@@ -5,7 +5,6 @@ package doc
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"strings"
 
@@ -60,6 +59,9 @@ func validateUpdateV2(_ context.Context, runtime *common.RuntimeContext) error {
 	docRef, err := parseDocumentRef(runtime.Str("doc"))
 	if err != nil {
 		return errs.NewValidationError(errs.SubtypeInvalidArgument, "invalid --doc: %v", err).WithParam("--doc")
+	}
+	if runtime.Int("revision-id") < -1 {
+		return errs.NewValidationError(errs.SubtypeInvalidArgument, "--revision-id must be >= -1").WithParam("--revision-id")
 	}
 	cmd := runtime.Str("command")
 	if cmd == "" {
@@ -200,6 +202,9 @@ func dryRunUpdateV2(_ context.Context, runtime *common.RuntimeContext) *common.D
 			Params(map[string]interface{}{"token": ref.Token})
 	}
 	apiPath := fmt.Sprintf("/open-apis/docs_ai/v1/documents/%s", validate.EncodePathSegment(documentID))
+	if canCheckDocsOverwrite(runtime, resources) {
+		dry.POST(apiPath + "/fetch").Desc("Read full native XML; an exact unchanged document skips the overwrite").Body(docsOverwriteReadBody(runtime))
+	}
 	dry.PUT(apiPath).
 		Desc("OpenAPI: update document").
 		Body(body).
@@ -226,6 +231,32 @@ func executeUpdateV2(_ context.Context, runtime *common.RuntimeContext) error {
 		}
 	}
 	apiPath := fmt.Sprintf("/open-apis/docs_ai/v1/documents/%s", validate.EncodePathSegment(documentID))
+
+	if canCheckDocsOverwrite(runtime, resources) {
+		snapshot, readErr := runtime.CallReadOnlyAPITyped("POST", apiPath+"/fetch", nil, docsOverwriteReadBody(runtime))
+		if readErr != nil {
+			return readErr
+		}
+		expectedID := documentID
+		if ref.Kind == "wiki" {
+			// The Docs API resolves wiki nodes to their native document ID.
+			expectedID = ""
+		}
+		unchanged, compareErr := docsOverwriteUnchanged(snapshot, body, expectedID, runtime.Int("revision-id"))
+		if compareErr != nil {
+			return compareErr
+		}
+		if unchanged {
+			result := map[string]interface{}{"result": "unchanged", "unchanged": true}
+			if ref.Kind == "wiki" {
+				result["wiki_token"] = ref.Token
+			} else {
+				result["document_id"] = documentID
+			}
+			runtime.Out(result, nil)
+			return nil
+		}
+	}
 
 	data, err := doDocAPI(runtime, "PUT", apiPath, body)
 	if err != nil {
@@ -274,7 +305,7 @@ func buildUpdateBodyBase(runtime *common.RuntimeContext) map[string]interface{} 
 		"format":  runtime.Str("doc-format"),
 		"command": cmd,
 	}
-	if v := runtime.Int("revision-id"); v != 0 {
+	if v := runtime.Int("revision-id"); v != 0 || runtime.Changed("revision-id") {
 		body["revision_id"] = v
 	}
 	if v := runtime.Str("content"); v != "" {
@@ -337,12 +368,5 @@ func parseUpdateReferenceMap(raw string) (map[string]interface{}, error) {
 	if strings.TrimSpace(raw) == "" {
 		return nil, errs.NewValidationError(errs.SubtypeInvalidArgument, "--reference-map must be a non-empty JSON object").WithParam("--reference-map")
 	}
-	var refMap map[string]interface{}
-	if err := json.Unmarshal([]byte(raw), &refMap); err != nil {
-		return nil, errs.NewValidationError(errs.SubtypeInvalidArgument, "--reference-map must be a valid JSON object: %v", err).WithParam("--reference-map").WithCause(err)
-	}
-	if refMap == nil {
-		return nil, errs.NewValidationError(errs.SubtypeInvalidArgument, "--reference-map must be a JSON object, got null").WithParam("--reference-map")
-	}
-	return refMap, nil
+	return parseDocsInputObject(raw, "--reference-map")
 }
