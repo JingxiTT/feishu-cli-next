@@ -4,8 +4,9 @@
 package cmdutil
 
 import (
-	"github.com/larksuite/cli/internal/recovery"
 	"testing"
+
+	"github.com/larksuite/cli/internal/recovery"
 )
 
 func TestRecoveryContextUsesBuildIdentityAndInvocationFallback(t *testing.T) {

@@ -5,7 +5,6 @@ package drive_test
 
 import (
 	"bytes"
-	"github.com/larksuite/cli/tests/nextfixture"
 	"io"
 	"net/http"
 	"os"
@@ -13,6 +12,8 @@ import (
 	"strings"
 	"sync/atomic"
 	"testing"
+
+	"github.com/larksuite/cli/tests/nextfixture"
 )
 
 func TestImportExportPreservesSourceAndAsyncRecovery(t *testing.T) {

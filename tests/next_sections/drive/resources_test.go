@@ -4,12 +4,13 @@
 package drive_test
 
 import (
-	"github.com/larksuite/cli/tests/nextfixture"
 	"net/http"
 	"reflect"
 	"strings"
 	"sync/atomic"
 	"testing"
+
+	"github.com/larksuite/cli/tests/nextfixture"
 )
 
 func TestResourceAndVersionOperations(t *testing.T) {

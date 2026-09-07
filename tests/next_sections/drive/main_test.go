@@ -4,9 +4,10 @@
 package drive_test
 
 import (
-	"github.com/larksuite/cli/tests/nextfixture"
 	"os"
 	"testing"
+
+	"github.com/larksuite/cli/tests/nextfixture"
 )
 
 func TestMain(m *testing.M) { os.Exit(nextfixture.RunMain(m, "../../..")) }

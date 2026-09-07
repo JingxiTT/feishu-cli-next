@@ -4,8 +4,9 @@
 package drive
 
 import (
-	"github.com/larksuite/cli/internal/cmdutil"
 	"testing"
+
+	"github.com/larksuite/cli/internal/cmdutil"
 )
 
 func TestDriveUpdateTitleUnchangedGuardSkipsMutation(t *testing.T) {

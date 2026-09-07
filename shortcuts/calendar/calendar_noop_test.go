@@ -4,9 +4,10 @@
 package calendar
 
 import (
-	"github.com/larksuite/cli/errs"
 	"net/http"
 	"testing"
+
+	"github.com/larksuite/cli/errs"
 
 	"github.com/larksuite/cli/internal/cmdutil"
 	"github.com/larksuite/cli/internal/httpmock"

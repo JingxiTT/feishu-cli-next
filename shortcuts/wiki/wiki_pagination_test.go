@@ -5,12 +5,13 @@ package wiki
 
 import (
 	"encoding/json"
+	"net/http"
+	"testing"
+
 	"github.com/larksuite/cli/internal/cmdutil"
 	"github.com/larksuite/cli/internal/httpmock"
 	"github.com/larksuite/cli/shortcuts/common"
 	"github.com/stretchr/testify/require"
-	"net/http"
-	"testing"
 )
 
 func TestWikiListStopsCursorCyclesWithoutClaimingComplete(t *testing.T) {

@@ -4,11 +4,12 @@
 package drive_test
 
 import (
-	"github.com/larksuite/cli/tests/nextfixture"
 	"net/http"
 	"strings"
 	"sync/atomic"
 	"testing"
+
+	"github.com/larksuite/cli/tests/nextfixture"
 )
 
 func TestPermissionsReadGrantRemoveAndPartial(t *testing.T) {

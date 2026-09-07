@@ -6,10 +6,11 @@ package minutes
 import (
 	"encoding/json"
 	"errors"
-	"github.com/larksuite/cli/internal/output"
 	"net/http"
 	"strings"
 	"testing"
+
+	"github.com/larksuite/cli/internal/output"
 
 	"github.com/larksuite/cli/errs"
 	"github.com/larksuite/cli/internal/cmdutil"

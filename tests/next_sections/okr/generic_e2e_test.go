@@ -5,13 +5,14 @@ package okr_test
 
 import (
 	"encoding/json"
-	"github.com/larksuite/cli/tests/nextfixture"
 	"io"
 	"net/http"
 	"reflect"
 	"strings"
 	"sync/atomic"
 	"testing"
+
+	"github.com/larksuite/cli/tests/nextfixture"
 )
 
 // Frozen catalog operations retain their native requests and response fields.

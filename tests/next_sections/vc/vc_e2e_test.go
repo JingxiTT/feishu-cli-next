@@ -286,7 +286,7 @@ func TestVCActiveAndEventsPagination(t *testing.T) {
 			if n == 2 && r.URL.Query().Get("page_token") != "next" {
 				t.Error("missing continuation")
 			}
-			reply(w, map[string]any{"meeting": map[string]any{"id": meetingID, "topic": "fixture", "start_time": "1700000000"}, "events": []any{map[string]any{"event_id": "e" + string(rune('0'+n)), "event_type": "future_event", "event_time": "1700000001", "payload": map[string]any{"custom": "Unicode 正文", "empty": ""}}}, "has_more": n == 1, "page_token": map[bool]string{true: "next", false: ""}[n == 1]})
+			reply(w, map[string]any{"meeting": map[string]any{"id": meetingID, "topic": "fixture", "start_time": "1700000000"}, "events": []any{map[string]any{"event_id": "e" + string('0'+n), "event_type": "future_event", "event_time": "1700000001", "payload": map[string]any{"custom": "Unicode 正文", "empty": ""}}}, "has_more": n == 1, "page_token": map[bool]string{true: "next", false: ""}[n == 1]})
 		default:
 			t.Errorf("%s", r.URL)
 			reply(w, map[string]any{})

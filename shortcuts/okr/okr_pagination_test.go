@@ -4,11 +4,12 @@
 package okr
 
 import (
+	"testing"
+
 	"github.com/larksuite/cli/errs"
 	"github.com/larksuite/cli/internal/cmdutil"
 	"github.com/larksuite/cli/internal/httpmock"
 	"github.com/tidwall/gjson"
-	"testing"
 )
 
 func TestAdvanceOKRPageRejectsIncompleteCollection(t *testing.T) {
