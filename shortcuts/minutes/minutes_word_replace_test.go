@@ -5,6 +5,8 @@ package minutes
 
 import (
 	"encoding/json"
+	"errors"
+	"github.com/larksuite/cli/internal/output"
 	"net/http"
 	"strings"
 	"testing"
@@ -174,8 +176,9 @@ func TestMinutesWordReplace_PartialSuccess(t *testing.T) {
 		"--replace-words", `[{"source_word":"missing","target_word":"Lark"},{"source_word":"hello","target_word":"hi"}]`,
 		"--format", "json", "--as", "user",
 	}, f, stdout)
-	if err != nil {
-		t.Fatalf("unexpected error: %v", err)
+	var partial *output.PartialFailureError
+	if !errors.As(err, &partial) {
+		t.Fatalf("expected partial failure, got: %v", err)
 	}
 
 	var envelope struct {
@@ -187,8 +190,8 @@ func TestMinutesWordReplace_PartialSuccess(t *testing.T) {
 	if err := json.Unmarshal(stdout.Bytes(), &envelope); err != nil {
 		t.Fatalf("unmarshal stdout: %v\nraw=%s", err, stdout.String())
 	}
-	if !envelope.OK {
-		t.Fatalf("ok = false, want true for partial success (aligned with OAPI); stdout=%s", stdout.String())
+	if envelope.OK {
+		t.Fatalf("partial success must retain ok:false; stdout=%s", stdout.String())
 	}
 	wantMsg := "Succeeded: hello; Failed: missing. " + minutesWordReplaceDoNotRetrySucceeded
 	if envelope.Data.Message != wantMsg {

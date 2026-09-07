@@ -18,14 +18,16 @@ const minutesUpdateNoEditPermissionCode = 2091005
 
 // MinutesUpdate updates the title (topic) of a minute.
 var MinutesUpdate = common.Shortcut{
-	Service:     "minutes",
-	Command:     "+update",
-	Description: "Update a minute's title",
-	Risk:        "write",
-	Scopes:      []string{"minutes:minutes:update"},
-	AuthTypes:   []string{"user"},
-	HasFormat:   true,
+	Service:           "minutes",
+	Command:           "+update",
+	Description:       "Update a minute's title",
+	Risk:              "write",
+	Scopes:            []string{"minutes:minutes:update"},
+	ConditionalScopes: []string{minutesDetailBasicScope},
+	AuthTypes:         []string{"user"},
+	HasFormat:         true,
 	Flags: []common.Flag{
+		{Name: "skip-unchanged", Type: "bool", Desc: "read current content and skip an identical replacement (requires read scope)"},
 		{Name: "minute-token", Desc: "minute token", Required: true},
 		{Name: "topic", Desc: "new minute title", Required: true},
 	},
@@ -40,17 +42,32 @@ var MinutesUpdate = common.Shortcut{
 		if strings.TrimSpace(runtime.Str("topic")) == "" {
 			return errs.NewValidationError(errs.SubtypeInvalidArgument, "--topic is required").WithParam("--topic")
 		}
-		return nil
+		return minutesUnchangedScope(runtime, minutesDetailBasicScope)
 	},
 	DryRun: func(ctx context.Context, runtime *common.RuntimeContext) *common.DryRunAPI {
 		minuteToken := strings.TrimSpace(runtime.Str("minute-token"))
-		return common.NewDryRunAPI().
+		preview := common.NewDryRunAPI()
+		if runtime.Bool("skip-unchanged") {
+			preview.GET(fmt.Sprintf("/open-apis/minutes/v1/minutes/%s", validate.EncodePathSegment(runtime.Str("minute-token"))))
+		}
+		return preview.
 			PATCH(fmt.Sprintf("/open-apis/minutes/v1/minutes/%s", validate.EncodePathSegment(minuteToken))).
 			Body(map[string]interface{}{"topic": runtime.Str("topic")})
 	},
 	Execute: func(ctx context.Context, runtime *common.RuntimeContext) error {
 		minuteToken := strings.TrimSpace(runtime.Str("minute-token"))
 		topic := runtime.Str("topic")
+
+		if runtime.Bool("skip-unchanged") {
+			same, err := minutesTitleUnchanged(runtime, minuteToken, topic)
+			if err != nil {
+				return err
+			}
+			if same {
+				runtime.OutFormat(map[string]any{"minute_token": minuteToken, "topic": topic, "unchanged": true}, nil, nil)
+				return nil
+			}
+		}
 
 		body := map[string]interface{}{
 			"topic": topic,

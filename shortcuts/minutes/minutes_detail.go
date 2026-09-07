@@ -15,6 +15,7 @@ import (
 	"regexp"
 	"strings"
 	"time"
+	"unicode/utf8"
 
 	"github.com/larksuite/cli/errs"
 	"github.com/larksuite/cli/extension/fileio"
@@ -135,10 +136,10 @@ func fetchMinuteDetail(ctx context.Context, runtime *common.RuntimeContext, minu
 			}
 			if needTranscript {
 				if v, ok := artData["transcript"].(string); ok && v != "" {
-					if path := saveDetailTranscript(runtime, minuteToken, result.Title, []byte(v)); path != "" {
-						artifacts["transcript_file"] = path
-					} else {
-						artifacts["transcript_file"] = ""
+					path, saveErr := saveDetailTranscript(runtime, minuteToken, result.Title, []byte(v))
+					artifacts["transcript_file"] = path
+					if saveErr != nil {
+						result.Error = fmt.Sprintf("failed to save transcript: %v", saveErr)
 					}
 				} else {
 					artifacts["transcript_file"] = ""
@@ -227,7 +228,7 @@ func minutesDetailNextCommand(minuteToken string, artifactFlags []string) string
 // With --output-dir, transcripts land under <output-dir>/artifact-<title>-<token>/
 // to mirror the legacy `vc +notes` layout. Otherwise falls back to the default
 // ./minutes/<token>/ shared with `minutes +download`.
-func saveDetailTranscript(runtime *common.RuntimeContext, minuteToken, title string, content []byte) string {
+func saveDetailTranscript(runtime *common.RuntimeContext, minuteToken, title string, content []byte) (string, error) {
 	errOut := runtime.IO().ErrOut
 	var dirName string
 	if outDir := runtime.Str("output-dir"); outDir != "" {
@@ -236,20 +237,26 @@ func saveDetailTranscript(runtime *common.RuntimeContext, minuteToken, title str
 		dirName = common.DefaultMinuteArtifactDir(minuteToken)
 	}
 	transcriptPath := filepath.Join(dirName, common.DefaultTranscriptFileName)
+	if err := runtime.ValidatePath(transcriptPath); err != nil {
+		return "", err
+	}
 
 	if !runtime.Bool("overwrite") {
-		if _, statErr := runtime.FileIO().Stat(transcriptPath); statErr == nil {
+		if info, statErr := runtime.FileIO().Stat(transcriptPath); statErr == nil {
+			if info.IsDir() {
+				return "", errs.NewValidationError(errs.SubtypeFailedPrecondition, "transcript path is a directory: %s", transcriptPath)
+			}
 			fmt.Fprintf(errOut, "%s transcript already exists: %s (use --overwrite to replace)\n", minutesDetailLogPrefix, transcriptPath)
-			return transcriptPath
+			return transcriptPath, nil
 		}
 	}
 
 	fmt.Fprintf(errOut, "%s writing transcript: %s\n", minutesDetailLogPrefix, transcriptPath)
 	if _, err := runtime.FileIO().Save(transcriptPath, fileio.SaveOptions{}, bytes.NewReader(content)); err != nil {
 		fmt.Fprintf(errOut, "%s failed to write transcript: %v\n", minutesDetailLogPrefix, err)
-		return ""
+		return "", err
 	}
-	return transcriptPath
+	return transcriptPath, nil
 }
 
 // sanitizeDetailDirName generates a filesystem-safe directory name using title
@@ -265,7 +272,11 @@ func sanitizeDetailDirName(title, minuteToken string) string {
 	safe := replacer.Replace(strings.TrimSpace(title))
 	safe = strings.Trim(safe, ".")
 	if len(safe) > maxLen {
-		safe = safe[:maxLen]
+		end := maxLen
+		for end > 0 && !utf8.RuneStart(safe[end]) {
+			end--
+		}
+		safe = safe[:end]
 	}
 	if safe == "" {
 		return fmt.Sprintf("artifact-%s", minuteToken)
@@ -299,6 +310,9 @@ var MinutesDetail = common.Shortcut{
 	Validate: func(ctx context.Context, runtime *common.RuntimeContext) error {
 		tokens := common.SplitCSV(runtime.Str("minute-tokens"))
 		const maxBatchSize = 50
+		if len(tokens) == 0 {
+			return errs.NewValidationError(errs.SubtypeInvalidArgument, "--minute-tokens must contain at least one token").WithParam("--minute-tokens")
+		}
 		if len(tokens) > maxBatchSize {
 			return errs.NewValidationError(errs.SubtypeInvalidArgument, "--minute-tokens: too many tokens (%d), maximum is %d", len(tokens), maxBatchSize).WithParam("--minute-tokens")
 		}
@@ -356,7 +370,7 @@ var MinutesDetail = common.Shortcut{
 		}
 		fmt.Fprintf(errOut, "%s done: %d total, %d succeeded, %d failed\n", minutesDetailLogPrefix, len(results), successCount, len(results)-successCount)
 
-		if successCount == 0 && len(results) > 0 {
+		if successCount < len(results) {
 			return runtime.OutPartialFailure(map[string]any{"minutes": results}, &output.Meta{Count: len(results)})
 		}
 

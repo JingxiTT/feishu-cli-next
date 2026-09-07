@@ -522,9 +522,10 @@ func TestDownload_Batch_PartialFailure(t *testing.T) {
 	err := mountAndRun(t, MinutesDownload, []string{
 		"+download", "--minute-tokens", "tok001,tok002", "--as", "bot",
 	}, f, stdout)
-	// partial failure should not cause an overall error
-	if err != nil {
-		t.Fatalf("partial failure should not return error, got: %v", err)
+	// A mixed batch preserves all results and signals incomplete fulfillment.
+	var partial *output.PartialFailureError
+	if !errors.As(err, &partial) {
+		t.Fatalf("expected partial failure, got: %v", err)
 	}
 	out := stdout.String()
 	if !strings.Contains(out, "tok001") || !strings.Contains(out, "tok002") {
@@ -540,8 +541,9 @@ func TestDownload_Batch_DuplicateToken(t *testing.T) {
 	err := mountAndRun(t, MinutesDownload, []string{
 		"+download", "--minute-tokens", "tok001,tok001", "--url-only", "--as", "bot",
 	}, f, stdout)
-	if err != nil {
-		t.Fatalf("unexpected error: %v", err)
+	var partial *output.PartialFailureError
+	if !errors.As(err, &partial) {
+		t.Fatalf("expected partial failure, got: %v", err)
 	}
 	out := stdout.String()
 	if !strings.Contains(out, "duplicate") {

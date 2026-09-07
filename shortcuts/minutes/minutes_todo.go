@@ -36,14 +36,16 @@ type minuteTodoSpec struct {
 
 // MinutesTodo adds, updates, or deletes todo item(s) on a minute.
 var MinutesTodo = common.Shortcut{
-	Service:     "minutes",
-	Command:     "+todo",
-	Description: "Add, update, or delete todo item(s) on a minute",
-	Risk:        "write",
-	Scopes:      []string{"minutes:minutes:update"},
-	AuthTypes:   []string{"user"},
-	HasFormat:   true,
+	Service:           "minutes",
+	Command:           "+todo",
+	Description:       "Add, update, or delete todo item(s) on a minute",
+	Risk:              "write",
+	Scopes:            []string{"minutes:minutes:update"},
+	ConditionalScopes: []string{minutesDetailArtifactsScope},
+	AuthTypes:         []string{"user"},
+	HasFormat:         true,
 	Flags: []common.Flag{
+		{Name: "skip-unchanged", Type: "bool", Desc: "read current content and skip an identical replacement (requires read scope)"},
 		{Name: "minute-token", Desc: "minute token (required)", Required: true},
 		{Name: "operation", Desc: "operation for a single todo (required unless --todos)", Enum: []string{"add", "update", "delete"}},
 		{Name: "todo", Desc: "todo plain-text content; required by single add/update", Input: []string{common.File, common.Stdin}},
@@ -72,14 +74,28 @@ var MinutesTodo = common.Shortcut{
 		if err := validate.ResourceName(minuteToken, "--minute-token"); err != nil {
 			return errs.NewValidationError(errs.SubtypeInvalidArgument, "%s", err).WithParam("--minute-token")
 		}
-		if _, err := resolveMinuteTodoOps(runtime); err != nil {
+		ops, err := resolveMinuteTodoOps(runtime)
+		if err != nil {
 			return err
 		}
-		return nil
+		if runtime.Bool("skip-unchanged") {
+			seen := map[string]bool{}
+			for _, op := range ops {
+				id, _ := op.item["todo_id"].(string)
+				if op.operation != "update" || seen[id] {
+					return errs.NewValidationError(errs.SubtypeInvalidArgument, "--skip-unchanged requires updates to distinct todo IDs").WithParam("--skip-unchanged")
+				}
+				seen[id] = true
+			}
+		}
+		return minutesUnchangedScope(runtime, minutesDetailArtifactsScope)
 	},
 	DryRun: func(ctx context.Context, runtime *common.RuntimeContext) *common.DryRunAPI {
-		api := common.NewDryRunAPI().
-			POST(fmt.Sprintf("/open-apis/minutes/v1/minutes/%s/todo", validate.EncodePathSegment(runtime.Str("minute-token"))))
+		api := common.NewDryRunAPI()
+		if runtime.Bool("skip-unchanged") {
+			api.GET(fmt.Sprintf("/open-apis/minutes/v1/minutes/%s/artifacts", validate.EncodePathSegment(runtime.Str("minute-token"))))
+		}
+		api.POST(fmt.Sprintf("/open-apis/minutes/v1/minutes/%s/todo", validate.EncodePathSegment(runtime.Str("minute-token"))))
 		ops, err := resolveMinuteTodoOps(runtime)
 		if err != nil {
 			return api.Body(map[string]interface{}{
@@ -95,6 +111,17 @@ var MinutesTodo = common.Shortcut{
 		ops, err := resolveMinuteTodoOps(runtime)
 		if err != nil {
 			return err
+		}
+
+		if runtime.Bool("skip-unchanged") {
+			same, err := minutesTodosUnchanged(runtime, minuteToken, ops)
+			if err != nil {
+				return err
+			}
+			if same {
+				runtime.OutFormat(map[string]any{"minute_token": minuteToken, "count": len(ops), "updated": false, "unchanged": true}, nil, nil)
+				return nil
+			}
 		}
 
 		path := fmt.Sprintf("/open-apis/minutes/v1/minutes/%s/todo", validate.EncodePathSegment(minuteToken))
@@ -181,9 +208,9 @@ func parseMinuteTodoSpecs(raw string) ([]minuteTodoSpec, error) {
 
 func resolveMinuteTodoSingle(runtime *common.RuntimeContext) (*minuteTodoOp, error) {
 	operation := strings.TrimSpace(runtime.Str("operation"))
-	todo := strings.TrimSpace(runtime.Str("todo"))
+	todo := runtime.Str("todo")
 	todoID := strings.TrimSpace(runtime.Str("todo-id"))
-	hasTodo := todo != ""
+	hasTodo := strings.TrimSpace(todo) != ""
 	hasTodoID := todoID != ""
 	hasIsDone := runtime.Changed("is-done")
 
@@ -239,7 +266,7 @@ func buildMinuteTodoItem(spec minuteTodoSpec) (map[string]interface{}, error) {
 		return nil, errs.NewValidationError(errs.SubtypeInvalidArgument, "operation %q is invalid, allowed: add, update, delete", operation)
 	}
 
-	content := strings.TrimSpace(spec.Content)
+	content := spec.Content
 	todoID := strings.TrimSpace(spec.TodoID)
 	item := map[string]interface{}{"operation": operation}
 
@@ -248,7 +275,7 @@ func buildMinuteTodoItem(spec minuteTodoSpec) (map[string]interface{}, error) {
 		if todoID != "" {
 			return nil, errs.NewValidationError(errs.SubtypeInvalidArgument, "operation \"add\" does not accept todo_id")
 		}
-		if content == "" {
+		if strings.TrimSpace(content) == "" {
 			return nil, errs.NewValidationError(errs.SubtypeInvalidArgument, "operation \"add\" requires content")
 		}
 		if spec.IsDone == nil {
@@ -260,7 +287,7 @@ func buildMinuteTodoItem(spec minuteTodoSpec) (map[string]interface{}, error) {
 		if todoID == "" {
 			return nil, errs.NewValidationError(errs.SubtypeInvalidArgument, "operation \"update\" requires todo_id")
 		}
-		if content == "" {
+		if strings.TrimSpace(content) == "" {
 			return nil, errs.NewValidationError(errs.SubtypeInvalidArgument, "operation \"update\" requires content")
 		}
 		if spec.IsDone == nil {

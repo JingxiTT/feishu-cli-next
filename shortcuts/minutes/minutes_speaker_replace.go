@@ -139,7 +139,7 @@ func minutesSpeakerReplaceError(err error, minuteToken, sourceSpeaker string) er
 	case minutesSpeakerReplaceSpeakerNotFoundCode:
 		p.Subtype = errs.SubtypeNotFound
 		p.Message = fmt.Sprintf("Speaker not found in minute %q: source speaker %q does not match an existing speaker in the transcript.", minuteToken, sourceSpeaker)
-		p.Hint = "Verify --from-speaker-id is a valid speaker_id or display name from the transcript; if multiple speakers share the same name, pass the exact speaker_id after reviewing their utterances."
+		p.Hint = "Verify --from-speaker-id is the exact opaque speaker_id from the transcript speaker list; if speakers share a name, review their utterances to choose the correct ID."
 	}
 	return err
 }

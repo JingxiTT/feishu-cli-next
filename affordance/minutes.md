@@ -25,6 +25,9 @@
 
 ## +update
 
+### Tips
+- For repeated replacements, use `--skip-unchanged` to compare the exact current title when read access is available. This is not concurrency protection.
+
 ### Skills
 - lark-meeting/references/lark-minutes-update.md
 
@@ -40,7 +43,8 @@ Batch-replace exact keywords in a minute transcript.
 - `minute_token` from [[+search]], a minutes URL, or VC recording
 
 ### Tips
-- Replace straight away — the response reports every `source_word`'s outcome, so reading the transcript before or after only slows the run down
+- Exact source words can be replaced directly. Preserve their spelling, case and spacing.
+- Retry only unmatched words after confirming intent; never repeat successful replacements. Missing or unknown outcomes require a read-only transcript check before deciding whether to retry.
 
 ### Examples
 
@@ -51,6 +55,9 @@ lark-cli minutes +word-replace --minute-token obcnxxxxxxxxxxxxxxxxxxxx --replace
 
 ## +summary
 Replace the minute's AI summary text in full.
+
+### Repeated replacements
+Use `--skip-unchanged` when read access is available to avoid an identical replacement. The comparison preserves whitespace and does not protect against concurrent edits.
 
 ### Prerequisites
 - Prefer reading the current summary via [[+detail]] with `--summary` before overwriting
@@ -67,6 +74,9 @@ lark-cli minutes +summary --minute-token obcnxxxxxxxxxxxxxxxxxxxx --summary "**�
 
 ## +todo
 Write AI todos that live inside a minute — not Lark Task list items.
+
+### Repeated replacements
+`--skip-unchanged` applies to updates of distinct todo IDs. Adds and deletes retain their explicit effects; a missing list never implies deletion.
 
 ### Avoid when
 - Personal or shared Task lists → use the task domain (`lark-cli task`), not this shortcut

@@ -28,8 +28,8 @@ const minutesWordReplaceDoNotRetrySucceeded = "Do not reprocess words that alrea
 const minutesWordReplaceNotFoundHint = "Report the unmatched source_word values and confirm their exact spelling, case and spacing with the user, then retry only those words"
 
 type transcriptWordReplace struct {
-	SourceWord string `json:"source_word"`
-	TargetWord string `json:"target_word"`
+	SourceWord string  `json:"source_word"`
+	TargetWord *string `json:"target_word"`
 }
 
 // MinutesWordReplace batch-replaces words in a minute's transcript.
@@ -113,17 +113,20 @@ func parseReplaceWords(raw string) ([]map[string]string, error) {
 	replaceWords := make([]map[string]string, 0, len(items))
 	seen := make(map[string]struct{}, len(items))
 	for i, item := range items {
-		sourceWord := strings.TrimSpace(item.SourceWord)
-		if sourceWord == "" {
+		sourceWord := item.SourceWord
+		if strings.TrimSpace(sourceWord) == "" {
 			return nil, errs.NewValidationError(errs.SubtypeInvalidArgument, "--replace-words: item %d: source_word is required", i).WithParam("--replace-words")
 		}
 		if _, exists := seen[sourceWord]; exists {
 			return nil, errs.NewValidationError(errs.SubtypeInvalidArgument, "--replace-words: duplicate source_word %q", sourceWord).WithParam("--replace-words")
 		}
+		if item.TargetWord == nil {
+			return nil, errs.NewValidationError(errs.SubtypeInvalidArgument, "--replace-words: item %d: target_word is required (use an empty string for deletion)", i).WithParam("--replace-words")
+		}
 		seen[sourceWord] = struct{}{}
 		replaceWords = append(replaceWords, map[string]string{
 			"source_word": sourceWord,
-			"target_word": item.TargetWord,
+			"target_word": *item.TargetWord,
 		})
 	}
 	return replaceWords, nil
@@ -131,7 +134,21 @@ func parseReplaceWords(raw string) ([]map[string]string, error) {
 
 func emitWordReplaceResult(runtime *common.RuntimeContext, minuteToken string, replaceWords []map[string]string, data map[string]interface{}) error {
 	counts, hasCounts := parseReplaceWordCounts(data)
-	if !hasCounts {
+	var unknown []string
+	for _, item := range replaceWords {
+		if _, found := counts[item["source_word"]]; !found {
+			unknown = append(unknown, item["source_word"])
+		}
+	}
+	if hasCounts && len(counts) > 0 && len(unknown) > 0 {
+		return runtime.OutPartialFailure(map[string]any{
+			"minute_token":        minuteToken,
+			"replace_word_counts": counts,
+			"unknown":             unknown,
+			"message":             "The server omitted outcomes for some requested words. Check the transcript before deciding whether to retry. " + minutesWordReplaceDoNotRetrySucceeded,
+		}, nil)
+	}
+	if !hasCounts || len(unknown) > 0 {
 		return errs.NewValidationError(errs.SubtypeFailedPrecondition,
 			"Replace request returned success, but the server did not include replace_word_counts, so per-word outcomes cannot be reported.").
 			WithHint("Check the transcript with `minutes +detail --minute-tokens %s --transcript` before retrying. %s",
@@ -143,10 +160,17 @@ func emitWordReplaceResult(runtime *common.RuntimeContext, minuteToken string, r
 		return minutesWordReplaceAllFailed(minuteToken, failed)
 	}
 
-	runtime.OutFormat(map[string]interface{}{
-		"minute_token": minuteToken,
-		"message":      formatWordReplaceMessage(succeeded, failed),
-	}, nil, nil)
+	result := map[string]interface{}{
+		"minute_token":        minuteToken,
+		"message":             formatWordReplaceMessage(succeeded, failed),
+		"succeeded":           succeeded,
+		"failed":              failed,
+		"replace_word_counts": counts,
+	}
+	if len(failed) > 0 {
+		return runtime.OutPartialFailure(result, nil)
+	}
+	runtime.OutFormat(result, nil, nil)
 	return nil
 }
 
@@ -181,74 +205,37 @@ func minutesWordReplaceAllFailed(minuteToken string, failed []string) error {
 }
 
 func parseReplaceWordCounts(data map[string]interface{}) (map[string]int64, bool) {
-	if data == nil {
+	var response struct {
+		Counts *[]struct {
+			Source string          `json:"source_word"`
+			Count  json.RawMessage `json:"replace_count"`
+		} `json:"replace_word_counts"`
+	}
+	encoded, err := json.Marshal(data)
+	if err != nil || json.Unmarshal(encoded, &response) != nil || response.Counts == nil {
 		return nil, false
 	}
-	raw, ok := data["replace_word_counts"]
-	if !ok || raw == nil {
-		return nil, false
-	}
-
-	items, ok := asObjectSlice(raw)
-	if !ok {
-		return nil, false
-	}
-
-	out := make(map[string]int64, len(items))
-	for _, m := range items {
-		source := strings.TrimSpace(asString(m["source_word"]))
-		if source == "" {
-			continue
+	counts := make(map[string]int64, len(*response.Counts))
+	for _, item := range *response.Counts {
+		if strings.TrimSpace(item.Source) == "" {
+			return nil, false
 		}
-		out[source] = toInt64(m["replace_count"])
-	}
-	return out, true
-}
-
-func asObjectSlice(v interface{}) ([]map[string]interface{}, bool) {
-	switch items := v.(type) {
-	case []interface{}:
-		out := make([]map[string]interface{}, 0, len(items))
-		for _, item := range items {
-			m, ok := item.(map[string]interface{})
-			if !ok {
+		if _, duplicate := counts[item.Source]; duplicate {
+			return nil, false
+		}
+		raw := string(item.Count)
+		if strings.HasPrefix(raw, "\"") {
+			if json.Unmarshal(item.Count, &raw) != nil {
 				return nil, false
 			}
-			out = append(out, m)
 		}
-		return out, true
-	case []map[string]interface{}:
-		return items, true
-	default:
-		return nil, false
-	}
-}
-
-func asString(v interface{}) string {
-	s, _ := v.(string)
-	return s
-}
-
-func toInt64(v interface{}) int64 {
-	switch n := v.(type) {
-	case int64:
-		return n
-	case int:
-		return int64(n)
-	case float64:
-		return int64(n)
-	case json.Number:
-		i, _ := n.Int64()
-		return i
-	case string:
-		i, err := strconv.ParseInt(strings.TrimSpace(n), 10, 64)
-		if err != nil {
-			return 0
+		count, err := strconv.ParseInt(raw, 10, 64)
+		if err != nil || count < 0 {
+			return nil, false
 		}
-		return i
-	default:
-		return 0
+		counts[item.Source] = count
 	}
+	return counts, true
 }
 
 func splitWordReplaceResults(replaceWords []map[string]string, counts map[string]int64) (succeeded, failed []string) {

@@ -264,7 +264,7 @@ var MinutesDownload = common.Shortcut{
 
 		outData := map[string]interface{}{"downloads": results}
 		meta := &output.Meta{Count: len(results)}
-		if successCount == 0 && len(results) > 0 {
+		if successCount < len(results) {
 			return runtime.OutPartialFailure(outData, meta)
 		}
 		runtime.OutFormat(outData, meta, nil)

@@ -20,14 +20,16 @@ const minutesSummaryASRQuotaNotEnough = 2091008
 
 // MinutesSummary replaces the AI summary of a minute.
 var MinutesSummary = common.Shortcut{
-	Service:     "minutes",
-	Command:     "+summary",
-	Description: "Replace the AI summary of a minute",
-	Risk:        "write",
-	Scopes:      []string{"minutes:minutes:update"},
-	AuthTypes:   []string{"user"},
-	HasFormat:   true,
+	Service:           "minutes",
+	Command:           "+summary",
+	Description:       "Replace the AI summary of a minute",
+	Risk:              "write",
+	Scopes:            []string{"minutes:minutes:update"},
+	ConditionalScopes: []string{minutesDetailArtifactsScope},
+	AuthTypes:         []string{"user"},
+	HasFormat:         true,
 	Flags: []common.Flag{
+		{Name: "skip-unchanged", Type: "bool", Desc: "read current content and skip an identical replacement (requires read scope)"},
 		{Name: "minute-token", Desc: "minute token", Required: true},
 		{Name: "summary", Desc: "replacement summary text (Markdown subset renders best in Minutes)", Required: true, Input: []string{common.File, common.Stdin}},
 	},
@@ -47,16 +49,31 @@ var MinutesSummary = common.Shortcut{
 		if summary == "" {
 			return errs.NewValidationError(errs.SubtypeInvalidArgument, "--summary is required").WithParam("--summary")
 		}
-		return nil
+		return minutesUnchangedScope(runtime, minutesDetailArtifactsScope)
 	},
 	DryRun: func(ctx context.Context, runtime *common.RuntimeContext) *common.DryRunAPI {
-		return common.NewDryRunAPI().
+		preview := common.NewDryRunAPI()
+		if runtime.Bool("skip-unchanged") {
+			preview.GET(fmt.Sprintf("/open-apis/minutes/v1/minutes/%s/artifacts", validate.EncodePathSegment(runtime.Str("minute-token"))))
+		}
+		return preview.
 			PUT(fmt.Sprintf("/open-apis/minutes/v1/minutes/%s/summary", validate.EncodePathSegment(runtime.Str("minute-token")))).
-			Body(map[string]interface{}{"summary": "<summary markdown>"})
+			Body(map[string]interface{}{"summary": runtime.Str("summary")})
 	},
 	Execute: func(ctx context.Context, runtime *common.RuntimeContext) error {
 		minuteToken := runtime.Str("minute-token")
-		summary := strings.TrimSpace(runtime.Str("summary"))
+		summary := runtime.Str("summary")
+
+		if runtime.Bool("skip-unchanged") {
+			same, err := minutesSummaryUnchanged(runtime, minuteToken, summary)
+			if err != nil {
+				return err
+			}
+			if same {
+				runtime.OutFormat(map[string]any{"minute_token": minuteToken, "updated": false, "unchanged": true}, nil, nil)
+				return nil
+			}
+		}
 
 		path := fmt.Sprintf("/open-apis/minutes/v1/minutes/%s/summary", validate.EncodePathSegment(minuteToken))
 		body := map[string]interface{}{
