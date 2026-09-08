@@ -371,8 +371,50 @@ class CodexAccountingTests(unittest.TestCase):
             self.assertIn('features.multi_agent=false', config)
             self.assertIn('features.apps=false', config)
             self.assertIn('project_doc_max_bytes=0', config)
-            self.assertIn('enabled=false', next(value for value in config if value.startswith('skills.config=')))
+            self.assertEqual(next(value for value in config if value.startswith('skills.config=')),
+                             'skills.config=[{path=' + json.dumps(str(skill)) + ',enabled=false}]')
             self.assertNotIn('DO NOT INJECT THIS', '\n'.join(config))
+
+    @unittest.skipUnless(sys.platform == 'darwin' and os.environ.get('EVAL_NATIVE_CODEX'),
+                         'set EVAL_NATIVE_CODEX on macOS for no-model native skill isolation')
+    def test_native_skill_entry_file_disables_catalog_without_model_or_auth(self):
+        with tempfile.TemporaryDirectory(prefix='feishu-skill-isolation-') as directory:
+            root = Path(directory)
+            auth_home, workspace = root / 'codex-home', root / 'workspace'
+            for path in (auth_home, workspace, workspace / 'home', workspace / 'tmp'):
+                path.mkdir()
+            skill = auth_home / 'skills' / 'isolation-probe-sentinel' / 'SKILL.md'
+            skill.parent.mkdir(parents=True)
+            skill.write_text('---\nname: isolation-probe-sentinel\ndescription: Synthetic no-action probe.\n---\nSynthetic only.\n')
+            env = {**runner.cli_environment(workspace), 'CODEX_HOME': str(auth_home)}
+
+            def prompt(disable_directory):
+                # Offline configuration avoids opening managed proxy listeners;
+                # the skill path/feature overrides are shared with paired runs.
+                settings = runner.configuration(auth_home, workspace, 'medium')
+                if disable_directory:
+                    # Negative control reproduces the old ineffective path shape.
+                    settings = [value if not value.startswith('skills.config=') else
+                                'skills.config=[{path=' + json.dumps(str(skill.parent)) + ',enabled=false}]'
+                                for value in settings]
+                command = ['/usr/bin/sandbox-exec', '-p', '(version 1) (allow default) (deny network*)',
+                           os.environ['EVAL_NATIVE_CODEX'], '-C', str(workspace),
+                           'debug', 'prompt-input', 'Synthetic isolation probe.']
+                for value in settings:
+                    command += ['-c', value]
+                result = subprocess.run(command, cwd=workspace, env=env, capture_output=True, text=True, timeout=20)
+                self.assertEqual(result.returncode, 0, 'native prompt-input failed')
+                self.assertIsInstance(json.loads(result.stdout), list)
+                return result.stdout
+
+            visible = prompt(True)
+            self.assertIn('isolation-probe-sentinel', visible)
+            self.assertIn('skills_instructions', visible)
+            # Re-enumeration also covers system entry files bootstrapped by Codex.
+            isolated = prompt(False)
+            self.assertNotIn('isolation-probe-sentinel', isolated)
+            self.assertNotIn('skills_instructions', isolated)
+            self.assertFalse((auth_home / 'auth.json').exists())
 
 
 class CodexAdapterProcessTests(unittest.TestCase):

@@ -189,7 +189,8 @@ def cli_environment(workspace):
 
 def configuration(auth_home, workspace, reasoning, fixture_env=None, *, unix_sockets=(), protect_home=False):
     # Inspect skill path names only. Never read config.toml, auth files, or skill contents.
-    skill_paths = sorted(path.parent for path in (auth_home / "skills").rglob("SKILL.md"))
+    # Native Codex matches the entry file, not its parent skill directory.
+    skill_paths = sorted((auth_home / "skills").rglob("SKILL.md"))
     disabled_skills = ",".join("{path=" + json.dumps(str(path)) + ",enabled=false}" for path in skill_paths)
     environment = {**cli_environment(workspace), **(fixture_env or {})}
     shell_env = ",".join(json.dumps(key) + "=" + json.dumps(value) for key, value in environment.items())

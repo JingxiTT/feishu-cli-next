@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "observed_at_utc": "2026-09-08T18:37:27.607715+00:00",
+  "purpose": "No-model native control of Codex skill-disable entry paths; no historical result changes.",
+  "codex_version": "codex-cli 0.153.4",
+  "codex_sha256": "b973d440acac501fd2594a43e7ca9ce41e0a65b9dfb28d0d7a7837c99e1261e3",
+  "binary_matches_condition06": true,
+  "isolation": {
+    "fresh_home": true,
+    "fresh_codex_home": true,
+    "copied_files": "Only the nine listed public SKILL.md files; no config or credential files.",
+    "network_policy": "(version 1) (allow default) (deny network*)",
+    "model_invocations": 0,
+    "raw_prompts_retained": false,
+    "temporary_probe_directories_removed": true
+  },
+  "method": {
+    "command": "sandbox-exec -p NETWORK_POLICY EVAL_NATIVE_CODEX -C TEMP_WORKSPACE debug prompt-input SYNTHETIC_PROMPT with configuration(TEMP_CODEX_HOME,TEMP_WORKSPACE,medium) overrides",
+    "negative_control": "Replace only skills.config entry-file paths with their parent directories, matching the frozen06 bug.",
+    "scope": "Native debug prompt-input with offline configuration. Same skill paths and disabled features as paired configuration; omit managed proxy listeners so all network can be denied. This is not a paid codex exec replay.",
+    "regression_test": "tests/next_evaluation/test_codex_runner.py::CodexAccountingTests.test_native_skill_entry_file_disables_catalog_without_model_or_auth",
+    "test_command": "EVAL_NATIVE_CODEX=/absolute/path/to/pinned/codex python3 -m unittest discover -s tests/next_evaluation -p test_codex_runner.py"
+  },
+  "public_skill_entries": [
+    {
+      "relative_entry": ".system/imagegen/SKILL.md",
+      "sha256": "681ddb4ad6d06a2acc78a3535b583f8d0c1ea800ecda3d56370d3310fd2cd4ba"
+    },
+    {
+      "relative_entry": ".system/openai-docs/SKILL.md",
+      "sha256": "7cb8fa1b2a0c635b5c61ffe1da7b8594a7ea0fce5b71e8d523e2025d88b2a05e"
+    },
+    {
+      "relative_entry": ".system/plugin-creator/SKILL.md",
+      "sha256": "71b95b8219644f95d633721e7f7cd3c469edfc8fe50f8415d400dfb2d74bc7b9"
+    },
+    {
+      "relative_entry": ".system/review-agent/SKILL.md",
+      "sha256": "07079efd0dc76f05fade424e5dfb048dce1de2df7626e1a4f56292a4f3f92228"
+    },
+    {
+      "relative_entry": ".system/skill-creator/SKILL.md",
+      "sha256": "6656e54755638e8efcf275a472b9672eaa8a9a1b9e59dc210e275b03b59e1e66"
+    },
+    {
+      "relative_entry": ".system/skill-installer/SKILL.md",
+      "sha256": "d68b77e5bbb34dedab89d134da52855f140fc4b4299b80104f534e3b9e98f8ee"
+    },
+    {
+      "relative_entry": "hatch-pet/SKILL.md",
+      "sha256": "ccfabd5d761faa721586f8793dd93bdd735e2a2c07099a5d593a7e31286e58f3"
+    },
+    {
+      "relative_entry": "kimi-webbridge/SKILL.md",
+      "sha256": "6a2ab08680d904c9bfa30cae07729069d19440daa25dbd090ffc78a79a0d169a"
+    },
+    {
+      "relative_entry": "playwright/SKILL.md",
+      "sha256": "0ffaabcc8e0990627c4725f18bf1c7955534a796c1c199e872909de2013ce6a8"
+    }
+  ],
+  "controls": [
+    {
+      "control": "directory_path_negative",
+      "exit_code": 0,
+      "skills_instructions_present": true,
+      "visible_public_skill_names": [
+        "hatch-pet",
+        "imagegen",
+        "kimi-webbridge",
+        "openai-docs",
+        "playwright",
+        "plugin-creator",
+        "skill-creator",
+        "skill-installer"
+      ],
+      "real_home_agents_root_present": false,
+      "arbitrary_guidance_autoloaded": false,
+      "stderr_empty": true
+    },
+    {
+      "control": "entry_file_path_fixed",
+      "exit_code": 0,
+      "skills_instructions_present": false,
+      "visible_public_skill_names": [],
+      "real_home_agents_root_present": false,
+      "arbitrary_guidance_autoloaded": false,
+      "stderr_empty": true
+    }
+  ],
+  "conclusions": [
+    "Directory paths do not disable the advertised skill entries; SKILL.md entry paths do.",
+    "Eight of nine mirrored public entries were advertised under the old configuration; review-agent was not advertised.",
+    "Real HOME .agents skill paths and an arbitrary workspace guidance skill were absent in these native controls.",
+    "configuration() is shared by both comparison arms. Its selected arm guidance is explicitly appended once by run_agent(); it is not registered as an automatic skill."
+  ],
+  "limitations": [
+    "These controls establish native prompt catalog visibility, not the contents of discarded historical model transcripts.",
+    "No claim that ambient skills caused file-read loops, changed success rates, or caused a quantified billed token difference.",
+    "No historical results are rescored; a fresh comparison is needed after the isolation correction."
+  ]
+}
