@@ -49,7 +49,8 @@ class AccountingTests(unittest.TestCase):
         self.assertEqual(len(runs), 9)
         for arm in arms:
             self.assertEqual(sum(a == arm for _, _, a in runs), 3)
-        for names in (("official", "next"), (*harness.ARMS, "next_before")):
+        self.assertEqual(harness.comparison_arms({"arms": dict.fromkeys(harness.ORIGINAL_ARMS)}), harness.ORIGINAL_ARMS)
+        for names in (("official", "next_before"), (*harness.ARMS, "next_before")):
             with self.assertRaises(ValueError):
                 harness.comparison_arms({"arms": dict.fromkeys(names)})
 
@@ -207,6 +208,53 @@ class ProcessE2ETests(unittest.TestCase):
             self.assertEqual([(r["task_id"], r["trial"], r["arm"]) for r in actual], expected)
             self.assertEqual(result["planned_runs"], 24)
             self.assertEqual(len(result["runs"]), 24)
+
+    def test_original_comparison_eight_tasks_three_trials_invokes_48_balanced_attempts(self):
+        with tempfile.TemporaryDirectory() as directory:
+            log = Path(directory) / "invocations.jsonl"
+            completed, result = self.invoke({"invocation_log": str(log)}, task_count=8,
+                arms=harness.ORIGINAL_ARMS, extra_args=("--original-comparison", "--repeats", "3"))
+            self.assertEqual(completed.returncode, 0, completed.stderr)
+            actual = [json.loads(line) for line in log.read_text().splitlines()]
+            tasks = [{"id": f"increment-{n}"} for n in range(8)]
+            expected = [(task["id"], trial, arm) for task, trial, arm in
+                        harness.schedule(tasks, 3, 20260907, harness.ORIGINAL_ARMS)]
+            self.assertEqual([(r["task_id"], r["trial"], r["arm"]) for r in actual], expected)
+            self.assertEqual(result["planned_runs"], 48)
+            self.assertEqual(len(result["runs"]), 48)
+            self.assertEqual(set(result["arms"]), {"official", "next"})
+            self.assertEqual(result["arm_selection"], {"mode": "original_comparison",
+                "selected": ["official", "next"], "schedule": "balanced", "balanced_comparison": True})
+            self.assertEqual(len(result["matched_success"]), 1)
+            self.assertEqual(result["matched_success"][0]["baseline"], "official")
+            self.assertEqual(len(result["matched_success"][0]["pairs"]), 24)
+            self.assertTrue(all(row["attempts"] == 3 for row in result["groups"] if row["scope"] == "task_id"))
+
+    def test_original_comparison_keeps_failed_cost_and_unknown_usage(self):
+        for fixture in ({"wrong_effect": True}, {"invalid_usage": True}):
+            completed, result = self.invoke(fixture, arms=harness.ORIGINAL_ARMS,
+                                            extra_args=("--original-comparison",))
+            self.assertEqual(completed.returncode, 1, completed.stderr)
+            self.assertEqual(len(result["runs"]), 4)
+            self.assertTrue(all(not row["success"] for row in result["runs"]))
+            for row in result["groups"]:
+                self.assertIsNone(row["tokens_per_success"])
+                if fixture.get("wrong_effect"):
+                    self.assertEqual(row["known_total_tokens"], 330)
+                else:
+                    self.assertFalse(row["usage_complete"])
+            if fixture.get("invalid_usage"):
+                self.assertTrue(all(row["usage"] is None for row in result["runs"]))
+
+    def test_original_comparison_rejects_mismatched_or_candidate_only_options(self):
+        for arms, args in ((harness.ORIGINAL_ARMS, ()),
+                           (harness.ARMS, ("--original-comparison",)),
+                           (harness.BEFORE_AFTER_ARMS, ("--original-comparison",)),
+                           (harness.ORIGINAL_ARMS, ("--original-comparison", "--only-arm", "next"))):
+            with self.subTest(arms=arms, args=args):
+                completed, result = self.invoke(arms=arms, extra_args=args)
+                self.assertEqual(completed.returncode, 2)
+                self.assertIsNone(result)
 
     def test_operator_stop_preserves_active_attempt_and_skips_unstarted_models(self):
         with tempfile.TemporaryDirectory() as directory:

@@ -119,6 +119,56 @@ class CodexAccountingTests(unittest.TestCase):
             self.assertEqual(len(captured), 1)
             self.assertFalse(values['auth-home'].exists())
 
+    def test_original_comparison_and_paired_markdown_keep_full_drive_source(self):
+        from unittest.mock import patch
+        spec = importlib.util.spec_from_file_location('run_read_batch', ROOT / 'evaluation/run_read_batch.py')
+        batch = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(batch)
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            binary = root / 'cli'
+            binary.touch()
+            args = ['run_read_batch.py', '--section', 'markdown', '--task-kind', 'paired',
+                    '--model', 'gpt-5.6-luna', '--reasoning', 'medium']
+            for name, path in {'official-source': ROOT, 'official-cli': binary,
+                'next-source': ROOT, 'next-cli': binary, 'codex': binary,
+                'auth-home': root / 'auth', 'output-root': root / 'results'}.items():
+                args.extend(['--' + name, str(path)])
+            configs = []
+
+            def inspect_config(command, **kwargs):
+                config = json.loads(Path(command[command.index('--config') + 1]).read_text())
+                configs.append(config)
+                self.assertEqual(Path(config['arms']['official']['skill']), ROOT / 'skills/lark-drive/SKILL.md')
+                self.assertEqual(Path(config['arms']['official']['skill']).read_bytes(),
+                                 (ROOT / 'skills/lark-drive/SKILL.md').read_bytes())
+                self.assertEqual(Path(config['arms']['next']['skill']), ROOT / 'agent-skills/feishu-cli-next/SKILL.md')
+                if '--original-comparison' in command:
+                    self.assertEqual(set(config['arms']), {'official', 'next'})
+                else:
+                    self.assertEqual(set(config['arms']), {'official', 'official_concise', 'next'})
+                    self.assertEqual(Path(config['arms']['official_concise']['skill']).read_bytes(),
+                                     (ROOT / 'evaluation/concise/markdown/SKILL.md').read_bytes())
+                return subprocess.CompletedProcess(command, 0)
+
+            for extra, attempts in (([], 9), (['--original-comparison'], 6)):
+                with patch.object(sys, 'argv', [*args, *extra]), \
+                     patch.object(sys, 'path', [str(ROOT / 'evaluation'), *sys.path]), \
+                     patch.object(batch.subprocess, 'run', side_effect=inspect_config) as run, \
+                     patch('builtins.print') as printed:
+                    self.assertEqual(batch.main(), 0)
+                self.assertEqual('--original-comparison' in run.call_args.args[0], bool(extra))
+                self.assertEqual(json.loads(printed.call_args_list[0].args[0])['planned_attempts'], attempts)
+            expected = {**configs[0], 'arms': {k: v for k, v in configs[0]['arms'].items() if k != 'official_concise'}}
+            self.assertEqual(configs[1], expected)
+            self.assertFalse((root / 'auth').exists())
+            for conflicting in (['--previous-next-source', str(ROOT)],
+                                ['--previous-next-cli', str(binary)], ['--only-arm', 'next']):
+                with patch.object(sys, 'argv', [*args, '--original-comparison', *conflicting]), \
+                     patch.object(batch.subprocess, 'run') as run, patch('sys.stderr'), self.assertRaises(SystemExit):
+                    batch.main()
+                run.assert_not_called()
+
     def test_batch_before_after_uses_frozen_next_without_mislabeling_concise(self):
         from unittest.mock import patch
         spec = importlib.util.spec_from_file_location('run_read_batch', ROOT / 'evaluation/run_read_batch.py')

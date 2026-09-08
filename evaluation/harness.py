@@ -16,14 +16,15 @@ import time
 
 ARMS = ("official", "official_concise", "next")
 BEFORE_AFTER_ARMS = ("official", "next_before", "next")
+ORIGINAL_ARMS = ("official", "next")
 
 
 def comparison_arms(config):
     names = set(config.get("arms", {}))
-    for arms in (ARMS, BEFORE_AFTER_ARMS):
+    for arms in (ARMS, BEFORE_AFTER_ARMS, ORIGINAL_ARMS):
         if names == set(arms):
             return arms
-    raise ValueError("exactly three recognized comparison arms required")
+    raise ValueError("a recognized comparison arm set is required")
 
 
 def read_json(path):
@@ -310,6 +311,7 @@ def main():
     parser.add_argument("--release-held-out", action="store_true")
     parser.add_argument("--section", action="append", help="Evaluate only this inventory section; may repeat")
     parser.add_argument("--only-arm", choices=("next",), help="Run only the candidate entries from the frozen balanced schedule; not a new balanced comparison")
+    parser.add_argument("--original-comparison", action="store_true", help="Run a fresh balanced comparison of only the original CLI and Next")
     args = parser.parse_args()
     try:
         manifest = tasks_from(args.tasks, args.release_held_out)
@@ -319,6 +321,8 @@ def main():
         if not selected or args.section and set(args.section) - {task["section"] for task in selected}:
             raise ValueError("unknown or empty section selection")
         arms = comparison_arms(config)
+        if args.original_comparison != (arms == ORIGINAL_ARMS) or args.original_comparison and args.only_arm:
+            raise ValueError("original comparison requires exactly original and Next arms and cannot select only one arm")
         planned = schedule(selected, args.repeats, args.seed, arms)
         selected_arms = arms
         if args.only_arm:
@@ -335,6 +339,9 @@ def main():
         if args.only_arm:
             evidence["arm_selection"] = {"mode": "candidate_only", "selected": list(selected_arms),
                                          "schedule": "filtered_balanced", "balanced_comparison": False}
+        elif args.original_comparison:
+            evidence["arm_selection"] = {"mode": "original_comparison", "selected": list(selected_arms),
+                                         "schedule": "balanced", "balanced_comparison": True}
         args.output.parent.mkdir(parents=True, exist_ok=True)
         # Checkpoint each finished attempt before launching another billed model run.
         for planned_run in planned:
