@@ -2,9 +2,9 @@
 
 A Feishu/Lark CLI for AI agents that work through a shell and files. It builds on the official Lark CLI and adds command discovery, compact results, file artifacts, typed data transfer, and mutation recovery evidence.
 
-The goal is to reduce the tokens needed to complete a task while preserving every original command and workflow, data fidelity, and successful outcomes. Results remain task-dependent; the evaluation tracks the **50% token-reduction target separately for each function**, with failed-attempt costs included.
+The goal is to reduce the tokens needed to complete a task while preserving every original command and workflow, data fidelity, and successful outcomes. Results remain task-dependent. The current evaluation targets **more than 50% fewer tokens for Docs read/edit and at least 30% fewer for each other evaluated function versus the original CLI**, with failed-attempt costs included and no observed success regression.
 
-[Quick start](#quick-start) · [Usage](#usage) · [Evaluation report](evaluation/evidence/token-efficiency-04/REPORT.md) · [Implementation status](docs/IMPLEMENTATION.md)
+[Quick start](#quick-start) · [Usage](#usage) · [Evaluation report](evaluation/evidence/token-efficiency-05/REPORT.md) · [Implementation status](docs/IMPLEMENTATION.md)
 
 ## What this project adds
 
@@ -12,10 +12,11 @@ The goal is to reduce the tokens needed to complete a task while preserving ever
 | --- | --- |
 | Command discovery | Search registered commands with bounded results; optional flag descriptions expose accepted inputs without a separate help lookup. |
 | Compact JSON | Full JSON data in compact form by default; optional indentation and field selection. |
+| Local Docs editing | Pull readable Markdown with native block IDs, edit supported text locally, then push targeted native changes with verified text results. |
 | File artifacts | Save supported read results to versioned, identity-bound files for local processing and handoff. |
 | Typed data workflows | Sheets export/import and Base record workflows with validation, type preservation, and operation-specific no-op detection. |
 | Mutation evidence | Durable local receipts distinguish rejected, partial, and unknown outcomes without replaying writes. The exact raw Contact basic-profile POST read retains read-only behavior. |
-| One entry skill | Install direct routes for common tasks, including native XML edits, single-row Base updates, exact Sheets exports and Drive transfers; load deeper guidance on demand. |
+| One entry skill | Install direct routes for common tasks, including local Docs text edits, native XML operations, single-row Base updates, exact Sheets exports and Drive transfers; load deeper guidance on demand. |
 | Upstream compatibility | Retain domain shortcuts, generated service commands, raw API access, authentication, events, and the extension SDK. |
 
 The inherited surface includes Docs, Sheets, Base, Drive, Wiki, Contacts, Messages, Calendar, Tasks, Mail, meetings, and other registered services. See the [capability inventory](docs/reference/README.md) and [section evidence](docs/sections/OWNERSHIP.md) for scope and verification status.
@@ -70,8 +71,8 @@ Use a known command directly. Help, discovery, and schema inspection are availab
 ./feishu-cli-next contact +search-user --query 'Alex' --as user
 ./feishu-cli-next contact +search-bot --query 'assistant' --as user
 
-# Read a document.
-./feishu-cli-next docs +fetch --doc DOCUMENT_TOKEN --as user
+# Read document facts as Markdown with native block IDs.
+./feishu-cli-next docs +pull --doc DOCUMENT_TOKEN --as user
 
 # Export an explicit Sheets range to a local artifact.
 ./feishu-cli-next sheets +data-export \
@@ -80,6 +81,21 @@ Use a known command directly. Help, discovery, and schema inspection are availab
 ```
 
 Replace resource placeholders with your own IDs. Discovery describes the local command surface; access still depends on the selected account and scopes. Shortcuts start with `+`; generated service commands expose catalog methods, and `api` provides raw OpenAPI access.
+
+### Edit Docs through a local working copy
+
+```sh
+./feishu-cli-next docs +pull --doc DOCUMENT_TOKEN --output note.md --as user
+# Edit supported text in note.md; keep its block markers and formatting intact.
+./feishu-cli-next docs +push --file note.md --dry-run --as user
+./feishu-cli-next docs +push --file note.md --as user
+```
+
+Pull creates `note.md` and its identity-bound `note.md.feishu.json` native sidecar without overwriting either file. Keep them together. Push validates the entire local edit plan, checks current native state, and changes supported paragraph and heading text while preserving its existing styles and link destinations. Its compact result includes `verified` and complete `changed_blocks` texts with native IDs. An unchanged working copy produces no content write. Pull to a fresh path before making further edits after a push.
+
+This is a text-editing workflow, not a universal Markdown round trip. Unsupported structural or formatting changes stop before writing. Existing `docs +fetch`, `docs +update`, native block operations, media commands and Drive import remain available for rich documents and other original workflows. See the [local Docs guide](skills/lark-doc/references/lark-doc-workspace.md).
+
+Snapshot checks detect observed conflicts but cannot close the race with a concurrent writer; the native revision parameter is not compare-and-swap. Unknown or partial outcomes require reconciliation, not a blind push retry. A [private native lifecycle](evaluation/evidence/docs-workspace-native-live-20260909.json) verified two text edits, bold/link/Unicode preservation and an untouched table through independent original-CLI readback. That bounded test does not establish every rich-document or concurrency case.
 
 ### Results and recovery
 
@@ -95,30 +111,30 @@ Those guides are not all injected by installing the entry skill. They can still 
 
 ## Latest evaluation
 
-**[Read the latest report →](evaluation/evidence/token-efficiency-04/REPORT.md)**
+**[Read condition 05 →](evaluation/evidence/token-efficiency-05/REPORT.md)**
 
-Condition 04 is an **exploratory follow-up: 24 new candidate trials compared with 48 reused baseline trials from condition 03**. It is not a new balanced 72-trial experiment. The model is **GPT-5.6 Luna with medium reasoning**, run through native **Codex CLI 0.153.4**, on eight tasks with three fresh candidate contexts each. Feishu operations use signed synthetic fixtures informed by native behavior; this is not a live-tenant benchmark.
+The target was **not met: 3/8 functions met their gate, 3 missed and 2 were unavailable**. Condition 05 completed 48 fresh attempts against the original CLI: eight tasks, three repetitions, two arms, using **GPT-5.6 Luna with medium reasoning through native Codex CLI 0.153.4**. The benchmark uses signed synthetic Feishu fixtures; private native QA is separate evidence.
 
-**24/24 new attempts verified · 1,154,003 new provider tokens · the 50% target is not fully met: 5/8 functions met it.** All eight functions used fewer tokens per verified success than the reused unchanged-Next baseline. Each candidate function verified 3/3, matching or exceeding both baselines' observed success counts.
+**40/48 attempts verified: Next 22/24, original 18/24.** Docs edit regressed from original 3/3 to Next 2/3. Observed provider usage was **3,602,432 tokens, a lower bound** because four Drive attempts had incomplete usage.
 
-| Function | Token saving vs unchanged Next | 50% target |
+| Function | Tokens per verified success vs original | Gate |
 | --- | ---: | --- |
-| Discovery | 52.5% | Met |
-| Contact search | 68.9% | Met |
-| Docs read | 39.5% | Missed |
-| Docs edit | 63.4% | Met |
-| Markdown creation | 43.1% | Missed |
-| Base update | 74.1% | Met |
-| Sheets export | 55.7% | Met |
-| Drive roundtrip | 40.0% | Missed |
+| Discovery | 14.8% more | Missed |
+| Contact search | 58.2% less | Met |
+| Docs read | 6.4% less; both 3/3 verified | Missed |
+| Docs edit | 172.0% more; Next 2/3 vs original 3/3 | Missed |
+| Markdown creation | 60.7% less | Met |
+| Base update | 36.6% less | Met |
+| Sheets export | Unavailable: original 0/3 verified | Unavailable |
+| Drive roundtrip | Unavailable: incomplete usage and original 0/3 | Unavailable |
 
-These percentages use the reused unchanged-Next baseline. Against original/full, Docs read used 5.8% more tokens; original Docs-edit accounting is incomplete and original Markdown/Sheets have zero verified successes, making those token comparisons unavailable. The full report retains these distinctions.
+The primary gate requires strictly more than 50% savings for Docs read/edit and at least 30% for each other function, with no observed success regression. All attempt costs, including failures and recovery, count toward tokens per verified success. Cached input is counted once; missing usage is never zero. These small development samples do not establish stable savings, statistical success-rate parity or full live functionality.
 
-The primary target compares all-attempt tokens per verified success against unchanged Next; original/full is a separate compatibility and token comparator. Cached input is counted once, failed-attempt costs stay included, and unknown usage prevents an affected finite score. Baselines were reused to avoid another 48 model calls, so timing/cache differences and adaptive guidance tuning limit the comparison. Three repetitions do not establish statistical success-rate parity or stable 50% savings.
+Docs-edit traces show rejected `+push` calls followed by `+update` fallback. The retained traces omit local file contents and validation-error text, so they do not establish the rejection's exact cause. The failed result and fallback costs remain included.
 
-[Frozen environment](evaluation/evidence/token-efficiency-04/environment.json) · [Readiness review](evaluation/evidence/token-efficiency-04/readiness-review.json) · [Follow-up protocol](evaluation/token-efficiency-04.md) · [All evaluation conditions](evaluation/README.md)
+[Frozen environment](evaluation/evidence/token-efficiency-05/environment.json) · [Readiness review](evaluation/evidence/token-efficiency-05/readiness-review.json) · [Protocol](evaluation/token-efficiency-05.md) · [All evaluation conditions](evaluation/README.md)
 
-Earlier reports remain unchanged: [original pilot 01](evaluation/evidence/paired-luna-medium-01/REPORT.md), [balanced optimization 02](evaluation/evidence/token-efficiency-02/REPORT.md), and [balanced optimization 03](evaluation/evidence/token-efficiency-03/REPORT.md). Their costs, failures, inconclusive outcomes and accounting gaps remain recorded separately.
+Historical [condition 04](evaluation/evidence/token-efficiency-04/REPORT.md) remains a separate exploratory comparison: 24 new candidate attempts, 48 reused baselines and 5/8 gates met against unchanged Next. Its 50% target and reused-baseline results do not satisfy condition 05's original-CLI comparison. Earlier [pilot 01](evaluation/evidence/paired-luna-medium-01/REPORT.md), [condition 02](evaluation/evidence/token-efficiency-02/REPORT.md) and [condition 03](evaluation/evidence/token-efficiency-03/REPORT.md) retain all their costs, failures and accounting limits.
 
 ## Development
 
