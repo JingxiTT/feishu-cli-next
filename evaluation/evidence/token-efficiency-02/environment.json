@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "condition": "token-efficiency-02",
+  "model": "gpt-5.6-luna",
+  "reasoning": "medium",
+  "codex_version": "codex-cli 0.153.4",
+  "codex_sha256": "b973d440acac501fd2594a43e7ca9ce41e0a65b9dfb28d0d7a7837c99e1261e3",
+  "official_revision": "7fd6ef3c07182257ce776cdc5a614e122d5bd4b3",
+  "official_binary_sha256": "5e1f582ec5ab9c86d3618fc17bd099b3443d40fe8691fed07d42e83a351ba977",
+  "next_before_revision": "7d28655dcb724c82adbec658b11fbd69add789ec",
+  "next_before_binary_sha256": "a96268761560efa996ba7ce99c231423de14277cc814f694c18b9b5cbb7a7a48",
+  "candidate_revision": "3b57692f8da0bd78c1f1d5cebd507ba47ddfe202",
+  "candidate_binary_sha256": "601f040d7cfcd33ad5bb8342e5f983d4b636582daca8c09eb51fa4f053c17ce1",
+  "candidate_archive_sha256": "563c2aaa4494fd64c6474ce5d32a396ebc79944e0cba3e31a9bdf664f13c9ce4",
+  "candidate_build": {
+    "command": [
+      "make",
+      "build",
+      "BINARY=candidate-cli",
+      "VERSION=3b57692"
+    ],
+    "environment": {
+      "GOFLAGS": "-tags=authsidecar"
+    }
+  },
+  "evaluator_revision": "866f4ab689c9bbc48f9b1f5a5a6a786c05b8bed4",
+  "evaluator_archive_sha256": "982745bfd1b7e00214866ca1e7dc978b8d2cf1099c18c2687f6826fea418abe6",
+  "task_manifest_sha256": "d62f4978ea4acfcc594c7854d680fb98c93836d0562662249fd4023e0d98fa9d",
+  "official_guidance_tree_sha256": "efe738218a2b74b19669b02c8491c4dc35c7d057a45eaf3ff5a676b17b5e073e",
+  "next_before_guidance": {
+    "SKILL.md": "c0de66cb47e62ca389a691ca7c9549d68e262702cb692d45dd2a5965779c9f1b"
+  },
+  "candidate_guidance": {
+    "SKILL.md": "1571ed13fd2cf1fa24df3de5e2d15dc1db522dd7303ee8792198d8ba8cb4dc22"
+  },
+  "candidate_inherited_guidance_tree_sha256": "efe738218a2b74b19669b02c8491c4dc35c7d057a45eaf3ff5a676b17b5e073e",
+  "api_catalog_sha256": "b5375251ff1f0a5939925587b0d514669a748135cde36c56f1c8ab5f5fe266c8",
+  "planned_attempts": 72,
+  "repeats_per_task_arm": 3,
+  "agent_seconds": 180,
+  "outer_seconds": 210,
+  "primary_target": "At least 50% fewer all-attempt tokens per verified success versus next_before, separately for every task; no success regression versus either baseline",
+  "secondary_comparison": "Report tokens per verified success versus original/full separately",
+  "task_delta": "Only observed formatted_value expectation added for Sheets optional read provenance; prompts and required raw/formula artifact fidelity unchanged",
+  "private_native_evidence_sha256": "bbd7f8cf034d25582400aa3ae416626f781ea75f85de597618571ac97d3f0e77",
+  "pre_provider_correction": "Default candidate build rejected by sidecar controls; rebuilt with explicit authsidecar tag before any billed trials. Original failed controls retained in ignored preparation artifacts.",
+  "provider_alias_limitation": "No immutable provider model snapshot reported; same explicitly requested alias for every arm."
+}

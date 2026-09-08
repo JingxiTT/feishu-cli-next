@@ -1,0 +1,111 @@
+{
+  "decision": "go",
+  "scope": "frozen 72-attempt development target test, not a target achievement claim",
+  "independent_review": {
+    "blocking_findings": 0,
+    "native_observation_hashes_checked": 22,
+    "native_modes_identical_across_original_and_next": 11,
+    "private_resources_deleted": 2
+  },
+  "product_checks": [
+    {
+      "check": "unit-test",
+      "exit_code": 0,
+      "seconds": 167.38
+    },
+    {
+      "check": "vet",
+      "exit_code": 0,
+      "seconds": 4.19
+    },
+    {
+      "check": "fmt-check",
+      "exit_code": 0,
+      "seconds": 0.29
+    },
+    {
+      "check": "module-tidy",
+      "exit_code": 0,
+      "seconds": 0.1
+    },
+    {
+      "check": "module-clean",
+      "exit_code": 0,
+      "seconds": 0.01
+    }
+  ],
+  "product_gates": [
+    {
+      "check": "quality-gate",
+      "exit_code": 0,
+      "seconds": 14.33
+    },
+    {
+      "check": "source-lint",
+      "exit_code": 0,
+      "seconds": 6.26
+    },
+    {
+      "check": "lint-tests",
+      "exit_code": 0,
+      "seconds": 14.02
+    },
+    {
+      "check": "golangci",
+      "exit_code": 1,
+      "seconds": 0.01
+    },
+    {
+      "check": "licenses",
+      "exit_code": 1,
+      "seconds": 0.01
+    }
+  ],
+  "network_tooling_checks": [
+    {
+      "check": "golangci",
+      "exit_code": 0,
+      "seconds": 68.49
+    },
+    {
+      "check": "licenses",
+      "exit_code": 0,
+      "seconds": 2.36
+    }
+  ],
+  "harness": {
+    "status": "pass",
+    "tests": {
+      "pass": 277,
+      "fail": 0,
+      "skip": 21
+    }
+  },
+  "native_controls": [
+    {
+      "check": "native-paired",
+      "exit_code": 0,
+      "seconds": 49.78
+    },
+    {
+      "check": "native-sandbox",
+      "exit_code": 0,
+      "seconds": 13.17
+    }
+  ],
+  "native_test_counts": {
+    "paired": 61,
+    "sandbox": 8
+  },
+  "launcher_prepare": "passed all six sections and eight tasks",
+  "environment_sha256": "9cbfdbc209c8bff7523096a9cbe4391f0837ac07c7ff280c8d864f8fb8ac3913",
+  "initial_corrections": [
+    "Default candidate build lacked required authsidecar; explicit-tag rebuild passed native controls before any model execution.",
+    "Pinned Go lint/license runners initially could not check deprecations with GOPROXY off; repeated with isolated config and dependency network access, both passed."
+  ],
+  "limits": [
+    "Three repetitions do not establish statistical sufficiency.",
+    "Native fixture coverage remains bounded; unsupported outcomes are never success.",
+    "Full original functionality beyond tested contracts is not established by eight model tasks."
+  ]
+}
