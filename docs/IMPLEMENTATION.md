@@ -180,10 +180,12 @@ and Sheets held-out prompts and one size field. The
 examples for independent replacement after product freeze; full coordinator
 blinding is not claimed.
 
-[Live Contact evidence](sections/contact-live-evidence.json) verifies the current
-account and the sequential user reads. The full test failed on bot search; a
-single bounded diagnosis identified missing `search:bot` user scope. No permission
-was granted and no content was written. This remains an unmet live prerequisite.
+[Live Contact evidence](sections/contact-live-evidence.json) preserves the initial
+missing-`search:bot` failure and the authorized 2026-09-08 resumption (`e07178d`).
+The narrow grant retained every previous scope and the exact account/tenant;
+the selected current-account read suite then passed, including bot search.
+Separate bot identity verification passed. Bot tenant verification remains
+blocked by the additional, unrequested `tenant:tenant:readonly` app scope.
 
 The [Drive privacy revalidation](sections/drive-privacy-prerequisites.json)
 records readable official guidance on folder inheritance and configurable
@@ -191,6 +193,24 @@ new-document sharing defaults. It does not establish this account's effective
 defaults or the exact API creation rule. A private parent alone therefore does
 not close the precreation requirement; no authenticated calls or writes were made
 for this documentation check.
+
+The [2026-09-08 private fixture preflight](sections/private-live-preflight-20260908.json)
+adds actual current-account evidence: the UI's new-document default was already
+invited-only, a personal test folder was created with no invited collaborators,
+and independent CLI checks matched its owner and sole collaborator to the verified
+current account with link sharing closed. No sharing setting was changed.
+The bounded [Drive lifecycle](sections/drive-private-live-evidence.json) passes
+exact byte/hash preservation and independently confirmed deletion (`b5505a9`).
+The [Docs live evidence](sections/docs-private-live-evidence.json) retains a failed
+plain replacement that removed formatting and a passing explicit rich-XML
+lifecycle (`f917e22`), with both documents independently confirmed deleted.
+These are named private workflows, not full section live acceptance.
+
+Native testing also exposed formula identity missing from raw Sheets exports and
+Base empty text normalizing to null. Sheets export and typed Base import fixes
+are in progress; prior offline transfer and synthetic evaluation assumptions
+do not establish live fidelity for those cases. Failed attempts and cleanup
+evidence remain retained, and no replacement model comparisons have run.
 
 The [P3 Sheets-to-Base process suite](integration/sheets-base.md) passes all 11
 initial test/subtest events without skips; the expanded suite at `1f1ce4e`
@@ -267,8 +287,8 @@ complete goal.
 
 | Remaining prerequisite | Evidence needed to close it |
 | --- | --- |
-| Private live fixtures | Verify current-account and tenant binding plus account-only creation visibility before writing; run the owning live suites and clean up only their resources. |
-| Contact bot search | Current-user authorization for `search:bot`, followed by the failed live scenario and bot binding checks. |
+| Private live workflows | The named private folder and current account are verified; bounded Drive and explicit-XML Docs lifecycles pass. Finish Sheets/Base fidelity corrections and remaining section live scenarios; delete only run-owned resources. |
+| Contact bot tenant binding | Requested `search:bot` grant and selected read suite passed. Separate bot tenant verification still requires the unrequested `tenant:tenant:readonly` app scope. |
 | OS-specific runtime coverage | Linux arm64 runtime suites and platform comparison pass; delivered archive lifecycles pass on arm64 and under amd64/riscv64 translation. Broader amd64/riscv64 runtime suites have not run. Windows behavior checks and native reference capture are deferred by the user's 2026-09-08 instruction; cross-built archives are not runtime verification. Darwin/amd64 smoke checks already ran under Rosetta. Additional gaps must name the unverified scenario, not require physical hardware absent from PLAN. |
 | Remote release ownership | An owned Next repository/download destination and package identity, then the documented updater identity integration and remote install/update checks. Public signing/notarization and publication retain their separate prerequisites. |
 | Comparative release evidence | Development size and representative business comparisons are complete and assessed with their tradeoffs. Retain older product conditions and the inconclusive Events baseline separately; perform independently replaced held-out tasks only at the final release gate. |

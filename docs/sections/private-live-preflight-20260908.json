@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "evidence": "live_preflight",
+  "checked_on": "2026-09-08",
+  "status": "verified_for_named_private_fixture",
+  "windows": "deferred_by_user_2026-09-08",
+  "authorization": "User requested private live testing and search:bot; PLAN account-only and recipient limits retained.",
+  "ui_precreation": {
+    "account": "Current work account, matched through subsequent CLI authorization identity verification.",
+    "effective_new_document_access": "Only invited members can access",
+    "setting_changed": false,
+    "creation_surface": "Personal Drive folder dialog",
+    "collaborators_invited": 0,
+    "synthetic_name": "feishu-cli-next-private-20260908-1615",
+    "unrelated_resources_modified": false
+  },
+  "ui_postcreation": {
+    "link_access": "Restricted; Only collaborators can access",
+    "owner_matches_current_account_display": true
+  },
+  "independent_cli_preflight": {
+    "owner": "/root/p2_drive",
+    "identity": "user",
+    "auth_verified": true,
+    "status_open_id_matches_own_user_info": true,
+    "account_and_tenant_match_independent_contact_proof": true,
+    "folder_metadata_owner_matches_self": true,
+    "collaborator_count": 1,
+    "sole_collaborator_matches_self": true,
+    "member_type": "openid",
+    "perm": "full_access",
+    "perm_type": "container",
+    "link_share_entity": "closed",
+    "external_access_entity": "open",
+    "share_entity": "anyone",
+    "manage_collaborator_entity": "collaborator_can_view",
+    "settings_interpretation": "The latter settings permit possible future sharing actions; they do not grant current link or collaborator access. No sharing setting was changed."
+  },
+  "fixture_reference": {
+    "folder_token_sha256": "7568cee38c78adf5e0f92b0ab6f96c79219e07be30572084a6583aad1fb587c6",
+    "raw_reference_location": "Ignored local fixture manifest, mode0600; no resource token in committed evidence.",
+    "cleanup_owner": "root"
+  },
+  "batch_constraints": [
+    "Explicit user identity, verified current-account/tenant binding and parent ACL before each lifecycle.",
+    "Only synthetic children created by the run; no collaborator additions, messages, mentions or public sharing.",
+    "Single-attempt mutation calls; no blind replay of an unknown create or write.",
+    "Register returned IDs for cleanup; inspect child permissions before adding further test content.",
+    "Each domain deletes only its own returned children; coordinator removes the parent after all children are reconciled."
+  ],
+  "limits": [
+    "This is current UI and API evidence for one named fixture, not a general default-permission guarantee for every backend route or tenant.",
+    "The earlier public-documentation-only blocker remains historical; this follow-up adds effective account settings and actual private destination checks.",
+    "Broader section live acceptance requires its remaining named scenarios; placeholders and skipped tests are not passes."
+  ],
+  "sources": [
+    {
+      "title": "Administrator document permission defaults",
+      "url": "https://www.feishu.cn/hc/zh-CN/articles/265017155035",
+      "role": "Background on per-member defaults and configurable link access; current effective setting was inspected directly."
+    },
+    {
+      "title": "Drive folder creation and inheritance",
+      "url": "https://www.feishu.cn/hc/zh-CN/articles/778513900437",
+      "role": "Background on personal-folder creation without invited collaborators and inherited child permissions; actual destination was independently checked."
+    }
+  ]
+}
