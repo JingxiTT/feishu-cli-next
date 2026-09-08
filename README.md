@@ -4,7 +4,7 @@ A Feishu/Lark CLI for AI agents that work through a shell and files. It builds o
 
 The goal is to reduce the tokens needed to complete a task while preserving every original command and workflow, data fidelity, and successful outcomes. Results remain task-dependent. The current evaluation targets **more than 50% fewer tokens for Docs read/edit and at least 30% fewer for each other evaluated function versus the original CLI**, with failed-attempt costs included and no observed success regression.
 
-[Quick start](#quick-start) · [Usage](#usage) · [Evaluation report](evaluation/evidence/token-efficiency-06/REPORT.md) · [Implementation status](docs/IMPLEMENTATION.md)
+[Quick start](#quick-start) · [Usage](#usage) · [Evaluation report](evaluation/evidence/token-efficiency-08/REPORT.md) · [Implementation status](docs/IMPLEMENTATION.md)
 
 ## What this project adds
 
@@ -111,19 +111,23 @@ Those guides are not all injected by installing the entry skill. They can still 
 
 ## Latest evaluation
 
-**[Read condition 06 →](evaluation/evidence/token-efficiency-06/REPORT.md)**
+**[Read condition 08 →](evaluation/evidence/token-efficiency-08/REPORT.md)**
 
-The Docs-first condition completed **12/12 verified attempts**: Docs read and edit, original/full versus Next, three repetitions each, using **GPT-5.6 Luna with medium reasoning through native Codex CLI 0.153.4**. Both functions missed the strictly greater than 50% token-saving target, so the declared stop rule left **36 attempts across the other six functions not run**.
+Condition 08 verified **12/12 attempts: original 6/6 and Next 6/6**, using **GPT-5.6 Luna with medium reasoning through native Codex CLI 0.153.4**. The strict per-function target remains **unmet**: Docs edit passed, Docs read missed, and the declared stop rule left **36 attempts across six other functions not run**.
 
-| Function | Tokens per verified success vs original | Observed success | Gate |
-| --- | ---: | --- | --- |
-| Docs read | 1.0% more | Both 3/3 | Missed |
-| Docs edit | 42.1% less | Both 3/3 | Missed |
-| Other six functions | Not measured | Not run | Not measured |
+| Function | Tokens per verified success vs original | Original verified/attempts | Next verified/attempts | Gate |
+| --- | ---: | ---: | ---: | --- |
+| Docs read | 44.3% less | 3/3 | 3/3 | Missed |
+| Docs edit | 61.1% less | 3/3 | 3/3 | Met |
+| Other six functions | Not measured | Not run | Not run | Not measured |
 
-All 12 attempts had complete usage, totaling **761,257 tokens**. This conditional development comparison retains all attempt and recovery costs; it is not independent confirmation of stable savings or success parity. [Protocol](evaluation/token-efficiency-06.md) · [Stage decision](evaluation/evidence/token-efficiency-06/stage-decision.json).
+**Secondary combined Docs workload: 56.8% fewer tokens**, from **472,979 original** to **204,413 Next**, with both arms **6/6 verified**. This totals three read and three edit attempts per arm, weighting the more expensive edits more heavily. It does **not** satisfy the separate >50% read gate or establish savings for other task mixes.
 
-**Qualification for conditions 05/06:** a later no-model native control found that the harness's disabled-skill directory paths left eight public `CODEX_HOME` catalog entries advertised; exact `SKILL.md` paths suppressed them. Both arms shared the affected configuration. The probe does not quantify billed-token impact or establish a cause for file-read loops. [Qualification and evidence](evaluation/evidence/token-efficiency-05-06-skill-isolation-qualification.md). Historical results remain unchanged.
+All usage was complete, totaling **677,392 tokens across both arms**. Every attempt and recovery cost is included. Both arms received their selected skill by file path and were instructed to read it within the measured tool loop. Next's entry guide also became shorter; its runtime, native fidelity checks and original command surface stayed unchanged. Because guidance length and delivery both changed, earlier-condition differences cannot isolate either factor. These small development samples do not establish statistical success parity or full live functionality. [Protocol](evaluation/token-efficiency-08.md) · [Stage decision](evaluation/evidence/token-efficiency-08/stage-decision.json).
+
+Historical [condition 07](evaluation/evidence/token-efficiency-07/REPORT.md) retained 11/12 verified attempts, 36.1% Docs-read savings and 67.0% Docs-edit savings; original edit verified 2/3 versus Next 3/3. [Condition 06](evaluation/evidence/token-efficiency-06/REPORT.md) retained 12/12 verified, 1.0% more read tokens and 42.1% fewer edit tokens. Both stopped before the other six functions; neither is pooled with condition 08.
+
+**Qualification for conditions 05/06:** a later no-model native control found that disabled-skill directory paths left eight public `CODEX_HOME` catalog entries advertised; exact `SKILL.md` paths suppressed them. Both arms shared the affected configuration. Corrected suppression is retained in condition 08. The probe does not quantify billed-token impact or establish a cause for file-read loops. [Qualification and evidence](evaluation/evidence/token-efficiency-05-06-skill-isolation-qualification.md). Historical results remain unchanged.
 
 ### Previous full comparison: condition 05
 
