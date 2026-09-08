@@ -21,7 +21,7 @@ func saveImportSource(t *testing.T, f *nextfixture.Fixture, count int, change fu
 	t.Helper()
 	rows := make([]interface{}, count)
 	for i := range rows {
-		rows[i] = []interface{}{map[string]interface{}{"value": fmt.Sprintf("行%05d", i)}, map[string]interface{}{"value": json.Number("9007199254740991")}, map[string]interface{}{"value": nil}, map[string]interface{}{}, map[string]interface{}{"value": ""}, map[string]interface{}{"value": i%2 == 0}}
+		rows[i] = []interface{}{map[string]interface{}{"value": fmt.Sprintf("行%05d", i)}, map[string]interface{}{"value": json.Number("9007199254740991")}, map[string]interface{}{"value": nil}, map[string]interface{}{}, map[string]interface{}{"value": " "}, map[string]interface{}{"value": i%2 == 0}}
 	}
 	artifact := map[string]interface{}{
 		"schema":  "feishu-cli-next/result/v1",
@@ -38,7 +38,7 @@ func saveImportSource(t *testing.T, f *nextfixture.Fixture, count int, change fu
 	if err := os.WriteFile(filepath.Join(f.WorkDir, "source.json"), raw, 0600); err != nil {
 		t.Fatal(err)
 	}
-	mapping := `[{"column":0,"field_id":"fld_text","type":"text"},{"column":1,"field_id":"fld_number","type":"number"},{"column":2,"field_id":"fld_null","type":"text"},{"column":3,"field_id":"fld_omitted","type":"text"},{"column":4,"field_id":"fld_empty","type":"text"},{"column":5,"field_id":"fld_checkbox","type":"checkbox"}]`
+	mapping := `[{"column":0,"field_id":"fld_text","type":"text"},{"column":1,"field_id":"fld_number","type":"number"},{"column":2,"field_id":"fld_null","type":"text"},{"column":3,"field_id":"fld_omitted","type":"text"},{"column":4,"field_id":"fld_whitespace","type":"text"},{"column":5,"field_id":"fld_checkbox","type":"checkbox"}]`
 	if err := os.WriteFile(filepath.Join(f.WorkDir, "mapping.json"), []byte(mapping), 0600); err != nil {
 		t.Fatal(err)
 	}
@@ -92,7 +92,7 @@ func TestRecordImportTenThousandRowsPreservesTypedValuesOutsideStdout(t *testing
 		ids := make([]string, len(body.Records))
 		for i, row := range body.Records {
 			index := int(observed.Add(1)) - 1
-			if row["fld_text"] != fmt.Sprintf("行%05d", index) || row["fld_number"] != json.Number("9007199254740991") || row["fld_empty"] != "" || row["fld_checkbox"] != (index%2 == 0) {
+			if row["fld_text"] != fmt.Sprintf("行%05d", index) || row["fld_number"] != json.Number("9007199254740991") || row["fld_whitespace"] != " " || row["fld_checkbox"] != (index%2 == 0) {
 				t.Errorf("corrupted row %d: %#v", index, row)
 			}
 			if v, ok := row["fld_null"]; !ok || v != nil {
@@ -356,5 +356,27 @@ func TestRecordImportStopsOnIDsRepeatedAcrossBatches(t *testing.T) {
 	}
 	if len(receipts) != 2 || outcomes["confirmed_applied"] != 1 || outcomes["unknown"] != 1 {
 		t.Fatalf("durable receipts overstate effects: %v", outcomes)
+	}
+}
+
+func TestRecordImportLateEmptyTextRejectsBeforeAnyDestinationMutation(t *testing.T) {
+	var writes atomic.Int32
+	f := nextfixture.NewFixture(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if importFieldResponse(w, r) {
+			return
+		}
+		writes.Add(1)
+		http.Error(w, "unexpected destination mutation", 500)
+	}))
+	saveImportSource(t, f, 401, func(a map[string]interface{}) {
+		data := a["result"].(map[string]interface{})["data"].(map[string]interface{})
+		data["cells"].([]interface{})[400].([]interface{})[4].(map[string]interface{})["value"] = ""
+	})
+	result := f.Run(importArguments()...)
+	if result.ExitCode != 2 || writes.Load() != 0 || result.Stdout != "" || !strings.Contains(result.Stderr, "empty text") {
+		t.Fatalf("late empty text did not fail complete preflight: %+v writes=%d", result, writes.Load())
+	}
+	if _, err := os.Stat(filepath.Join(f.WorkDir, "import-report.json")); !os.IsNotExist(err) {
+		t.Fatal("preflight rejection created a mutation report")
 	}
 }

@@ -158,7 +158,14 @@ func parseRecordImport(artifactRaw, mappingRaw string) (recordImport, error) {
 				valid := false
 				switch col.Type {
 				case "text":
-					_, valid = value.(string)
+					text, isText := value.(string)
+					valid = isText
+					// Native Base storage returns explicitly written empty text as
+					// null (private live evidence, 2026-09-08). This typed handoff
+					// promises no such coercion; reject before any batch is sent.
+					if isText && text == "" {
+						return imp, importInvalid("--artifact", "empty text cannot round-trip through Base storage: it is returned as null")
+					}
 				case "number":
 					_, valid = value.(json.Number)
 				case "checkbox":

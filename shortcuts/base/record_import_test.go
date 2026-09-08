@@ -15,12 +15,12 @@ func importTestArtifact(cells, region string, count int) string {
 }
 
 func TestRecordImportPreservesScalarValuesAndPresence(t *testing.T) {
-	imp, err := parseRecordImport(importTestArtifact(`[[{"value":9007199254740991},{"value":"001"},{"value":null},{},{"value":""},{"value":false}]]`, "A1:F1", 1), `[{"column":0,"field_id":"fld_num","type":"number"},{"column":1,"field_id":"fld_code","type":"text"},{"column":2,"field_id":"fld_null","type":"text"},{"column":3,"field_id":"fld_omitted","type":"text"},{"column":4,"field_id":"fld_empty","type":"text"},{"column":5,"field_id":"fld_bool","type":"checkbox"}]`)
+	imp, err := parseRecordImport(importTestArtifact(`[[{"value":9007199254740991},{"value":"001"},{"value":null},{},{"value":" "},{"value":false}]]`, "A1:F1", 1), `[{"column":0,"field_id":"fld_num","type":"number"},{"column":1,"field_id":"fld_code","type":"text"},{"column":2,"field_id":"fld_null","type":"text"},{"column":3,"field_id":"fld_omitted","type":"text"},{"column":4,"field_id":"fld_whitespace","type":"text"},{"column":5,"field_id":"fld_bool","type":"checkbox"}]`)
 	if err != nil {
 		t.Fatal(err)
 	}
 	row := imp.records[0]
-	if row["fld_num"] != json.Number("9007199254740991") || row["fld_code"] != "001" || row["fld_empty"] != "" || row["fld_bool"] != false {
+	if row["fld_num"] != json.Number("9007199254740991") || row["fld_code"] != "001" || row["fld_whitespace"] != " " || row["fld_bool"] != false {
 		t.Fatalf("changed cells: %#v", row)
 	}
 	if value, present := row["fld_null"]; !present || value != nil {
@@ -105,5 +105,18 @@ func TestRecordImportBatchIDsRejectPreviouslyConfirmedIDs(t *testing.T) {
 	}
 	if _, err := recordImportBatchIDs(map[string]interface{}{"record_id_list": []string{"rec_new", "rec_other"}}, 2, confirmed); err != nil {
 		t.Fatal(err)
+	}
+}
+
+func TestRecordImportRejectsEmptyTextAfterCompletePreflight(t *testing.T) {
+	cells := make([][]map[string]interface{}, 401)
+	for i := range cells {
+		cells[i] = []map[string]interface{}{{"value": "representable"}}
+	}
+	cells[400][0]["value"] = ""
+	raw, _ := json.Marshal(cells)
+	_, err := parseRecordImport(importTestArtifact(string(raw), "A1:A401", 401), `[{"column":0,"field_id":"fld_text","type":"text"}]`)
+	if err == nil || !strings.Contains(err.Error(), "empty text") {
+		t.Fatalf("late empty text accepted: %v", err)
 	}
 }
