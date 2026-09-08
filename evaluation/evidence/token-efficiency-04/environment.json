@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "condition": "token-efficiency-04",
+  "model": "gpt-5.6-luna",
+  "reasoning": "medium",
+  "codex_version": "codex-cli 0.153.4",
+  "codex_sha256": "b973d440acac501fd2594a43e7ca9ce41e0a65b9dfb28d0d7a7837c99e1261e3",
+  "official_revision": "7fd6ef3c07182257ce776cdc5a614e122d5bd4b3",
+  "official_binary_sha256": "5e1f582ec5ab9c86d3618fc17bd099b3443d40fe8691fed07d42e83a351ba977",
+  "next_before_revision": "7d28655dcb724c82adbec658b11fbd69add789ec",
+  "next_before_binary_sha256": "a96268761560efa996ba7ce99c231423de14277cc814f694c18b9b5cbb7a7a48",
+  "candidate_revision": "f2ab96b359f386a67b8c078bdae41e802eeea785",
+  "candidate_binary_sha256": "d181a06dcbf67023dd047ae000a6d34aaa763d4852fb3f0a4fff0ebc6dc65c6d",
+  "candidate_archive_sha256": "4c046804acb2c2d6b7541196a9dec52e05f0a89eef9eee94a2a5ab12eb06bd7f",
+  "candidate_build": {
+    "command": [
+      "make",
+      "build",
+      "BINARY=candidate-cli",
+      "VERSION=f2ab96b"
+    ],
+    "environment": {
+      "GOFLAGS": "-tags=authsidecar"
+    }
+  },
+  "evaluator_revision": "c3cadad309778af0c4ec3ce6773e73742275f7c4",
+  "evaluator_archive_sha256": "642fa82fbdd84925dc3f8278ec27612a6fc622c4531a127c87c61047389fcf44",
+  "task_manifest_sha256": "d62f4978ea4acfcc594c7854d680fb98c93836d0562662249fd4023e0d98fa9d",
+  "official_guidance_tree_sha256": "efe738218a2b74b19669b02c8491c4dc35c7d057a45eaf3ff5a676b17b5e073e",
+  "next_before_guidance": {
+    "SKILL.md": "c0de66cb47e62ca389a691ca7c9549d68e262702cb692d45dd2a5965779c9f1b"
+  },
+  "candidate_guidance": {
+    "SKILL.md": "e004590a6feab2b675d622b5c3b8b709991420bdc05254a11539fc6e263275d8"
+  },
+  "candidate_inherited_guidance_tree_sha256": "efe738218a2b74b19669b02c8491c4dc35c7d057a45eaf3ff5a676b17b5e073e",
+  "api_catalog_sha256": "b5375251ff1f0a5939925587b0d514669a748135cde36c56f1c8ab5f5fe266c8",
+  "planned_attempts": 24,
+  "repeats_per_task_arm": 3,
+  "agent_seconds": 180,
+  "outer_seconds": 210,
+  "primary_target": "At least 50% fewer all-attempt tokens per verified success versus next_before, separately for every task; no success regression versus either baseline",
+  "secondary_comparison": "Report tokens per verified success versus original/full separately",
+  "task_delta": "Task manifest, runner, verifier and fixtures identical to condition03; only orchestration adds explicit candidate-only selection",
+  "private_native_evidence_sha256": "bbd7f8cf034d25582400aa3ae416626f781ea75f85de597618571ac97d3f0e77",
+  "provider_alias_limitation": "No immutable provider model snapshot reported; same explicitly requested alias for every arm.",
+  "private_docs_native_evidence_sha256": "636f6c745ae8bc714d4fc8e2dd7b9346e224496eb0c21b6ba2a3d1f59e7ff15a",
+  "reused_baselines_condition": "token-efficiency-03",
+  "reused_baseline_attempts": 48,
+  "reused_baseline_environment_sha256": "a2b952b949220f84062fbb3febabc24aceb02f5cb79cfb99379ddb43779405bb",
+  "reused_baseline_sources_sha256": {
+    "base/batch-01.json": "def09cad8c8a75473c66ba6b06c2cabf8ee17cfd32b03da55df2231962b00615",
+    "contact/batch-01.json": "57b431ad89812b1bc64b6a0d84b39b8763339cb19d9c68034b7e0514eb984a78",
+    "docs/batch-01.json": "956b960c7444413115f7ab9c575ca6ed87107f03176c75baab6f9fc0adc42423",
+    "drive/batch-01.json": "f5800551bc9f1a32198a1615d78044f4af8e6fcf6f71dd8da33faeb42d7338cd",
+    "markdown/batch-01.json": "7c3b81b6506c7254e960b4f069d82f04cf5d4bd581a8ac36ad5b4d9049df8064",
+    "sheets/batch-01.json": "0224e9b0001cc12868416319774f94edd28e37a0cd1c551a10fa698f60a1eb58"
+  },
+  "reused_baseline_execution_sources_sha256": {
+    "evaluation/section_fixture.py": "65c08b8fb1755eb34da1e1cad60a5c73364cf4818f787365e68d27a2fbd7f3bf",
+    "evaluation/foundation_verifier.py": "51a3337b8c3517a20956f6550dda62fd56673a9259cf95ebc79b7b33996c0857",
+    "evaluation/codex_runner.py": "2108ad4e8e64992a5752a6dc2d45af5f6f700b1380e12c16d84a072097cb63f0",
+    "evaluation/contact_verifier.py": "ccef258755042190a9227be165111722d8a23a7b3b9d9a7d4a9baf670b71fe9e",
+    "evaluation/scenario_fixture.py": "65d1df91dd201bcc0df2711b118ab32090411f0f369ae02781dd68e574c25d55",
+    "evaluation/scenario_protocol.py": "9fe7842451457ced8073c11d134c5cc3ec968257f6aa419ebe1f125eeab1adaa",
+    "evaluation/read_fixture.py": "593f76bb0f293495d0348afb7cc6f5bac7890b541ba948a14405305b5c25225d",
+    "evaluation/read_verifier.py": "4a799c6d8ac9554c2f7094d5c175902e3161cfc11553892679cb9fc77a5fabc2",
+    "evaluation/scenario_verifier.py": "df323e95f01a3c887cc33eca098449060e5564d96eb2f0114bd75c723d6c3774",
+    "evaluation/plot_scaling.py": "c9456df0a75ecf692f166c210a30295eaaee142cefcc216e8f6bcaef708f6eb1",
+    "evaluation/scaling/sheets.py": "22d2cae1fb3c0e81780b1cecb86ea3f082e6664f4b3ca68c2edbd3d81fb48c43",
+    "evaluation/scaling/base.py": "10f8d05c3c0a2f54131981271a02bee795b0f6d6ed2be3765e9eb492b3f7b0a3",
+    "evaluation/scenarios/task.py": "08c615f7e011b32fb61fe94476593f6af10b9e97e098e40fc30b159561ff4192",
+    "evaluation/scenarios/sheets.py": "9a0ab225117803c1f532b6d87f5320bf126d620ac77df8d32dd8ec8a1029a032",
+    "evaluation/scenarios/events.py": "fabf03e228c533acb303f3baa2906bb0851eb376c2e1fa1a784af00412993ac6",
+    "evaluation/scenarios/generated_business.py": "f94ef38fb7d42c5e49e58c52c049ee0b00d8fdd02871aaba05515d72493d39b9",
+    "evaluation/scenarios/docs.py": "32fdcd8d1616a05d4192701cb84133fd306c136cd49244a9f9c52761a3f8db8b",
+    "evaluation/scenarios/extensions.py": "f35b8499eb5af253f2b2d99c29006d2afafbe9757e130d254fc995f19bc08630",
+    "evaluation/scenarios/packaging.py": "cab8b02b7458c55d32f6663ea448973b071d090108cd50936e8bf837c9c251b4",
+    "evaluation/scenarios/markdown.py": "221086f79a69749398c792b134d4e6a32b32c638129b78a6081769417d64ced0",
+    "evaluation/scenarios/drive.py": "9b368f3fac67a49e0ec1694a326017c17dfb3895726d65773a3dbb4fec517208",
+    "evaluation/scenarios/base.py": "ef6ca2a96002098b4ede7f5f7c12bfbb0ba718a6fe7877d5d10008d70f69dab4",
+    "evaluation/paired/docs_read.py": "b3a7742d1e4506b2ec9f61971f770c9bff27eeb7d05680b8b8bdc3b72daa9789",
+    "evaluation/paired/sheets.py": "7afd79f99d5e3fb90eda3286f99875a4864a2e05acba965b46db9e3345bc3c5b",
+    "evaluation/paired/discovery.py": "61c10aef414e1f1d97c054fe6f34a7c6ffc5353035d51527cd11b317914e20ff",
+    "evaluation/paired/__init__.py": "9b588cfbd2371513ca8233005743b0f43ebce0fba6ccd2c43ede3f5022f1a3d6",
+    "evaluation/paired/markdown.py": "1f6dfdc4dfaa7e2a8b93e3810e17f42c87925ee5e3649f3985aa5054052a757d",
+    "evaluation/paired/docs_edit.py": "f6d2aa04ea866d6a393db378da5371073ee21bd00d6770e93b128479f64b7915",
+    "evaluation/paired/drive.py": "6322004558f6ca1f1f56447efde0e6dc5ba679534c57854d25a465da27725e9d",
+    "evaluation/paired/base.py": "f78930c34e9e132fad608b8db71d91c883b33589eedcfa90cf68d5daa7a7f95b",
+    "evaluation/paired/contact.py": "ebe6a7c3e3f87a1f6eb3245d20b0f614405eeb04d0cfe73d43b5d7b97abeebdb"
+  },
+  "comparison_limitations": "24 new candidate trials compared with all48 reused condition03 baselines; noncontemporaneous, exploratory, selected after earlier results; alias drift and cache/timing effects possible"
+}
