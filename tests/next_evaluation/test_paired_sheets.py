@@ -42,7 +42,7 @@ class PairedSheetsTests(unittest.TestCase):
     def call(self, tool="get_cell_ranges", **inputs):
         data = {"excel_id": "shtSheetsDev01"}
         if tool == "get_cell_ranges":
-            data.update(sheet_id="shdev01", ranges=["A1:E1"], value_render_option="raw_value")
+            data.update(sheet_id="shdev01", ranges=["A1:E1"], value_render_option="raw_value", include_styles=False)
         data.update(inputs)
         if data.get("value_render_option") == "OMIT":
             del data["value_render_option"]
@@ -61,6 +61,24 @@ class PairedSheetsTests(unittest.TestCase):
         return sheets.verify(self.workspace, answer or {"artifact_path": "sheet.json"},
                              {"scenario": sheets.SCENARIO, "requests": self.records,
                               "state": self.scenario.snapshot()}, sheets.TASK["expected"])
+
+    def test_failure_diagnostics_keep_proof_requirements_and_drop_payloads(self):
+        payload=self.pair()
+        self.assertTrue(self.check(payload))
+        def reasons():
+            return sheets.verification_diagnostics(self.workspace,{'artifact_path':'sheet.json'},
+                {'scenario':sheets.SCENARIO,'requests':self.records,'state':self.scenario.snapshot()},sheets.TASK['expected'])
+        self.assertEqual(reasons(),[])
+        self.records.pop()
+        self.assertEqual(reasons(),['paired_sheets_formula_read_missing'])
+        self.assertFalse(self.check())
+        self.call(value_render_option='formula')
+        payload['ranges'][0]['cells'][0][0]['value']='private value'
+        self.assertFalse(self.check(payload))
+        self.assertEqual(reasons(),['paired_sheets_proof_or_typed_artifact_mismatch'])
+        (self.workspace/'sheet.json').write_text('private malformed JSON')
+        self.assertEqual(reasons(),['paired_sheets_artifact_format_invalid'])
+        self.assertNotIn('private',json.dumps(reasons()))
 
     def test_public_routing_contains_no_source_answers(self):
         self.assertEqual(sheets.TASK["id"], "paired-sheets")
@@ -87,11 +105,19 @@ class PairedSheetsTests(unittest.TestCase):
 
     def test_supported_inspection_is_distinguished_from_invalid_requests(self):
         for mode in ("OMIT", "formatted_value"):
-            with self.subTest(mode=mode), self.assertRaisesRegex(ValueError, "^unsupported strategy:"):
-                self.call(value_render_option=mode)
+            display=self.call(value_render_option=mode)
+            self.assertEqual(display['ranges'][0]['cells'][0],list(sheets.TASK['expected']['rendered']['formatted_value'].values()))
+            self.assertFalse(self.check(display))
         for tool in ("get_sheet_structure", "get_range_as_csv"):
-            with self.subTest(tool=tool), self.assertRaisesRegex(ValueError, "^unsupported strategy:"):
-                self.call(tool=tool, sheet_id="shdev01", range="A1:E1")
+            result=self.call(tool=tool,sheet_id='shdev01',range='A1:E1')
+            self.assertEqual(result['revision'],17)
+            self.assertFalse(self.check(result))
+        self.assertTrue(self.check(self.pair()),'inspection does not substitute for or invalidate valid typed reads')
+        for data in ({'tool':'get_sheet_structure','sheet_id':'shdev01','info_type':'hidden_infos'},
+                     {'tool':'get_sheet_structure','sheet_id':'shdev01'},
+                     {'tool':'get_range_as_csv','sheet_id':'shdev01','range':'A1:E1','max_chars':1}):
+            with self.assertRaisesRegex(ValueError,'^unsupported strategy:'):
+                self.call(**data)
         for data in ({"value_render_option": None}, {"value_render_option": "bogus"},
                      {"sheet_id": "foreign"}, {"cell_limit": True}, {"include_styles": "true"},
                      {"tool": "invented"}, {"tool": "get_sheet_structure", "sheet_id": "shdev01", "info_type": []},
@@ -236,6 +262,12 @@ class PairedSheetsBinaryTests(unittest.TestCase):
                                 run("sheets", "+cells-get", *flags, "--include", "value,formula", "--output-path", "formula.json")
                                 formula = json.loads((workspace / "formula.json").read_text())
                             (workspace / "sheet.json").write_text(json.dumps(merge(raw, formula), ensure_ascii=False))
+                        # Independently observed display/inspection alternatives are legal
+                        # but still cannot replace the successful typed composition above.
+                        api('formatted_value')
+                        for tool in ('get_sheet_structure','get_range_as_csv'):
+                            body={'tool_name':tool,'input':json.dumps({'excel_id':'shtSheetsDev01','sheet_id':'shdev01','range':'A1:E1'})}
+                            run('api','POST',sheets.READ_PATH,'--data',json.dumps(body))
                         receipt = server.receipt()
                         self.assertTrue(sheets.verify(workspace, {"artifact_path": "sheet.json"}, receipt, sheets.TASK["expected"]), receipt)
                         self.assertEqual(receipt["state"]["initial"], receipt["state"]["final"])

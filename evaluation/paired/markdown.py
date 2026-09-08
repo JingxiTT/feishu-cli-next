@@ -132,19 +132,98 @@ def parse_xml(content):
     return nodes
 
 
-def xml_content(nodes, ids=True):
+def xml_content(nodes, ids=True, start_index=0, native_ids=False):
     parts = []
-    for n, node in enumerate(nodes):
-        attr = f' block-id="pairedBlock{n}"' if ids else ''
+    for n, node in enumerate(nodes, start_index):
+        attribute = 'id' if native_ids else 'block-id'
+        attr = f' {attribute}="pairedBlock{n}"' if ids else ''
         if node['kind'] == 'heading': parts.append('<h1'+attr+'>'+escape(node['text'])+'</h1>')
         elif node['kind'] == 'paragraph':
             runs = native.runs_from_characters(node['characters'], n)
             block = {"block_id": f'pairedBlock{n}', "kind": "paragraph", "runs": runs}
-            parts.append(native.xml_block(block, ids))
+            paragraph = native.xml_block(block, ids)
+            parts.append(paragraph.replace(' block-id=', ' id=', 1) if ids and native_ids else paragraph)
         elif node['kind'] == 'table':
             parts.append('<table'+attr+'>'+''.join('<tr>'+''.join('<td><p>'+escape(cell)+'</p></td>' for cell in row)+'</tr>' for row in node['rows'])+'</table>')
         else: parts.append('<pre'+attr+' lang="'+escape(node['language'], quote=True)+'"><code>'+escape(node['text'])+'</code></pre>')
     return ''.join(parts)
+
+
+def markdown_content(nodes):
+    """Observed native rendering of this bounded rich subset, not source replay."""
+    parts = []
+    for node in nodes:
+        if node['kind'] == 'heading':
+            parts.append('# ' + node['text'])
+        elif node['kind'] == 'paragraph':
+            parts.append(native.markdown_block({'kind': 'paragraph',
+                'runs': native.runs_from_characters(node['characters'], 0)}))
+        elif node['kind'] == 'table':
+            rows = ['| ' + ' | '.join(row) + ' |' for row in node['rows']]
+            rows.insert(1, '|' + '|'.join('-' for _ in node['rows'][0]) + '|')
+            parts.append('\n'.join(rows))
+        else:
+            parts.append('```' + node['language'] + '\n' + node['text'] + '\n```')
+    return '\n\n'.join(parts)
+
+
+def fetch_content(nodes, body):
+    """Native-checked default-context scopes; unobserved options stay unsupported."""
+    option = body.get('read_option', {})
+    if not isinstance(option, dict) or set(option) - {'read_mode','start_block_id','end_block_id','keyword','context_before','context_after','max_depth'}:
+        raise ValueError('invalid read options')
+    mode = option.get('read_mode', 'full')
+    if mode not in ('full','outline','keyword','range','section'):
+        raise ValueError('invalid read mode')
+    before = native.integer(option.get('context_before', 0), 'context', 0)
+    after = native.integer(option.get('context_after', 0), 'context', 0)
+    depth = native.integer(option.get('max_depth', -1), 'depth')
+    if before or after or depth != -1:
+        raise ValueError('unsupported strategy: native scoped Markdown-document fetch unobserved')
+    indices = list(range(len(nodes)))
+    attributes = {'mode': mode}
+    if mode == 'outline':
+        indices = [i for i, node in enumerate(nodes) if node['kind'] == 'heading']
+    elif mode == 'keyword':
+        keyword = option.get('keyword')
+        if not isinstance(keyword, str) or not keyword or len(keyword) > 4096:
+            raise ValueError('invalid keyword')
+        # docs_fetch_v2.go documents case-insensitive substring matching.
+        # This rich fixture does not model its normalization/regex fallback.
+        if '|' in keyword:
+            raise ValueError('unsupported strategy: native scoped Markdown-document fetch unobserved')
+        def text(node):
+            if node['kind'] == 'paragraph': return ''.join(c for c, _, _ in node['characters'])
+            if node['kind'] == 'table': return ' '.join(c for row in node['rows'] for c in row)
+            return node['text']
+        indices = [i for i, node in enumerate(nodes) if keyword.casefold() in text(node).casefold()]
+        if not indices or any(nodes[i]['kind'] not in ('paragraph','heading') for i in indices):
+            raise ValueError('unsupported strategy: native scoped Markdown-document fetch unobserved')
+        attributes['keyword'] = keyword
+    elif mode in ('range','section'):
+        index = {f'pairedBlock{i}': i for i in indices}
+        start, end = option.get('start_block_id'), option.get('end_block_id')
+        if start not in index or (mode == 'range' and end not in index):
+            raise ValueError('unknown scoped block endpoint')
+        first = index[start]
+        last = index[end] if mode == 'range' else next((i-1 for i in indices[first+1:] if nodes[i]['kind']=='heading'),len(nodes)-1)
+        if first > last: raise ValueError('reversed range')
+        indices = list(range(first,last+1))
+        attributes['requested-start'] = start
+        if mode == 'range': attributes['requested-end'] = end
+    selected = [nodes[i] for i in indices]
+    if body.get('format','xml') == 'markdown':
+        if mode != 'full':
+            raise ValueError('unsupported strategy: native scoped Markdown-document fetch unobserved')
+        return markdown_content(selected)
+    ids = body.get('export_option',{}).get('export_block_id',False)
+    # Render against the full list to retain original native IDs after selection.
+    content = ''.join(xml_content([nodes[i]],ids,start_index=i,native_ids=True) for i in indices)
+    if mode == 'outline': content = '<outline>' + content + '</outline>'
+    if mode != 'full':
+        attrs = ''.join(' '+key+'="'+escape(value,quote=True)+'"' for key,value in [('mode',mode),*sorted((k,v) for k,v in attributes.items() if k != 'mode')])
+        content = '<fragment'+attrs+'>'+content+'</fragment>'
+    return content
 
 
 def revision(value):
@@ -241,12 +320,10 @@ class Scenario(ScenarioBase):
                     raise ValueError('invalid native fetch input')
                 if body.get('format', 'xml') not in ('xml', 'markdown'):
                     raise ValueError('invalid native fetch format')
-                if body.get('format') == 'markdown' or body.get('read_option'):
-                    raise ValueError('unsupported strategy: native converted or bounded fetch')
                 revision(body.get('revision_id', -1))
                 options = body.get('export_option', {})
                 if not isinstance(options,dict) or set(options)-{'export_block_id','export_style_attrs','export_cite_extra_data'} or any(type(v) is not bool for v in options.values()): raise ValueError("invalid export options")
-                return self.reply('paired_markdown_fetch', {"document": {"document_id": DOCUMENT, "revision_id": 1, "content": xml_content(self.document['nodes'], options.get('export_block_id',False))}})
+                return self.reply('paired_markdown_fetch', {"document": {"document_id": DOCUMENT, "revision_id": 1, "content": fetch_content(self.document['nodes'], body)}})
             if method == 'GET' and url.path == DOCX and not query:
                 return self.reply('paired_markdown_meta', {"document": {"document_id": DOCUMENT, "revision_id": 1, "title": next((n['text'] for n in self.document['nodes'] if n['kind']=='heading'), '')}})
             if method == 'GET' and url.path == DOCX+'/blocks' and set(query)<= {'page_size','page_token','document_revision_id','user_id_type'}:
@@ -277,3 +354,30 @@ def verify(workspace, answer, receipt, expected):
             return state['upload'] is not None and native.canonical(state['upload']['nodes'])==native.canonical(EXPECTED_NODES) and any(e['route']=='paired_markdown_upload' for e in events)
         return document['strategy']=='docs_ai' and state['upload'] is None
     except (KeyError,TypeError,AttributeError,OSError,ValueError):return False
+
+
+def verification_diagnostics(workspace, answer, receipt, expected):
+    """Payload-free failure categories; the existing verifier remains authoritative."""
+    if verify(workspace, answer, receipt, expected):
+        return []
+    reasons = []
+    try:
+        if native.canonical(answer) != native.canonical({"document_id": DOCUMENT}):
+            reasons.append("paired_markdown_answer_mismatch")
+        state = receipt["state"]
+        document = state.get("document")
+        if document is None:
+            reasons.append("paired_markdown_document_missing")
+        elif (document.get("document_id") != DOCUMENT or document.get("visibility") != "self_only"
+              or document.get("owner") != "fixture_self"):
+            reasons.append("paired_markdown_identity_or_privacy_mismatch")
+        elif native.canonical(document.get("nodes")) != native.canonical(EXPECTED_NODES):
+            reasons.append("paired_markdown_native_content_mismatch")
+        source = Path(workspace) / "input.md"
+        if source.is_symlink() or not source.is_file() or source.read_bytes() != SOURCE.encode():
+            reasons.append("paired_markdown_source_changed")
+        if sum(event.get("route") == "paired_markdown_create" for event in state.get("events", [])) != 1:
+            reasons.append("paired_markdown_create_count_mismatch")
+    except (KeyError, TypeError, AttributeError, OSError, ValueError):
+        return ["paired_markdown_receipt_or_source_invalid"]
+    return sorted(set(reasons)) or ["paired_markdown_proof_mismatch"]

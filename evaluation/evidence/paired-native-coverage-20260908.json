@@ -1,0 +1,177 @@
+{
+  "schema": "paired-native-coverage/v1",
+  "date": "2026-09-08",
+  "scope": "Fresh synthetic current-user document and workbook; private live read contracts followed by independent local fixtures. No provider/model calls.",
+  "private_evidence": ".tmp/token-native-probe",
+  "binaries": {
+    "official": {
+      "sha256": "5e1f582ec5ab9c86d3618fc17bd099b3443d40fe8691fed07d42e83a351ba977"
+    },
+    "next": {
+      "sha256": "a96268761560efa996ba7ce99c231423de14277cc814f694c18b9b5cbb7a7a48"
+    }
+  },
+  "privacy": {
+    "fresh_current_account_and_tenant_digest_matches_prior_independent_binding": true,
+    "creation_default": "Previously observed invited-only private root default",
+    "created_document_initially_title_only": true,
+    "created_workbook_initially_empty": true,
+    "closed_links_sole_current_full_access_member_and_metadata_owner_before_content": true,
+    "sharing_changes": 0,
+    "invitations": 0,
+    "messages": 0,
+    "created_parent_folders": 0
+  },
+  "mutations": {
+    "document_create": 1,
+    "document_synthetic_append": 1,
+    "workbook_create": 1,
+    "workbook_synthetic_cells_set": 1,
+    "delete": 2,
+    "retries": 0
+  },
+  "cleanup": {
+    "docx": {
+      "exact_created_id_read_api_code": 1770003,
+      "deletion_confirmed": true,
+      "delete_attempts": 1
+    },
+    "sheet": {
+      "exact_created_id_read_api_code": 1310249,
+      "deletion_confirmed": true,
+      "delete_attempts": 1
+    }
+  },
+  "read_observations": {
+    "both_binaries_return_identical_data_for_each_probe": true,
+    "markdown_full": "Native renders heading, bold, link, Unicode, table separator |-|-| and fenced code; fetched from actual native state after synthetic append.",
+    "xml_scopes": {
+      "outline": "fragment mode=outline containing outline and h1 with native id",
+      "keyword": "literal bold: fragment mode=keyword keyword=bold containing matching paragraph",
+      "range": "inclusive equal heading endpoints: fragment mode=range requested-end/requested-start and one h1",
+      "section": "heading through trailing paragraph, table and code: fragment mode=section requested-start"
+    },
+    "sheets_renderings": {
+      "default": [
+        {
+          "value": "0"
+        },
+        {
+          "value": "FALSE"
+        },
+        {},
+        {
+          "value": "你好"
+        },
+        {
+          "value": "1"
+        }
+      ],
+      "formatted_value": [
+        {
+          "value": "0"
+        },
+        {
+          "value": "FALSE"
+        },
+        {},
+        {
+          "value": "你好"
+        },
+        {
+          "value": "1"
+        }
+      ],
+      "raw_value": [
+        {
+          "value": 0
+        },
+        {
+          "value": false
+        },
+        {
+          "value": ""
+        },
+        {
+          "value": "你好"
+        },
+        {
+          "value": 1
+        }
+      ],
+      "formula": [
+        {
+          "value": "0"
+        },
+        {
+          "value": "FALSE"
+        },
+        {},
+        {
+          "value": "你好"
+        },
+        {
+          "formula": "=A1+1",
+          "value": 1
+        }
+      ]
+    },
+    "sheets_inspection": {
+      "structure": "A1:E1: row 1 auto height27; A:E default width105; no hidden, merged or grouped dimensions; integer revision",
+      "csv": "A1:E1: annotated row prefix, formatted scalars; explicit row/column coordinates; no more rows; current_region and integer revision"
+    },
+    "typed_success_requires": "Complete signed raw reads plus explicit formula observation at matching integer revision and independent exact typed artifact; display/inspection alone never establishes success."
+  },
+  "controls": {
+    "markdown_tests": 10,
+    "markdown_tests_skipped": 0,
+    "sheets_tests": 12,
+    "sheets_tests_skipped": 0,
+    "native_fixture_binaries": [
+      "official",
+      "next"
+    ],
+    "provider_calls": 0
+  },
+  "remaining_limits": [
+    "Only the declared synthetic rich content subset is parsed for native creation; unknown valid syntax is unsupported.",
+    "Scoped Markdown and XML keyword OR/context/depth variants have not been observed and remain unsupported.",
+    "Sheets narrowed/alternate structure categories and truncated CSV inspection remain unsupported.",
+    "Fixture read outputs are a bounded service model, not byte-for-byte native layout/style serialization for arbitrary documents.",
+    "Historical report and 72 outcomes remain immutable; these contracts require a new balanced evaluator condition.",
+    "Native table XML remains the existing bounded simplified table representation; widths, header containers and nested paragraph IDs are not byte-for-byte serialization claims.",
+    "Keyword case-insensitive substring follows docs_fetch_v2.go flag contract; no match requiring normalization/regex fallback, or table/code matching, remains unsupported.",
+    "Only explicit A1:E1 structure/CSV range was observed; omitted inspection range remains unsupported."
+  ],
+  "private_observation_sha256": {
+    "doc-next-keyword.json": "2d57ad27ca5c2082d192f5f576b47af478cf4a7b859112bb6f965593b43e4bf6",
+    "doc-next-markdown.json": "8664fa261bbcfd707cb9959f721d7e586b05e6afca23f407263df5916c6f89ae",
+    "doc-next-outline.json": "c9a8f83dd6deb5c7da23b5e72e3eb6fb73f789daced82788dd9f1b854efb76ba",
+    "doc-next-range.json": "55fba09c95815a7c73ced051affbfdeea19e25bacf4865378624446f151d3bef",
+    "doc-next-section.json": "aa64fea2702ad9a5ee82e1581112ce334decd90c6b8036f19f9b2d1fe48132ba",
+    "doc-official-keyword.json": "577665a9e5cbb9137f2c58041abc4406305a9f8933dd6bd2a43bf1b58c45f1cf",
+    "doc-official-markdown.json": "dd56c0af4b27fc407071f43d290893699a0ea1bfe48fd7a2548a73d4a519fff2",
+    "doc-official-outline.json": "4d6d9444348d3bd04cc826c6f4e06f187557cdc3d6b1979d961ce6991efef1f6",
+    "doc-official-range.json": "c6dc7e97ff0d59238bc0dac2e9b789eab09b659cc2a90431c5ad9d6cdb45b6e6",
+    "doc-official-section.json": "b8d90e484e2109039e33f5323971c5e14b18e9ef9a619741e3b23a5f086e77f2",
+    "sheet-next-csv.json": "218c055f54575533ce1b6e032b3433ecf58d6875e3c6e108659137dce5f73ab4",
+    "sheet-next-default.json": "04448e62fe9a884c4ecb11c386956b736d3e9649c97cf0924c2d8adb63f0e3f2",
+    "sheet-next-formatted_value.json": "088fa757d761dfc70961b9b940537ca7d61351881627e586ee232d4c390ef213",
+    "sheet-next-formula.json": "7e7cc9b77a2be0f0e80c982b0104bf421e17acad9ab346d82d255a5ffdf7f812",
+    "sheet-next-raw_value.json": "4fc9d198d3a551539d4dfd7a00e5331b9b75ebd5a837ccf9f6df327b95b95bdb",
+    "sheet-next-structure.json": "b44ccda8bcaa6062c13cb030e7554cc84f34aeee76ba4a140a82d0a26a625553",
+    "sheet-official-csv.json": "17f1e033d3e31eb70b1fa3aad65b6aaedb9664f04ad1d7a9e61a76d4aaa4be79",
+    "sheet-official-default.json": "f540f13243bb463286b3b488906e7f061b9fb4f18ddbde57b9d7d43343463e76",
+    "sheet-official-formatted_value.json": "f540f13243bb463286b3b488906e7f061b9fb4f18ddbde57b9d7d43343463e76",
+    "sheet-official-formula.json": "5acbacfdc85e79d2f2429ac127d45ca225f48d4dd13449e5550c8d153ede4390",
+    "sheet-official-raw_value.json": "bc2b03ae71bde40b3e29ce3b1c3e484ed097477fc927322f6d28cc1d15d00255",
+    "sheet-official-structure.json": "30a23f50c37f316c12955595aef59a8c45eb4ec74b9e32ccd769a680e7bc279e"
+  },
+  "source_references": [
+    "shortcuts/doc/docs_fetch_v2.go",
+    "shortcuts/sheets/lark_sheet_read_data.go",
+    "shortcuts/sheets/lark_sheet_sheet_structure.go",
+    "docs/sections/sheets-private-live-evidence.json",
+    "docs/sections/markdown-private-live-evidence.json"
+  ]
+}

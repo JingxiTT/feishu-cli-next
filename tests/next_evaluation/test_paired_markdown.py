@@ -43,6 +43,17 @@ class MarkdownPairedTests(unittest.TestCase):
         self.assertFalse(m.verify(self.work,{'document_id':m.DOCUMENT},receipt,{}))
         self.assertFalse(m.verify(self.work,{'document_id':'wrong'},self.receipt(),{}))
         (self.work/'input.md').write_text('changed');self.assertFalse(self.valid())
+    def test_failure_diagnostics_are_specific_without_content(self):
+        reasons=m.verification_diagnostics(self.work,{'document_id':m.DOCUMENT},self.receipt(),{})
+        self.assertIn('paired_markdown_document_missing',reasons)
+        self.call('POST',m.CREATE,{'format':'markdown','content':m.SOURCE})
+        self.assertEqual(m.verification_diagnostics(self.work,{'document_id':m.DOCUMENT},self.receipt(),{}),[])
+        self.s.document['nodes'][1]['characters']=[]
+        reasons=m.verification_diagnostics(self.work,{'document_id':m.DOCUMENT},self.receipt(),{})
+        self.assertEqual(reasons,['paired_markdown_native_content_mismatch'])
+        self.assertNotIn('Keep',json.dumps(reasons))
+        self.assertFalse(self.valid())
+
     def test_revision_selectors_are_checked(self):
         self.call('POST',m.CREATE,{'format':'markdown','content':m.SOURCE})
         for value in [-1,1]:
@@ -57,9 +68,29 @@ class MarkdownPairedTests(unittest.TestCase):
         for method,path,body in [('DELETE',m.DOCX,{}),('GET',m.DOCX+'foreign',{}),('POST',m.FETCH,{'unknown':True})]:
             with self.assertRaises(ValueError) as caught:self.call(method,path,body)
             self.assertNotIn('unsupported strategy:',str(caught.exception))
+        self.assertIn('**bold**',self.call('POST',m.FETCH,{'format':'markdown'})['document']['content'])
         with self.assertRaisesRegex(ValueError,'^unsupported strategy:'):
-            self.call('POST',m.FETCH,{'format':'markdown'})
+            self.call('POST',m.FETCH,{'read_option':{'read_mode':'keyword','keyword':'bold','context_after':1}})
         self.assertTrue(self.valid())
+
+    def test_native_markdown_and_scoped_readbacks_do_not_change_state(self):
+        self.call('POST',m.CREATE,{'format':'markdown','content':m.SOURCE})
+        result=self.call('POST',m.FETCH,{'format':'markdown'})['document']['content']
+        self.assertEqual(result,m.SOURCE.strip().replace('| --- | --- |','|-|-|'))
+        for mode,options in [('outline',{}),('keyword',{'keyword':'bold'}),
+            ('range',{'start_block_id':'pairedBlock0','end_block_id':'pairedBlock0'}),
+            ('section',{'start_block_id':'pairedBlock0'})]:
+            result=self.call('POST',m.FETCH,{'export_option':{'export_block_id':True},
+                'read_option':{'read_mode':mode,**options}})['document']['content']
+            self.assertIn('<fragment mode="'+mode+'"',result)
+            self.assertNotIn('block-id=',result)
+            self.assertEqual('pairedBlock1' in result,mode in ('keyword','section'))
+            self.assertEqual('<table' in result,mode=='section')
+        self.assertTrue(self.valid())
+        self.s.document['nodes'][1]['characters']=[]
+        result=self.call('POST',m.FETCH,{'format':'markdown'})['document']['content']
+        self.assertNotIn('**bold**',result)
+        self.assertFalse(self.valid())
 
     def test_xml_language_and_unexpected_table_text(self):
         xml=m.xml_content(m.EXPECTED_NODES,False)
@@ -102,4 +133,10 @@ class MarkdownPairedBinaryTests(unittest.TestCase):
                     self.assertEqual(result.returncode,0,result.stderr)
                     result=subprocess.run([binary,'docs','+fetch','--doc',m.DOCUMENT,'--detail','full','--as','user'],cwd=work,env=env,text=True,capture_output=True,timeout=30)
                     self.assertEqual(result.returncode,0,result.stderr)
+                    for extra in (['--doc-format','markdown'],['--scope','outline'],
+                                  ['--scope','keyword','--keyword','bold'],
+                                  ['--scope','section','--start-block-id','pairedBlock0'],
+                                  ['--scope','range','--start-block-id','pairedBlock0','--end-block-id','pairedBlock0']):
+                        result=subprocess.run([binary,'docs','+fetch','--doc',m.DOCUMENT,'--detail','full',*extra,'--as','user'],cwd=work,env=env,text=True,capture_output=True,timeout=30)
+                        self.assertEqual(result.returncode,0,result.stderr)
                     self.assertTrue(m.verify(work,{'document_id':m.DOCUMENT},server.receipt(),m.TASK['expected']))

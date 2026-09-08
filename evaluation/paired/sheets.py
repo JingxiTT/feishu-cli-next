@@ -2,17 +2,23 @@
 
 Live evidence: docs/sections/sheets-private-live-evidence.json. The historical
 scenario is reused for resource selection, metadata and artifact validation;
-its render behavior and coverage-only proof are not reused. Omitted/default
-rendering is explicitly unsupported because it was not observed live. Documented
-sheet-structure and CSV inspection are also classified as unsupported strategies
-after bounded selector validation; their native output is not emulated here.
+its render behavior and coverage-only proof are not reused. A separate private
+live probe through both frozen binaries establishes default/formatted rendering
+and bounded structure/CSV inspection. Those display reads never substitute for
+the signed typed raw/formula reads required by the verifier.
 """
 from copy import deepcopy
+import csv
+import io
+from scenario_protocol import Reply
 import hashlib
 import json
 from pathlib import Path
 
 from scenarios import sheets as original
+
+CELLS_WARNING = '处理 ranges[n].cells 之前，必须先查看顶层 has_more，以及每个 range 的 actual_range / row_indices / col_indices。定位真实行号时用 row_indices[i]，定位真实列字母时用 col_indices[j]，不要按二维数组下标自己数行列；skip_hidden=true、skip_filter=true 或结果被截断时，这样会错位。'
+CSV_WARNING = '①定位行号：必须直接读取 annotated_csv 中每行开头的 [row=N] 前缀（N 即为实际表格行号），不要自己数行，不要用"序号/ID/编号"列的值推导（这些列可能跳号或从非 1 开始，会全盘错位）；②定位列字母：必须用 col_indices[j]，不要手数。'
 
 SCENARIO = "paired-sheets"
 SOURCE = deepcopy(original.SOURCE)
@@ -28,6 +34,8 @@ TASK["fixture"].update(scenario=SCENARIO, scenario_section=SCENARIO)
 TASK["expected"]["rendered"] = {
     "raw_value": {"A1": {"value": 0}, "B1": {"value": False}, "C1": {"value": ""},
                   "D1": {"value": "你好"}, "E1": {"value": 1}},
+    "formatted_value": {"A1": {"value": "0"}, "B1": {"value": "FALSE"}, "C1": {},
+                        "D1": {"value": "你好"}, "E1": {"value": "1"}},
     "formula": {"A1": {"value": "0"}, "B1": {"value": "FALSE"}, "C1": {},
                 "D1": {"value": "你好"}, "E1": {"formula": "=A1+1", "value": 1}},
 }
@@ -43,7 +51,8 @@ def _render(cell, mode):
     cell = deepcopy(cell)
     if mode == "raw_value":
         cell.pop("formula", None)
-    elif "formula" not in cell:
+    elif mode == "formatted_value" or "formula" not in cell:
+        cell.pop("formula", None)
         value = cell.get("value")
         if value == "" or value is None:
             cell.pop("value", None)
@@ -84,7 +93,27 @@ class Scenario(original.Scenario):
             for flag in ("max_rows", "max_chars"):
                 if flag in data and (type(data[flag]) is not int or data[flag] < 1):
                     raise ValueError("positive integer limit required") from error
-            raise ValueError("unsupported strategy: documented Sheets inspection is outside this paired native fixture") from error
+            region = data.get('range')
+            if region != 'A1:E1' or (tool == 'get_sheet_structure' and data.get('info_type','all') != 'all'):
+                raise ValueError("unsupported strategy: native Sheets structure inspection unobserved" if tool == 'get_sheet_structure'
+                                 else "unsupported strategy: native Sheets CSV inspection unobserved") from error
+            if tool == 'get_sheet_structure':
+                output = {'sheet_id': SOURCE['sheet_id'], 'sheet_name': 'Fixture', 'range': region,
+                    'row_heights': [{'rows':'1:1','height':27,'type':'auto'}],
+                    'column_widths': [{'cols':'A:E','width':105,'type':'default'}],
+                    'hidden_rows':[], 'hidden_columns':[], 'row_groups':[], 'column_groups':[],
+                    'merged_cells':[], 'revision':self.current['revision']}
+            else:
+                stream = io.StringIO()
+                csv.writer(stream,lineterminator='').writerow([_render(c,'formatted_value').get('value','') for c in self.current['cells'][0]])
+                annotated = '[row=1] ' + stream.getvalue()
+                if data.get('max_chars',len(annotated)) < len(annotated):
+                    raise ValueError("unsupported strategy: native Sheets CSV inspection unobserved") from error
+                output = {'warning_message':CSV_WARNING, 'actual_range':region, 'row_count':1, 'col_count':5,
+                    'col_indices':list('ABCDE'), 'row_indices':[1], 'has_more':False,
+                    'current_region':region, 'annotated_csv':annotated, 'revision':self.current['revision']}
+            return Reply('sheets_inspection', {'code':0,'data':{'output':json.dumps(output,ensure_ascii=False)}},
+                         proof={'operation':tool,'identity':'user','revision':self.current['revision']})
 
     def _cells(self, data):
         allowed = {"excel_id", "sheet_id", "sheet_name", "ranges", "value_render_option",
@@ -95,10 +124,8 @@ class Scenario(original.Scenario):
         selectors = set(data) & {"sheet_id", "sheet_name"}
         if not selectors or data.get("sheet_id", SOURCE["sheet_id"]) != SOURCE["sheet_id"] or data.get("sheet_name", "Fixture") != "Fixture":
             raise ValueError("foreign or missing sheet selector")
-        mode = data.get("value_render_option")
-        if (mode is None and "value_render_option" not in data) or mode == "formatted_value":
-            raise ValueError("unsupported strategy: default/formatted native rendering has no observed fixture contract")
-        if type(mode) is not str or mode not in ("raw_value", "formula"):
+        mode = data.get("value_render_option", "formatted_value")
+        if type(mode) is not str or mode not in ("raw_value", "formula", "formatted_value"):
             raise ValueError("invalid rendering")
         for flag in ("include_styles", "include_truncation_info", "include_conditional_format_style", "skip_hidden"):
             if flag in data and type(data[flag]) is not bool:
@@ -117,7 +144,7 @@ class Scenario(original.Scenario):
             row, returned = [], []
             for column in columns:
                 cell = _render(self.current["cells"][0][ord(column) - ord("A")], mode)
-                if data.get("include_styles") or data.get("include_conditional_format_style"):
+                if data.get("include_styles", True) or data.get("include_conditional_format_style"):
                     # Explicit synthetic default, matching the observed private sample.
                     cell["cell_styles"] = {"font_size": 13, "vertical_alignment": "middle"}
                 if data.get("include_truncation_info"):
@@ -140,8 +167,7 @@ class Scenario(original.Scenario):
                            "row_indices": [1] if returned else [], "col_indices": returned,
                            "truncated": truncated, "cells": [row] if returned else []})
         revision = self.current["revision"]
-        output = {"spreadsheet_token": SOURCE["spreadsheet_token"], "sheet_id": SOURCE["sheet_id"],
-                  "revision": revision, "has_more": partial, "returned_cell_count": len(coordinates), "ranges": ranges}
+        output = {"warning_message": CELLS_WARNING, "revision": revision, "has_more": partial, "returned_cell_count": len(coordinates), "ranges": ranges}
         proof = {"operation": "get_cell_ranges", "spreadsheet_token": SOURCE["spreadsheet_token"],
                  "sheet_id": SOURCE["sheet_id"], "identity": "user", "coordinates": coordinates,
                  "render": mode, "revision": revision, "content_hashes": hashes,
@@ -173,7 +199,7 @@ def verify(workspace, answer, receipt, expected):
             if type(proof.get("revision")) is not int or proof["revision"] != expected["source"]["revision"]:
                 return False
             mode, coordinates = proof.get("render"), proof.get("coordinates")
-            if mode not in ("raw_value", "formula") or not isinstance(coordinates, list) or not set(coordinates) <= COORDS:
+            if mode not in ("raw_value", "formula", "formatted_value") or not isinstance(coordinates, list) or not set(coordinates) <= COORDS:
                 return False
             hashes = proof.get("content_hashes")
             if not isinstance(hashes, dict) or set(hashes) != set(coordinates):
@@ -189,7 +215,7 @@ def verify(workspace, answer, receipt, expected):
                 return False
             if mode == "raw_value":
                 raw_seen.update(coordinates)
-            else:
+            elif mode == "formula":
                 formula_seen.update(explicit)
         if raw_seen != COORDS or formula_seen != {"E1"}:
             return False
@@ -227,3 +253,52 @@ def verify(workspace, answer, receipt, expected):
         return formula.get("formula") == "=A1+1" and "value" in formula and original._cell_value_same(formula["value"], 1)
     except (OSError, UnicodeError, ValueError, TypeError, KeyError, AttributeError):
         return False
+
+
+def verification_diagnostics(workspace, answer, receipt, expected):
+    """Keep failure explanations finite; never export cell contents or file paths."""
+    if verify(workspace, answer, receipt, expected):
+        return []
+    reasons = []
+    try:
+        raw, formula = set(), set()
+        for record in receipt.get("requests", []):
+            if record.get("route") != "sheets_cells_read" or record.get("status") != 200:
+                continue
+            proof = record.get("proof", {})
+            if proof.get("render") == "raw_value":
+                raw.update(proof.get("coordinates", []))
+            elif proof.get("render") == "formula":
+                formula.update(proof.get("formula_coordinates", []))
+        if raw != COORDS:
+            reasons.append("paired_sheets_raw_reads_missing")
+        if formula != {"E1"}:
+            reasons.append("paired_sheets_formula_read_missing")
+        state = receipt.get("state", {})
+        if (not original._same(state.get("initial"), expected["source"])
+                or not original._same(state.get("final"), expected["source"])
+                or type(state.get("mutation_attempts")) is not int or state["mutation_attempts"] != 0):
+            reasons.append("paired_sheets_state_changed")
+        if not isinstance(answer, dict) or set(answer) != {"artifact_path"}:
+            reasons.append("paired_sheets_answer_invalid")
+        else:
+            relative = answer["artifact_path"]
+            root = Path(workspace).resolve()
+            if not isinstance(relative, str) or not relative or Path(relative).is_absolute():
+                reasons.append("paired_sheets_artifact_path_invalid")
+            else:
+                path = (root / relative).resolve()
+                if not path.is_relative_to(root) or not path.is_file() or path.stat().st_size > 1000000:
+                    reasons.append("paired_sheets_artifact_path_invalid")
+                else:
+                    try:
+                        artifact = original._json(path.read_text(encoding="utf-8"))
+                        if not isinstance(artifact, dict):
+                            reasons.append("paired_sheets_artifact_format_invalid")
+                    except (ValueError, UnicodeError):
+                        reasons.append("paired_sheets_artifact_format_invalid")
+    except (OSError, ValueError, KeyError, TypeError, AttributeError):
+        return ["paired_sheets_receipt_or_artifact_invalid"]
+    # Valid-looking paths/reads are not enough: signed hashes, revisions, binding,
+    # native extent and exact typed cells remain checked by verify().
+    return sorted(set(reasons)) or ["paired_sheets_proof_or_typed_artifact_mismatch"]

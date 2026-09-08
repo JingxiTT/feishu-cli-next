@@ -6,7 +6,15 @@ import sys
 from scenario_fixture import load_scenario
 from section_fixture import UNSUPPORTED_REASON_CODES
 
-SCENARIO_DIAGNOSTICS = frozenset(('execution_proof_unavailable', 'packaging_receipt_invalid',
+SCENARIO_DIAGNOSTICS = frozenset((
+    'paired_markdown_answer_mismatch', 'paired_markdown_document_missing',
+    'paired_markdown_identity_or_privacy_mismatch', 'paired_markdown_native_content_mismatch',
+    'paired_markdown_source_changed', 'paired_markdown_create_count_mismatch',
+    'paired_markdown_receipt_or_source_invalid', 'paired_markdown_proof_mismatch',
+    'paired_sheets_raw_reads_missing', 'paired_sheets_formula_read_missing',
+    'paired_sheets_state_changed', 'paired_sheets_answer_invalid',
+    'paired_sheets_artifact_path_invalid', 'paired_sheets_artifact_format_invalid',
+    'paired_sheets_receipt_or_artifact_invalid', 'paired_sheets_proof_or_typed_artifact_mismatch', 'execution_proof_unavailable', 'packaging_receipt_invalid',
     'packaging_isolation_missing', 'packaging_answer_mismatch', 'packaging_answer_path_mismatch',
     'packaging_protected_changed', 'packaging_project_changed', 'packaging_install_invalid',
     'base_scaling_answer_invalid', 'base_scaling_report_path', 'base_scaling_report_format',
