@@ -1,0 +1,13 @@
+# Token efficiency 07: corrected skill isolation
+
+This condition uses the exact candidate source and binary from condition 06. No CLI behavior or selected guidance changes. The evaluator corrects native Codex skill-disable paths from directories to the actual SKILL.md files, for both original/full and Next. No-model native controls established that the prior directory settings did not suppress eight ambient public skill descriptions. They did not establish their billed token cost or why particular agents read files. Prior results remain unchanged and are not pooled or rescored.
+
+Use native Codex CLI 0.153.4, GPT-5.6 Luna at medium reasoning, unchanged paired tasks and independent fidelity verifiers, the same signed synthetic fixtures, and 180-second agent / 210-second outer budgets. Freeze evaluator, original and candidate binaries, selected skills, and task hashes before launching. Verify the corrected configuration with native no-model controls. Reuse the condition-06 product checks only after confirming the exact candidate hashes; this is validation reuse, not baseline trial reuse.
+
+Run 12 fresh Docs trials first: read and edit, original/full and Next, three contexts per task and arm, with the existing balanced section schedule. Retain every attempt and all known/unknown costs. Run the remaining 36 fresh trials only if both Docs functions have strictly more than 50% fewer all-attempt tokens per verified success, complete usage, no inconclusive outcomes, and observed success at least that of the original. Use integer cross-multiplication so exactly 50% fails. Unknown accounting or zero successes cannot pass.
+
+Otherwise stop with all 12 Docs attempts reported and the remaining 36 explicitly not run. Do not replace failures or substitute prior baselines. If other functions run, their target remains at least 30% reduction with observed success nonregression. Mean cost per attempt is secondary and cannot satisfy the successful-task gate.
+
+The local Markdown workflow still supports bounded text edits, preserves native IDs/marks/links and unrelated rich blocks, and retains original commands for structural work. Native revision checks are not compare-and-swap. Existing private native lifecycle evidence remains applicable to the unchanged candidate.
+
+These are repeated development experiments on fixed tasks, with three repetitions and a provider alias rather than an immutable model snapshot. Results do not establish stable population savings, full original-functionality coverage, or statistical success parity. The conditional Docs-first design and corrected ambient-skill condition must remain explicit in reports.
