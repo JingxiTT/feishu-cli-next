@@ -43,6 +43,9 @@ func (f *Factory) agentAttemptTransport(base http.RoundTripper) http.RoundTrippe
 			if mutation, declared := declaredRequestEffect(req); declared {
 				return mutation
 			}
+			if isContactBasicBatchRead(req) {
+				return false
+			}
 			if f.CurrentCommand != nil {
 				if risk, ok := GetRisk(f.CurrentCommand); ok && risk == "read" {
 					return false
@@ -52,6 +55,17 @@ func (f *Factory) agentAttemptTransport(base http.RoundTripper) http.RoundTrippe
 		},
 		Resolve: f.resolveAgentAttemptBinding,
 	}
+}
+
+// isContactBasicBatchRead recognizes the same read-only basic-profile lookup
+// used by contact +get-user, including callers of the raw API. Do not infer
+// read semantics from POST names, response bodies, or untrusted origins.
+func isContactBasicBatchRead(req *http.Request) bool {
+	if req.Method != http.MethodPost || !core.IsPlatformEndpointURL(req.URL) || req.URL.EscapedPath() != "/open-apis/contact/v3/users/basic_batch" {
+		return false
+	}
+	origin := "https://" + strings.ToLower(req.URL.Hostname())
+	return origin == core.ResolveEndpoints(core.BrandFeishu).Open || origin == core.ResolveEndpoints(core.BrandLark).Open
 }
 
 func (f *Factory) resolveAgentAttemptBinding(req *http.Request) (nextattempt.Binding, error) {

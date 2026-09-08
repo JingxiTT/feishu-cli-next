@@ -24,6 +24,33 @@ type receiptWireSummary struct {
 	PersistenceFailed bool     `json:"persistence_failed,omitempty"`
 }
 
+func TestRawContactBasicBatchReadHasNoMutationReceipt(t *testing.T) {
+	t.Parallel()
+	var reads atomic.Int32
+	fixture := NewFixture(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		reads.Add(1)
+		if r.Method != "POST" || r.URL.Path != "/open-apis/contact/v3/users/basic_batch" || r.URL.Query().Get("user_id_type") != "open_id" {
+			t.Errorf("unexpected Contact read: %s %s", r.Method, r.URL)
+		}
+		var body struct {
+			UserIDs []string `json:"user_ids"`
+		}
+		if err := json.NewDecoder(r.Body).Decode(&body); err != nil || len(body.UserIDs) != 1 || body.UserIDs[0] != "ou_synthetic" {
+			t.Errorf("Contact request body changed: %+v, %v", body, err)
+		}
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = w.Write([]byte(`{"code":0,"data":{"users":[{"user_id":"ou_synthetic","name":"测试"}]}}`))
+	}))
+	result := fixture.Run("api", "POST", "/open-apis/contact/v3/users/basic_batch", "--params", `{"user_id_type":"open_id"}`, "--data", `{"user_ids":["ou_synthetic"]}`, "--as", "user")
+	if result.ExitCode != 0 || reads.Load() != 1 || !strings.Contains(result.Stdout, `"user_id":"ou_synthetic"`) || !strings.Contains(result.Stdout, "测试") || strings.Contains(result.Stdout+result.Stderr, `"mutation"`) {
+		t.Fatalf("raw Contact read changed: %+v, reads=%d", result, reads.Load())
+	}
+	receipts, err := (nextattempt.Store{Dir: filepath.Join(fixture.ConfigDir, "next", "receipts")}).List()
+	if err != nil || len(receipts) != 0 {
+		t.Fatalf("read created mutation receipts: %+v, %v", receipts, err)
+	}
+}
+
 func receiptSummary(t *testing.T, result Result) receiptWireSummary {
 	t.Helper()
 	decoder := json.NewDecoder(strings.NewReader(result.Stderr))

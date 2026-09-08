@@ -168,9 +168,15 @@ It preserves cancellation and command risk, and must never be derived from
 arbitrary raw API input or request content. Conversely,
 `common.WithMutationRequest(ctx, method, apiPath)` identifies an exact known
 lifecycle mutation inside a read workflow, such as subscription registration.
-Credential acquisition stays excluded; this never changes the command risk. Raw API POST/custom methods
-are conservatively potential mutations; an unclassified raw read may receive a
-receipt. Auth/config lifecycle effects are preserved from the reference and are
+Credential acquisition stays excluded; this never changes the command risk.
+The shared transport also recognizes the exact POST
+`/open-apis/contact/v3/users/basic_batch` basic-profile read used by Contact
+`+get-user`, including raw API callers. This requires a trusted Feishu/Lark Open
+API HTTPS origin and the exact unescaped path; neighboring endpoints, other
+methods/origins and explicit mutation declarations retain their classification.
+Read response bytes and errors pass through without a receipt or mutation exit.
+Other raw API POST/custom methods are conservatively potential mutations; an
+unclassified raw read may receive a receipt. Auth/config lifecycle effects are preserved from the reference and are
 not content mutation receipts. This is a documented foundation ceiling, not
 proof that all domain mutations or raw endpoint semantics have been verified.
 
