@@ -11,6 +11,15 @@ longer a blocker for this requested continuation. Windows artifacts and coverage
 records remain available; deferred checks are not reported as passes. Private
 creation visibility and recipient boundaries from PLAN still apply.
 
+The [2026-09-08 native-fidelity audit](../evaluation/evidence/native-fidelity-validity-audit-20260908.md)
+qualifies the historical comparisons below: Docs plain replacement, Sheets native
+renderings and Base create-time empty-text behavior differ from the development
+fixtures. Preserve all costs and synthetic verdicts, but withhold affected live
+same-fidelity efficiency conclusions. Small Base update fidelity remains
+unvalidated; native create behavior alone does not establish update behavior.
+Sheets/Base correctness changes and the Docs help tip form a new, unmeasured
+product condition. No replacement model trials have run.
+
 ## Reference and baseline
 
 - Reference: `../feishu-cli-review`, clean commit `7fd6ef3c07182257ce776cdc5a614e122d5bd4b3`; kept unchanged.
@@ -41,7 +50,7 @@ remain explicitly tracked for semantic review and subsequent fix reconciliation.
 [P1 shared interfaces are ready for P2](sections/foundation.md): the full
 foundation unit/process suite, plugin and sidecar checks, static checks and
 quality gate pass, with explicit skips and revision boundaries. Read-only live
-checks verified the current user; private content fixtures are not yet verified.
+checks verified the current user; the later private fixture evidence is recorded below.
 The [foundation model report](../evaluation/evidence/foundation/REPORT.md)
 records 18/18 compatible trials, actual token usage, a task-level regression,
 earlier unknown-cost failures and trace limitations. Held-out trials have not run.
@@ -109,7 +118,8 @@ is a lower bound of 12,201,326 tokens, including 2,282,405 from non-verified
 attempts; one attempt has incomplete accounting. Independent recount confirms
 three trials per arm/task, all 27 group token/API totals and full cached-input
 accounting. Of the five fully verified tasks, Next improves over both baselines
-on Drive, Sheets and Tasks, regresses against both on Base, and regresses against
+on Drive, Sheets and Tasks under their original synthetic verifiers, regresses
+against both on Base, and regresses against
 concise guidance on Markdown. Fixture corrections for Docs, Extensions and
 Packaging received separate balanced comparisons below. Events retains an explicit
 missing-exit-proof limitation. Data-size and generated-business comparisons
@@ -166,7 +176,8 @@ and affected efficiency scores remain null. Independent recount verifies all
 API totals. The exported all-attempt plot passed visual inspection after correcting
 overlapping labels. Next improves Base tokens at 10,000 rows but regresses at
 smaller sizes; Sheets token savings coexist with more Next API requests at 10,000
-rows. No uniform scaling claim follows.
+rows under the historical synthetic condition. The native-fidelity amendment
+withholds live same-fidelity conclusions; no uniform scaling claim follows.
 The [representative business comparison](../evaluation/evidence/business-8d-archive03/REPORT.md)
 completed 18/18 verified attempts with complete provider accounting: 2,741,785
 tokens under the same immutable evaluator. Independent recount verifies all
@@ -207,8 +218,12 @@ lifecycle (`f917e22`), with both documents independently confirmed deleted.
 These are named private workflows, not full section live acceptance.
 
 Native testing also exposed formula identity missing from raw Sheets exports and
-Base empty text normalizing to null. Sheets export and typed Base import fixes
-are in progress; prior offline transfer and synthetic evaluation assumptions
+Base empty text normalizing to null. The reviewed Base fix (`b746eff`) rejects
+explicit empty text during complete typed-import preflight before destination
+reads or writes; full Base offline suites pass (1,097 unit, 160 legacy and 178
+process events, one existing broad-live skip). Sheets formula preservation and
+fresh supported-input live confirmations are in progress; prior offline transfer
+and synthetic evaluation assumptions
 do not establish live fidelity for those cases. Failed attempts and cleanup
 evidence remain retained, and no replacement model comparisons have run.
 
@@ -291,7 +306,7 @@ complete goal.
 | Contact bot tenant binding | Requested `search:bot` grant and selected read suite passed. Separate bot tenant verification still requires the unrequested `tenant:tenant:readonly` app scope. |
 | OS-specific runtime coverage | Linux arm64 runtime suites and platform comparison pass; delivered archive lifecycles pass on arm64 and under amd64/riscv64 translation. Broader amd64/riscv64 runtime suites have not run. Windows behavior checks and native reference capture are deferred by the user's 2026-09-08 instruction; cross-built archives are not runtime verification. Darwin/amd64 smoke checks already ran under Rosetta. Additional gaps must name the unverified scenario, not require physical hardware absent from PLAN. |
 | Remote release ownership | An owned Next repository/download destination and package identity, then the documented updater identity integration and remote install/update checks. Public signing/notarization and publication retain their separate prerequisites. |
-| Comparative release evidence | Development size and representative business comparisons are complete and assessed with their tradeoffs. Retain older product conditions and the inconclusive Events baseline separately; perform independently replaced held-out tasks only at the final release gate. |
+| Comparative release evidence | Development comparisons retain all costs and tradeoffs. The native-fidelity audit withholds affected Docs/Sheets/Base-size same-fidelity claims; small Base update fidelity is unvalidated. New correctness changes have no model measurements. Retain older product conditions and the inconclusive Events baseline separately; perform independently replaced held-out tasks only at the final release gate. |
 
 The read-only Windows-environment check found VirtualBox `7.1.6r167084`, but
 `VBoxManage list vms` and `VBoxManage list runningvms` both returned empty lists
