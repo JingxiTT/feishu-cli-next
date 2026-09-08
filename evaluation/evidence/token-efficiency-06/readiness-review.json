@@ -1,0 +1,162 @@
+{
+  "schema": "token-efficiency-readiness/v1",
+  "decision": "go",
+  "date_utc": "2026-09-08T18:14:20.535838+00:00",
+  "condition": "token-efficiency-06",
+  "scope": "Authorize the first 12 fresh Docs attempts; the remaining 36 are conditional on both predeclared Docs gates. No performance target is claimed achieved.",
+  "candidate_revision": "dd0fc7a7e62b29790c567959a6daf9fa5ec55c20",
+  "evaluator_revision": "dd0fc7a7e62b29790c567959a6daf9fa5ec55c20",
+  "environment_sha256": "8be0094dcfa23dc5fdda630c781e6f364aefd2a324481d776fec23c6d6a84679",
+  "evaluation_attempts_before_decision": 0,
+  "source_readiness": {
+    "decision": "go",
+    "candidate_binary_sha256": "1f3538ea4f333347550e7e3e7fb193234bf8f995e47ae7b1d615c553814d16e5",
+    "candidate_archive_sha256": "d75e42e3a44083b75ca769e6a8b503b230fa5232d4ed73bbe868506355ae8ed5",
+    "archive_equals_git_revision": true,
+    "candidate_and_evaluator_archive_files_verified_each": 3865,
+    "execution_sources_verified": 34,
+    "original_binary_and_guidance_verified": true,
+    "native_codex_binary_verified": true,
+    "entry_and_original_markdown_entry_verified": true,
+    "task_manifest_unchanged": true,
+    "candidate_and_evaluator_archives_identical": true
+  },
+  "scoped_review": {
+    "contact": "Basic versus richer user-profile guidance corrected; bot, self and batch restrictions retained. No API implementation changed.",
+    "entry": "Integrated dd0fc7a entry matches reviewed scratch 1adea39 byte-for-byte. Existing functions, references, rich-content fallbacks, native identity and mutation safeguards remain available.",
+    "docs_normalization": "BOM, CRLF and blank separators within block bodies normalize locally. Native mutation algorithm is unchanged; marks, links, anchors, opaque regions and encoded native breaks retain fidelity checks. Blank lines before the first anchor remain rejected. Canonical plan equivalence and local/runtime regressions are adequate for this local-only acceptance change; no new native API contract is asserted.",
+    "diagnostics": "Only bounded complete failed CLI JSON envelopes yield finite public diagnostic labels; no arbitrary output or identifiers retained. Adapter and harness sanitization do not affect accounting, verdicts or categories. Reviewer independently observed 24 adapter plus 27 harness tests pass on scratch 44e88fc; pure docworkspace package tests passed on 4e5e85d.",
+    "native_evidence": "Prior private Docs evidence remains applicable to the unchanged API mutation algorithm. Source is newer for presentation normalization; this is not a claim of byte-identical private-QA and candidate binaries."
+  },
+  "product_checks": [
+    {
+      "check": "unit-test",
+      "exit_code": 0,
+      "seconds": 130.56
+    },
+    {
+      "check": "vet",
+      "exit_code": 0,
+      "seconds": 4.43
+    },
+    {
+      "check": "fmt-check",
+      "exit_code": 0,
+      "seconds": 0.3
+    },
+    {
+      "check": "module-tidy",
+      "exit_code": 0,
+      "seconds": 0.1
+    },
+    {
+      "check": "module-clean",
+      "exit_code": 0,
+      "seconds": 0.01
+    },
+    {
+      "check": "quality-gate",
+      "exit_code": 0,
+      "seconds": 14.99
+    },
+    {
+      "check": "source-guard",
+      "exit_code": 0,
+      "seconds": 6.34
+    },
+    {
+      "check": "source-guard-tests",
+      "exit_code": 0,
+      "seconds": 14.28
+    },
+    {
+      "check": "golangci",
+      "exit_code": 0,
+      "seconds": 69.11
+    }
+  ],
+  "product_checks_sha256": "2a32a1b9b951288d4930ad71d66f85f36e11ee3b263ce25c6c8c906473591170",
+  "explicit_native_controls": {
+    "paired_passed": 72,
+    "sandbox_passed": 8,
+    "skips": 0,
+    "checks": [
+      {
+        "check": "native-paired",
+        "exit_code": 0,
+        "seconds": 42.28
+      },
+      {
+        "check": "native-sandbox",
+        "exit_code": 0,
+        "seconds": 10.87
+      }
+    ],
+    "summary_sha256": "26febcdcb3b2f2cb32fc8ba4c9ae7232175f2814046542d18e9794d6d57f5de3",
+    "paired_log_sha256": "269596086525b67830fb43a97e025be745ce2c81ed222a748f7ed2b80c4df5e9",
+    "sandbox_log_sha256": "c0c8cc737c52b6b023500d2a52f7faa60ddcc1805c0276519f1353d6e1ca5208",
+    "scope": "Frozen evaluator with explicit original and candidate binaries; paired native routes and native Codex sandbox controls."
+  },
+  "prepare_only": {
+    "sections": [
+      "contact",
+      "docs",
+      "markdown",
+      "sheets",
+      "base",
+      "drive"
+    ],
+    "passed": true,
+    "log_sha256": "7af7cc42e43fb1e0ef340216c99c6b760643028b010d1ea118ab8899634c6fca"
+  },
+  "provider_availability": {
+    "decision": "go",
+    "limitation": "Point-in-time connectivity evidence, not a guarantee that task usage will complete. Neither probe is an evaluation attempt or a CLI efficiency result.",
+    "successful_isolated_probe": {
+      "evaluation_attempt": false,
+      "exit_code": 0,
+      "completed": true,
+      "seconds": 14.69,
+      "accounting_complete": true,
+      "accounting_diagnostics": [],
+      "turns": [
+        {
+          "input_tokens": 7587,
+          "cached_input_tokens": 0,
+          "output_tokens": 15
+        }
+      ],
+      "command_executions": 0
+    },
+    "successful_probe_total_tokens": 7602,
+    "successful_probe_sha256": "b16c56067ba5845b9c285177d0f2c8f190956fb1be265ea1ffd530ab8770e293",
+    "retained_first_probe": {
+      "completed": false,
+      "timeout_seconds": 90,
+      "seconds": 90.01,
+      "evaluation_attempt": false
+    },
+    "first_probe_sha256": "45f0751e9df0e70be1c5c6e25384e988008c46df55485af282dc12a0aa63d6b5",
+    "runner_matches_frozen_source": true,
+    "configuration": "Same native Codex executable, gpt-5.6-luna medium, isolated run_agent path and provider accounting; simple no-tool health prompt with a shorter 90-second probe budget."
+  },
+  "conditional_design": {
+    "first_attempts": 12,
+    "maximum_attempts": 48,
+    "remaining_attempts": 36,
+    "repetitions_per_task_arm": 3,
+    "reused_attempts": 0,
+    "arms": [
+      "official",
+      "next"
+    ],
+    "docs_gate": "For each Docs task: exactly three trials per arm, complete usage, no inconclusive outcomes, both success counts positive, Next successes >= original successes, and 2 * Next_tokens * original_successes < original_tokens * Next_successes. All attempt tokens count. Exactly 50 percent does not pass.",
+    "other_function_target": "At least 30 percent fewer all-attempt tokens per verified success, with observed success nonregression.",
+    "stop_rule": "If either Docs gate fails or is unavailable, retain all 12 attempts and report the remaining 36 as not run. No replacement, baseline reuse or condition pooling.",
+    "limitations": "Conditional development sample, three repetitions, mutable provider alias. No independent confirmation, population parity or full functionality coverage claim.",
+    "launcher_sha256": "fb652d4e55f93fb01aeb0db5f74f99dbe11bf76d0555db88ac8be43fd19afed7",
+    "launch_arguments_sha256": "cdcc641a42c092449cdded0305f51541a1106dac97673c69b7555d30a083d8db",
+    "protocol_sha256": "841a009b2479617e8130b3e30cede4bca0e27fb6daf183eb5cd7ada99f8f7b9b"
+  },
+  "checks_not_repeated": "No tests or paid provider calls were rerun by this final review. Existing private API lifecycle and full condition05 harness evidence were not redundantly repeated; changed diagnostics had focused invariant/privacy tests and the current frozen paired/sandbox suites passed."
+}
