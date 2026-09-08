@@ -1,5 +1,7 @@
 # Interrupted archive-preparation probe
 
+> **Validity amendment (2026-09-08):** The [native-fidelity audit](../native-fidelity-validity-audit-20260908.md) qualifies synthetic fidelity assumptions for the Base size task. Original verdicts and provider costs below remain historical; they do not establish equal live fidelity or live-fidelity efficiency. Original failure attributions and unknown costs remain unchanged.
+
 Two model attempts started before a graceful stop. The first attempt has unavailable total provider usage. The second has **237,389 actual provider tokens**:234,515 input, including207,488 cached input, plus2,874 output. The complete cost of the two-attempt series is unknown;237,389 is only its known lower bound. All raw verdicts and costs remain in the batch file.
 
 The evaluator archive was incorrectly prepared from evaluation/ alone. Its sanitized command parser also requires the committed docs/reference/registrations.json.gz file. A controlled synthetic command event reproduced FileNotFoundError without a model call; restoring the exact c61ad62 registry blob made that event parse successfully. The absent dependency raised after the first provider run, before its usage could be returned. That discarded provider stream and temporary workspace cannot be recovered; null usage does not mean zero cost or zero calls.

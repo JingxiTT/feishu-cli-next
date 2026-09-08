@@ -1,5 +1,7 @@
 # Stopped size-series condition
 
+> **Validity amendment (2026-09-08):** The [native-fidelity audit](../native-fidelity-validity-audit-20260908.md) qualifies synthetic fidelity assumptions for the Base size task. Original verdicts and provider costs below remain historical; they do not establish equal live fidelity or live-fidelity efficiency. Original failure attributions and unknown costs remain unchanged.
+
 The Base size series stopped after **7 completed attempts**, with **1 recorded verified outcome** and 6 recorded non-verified outcomes. Every attempt has complete provider accounting; **1,258,267 tokens** remain recorded. The active attempt finished before cancellation. Twenty unstarted Base slots and all 27 unstarted Sheets slots incurred no model calls and are not failed trials.
 
 The partial randomized series is not balanced and supports no token-versus-size or product success-rate comparison. Raw verdicts remain unchanged. Source review demonstrated missing ordinary Base table/view metadata reads and an unstated optional-report convention: the task requires created/count and exact record IDs, while the old verifier also constrains arbitrary optional status/batching/binding extras. These are concrete fixture limitations, not proof of the exact cause of every historical failure. Private receipts, reports and request values were discarded and cannot be reconstructed.

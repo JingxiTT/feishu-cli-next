@@ -467,6 +467,8 @@ No supplemental model trials have run yet.
 
 ## Completed size-series plot
 
+The [native-fidelity audit](evidence/native-fidelity-validity-audit-20260908.md) qualifies the Base and Sheets fixtures underlying the retained size plot. Its provider costs remain historical, and its outcome markers denote synthetic checks; it does not establish live same-fidelity efficiency. The original figure remains unchanged.
+
 After both Base and Sheets batches contain all 27 planned attempts, export the
 provider-token plot with Matplotlib (3.10.8 used for this work):
 

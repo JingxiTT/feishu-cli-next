@@ -1,5 +1,7 @@
 # Scenario development comparison
 
+> **Validity amendment (2026-09-08):** The [native-fidelity audit](../native-fidelity-validity-audit-20260908.md) qualifies synthetic fidelity assumptions for Docs and Sheets; small Base update fidelity remains unvalidated. Original verdicts and provider costs below remain historical; they do not establish equal live fidelity or live-fidelity efficiency. Original failure attributions and unknown costs remain unchanged.
+
 Completed **81 attempts**, with **63 verified successes** and 18 inconclusive outcomes. Known provider usage totals **12,201,326 tokens**; one attempt has unavailable complete usage. Known costs of non-verified/inconclusive attempts total **2,282,405 tokens** and are retained.
 
 The known total is a lower bound because one Extensions attempt has only a known partial 360,167-token span; its complete total remains unavailable. The range column uses only attempts with complete provider usage.

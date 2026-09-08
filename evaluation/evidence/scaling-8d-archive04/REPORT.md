@@ -1,5 +1,7 @@
 # Scaling development comparison
 
+> **Validity amendment (2026-09-08):** The [native-fidelity audit](../native-fidelity-validity-audit-20260908.md) qualifies synthetic fidelity assumptions for Base and Sheets size tasks. Original verdicts and provider costs below remain historical; they do not establish equal live fidelity or live-fidelity efficiency. Original failure attributions and unknown costs remain unchanged.
+
 Completed **54 attempts**, with **51 verified successes** and 0 inconclusive outcomes. Known provider usage totals **9,780,669 tokens**; 1 attempt has unavailable usage. Non-success-attempt known costs total **499,819 tokens** and are retained.
 
 The complete total is unknown: 9,780,669 is a lower bound because the concise-original 1,000-row Sheets trial reached the unchanged 180-second budget before a provider usage summary. Its missing total is not plotted as zero, and the affected group has no finite efficiency result. The two Base nonverified outcomes retain 499,819 known tokens; their generic rejected-request reason cannot identify a product cause.
@@ -30,6 +32,8 @@ Provider input includes cached input in full; output and failed/recovery turns a
 Next regressed on the smaller Base tasks but verified all three 10,000-row imports with fewer total tokens and API requests than either original arm at that size. For Sheets, Next used fewer tokens than the original at every size and the concise original at 100 and 10,000 rows; the concise 1,000-row total is unknown. At 10,000 rows, Next made 51 total API requests versus 9 original and 13 concise, despite its lower provider usage. There is no uniform API advantage.
 
 Both original and Next file workflows show provider-token variation far smaller than the 100-fold row-count change in this sample. Three fixed sizes and three repetitions cannot establish an asymptotic bound or isolate how much of the difference comes from guidance, command discovery, formatting or model choices. Tokens/success divides all attempt costs, including known failures, by verified successes only when every attempt has complete usage.
+
+The plot retains historical provider costs and synthetic verification markers. The [validity amendment](../native-fidelity-validity-audit-20260908.md) withholds live same-fidelity scaling conclusions for both tasks; the figure has not been regenerated.
 
 ![Actual provider tokens by size](usage-by-size.png)
 

@@ -1,5 +1,7 @@
 # Scenario development comparison
 
+> **Validity amendment (2026-09-08):** The [native-fidelity audit](../native-fidelity-validity-audit-20260908.md) qualifies synthetic fidelity assumptions for Docs. Original verdicts and provider costs below remain historical; they do not establish equal live fidelity or live-fidelity efficiency. Original failure attributions and unknown costs remain unchanged.
+
 Completed **27 attempts**, with **27 verified successes** and 0 inconclusive outcomes. Known provider usage totals **3,702,291 tokens**; 0 attempts have unavailable usage. Non-success-attempt known costs total **0 tokens** and are retained.
 
 Provider input includes cached input in full; output and failed/recovery turns are counted. Token distributions come from the provider, not byte estimates. A group with unknown usage, inconclusive outcomes, or no successful outcome has no finite tokens-per-success result.
