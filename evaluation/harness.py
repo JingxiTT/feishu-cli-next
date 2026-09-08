@@ -200,16 +200,11 @@ def sanitized_accounting_diagnostics(values):
 
 
 def sanitized_verification_failures(values):
+    from scenario_verifier import SCENARIO_DIAGNOSTICS
+    from section_fixture import UNSUPPORTED_REASON_CODES
     allowed = {"answer_mismatch", "scenario_mismatch", "missing_request_evidence", "request_outside_fixture",
                "required_reads_missing", "config_changed", "invalid_verification_input",
-               "unsupported_reconstruction", "unsupported_xml_fragment", "unsupported_strategy_other",
-               "execution_proof_unavailable", "packaging_receipt_invalid", "packaging_isolation_missing",
-               "packaging_answer_mismatch", "packaging_answer_path_mismatch", "packaging_protected_changed",
-               "packaging_project_changed", "packaging_install_invalid",
-               "base_scaling_answer_invalid", "base_scaling_report_path", "base_scaling_report_format",
-               "base_scaling_report_ids", "base_scaling_missing_rows", "base_scaling_typed_cells",
-               "base_scaling_metadata_changed", "base_scaling_input_changed", "base_scaling_api_rejected",
-               "base_scaling_unsupported_strategy", "base_scaling_bad_mutation_proof", "base_scaling_fixture_state_invalid"}
+               "packaging_answer_path_mismatch"} | SCENARIO_DIAGNOSTICS | UNSUPPORTED_REASON_CODES
     return values if isinstance(values, list) and all(isinstance(value, str) and value in allowed for value in values) else None
 
 

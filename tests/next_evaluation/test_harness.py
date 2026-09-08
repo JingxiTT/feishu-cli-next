@@ -93,6 +93,9 @@ class AccountingTests(unittest.TestCase):
 
     def test_verifier_diagnostics_never_publish_free_form_content(self):
         self.assertEqual(harness.sanitized_verification_failures(["answer_mismatch"]), ["answer_mismatch"])
+        self.assertEqual(harness.sanitized_verification_failures([
+            "paired_sheets_formula_read_missing", "paired_markdown_native_content_mismatch"]),
+            ["paired_sheets_formula_read_missing", "paired_markdown_native_content_mismatch"])
         self.assertIsNone(harness.sanitized_verification_failures(["private answer text"]))
         task = {"fixture": {"runtime_section": "wiki"}}
         event = {"method": "GET", "route": "rejected", "status": 403, "payload": "private"}

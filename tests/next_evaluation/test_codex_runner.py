@@ -162,6 +162,8 @@ class CodexAccountingTests(unittest.TestCase):
             run.assert_not_called()
 
     def test_trace_keeps_only_public_names_not_content_paths_or_unknown_flags(self):
+        self.assertEqual(runner.command_choices('feishu-cli-next sheets +data-export --spreadsheet-token private --save-result private.json'),
+                         [{'kind': 'cli', 'command': ['sheets', '+data-export'], 'flags': ['--save-result', '--spreadsheet-token']}])
         command = 'TOKEN=private-value /private/workspace/feishu-cli-next docs +fetch --doc secret-document-id --keyword="private user text" --not-a-real-private-flag=secret && cat /private/secret-file'
         result = runner.command_choices(command)
         self.assertEqual(result, [{"kind": "cli", "command": ["docs", "+fetch"], "flags": ["--doc", "--keyword"]}, {"kind": "file_read"}])

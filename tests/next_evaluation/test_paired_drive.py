@@ -3,6 +3,7 @@ import base64
 import copy
 import hashlib
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -190,6 +191,8 @@ class PairedDriveArchivedCLITests(unittest.TestCase):
     def test_both_archived_cli_strategies(self):
         directory = ROOT / ".tmp/luna-medium-preparation"
         binaries = [directory / "official-cli", directory / "next-cli"]
+        if os.environ.get("EVAL_PAIRED_DRIVE_BINARIES"):
+            binaries = [Path(path) for path in json.loads(os.environ["EVAL_PAIRED_DRIVE_BINARIES"])]
         if not all(path.is_file() for path in binaries):
             self.skipTest("fresh controlled paired binaries unavailable")
         for binary in binaries:

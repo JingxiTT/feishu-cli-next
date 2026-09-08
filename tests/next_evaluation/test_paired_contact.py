@@ -1,6 +1,8 @@
 """Paired Contact/discovery controls; no provider or live service calls."""
 from copy import deepcopy
+import hashlib
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -141,9 +143,12 @@ class DiscoveryTests(unittest.TestCase):
 class ControlledBinaries(unittest.TestCase):
     def test_both_archived_binaries_contact_and_discovery(self):
         binaries = [ROOT / ".tmp/luna-medium-preparation" / (arm + "-cli") for arm in ("official", "next")]
+        if os.environ.get("EVAL_PAIRED_CONTACT_BINARIES"):
+            binaries = [Path(path) for path in json.loads(os.environ["EVAL_PAIRED_CONTACT_BINARIES"])]
         if not all(p.is_file() for p in binaries):
             self.skipTest("requires supplied archived paired controlled binaries")
         for binary in binaries:
+            historical_next = hashlib.sha256(binary.read_bytes()).hexdigest() == "a96268761560efa996ba7ce99c231423de14277cc814f694c18b9b5cbb7a7a48"
             with self.subTest(arm=binary.name), tempfile.TemporaryDirectory() as directory:
                 w = Path(directory)
                 for name in ("home", "tmp", "bin", "feishu-config"):
@@ -171,7 +176,7 @@ class ControlledBinaries(unittest.TestCase):
                         receipt = {"scenario": discovery.SCENARIO, "requests": [], "state": d.snapshot()}
                         # Preserve the supplied Next binary's known raw read-POST
                         # exit22 as a failed alternative, never a verifier success.
-                        if argv[:3] == ["api", "POST", contact.USER_BATCH] and binary.name == "next-cli" and d.probe.get("exit_code") == 22:
+                        if argv[:3] == ["api", "POST", contact.USER_BATCH] and historical_next and d.probe.get("exit_code") == 22:
                             self.assertFalse(discovery.verify(w, answer, receipt, {}))
                             self.assertIn(contact.USERS[1], contact.observed_records(d.probe["receipt"])["users"])
                             continue
