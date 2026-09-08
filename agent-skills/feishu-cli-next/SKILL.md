@@ -5,7 +5,7 @@ description: Work with Feishu/Lark documents, messages, calendars, spreadsheets,
 
 # Feishu CLI Next
 
-Use `feishu-cli-next` for Feishu/Lark workspace operations. All inherited commands, generated OpenAPI methods, raw API access, events, and domain skills remain available. Start with a known command; reuse guidance already in context and follow applicable workspace instructions. Discovery, help, and authentication checks resolve missing information. Combine independent reads or help lookups in one shell tool call when useful. Dependent operations may share a script when ordered and guarded by successful exit status, parsed JSON `ok`, and required resource IDs; stop and reconcile on failure.
+Use `feishu-cli-next` for Feishu/Lark workspace operations. All inherited commands, generated OpenAPI methods, raw API access, events, and domain skills remain available. Start with a known command; discovery, help, and authentication checks are for missing information, not prerequisites to every operation. Use guidance already provided; read additional references for a specific missing syntax or workflow detail. Combine independent reads or help lookups in one shell tool call when useful. Keep dependent operations ordered and guard subsequent steps with successful exit status, parsed JSON `ok`, and required resource IDs; stop and reconcile on failure.
 
 ## Common routes
 
@@ -34,6 +34,6 @@ Read a specific domain reference only when its concepts, syntax or limitations a
 
 Prefer offered file/stdin flags for substantial content. Keep document structure/reference maps, sheet formulas/types, and Base schema semantics. Omitted fields preserve data where supported; null, empty text, zero and false are distinct. Whole-document overwrite can lose unrelated blocks, IDs and comments; use it only for an intended full replacement.
 
-JSON is compact without dropping fields. `--result-fields` selects result fields while retaining status/completeness metadata; select only when unselected data is unnecessary for the task and verification. `--result-detail` adds indentation. Where supported, `--save-result PATH` saves the full response without replacing an existing file; process large artifacts locally and return the needed evidence. Command-specific `--fields`/`--detail` retain their own meanings.
+JSON is compact without dropping fields. Read small responses directly from stdout when their contents are needed for the answer. Where supported, use `--save-result PATH` when the task requires a saved artifact or the response is large; it saves the full response without replacing an existing file. `--result-fields` selects fields while retaining status/completeness metadata; select only when omitted data is unnecessary for the task and verification. `--result-detail` adds indentation. Command-specific `--fields`/`--detail` retain their own meanings.
 
 Check `ok`, exit status, pagination, warnings and partial-failure receipts; success need not contain OpenAPI `code`. A mutation timeout can leave an unknown effect: reconcile the affected resource or use documented backend idempotency before retrying a create, append, send or other non-idempotent write. Local receipts and readbacks do not provide a concurrency lock.
