@@ -7,6 +7,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"io/fs"
 	"net/url"
@@ -94,13 +95,31 @@ func docsWorkspaceRevision(runtime *common.RuntimeContext, documentID string) (i
 }
 
 func readDocsWorkspaceSnapshot(runtime *common.RuntimeContext, documentID string) (docsWorkspaceSnapshot, error) {
+	// Only a completed read whose revision moved is reconciled. Transport,
+	// pagination and validation failures return immediately; no mutation repeats.
+	for attempt := 0; ; attempt++ {
+		snapshot, latest, err := readDocsWorkspaceSnapshotAttempt(runtime, documentID)
+		if err != nil {
+			return snapshot, err
+		}
+		if latest == snapshot.RevisionID {
+			return snapshot, nil
+		}
+		if attempt == 2 {
+			return snapshot, docsWorkspaceError("document changed while reading its native blocks after 3 snapshot attempts").
+				WithHint(fmt.Sprintf("Final read observed revision %d before reading and %d after reading. Keep local edits and pull a fresh working copy before reconciling; no mutation was retried.", snapshot.RevisionID, latest))
+		}
+	}
+}
+
+func readDocsWorkspaceSnapshotAttempt(runtime *common.RuntimeContext, documentID string) (docsWorkspaceSnapshot, int64, error) {
 	snapshot := docsWorkspaceSnapshot{DocumentID: documentID}
 	if !docsWorkspaceIDValid(documentID) {
-		return snapshot, docsWorkspaceError("invalid document identity")
+		return snapshot, 0, docsWorkspaceError("invalid document identity")
 	}
 	revision, err := docsWorkspaceRevision(runtime, documentID)
 	if err != nil {
-		return snapshot, err
+		return snapshot, 0, err
 	}
 	snapshot.RevisionID = revision
 	seenPages, seenBlocks := map[string]bool{}, map[string]bool{}
@@ -116,45 +135,42 @@ func readDocsWorkspaceSnapshot(runtime *common.RuntimeContext, documentID string
 			PageToken string            `json:"page_token"`
 		}
 		if err := docsWorkspaceAPI(runtime, "GET", docsWorkspacePath(documentID)+"/blocks", params, nil, &page); err != nil {
-			return snapshot, err
+			return snapshot, 0, err
 		}
 		if page.HasMore == nil {
-			return snapshot, errs.NewInternalError(errs.SubtypeInvalidResponse, "native block pagination completeness is missing")
+			return snapshot, 0, errs.NewInternalError(errs.SubtypeInvalidResponse, "native block pagination completeness is missing")
 		}
 		for _, raw := range page.Items {
 			var block struct {
 				ID string `json:"block_id"`
 			}
 			if json.Unmarshal(raw, &block) != nil || !docsWorkspaceIDValid(block.ID) || seenBlocks[block.ID] {
-				return snapshot, errs.NewInternalError(errs.SubtypeInvalidResponse, "native blocks contain invalid or duplicate identities")
+				return snapshot, 0, errs.NewInternalError(errs.SubtypeInvalidResponse, "native blocks contain invalid or duplicate identities")
 			}
 			seenBlocks[block.ID] = true
 			size += len(raw)
 			snapshot.Blocks = append(snapshot.Blocks, raw)
 			if len(snapshot.Blocks) > docsWorkspaceBlockLimit || size > docsWorkspaceLimit {
-				return snapshot, errs.NewValidationError(errs.SubtypeFailedPrecondition, "document exceeds local workspace limits")
+				return snapshot, 0, errs.NewValidationError(errs.SubtypeFailedPrecondition, "document exceeds local workspace limits")
 			}
 		}
 		if !*page.HasMore {
 			break
 		}
 		if len(page.Items) == 0 || page.PageToken == "" || seenPages[page.PageToken] {
-			return snapshot, errs.NewInternalError(errs.SubtypeInvalidResponse, "native block pagination did not advance")
+			return snapshot, 0, errs.NewInternalError(errs.SubtypeInvalidResponse, "native block pagination did not advance")
 		}
 		token = page.PageToken
 		seenPages[token] = true
 	}
 	if len(snapshot.Blocks) == 0 {
-		return snapshot, errs.NewInternalError(errs.SubtypeInvalidResponse, "native document contains no blocks")
+		return snapshot, 0, errs.NewInternalError(errs.SubtypeInvalidResponse, "native document contains no blocks")
 	}
 	latest, err := docsWorkspaceRevision(runtime, documentID)
 	if err != nil {
-		return snapshot, err
+		return snapshot, 0, err
 	}
-	if latest != revision {
-		return snapshot, docsWorkspaceError("document changed while reading its native blocks")
-	}
-	return snapshot, nil
+	return snapshot, latest, nil
 }
 
 func docsWorkspaceJSONEqual(left, right interface{}) bool {
@@ -281,5 +297,5 @@ func docsWorkspacePreviewSnapshot(preview *common.DryRunAPI, path string) {
 	preview.GET(path).Desc("Read the latest native document revision").
 		GET(path + "/blocks").Params(map[string]interface{}{"document_revision_id": "<observed current revision>", "page_size": 500}).
 		Desc("Read every native block page pinned to the observed current revision").
-		GET(path).Desc("Reread latest revision and reject changes during the paginated snapshot")
+		GET(path).Desc("Reread latest revision; repeat the complete read at most 3 times only when its revision changed")
 }

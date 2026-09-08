@@ -49,6 +49,7 @@ func workspaceBlocks() []json.RawMessage {
 }
 
 type workspaceServer struct {
+	metadataHook                       func(*workspaceServer)
 	revision                           int64
 	blocks                             []json.RawMessage
 	metadataCalls, blockCalls, patches int
@@ -72,6 +73,9 @@ func (s *workspaceServer) mount(t *testing.T, reg *httpmock.Registry) {
 	metadata := &httpmock.Stub{Method: "GET", URL: "/documents/doc1", Reusable: true, Optional: true}
 	metadata.OnMatch = func(*http.Request) {
 		s.metadataCalls++
+		if s.metadataHook != nil {
+			s.metadataHook(s)
+		}
 		if s.changeReadAt == s.metadataCalls {
 			s.revision++
 		}
@@ -293,7 +297,11 @@ func TestDocsWorkspacePullRejectsIncompleteSnapshots(t *testing.T) {
 		t.Run(mode, func(t *testing.T) {
 			f, reg, out := workspaceFactory(t)
 			if mode == "drift" {
-				s := &workspaceServer{revision: 3, blocks: workspaceBlocks(), changeReadAt: 2}
+				s := &workspaceServer{revision: 3, blocks: workspaceBlocks(), metadataHook: func(s *workspaceServer) {
+					if s.metadataCalls%2 == 0 {
+						s.revision++
+					}
+				}}
 				s.mount(t, reg)
 			} else {
 				data := map[string]interface{}{"items": workspaceBlocks(), "has_more": false}
@@ -433,5 +441,69 @@ func TestDocsWorkspacePullRejectsFinalSidecarEnvelopeBeforeSaving(t *testing.T) 
 		if _, err := os.Stat(name); !os.IsNotExist(err) {
 			t.Fatalf("published oversized sidecar: %s", name)
 		}
+	}
+}
+
+func TestDocsWorkspaceSnapshotReconciliationNeverReplaysMutation(t *testing.T) {
+	for _, mode := range []string{"transient", "persistent", "changed-content", "malformed-response"} {
+		t.Run(mode, func(t *testing.T) {
+			f, reg, out := workspaceFactory(t)
+			blocks := workspaceBlocks()
+			workspaceSave(t, f, blocks, strings.Replace(workspaceMarkdown(t, blocks), "Old 中文", "New 中文", 1))
+			server := &workspaceServer{revision: 3, blocks: blocks}
+			server.metadataHook = func(s *workspaceServer) {
+				if s.patches == 0 {
+					return
+				}
+				switch mode {
+				case "transient", "changed-content":
+					if s.metadataCalls == 4 {
+						s.revision++
+						if mode == "changed-content" {
+							s.blocks[2] = bytes.ReplaceAll(s.blocks[2], []byte("Second"), []byte("Concurrent"))
+						}
+					}
+				case "persistent":
+					if s.metadataCalls%2 == 0 {
+						s.revision++
+					}
+				case "malformed-response":
+					s.blocks = nil
+				}
+			}
+			server.mount(t, reg)
+			err := workspaceRun(t, DocsPush, f, out, "+push", "--file", "note.md")
+			if server.patches != 1 {
+				t.Fatalf("mutation repeated: %d", server.patches)
+			}
+			if mode == "transient" {
+				if err != nil || !strings.Contains(out.String(), `"verified": true`) || server.metadataCalls != 6 || server.blockCalls != 3 {
+					t.Fatalf("stable reconciliation failed: %v; reads %d/%d; %s", err, server.metadataCalls, server.blockCalls, out)
+				}
+			} else {
+				var outcome *errs.MutationOutcomeError
+				if !errors.As(err, &outcome) || outcome.Outcome != "unknown" {
+					t.Fatalf("read uncertainty lost: %T %v", err, err)
+				}
+				if mode == "persistent" {
+					if server.metadataCalls != 8 || server.blockCalls != 4 {
+						t.Fatalf("read attempts unbounded: %d/%d", server.metadataCalls, server.blockCalls)
+					}
+					var conflict *errs.ValidationError
+					if !errors.As(err, &conflict) || !strings.Contains(conflict.Hint, "revision 6 before reading and 7 after reading") {
+						t.Fatalf("missing final observed revisions: %v", err)
+					}
+				}
+				if mode == "changed-content" {
+					var conflict *errs.ValidationError
+					if !errors.As(err, &conflict) || !strings.Contains(conflict.Error(), "does not match") {
+						t.Fatalf("accepted changed content: %v", err)
+					}
+				}
+				if mode == "malformed-response" && (server.metadataCalls != 3 || server.blockCalls != 2) {
+					t.Fatalf("invalid response retried: %d/%d", server.metadataCalls, server.blockCalls)
+				}
+			}
+		})
 	}
 }
