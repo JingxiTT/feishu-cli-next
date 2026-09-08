@@ -256,6 +256,15 @@ class CodexAccountingTests(unittest.TestCase):
         self.assertEqual(runner.command_choices('feishu-cli-next discover private --flags --result-fields private'),
                          [{"kind": "cli", "command": ["discover"], "flags": ["--flags", "--result-fields"]}])
 
+    def test_docs_workspace_trace_retains_commands_without_resource_or_file_values(self):
+        command = 'feishu-cli-next docs +pull --doc secret-id --output ./private.md && feishu-cli-next docs +push --file ./private.md'
+        result = runner.command_choices(command)
+        self.assertEqual(result, [
+            {'kind': 'cli', 'command': ['docs', '+pull'], 'flags': ['--doc', '--output']},
+            {'kind': 'cli', 'command': ['docs', '+push'], 'flags': ['--file']}])
+        self.assertNotIn('secret', json.dumps(result))
+        self.assertNotIn('private', json.dumps(result))
+
     def test_incomplete_and_failed_turns_are_unknown(self):
         for tail in ([{"type": "turn.started"}], [{"type": "turn.failed"}],
                      [{"type": "item.completed", "item": {"type": "mcp_tool_call"}}]):

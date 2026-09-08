@@ -27,7 +27,8 @@ def trace_vocabulary():
     snapshot = Path(__file__).resolve().parents[1] / "docs/reference/registrations.json.gz"
     with gzip.open(snapshot, "rt", encoding="utf-8") as stream:
         registrations = json.load(stream)
-    paths = {("discover",), ("guide",), ("im", "+fixture-host"), ("sheets", "+data-export")} | {("guide", action) for action in ("show", "install", "update", "uninstall")}
+    paths = {("discover",), ("guide",), ("im", "+fixture-host"), ("sheets", "+data-export"),
+             ("docs", "+pull"), ("docs", "+push")} | {("guide", action) for action in ("show", "install", "update", "uninstall")}
     flags = {"--help", "-h", "--flags", "--project", "--result-detail", "--result-fields", "--save-result"}
     for variant in registrations.values():
         for command, descriptor in variant["commands"].items():
