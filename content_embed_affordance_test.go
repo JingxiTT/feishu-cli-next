@@ -53,9 +53,9 @@ func TestEmbeddedDocsAffordanceComplementsShortcutMetadata(t *testing.T) {
 				"Read an entire Lark document, or limit the result to an outline, section, block range, or keyword match.",
 			},
 			tips: []string{
-				"Use XML `full` detail when native IDs, styles and reference maps matter; Markdown and IM Markdown are explicit conversions.",
+				"For facts and native block addresses, choose XML `with-ids`; use `full` when styles and edit/reference metadata are needed. Markdown and IM Markdown are explicit conversions.",
 				"Bounds require a matching scope; `full` with range or keyword bounds fails instead of silently returning the entire document.",
-				"`--save-result` saves the full response; the generic result artifact is not a document import payload. Preserve `document.reference_map` alongside `document.content`.",
+				"Read small fact-lookup results directly from JSON stdout. Use `--save-result` for requested exports or large responses, preserving `document.reference_map` alongside `document.content`; the artifact is not a document import payload.",
 			},
 		},
 		"+update": {
@@ -65,7 +65,9 @@ func TestEmbeddedDocsAffordanceComplementsShortcutMetadata(t *testing.T) {
 			},
 			tips: []string{
 				"Prefer `str_replace` or `block_*` commands for targeted edits. Use `overwrite` only when replacing the entire document is intended; it can discard unrelated rich content.",
-				"Include bold/link markup in replacement content to retain it within the matched span; plain replacement can remove existing formatting.",
+				"For one occurrence, use the smallest `--pattern` established unique across the document; leave unchanged styled text outside the match. If uniqueness is uncertain, use a native block edit addressed by ID, preserving unrelated block IDs and resources.",
+				"When the match includes styled text, copy its actual XML marks and link `href` into replacement content and change only the intended characters; plain replacement can remove existing formatting.",
+				"After a targeted edit, fetch the affected native XML and verify text, styles and link destinations before reporting success.",
 				"Native block IDs come from `docs +fetch --detail with-ids`; structural edits can invalidate earlier addressing.",
 				contentGuideTip,
 				"Match `--doc-format` to `--content`; for multiline content, prefer `@file` or `-` (stdin).",
