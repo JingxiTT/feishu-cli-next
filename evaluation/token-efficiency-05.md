@@ -32,6 +32,16 @@ references remain unchanged; this corrects selection, not the baseline CLI.
 Other original domain selections are unchanged. Record this correction in the
 environment and report instead of carrying forward the earlier routing error.
 
+The [private revision probe](evidence/docs-workspace-native-cas-20260909.json)
+established that native block reads can return historical state and native block
+PATCH accepts a stale revision. The new paired fixtures must not fabricate a
+conflict for these requests. Well-formed historical native block operations
+outside the fixture's validated current-state coverage are inconclusive, with
+their costs retained; malformed requests remain failures. Docs-AI operations and
+all native fidelity assertions remain unchanged. The local workflow detects
+known stale state before writing but cannot prevent a concurrent edit during
+the check/write window.
+
 Record the final candidate's shipped guidance after product work is complete.
 It should distinguish factual reads from editing metadata and make additional
 reference reads conditional on missing information. All original commands,
