@@ -55,3 +55,33 @@ func TestDocsTargetedEditGuidanceIsParsedIntoCommandTips(t *testing.T) {
 		}
 	}
 }
+
+func TestDocsFactReadGuidanceIsParsedIntoCommandTips(t *testing.T) {
+	previous := mdSource
+	t.Cleanup(func() { SetSource(previous) })
+	SetSource(os.DirFS("../../affordance"))
+	raw, ok := For("docs", "+fetch")
+	if !ok {
+		t.Fatal("missing docs +fetch overlay")
+	}
+	parsed, ok := (meta.Method{Affordance: raw}).ParsedAffordance()
+	if !ok {
+		t.Fatal("docs +fetch overlay did not parse")
+	}
+	tips := strings.Join(parsed.Tips, "\n")
+	for _, decision := range []string{
+		"For facts and native block addresses, choose XML `with-ids`",
+		"use `full` when styles and edit/reference metadata are needed",
+		"Read small fact-lookup results directly from JSON stdout",
+		"requested exports or large responses",
+		"`document.reference_map` alongside `document.content`",
+		"Bounds require a matching scope",
+	} {
+		if !strings.Contains(tips, decision) {
+			t.Errorf("parsed command tips missing %q", decision)
+		}
+	}
+	if !containsExact(parsed.Skills, "lark-doc/references/lark-doc-fetch.md") {
+		t.Fatal("fetch guide is no longer reachable from command guidance")
+	}
+}

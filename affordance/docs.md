@@ -19,9 +19,9 @@ Create a new Lark document from DocxXML or Markdown, optionally in a folder or W
 Read an entire Lark document, or limit the result to an outline, section, block range, or keyword match.
 
 ### Tips
-- Use XML `full` detail when native IDs, styles and reference maps matter; Markdown and IM Markdown are explicit conversions.
+- For facts and native block addresses, choose XML `with-ids`; use `full` when styles and edit/reference metadata are needed. Markdown and IM Markdown are explicit conversions.
 - Bounds require a matching scope; `full` with range or keyword bounds fails instead of silently returning the entire document.
-- `--save-result` saves the full response; the generic result artifact is not a document import payload. Preserve `document.reference_map` alongside `document.content`.
+- Read small fact-lookup results directly from JSON stdout. Use `--save-result` for requested exports or large responses, preserving `document.reference_map` alongside `document.content`; the artifact is not a document import payload.
 
 ### Skills
 - lark-doc/references/lark-doc-fetch.md
