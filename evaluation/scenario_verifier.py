@@ -7,6 +7,9 @@ from scenario_fixture import load_scenario
 from section_fixture import UNSUPPORTED_REASON_CODES
 
 SCENARIO_DIAGNOSTICS = frozenset((
+    'paired_docs_answer_mismatch', 'paired_docs_text_mismatch', 'paired_docs_bold_mismatch',
+    'paired_docs_link_mismatch', 'paired_docs_unrelated_state_changed',
+    'paired_docs_mutation_missing', 'paired_docs_receipt_invalid', 'paired_docs_proof_mismatch',
     'paired_markdown_answer_mismatch', 'paired_markdown_document_missing',
     'paired_markdown_identity_or_privacy_mismatch', 'paired_markdown_native_content_mismatch',
     'paired_markdown_source_changed', 'paired_markdown_create_count_mismatch',

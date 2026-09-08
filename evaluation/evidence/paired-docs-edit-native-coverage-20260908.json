@@ -1,0 +1,208 @@
+{
+  "schema": "paired-docs-edit-native-coverage/v1",
+  "date": "2026-09-08",
+  "private_evidence": ".tmp/token-docs-edit-native-probe",
+  "scope": "One fresh synthetic current-user private document. No provider calls, no sharing/invitations/notifications. Observed variants inform a new fixture condition; old02 verdicts are not recovered or changed.",
+  "privacy": {
+    "fresh_account_and_tenant_digest_matches_prior_independent_binding": true,
+    "title_only_create_in_private_root": true,
+    "previously_observed_invited_only_creation_default": true,
+    "closed_links_sole_current_full_access_member_and_metadata_owner_verified_before_content": true,
+    "privacy_and_owner_rechecked_before_cleanup": true
+  },
+  "attempts": {
+    "document_create": 1,
+    "synthetic_content_append": 1,
+    "edit_variants": 8,
+    "native_edit_result_success": 6,
+    "native_edit_result_failed": 2,
+    "delete": 1,
+    "automatic_retries": 0,
+    "provider_calls": 0
+  },
+  "binaries": {
+    "next": {
+      "sha256": "a96268761560efa996ba7ce99c231423de14277cc814f694c18b9b5cbb7a7a48",
+      "role": "mutation and native read"
+    },
+    "official": {
+      "sha256": "5e1f582ec5ab9c86d3618fc17bd099b3443d40fe8691fed07d42e83a351ba977",
+      "role": "independent native read; local controlled mutation replay also tested"
+    }
+  },
+  "observations": [
+    {
+      "case": "md_block",
+      "updated": true,
+      "unrelated_blocks_unchanged": true,
+      "id_retained": false,
+      "text_matches_requested_prefix": true,
+      "bold_on_status": true,
+      "link_on_status": true,
+      "unicode_suffix_preserved": true
+    },
+    {
+      "case": "md_narrow",
+      "updated": true,
+      "unrelated_blocks_unchanged": true,
+      "id_retained": false,
+      "text_matches_requested_prefix": true,
+      "bold_on_status": true,
+      "link_on_status": true,
+      "unicode_suffix_preserved": true
+    },
+    {
+      "case": "md_str_bold_link",
+      "updated": false,
+      "unrelated_blocks_unchanged": true,
+      "id_retained": null,
+      "text_matches_requested_prefix": false,
+      "bold_on_status": null,
+      "link_on_status": null,
+      "unicode_suffix_preserved": null,
+      "unchanged_target": true,
+      "new_prefix_checks": "not applicable: no updated paragraph; original target deep-equal"
+    },
+    {
+      "case": "md_str_link_bold",
+      "updated": false,
+      "unrelated_blocks_unchanged": true,
+      "id_retained": null,
+      "text_matches_requested_prefix": false,
+      "bold_on_status": null,
+      "link_on_status": null,
+      "unicode_suffix_preserved": null,
+      "unchanged_target": true,
+      "new_prefix_checks": "not applicable: no updated paragraph; original target deep-equal"
+    },
+    {
+      "case": "xml_block_id",
+      "updated": true,
+      "unrelated_blocks_unchanged": true,
+      "id_retained": false,
+      "text_matches_requested_prefix": true,
+      "bold_on_status": true,
+      "link_on_status": true,
+      "unicode_suffix_preserved": true
+    },
+    {
+      "case": "xml_block_inline",
+      "updated": true,
+      "unrelated_blocks_unchanged": true,
+      "id_retained": false,
+      "text_matches_requested_prefix": true,
+      "bold_on_status": true,
+      "link_on_status": true,
+      "unicode_suffix_preserved": true
+    },
+    {
+      "case": "xml_plain_span",
+      "updated": true,
+      "unrelated_blocks_unchanged": true,
+      "id_retained": true,
+      "text_matches_requested_prefix": true,
+      "bold_on_status": false,
+      "link_on_status": false,
+      "unicode_suffix_preserved": true
+    },
+    {
+      "case": "xml_str",
+      "updated": true,
+      "unrelated_blocks_unchanged": true,
+      "id_retained": true,
+      "text_matches_requested_prefix": true,
+      "bold_on_status": true,
+      "link_on_status": true,
+      "unicode_suffix_preserved": true
+    }
+  ],
+  "readback": {
+    "each_after_state_data_identical_across_binaries": true,
+    "native_block_reads": 18,
+    "all_unrelated_native_blocks_unchanged_each_variant": true
+  },
+  "semantics": {
+    "xml_str_replace": "Supplied rich XML retains marks; plain full-span replacement loses marks; target ID retained.",
+    "xml_block_replace": "Observed both <p id=actual-target>rich content</p> and bare inline rich content; paragraph ID replaced.",
+    "markdown_block_replace": "Observed New **[status](synthetic-link)** with unchanged Unicode suffix; bold and link retained; paragraph ID replaced.",
+    "markdown_str_replace_narrow_plain": "OldN to NewN inside plain text preserves adjacent rich marks but replaces paragraph ID.",
+    "markdown_str_replace_cross_marks": "Plain rendered pattern OldN status with a marked status did not match native Markdown; response result=failed, warning degrade1013; Next exit22 unknown receipt; independent native reads proved no target change. No retries.",
+    "unsupported": "Rich Markdown str_replace patterns/replacements, reverse nested mark spelling, multiline/multi-block replacement and other unobserved syntax remain unsupported."
+  },
+  "cleanup": {
+    "exact_created_document_deleted": true,
+    "independent_exact_id_read_api_code": 1770003,
+    "independent_read_exit": 1,
+    "parent_resources_created": 0
+  },
+  "controls": {
+    "targeted_local_docs_tests": 11,
+    "optional_binary_cases_per_binary": 10,
+    "fixture_verifier_acceptance": "Existing native.verify() unchanged. New finite diagnostics only explain its rejection.",
+    "binary_controls": [
+      "official",
+      "previous_next",
+      "candidate_8946671"
+    ],
+    "candidate_sha256": "1515e1f22e1f26f90c2b3d6a67852553342359e988d9682b1ce183ba4f824919"
+  },
+  "source_references": [
+    "evaluation/scenarios/docs.py:parse_inline_xml",
+    "evaluation/scenarios/docs.py:verify",
+    "shortcuts/doc/docs_update_v2.go",
+    "docs/sections/docs-private-live-evidence.json"
+  ],
+  "private_evidence_sha256": {
+    "01-self.json": "a74542078807efd7ed73d6b3ca67b08af26295af454c1ed7506a7c3a428d0bb6",
+    "02-create.json": "5da41a71867ea8e2acfb2b1aefd213b43f6e0f8d4ec4cc96bf0a5db3dc7aa7f1",
+    "03-private-members.json": "9b7da38c61773b6c17306d7e3e81b6a56b01e2561e58756f6de0384a149fa878",
+    "03-private-owner.json": "b9eb1d314ac385a1f0f7a01b770edfde54e28591fbedb9292d4cf2d16a235b67",
+    "03-private-settings.json": "ae2069406503656f59b8691be32537749018aec2404bbbc00f35d7b42637efae",
+    "04-content.json": "4c4a6464866db11e056988d0b6c15d2434816dad0f269743397b56736e2ccc7d",
+    "05-initial.json": "713bfdda83c8863334d6ce195db0b938723c1f42bfdd78e4c220e86ad7c25fb8",
+    "06-initial-official.json": "575d13677418b7889a01ceef2fda92657d171451ee21b0d6b8ecd9113175a580",
+    "after-md_block-official.json": "e51b880ab8f41653a8a0270e0fedf3517febd02408d103252a2ec168f5fabd70",
+    "after-md_block.json": "2d874d9dd7c0bd6a68aeda9a6b26ba41c607ab8f8d2044dc13cb7cb6bc68ae2c",
+    "after-md_narrow-official.json": "9a41bda4235aa44c0bbf63422d57a76e6c27e52913a6071d9f90648ac42ff8f7",
+    "after-md_narrow.json": "d5d8c57eda6fdbf616371d311de8590934a697465522c697cd04b7d007d5f4a9",
+    "after-md_str_bold_link-official.json": "5eee00c6045532b2e27ce45f1754befc5f498d3bc735d528c32396dd3b68c12c",
+    "after-md_str_bold_link.json": "310e678ca43f983faf7bf2f5ecd338320ed7d71d99ce10c289a9eeb9c64383e6",
+    "after-md_str_link_bold-official.json": "5eee00c6045532b2e27ce45f1754befc5f498d3bc735d528c32396dd3b68c12c",
+    "after-md_str_link_bold.json": "310e678ca43f983faf7bf2f5ecd338320ed7d71d99ce10c289a9eeb9c64383e6",
+    "after-xml_block_id-official.json": "4be1f46494d1320bd899c413b1c8edfde709646cc473e3a4bcd36436364d3811",
+    "after-xml_block_id.json": "5762bef5291d653c2f5f8a2e04b417dba2b861f5080f53314a581735c51842f9",
+    "after-xml_block_inline-official.json": "289c44929aed720108965f6415978b99b0647145e0f5d8ebbfe5e58085a9c3bb",
+    "after-xml_block_inline.json": "b238c6f2d93c1c7acc6f76fe10551735e4d190ab39796ab736493106b1d476c1",
+    "after-xml_plain_span-official.json": "b379984a6a1249aa42e37e94d2a65fb659705c0f961402281473d54b77ea3e55",
+    "after-xml_plain_span.json": "c14db9971a1b376d7692d5f7a107438a6883b74d390670cf3d5a26698e758783",
+    "after-xml_str-official.json": "5eee00c6045532b2e27ce45f1754befc5f498d3bc735d528c32396dd3b68c12c",
+    "after-xml_str.json": "310e678ca43f983faf7bf2f5ecd338320ed7d71d99ce10c289a9eeb9c64383e6",
+    "cleanup-delete.json": "65421021a26b174cb7dcecf106b844ba30922b78d61ea90a1ea13f40e249a811",
+    "cleanup-members.json": "9b7da38c61773b6c17306d7e3e81b6a56b01e2561e58756f6de0384a149fa878",
+    "cleanup-owner.json": "dd294d00ece2abd6e8c6a2251ff0bac28a1e822c1372b5a2730bfe9dc7c0ab41",
+    "cleanup-proof.json": "254ef1431fd4094085f4a28ddb0b440a6b23419387724f6a6ddcd3a569a56097",
+    "cleanup-settings.json": "ae2069406503656f59b8691be32537749018aec2404bbbc00f35d7b42637efae",
+    "edit-md_block.json": "02fd25d987ee6e3afad5c988712f55924fe3c132013b99d5005c573a720ae3c7",
+    "edit-md_narrow.json": "45fb8549c19e7eb6a8d9b5cfa77d348e89afd17a85a553092c2cf2615ed432bd",
+    "edit-md_str_bold_link.json": "a7bc7bae7e7232f1cf1461a5c67d394a51daca2ea6b070da76fbb55abe300af8",
+    "edit-md_str_link_bold.json": "f61c4a381c106591cbd3f6f52c47a5f781def3879075ad1cc7df1e459fb27bf4",
+    "edit-xml_block_id.json": "2d1dcb865117a4ffec6bcaa2bedca9eb4f7008dab844b34c0515df1afd004092",
+    "edit-xml_block_inline.json": "ffeb62ac6c50cdb10f2a1f9865bb2fd6dcdff5f25957fbe7e38d56c7f2d414ab",
+    "edit-xml_plain_span.json": "00a19a61522f5f933ffd174915a9b1fe8ce0943a08a3d9c787d075eb2a43cde9",
+    "edit-xml_str.json": "cb78866b5a688703b8fb4e805fd921903053c386fd304b9f9a9335a0586a0f12",
+    "md_block-verified.json": "335e380f3a75f7b291a2cf4cde3e4d6fbb8e680e58ebe91439d2b127f182e204",
+    "md_narrow-verified.json": "5e5cc2d20a8ddbb01ff296a722ecaa29b1071637b6f07a7d2076b0337471b7b3",
+    "md_str_bold_link-verified.json": "461f7d48fb1bde657b40a7dc642454850b0006c47ff3a2f296cdd759aaba4f26",
+    "md_str_link_bold-verified.json": "b2a434c2d17c666e65459f05111954f273b5f3736cb514a2e1349e23b2d288b4",
+    "summary.json": "67102441005e9db1053915f9be1c3ea38f565b6820c6c5a97faf0742eea28ad7",
+    "xml_block_id-verified.json": "050f416f65d011453e7c8ea2c222a37459256c9a80eece8bc316c0cb2b28eb13",
+    "xml_block_inline-verified.json": "de3a73baffd1752381bbbc44f28dc92faba6c9969602ea935cc0e054e35b4714",
+    "xml_plain_span-verified.json": "cfcf5ddaa0a7298e1fc3ed2f6cf796596008619c55b6492af1dc1cbf42c48db7",
+    "xml_str-verified.json": "8ae7877809acdbf04baf125a444b9e7753118ec3ffe412eadf49a1856176f82b"
+  },
+  "limits": [
+    "This is a bounded synthetic rich-text subset, not a general Markdown/XML parser.",
+    "Mutation probes used frozen Next; both binaries returned identical native read data, and both are exercised against local fixtures.",
+    "No old trial request payloads were retained, so this evidence does not identify or rescore either historical02 failure."
+  ]
+}
