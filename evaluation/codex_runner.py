@@ -335,6 +335,11 @@ def validate_output_schema(schema):
 
 def run_agent(request, codex, auth_home, expected_version, fixture_env=None, *, scenario=None, protect_home=False):
     validate_output_schema(request["fixture"]["answer_schema"])
+    delivery = request.get("settings", {}).get("guidance_delivery", "inline")
+    if delivery not in ("inline", "file"):
+        raise ValueError("guidance_delivery must be inline or file")
+    if delivery == "file" and Path(request["skill"]).name != "SKILL.md":
+        raise ValueError("file guidance requires a SKILL.md entry")
     # Required for safe command traces; reject incomplete archives before billing.
     trace_vocabulary()
     workspace = Path(request["workspace"]).resolve()
@@ -382,7 +387,13 @@ def run_agent(request, codex, auth_home, expected_version, fixture_env=None, *, 
     for value in configuration(auth_home, workspace, request["settings"]["reasoning"], fixture_env, unix_sockets=sockets, protect_home=protect_home):
         command.extend(["--config", value])
     command.append("-")
-    skill = (workspace / "guidance" / Path(request["skill"]).name).read_text(encoding="utf-8")
+    if delivery == "inline":
+        skill = (workspace / "guidance" / Path(request["skill"]).name).read_text(encoding="utf-8")
+        guidance = ("The supplied CLI skill follows; its relative references are "
+                    "under ./guidance/.\n\n" + skill)
+    else:
+        guidance = ("The selected CLI skill is at ./guidance/SKILL.md. Read it completely before task actions; "
+                    "its relative references are under ./guidance/.")
     environment_note = ("All Feishu API calls use a local synthetic read-only fixture through the preconfigured "
                         "auth sidecar; user and bot identities are available with sentinel credentials. Only "
                         "loopback HTTP is permitted. Do not inspect or change auth/proxy settings. " if fixture_env and fixture_env.get("LARKSUITE_CLI_AUTH_PROXY") else
@@ -395,8 +406,7 @@ def run_agent(request, codex, auth_home, expected_version, fixture_env=None, *, 
     prompt = ("Complete this CLI task using the selected binary on PATH. " + environment_note +
               "Do not log in, initialize an app, or access other credentials. " + mutation_rule + "Work only in this "
               "temporary workspace. Return the requested JSON answer. You may use the shell and files "
-              "and choose your approach. The supplied CLI skill follows; its relative references are "
-              "under ./guidance/.\n\n" + skill + "\n\nTask:\n" + request["prompt"])
+              "and choose your approach. " + guidance + "\n\nTask:\n" + request["prompt"])
     timeout = request["settings"]["budget"].get("timeout_seconds")
     if type(timeout) not in (int, float) or timeout <= 0:
         raise ValueError("Codex adapter requires a positive timeout_seconds task budget")

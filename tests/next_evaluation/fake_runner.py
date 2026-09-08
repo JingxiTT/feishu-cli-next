@@ -10,6 +10,8 @@ assert "expected" not in request
 assert "FEISHU_EVAL_TEST_SECRET" not in os.environ
 assert not (Path(request["workspace"]) / "state.json").exists()
 fixture = request["fixture"]
+if "expected_guidance_delivery" in fixture:
+    assert request["settings"]["guidance_delivery"] == fixture["expected_guidance_delivery"]
 if fixture.get("invocation_log"):
     with Path(fixture["invocation_log"]).open("a") as log:
         log.write(json.dumps({"task_id": request["task_id"], "trial": request["trial"], "arm": request["arm"]}) + "\n")

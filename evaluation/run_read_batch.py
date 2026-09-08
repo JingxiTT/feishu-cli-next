@@ -24,6 +24,8 @@ def main():
     parser.add_argument('--task-kind', choices=('read', 'scenario', 'scaling', 'business', 'paired'), default='read')
     parser.add_argument('--model', default='gpt-6-astra', help='Codex model identifier; pin explicitly for a new comparison')
     parser.add_argument('--reasoning', default='high', help='Codex reasoning effort; pin explicitly for a new comparison')
+    parser.add_argument('--guidance-delivery', choices=('inline', 'file'), default='inline',
+                        help='Shared delivery for every arm: inline skill text or a required complete file read')
     args = parser.parse_args()
     if args.original_comparison and (args.previous_next_source or args.previous_next_cli or args.only_arm):
         parser.error('original comparison cannot combine previous Next or candidate-only options')
@@ -80,6 +82,7 @@ def main():
                 official_cli = build_host(args.official_source, temporary / 'official-host', False)
                 next_cli = build_host(args.next_source, temporary / 'next-host', True)
             config = {'mode': 'real', 'backend': manifest['backend'], 'model': args.model,
+                      'guidance_delivery': args.guidance_delivery,
                       'reasoning': args.reasoning, 'tokenizer': 'provider-undisclosed', 'tools': ['shell', 'files'],
                       'permissions': 'workspace-write; managed proxy loopback-only with local binding; isolated synthetic sidecar',
                       'budget': {'timeout_seconds': 180}, 'timeout_seconds': 210,

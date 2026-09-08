@@ -105,9 +105,17 @@ def process(command, request, workspace, timeout):
         return {}, "launch_failed", time.monotonic() - started
 
 
+def guidance_delivery(config):
+    delivery = config.get("guidance_delivery", "inline")
+    if delivery not in ("inline", "file") or any("guidance_delivery" in arm for arm in config.get("arms", {}).values()):
+        raise ValueError("guidance_delivery must be one shared inline or file mode")
+    return delivery
+
+
 def validate_config(config):
     if not isinstance(config, dict):
         raise ValueError("config must be an object")
+    guidance_delivery(config)
     for key in ("backend", "model", "tokenizer", "reasoning", "tools", "permissions", "budget", "accounting_method"):
         if not config.get(key):
             raise ValueError("pin config field: " + key)
@@ -134,6 +142,7 @@ def validate_config(config):
 
 
 def run_one(config, task, trial, arm):
+    delivery = guidance_delivery(config)
     with tempfile.TemporaryDirectory(prefix="feishu-eval-") as directory:
         workspace = Path(directory)
         (workspace / "fixture.json").write_text(json.dumps(task["fixture"], ensure_ascii=False), encoding="utf-8")
@@ -143,6 +152,7 @@ def run_one(config, task, trial, arm):
                    "cli": config["arms"][arm]["cli"], "skill": config["arms"][arm]["skill"],
                    "settings": {key: config[key] for key in
                                 ("backend", "model", "tokenizer", "reasoning", "tools", "permissions", "budget", "mode")}}
+        request["settings"]["guidance_delivery"] = delivery
         if "selected_skill_source" in config["arms"][arm]:
             request["selected_skill_source"] = config["arms"][arm]["selected_skill_source"]
         payload, code, elapsed = process(config["runner"], request, workspace, config.get("timeout_seconds", 120))
@@ -338,7 +348,8 @@ def main():
                     "performance_claims_supported": False, "completed": False, "planned_runs": len(planned),
                     "seed": args.seed, "repeats": args.repeats, "fresh_context": True,
                     "task_manifest_sha256": digest(args.tasks), "config_sha256": digest(args.config),
-                    "environment": {key: config[key] for key in ("backend", "model", "tokenizer", "reasoning", "tools", "permissions", "budget", "accounting_method")},
+                    "environment": {**{key: config[key] for key in ("backend", "model", "tokenizer", "reasoning", "tools", "permissions", "budget", "accounting_method")},
+                                    "guidance_delivery": guidance_delivery(config)},
                     "arms": {arm: {key + "_sha256": digest(config["arms"][arm][key]) for key in ("cli", "skill")} for arm in arms},
                     "runs": runs, **aggregate(runs, selected_arms)}
         if args.only_arm:

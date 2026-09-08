@@ -108,6 +108,76 @@ class CodexAccountingTests(unittest.TestCase):
                     runner.run_agent({'fixture': {'answer_schema': schema}}, None, None, None)
                 process.assert_not_called()
 
+    def test_file_guidance_preserves_both_arm_files_and_inline_prompt(self):
+        from unittest.mock import patch
+        schema = {'type': 'object', 'properties': {}, 'required': [], 'additionalProperties': False}
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            for arm in ('official', 'next'):
+                distribution = root / arm / ('skills' if arm == 'official' else 'agent-skills')
+                entry = distribution / ('lark-doc' if arm == 'official' else 'feishu-cli-next') / 'SKILL.md'
+                entry.parent.mkdir(parents=True)
+                content = ('Complete ' + arm + ' guidance — 你好\nRead references/details.md when needed.\n').encode()
+                entry.write_bytes(content)
+                reference = entry.parent / 'references/details.md'
+                reference.parent.mkdir()
+                reference.write_bytes(b'Exact reference bytes\r\n')
+                if arm == 'official':
+                    shared = distribution / 'lark-shared/SKILL.md'
+                    shared.parent.mkdir()
+                    shared.write_bytes(b'Original cross-skill dependency\n')
+                prompts, copied = {}, {}
+                for mode in ('default', 'inline', 'file'):
+                    workspace = root / (arm + '-' + mode)
+                    workspace.mkdir()
+                    settings = {'model': 'gpt-5.6-luna', 'tokenizer': 'provider-undisclosed',
+                                'reasoning': 'medium', 'budget': {'timeout_seconds': 5}}
+                    if mode != 'default':
+                        settings['guidance_delivery'] = mode
+                    request = {'workspace': str(workspace), 'cli': str(root / 'unused-cli'), 'skill': str(entry),
+                               'prompt': 'Perform the synthetic task.', 'settings': settings,
+                               'fixture': {'answer_schema': schema}, 'arm': arm}
+                    with patch.object(runner.subprocess, 'run', return_value=subprocess.CompletedProcess(
+                            [], 0, stdout='codex-cli test\n')), patch.object(runner.subprocess, 'Popen') as process:
+                        process.return_value.returncode = 0
+                        process.return_value.communicate.return_value = (self.stream(), '')
+                        result, code = runner.run_agent(request, root / 'unused-codex', root / 'empty-auth', 'codex-cli test')
+                        prompts[mode] = process.return_value.communicate.call_args.args[0]
+                    self.assertEqual(code, 0)
+                    self.assertTrue(result['accounting_complete'])
+                    self.assertEqual(entry.read_bytes(), content)
+                    self.assertEqual((workspace / 'guidance/SKILL.md').read_bytes(), content)
+                    self.assertEqual((workspace / 'guidance/references/details.md').read_bytes(), reference.read_bytes())
+                    copied[mode] = {str(path.relative_to(workspace)): path.read_bytes()
+                                    for path in workspace.rglob('*') if path.is_file() and
+                                    path.relative_to(workspace).parts[0] in ('guidance', 'lark-doc', 'lark-shared')}
+                    if arm == 'official':
+                        self.assertEqual((workspace / 'lark-shared/SKILL.md').read_bytes(), shared.read_bytes())
+                self.assertEqual(prompts['default'], prompts['inline'])
+                self.assertEqual(copied['default'], copied['file'])
+                self.assertEqual(prompts['inline'].count(content.decode()), 1)
+                self.assertNotIn(content.decode(), prompts['file'])
+                self.assertIn('./guidance/SKILL.md. Read it completely before task actions', prompts['file'])
+                self.assertTrue(prompts['file'].endswith('\n\nTask:\nPerform the synthetic task.'))
+                # Preserve the historical inline wrapper, including whitespace.
+                expected = ('Complete this CLI task using the selected binary on PATH. '
+                            'The project has an empty Feishu configuration. Network access for shell commands is disabled. '
+                            'Do not log in, initialize an app, or access other credentials. Do not change any backend resources. '
+                            'Work only in this temporary workspace. Return the requested JSON answer. You may use the shell and files '
+                            'and choose your approach. The supplied CLI skill follows; its relative references are '
+                            'under ./guidance/.\n\n' + content.decode() + '\n\nTask:\nPerform the synthetic task.')
+                self.assertEqual(prompts['inline'], expected)
+
+    def test_invalid_guidance_delivery_fails_before_workspace_or_provider(self):
+        from unittest.mock import patch
+        schema = {'type': 'object', 'properties': {}, 'required': [], 'additionalProperties': False}
+        for mode in (None, True, [], {}, 'private-invalid-mode'):
+            with self.subTest(mode=mode), patch.object(runner.subprocess, 'Popen') as process:
+                with self.assertRaises(ValueError):
+                    runner.run_agent({'fixture': {'answer_schema': schema}, 'settings': {'guidance_delivery': mode}},
+                                     None, None, None)
+                process.assert_not_called()
+
     def test_uses_provider_aggregate_without_byte_estimates(self):
         result = runner.parse_events(self.stream(), 0)
         self.assertTrue(result["accounting_complete"])
@@ -171,6 +241,8 @@ class CodexAccountingTests(unittest.TestCase):
                 captured.append(config)
                 self.assertEqual(config['model'], 'gpt-5.6-luna')
                 self.assertEqual(config['reasoning'], 'medium')
+                self.assertEqual(config['guidance_delivery'], expected_delivery)
+                self.assertTrue(all('guidance_delivery' not in arm for arm in config['arms'].values()))
                 self.assertEqual(Path(config['arms']['official_concise']['skill']).read_text(),
                                  (ROOT / 'evaluation/official-contact-concise/SKILL.md').read_text())
                 self.assertEqual(set(config['arms']), {'official', 'official_concise', 'next'})
@@ -179,12 +251,14 @@ class CodexAccountingTests(unittest.TestCase):
                 self.assertEqual(config['runner'][-1], 'codex-cli 0.153.4')
                 return subprocess.CompletedProcess(command, 0)
 
-            with patch.object(sys, 'argv', args), \
-                 patch.object(sys, 'path', [str(ROOT / 'evaluation'), *sys.path]), \
-                 patch.object(batch.subprocess, 'run', side_effect=inspect_config), \
-                 patch('builtins.print'):
-                self.assertEqual(batch.main(), 0)
-            self.assertEqual(len(captured), 1)
+            for expected_delivery in ('inline', 'file'):
+                selected_args = args + (['--guidance-delivery', 'file'] if expected_delivery == 'file' else [])
+                with patch.object(sys, 'argv', selected_args), \
+                     patch.object(sys, 'path', [str(ROOT / 'evaluation'), *sys.path]), \
+                     patch.object(batch.subprocess, 'run', side_effect=inspect_config), \
+                     patch('builtins.print'):
+                    self.assertEqual(batch.main(), 0)
+            self.assertEqual(len(captured), 2)
             self.assertFalse(values['auth-home'].exists())
 
     def test_original_comparison_and_paired_markdown_keep_full_drive_source(self):

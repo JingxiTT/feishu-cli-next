@@ -15,6 +15,20 @@ SPEC.loader.exec_module(harness)
 
 
 class AccountingTests(unittest.TestCase):
+    def test_guidance_delivery_rejects_invalid_and_per_arm_modes_before_runner(self):
+        from unittest.mock import patch
+        invalid = [{'guidance_delivery': value} for value in (None, True, [], {}, 'invalid')]
+        invalid += [{'guidance_delivery': 'file', 'arms': {'official': {'guidance_delivery': value}}}
+                    for value in ('file', 'inline')]
+        for config in invalid:
+            with self.subTest(config=config), patch.object(harness, 'process') as process:
+                with self.assertRaises(ValueError):
+                    harness.validate_config(config)
+                with self.assertRaises(ValueError):
+                    harness.run_one(config, None, 0, 'next')
+                process.assert_not_called()
+        self.assertEqual(harness.guidance_delivery({}), 'inline')
+
     def test_accounting_diagnostics_never_keep_unknown_provider_text(self):
         self.assertEqual(harness.sanitized_accounting_diagnostics([
             "provider_turn_failed", "private provider message", {}, "provider_turn_failed"]), ["provider_turn_failed"])
@@ -162,7 +176,8 @@ class AccountingTests(unittest.TestCase):
 
 
 class ProcessE2ETests(unittest.TestCase):
-    def invoke(self, fixture=None, split="controlled", extra_args=(), arms=harness.ARMS, task_count=1):
+    def invoke(self, fixture=None, split="controlled", extra_args=(), arms=harness.ARMS, task_count=1,
+               guidance_delivery="inline"):
         with tempfile.TemporaryDirectory(prefix="feishu-harness-test-") as directory:
             root = Path(directory)
             task = {"id": "increment", "section": "foundation", "prompt": "Increment the fixture value.",
@@ -170,6 +185,7 @@ class ProcessE2ETests(unittest.TestCase):
             tasks = [task] if task_count == 1 else [{**task, "id": f"increment-{n}"} for n in range(task_count)]
             (root / "tasks.json").write_text(json.dumps({"split": split, "tasks": tasks}))
             config = {"mode": "controlled", "backend": "synthetic-state-v1", "model": "synthetic-model",
+                      "guidance_delivery": guidance_delivery,
                       "tokenizer": "synthetic-counts-v1", "reasoning": "none", "tools": ["python"],
                       "permissions": "isolated-offline-fixture", "budget": {"turns": 2},
                       "accounting_method": "invented test counts; not real model usage", "timeout_seconds": 5,
@@ -190,6 +206,7 @@ class ProcessE2ETests(unittest.TestCase):
         self.assertEqual(completed.returncode, 0, completed.stderr)
         self.assertEqual(json.loads(completed.stdout)["status"], "pass")
         self.assertFalse(result["performance_claims_supported"])
+        self.assertEqual(result['environment']['guidance_delivery'], 'inline')
         self.assertEqual(len(result["runs"]), 6)
         self.assertEqual(result["planned_runs"], 6)
         self.assertNotIn("arm_selection", result)
@@ -199,6 +216,15 @@ class ProcessE2ETests(unittest.TestCase):
         self.assertEqual(result["runs"][0]["control_trace"], [{"choices": [{"kind": "cli", "command": ["auth", "status"], "flags": ["--json"]}], "exit_code": 3}])
         self.assertEqual(len(result["matched_success"][0]["pairs"]), 2)
         self.assertNotIn("private marker", json.dumps(result))
+
+    def test_file_guidance_is_shared_and_persisted_for_original_comparison(self):
+        completed, result = self.invoke(fixture={'expected_guidance_delivery': 'file'}, guidance_delivery='file',
+                                        arms=harness.ORIGINAL_ARMS, extra_args=('--original-comparison',))
+        self.assertEqual(completed.returncode, 0, completed.stderr)
+        self.assertEqual(result['environment']['guidance_delivery'], 'file')
+        self.assertEqual({run['arm'] for run in result['runs']}, {'official', 'next'})
+        self.assertTrue(all(run['success'] and run['usage']['total_tokens'] == 165 for run in result['runs']))
+        self.assertEqual(result['environment']['budget'], {'turns': 2})
         self.assertNotIn("must-not-be-inherited", json.dumps(result))
 
     def test_before_after_comparison_keeps_named_baselines_and_failed_costs(self):
