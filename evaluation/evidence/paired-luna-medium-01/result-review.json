@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "verdict": "pass: retained accounting, provenance and bounded report claims agree",
+  "condition": "paired-luna-medium-01",
+  "evaluator_revision": "596373b2d45ca6bd37d9eade191d6b2de1c65274",
+  "review_scope": "Independent recomputation of six final batch records and final report; no replay of discarded model payloads or backend receipts.",
+  "reviewer_activity": {
+    "provider_calls": 0,
+    "live_calls": 0,
+    "held_out_access": false,
+    "product_fixture_guidance_edits": false
+  },
+  "totals": {
+    "planned_attempts": 72,
+    "completed_attempts": 72,
+    "successes": 54,
+    "inconclusive": 7,
+    "unknown_usage_attempts": 0,
+    "known_tokens": 8442585,
+    "all_completed": true,
+    "failed_or_inconclusive_known_tokens": 3454343,
+    "cached_input_tokens_observed": 6382336,
+    "failed_verifications": 11,
+    "observed_input_tokens": 8357840,
+    "observed_output_tokens": 84745
+  },
+  "checks": {
+    "unique_complete_seeded_attempts": 72,
+    "batch_aggregate_groups": 60,
+    "summary_aggregate_groups": 45,
+    "matched_success_pairs": 33,
+    "command_diagnostic_groups": 24,
+    "report_function_rows": 24,
+    "report_matched_rows": 16,
+    "report_failure_rows": 8,
+    "cached_input_included_once": true,
+    "finite_efficiency_rules": true,
+    "frozen_task_model_binary_and_entry_hashes": true
+  },
+  "batch_sha256": {
+    "base/batch-01.json": "c09dd484a630f77a84038cbf4fd7f90f7ee4d79d8178d1584cf7d6420a73a036",
+    "contact/batch-01.json": "e29fcee4409cd7dca7991616f3265d4bb7cc792f4b9e7c0bd38286ae5656d59b",
+    "docs/batch-01.json": "2d375247f4b12ce68200a502924a29bc23a9f4eb38b7d7c2652eb2f5222492d6",
+    "drive/batch-01.json": "327f87f4e92512fd528ad35d96eb8f26992a5a004bd9ce4d65c4551abd6372a6",
+    "markdown/batch-01.json": "b0339f54686613e6112dce5785f32c6740da154986c22d92ed0726010c652d42",
+    "sheets/batch-01.json": "203f8518567ad630a395fb7ec6d8e8b9bfccdf4e275128b50178d41ce0d550ef"
+  },
+  "report_input_sha256": {
+    "REPORT.md": "b75e3c5ea3779320d78d427908dfc154906b504d8961602c507421fcaa1c7c47",
+    "summary.json": "9460b11850df28113c072dd9fe8da5e6ed77a7e3634606123ba6ef3cf894c669",
+    "environment.json": "d3e1ee4bcd194d8cbb7003aa4ebdb60f6adca1eefd640e04950ae9ab36930253"
+  },
+  "interpretation": [
+    "Drive has the clearest observed per-task token reduction; both matched-success and all-attempt denominators are reported separately.",
+    "Discovery, Contact and Docs read used more Next tokens than official/full. The Contact comparison with concise must retain its failed-attempt cost and cheaper concise matched successes.",
+    "Docs edit and Base differences are small and not established as stable by three repetitions.",
+    "No comparative saving is supported for Sheets with zero verified baseline results or for Markdown with no verified results and six inconclusive outcomes.",
+    "Generic or absent verification reasons cannot recover exact rejected requests, establish a product cause, or imply misleading intent.",
+    "Public command-choice counts support workflow observations only; provider usage does not allocate tokens per command.",
+    "Synthetic runtime verifier results are preserved, not retrospectively revalidated as live backend fidelity. Historical qualifications and quarantined examples remain separate."
+  ],
+  "additional_provenance_checks": {
+    "actual_cli_binaries_and_api_catalog_hashes_match": true,
+    "versioned_evaluator_archive_hash_matches": true,
+    "archived_task_manifest_hash_matches": true,
+    "guidance_files_hash_checked": {
+      "official_guidance_files": 544,
+      "concise_guidance_files": 21,
+      "next_guidance_files": 1
+    },
+    "additional_concise_contact_entry_hash_matches": true,
+    "linked_readiness_review_hash_matches": true,
+    "report_relative_links_resolve": true,
+    "native_codex_binary_hash_matches": true
+  }
+}
