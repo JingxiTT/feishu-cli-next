@@ -152,3 +152,15 @@ func TestEmbeddedDocsAffordanceComplementsShortcutMetadata(t *testing.T) {
 func normalizedCopy(value string) string {
 	return strings.ToLower(strings.TrimRight(strings.TrimSpace(value), "."))
 }
+
+func TestEmbeddedDocsWorkspaceReferenceIsReachable(t *testing.T) {
+	raw, err := embeddedContentFS.ReadFile("skills/lark-doc/references/lark-doc-workspace.md")
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, command := range []string{"docs +pull", "docs +push", "docs +update"} {
+		if !strings.Contains(string(raw), command) {
+			t.Errorf("workspace reference missing %q", command)
+		}
+	}
+}

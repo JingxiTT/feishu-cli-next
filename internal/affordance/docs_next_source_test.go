@@ -85,3 +85,30 @@ func TestDocsFactReadGuidanceIsParsedIntoCommandTips(t *testing.T) {
 		t.Fatal("fetch guide is no longer reachable from command guidance")
 	}
 }
+
+func TestDocsWorkspaceGuidancePreservesNativeBoundaries(t *testing.T) {
+	previous := mdSource
+	t.Cleanup(func() { SetSource(previous) })
+	SetSource(os.DirFS("../../affordance"))
+	for command, decisions := range map[string][]string{
+		"+pull": {"Read stdout directly", "native sidecar", "immutable regions", "full native content"},
+		"+push": {"Ambiguous edits across text runs are rejected before writing", "verifies applied changes internally", "partial or unknown effects"},
+	} {
+		raw, ok := For("docs", command)
+		if !ok {
+			t.Fatalf("missing %s guidance", command)
+		}
+		parsed, ok := (meta.Method{Affordance: raw}).ParsedAffordance()
+		if !ok {
+			t.Fatalf("invalid %s guidance", command)
+		}
+		for _, decision := range decisions {
+			if !strings.Contains(strings.Join(parsed.Tips, "\n"), decision) {
+				t.Errorf("%s guidance missing %q", command, decision)
+			}
+		}
+		if !containsExact(parsed.Skills, "lark-doc/references/lark-doc-workspace.md") {
+			t.Errorf("%s workspace reference missing", command)
+		}
+	}
+}

@@ -15,6 +15,29 @@ Create a new Lark document from DocxXML or Markdown, optionally in a folder or W
 - lark-doc/references/lark-doc-xml.md
 - lark-doc/references/lark-doc-md.md
 
+## +pull
+Use a readable local view for document facts or wording changes while keeping native block references.
+
+### Tips
+- Read stdout directly for small fact questions. Save a workspace when local editing or a file is needed; keep the Markdown file and its native sidecar together.
+- Unsupported rich blocks remain visible as immutable regions. Use [[+fetch]] for their full native content, comments and reference maps.
+- Existing Markdown marks and block anchors identify the original native content; changing them is not a supported text edit.
+
+### Skills
+- lark-doc/references/lark-doc-workspace.md
+
+## +push
+Apply wording edits from a saved local view while preserving the existing native block identities and formatting.
+
+### Tips
+- Edit text inside existing paragraphs or headings; leave anchors, structure and Markdown formatting intact. Ambiguous edits across text runs are rejected before writing; use [[+update]] for richer edits.
+- The command checks the saved native state and verifies applied changes internally. Use a successful verified result without repeating the same readback.
+- Known remote changes stop the push. Feishu accepts stale revision parameters, so another client can still edit between the check and write; this is not an atomic conflict check.
+- A workspace is a base snapshot, not a live mirror. Pull a new file for further work; after partial or unknown effects, reconcile the returned block outcomes before another mutation.
+
+### Skills
+- lark-doc/references/lark-doc-workspace.md
+
 ## +fetch
 Read an entire Lark document, or limit the result to an outline, section, block range, or keyword match.
 
