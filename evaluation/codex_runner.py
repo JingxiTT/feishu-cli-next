@@ -20,6 +20,100 @@ DISABLED_FEATURES = (
     "workspace_dependencies", "shell_snapshot",
 )
 
+# Public errs/category.go and errs/subtypes.go vocabulary, deliberately finite.
+# These fields report CLI output; they are never backend or success evidence.
+CLI_ERROR_SUBTYPES = {
+    "validation": {"invalid_argument", "failed_precondition", "command_unavailable"},
+    "authentication": {"token_missing", "token_invalid", "token_expired", "refresh_token_invalid",
+                       "refresh_token_expired", "refresh_token_revoked", "refresh_token_reused", "refresh_server_error"},
+    "authorization": {"missing_scope", "user_unauthorized", "app_scope_not_applied", "token_scope_insufficient",
+                      "app_unavailable", "app_disabled", "permission_denied"},
+    "config": {"invalid_client", "not_configured", "invalid_config"},
+    "network": {"transport", "timeout", "tls", "dns", "server_error", "protocol", "representation_changed"},
+    "api": {"mutation_outcome", "rate_limit", "conflict", "cross_tenant", "cross_brand", "invalid_parameters",
+            "ownership_mismatch", "not_found", "server_error", "quota_exceeded", "already_exists", "feature_not_available"},
+    "policy": {"challenge_required", "access_denied", "content_safety"},
+    "internal": {"sdk_error", "invalid_response", "file_io", "external_tool", "storage"},
+    "confirmation": {"confirmation_required"},
+}
+PUSH_ERROR_REASONS = {
+    "invalid document workspace sidecar": "workspace_sidecar_invalid",
+    "invalid or unsupported document workspace sidecar": "workspace_sidecar_invalid",
+    "local document edit is unsupported or ambiguous": "workspace_edit_unsupported",
+    "current document differs from the expected native snapshot": "workspace_snapshot_changed",
+    "native readback does not match the planned block edit": "workspace_readback_mismatch",
+    "mutation evidence is incomplete; inspect receipts before continuing": "workspace_evidence_incomplete",
+}
+MUTATION_OUTCOMES = {"confirmed_unapplied", "partial", "unknown", "confirmed_applied"}
+
+
+def sanitized_cli_error(value, command, *, wire=False, cause=False):
+    """Rebuild only published enum fields; never copy arbitrary envelope content."""
+    if not isinstance(value, dict):
+        return None
+    category, subtype = value.get("type"), value.get("subtype")
+    if (not isinstance(category, str) or category not in CLI_ERROR_SUBTYPES or
+            not isinstance(subtype, str) or subtype not in CLI_ERROR_SUBTYPES[category] | {"unknown"}):
+        return None
+    result = {"type": category, "subtype": subtype}
+    param = value.get("param")
+    if isinstance(param, str) and param in trace_vocabulary()[1]:
+        result["param"] = param
+    if command == ["docs", "+push"] and (category, subtype) == ("validation", "failed_precondition"):
+        text = value.get("message") if wire else value.get("reason")
+        reason = PUSH_ERROR_REASONS.get(text) if wire and isinstance(text, str) else text
+        if isinstance(reason, str) and reason in PUSH_ERROR_REASONS.values():
+            result["reason"] = reason
+    if not cause and (category, subtype) == ("api", "mutation_outcome"):
+        outcome = value.get("outcome")
+        if isinstance(outcome, str) and outcome in MUTATION_OUTCOMES:
+            result["outcome"] = outcome
+        detail = sanitized_cli_error(value.get("cause"), command, wire=wire, cause=True)
+        if detail:
+            result["cause"] = detail
+    return result
+
+
+def reported_cli_error(output, choices, exit_code):
+    """Parse only complete bounded JSON output from one failed CLI shell choice.
+
+    Pretty JSON and a partial-result envelope followed by an error are supported.
+    Mixed shell output, truncation and unknown shapes stay unavailable. No search
+    inside arbitrary text; all parse failures are independent of token accounting.
+    """
+    if (type(exit_code) is not int or exit_code == 0 or len(choices) != 1 or
+            choices[0].get("kind") != "cli" or not isinstance(output, str) or len(output) > 65536):
+        return None
+
+    def unique_object(pairs):
+        value = {}
+        for key, item in pairs:
+            if key in value:
+                raise ValueError("duplicate JSON key")
+            value[key] = item
+        return value
+
+    def invalid_constant(_):
+        raise ValueError("non-JSON constant")
+
+    decoder = json.JSONDecoder(object_pairs_hook=unique_object, parse_constant=invalid_constant)
+    remaining, errors = output.strip(), []
+    try:
+        for _ in range(2):
+            envelope, end = decoder.raw_decode(remaining)
+            if not isinstance(envelope, dict) or type(envelope.get("ok")) is not bool:
+                return None
+            if envelope["ok"] is False and isinstance(envelope.get("error"), dict):
+                errors.append(envelope["error"])
+            remaining = remaining[end:].strip()
+            if not remaining:
+                break
+        if remaining or len(errors) != 1:
+            return None
+        return sanitized_cli_error(errors[0], choices[0].get("command"), wire=True)
+    except (ValueError, TypeError, RecursionError):
+        return None
+
 
 @functools.lru_cache(maxsize=1)
 def trace_vocabulary():
@@ -162,8 +256,12 @@ def parse_events(stdout, returncode):
             if item_kind == "command_execution":
                 commands += 1
                 exit_code = item.get("exit_code")
-                control_trace.append({"choices": command_choices(item.get("command")),
-                                      "exit_code": exit_code if type(exit_code) is int else None})
+                record = {"choices": command_choices(item.get("command")),
+                          "exit_code": exit_code if type(exit_code) is int else None}
+                diagnostic = reported_cli_error(item.get("aggregated_output"), record["choices"], exit_code)
+                if diagnostic:
+                    record["reported_cli_error"] = diagnostic
+                control_trace.append(record)
             if item_kind in ("mcp_tool_call", "web_search", "collab_tool_call"):
                 unexpected_tools = True
     complete = started > 0 and started == completed == len(spans) and not (malformed or failed or unexpected_tools)

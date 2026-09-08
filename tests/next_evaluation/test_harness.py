@@ -113,6 +113,53 @@ class AccountingTests(unittest.TestCase):
         trace[0]["choices"][0]["flags"].append("--secret-user-value")
         self.assertIsNone(harness.sanitized_trace(trace))
 
+    def test_cli_error_trace_revalidates_every_field_and_omits_untrusted_content(self):
+        event = {"choices": [{"kind": "cli", "command": ["docs", "+push"], "flags": ["--file"]}],
+                 "exit_code": 22, "reported_cli_error": {"type": "api", "subtype": "mutation_outcome",
+                    "outcome": "unknown", "message": "private", "receipts": ["private"], "cause": {
+                        "type": "validation", "subtype": "failed_precondition", "param": "--file",
+                        "reason": "workspace_readback_mismatch", "message": "private", "cause": {"private": True}}}}
+        self.assertEqual(harness.sanitized_trace([event])[0]["reported_cli_error"], {
+            "type": "api", "subtype": "mutation_outcome", "outcome": "unknown", "cause": {
+                "type": "validation", "subtype": "failed_precondition", "param": "--file",
+                "reason": "workspace_readback_mismatch"}})
+        for diagnostic in ([], {"type": "private", "subtype": "private"},
+                           {"type": "validation", "subtype": ["failed_precondition"]}):
+            clean = harness.sanitized_trace([{**event, "reported_cli_error": diagnostic}])
+            self.assertNotIn("reported_cli_error", clean[0])
+            self.assertEqual(clean[0]["exit_code"], 22)
+        clean = harness.sanitized_trace([{**event, "reported_cli_error": {
+            "type": "validation", "subtype": "failed_precondition", "reason": "private", "param": "private"}}])
+        self.assertEqual(clean[0]["reported_cli_error"], {"type": "validation", "subtype": "failed_precondition"})
+        for extra in ({"exit_code": 0}, {"exit_code": True}, {"choices": [{"kind": "script"}]},
+                      {"choices": event["choices"] + [{"kind": "file_read"}]}):
+            self.assertNotIn("reported_cli_error", harness.sanitized_trace([{**event, **extra}])[0])
+
+    def test_reported_cli_errors_cannot_change_verdict_or_cost(self):
+        from unittest.mock import patch
+        config = {"mode": "controlled", "backend": "synthetic-state-v1", "model": "synthetic-model",
+                  "tokenizer": "synthetic-counts-v1", "reasoning": "none", "tools": [], "permissions": "offline",
+                  "budget": {}, "runner": ["runner"], "verifier": ["verifier"],
+                  "arms": {"next": {"cli": "unused", "skill": "unused"}}}
+        task = {"id": "controlled", "section": "docs", "prompt": "controlled", "fixture": {}, "expected": {}}
+        event = {"choices": [{"kind": "cli", "command": ["docs", "+push"], "flags": []}], "exit_code": 2}
+        payload = {"usage_source": "synthetic", "model": config["model"], "tokenizer": config["tokenizer"],
+                   "accounting_complete": True, "claimed_success": True,
+                   "turns": [{"input_tokens": 200, "cached_input_tokens": 80, "output_tokens": 30}]}
+        for verification in ({"success": True}, {"success": False}, {"success": False, "fixture_unsupported": True}):
+            baseline = None
+            for diagnostic in (None, {"type": "validation", "subtype": "failed_precondition",
+                                      "reason": "workspace_edit_unsupported"}, {"type": "private", "subtype": []}):
+                trace = [{**event, **({"reported_cli_error": diagnostic} if diagnostic is not None else {})}]
+                with patch.object(harness, "process", side_effect=[({**payload, "control_trace": trace}, 0, 1),
+                                                                  (verification, 0, 1)]):
+                    result = harness.run_one(config, task, 0, "next")
+                result.pop("control_trace")
+                if baseline is None:
+                    baseline = result
+                self.assertEqual(result, baseline)
+                self.assertEqual(result["usage"]["total_tokens"], 230)
+
 
 class ProcessE2ETests(unittest.TestCase):
     def invoke(self, fixture=None, split="controlled", extra_args=(), arms=harness.ARMS, task_count=1):

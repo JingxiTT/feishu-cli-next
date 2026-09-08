@@ -235,7 +235,7 @@ def sanitized_trace(trace):
     """Validate even adapter-provided trace strings against the public vocabulary."""
     if not isinstance(trace, list):
         return None
-    from codex_runner import trace_vocabulary
+    from codex_runner import trace_vocabulary, sanitized_cli_error
     paths, flags = trace_vocabulary()
     result = []
     for event in trace:
@@ -258,7 +258,12 @@ def sanitized_trace(trace):
             else:
                 return None
         code = event.get("exit_code")
-        result.append({"choices": choices, "exit_code": code if type(code) is int else None})
+        record = {"choices": choices, "exit_code": code if type(code) is int else None}
+        if type(code) is int and code != 0 and len(choices) == 1 and choices[0]["kind"] == "cli":
+            diagnostic = sanitized_cli_error(event.get("reported_cli_error"), choices[0]["command"])
+            if diagnostic:
+                record["reported_cli_error"] = diagnostic
+        result.append(record)
     return result
 
 

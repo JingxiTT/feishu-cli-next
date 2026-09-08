@@ -14,6 +14,74 @@ SPEC.loader.exec_module(runner)
 
 
 class CodexAccountingTests(unittest.TestCase):
+    def error_stream(self, output, command="lark-cli docs +push --file private.md --json", exit_code=2):
+        return "\n".join(json.dumps(event) for event in [
+            {"type": "turn.started"},
+            {"type": "item.completed", "item": {"type": "command_execution", "command": command,
+                "exit_code": exit_code, "aggregated_output": output}},
+            {"type": "turn.completed", "usage": {"input_tokens": 200, "cached_input_tokens": 80, "output_tokens": 30}}])
+
+    def test_cli_diagnostics_are_finite_and_do_not_change_accounting(self):
+        for message, reason in runner.PUSH_ERROR_REASONS.items():
+            output = json.dumps({"ok": False, "identity": "private identity", "error": {
+                "type": "validation", "subtype": "failed_precondition", "message": message,
+                "param": "--file", "hint": "private hint", "code": 987654321,
+                "log_id": "private id", "cause": {"secret": "private cause"}}}, indent=2)
+            result = runner.parse_events(self.error_stream(output), 0)
+            baseline = runner.parse_events(self.error_stream(""), 0)
+            self.assertEqual({k: v for k, v in result.items() if k != "control_trace"},
+                             {k: v for k, v in baseline.items() if k != "control_trace"})
+            diagnostic = result["control_trace"][0].pop("reported_cli_error")
+            self.assertEqual(diagnostic, {"type": "validation", "subtype": "failed_precondition",
+                                         "param": "--file", "reason": reason})
+            self.assertEqual(result, baseline)
+            self.assertNotIn("private", json.dumps(diagnostic))
+
+    def test_mutation_error_keeps_one_finite_cause_without_receipts(self):
+        output = json.dumps({"ok": False, "data": {"private": "partial output"}}) + "\n" + json.dumps({
+            "ok": False, "error": {"type": "api", "subtype": "mutation_outcome", "outcome": "unknown",
+                "receipts": ["private receipt"], "persistence_failed": True,
+                "cause": {"type": "validation", "subtype": "failed_precondition",
+                    "message": "native readback does not match the planned block edit", "param": "private path",
+                    "cause": {"type": "internal", "subtype": "file_io", "message": "private"}}}})
+        result = runner.parse_events(self.error_stream(output, exit_code=22), 0)
+        self.assertEqual(result["control_trace"][0]["reported_cli_error"], {
+            "type": "api", "subtype": "mutation_outcome", "outcome": "unknown", "cause": {
+                "type": "validation", "subtype": "failed_precondition", "reason": "workspace_readback_mismatch"}})
+        self.assertTrue(result["accounting_complete"])
+
+    def test_diagnostic_parser_rejects_adversarial_output_without_losing_usage(self):
+        error = {"ok": False, "error": {"type": "validation", "subtype": "failed_precondition"}}
+        encoded = json.dumps(error)
+        outputs = [None, [], "", "private text " + encoded, encoded + " private text", encoded[:-1],
+                   encoded + encoded, encoded + "{}{}", " " * 65537 + encoded, "[" * 1500 + "]" * 1500,
+                   '{"ok":false,"ok":false,"error":{"type":"validation","subtype":"failed_precondition"}}',
+                   '{"ok":false,"error":{"type":"validation","subtype":"failed_precondition","code":NaN}}',
+                   json.dumps({"ok": True, "error": error["error"]}),
+                   json.dumps({"ok": False, "error": {"type": ["validation"], "subtype": {}}}),
+                   json.dumps({"ok": False, "error": {"type": "private type", "subtype": "private subtype"}})]
+        for output in outputs:
+            with self.subTest(output_type=type(output).__name__):
+                result = runner.parse_events(self.error_stream(output), 0)
+                self.assertNotIn("reported_cli_error", result["control_trace"][0])
+                self.assertTrue(result["accounting_complete"])
+                self.assertEqual(result["turns"], [{"input_tokens": 200, "cached_input_tokens": 80, "output_tokens": 30}])
+        for command, code in [("lark-cli docs +push --file private.md; cat private.txt", 2),
+                              ("python3 private.py", 2), ("lark-cli docs +push --file private.md", 0),
+                              ("lark-cli docs +push --file private.md", True)]:
+            result = runner.parse_events(self.error_stream(encoded, command, code), 0)
+            self.assertNotIn("reported_cli_error", result["control_trace"][0])
+
+    def test_message_labels_require_exact_source_literal_and_push_command(self):
+        for command, message in [("lark-cli docs +pull", "local document edit is unsupported or ambiguous"),
+                                 ("lark-cli docs +push", "local document edit is unsupported or ambiguous private"),
+                                 ("lark-cli docs +push", "workspace_edit_unsupported")]:
+            output = json.dumps({"ok": False, "error": {"type": "validation", "subtype": "failed_precondition",
+                                "message": message, "reason": "workspace_edit_unsupported"}})
+            result = runner.parse_events(self.error_stream(output, command), 0)
+            self.assertEqual(result["control_trace"][0]["reported_cli_error"],
+                             {"type": "validation", "subtype": "failed_precondition"})
+
     def stream(self, extra=()):
         return "\n".join(json.dumps(event) for event in [
             {"type": "thread.started", "thread_id": "synthetic"},
