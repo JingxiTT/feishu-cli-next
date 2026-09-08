@@ -1,0 +1,121 @@
+{
+  "schema_version": 1,
+  "section": "markdown",
+  "date": "2026-09-08",
+  "status": "bounded_private_source_and_native_render_lifecycle_passed",
+  "binary_sha256": "05e126fc5a7e10d94d919088c28434eee3f0332bc3016efa21c094cb31ba2d01",
+  "scope": "One current-user Markdown source file and one Docs-native Markdown rendering under coordinator-owned private parent. Not full Markdown parity.",
+  "identity_and_privacy": {
+    "fresh_identity": "Verified auth user/openID equals contact current user; SHA256 domain-separated openID/tenant digest matches independent Contact proof",
+    "before_create": "Previously observed invited-only default plus independently verified personal parent; current test repeats closed-link sharing, sole current-user full_access/container membership and metadata owner",
+    "per_phase": "Parent sharing/membership rechecked before each create; each returned child sharing/membership checked before reads",
+    "sharing": "No recipients, mentions, grants, Wiki space, new scopes or login",
+    "identifiers": "Omitted from committed evidence; private owner-readable manifests retain only exact returned run-owned IDs"
+  },
+  "source_file": {
+    "create": "markdown +create --folder-token <verified-parent> --name <run-owned.md> --file <private-source.md> --as user",
+    "read": "markdown +fetch default preview_type16 source content and --output saved bytes",
+    "source_bytes": 194,
+    "source_sha256": "f8c0d5ef08f182944908570437a1bcd9380a6fa6deac00493d8e8813aa009419",
+    "download_sha256": "f8c0d5ef08f182944908570437a1bcd9380a6fa6deac00493d8e8813aa009419",
+    "checks": "Exact bytes, UTF8 Unicode, Markdown bold/link/table/checkbox/code syntax and leading-zero content",
+    "cleanup": {
+      "delete_attempts": 1,
+      "native_deleted_proof": {
+        "route": "GET /drive/v1/permissions/{returned-file-id}/members/auth?type=file&action=export",
+        "api_code": 1063005,
+        "message": "Resource is deleted"
+      }
+    }
+  },
+  "native_render": {
+    "create": "docs +create --parent-token <verified-parent> --title <run-name> --doc-format markdown --content @<private-source.md> --as user",
+    "read": "docs +fetch XML/full and native Docx block GET",
+    "checks": [
+      "Native heading",
+      "Native bold text",
+      "Native hyperlink with same URL",
+      "Native table",
+      "Chinese and emoji in XML; Chinese native text",
+      "Native code block",
+      "Leading-zero content",
+      "Exact code text 001 & <literal> and table cells 001 / résumé 😀 verified from retained native capture"
+    ],
+    "cleanup": {
+      "delete_attempts": 1,
+      "native_deleted_proof": {
+        "route": "GET /docx/v1/documents/{returned-document-id}",
+        "api_code": 1770003,
+        "message": "resource deleted"
+      }
+    }
+  },
+  "counts": {
+    "resources_created": 2,
+    "resources_deleted": 2,
+    "live_command_invocations_in_successful_batch": 25,
+    "automatic_command_retries": 0,
+    "version_or_patch_writes": 0,
+    "parent_mutations": 0
+  },
+  "preserved_initial_failure": {
+    "status": "local_test_path_validation_failed",
+    "create_command_exit_codes": [
+      2,
+      2
+    ],
+    "business_creates_dispatched": 0,
+    "cause": "go test package working directory excluded repository .tmp source from FileIO allowlist",
+    "test_only_correction": "Set child Request.WorkDir to private evidence directory; no product guard bypass",
+    "private_evidence": ".tmp/next-live-20260908/markdown",
+    "artifact_hashes": {
+      "01-auth-binding.json": "4acfd5ec2a85cb160f407da6ade118efa4be55f4c05ae29ce32c7e0367aa172f",
+      "02-self-binding.json": "b9e5600b6a7bb3ae90580838a870c08e2618542d9bbff41368fe3f0c12674b5f",
+      "03-parent-settings.json": "8185f118e831e7aa3182c01ede43eeb64e86f2cf0d878a39b2acebd2ba243cc1",
+      "04-parent-members.json": "480ed9d84da83585da568a987c109c2a3b257fa403cfb1bb7de50fb573818254",
+      "05-parent-owner.json": "16b7de37ba1e7dae57f1ce6ab09ca0aade3c65ce15f95d10b85f9ec75812b632",
+      "06-source-parent-settings.json": "068a8117a0fd62bc33ad93a84ab3dc1a88db1e8b921cde6157091c6faea757aa",
+      "07-source-parent-members.json": "b0ddef340d1137d460f09507f4d10c608d001a53d14067f96811c6fd9ba57701",
+      "08-source-create.json": "459921a25da87a3ddcbd955f72059993231f3f0bb3e1738cac7aec201bc21c3f",
+      "09-render-parent-settings.json": "5e37364a2436994f2f5769e7a2eec4e71c8df0ff54df87cbc0ff3bafb49e9398",
+      "10-render-parent-members.json": "1475c48ddc8d04c530279b44e000bd5b2c8dc4e5b39126d239fa6db4b3b90745",
+      "11-render-create.json": "b1cca424b3cbb0684dae828087e5f0e8b19e70393c2fa23f7ddfa2884d0120bf"
+    }
+  },
+  "successful_private_evidence": ".tmp/next-live-20260908/markdown-pathfix",
+  "artifact_hashes": {
+    "01-auth-binding.json": "4acfd5ec2a85cb160f407da6ade118efa4be55f4c05ae29ce32c7e0367aa172f",
+    "02-self-binding.json": "ce3a652553b2c9ac9749aaa6ebb3f3d40bc069b1affc67f2f06d29f851bca1e0",
+    "03-parent-settings.json": "8185f118e831e7aa3182c01ede43eeb64e86f2cf0d878a39b2acebd2ba243cc1",
+    "04-parent-members.json": "480ed9d84da83585da568a987c109c2a3b257fa403cfb1bb7de50fb573818254",
+    "05-parent-owner.json": "16b7de37ba1e7dae57f1ce6ab09ca0aade3c65ce15f95d10b85f9ec75812b632",
+    "06-source-parent-settings.json": "068a8117a0fd62bc33ad93a84ab3dc1a88db1e8b921cde6157091c6faea757aa",
+    "07-source-parent-members.json": "b0ddef340d1137d460f09507f4d10c608d001a53d14067f96811c6fd9ba57701",
+    "08-source-create.json": "3e4131f3dfef7937b6deb030262b4ff3dc1d38fcbe3a4eca6f38617b54500223",
+    "09-source-child-settings.json": "341e3dd7f841aad120a86a82396007421f9e7de64352b496c593d47853399b83",
+    "10-source-child-members.json": "4bd8e3b45f762e8e9172cc87da87e436d4a955b396e65abdff2c70d999455dbd",
+    "11-source-fetch.json": "9c47115f2dbb7eea34035eac6945d6b191047d86033ee851923883a6c06b4789",
+    "12-source-save.json": "339ccda218fbbd5417cc103f8b0f74429d8ff049a3a0030e923d38e3cb21d299",
+    "13-source-cleanup-owner.json": "078a69c37886aeed0ac66524d039925d79469602e1fa8b12d181e932791326db",
+    "14-source-delete.json": "96db17d36415904a79a1af95b6cabdd27d167ac8891ea1f7fa6c6ec57090a5c6",
+    "15-source-deleted-proof.json": "b54ba25952670fbecf2c8533d3b1a9f2ab7f3ee917905d5b1e43e2f37645a3cb",
+    "16-render-parent-settings.json": "5e37364a2436994f2f5769e7a2eec4e71c8df0ff54df87cbc0ff3bafb49e9398",
+    "17-render-parent-members.json": "1475c48ddc8d04c530279b44e000bd5b2c8dc4e5b39126d239fa6db4b3b90745",
+    "18-render-create.json": "f312055247f01852395984e014b6ad2e7ef0e0cfc69ba4fde248ca6fa9c27272",
+    "19-render-child-settings.json": "18bbfb48f4947481604eb7b8bad617d9a6aaf39d1c97c5f2a6cc90e49f484253",
+    "20-render-child-members.json": "d6decb59c75e4fa89ee6c36ce4706bb9137b1a96805932d03d475c7a43152cd5",
+    "21-render-xml.json": "32f20accecf8171e7896650c4c3d31209cb276ab3251f17fe587cb2542cdf201",
+    "22-render-native.json": "0492f9f5985fcd46f6459dcf2959a19aaf5ab734f91c44abbd008956b925f982",
+    "23-render-cleanup-owner.json": "3dcaee36214b4534b3caf7ca107ff8502ca609e23fce0d3959e7d5b3477a53a8",
+    "24-render-delete.json": "a0dd2b4b28f3d3b1ec6fb68bb90c682a49319e45a580c2d91acf32a937b4d5f2",
+    "25-render-deleted-proof.json": "d5954cbdfcb5eb681b532ad42a98716b514a4ad77d87e38d97f718de06269072"
+  },
+  "remaining": [
+    "No Markdown historical versions/overwrite/patch live gate",
+    "No multipart upload/recovery or concurrency guarantee",
+    "No bot grants or Wiki/shared creation",
+    "No full conversion/type parity",
+    "No model evaluation change or claim"
+  ],
+  "offline_followup": "Passed isolated deleted-proof and native-render verifier positive/negative tests; explicit live selection absent skips lifecycle. Stricter code/table text checks also confirmed against retained native capture without further live calls."
+}

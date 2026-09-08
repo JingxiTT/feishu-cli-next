@@ -104,3 +104,47 @@ P3 discovery follow-up: the full isolated Markdown boundary passed again with
 `.tmp/markdown-discovery-boundary.json`. The process test follows continuation
 metadata and checks exact command membership without assuming first-page
 completeness or a particular ranking. No product behavior changed.
+
+## Bounded private live continuation — 2026-09-08
+
+The earlier no-fixture live blocker was resolved for one current-user source file
+and one native rendered document under the coordinator's private personal parent.
+`TestMarkdownNextPrivateLiveLifecycle` repeats independent account/tenant binding,
+parent closed sharing, sole owner/container membership and metadata ownership
+before writing, rechecks parent access before each phase, and verifies each
+returned child's ACL. It uses explicit user identity and single-attempt commands;
+returned IDs are persisted and guarded cleanup is registered before success
+assertions, including partial/unknown CLI results. The parent is never deleted.
+
+Both phases **passed**. `markdown +create` uploaded one `.md` file to the explicit
+folder; `markdown +fetch` read the preview-type-16 source and saved it with exact
+byte equality, including Unicode, Markdown markup and leading-zero text. Native
+rendering is the separate Docs dependency: `docs +create --doc-format markdown`
+created one document in the same parent, and XML/native block reads verified the
+heading, bold, link URL, table, Unicode, leading-zero content and code block.
+These file/source and native rendering results are not conflated.
+
+Both run-owned children were deleted once. Independent exact-ID read evidence
+confirmed deletion: file permission auth returned API 1063005, `Resource is
+deleted`; native Docx GET returned API 1770003, `resource deleted`. Empty metadata
+URLs were not accepted as proof. All command stdout/stderr, including failures,
+was retained in owner-readable ignored evidence before assertions.
+
+The initial invocation's two create commands failed local FileIO validation
+because the source was outside the Go test package's working-directory allowlist;
+no business create was dispatched. That failure remains recorded. Setting the
+child request's working directory to the private evidence directory corrected
+only the test harness; product file guards and runtime code were unchanged.
+
+Select the dedicated test with `NEXT_MARKDOWN_LIVE=1`, an explicit `LARK_CLI_BIN`,
+and absolute `NEXT_MARKDOWN_LIVE_FIXTURE`, `NEXT_MARKDOWN_LIVE_BINDING`, and
+`NEXT_MARKDOWN_LIVE_EVIDENCE_DIR` paths supplied by the coordinator. It creates at
+most the two described resources. No new scope, login, Wiki/shared space, bot,
+recipient, version/patch operation or model task is involved. See
+[the sanitized evidence](markdown-private-live-evidence.json) for byte hashes,
+command counts and retained failure hashes; private IDs are omitted.
+
+This narrows the live gap but does not close full P2 acceptance. Multipart,
+version/overwrite/patch, concurrency, bot grants, Wiki inheritance and complete
+native conversion/type parity remain separate unverified gates. No runtime or
+evaluation behavior changed.
