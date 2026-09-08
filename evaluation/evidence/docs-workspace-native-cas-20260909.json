@@ -1,0 +1,139 @@
+{
+  "schema": "docs-workspace-native-cas/v1",
+  "date": "2026-09-09",
+  "decision": "document_revision_id does not enforce compare-and-swap for the observed native single-block PATCH",
+  "scope": "One corrected private synthetic Doc probe after one separately cleaned local-validation preparation failure. No model calls, fixture changes, sharing, invitations or notifications.",
+  "private_evidence": ".tmp/token-docs-workspace-cas-probe",
+  "privacy": {
+    "fresh_user_and_tenant_digest_matches_prior_independent_binding": true,
+    "title_only_create_in_private_root": true,
+    "previously_observed_invited_only_creation_default": true,
+    "closed_links_sole_current_full_access_member_and_metadata_owner_before_synthetic_append": true,
+    "privacy_and_owner_rechecked_before_each_cleanup": true
+  },
+  "first_attempt": {
+    "result": "local raw-api path validation before PATCH; query must use --params",
+    "native_patch_calls": 0,
+    "document_create": 1,
+    "synthetic_append": 1,
+    "delete": 1,
+    "exact_created_document_deleted_api_code": 1770003,
+    "independent_delete_read_exit": 1,
+    "ambiguous_remote_write_retries": 0
+  },
+  "corrected_attempt": {
+    "document_create": 1,
+    "synthetic_append": 1,
+    "current_revision_patch": 1,
+    "stale_revision_patch": 1,
+    "delete": 1,
+    "ambiguous_remote_write_retries": 0,
+    "patch_payload": "update_text_elements with complete native text_run elements copied from initial read; only first plain text run changed",
+    "query": "--params JSON document_revision_id=3 for both PATCH operations"
+  },
+  "observations": {
+    "initial_revision": 3,
+    "current_patch": {
+      "requested_revision": 3,
+      "exit_code": 0,
+      "ok": true,
+      "document_revision_id": 4,
+      "target_id_preserved": true,
+      "exact_text_bold_link_unicode_match": true,
+      "all_unrelated_native_blocks_deep_equal": true
+    },
+    "pinned_old_get": {
+      "requested_revision": 3,
+      "returns_initial_snapshot": true,
+      "returns_latest_snapshot": false
+    },
+    "stale_patch": {
+      "requested_revision": 3,
+      "actual_revision_before_patch": 4,
+      "exit_code": 0,
+      "ok": true,
+      "document_revision_id": 5,
+      "state_unchanged": false,
+      "revision_unchanged": false,
+      "different_stale_target_text_applied": true
+    },
+    "independent_readback": "Initial, after-current-PATCH and after-stale-PATCH complete native block data identical through frozen Next and original binaries."
+  },
+  "cleanup": {
+    "both_exact_created_documents_deleted": true,
+    "independent_read_api_code": 1770003,
+    "independent_read_exit": 1,
+    "new_parent_folders": 0
+  },
+  "implications": [
+    "Do not advertise atomic conflict prevention or CAS based on document_revision_id for this PATCH route.",
+    "A GET pinned to an old revision can read historical state and therefore cannot serve as a latest-state conflict check.",
+    "A latest-state compare before PATCH may detect existing drift, but it does not close the race between compare and write.",
+    "This counterexample blocks a strict CAS guarantee; it does not establish the backend conflict-transformation algorithm or behavior for every operation."
+  ],
+  "documentation_check": {
+    "url": "https://open.feishu.cn/document/server-docs/docs/docs/docx-v1/document-block/patch",
+    "title": "Update a block - Server API - Feishu Open Platform",
+    "result": "Official page opened, but no machine-readable body text was available; CAS conclusion uses direct native counterexample rather than an inferred documentation guarantee."
+  },
+  "local_source_references": [
+    "cmd/api/api.go:ParseJSONMap --params forwarded in raw call Params",
+    "internal/nextattempt/transport.go:receipt status classification"
+  ],
+  "binaries": {
+    "next": {
+      "sha256": "a96268761560efa996ba7ce99c231423de14277cc814f694c18b9b5cbb7a7a48",
+      "role": "creation/current-stale PATCH and native read"
+    },
+    "official": {
+      "sha256": "5e1f582ec5ab9c86d3618fc17bd099b3443d40fe8691fed07d42e83a351ba977",
+      "role": "independent native read"
+    }
+  },
+  "private_file_sha256": {
+    "01-self.json": "ed970e037270d8b4dc3b3f8adc5f27742f7e2a172ee4b9f73ab3284408a7e051",
+    "02-create.json": "ca921e863d4e449171d7c60b7dabedd668121e05f874c0a20fab176bdf4960f9",
+    "03-private-members.json": "9b7da38c61773b6c17306d7e3e81b6a56b01e2561e58756f6de0384a149fa878",
+    "03-private-owner.json": "36198ef34a4306a2ad8dbd8cbcab0bd2c1b1565bce41c7fb59d4f192a836f9e9",
+    "03-private-settings.json": "ae2069406503656f59b8691be32537749018aec2404bbbc00f35d7b42637efae",
+    "04-content.json": "9f2b8da4e8c5cdd336a45bc791cabae67c23c7ebfa400f55e8196ea17fb44278",
+    "05-before.json": "453fbbd57ed758fa95a41e62cf5ecfedae113bdc7096914b68b0caca837f3306",
+    "06-before-official.json": "bbc52b32fa505bd7dab3b21cda38cf3bcc31b492a31f996f3d76f05e6fcca3d1",
+    "07-before-meta.json": "2808e98d7d14aee38ddb1e9446c337ea5c487d6926a36a8b566f5cf9a660b876",
+    "08-current-patch.json": "0b3fd0cb2a0aa55d449b5bde51afecd80af12ab2b67f5510f4c219e72a12ea3f",
+    "cleanup-delete.json": "39df374a3401aa51de1a9051fbde267995911f830b0b8eedf7488fc1c706aa96",
+    "cleanup-members.json": "9b7da38c61773b6c17306d7e3e81b6a56b01e2561e58756f6de0384a149fa878",
+    "cleanup-owner.json": "7d19379859c5da71524c156cb46b8593485e1037c5f23145c3871af1ecb9687b",
+    "cleanup-proof.json": "672762a4cb2e447d4c05789c6f48886d9d28163a2f9cabe89297ffdc2201673e",
+    "cleanup-settings.json": "ae2069406503656f59b8691be32537749018aec2404bbbc00f35d7b42637efae",
+    "corrected/01-self.json": "62e178e0f13f80ffe1f57db1cca11452fb39e03db02ef9d1fd086e2806c57340",
+    "corrected/02-create.json": "e121dea7753473dc7f03655799eb5d3f5900a325ba51eceb39efe5c4ca714908",
+    "corrected/03-private-members.json": "9b7da38c61773b6c17306d7e3e81b6a56b01e2561e58756f6de0384a149fa878",
+    "corrected/03-private-owner.json": "2a46cdc623f17e9239be717b276c60a41055d8b683f1c57936501cc67c3af25d",
+    "corrected/03-private-settings.json": "ae2069406503656f59b8691be32537749018aec2404bbbc00f35d7b42637efae",
+    "corrected/04-content.json": "039b71c875341ece21e85e8b00662560af8e8c9f5152f63934a3c3cc918bb31d",
+    "corrected/05-before.json": "f1325609058001eb85ccd9e11b0e54da121f501f6c0b7a55e1b7c2259c661d60",
+    "corrected/06-before-official.json": "45c937d432f71b363c63a1df1bc8bb38e22ce74a22465da6d1769a6ac604b404",
+    "corrected/07-before-meta.json": "01b29b838cbc1e7c4c816140fd621d11f840623ccd4f5c5bc89cabeb23dc4e0c",
+    "corrected/08-current-patch.json": "172e709162c96a6f8722e74f6723142a2661cc760efc4cb6c7b6201bc045ebb0",
+    "corrected/09-after-current.json": "b74e5567e92dc77770f36992b29a24e9b7e5e1caf294a8dae95059efab12a4f2",
+    "corrected/10-after-current-official.json": "d653def9bcc735d63020bee545215c51cdee6483737cf475ae1f01336509e690",
+    "corrected/11-after-current-meta.json": "1b5dd1a8f7eca94925fe725eca58df42368bac622596308c16d45d14581eb85e",
+    "corrected/12-pinned-old-blocks.json": "f1325609058001eb85ccd9e11b0e54da121f501f6c0b7a55e1b7c2259c661d60",
+    "corrected/13-stale-patch.json": "be90d01e270ccaecfe4e072c2dedfa5fdbe4e2894bb943b13ba770b9170390f7",
+    "corrected/14-after-stale.json": "8fb35e7a31d221e0205fecc038f5097beef0fa5d48d16455f456c485c155a3b8",
+    "corrected/15-after-stale-official.json": "ed1cbbd07e358bbf69b86c6bee8487a508d02138da07c778e9f7fae0f5e0fbe4",
+    "corrected/16-after-stale-meta.json": "0b023fa5fd163f3604950ee5ba875070305a92b5f0d540892b263dd81ccce020",
+    "corrected/cleanup-delete.json": "a1cfe30131ca41e74f0a24cbee4d4e68fa06031e21931dad8ba70bc0ca3bf394",
+    "corrected/cleanup-members.json": "9b7da38c61773b6c17306d7e3e81b6a56b01e2561e58756f6de0384a149fa878",
+    "corrected/cleanup-owner.json": "ba0bdc38f20bc6b7487a245aa4de147a908f3de4e65a874849b7a86cddd6e506",
+    "corrected/cleanup-proof.json": "e8c21b0fbd0ca526ad937391afdd729096e368b0896537147e3ebee27168381d",
+    "corrected/cleanup-settings.json": "ae2069406503656f59b8691be32537749018aec2404bbbc00f35d7b42637efae",
+    "corrected/owned.json": "0e808dfcce2d854d9ad331f9f2203f6caaa5c965c3d17ea7fff386662f59419f",
+    "corrected/summary.json": "04f1ef489f5dbda5573858f716d4ebfc72efa7f7536e9cba1f2639a2c517a21e",
+    "owned.json": "5955c6ba399ba33eb848fa1508dbd04fd8784134c4cfb09981f55716e40aa071",
+    "run-corrected.py": "db13f0ba693441cf6676f4808660e557e0662c4f04677fe7db9ba3d4adb09b02",
+    "run.py": "3c9c23c8d2f913d654b17be3c2181dfb59a30ca28f53459d05de3cd1706abe79",
+    "summary.json": "20685c59612e52da056aa13fc2b63a0e01dbca2d437b810035a6467a2ee89f2f"
+  }
+}
