@@ -1,6 +1,6 @@
 # Sheets section reconciliation
 
-Status: **open**. Offline process evidence is distinct from live capability acceptance. A bounded private live lifecycle is now executable after independent account, tenant, and creation-visibility checks. Initial live attempts exposed a native formula-export fidelity defect; the diagnosis, correction contract, retained failures, and remaining limits are recorded in [private Sheets live evidence](sheets-private-live.md). This narrow batch does not establish full Sheets parity. Historical comparative measurements retain their original product and fixture conditions.
+Status: **open**. Offline process evidence is distinct from live capability acceptance. A bounded private live lifecycle is now executable after independent account, tenant, and creation-visibility checks. Initial live attempts exposed a native formula-export fidelity defect; the corrected six-cell native lifecycle subsequently passed. The diagnosis, correction contract, retained failures, and remaining limits are recorded in [private Sheets live evidence](sheets-private-live.md). This narrow batch does not establish full Sheets parity. Historical comparative measurements retain their original product and fixture conditions.
 
 ## Scope and ownership
 

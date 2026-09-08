@@ -1,0 +1,119 @@
+{
+  "schema": "sheets-private-live-evidence/v1",
+  "date": "2026-09-08",
+  "scope": "one private synthetic workbook lifecycle; not full Sheets capability acceptance",
+  "product_commit": "02b6c5faa53c4f99ecfe71b2731a314355fa2bf9",
+  "review_commit": "88b8c7e",
+  "product_source_sha256": "9d6f9e356d3e4dac01bd09f5443a58a4483e8688b930d4d111020d6e6f8b8b42",
+  "test_source_sha256": "1ff0a8d0caec234975e3b62be22f8179c787200cbdba1339f0a342996b5a7b46",
+  "binary": {
+    "version": "02b6c5f-dirty",
+    "sha256": "aecd2a4732909430664e3acde06f358ad75e3272ed20a5ec0cb40f65ee0cb7eb",
+    "build": "make build BINARY=.tmp/next-live-20260908/sheets-cli-fixed",
+    "boundary": "Owned runtime/test files were committed and clean. The dirty version suffix came from another owner's tracked Base test edit; no runtime source changes."
+  },
+  "authorization_evidence": {
+    "operator_creation_default": "Only invited members can access, observed before private parent creation",
+    "no_invitees": true,
+    "independent_contact_binding_digest_checked_in_memory": true,
+    "fresh_test_user_and_tenant_match": true,
+    "parent_and_child_link_access": "closed",
+    "parent_and_child_sole_member_matches_current_owner": true,
+    "parent_container_permission_verified": true,
+    "parent_and_child_metadata_owner_matches": true
+  },
+  "final_live_run": {
+    "test": "TestSheets_PrivateUserLifecycle",
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "test_seconds": 15.25,
+    "package_seconds": 24.626,
+    "cli_invocations": 14,
+    "mutation_cli_invocations": {
+      "workbook_create": 1,
+      "cells_set": 1,
+      "owned_workbook_delete": 1
+    },
+    "automatic_replay": false,
+    "artifact_bytes": 1035,
+    "artifact_complete": true,
+    "extent": "A1:F1",
+    "row_count": 1,
+    "column_count": 6,
+    "verified_user_binding": true,
+    "verified_tenant_binding": true,
+    "typed_checks": {
+      "unicode_newline_string": true,
+      "empty_string": true,
+      "leading_zero_string": true,
+      "numeric_zero": true,
+      "boolean_false": true,
+      "explicit_formula_with_numeric_cache": true
+    },
+    "independent_formula_read_revision": 1,
+    "cleanup": {
+      "requested_resource": "exact token returned by this run's create",
+      "native_code": 1310249,
+      "message": "Path param :spreadsheet_token is deleted",
+      "parent_untouched": true
+    }
+  },
+  "preserved_failed_attempts": [
+    1,
+    2,
+    3
+  ],
+  "remaining_full_live_lifecycles": 6,
+  "offline_gates": {
+    "sheets_unit_package": "pass",
+    "scoped_vet": "pass",
+    "inherited_pass": 68,
+    "process_pass": 300,
+    "full_report_historical_skip_count": 7,
+    "focused_current_skip_count": 6,
+    "integration_pass": 23,
+    "integration_10k_native_read_calls": 32
+  },
+  "evidence_files": [
+    {
+      "path": ".tmp/next-live-20260908/sheets-private-04/native-cells.json",
+      "sha256": "d6d04518a0292a445b940ce788fe37ddf4afa34aa0287a531dff85dc550e9067"
+    },
+    {
+      "path": ".tmp/next-live-20260908/sheets-private-04/07-read.json",
+      "sha256": "0a60e9161803eb97f36f9d01095041ba5d89b3a4899e3df0ab4d5c89f6a72276"
+    },
+    {
+      "path": ".tmp/next-live-20260908/sheets-private-04/90-cleanup.json",
+      "sha256": "a0d509e209227ff68efbb27217102abf5b464f9d9baa609b8203d2f0d661729d"
+    },
+    {
+      "path": ".tmp/next-live-20260908/sheets-private-04/91-cleanup-readback.json",
+      "sha256": "2268c4d1d7cb204103c3b8a8206fd4d03901609aaaad36bf57f4b31c866718d7"
+    },
+    {
+      "path": ".tmp/next-live-20260908/sheets-private-04-go-test.txt",
+      "sha256": "c09f21c69675101f4c857f23c2b51b783a761fed9532db5a37f9376b404fd6e1"
+    },
+    {
+      "path": ".tmp/sheets/paired-e2e-report.json",
+      "sha256": "ca882538d6c7406fa11e933e7fd8ae8f2f08750b0caa0143583286b32282d86c"
+    },
+    {
+      "path": ".tmp/sheets/paired-focused-report.json",
+      "sha256": "ddecc0bc6062102ccfc60ab110d83e7bc17d18e0bd47010c36e80d891016735e"
+    },
+    {
+      "path": ".tmp/sheets-base/paired-report.json",
+      "sha256": "fd96702d352a0d64fa04202ca58783702049bbf96cdf27af1ab933cbcff6faf5"
+    }
+  ],
+  "limits": [
+    "Revision equality is optimistic evidence, not snapshot isolation or a write CAS.",
+    "Earlier raw-only v1 artifacts may have lost formula identity; re-export before reuse.",
+    "Historical model measurements are not measurements of the corrected product/fixture condition.",
+    "Original failed attempts remain failed; final live success is a separate run.",
+    "No model calls or additional permission scopes were requested for this fix."
+  ]
+}
