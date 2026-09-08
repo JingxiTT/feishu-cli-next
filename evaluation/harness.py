@@ -15,6 +15,15 @@ import time
 
 
 ARMS = ("official", "official_concise", "next")
+BEFORE_AFTER_ARMS = ("official", "next_before", "next")
+
+
+def comparison_arms(config):
+    names = set(config.get("arms", {}))
+    for arms in (ARMS, BEFORE_AFTER_ARMS):
+        if names == set(arms):
+            return arms
+    raise ValueError("exactly three recognized comparison arms required")
 
 
 def read_json(path):
@@ -43,10 +52,10 @@ def tasks_from(path, allow_held_out=False):
     return manifest
 
 
-def schedule(tasks, repeats, seed):
+def schedule(tasks, repeats, seed, arms=ARMS):
     if repeats < 2:
         raise ValueError("at least two independent trials per task and arm are required")
-    runs = [(task, trial, arm) for task in tasks for trial in range(repeats) for arm in ARMS]
+    runs = [(task, trial, arm) for task in tasks for trial in range(repeats) for arm in arms]
     random.Random(seed).shuffle(runs)
     return runs
 
@@ -103,8 +112,7 @@ def validate_config(config):
             raise ValueError("pin config field: " + key)
     if config.get("mode") not in ("controlled", "real"):
         raise ValueError("mode must be controlled or real")
-    if set(config.get("arms", {})) != set(ARMS):
-        raise ValueError("exactly three comparison arms required")
+    comparison_arms(config)
     for key in ("runner", "verifier"):
         command = config.get(key)
         if not isinstance(command, list) or not command or not all(isinstance(arg, str) for arg in command):
@@ -114,7 +122,7 @@ def validate_config(config):
     if config["runner"] == config["verifier"]:
         raise ValueError("verifier must be independent of agent runner")
     official = config["arms"]["official"]["cli"]
-    if official != config["arms"]["official_concise"]["cli"]:
+    if "official_concise" in config["arms"] and official != config["arms"]["official_concise"]["cli"]:
         raise ValueError("official arms must use the identical CLI")
     if type(config.get("timeout_seconds", 120)) not in (int, float) or config.get("timeout_seconds", 120) <= 0:
         raise ValueError("timeout_seconds must be positive")
@@ -258,7 +266,7 @@ def sanitized_trace(trace):
     return result
 
 
-def aggregate(runs):
+def aggregate(runs, arms=ARMS):
     groups = {}
     for scope in ("all", "section", "task_id"):
         for run in runs:
@@ -285,7 +293,7 @@ def aggregate(runs):
                                             for category in sorted({category for run in values for category in run["categories"]})}})
     matched = []
     indexed = {(run["task_id"], run["trial"], run["arm"]): run for run in runs}
-    for baseline in ARMS[:2]:
+    for baseline in arms[:-1]:
         pairs = []
         for run in runs:
             other = indexed.get((run["task_id"], run["trial"], baseline))
@@ -314,15 +322,16 @@ def main():
         selected = [task for task in manifest["tasks"] if not args.section or task["section"] in args.section]
         if not selected or args.section and set(args.section) - {task["section"] for task in selected}:
             raise ValueError("unknown or empty section selection")
-        planned = schedule(selected, args.repeats, args.seed)
+        arms = comparison_arms(config)
+        planned = schedule(selected, args.repeats, args.seed, arms)
         runs = []
         evidence = {"protocol": 1, "mode": config["mode"], "split": manifest["split"],
                     "performance_claims_supported": False, "completed": False, "planned_runs": len(planned),
                     "seed": args.seed, "repeats": args.repeats, "fresh_context": True,
                     "task_manifest_sha256": digest(args.tasks), "config_sha256": digest(args.config),
                     "environment": {key: config[key] for key in ("backend", "model", "tokenizer", "reasoning", "tools", "permissions", "budget", "accounting_method")},
-                    "arms": {arm: {key + "_sha256": digest(config["arms"][arm][key]) for key in ("cli", "skill")} for arm in ARMS},
-                    "runs": runs, **aggregate(runs)}
+                    "arms": {arm: {key + "_sha256": digest(config["arms"][arm][key]) for key in ("cli", "skill")} for arm in arms},
+                    "runs": runs, **aggregate(runs, arms)}
         args.output.parent.mkdir(parents=True, exist_ok=True)
         # Checkpoint each finished attempt before launching another billed model run.
         for planned_run in planned:
@@ -334,7 +343,7 @@ def main():
                 print(json.dumps({"status": "stopped", "completed_attempts": len(runs), "cancelled_before_model": len(planned) - len(runs)}))
                 return 0
             runs.append(run_one(config, *planned_run))
-            evidence.update({"runs": runs, **aggregate(runs), "completed": len(runs) == len(planned),
+            evidence.update({"runs": runs, **aggregate(runs, arms), "completed": len(runs) == len(planned),
                              "performance_claims_supported": config["mode"] == "real" and len(runs) == len(planned)
                              and all(run["usage"] and not run.get("outcome_inconclusive") for run in runs)})
             checkpoint = args.output.with_suffix(args.output.suffix + ".tmp")

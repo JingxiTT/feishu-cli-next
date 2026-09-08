@@ -42,6 +42,17 @@ class AccountingTests(unittest.TestCase):
             for arm in harness.ARMS:
                 self.assertEqual(sum(t["id"] == task and a == arm for t, _, a in first), 3)
 
+    def test_before_after_schedule_is_balanced_and_rejects_mixed_arms(self):
+        config = {"arms": {arm: {} for arm in harness.BEFORE_AFTER_ARMS}}
+        arms = harness.comparison_arms(config)
+        runs = harness.schedule([{"id": "a"}], 3, 7, arms)
+        self.assertEqual(len(runs), 9)
+        for arm in arms:
+            self.assertEqual(sum(a == arm for _, _, a in runs), 3)
+        for names in (("official", "next"), (*harness.ARMS, "next_before")):
+            with self.assertRaises(ValueError):
+                harness.comparison_arms({"arms": dict.fromkeys(names)})
+
     def test_no_finite_efficiency_for_no_success_or_missing_usage(self):
         base = {"task_id": "a", "section": "foundation", "trial": 0, "arm": "next",
                 "success": False, "usage": {"total_tokens": 10}, "categories": ["outcome_failure"],
@@ -100,7 +111,7 @@ class AccountingTests(unittest.TestCase):
 
 
 class ProcessE2ETests(unittest.TestCase):
-    def invoke(self, fixture=None, split="controlled", extra_args=()):
+    def invoke(self, fixture=None, split="controlled", extra_args=(), arms=harness.ARMS):
         with tempfile.TemporaryDirectory(prefix="feishu-harness-test-") as directory:
             root = Path(directory)
             task = {"id": "increment", "section": "foundation", "prompt": "Increment the fixture value.",
@@ -112,7 +123,7 @@ class ProcessE2ETests(unittest.TestCase):
                       "accounting_method": "invented test counts; not real model usage", "timeout_seconds": 5,
                       "runner": [sys.executable, str(ROOT / "tests/next_evaluation/fake_runner.py")],
                       "verifier": [sys.executable, str(ROOT / "tests/next_evaluation/fake_verifier.py")],
-                      "arms": {arm: {"cli": sys.executable, "skill": str(ROOT / "tests/next_evaluation/fake_runner.py")} for arm in harness.ARMS}}
+                      "arms": {arm: {"cli": sys.executable, "skill": str(ROOT / "tests/next_evaluation/fake_runner.py")} for arm in arms}}
             (root / "config.json").write_text(json.dumps(config))
             completed = subprocess.run([sys.executable, str(ROOT / "evaluation/harness.py"),
                                         "--tasks", str(root / "tasks.json"), "--config", str(root / "config.json"),
@@ -135,6 +146,18 @@ class ProcessE2ETests(unittest.TestCase):
         self.assertEqual(len(result["matched_success"][0]["pairs"]), 2)
         self.assertNotIn("private marker", json.dumps(result))
         self.assertNotIn("must-not-be-inherited", json.dumps(result))
+
+    def test_before_after_comparison_keeps_named_baselines_and_failed_costs(self):
+        for fixture in ({}, {"wrong_effect": True}):
+            completed, result = self.invoke(fixture, arms=harness.BEFORE_AFTER_ARMS)
+            self.assertEqual(completed.returncode, int(bool(fixture)), completed.stderr)
+            self.assertEqual(set(result["arms"]), set(harness.BEFORE_AFTER_ARMS))
+            self.assertEqual({row["baseline"] for row in result["matched_success"]}, {"official", "next_before"})
+            self.assertEqual(len(result["runs"]), 6)
+            for row in result["groups"]:
+                self.assertEqual(row["known_total_tokens"], 330)
+                self.assertEqual(row["successes"], 0 if fixture else 2)
+            self.assertTrue(all(len(row["pairs"]) == (0 if fixture else 2) for row in result["matched_success"]))
 
     def test_operator_stop_preserves_active_attempt_and_skips_unstarted_models(self):
         with tempfile.TemporaryDirectory() as directory:

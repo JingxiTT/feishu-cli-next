@@ -119,6 +119,48 @@ class CodexAccountingTests(unittest.TestCase):
             self.assertEqual(len(captured), 1)
             self.assertFalse(values['auth-home'].exists())
 
+    def test_batch_before_after_uses_frozen_next_without_mislabeling_concise(self):
+        from unittest.mock import patch
+        spec = importlib.util.spec_from_file_location('run_read_batch', ROOT / 'evaluation/run_read_batch.py')
+        batch = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(batch)
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            binary = root / 'cli'
+            binary.touch()
+            args = ['run_read_batch.py', '--section', 'docs', '--task-kind', 'paired',
+                    '--model', 'gpt-5.6-luna', '--reasoning', 'medium']
+            for name, path in {
+                'official-source': ROOT, 'official-cli': binary,
+                'next-source': ROOT, 'next-cli': binary,
+                'previous-next-source': ROOT, 'previous-next-cli': binary,
+                'codex': binary, 'auth-home': root / 'auth', 'output-root': root / 'results',
+            }.items():
+                args.extend(['--' + name, str(path)])
+            configs = []
+
+            def inspect_config(command, **kwargs):
+                config = json.loads(Path(command[command.index('--config') + 1]).read_text())
+                configs.append(config)
+                self.assertEqual(set(config['arms']), {'official', 'next_before', 'next'})
+                self.assertEqual(config['arms']['next_before'], {
+                    'cli': str(binary), 'skill': str(ROOT / 'agent-skills/feishu-cli-next/SKILL.md')})
+                self.assertEqual(config['model'], 'gpt-5.6-luna')
+                self.assertEqual(config['reasoning'], 'medium')
+                return subprocess.CompletedProcess(command, 0)
+
+            with patch.object(sys, 'argv', args), \
+                 patch.object(sys, 'path', [str(ROOT / 'evaluation'), *sys.path]), \
+                 patch.object(batch.subprocess, 'run', side_effect=inspect_config), patch('builtins.print'):
+                self.assertEqual(batch.main(), 0)
+            self.assertEqual(len(configs), 1)
+            index = args.index('--previous-next-cli')
+            missing = args[:index] + args[index + 2:]
+            with patch.object(sys, 'argv', missing), patch.object(batch.subprocess, 'run') as run, \
+                 patch('sys.stderr'), self.assertRaises(SystemExit):
+                batch.main()
+            run.assert_not_called()
+
     def test_trace_keeps_only_public_names_not_content_paths_or_unknown_flags(self):
         command = 'TOKEN=private-value /private/workspace/feishu-cli-next docs +fetch --doc secret-document-id --keyword="private user text" --not-a-real-private-flag=secret && cat /private/secret-file'
         result = runner.command_choices(command)

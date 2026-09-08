@@ -15,12 +15,18 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     for name in ('official-source', 'official-cli', 'next-source', 'next-cli', 'codex', 'auth-home', 'output-root'):
         parser.add_argument('--' + name, type=Path, required=True)
+    parser.add_argument('--previous-next-source', type=Path, help='Frozen previous Next source; replaces concise arm for a paired before/after comparison')
+    parser.add_argument('--previous-next-cli', type=Path, help='Frozen previous Next binary; requires --previous-next-source')
     parser.add_argument('--section', action='append')
     parser.add_argument('--prepare-only', action='store_true')
     parser.add_argument('--task-kind', choices=('read', 'scenario', 'scaling', 'business', 'paired'), default='read')
     parser.add_argument('--model', default='gpt-6-astra', help='Codex model identifier; pin explicitly for a new comparison')
     parser.add_argument('--reasoning', default='high', help='Codex reasoning effort; pin explicitly for a new comparison')
     args = parser.parse_args()
+    if bool(args.previous_next_source) != bool(args.previous_next_cli):
+        parser.error('previous Next source and CLI must be supplied together')
+    if args.previous_next_source and args.task_kind != 'paired':
+        parser.error('previous Next comparison is supported only for paired tasks')
     manifest_path = ROOT / 'evaluation' / {'read': 'tasks.read-sections.json', 'scenario': 'tasks.scenarios.json', 'scaling': 'tasks.scaling.json', 'business': 'tasks.business.json', 'paired': 'tasks.paired.json'}[args.task_kind]
     manifest = json.loads(manifest_path.read_text())
     sections = list(dict.fromkeys(task['section'] for task in manifest['tasks'] if not args.section or task['section'] in args.section))
@@ -75,6 +81,11 @@ def main():
                       'arms': {'official': {'cli': str(official_cli), 'skill': str(official_entry)},
                                'official_concise': {'cli': str(official_cli), 'skill': str(concise_entry)},
                                'next': {'cli': str(next_cli), 'skill': str(args.next_source / 'agent-skills/feishu-cli-next/SKILL.md')}}}
+            if args.previous_next_source:
+                del config['arms']['official_concise']
+                config['arms']['next_before'] = {
+                    'cli': str(args.previous_next_cli),
+                    'skill': str(args.previous_next_source / 'agent-skills/feishu-cli-next/SKILL.md')}
             if section == 'packaging':
                 for arm in ('official', 'official_concise'):
                     config['arms'][arm]['selected_skill_source'] = str(args.official_source / 'skills/lark-shared')
