@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "condition": "token-efficiency-03",
+  "model": "gpt-5.6-luna",
+  "reasoning": "medium",
+  "codex_version": "codex-cli 0.153.4",
+  "codex_sha256": "b973d440acac501fd2594a43e7ca9ce41e0a65b9dfb28d0d7a7837c99e1261e3",
+  "official_revision": "7fd6ef3c07182257ce776cdc5a614e122d5bd4b3",
+  "official_binary_sha256": "5e1f582ec5ab9c86d3618fc17bd099b3443d40fe8691fed07d42e83a351ba977",
+  "next_before_revision": "7d28655dcb724c82adbec658b11fbd69add789ec",
+  "next_before_binary_sha256": "a96268761560efa996ba7ce99c231423de14277cc814f694c18b9b5cbb7a7a48",
+  "candidate_revision": "894667168fc8c253c32eedda0980a20da7aba3f3",
+  "candidate_binary_sha256": "1515e1f22e1f26f90c2b3d6a67852553342359e988d9682b1ce183ba4f824919",
+  "candidate_archive_sha256": "91d95c0b0769a41f841096797c4c3507072e3ef218fc9f8de346acd11c26c7ef",
+  "candidate_build": {
+    "command": [
+      "make",
+      "build",
+      "BINARY=candidate-cli",
+      "VERSION=8946671"
+    ],
+    "environment": {
+      "GOFLAGS": "-tags=authsidecar"
+    }
+  },
+  "evaluator_revision": "9ac6c4b377bcf2eb563274e83ecf1ab0446e78fd",
+  "evaluator_archive_sha256": "12aff88e71660ddaf16b5dd9e0c6a2a7a26b6b054eec2c5e1563b5aee69476b6",
+  "task_manifest_sha256": "d62f4978ea4acfcc594c7854d680fb98c93836d0562662249fd4023e0d98fa9d",
+  "official_guidance_tree_sha256": "efe738218a2b74b19669b02c8491c4dc35c7d057a45eaf3ff5a676b17b5e073e",
+  "next_before_guidance": {
+    "SKILL.md": "c0de66cb47e62ca389a691ca7c9549d68e262702cb692d45dd2a5965779c9f1b"
+  },
+  "candidate_guidance": {
+    "SKILL.md": "f270a2318fad6470e756de165e09e3488f08375aa055181e34c66d8a44e1c23c"
+  },
+  "candidate_inherited_guidance_tree_sha256": "efe738218a2b74b19669b02c8491c4dc35c7d057a45eaf3ff5a676b17b5e073e",
+  "api_catalog_sha256": "b5375251ff1f0a5939925587b0d514669a748135cde36c56f1c8ab5f5fe266c8",
+  "planned_attempts": 72,
+  "repeats_per_task_arm": 3,
+  "agent_seconds": 180,
+  "outer_seconds": 210,
+  "primary_target": "At least 50% fewer all-attempt tokens per verified success versus next_before, separately for every task; no success regression versus either baseline",
+  "secondary_comparison": "Report tokens per verified success versus original/full separately",
+  "task_delta": "No task manifest changes versus condition02; native-observed Docs fixture coverage and finite diagnostics expanded; old outcomes remain immutable",
+  "private_native_evidence_sha256": "bbd7f8cf034d25582400aa3ae416626f781ea75f85de597618571ac97d3f0e77",
+  "provider_alias_limitation": "No immutable provider model snapshot reported; same explicitly requested alias for every arm.",
+  "private_docs_native_evidence_sha256": "636f6c745ae8bc714d4fc8e2dd7b9346e224496eb0c21b6ba2a3d1f59e7ff15a"
+}
