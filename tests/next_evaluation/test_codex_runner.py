@@ -83,13 +83,13 @@ class CodexAccountingTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             source = root / 'official-source'
-            entry = source / 'skills/lark-doc/SKILL.md'
+            entry = source / 'skills/lark-contact/SKILL.md'
             entry.parent.mkdir(parents=True)
             entry.write_text('Controlled official guidance')
             official, next_cli = root / 'official-cli', root / 'next-cli'
             official.touch()
             next_cli.touch()
-            args = ['run_read_batch.py', '--section', 'docs', '--task-kind', 'paired',
+            args = ['run_read_batch.py', '--section', 'contact', '--task-kind', 'paired',
                     '--model', 'gpt-5.6-luna', '--reasoning', 'medium']
             values = {'official-source': source, 'official-cli': official,
                       'next-source': ROOT, 'next-cli': next_cli, 'codex': root / 'codex',
@@ -103,6 +103,8 @@ class CodexAccountingTests(unittest.TestCase):
                 captured.append(config)
                 self.assertEqual(config['model'], 'gpt-5.6-luna')
                 self.assertEqual(config['reasoning'], 'medium')
+                self.assertEqual(Path(config['arms']['official_concise']['skill']).read_text(),
+                                 (ROOT / 'evaluation/official-contact-concise/SKILL.md').read_text())
                 self.assertEqual(set(config['arms']), {'official', 'official_concise', 'next'})
                 self.assertEqual(config['arms']['official']['cli'], config['arms']['official_concise']['cli'])
                 self.assertEqual(Path(config['runner'][1]).name, 'codex_runner.py')

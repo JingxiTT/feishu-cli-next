@@ -56,7 +56,9 @@ def main():
             shutil.copytree(args.official_source / 'skills', concise_distribution)
             concise_entry = concise_distribution / skill_name / 'SKILL.md'
             concise_entry.parent.mkdir(exist_ok=True)
-            shutil.copyfile(ROOT / 'evaluation/concise' / ('packaging' if section == 'business' else section) / 'SKILL.md', concise_entry)
+            concise_source = (ROOT / 'evaluation/official-contact-concise/SKILL.md' if section == 'contact'
+                              else ROOT / 'evaluation/concise' / ('packaging' if section == 'business' else section) / 'SKILL.md')
+            shutil.copyfile(concise_source, concise_entry)
             official_cli, next_cli = args.official_cli, args.next_cli
             if section == 'extensions':
                 from scenarios.extensions import build_host
