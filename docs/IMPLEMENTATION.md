@@ -17,8 +17,12 @@ renderings and Base create-time empty-text behavior differ from the development
 fixtures. Preserve all costs and synthetic verdicts, but withhold affected live
 same-fidelity efficiency conclusions. Small Base update fidelity remains
 unvalidated; native create behavior alone does not establish update behavior.
-Sheets/Base correctness changes and the Docs help tip form a new, unmeasured
-product condition. No replacement model trials have run.
+Sheets/Base correctness changes and the Docs help tip were not covered by those
+historical batches. The subsequent [Luna/medium paired pilot](../evaluation/evidence/paired-luna-medium-01/REPORT.md)
+ran 72 model trials against corrected synthetic fixtures: 54 verified successes,
+seven inconclusive outcomes and 11 failed verifications, with complete token
+accounting. Its per-function results do not close outstanding live or release
+gates; Markdown and some Sheets strategies remain limited by fixture coverage.
 
 ## Reference and baseline
 
