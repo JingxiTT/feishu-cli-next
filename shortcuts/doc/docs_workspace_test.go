@@ -507,3 +507,68 @@ func TestDocsWorkspaceSnapshotReconciliationNeverReplaysMutation(t *testing.T) {
 		})
 	}
 }
+
+func TestDocsWorkspacePhysicalNewlineNoopAndDryRun(t *testing.T) {
+	for _, mode := range []string{"noop", "dry-run"} {
+		t.Run(mode, func(t *testing.T) {
+			f, reg, out := workspaceFactory(t)
+			blocks := workspaceBlocks()
+			markdown := workspaceMarkdown(t, blocks)
+			if mode == "dry-run" {
+				markdown = strings.Replace(markdown, "Old 中文", "New 中文", 1)
+			}
+			markdown = "\ufeff" + strings.ReplaceAll(strings.TrimRight(markdown, "\n"), "\n", "\r\n")
+			workspaceSave(t, f, blocks, markdown)
+			server := &workspaceServer{revision: 3, blocks: blocks}
+			server.mount(t, reg)
+			args := []string{"+push", "--file", "note.md"}
+			if mode == "dry-run" {
+				args = append(args, "--dry-run")
+			}
+			if err := workspaceRun(t, DocsPush, f, out, args...); err != nil {
+				t.Fatal(err)
+			}
+			if server.patches != 0 {
+				t.Fatal("physical formatting dispatched a write")
+			}
+			if mode == "dry-run" && server.metadataCalls+server.blockCalls != 0 {
+				t.Fatal("dry-run performed native reads")
+			}
+		})
+	}
+}
+
+func TestDocsWorkspaceAtPathRecoveryPreservesLiteralFiles(t *testing.T) {
+	for _, mode := range []string{"missing-prefix", "literal-prefix"} {
+		t.Run(mode, func(t *testing.T) {
+			f, reg, out := workspaceFactory(t)
+			blocks := workspaceBlocks()
+			workspaceSave(t, f, blocks, workspaceMarkdown(t, blocks))
+			server := &workspaceServer{revision: 3, blocks: blocks}
+			server.mount(t, reg)
+			file := "@./note.md"
+			if mode == "literal-prefix" {
+				for _, suffix := range []string{"", ".feishu.json"} {
+					if err := os.Rename("note.md"+suffix, "@note.md"+suffix); err != nil {
+						t.Fatal(err)
+					}
+				}
+				file = "@note.md"
+			}
+			err := workspaceRun(t, DocsPush, f, out, "+push", "--file", file, "--dry-run")
+			if mode == "literal-prefix" {
+				if err != nil {
+					t.Fatal(err)
+				}
+			} else {
+				var input *errs.ValidationError
+				if !errors.As(err, &input) || input.Subtype != errs.SubtypeInvalidArgument || !errors.Is(err, os.ErrNotExist) || !strings.Contains(input.Hint, "--file ./note.md without @") {
+					t.Fatalf("missing actionable typed recovery: %v", err)
+				}
+			}
+			if server.patches+server.metadataCalls+server.blockCalls != 0 {
+				t.Fatal("local path/dry-run performed native requests")
+			}
+		})
+	}
+}

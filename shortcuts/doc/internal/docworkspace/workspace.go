@@ -39,7 +39,7 @@ type block struct {
 }
 
 var idPattern = regexp.MustCompile(`^[A-Za-z0-9_-]+$`)
-var markerPattern = regexp.MustCompile(`(?m)^<!-- block:([A-Za-z0-9_-]+) -->\n`)
+var markerPattern = regexp.MustCompile(`(?m)^<!-- block:([A-Za-z0-9_-]+) -->(?:\n|$)`)
 
 func marker(id string) string { return "<!-- block:" + id + " -->\n" }
 
@@ -65,6 +65,9 @@ func Plan(blocks []json.RawMessage, editedMarkdown string) ([]Edit, error) {
 	if !utf8.ValidString(editedMarkdown) {
 		return nil, invalid("Markdown must be valid UTF-8")
 	}
+	// Physical editor line endings and a leading encoding marker do not encode
+	// native text: native newlines/carriage returns use <br>/&#13; in this view.
+	editedMarkdown = strings.ReplaceAll(strings.TrimPrefix(editedMarkdown, "\ufeff"), "\r\n", "\n")
 	projected, err := project(blocks)
 	if err != nil {
 		return nil, err
@@ -83,7 +86,9 @@ func Plan(blocks []json.RawMessage, editedMarkdown string) ([]Edit, error) {
 		if i+1 < len(matches) {
 			end = matches[i+1][0]
 		}
-		body := editedMarkdown[m[1]:end]
+		// Blank separator lines are presentation only. Preserve spaces, markup,
+		// and encoded native line breaks while accepting ordinary editor EOFs.
+		body := strings.Trim(editedMarkdown[m[1]:end], "\n") + "\n\n"
 		if body == b.body {
 			continue
 		}

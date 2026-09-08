@@ -244,6 +244,12 @@ func loadDocsWorkspace(runtime *common.RuntimeContext) (docsWorkspace, []docwork
 	}
 	raw, err := readDocsWorkspaceFile(runtime, sidecar)
 	if err != nil {
+		// --file names a path, unlike content flags that resolve @file bytes.
+		// Keep existing literal @ filenames valid; clarify only missing input.
+		var input *errs.ValidationError
+		if strings.HasPrefix(file, "@") && errors.Is(err, fs.ErrNotExist) && errors.As(err, &input) {
+			input.WithHint("--file names the saved workspace path: use --file ./note.md without @. For a literal @-prefixed filename, use --file ./@note.md.")
+		}
 		return saved, nil, err
 	}
 	decoder := json.NewDecoder(bytes.NewReader(raw))

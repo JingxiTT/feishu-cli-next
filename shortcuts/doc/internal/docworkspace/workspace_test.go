@@ -193,3 +193,52 @@ func TestPlanMultipleBlocksAndRuns(t *testing.T) {
 	plain := []json.RawMessage{paragraph("p", run("abc"), run("def"))}
 	validation(t, plain, strings.Replace(rendered(t, plain), "abcdef", "abXef", 1))
 }
+
+func TestPlanEditorNewlinesPreserveNativeContent(t *testing.T) {
+	blocks := []json.RawMessage{paragraph("p", run("Old \r\n literal &#13; <br>  ")), paragraph("empty"), json.RawMessage(`{"block_id":"resource","block_type":27,"image":{"token":"opaque"}}`)}
+	original := rendered(t, blocks)
+	for name, reformat := range map[string]func(string) string{
+		"single_separator":  func(s string) string { return strings.ReplaceAll(s, "\n\n", "\n") },
+		"extra_separator":   func(s string) string { return strings.ReplaceAll(s, "\n\n", "\n\n\n\n") },
+		"no_eof_newline":    func(s string) string { return strings.TrimRight(s, "\n") },
+		"extra_eof_newline": func(s string) string { return s + "\n" },
+		"crlf_bom":          func(s string) string { return "\ufeff" + strings.ReplaceAll(s, "\n", "\r\n") },
+	} {
+		t.Run(name, func(t *testing.T) {
+			edits, err := Plan(blocks, reformat(original))
+			if err != nil || len(edits) != 0 {
+				t.Fatalf("format-only change planned mutations: %v %v", edits, err)
+			}
+			edits, err = Plan(blocks, reformat(strings.Replace(original, "Old ", "New ", 1)))
+			if err != nil || len(edits) != 1 || edits[0].Text != "New \r\n literal &#13; <br>  " {
+				t.Fatalf("native text changed: %#v %v", edits, err)
+			}
+		})
+	}
+	empty := []json.RawMessage{paragraph("empty")}
+	if edits, err := Plan(empty, "<!-- block:empty -->"); err != nil || len(edits) != 0 {
+		t.Fatalf("empty block EOF: %v %v", edits, err)
+	}
+	// Native line breaks remain encoded; deleting one is a real text edit.
+	edits, err := Plan(blocks, strings.Replace(original, "<br>", "", 1))
+	if err != nil || len(edits) != 1 || edits[0].Text != "Old \r literal &#13; <br>  " {
+		t.Fatalf("lost native newline edit: %v %v", edits, err)
+	}
+	validation(t, blocks, strings.Replace(original, "Old ", "Old\n", 1))
+	validation(t, blocks, strings.Replace(original, "block:resource", "block:other", 1))
+	validation(t, blocks, strings.Replace(original, "Opaque native block type 27", "Removed", 1)+"\n")
+}
+
+func TestPlanVisiblePhraseAcrossMarksIsNotFlattened(t *testing.T) {
+	blocks := []json.RawMessage{paragraph("p", run("Old "), `{"text_run":{"content":"status","text_element_style":{"bold":true,"link":{"url":"https://example.org/status"}}}}`, run(" — 你好"))}
+	original := rendered(t, blocks)
+	unchanged := strings.Replace(original, "Old status", "New status", 1)
+	if edits, err := Plan(blocks, unchanged); err != nil || len(edits) != 0 {
+		t.Fatalf("unmatched local replacement should be no-op: %v %v", edits, err)
+	}
+	edits, err := Plan(blocks, strings.Replace(original, "Old ", "New ", 1))
+	if err != nil || len(edits) != 1 || edits[0].Text != "New status — 你好" {
+		t.Fatalf("smallest edit/complete paragraph: %v %v", edits, err)
+	}
+	validation(t, blocks, "<!-- block:p -->\nNew status — 你好\n")
+}
