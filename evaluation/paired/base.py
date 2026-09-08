@@ -1,8 +1,8 @@
 """Paired Base update: numeric zero and an explicit native null clear.
 
 Reuses the reviewed development state machine, never its empty-string task.
-Native null clearing was observed in the private supported lifecycle; empty text
-normalization is modeled separately and cannot substitute for requested null.
+Native null clearing was observed in the private supported lifecycle. Empty-text
+UPDATE storage semantics remain unverified (normalization was observed on CREATE).
 """
 from copy import deepcopy
 from urllib.parse import parse_qs, urlsplit, urlencode
@@ -85,15 +85,13 @@ class Scenario(native.Scenario):
         return super()._dispatch(method, uri, body_bytes, headers)
 
     def _update(self, route, updates):
-        reply = super()._update(route, updates)
-        effect = self.effects[-1]
-        if effect["submitted"].get("fld_text") == "":
-            # Live backend normalization, not a verifier conversion. The raw
-            # submitted empty string remains evidence of the wrong operation.
-            self.records[TARGET]["fld_text"] = None
-            effect["after"]["fld_text"] = None
-            reply.proof = deepcopy(effect)
-        return reply
+        if isinstance(updates, dict) and set(updates) == {TARGET}:
+            patch = updates[TARGET]
+            if isinstance(patch, dict) and any(patch.get(key) == "" for key in ("Text", "fld_text")):
+                # Only CREATE empty-text normalization was observed live. Do not
+                # invent UPDATE effects or silently substitute requested null.
+                raise ValueError("unsupported strategy: native Base empty-text update storage semantics are unverified")
+        return super()._update(route, updates)
 
 
 def verify(workspace, answer, receipt, expected):

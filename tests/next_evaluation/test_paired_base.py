@@ -52,13 +52,17 @@ class PairedBaseTests(unittest.TestCase):
         self.update()
         self.assertTrue(self.accepted(), "an unchanged repeated delta is still a valid strategy")
 
-    def test_empty_string_is_not_a_substitute_for_requested_null(self):
-        self.call("PATCH", base.PREFIX + "/records/" + base.TARGET, {"Amount": 0, "Text": ""})
-        self.assertIsNone(self.scenario.snapshot()["records"][base.TARGET]["fld_text"], "native normalization modeled")
-        self.assertEqual(self.scenario.snapshot()["effects"][0]["submitted"]["fld_text"], "")
-        self.assertFalse(self.accepted(), "final null cannot conceal wrong submitted semantics")
+    def test_empty_string_update_is_unsupported_before_mutation(self):
+        for method, path, payload in [
+            ("PATCH", base.PREFIX + "/records/" + base.TARGET, {"Amount": 0, "Text": ""}),
+            ("POST", base.PREFIX + "/records/batch_update", {"update_records": {base.TARGET: {"fld_amount": 0, "fld_text": ""}}}),
+        ]:
+            with self.subTest(method=method), self.assertRaisesRegex(ValueError, "^unsupported strategy:.*empty-text update"):
+                self.call(method, path, payload)
+            self.assertEqual(self.scenario.snapshot()["records"], base.INITIAL)
+            self.assertEqual(self.scenario.snapshot()["effects"], [])
         self.update()
-        self.assertFalse(self.accepted(), "later correction cannot erase wrong-operation evidence")
+        self.assertTrue(self.accepted(), "explicit null remains the supported requested operation")
 
     def test_omission_wrong_number_and_transient_updates_fail(self):
         self.call("PATCH", base.PREFIX + "/records/" + base.TARGET, {"Amount": 0})
