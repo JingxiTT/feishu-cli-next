@@ -1,0 +1,923 @@
+{
+  "protocol": 1,
+  "mode": "real",
+  "split": "development",
+  "performance_claims_supported": true,
+  "completed": true,
+  "planned_runs": 6,
+  "seed": 20260912,
+  "repeats": 3,
+  "fresh_context": true,
+  "task_manifest_sha256": "d62f4978ea4acfcc594c7854d680fb98c93836d0562662249fd4023e0d98fa9d",
+  "config_sha256": "95bd6eb79a45549ec9ee81bf85c8814cf185e00d431a475e808e9ab1988f4a59",
+  "environment": {
+    "backend": "synthetic-scenario-v1",
+    "model": "gpt-5.6-luna",
+    "tokenizer": "provider-undisclosed",
+    "reasoning": "medium",
+    "tools": [
+      "shell",
+      "files"
+    ],
+    "permissions": "workspace-write; managed proxy loopback-only with local binding; isolated synthetic sidecar",
+    "budget": {
+      "timeout_seconds": 180
+    },
+    "accounting_method": "codex-cli 0.153.4 provider turn.completed; cached input included in full"
+  },
+  "arms": {
+    "official": {
+      "cli_sha256": "5e1f582ec5ab9c86d3618fc17bd099b3443d40fe8691fed07d42e83a351ba977",
+      "skill_sha256": "b140cd55b62be7f001384fb47627dc269ef08db3b943d0eb8c6aa4ef1bc9b685"
+    },
+    "next": {
+      "cli_sha256": "729ebf3a2bfa3eb9d9c86db658135616d1e6cd4ac8384faea6b97c221e989f2a",
+      "skill_sha256": "e4b8c7acc25d3e7160e66c3c272feaca44a667e30740fd3b3e541b392d5df7be"
+    }
+  },
+  "runs": [
+    {
+      "task_id": "paired-markdown",
+      "section": "markdown",
+      "trial": 2,
+      "arm": "official",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 124900,
+        "cached_input_tokens": 94976,
+        "output_tokens": 1261,
+        "total_tokens": 126161
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 124900,
+        "cached_input_tokens": 94976,
+        "output_tokens": 1261,
+        "total_tokens": 126161
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 1
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_search"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "drive",
+                "+import"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "drive",
+                "+import"
+              ],
+              "flags": [
+                "--as",
+                "--file",
+                "--format",
+                "--type"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 43.19743645799463,
+      "verification_seconds": 0.06931683299626457,
+      "api_calls": 6,
+      "retries": null,
+      "command_executions": 5
+    },
+    {
+      "task_id": "paired-markdown",
+      "section": "markdown",
+      "trial": 1,
+      "arm": "official",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 112626,
+        "cached_input_tokens": 80896,
+        "output_tokens": 1201,
+        "total_tokens": 113827
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 112626,
+        "cached_input_tokens": 80896,
+        "output_tokens": 1201,
+        "total_tokens": 113827
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "drive",
+                "+import"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "drive",
+                "+import"
+              ],
+              "flags": [
+                "--as",
+                "--file",
+                "--format",
+                "--name",
+                "--type"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 41.511843500004034,
+      "verification_seconds": 0.06764558300346835,
+      "api_calls": 6,
+      "retries": null,
+      "command_executions": 4
+    },
+    {
+      "task_id": "paired-markdown",
+      "section": "markdown",
+      "trial": 2,
+      "arm": "next",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 53596,
+        "cached_input_tokens": 28928,
+        "output_tokens": 791,
+        "total_tokens": 54387
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 53596,
+        "cached_input_tokens": 28928,
+        "output_tokens": 791,
+        "total_tokens": 54387
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "docs",
+                "+create"
+              ],
+              "flags": [
+                "--as",
+                "--content",
+                "--doc-format"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "docs",
+                "+fetch"
+              ],
+              "flags": [
+                "--as",
+                "--detail",
+                "--doc"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 29.154948333001812,
+      "verification_seconds": 0.0648102090053726,
+      "api_calls": 4,
+      "retries": null,
+      "command_executions": 4
+    },
+    {
+      "task_id": "paired-markdown",
+      "section": "markdown",
+      "trial": 0,
+      "arm": "next",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 47186,
+        "cached_input_tokens": 32000,
+        "output_tokens": 695,
+        "total_tokens": 47881
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 47186,
+        "cached_input_tokens": 32000,
+        "output_tokens": 695,
+        "total_tokens": 47881
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "skills",
+                "read"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "docs",
+                "+create"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "docs",
+                "+create"
+              ],
+              "flags": [
+                "--as",
+                "--content",
+                "--doc-format"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 28.14754537499539,
+      "verification_seconds": 0.06778729199868394,
+      "api_calls": 2,
+      "retries": null,
+      "command_executions": 3
+    },
+    {
+      "task_id": "paired-markdown",
+      "section": "markdown",
+      "trial": 1,
+      "arm": "next",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 67418,
+        "cached_input_tokens": 33792,
+        "output_tokens": 1031,
+        "total_tokens": 68449
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 67418,
+        "cached_input_tokens": 33792,
+        "output_tokens": 1031,
+        "total_tokens": 68449
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "docs",
+                "+create"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "docs",
+                "+create"
+              ],
+              "flags": [
+                "--as",
+                "--content",
+                "--doc-format",
+                "--parent-position"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "docs",
+                "+fetch"
+              ],
+              "flags": [
+                "--as",
+                "--detail",
+                "--doc"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 38.797621666999476,
+      "verification_seconds": 0.06084516699775122,
+      "api_calls": 4,
+      "retries": null,
+      "command_executions": 5
+    },
+    {
+      "task_id": "paired-markdown",
+      "section": "markdown",
+      "trial": 0,
+      "arm": "official",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 192533,
+        "cached_input_tokens": 158976,
+        "output_tokens": 1547,
+        "total_tokens": 194080
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 192533,
+        "cached_input_tokens": 158976,
+        "output_tokens": 1547,
+        "total_tokens": 194080
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_search"
+            },
+            {
+              "kind": "file_search"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "drive",
+                "+import"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "drive",
+                "+import"
+              ],
+              "flags": [
+                "--as",
+                "--dry-run",
+                "--file",
+                "--type"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "drive",
+                "+import"
+              ],
+              "flags": [
+                "--as",
+                "--file",
+                "--format",
+                "--type"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 46.48143295800401,
+      "verification_seconds": 0.06579533300100593,
+      "api_calls": 7,
+      "retries": null,
+      "command_executions": 6
+    }
+  ],
+  "groups": [
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 170717,
+      "tokens_per_success": 56905.666666666664,
+      "token_distribution": {
+        "min": 47881,
+        "median": 54387,
+        "max": 68449,
+        "stdev": 10512.774007526907
+      },
+      "latency_median_seconds": 29.154948333001812,
+      "api_calls": 10,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 434068,
+      "tokens_per_success": 144689.33333333334,
+      "token_distribution": {
+        "min": 113827,
+        "median": 126161,
+        "max": 194080,
+        "stdev": 43215.85767207835
+      },
+      "latency_median_seconds": 43.19743645799463,
+      "api_calls": 19,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "section",
+      "name": "markdown",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 170717,
+      "tokens_per_success": 56905.666666666664,
+      "token_distribution": {
+        "min": 47881,
+        "median": 54387,
+        "max": 68449,
+        "stdev": 10512.774007526907
+      },
+      "latency_median_seconds": 29.154948333001812,
+      "api_calls": 10,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "section",
+      "name": "markdown",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 434068,
+      "tokens_per_success": 144689.33333333334,
+      "token_distribution": {
+        "min": 113827,
+        "median": 126161,
+        "max": 194080,
+        "stdev": 43215.85767207835
+      },
+      "latency_median_seconds": 43.19743645799463,
+      "api_calls": 19,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "task_id",
+      "name": "paired-markdown",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 170717,
+      "tokens_per_success": 56905.666666666664,
+      "token_distribution": {
+        "min": 47881,
+        "median": 54387,
+        "max": 68449,
+        "stdev": 10512.774007526907
+      },
+      "latency_median_seconds": 29.154948333001812,
+      "api_calls": 10,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "task_id",
+      "name": "paired-markdown",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 434068,
+      "tokens_per_success": 144689.33333333334,
+      "token_distribution": {
+        "min": 113827,
+        "median": 126161,
+        "max": 194080,
+        "stdev": 43215.85767207835
+      },
+      "latency_median_seconds": 43.19743645799463,
+      "api_calls": 19,
+      "retries": null,
+      "failure_categories": {}
+    }
+  ],
+  "matched_success": [
+    {
+      "baseline": "official",
+      "pairs": [
+        {
+          "task_id": "paired-markdown",
+          "trial": 2,
+          "baseline_tokens": 126161,
+          "next_tokens": 54387
+        },
+        {
+          "task_id": "paired-markdown",
+          "trial": 0,
+          "baseline_tokens": 194080,
+          "next_tokens": 47881
+        },
+        {
+          "task_id": "paired-markdown",
+          "trial": 1,
+          "baseline_tokens": 113827,
+          "next_tokens": 68449
+        }
+      ]
+    }
+  ],
+  "arm_selection": {
+    "mode": "original_comparison",
+    "selected": [
+      "official",
+      "next"
+    ],
+    "schedule": "balanced",
+    "balanced_comparison": true
+  }
+}
