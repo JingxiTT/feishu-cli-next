@@ -217,15 +217,49 @@ plain replacement that removed formatting and a passing explicit rich-XML
 lifecycle (`f917e22`), with both documents independently confirmed deleted.
 These are named private workflows, not full section live acceptance.
 
+The [Markdown private lifecycle](sections/markdown-private-live-evidence.json)
+(`45e4698`) passed exact source-file byte preservation and native Markdown
+heading, bold/link, table, Unicode and code readback. Both run-owned resources
+were independently confirmed deleted. The initial file-path validation attempt
+created no resources and remains recorded separately.
+The [batch closure](sections/private-live-summary-20260908.json) records 13 created
+children, all independently confirmed deleted, followed by a fresh complete empty
+parent listing and one parent delete. Its exact-folder listing returned native
+`1061007 / file has been delete.`; successful post-delete permission metadata was
+not accepted as deletion proof. No collaborators were invited, sharing defaults
+were changed or unknown mutations replayed. The test browser tab was closed.
+
 Native testing also exposed formula identity missing from raw Sheets exports and
 Base empty text normalizing to null. The reviewed Base fix (`b746eff`) rejects
 explicit empty text during complete typed-import preflight before destination
 reads or writes; full Base offline suites pass (1,097 unit, 160 legacy and 178
-process events, one existing broad-live skip). Sheets formula preservation and
-fresh supported-input live confirmations are in progress; prior offline transfer
-and synthetic evaluation assumptions
-do not establish live fidelity for those cases. Failed attempts and cleanup
-evidence remain retained, and no replacement model comparisons have run.
+process events, one existing broad-live skip). The separate
+[supported Base live scenario](sections/base-private-supported-live-evidence.json)
+verified native create/read, zero/null update/readback and unchanged no-op. Its
+negative import assertion failed on a test file-path problem, so the selected
+suite remains failed and the live negative check remains unverified. The harness
+path and diagnostic capture are corrected; cleanup independently confirmed the
+Base deleted. The offline regression proves empty-text rejection before any write.
+
+The [Sheets fix and final private lifecycle](sections/sheets-private-live-evidence.json)
+(`02b6c5f`, evidence `17b275e`) preserve raw scalar types and explicit formulas
+using paired native renderings with matching revisions. Its complete affected
+unit suite, 68 inherited checks, 300 process checks and 23 cross-section checks
+pass; six broader live lifecycles remain unverified. A fresh live workbook passed
+all six typed/formula assertions and exact-ID deletion. The coordinator rechecked
+eight evidence hashes and the native artifact independently. Earlier raw-only
+artifacts may lack formula identity and must be re-exported before reuse.
+The [independent fix review](reference/reviews/p3-native-fidelity-review.json)
+approves both changes at exact source hashes. Failed attempts remain retained;
+no replacement model comparisons have run.
+
+The [post-change checks](sections/private-live-final-gates-20260908.json) record
+129 passing packages in the broad race run and four path-related failing packages.
+All four pass their separate race rerun under a short isolated `/tmp` directory
+(1,551 test events). The root package passes after updating its existing embedded
+help expectation. Vet, formatting, unchanged module tidy, pinned Go lint, source
+guards and the committed quality gate pass; original failed invocations and their
+causes remain in the report.
 
 The [P3 Sheets-to-Base process suite](integration/sheets-base.md) passes all 11
 initial test/subtest events without skips; the expanded suite at `1f1ce4e`
@@ -287,7 +321,7 @@ unverified or unavailable. Local evidence does not establish public release read
 
 ## Outstanding release evidence
 
-P2 domain acceptance, verified private live fixtures,
+P2 domain acceptance, remaining private live scenarios,
 remaining OS-specific and remote lifecycle checks, full release checks and held-out
 evaluation remain open. The [source review aggregate](reference/p3-effective-review-current.json)
 records exact-hash offline approvals for all runtime/build paths; it grants no
@@ -302,7 +336,7 @@ complete goal.
 
 | Remaining prerequisite | Evidence needed to close it |
 | --- | --- |
-| Private live workflows | The named private folder and current account are verified; bounded Drive and explicit-XML Docs lifecycles pass. Finish Sheets/Base fidelity corrections and remaining section live scenarios; delete only run-owned resources. |
+| Private live workflows | The named private folder and current account were verified; all 13 run-created children and parent are deleted. Bounded Drive, explicit-XML Docs, Sheets and Markdown lifecycles pass. Sheets formula correction and its private lifecycle pass; Base supported steps pass but its selected suite retains a failed negative assertion. Remaining section live scenarios and broader type/concurrency guarantees stay open. |
 | Contact bot tenant binding | Requested `search:bot` grant and selected read suite passed. Separate bot tenant verification still requires the unrequested `tenant:tenant:readonly` app scope. |
 | OS-specific runtime coverage | Linux arm64 runtime suites and platform comparison pass; delivered archive lifecycles pass on arm64 and under amd64/riscv64 translation. Broader amd64/riscv64 runtime suites have not run. Windows behavior checks and native reference capture are deferred by the user's 2026-09-08 instruction; cross-built archives are not runtime verification. Darwin/amd64 smoke checks already ran under Rosetta. Additional gaps must name the unverified scenario, not require physical hardware absent from PLAN. |
 | Remote release ownership | An owned Next repository/download destination and package identity, then the documented updater identity integration and remote install/update checks. Public signing/notarization and publication retain their separate prerequisites. |

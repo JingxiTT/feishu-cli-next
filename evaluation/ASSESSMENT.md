@@ -169,8 +169,10 @@ capability acceptance follow from these development measurements.
 
 The requested `search:bot` grant and selected Contact current-account read suite
 passed. Separate bot tenant verification still lacks the unrequested
-`tenant:tenant:readonly` app scope. Bounded private Drive and explicit rich-XML Docs
-lifecycles passed; remaining private scenarios, release-channel
+`tenant:tenant:readonly` app scope. Bounded private Drive, explicit rich-XML Docs, corrected Sheets and Markdown
+lifecycles passed, with all test resources deleted. Base supported operations
+passed but its selected suite retains a failed negative assertion. Remaining
+private scenarios, release-channel
 and lifecycle checks, complete section acceptance and final held-out evidence
 remain outstanding.
 Windows behavior/reference capture remains unverified and is deferred by the

@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "date": "2026-09-08",
+  "status": "private_batch_closed",
+  "scope": "Authorized current-account-only synthetic native lifecycles; no full-section or release acceptance claim",
+  "search_bot": "Granted narrowly; selected Contact suite passed with existing scopes and identity binding retained.",
+  "child_resources_created": {
+    "drive_files": 2,
+    "docs": 2,
+    "sheets": 4,
+    "base": 3,
+    "markdown_source_file": 1,
+    "markdown_rendered_document": 1
+  },
+  "children_deleted_and_independently_confirmed": 13,
+  "parent_cleanup": {
+    "status": "deleted_and_independently_verified",
+    "owner_and_account_revalidated": true,
+    "link_sharing_closed": true,
+    "sole_current_user_collaborator": true,
+    "complete_listing_before_delete": {
+      "files": 0,
+      "has_more": false
+    },
+    "delete_attempts": 1,
+    "independent_proof": {
+      "operation": "exact-folder files list",
+      "error_type": "api",
+      "code": 1061007,
+      "message": "file has been delete."
+    },
+    "initial_after_delete_permission_read": "returned success; explicitly not used as deletion proof",
+    "other_resources_modified": false,
+    "child_resources": "All domain-owned children independently confirmed deleted; final complete folder listing contained zero files."
+  },
+  "automatic_mutation_replays": 0,
+  "sharing_settings_changed": false,
+  "collaborators_invited": 0,
+  "windows": "deferred by user",
+  "live_test_outcomes": {
+    "contact_selected_current_account": "pass",
+    "drive_final_file_lifecycle": "pass; original failed cleanup assertion retained",
+    "docs_plain_replace": "fail: bold/link removed",
+    "docs_explicit_rich_xml": "pass",
+    "sheets_original_attempts": "three failures retained",
+    "sheets_corrected_lifecycle": "pass",
+    "base_original_empty_text": "two failures retained: empty string became null",
+    "base_supported_lifecycle": "selected test failed at negative assertion; supported create/read/update/no-op and deletion steps passed",
+    "markdown_initial_path_attempt": "local validation failures; zero resources created",
+    "markdown_source_and_native_render": "pass"
+  },
+  "post_change_checks": "private-live-final-gates-20260908.json",
+  "native_fidelity_qualification": "../../evaluation/evidence/native-fidelity-validity-audit-20260908.md",
+  "cleanup_artifacts": [
+    {
+      "path": ".tmp/next-live-20260908/parent-cleanup/01-auth.json",
+      "sha256": "8f105d4a8c6a9cf0a79ea398b0da19500629891f5d999396efd6a30baec8b55d"
+    },
+    {
+      "path": ".tmp/next-live-20260908/parent-cleanup/02-self.json",
+      "sha256": "db13b6300db2bb9d39c15ab19555dc21f5b18f6d599c09cbbfba6c9175f7a71d"
+    },
+    {
+      "path": ".tmp/next-live-20260908/parent-cleanup/03-owner.json",
+      "sha256": "91706b55239d06097bf658d059bf9c9a13a5b506b9874b8de9cbfd834d51acf4"
+    },
+    {
+      "path": ".tmp/next-live-20260908/parent-cleanup/04-sharing.json",
+      "sha256": "eb5526aca5d9bd93f4a0c7437ca6ec0bf06708b5cddeaf1039a72c8346ef4383"
+    },
+    {
+      "path": ".tmp/next-live-20260908/parent-cleanup/05-members.json",
+      "sha256": "5e73b7abdf61523c830c82261dcf1e5e6dd4b6b1bf283f18ea9a1ab4969e554a"
+    },
+    {
+      "path": ".tmp/next-live-20260908/parent-cleanup/06-empty.json",
+      "sha256": "595b0c5cabd528b696ee8bc5bc4a3b2180154df9a7149af751332e43394abb94"
+    },
+    {
+      "path": ".tmp/next-live-20260908/parent-cleanup/07-delete-attempt.json",
+      "sha256": "9c217b35c171d5048f363101184f3d9dc45e8fb0eef1f1591c1bc5f079a04649"
+    },
+    {
+      "path": ".tmp/next-live-20260908/parent-cleanup/08-delete.json",
+      "sha256": "edd332a3513c3314a3402c4b72cacb409b63dde8da490e9a3d8db96966ac55ac"
+    },
+    {
+      "path": ".tmp/next-live-20260908/parent-cleanup/09-deleted-proof.json",
+      "sha256": "eb5526aca5d9bd93f4a0c7437ca6ec0bf06708b5cddeaf1039a72c8346ef4383"
+    },
+    {
+      "path": ".tmp/next-live-20260908/parent-cleanup/10-list-deleted-proof.json",
+      "sha256": "803d75ffc2a411ae20651e5d510612e0c89ab9533a5320af228f52d6058a5c29"
+    },
+    {
+      "path": ".tmp/next-live-20260908/parent-cleanup/summary.json",
+      "sha256": "e8a7d331cf58e949f88ed8ba479798e1f7cfd95effa5a88fe2d3b278db7f2184"
+    }
+  ]
+}

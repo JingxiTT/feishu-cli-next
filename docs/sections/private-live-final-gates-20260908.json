@@ -1,0 +1,107 @@
+{
+  "schema_version": 1,
+  "date": "2026-09-08",
+  "scope": "Darwin arm64 post-private-live product corrections; not release acceptance",
+  "product_commits": [
+    "b746eff",
+    "02b6c5f"
+  ],
+  "source_hashes": {
+    "shortcuts/sheets/data_transfer.go": "9d6f9e356d3e4dac01bd09f5443a58a4483e8688b930d4d111020d6e6f8b8b42",
+    "shortcuts/base/record_import.go": "6b4d342577e8dac827cc5a87efbe424a91b1b95e03a96e3fefab4bc7de1a0ed0",
+    "shortcuts/base/record_import_data.go": "ede6dcb20549a846a83dba8c0c252358f6fd3115bf92994d9392a78b946e4877"
+  },
+  "source_stable_during_broad_gate": true,
+  "initial_make_unit_test": {
+    "status": "failed",
+    "passing_packages": 129,
+    "failing_packages": [
+      "github.com/larksuite/cli/internal/event",
+      "github.com/larksuite/cli/internal/event/adapter/localbus/transport",
+      "github.com/larksuite/cli/internal/event/consume",
+      "github.com/larksuite/cli/shortcuts/drive"
+    ],
+    "reason": "Coordinator isolation directory under macOS /var/folders exceeded Unix socket path lengths and was outside the existing FileIO allowlist."
+  },
+  "targeted_race_followup": {
+    "status": "pass",
+    "package_count": 4,
+    "passing_test_events": 1551,
+    "skips": 0,
+    "failures": 0,
+    "correction": "Re-ran the four failing packages under a short isolated /tmp directory with identical race/debug/count flags. No product changes."
+  },
+  "root_package": {
+    "initial": "failed on outdated exact embedded Docs tip expectation",
+    "fix_commit": "712d1b8",
+    "followup": "pass with race"
+  },
+  "static": {
+    "make_vet": "pass",
+    "make_fmt_check": "pass",
+    "go_mod_tidy": "pass; go.mod/go.sum unchanged",
+    "source_guard": "pass against d6ec668",
+    "pinned_go_lint_v2_1_6": "pass against d6ec668; initial offline module lookup unavailable, separate network-enabled dependency followup retained",
+    "quality_gate": "pass against d6ec668; existing advisory output warnings retained",
+    "quality_initial_failure": "Public-content scanner classified a folder identifier hash field as a credential assignment. Removed the unnecessary public hash; exact resource reference remains in private ignored manifest."
+  },
+  "sheets_independent_recheck": {
+    "artifact_hashes_verified": 8,
+    "final_native_raw_types_and_explicit_formula_verified": true
+  },
+  "limits": [
+    "Broad race gate and four-package corrected-isolation followup are separate preserved invocations, not a fabricated single successful make run.",
+    "Final live harnesses have their own domain-specific compilation/vet and actual execution evidence.",
+    "No new model evaluations, Windows execution, remote publication or broader live capability acceptance."
+  ],
+  "raw_logs": [
+    {
+      "path": ".tmp/private-live-final-gates/fmt.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".tmp/private-live-final-gates/golint-followup.log",
+      "sha256": "6114068728a686e0b06db9181226020989a4c0745a309899cd7bc1ead2ff69a9"
+    },
+    {
+      "path": ".tmp/private-live-final-gates/golint.log",
+      "sha256": "c6363d47d7f1c3fb8d4ee44f4a81606e3878734d68ec87e7831a54a2fa61d16f"
+    },
+    {
+      "path": ".tmp/private-live-final-gates/quality-followup.log",
+      "sha256": "e8af15eb75efc9d18a660f605a597258a7a39afdb79261fc01527f2487065e0d"
+    },
+    {
+      "path": ".tmp/private-live-final-gates/quality.log",
+      "sha256": "d81e883069689240a7caedf00bb0f8d0b0e305388c6c059a8cc034f707190d61"
+    },
+    {
+      "path": ".tmp/private-live-final-gates/root-unit-followup.log",
+      "sha256": "eb3ad0db6606791a47c956d07fe4fcf7c4dccc03b974c9fe7382c8f6f9da087b"
+    },
+    {
+      "path": ".tmp/private-live-final-gates/root-unit.log",
+      "sha256": "d5a7f86811589198a6ce700c9f4fd73e9168c9c534f5e359785215a4e10fba41"
+    },
+    {
+      "path": ".tmp/private-live-final-gates/source-guard.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".tmp/private-live-final-gates/tidy.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".tmp/private-live-final-gates/unit-path-followup.log",
+      "sha256": "0e6f71e83cd78d4a54be976f6de767d81dbacc93c28aa1bd57f223c3e021c52e"
+    },
+    {
+      "path": ".tmp/private-live-final-gates/unit.log",
+      "sha256": "4b5841b3b324e9857e1a414090afbad092848ef9a86cb5273f31936da45ee866"
+    },
+    {
+      "path": ".tmp/private-live-final-gates/vet.log",
+      "sha256": "10c5878a951b2d2f4ad66c2cd864e43825b11615fd15cbeb75c632e68e722179"
+    }
+  ]
+}
