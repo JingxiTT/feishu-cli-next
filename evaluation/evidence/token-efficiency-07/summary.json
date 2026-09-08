@@ -1,0 +1,458 @@
+{
+  "groups": [
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "next",
+      "attempts": 6,
+      "successes": 6,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 248656,
+      "tokens_per_success": 41442.666666666664,
+      "token_distribution": {
+        "min": 15710,
+        "median": 40175.5,
+        "max": 64619,
+        "stdev": 21637.633629088617
+      },
+      "latency_median_seconds": 32.67869535450154,
+      "api_calls": 52,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "official",
+      "attempts": 6,
+      "successes": 5,
+      "inconclusive": 0,
+      "success_rate": 0.8333333333333334,
+      "usage_complete": true,
+      "known_total_tokens": 472042,
+      "tokens_per_success": 94408.4,
+      "token_distribution": {
+        "min": 29314,
+        "median": 66653.0,
+        "max": 163719,
+        "stdev": 54064.68653628417
+      },
+      "latency_median_seconds": 36.56312864600113,
+      "api_calls": 36,
+      "retries": null,
+      "failure_categories": {
+        "misleading_success_claim": 1,
+        "outcome_failure": 1
+      }
+    },
+    {
+      "scope": "section",
+      "name": "docs",
+      "arm": "next",
+      "attempts": 6,
+      "successes": 6,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 248656,
+      "tokens_per_success": 41442.666666666664,
+      "token_distribution": {
+        "min": 15710,
+        "median": 40175.5,
+        "max": 64619,
+        "stdev": 21637.633629088617
+      },
+      "latency_median_seconds": 32.67869535450154,
+      "api_calls": 52,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "section",
+      "name": "docs",
+      "arm": "official",
+      "attempts": 6,
+      "successes": 5,
+      "inconclusive": 0,
+      "success_rate": 0.8333333333333334,
+      "usage_complete": true,
+      "known_total_tokens": 472042,
+      "tokens_per_success": 94408.4,
+      "token_distribution": {
+        "min": 29314,
+        "median": 66653.0,
+        "max": 163719,
+        "stdev": 54064.68653628417
+      },
+      "latency_median_seconds": 36.56312864600113,
+      "api_calls": 36,
+      "retries": null,
+      "failure_categories": {
+        "misleading_success_claim": 1,
+        "outcome_failure": 1
+      }
+    },
+    {
+      "scope": "task_id",
+      "name": "paired-docs-edit",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 182011,
+      "tokens_per_success": 60670.333333333336,
+      "token_distribution": {
+        "min": 54481,
+        "median": 62911,
+        "max": 64619,
+        "stdev": 5427.725244827094
+      },
+      "latency_median_seconds": 43.80883066599927,
+      "api_calls": 40,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "task_id",
+      "name": "paired-docs-edit",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 2,
+      "inconclusive": 0,
+      "success_rate": 0.6666666666666666,
+      "usage_complete": true,
+      "known_total_tokens": 367665,
+      "tokens_per_success": 183832.5,
+      "token_distribution": {
+        "min": 88429,
+        "median": 115517,
+        "max": 163719,
+        "stdev": 38135.2344689265
+      },
+      "latency_median_seconds": 54.25545833400247,
+      "api_calls": 29,
+      "retries": null,
+      "failure_categories": {
+        "misleading_success_claim": 1,
+        "outcome_failure": 1
+      }
+    },
+    {
+      "scope": "task_id",
+      "name": "paired-docs-read",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 66645,
+      "tokens_per_success": 22215.0,
+      "token_distribution": {
+        "min": 15710,
+        "median": 25065,
+        "max": 25870,
+        "stdev": 5647.855787818949
+      },
+      "latency_median_seconds": 26.93084020900278,
+      "api_calls": 12,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "task_id",
+      "name": "paired-docs-read",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 104377,
+      "tokens_per_success": 34792.333333333336,
+      "token_distribution": {
+        "min": 29314,
+        "median": 30186,
+        "max": 44877,
+        "stdev": 8744.45380417401
+      },
+      "latency_median_seconds": 28.711894749998464,
+      "api_calls": 7,
+      "retries": null,
+      "failure_categories": {}
+    }
+  ],
+  "matched_success": [
+    {
+      "baseline": "official",
+      "pairs": [
+        {
+          "task_id": "paired-docs-edit",
+          "trial": 1,
+          "baseline_tokens": 163719,
+          "next_tokens": 64619
+        },
+        {
+          "task_id": "paired-docs-read",
+          "trial": 1,
+          "baseline_tokens": 30186,
+          "next_tokens": 15710
+        },
+        {
+          "task_id": "paired-docs-edit",
+          "trial": 0,
+          "baseline_tokens": 115517,
+          "next_tokens": 62911
+        },
+        {
+          "task_id": "paired-docs-read",
+          "trial": 2,
+          "baseline_tokens": 44877,
+          "next_tokens": 25870
+        },
+        {
+          "task_id": "paired-docs-read",
+          "trial": 0,
+          "baseline_tokens": 29314,
+          "next_tokens": 25065
+        }
+      ]
+    }
+  ],
+  "planned_attempts": 48,
+  "completed_attempts": 12,
+  "successes": 11,
+  "inconclusive": 0,
+  "unknown_usage_attempts": 0,
+  "known_tokens": 720698,
+  "input_tokens_observed": 709779,
+  "output_tokens_observed": 10919,
+  "cached_input_tokens_observed": 503552,
+  "failed_or_inconclusive_known_tokens": 88429,
+  "failed_verifications": 1,
+  "function_targets": [
+    {
+      "task_id": "paired-docs-edit",
+      "comparisons": {
+        "official": {
+          "token_saving_fraction": 0.6699694921554495,
+          "observed_success_nonregression": true
+        }
+      },
+      "required_saving_fraction": 0.5,
+      "required_saving_operator": ">",
+      "primary_token_target": true,
+      "combined_gate": "met"
+    },
+    {
+      "task_id": "paired-docs-read",
+      "comparisons": {
+        "official": {
+          "token_saving_fraction": 0.3614972647230712,
+          "observed_success_nonregression": true
+        }
+      },
+      "required_saving_fraction": 0.5,
+      "required_saving_operator": ">",
+      "primary_token_target": false,
+      "combined_gate": "missed"
+    },
+    {
+      "task_id": "paired-discovery",
+      "required_saving_fraction": 0.3,
+      "required_saving_operator": ">=",
+      "comparisons": {},
+      "primary_token_target": null,
+      "combined_gate": "not measured"
+    },
+    {
+      "task_id": "paired-contact",
+      "required_saving_fraction": 0.3,
+      "required_saving_operator": ">=",
+      "comparisons": {},
+      "primary_token_target": null,
+      "combined_gate": "not measured"
+    },
+    {
+      "task_id": "paired-markdown",
+      "required_saving_fraction": 0.3,
+      "required_saving_operator": ">=",
+      "comparisons": {},
+      "primary_token_target": null,
+      "combined_gate": "not measured"
+    },
+    {
+      "task_id": "paired-base",
+      "required_saving_fraction": 0.3,
+      "required_saving_operator": ">=",
+      "comparisons": {},
+      "primary_token_target": null,
+      "combined_gate": "not measured"
+    },
+    {
+      "task_id": "paired-sheets",
+      "required_saving_fraction": 0.3,
+      "required_saving_operator": ">=",
+      "comparisons": {},
+      "primary_token_target": null,
+      "combined_gate": "not measured"
+    },
+    {
+      "task_id": "paired-drive",
+      "required_saving_fraction": 0.3,
+      "required_saving_operator": ">=",
+      "comparisons": {},
+      "primary_token_target": null,
+      "combined_gate": "not measured"
+    }
+  ],
+  "secondary_attempt_costs": [
+    {
+      "task_id": "paired-docs-edit",
+      "mean_tokens_per_attempt": {
+        "official": 122555.0,
+        "next": 60670.333333333336
+      },
+      "token_saving_fraction": 0.5049542382331742,
+      "can_satisfy_primary_gate": false
+    },
+    {
+      "task_id": "paired-docs-read",
+      "mean_tokens_per_attempt": {
+        "official": 34792.333333333336,
+        "next": 22215.0
+      },
+      "token_saving_fraction": 0.3614972647230712,
+      "can_satisfy_primary_gate": false
+    }
+  ],
+  "command_diagnostics": [
+    {
+      "task_id": "paired-docs-edit",
+      "arm": "official",
+      "median_shell_executions": 7,
+      "cli_choices": {
+        "docs +fetch": 8,
+        "docs +fetch --help": 1,
+        "docs +update": 5,
+        "docs +update --help": 1,
+        "docs --help": 1
+      }
+    },
+    {
+      "task_id": "paired-docs-edit",
+      "arm": "next",
+      "median_shell_executions": 5,
+      "cli_choices": {
+        "docs +pull": 4,
+        "docs +push": 3
+      }
+    },
+    {
+      "task_id": "paired-docs-read",
+      "arm": "official",
+      "median_shell_executions": 2,
+      "cli_choices": {
+        "docs +fetch": 3,
+        "docs +fetch --help": 1
+      }
+    },
+    {
+      "task_id": "paired-docs-read",
+      "arm": "next",
+      "median_shell_executions": 2,
+      "cli_choices": {
+        "docs +pull": 3
+      }
+    }
+  ],
+  "verification_failure_reasons": [
+    {
+      "task_id": "paired-docs-edit",
+      "arm": "official",
+      "reasons": {
+        "paired_docs_answer_mismatch": 1
+      }
+    }
+  ],
+  "condition": "token-efficiency-07",
+  "design": "conditional_docs_first",
+  "execution_complete": true,
+  "all_planned_attempts_completed": false,
+  "not_run_attempts": 36,
+  "measured_functions": [
+    "paired-docs-edit",
+    "paired-docs-read"
+  ],
+  "not_measured_functions": [
+    "paired-discovery",
+    "paired-contact",
+    "paired-markdown",
+    "paired-base",
+    "paired-sheets",
+    "paired-drive"
+  ],
+  "stage_decision": {
+    "design": "Docs first, all12 retained; remaining36 run only if both Docs gates pass",
+    "docs_stage_exit_code": 1,
+    "gates": {
+      "paired-docs-read": {
+        "attempts": {
+          "official": 3,
+          "next": 3
+        },
+        "successes": {
+          "official": 3,
+          "next": 3
+        },
+        "tokens": {
+          "official": 104377,
+          "next": 66645
+        },
+        "accounting_complete": true,
+        "strict_more_than_50_percent": false,
+        "observed_success_nonregression": true,
+        "passed": false
+      },
+      "paired-docs-edit": {
+        "attempts": {
+          "official": 3,
+          "next": 3
+        },
+        "successes": {
+          "official": 2,
+          "next": 3
+        },
+        "tokens": {
+          "official": 367665,
+          "next": 182011
+        },
+        "accounting_complete": true,
+        "strict_more_than_50_percent": true,
+        "observed_success_nonregression": true,
+        "passed": true
+      }
+    },
+    "continue_remaining_functions": false
+  },
+  "reported_cli_error_diagnostics": [],
+  "diagnostics_affect_verdicts": false,
+  "candidate_validation_reuse": {
+    "condition": "token-efficiency-06",
+    "exact_source_and_binary": true,
+    "product_checks_sha256": "2a32a1b9b951288d4930ad71d66f85f36e11ee3b263ce25c6c8c906473591170",
+    "candidate_unchanged": true,
+    "baseline_trials_reused": false
+  },
+  "native_skill_isolation_evidence_sha256": "9bec5e1877e429eb2d8f3180f2009ec9ca84fea0a51c5602749728510c5a1dc8",
+  "source_sha256": {
+    "environment.json": "a44991749b2e39d864d35425ee0780f132af63a7d4463ea7a043bc71d438789f",
+    "readiness-review.json": "e7dedd6c3ad58444087d6946390e83cf56b3dd203cc18c88d23dd87e8b0fc000",
+    "stage-decision.json": "4dead4a53c78a733da9e7cae65406a5231ec7e1faa4f400d1f8c2ba8f78ce006",
+    "docs/batch-01.json": "5195b370c28d672404cb0cf1f84cc2313390496820d43c95b5f1e2d635018a76"
+  }
+}
