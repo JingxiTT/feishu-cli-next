@@ -134,3 +134,37 @@ func TestDiscoveryMatchesPublicFlagsWithoutChangingOutputShape(t *testing.T) {
 		}
 	}
 }
+
+func TestDiscoveryFlagDescriptionsPreserveRegisteredUsageAndVisibility(t *testing.T) {
+	f, out, _, _ := cmdutil.TestFactory(t, nil)
+	root := &cobra.Command{Use: "test-cli"}
+	root.PersistentFlags().String("identity-type", "open_id", "open_id, user_id or union_id")
+	root.PersistentFlags().String("selector", "", "inherited selector must not leak")
+	lookup := &cobra.Command{Use: "lookup", Short: "Read a person"}
+	usage := "Native 用户 identity.\nPreserve leading zeroes."
+	lookup.Flags().String("selector", "", usage)
+	_ = lookup.MarkFlagRequired("selector")
+	lookup.Flags().Bool("private", false, "hidden description must not leak")
+	_ = lookup.Flags().MarkHidden("private")
+	root.AddCommand(lookup, NewCmd(f, root))
+	root.SetArgs([]string{"discover", "lookup", "--flags", "--limit", "1"})
+	if err := root.Execute(); err != nil {
+		t.Fatal(err)
+	}
+	var result struct {
+		Data []entry `json:"data"`
+	}
+	if err := json.Unmarshal(out.Bytes(), &result); err != nil {
+		t.Fatal(err)
+	}
+	if len(result.Data) != 1 {
+		t.Fatalf("unexpected result: %s", out)
+	}
+	flags := result.Data[0].Flags
+	if len(flags) != 2 || flags[0].Name != "identity-type" || flags[0].Description != "open_id, user_id or union_id" || flags[0].Default != "open_id" {
+		t.Fatalf("missing inherited flag guidance or sorted output: %+v", flags)
+	}
+	if flags[1].Name != "selector" || flags[1].Description != usage || flags[1].Type != "string" || !flags[1].Required {
+		t.Fatalf("local flag guidance was lost or replaced: %+v", flags[1])
+	}
+}

@@ -25,10 +25,11 @@ type entry struct {
 }
 
 type flag struct {
-	Name     string `json:"name"`
-	Type     string `json:"type"`
-	Default  string `json:"default,omitempty"`
-	Required bool   `json:"required,omitempty"`
+	Name        string `json:"name"`
+	Type        string `json:"type"`
+	Description string `json:"description,omitempty"`
+	Default     string `json:"default,omitempty"`
+	Required    bool   `json:"required,omitempty"`
 }
 
 // NewCmd uses the final tree, including host contributions and visibility rules.
@@ -57,7 +58,7 @@ func NewCmd(f *cmdutil.Factory, root *cobra.Command) *cobra.Command {
 	}
 	cmd.Flags().IntVar(&limit, "limit", 20, "maximum results (1..1000)")
 	cmd.Flags().IntVar(&offset, "offset", 0, "resume this query at a result offset")
-	cmd.Flags().BoolVar(&withFlags, "flags", false, "include flag types, defaults and required markers")
+	cmd.Flags().BoolVar(&withFlags, "flags", false, "include flag descriptions, types, defaults and required markers")
 	cmdutil.DisableAuthCheck(cmd)
 	cmdutil.SetRisk(cmd, "read")
 	return cmd
@@ -93,7 +94,7 @@ func collect(root *cobra.Command, query string, withFlags bool) []entry {
 				if withFlags {
 					for _, f := range flags {
 						_, required := f.Annotations[cobra.BashCompOneRequiredFlag]
-						e.Flags = append(e.Flags, flag{Name: f.Name, Type: f.Value.Type(), Default: f.DefValue, Required: required})
+						e.Flags = append(e.Flags, flag{Name: f.Name, Type: f.Value.Type(), Description: f.Usage, Default: f.DefValue, Required: required})
 					}
 					sort.Slice(e.Flags, func(i, j int) bool { return e.Flags[i].Name < e.Flags[j].Name })
 				}
