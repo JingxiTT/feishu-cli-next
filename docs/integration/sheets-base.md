@@ -20,12 +20,16 @@ The complete transfer uses 10,000 rows × 8 columns:
 
 - Unicode text with unique row keys, newlines and a checkmark.
 - Numeric zero, `9007199254740991`, `-3.5` and `0.125` as exact JSON numbers.
-- Both boolean values, explicit null, an omitted cell, and empty text.
+- Both boolean values, explicit null, an omitted cell, and nonempty whitespace.
 - Leading-zero strings and literal text beginning `=`.
 
 The test verifies all 80,000 cell positions and types against source state,
-including JSON field presence. It checks 16 consecutive 625-row Sheets pages,
-eight destination field-schema reads, and 50 Base batches of 200 records.
+including JSON field presence. It independently checks 16 consecutive 625-row
+Sheets pages for each of the raw-value and formula renderers: 32 reads total,
+with matching integer revisions. Raw responses omit formula metadata; formula
+responses may display static values differently. Export must retain the raw
+typed values and attach only explicit formulas. The handoff also checks eight
+destination field-schema reads and 50 Base batches of 200 records.
 Every created record ID in the report must match the independently stored
 record at the corresponding source row. The original destination record,
 source state and exported artifact must remain unchanged.
@@ -38,12 +42,16 @@ the reference CLI.
 
 ## Failure scenarios
 
-Unsupported formulas, date/time styles and a non-roundtrippable number
+Unsupported formulas, date/time styles, empty text and a non-roundtrippable number
 (`9007199254740993`) are placed in the last source row of a 401-row sheet. Each
 case goes through a real Sheets export, then must fail Base validation before
 any write. The exact unsupported number must survive export before the
-consumer rejects its conversion. A truncated second source page cannot commit
-an artifact or trigger destination reads/writes.
+consumer rejects its conversion. Explicit formula metadata must also survive
+export before Base rejects it. Empty text is rejected because Base storage
+returns it as null; nonempty whitespace remains a positive case. A truncated
+second source page cannot commit an artifact or trigger destination reads/writes.
+Missing revisions, disagreement between renderers and later-page revision drift
+likewise fail before an artifact or destination operation is produced.
 
 Five further process cases consume an actual exported artifact after changing the
 effective tenant, user, app, environment, or user/bot identity. The artifact itself
@@ -72,8 +80,8 @@ there is no third batch or retry.
 
 ```sh
 python3 scripts/next_test.py --integration sheets_base \
-  --binary .tmp/sheets/feishu-cli-next \
-  --report .tmp/sheets-base/runner-report.json
+  --binary .tmp/sheets-paired-cli \
+  --report .tmp/sheets-base/paired-report.json
 ```
 
 The runner applies the repository's credential-isolated environment and builds
@@ -81,7 +89,19 @@ the actual authsidecar binary through `nextfixture.RunMain(m, "../../..")`.
 The supplied normal binary is the runner's canonical-build prerequisite; it
 does not replace the fresh process-fixture build.
 
-The complete canonical run on 2026-09-07 passed all 11 test/subtest events, with
+The 2026-09-08 paired-renderer run passed all 23 test/subtest events, with zero
+failures and zero skips, recorded in `.tmp/sheets-base/paired-report.json`.
+The 10,000-row scenario confirmed 80,000 typed cells, 32 source reads, eight
+schema reads and 50 destination batches, preserving the source and unrelated
+destination record. Its artifact was 1,710,500 bytes. This run used the shared
+working tree and the Base empty-text rejection committed as `b746eff`; it is
+not an immutable release-candidate result.
+
+The following evidence is historical. Its earlier synthetic fixtures accepted
+empty text and supplied formulas in raw-value responses; those assumptions do
+not establish the private backend behavior covered by the paired-reader fix.
+
+The historical canonical run on 2026-09-07 passed all 11 test/subtest events, with
 zero failures and zero skips. Machine-readable runner evidence
 is `.tmp/sheets-base/runner-report.json`. The 10,000-row scenario independently
 confirmed 80,000 cells, 16 source pages, eight schema reads and 50 destination
@@ -98,7 +118,7 @@ It ran after both product dependencies were committed: Base importer
 `f080e43` and shared receipt journal `d91e695`. The canonical integration runner
 is provided by `312af93`.
 
-The binding follow-up suite passed all 17 test/subtest events, with no failures
+The historical binding follow-up suite passed all 17 test/subtest events, with no failures
 or skips, in `.tmp/sheets-base/binding-followup.json`. This initial run used the
 shared working tree and is not an immutable release-candidate result. After
 adding the unchanged-binding control, a detached clone at `1f1ce4e` passed all
@@ -111,11 +131,13 @@ An initial missing-binary setup rejection is retained separately.
 This is complete offline evidence for the supported primitive handoff, not full
 P3 or release acceptance. The Base importer deliberately rejects native formula,
 style, rich-content and identity conversions, including otherwise harmless
-style metadata. Numeric values must round-trip through Base's double storage.
+style metadata. Empty text is rejected because its storage conversion loses the
+distinction from null. Numeric values must round-trip through Base's double storage.
 The primitive source fixture omits those unsupported fields; the suite does not
 claim that arbitrary live Sheet-AI response shapes are interchangeable.
 
-Neither endpoint supplies a snapshot or compare-and-swap lock. Backend live
+Paired reads reject observed revision drift; neither endpoint supplies a
+snapshot or compare-and-swap lock. Backend live
 privacy, live type/storage behavior, separately mapped cross-domain workflows and
 comparative provider-token measurements remain separate gates. No skipped or
 unperformed live case is counted as passing evidence here.

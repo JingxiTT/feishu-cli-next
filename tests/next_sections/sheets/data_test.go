@@ -16,9 +16,44 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+// The native raw renderer preserves typed values but does not expose formulas.
+// Only the formula renderer supplies formula identity; its static display values
+// and formatting must never replace the raw representation in an artifact.
+func renderedNativeRows(t *testing.T, rows [][]json.RawMessage, render string) [][]json.RawMessage {
+	t.Helper()
+	require.Contains(t, []string{"raw_value", "formula"}, render)
+	out := make([][]json.RawMessage, len(rows))
+	for i, row := range rows {
+		out[i] = make([]json.RawMessage, len(row))
+		for j, raw := range row {
+			var c map[string]json.RawMessage
+			require.NoError(t, json.Unmarshal(raw, &c))
+			if render == "raw_value" {
+				delete(c, "formula")
+			} else if len(c["formula"]) == 0 && len(c["value"]) > 0 {
+				c["value"] = json.RawMessage(`"native display text"`)
+			}
+			var err error
+			out[i][j], err = json.Marshal(c)
+			require.NoError(t, err)
+		}
+	}
+	return out
+}
+
+func nativePageReply(t *testing.T, w http.ResponseWriter, region, render string, rows [][]json.RawMessage, revision any) {
+	t.Helper()
+	output := map[string]any{"ranges": []any{map[string]any{"range": region, "actual_range": region, "cells": renderedNativeRows(t, rows, render)}}, "has_more": false}
+	if revision != nil {
+		output["revision"] = revision
+	}
+	toolReply(w, output)
+}
+
 func TestNativeArtifactPagedPrecisionAndNoop(t *testing.T) {
 	reads, writes := 0, 0
-	samples := []json.RawMessage{json.RawMessage(`{"value":9007199254740993}`), json.RawMessage(`{"value":"001"}`), json.RawMessage(`{"value":false}`), json.RawMessage(`{}`), json.RawMessage(`{"formula":"=1+1"}`), json.RawMessage(`{"value":0.1234567890123456789,"cell_styles":{"number_format":"0.00"}}`)}
+	samples := []json.RawMessage{json.RawMessage(`{"value":9007199254740993}`), json.RawMessage(`{"value":"001"}`), json.RawMessage(`{"value":false}`), json.RawMessage(`{}`), json.RawMessage(`{"value":2,"formula":"=1+1"}`), json.RawMessage(`{"value":0.1234567890123456789,"cell_styles":{"number_format":"0.00"}}`), json.RawMessage(`{"value":"=literal text"}`)}
+	renders, regions := []string{}, []string{}
 	f := nextfixture.NewFixture(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		require.Equal(t, "POST", r.Method)
 		var body struct {
@@ -36,6 +71,8 @@ func TestNativeArtifactPagedPrecisionAndNoop(t *testing.T) {
 		require.Equal(t, "get_cell_ranges", body.Tool)
 		input := decode(t, body.Input)
 		region := input["ranges"].([]any)[0].(string)
+		render := input["value_render_option"].(string)
+		renders, regions = append(renders, render), append(regions, region)
 		var first, last int
 		_, e := fmt.Sscanf(region, "A%d:A%d", &first, &last)
 		require.NoError(t, e)
@@ -44,7 +81,7 @@ func TestNativeArtifactPagedPrecisionAndNoop(t *testing.T) {
 		for i := range rows {
 			rows[i] = []json.RawMessage{samples[(first+i-1)%len(samples)]}
 		}
-		toolReply(w, map[string]any{"ranges": []any{map[string]any{"range": region, "cells": rows}}, "has_more": false})
+		nativePageReply(t, w, region, render, rows, 17)
 	}))
 	export := f.Run("sheets", "+data-export", "--as", "user", "--spreadsheet-token", "shtFixture", "--sheet-id", "sh1", "--range", "A1:A5001", "--save-result", "native.json")
 	exported := success(t, export)
@@ -52,17 +89,31 @@ func TestNativeArtifactPagedPrecisionAndNoop(t *testing.T) {
 	reference := exported["artifact"].(map[string]any)
 	require.Equal(t, float64(5001), reference["count"])
 	require.Equal(t, true, reference["complete"])
-	require.Equal(t, 2, reads)
+	require.Equal(t, 4, reads)
+	require.Equal(t, []string{"raw_value", "formula", "raw_value", "formula"}, renders)
+	require.Equal(t, []string{"A1:A5000", "A1:A5000", "A5001:A5001", "A5001:A5001"}, regions)
 	raw, e := os.ReadFile(filepath.Join(f.WorkDir, "native.json"))
 	require.NoError(t, e)
 	require.Contains(t, string(raw), "9007199254740993")
 	require.Contains(t, string(raw), "0.1234567890123456789")
 	require.Contains(t, string(raw), `"complete":true`)
+	var artifact struct {
+		Result struct {
+			Data struct {
+				Cells [][]json.RawMessage `json:"cells"`
+			} `json:"data"`
+		} `json:"result"`
+	}
+	require.NoError(t, json.Unmarshal(raw, &artifact))
+	for i, row := range artifact.Result.Data.Cells {
+		require.JSONEq(t, string(samples[i%len(samples)]), string(row[0]), "raw types, explicit formulas and static literal equals text must survive both views")
+	}
+	require.NotContains(t, string(raw), "native display text")
 	imported := success(t, f.Run("sheets", "+data-import", "--as", "user", "--spreadsheet-token", "shtFixture", "--sheet-id", "sh1", "--range", "A1:A5001", "--artifact", "@native.json"))
 	data := imported["data"].(map[string]any)
 	require.Equal(t, true, data["noop"])
 	require.Equal(t, float64(0), data["changed_cells"])
-	require.Equal(t, 4, reads)
+	require.Equal(t, 8, reads)
 	require.Zero(t, writes)
 	receipts, e := filepath.Glob(filepath.Join(f.ConfigDir, "next", "receipts", "*.json"))
 	require.NoError(t, e)
@@ -71,7 +122,7 @@ func TestNativeArtifactPagedPrecisionAndNoop(t *testing.T) {
 
 func TestNativeExportRejectsTruncation(t *testing.T) {
 	f := nextfixture.NewFixture(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		toolReply(w, map[string]any{"has_more": true, "ranges": []any{map[string]any{"range": "A1:A1", "cells": []any{[]any{map[string]any{"value": "partial"}}}}}})
+		toolReply(w, map[string]any{"revision": 17, "has_more": true, "ranges": []any{map[string]any{"range": "A1:A1", "cells": []any{[]any{map[string]any{"value": "partial"}}}}}})
 	}))
 	r := f.Run("sheets", "+data-export", "--as", "user", "--spreadsheet-token", "shtFixture", "--sheet-id", "sh1", "--range", "A1:A1", "--save-result", "bad.json")
 	require.NotZero(t, r.ExitCode)
@@ -102,7 +153,8 @@ func TestNativeChangedImportPreservesNumericWireToken(t *testing.T) {
 		if changed {
 			value = json.RawMessage(`{"value":0}`)
 		}
-		toolReply(w, map[string]any{"ranges": []any{map[string]any{"range": "A1:A1", "cells": [][]json.RawMessage{{value}}}}})
+		input := decode(t, body.Input)
+		nativePageReply(t, w, "A1:A1", input["value_render_option"].(string), [][]json.RawMessage{{value}}, 17)
 	}))
 	success(t, f.Run("sheets", "+data-export", "--as", "user", "--spreadsheet-token", "shtFixture", "--sheet-id", "sh1", "--range", "A1:A1", "--save-result", "one.json"))
 	changed = true
@@ -144,7 +196,8 @@ func TestNativePlainImportReplacesStructuredIdentityThenNoops(t *testing.T) {
 					return
 				}
 				require.Equal(t, "get_cell_ranges", body.Tool)
-				toolReply(w, map[string]any{"ranges": []any{map[string]any{"range": "A1:A1", "cells": [][]json.RawMessage{{current}}}}})
+				input := decode(t, body.Input)
+				nativePageReply(t, w, "A1:A1", input["value_render_option"].(string), [][]json.RawMessage{{current}}, 17)
 			}))
 			success(t, f.Run("sheets", "+data-export", "--as", "user", "--spreadsheet-token", "shtFixture", "--sheet-id", "sh1", "--range", "A1:A1", "--save-result", "plain.json"))
 			current = json.RawMessage(`{"value":"hello","` + key + `":` + content + `}`)
@@ -168,5 +221,96 @@ func TestNativePlainImportReplacesStructuredIdentityThenNoops(t *testing.T) {
 			require.NoError(t, err)
 			require.Equal(t, "confirmed_applied", decode(t, string(receipt))["outcome"])
 		})
+	}
+}
+
+func TestNativePairedReadsRejectUnverifiedRevisionBeforeEffects(t *testing.T) {
+	for _, operation := range []string{"export", "import"} {
+		for _, mode := range []string{"missing", "string", "fractional", "paired-mismatch", "later-page-mismatch", "paired-extent"} {
+			t.Run(operation+"/"+mode, func(t *testing.T) {
+				reject := operation == "export"
+				reads, writes := 0, 0
+				f := nextfixture.NewFixture(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+					if strings.HasSuffix(r.URL.Path, "invoke_write") {
+						writes++
+						toolReply(w, map[string]any{"revision": 19})
+						return
+					}
+					var body struct{ Tool, Input string }
+					require.NoError(t, json.NewDecoder(r.Body).Decode(&body))
+					input := decode(t, body.Input)
+					region := input["ranges"].([]any)[0].(string)
+					render := input["value_render_option"].(string)
+					var first, last int
+					_, err := fmt.Sscanf(region, "A%d:A%d", &first, &last)
+					require.NoError(t, err)
+					rows := make([][]json.RawMessage, last-first+1)
+					for i := range rows {
+						value := json.RawMessage(`{"value":0}`)
+						if reject && operation == "import" {
+							value = json.RawMessage(`{"value":1}`)
+						}
+						rows[i] = []json.RawMessage{value}
+					}
+					var revision any = 17
+					if reject {
+						reads++
+						switch mode {
+						case "missing":
+							revision = nil
+						case "string":
+							revision = "17"
+						case "fractional":
+							revision = 17.5
+						case "paired-mismatch":
+							if render == "formula" {
+								revision = 18
+							}
+						case "later-page-mismatch":
+							if first > 1 {
+								revision = 18
+							}
+						case "paired-extent":
+							if render == "formula" {
+								region = "A2:A5001"
+							}
+						}
+					}
+					nativePageReply(t, w, region, render, rows, revision)
+				}))
+				exportArgs := []string{"sheets", "+data-export", "--as", "user", "--spreadsheet-token", "shtFixture", "--sheet-id", "sh1", "--range", "A1:A5001", "--save-result", "revision.json"}
+				var before []byte
+				args := exportArgs
+				if operation == "import" {
+					success(t, f.Run(exportArgs...))
+					var err error
+					before, err = os.ReadFile(filepath.Join(f.WorkDir, "revision.json"))
+					require.NoError(t, err)
+					reject = true
+					args = []string{"sheets", "+data-import", "--as", "user", "--spreadsheet-token", "shtFixture", "--sheet-id", "sh1", "--range", "A1:A5001", "--artifact", "@revision.json"}
+				}
+				result := f.Run(args...)
+				require.NotZero(t, result.ExitCode)
+				require.Empty(t, result.Stdout)
+				failure := decode(t, result.Stderr)["error"].(map[string]any)
+				want := "invalid_response"
+				if mode == "paired-mismatch" || mode == "later-page-mismatch" {
+					want = "conflict"
+				}
+				require.Equal(t, want, failure["subtype"])
+				require.Greater(t, reads, 0)
+				require.Zero(t, writes, "failed complete read must finish before import dispatch")
+				after, err := os.ReadFile(filepath.Join(f.WorkDir, "revision.json"))
+				if operation == "export" {
+					require.True(t, os.IsNotExist(err), "failed export must not publish an artifact")
+				} else {
+					require.NoError(t, err)
+					require.Equal(t, before, after, "failed import must preserve the source artifact")
+				}
+				receipts, err := filepath.Glob(filepath.Join(f.ConfigDir, "next", "receipts", "*.json"))
+				require.NoError(t, err)
+				require.Empty(t, receipts, "read failure must create no mutation receipt")
+			})
+		}
 	}
 }

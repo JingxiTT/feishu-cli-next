@@ -114,6 +114,9 @@ func decodeNativePage(raw string, extent cellRange) ([][]nativeCell, error) {
 		return nil, errs.NewInternalError(errs.SubtypeInvalidResponse, "cell response is incomplete or has an unexpected range count")
 	}
 	block := page.Ranges[0]
+	if block.Range == "" && block.ActualRange == "" && (len(block.RowIndices) != extent.rows || len(block.ColIndices) != extent.cols) {
+		return nil, errs.NewInternalError(errs.SubtypeInvalidResponse, "cell response is missing explicit range or coordinate evidence")
+	}
 	if block.Truncated || block.IsTruncated || block.HasMore || len(block.Cells) != extent.rows {
 		return nil, errs.NewInternalError(errs.SubtypeInvalidResponse, "cell response does not contain the complete requested rows")
 	}
@@ -164,19 +167,100 @@ func decodeNativePage(raw string, extent cellRange) ([][]nativeCell, error) {
 	return block.Cells, nil
 }
 
+// nativePageRevision deliberately rejects absent, quoted, fractional, or
+// negative versions. Native tools expose the document revision on every read
+// (see lark_sheet_revision_get.go); older backends cannot prove a paired read.
+func nativePageRevision(raw string) (string, error) {
+	var page struct {
+		Revision json.RawMessage `json:"revision"`
+	}
+	if json.Unmarshal([]byte(raw), &page) != nil || len(page.Revision) == 0 {
+		return "", errs.NewInternalError(errs.SubtypeInvalidResponse, "native cell read is missing an integer document revision")
+	}
+	for _, digit := range page.Revision {
+		if digit < '0' || digit > '9' {
+			return "", errs.NewInternalError(errs.SubtypeInvalidResponse, "native cell read returned a non-integer document revision")
+		}
+	}
+	return string(page.Revision), nil
+}
+
+func nativeReadConflict() error {
+	return errs.NewAPIError(errs.SubtypeConflict, "spreadsheet changed or native renderings disagree during the read").
+		WithRetryable().WithHint("read the complete range again; no artifact or replacement writes were produced")
+}
+
+func mergeNativeFormulas(raw, formulas [][]nativeCell) error {
+	formulaText := func(cell nativeCell) (string, error) {
+		value, present := cell["formula"]
+		if !present {
+			return "", nil
+		}
+		var text string
+		if len(value) == 0 || value[0] != '"' || json.Unmarshal(value, &text) != nil || (text != "" && !strings.HasPrefix(text, "=")) {
+			return "", errs.NewInternalError(errs.SubtypeInvalidResponse, "native cell read returned an invalid formula field")
+		}
+		return text, nil
+	}
+	for row := range raw {
+		for col, cell := range raw[row] {
+			formulaCell := formulas[row][col]
+			existing, err := formulaText(cell)
+			if err != nil {
+				return err
+			}
+			formula, err := formulaText(formulaCell)
+			if err != nil {
+				return err
+			}
+			if existing != "" && existing != formula {
+				return nativeReadConflict()
+			}
+			if formula == "" {
+				continue // A literal value beginning '=' never implies a formula.
+			}
+			if cached, present := formulaCell["value"]; present {
+				if value, present := cell["value"]; present && !equalNativeJSON(value, cached) && !equalNativeJSON(formulaCell["formula"], cached) {
+					return nativeReadConflict()
+				}
+			}
+			cell["formula"] = formulaCell["formula"]
+		}
+	}
+	return nil
+}
+
 func readNativeCells(ctx context.Context, r *common.RuntimeContext, token, sheetID string, extent cellRange) ([][]nativeCell, error) {
 	cells := make([][]nativeCell, 0, extent.rows)
+	revision := ""
 	for _, region := range dataRanges(extent) {
-		raw, err := callToolOutput(ctx, r, token, ToolKindRead, "get_cell_ranges", dataReadInput(token, sheetID, region))
-		if err != nil {
-			return nil, err
-		}
 		part, _ := parseCellRange(region)
-		rows, err := decodeNativePage(raw, part)
-		if err != nil {
+		var renderings [2][][]nativeCell
+		for index, render := range []string{"raw_value", "formula"} {
+			input := dataReadInput(token, sheetID, region)
+			input["value_render_option"] = render
+			raw, err := callToolOutput(ctx, r, token, ToolKindRead, "get_cell_ranges", input)
+			if err != nil {
+				return nil, err
+			}
+			rows, err := decodeNativePage(raw, part)
+			if err != nil {
+				return nil, err
+			}
+			observed, err := nativePageRevision(raw)
+			if err != nil {
+				return nil, err
+			}
+			if revision != "" && revision != observed {
+				return nil, nativeReadConflict()
+			}
+			revision = observed
+			renderings[index] = rows
+		}
+		if err := mergeNativeFormulas(renderings[0], renderings[1]); err != nil {
 			return nil, err
 		}
-		cells = append(cells, rows...)
+		cells = append(cells, renderings[0]...)
 	}
 	return cells, nil
 }
@@ -469,8 +553,12 @@ func dataReadDryRun(r *common.RuntimeContext) *common.DryRunAPI {
 		return dry
 	}
 	for _, region := range dataRanges(extent) {
-		body, _ := buildToolBody("get_cell_ranges", dataReadInput(r.Str("spreadsheet-token"), r.Str("sheet-id"), region))
-		dry.POST(toolInvokePath(r.Str("spreadsheet-token"), ToolKindRead)).Desc("read complete native cells in " + region).Body(body)
+		for _, render := range []string{"raw_value", "formula"} {
+			input := dataReadInput(r.Str("spreadsheet-token"), r.Str("sheet-id"), region)
+			input["value_render_option"] = render
+			body, _ := buildToolBody("get_cell_ranges", input)
+			dry.POST(toolInvokePath(r.Str("spreadsheet-token"), ToolKindRead)).Desc("read " + render + " cells in " + region + "; require matching document revisions").Body(body)
+		}
 	}
 	return dry.Set("complete_extent", r.Str("range"))
 }

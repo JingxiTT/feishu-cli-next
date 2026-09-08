@@ -32,7 +32,7 @@ const baseTablePath = "/open-apis/base/v3/bases/" + baseToken + "/tables/" + tab
 const sourceFile = "sheet-source.json"
 const reportFile = "base-import.json"
 
-var fieldIDs = []string{"fld_key", "fld_number", "fld_bool", "fld_null", "fld_omitted", "fld_empty", "fld_code", "fld_literal"}
+var fieldIDs = []string{"fld_key", "fld_number", "fld_bool", "fld_null", "fld_omitted", "fld_whitespace", "fld_code", "fld_literal"}
 var fieldTypes = []string{"text", "number", "checkbox", "text", "text", "text", "text", "text"}
 
 type cell map[string]json.RawMessage
@@ -55,11 +55,13 @@ type transferBackend struct {
 	source       sourceState
 	destination  []storedRecord
 	ranges       []string
+	renders      []string
 	fields       []string
 	writes       int
 	sourceWrites int
 	mode         string
 	truncatePage int
+	revisionMode string
 }
 
 func raw(value any) json.RawMessage  { b, _ := json.Marshal(value); return b }
@@ -76,7 +78,7 @@ func newTransfer(t *testing.T, rows int, mode string) (*nextfixture.Fixture, *tr
 			{"value": raw(i%2 == 1)},
 			{"value": json.RawMessage("null")},
 			{},
-			{"value": raw("")},
+			{"value": raw(" \t ")},
 			{"value": raw(fmt.Sprintf("%08d", i))},
 			{"value": raw("=literal text, not a formula")},
 		})
@@ -145,7 +147,7 @@ func (b *transferBackend) readCells(w http.ResponseWriter, r *http.Request) {
 		b.t.Error(err)
 		return
 	}
-	if body.Tool != "get_cell_ranges" || in.Excel != sheetToken || in.Sheet != sheetID || len(in.Ranges) != 1 || in.Render != "raw_value" {
+	if body.Tool != "get_cell_ranges" || in.Excel != sheetToken || in.Sheet != sheetID || len(in.Ranges) != 1 || (in.Render != "raw_value" && in.Render != "formula") {
 		b.t.Errorf("wrong source read identity/operation: %+v %+v", body, in)
 		return
 	}
@@ -156,12 +158,41 @@ func (b *transferBackend) readCells(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	b.ranges = append(b.ranges, region)
+	b.renders = append(b.renders, in.Render)
 	indices := make([]int, last-first+1)
 	for i := range indices {
 		indices[i] = first + i
 	}
 	truncated := b.truncatePage > 0 && len(b.ranges) == b.truncatePage
-	output := map[string]any{"has_more": truncated, "ranges": []any{map[string]any{"range": region, "actual_range": region, "row_indices": indices, "col_indices": []string{"A", "B", "C", "D", "E", "F", "G", "H"}, "truncated": truncated, "cells": b.source.Cells[first-1 : last]}}}
+	cells := make([][]cell, last-first+1)
+	for i, sourceRow := range b.source.Cells[first-1 : last] {
+		cells[i] = make([]cell, len(sourceRow))
+		for j, sourceCell := range sourceRow {
+			copy := cell{}
+			for key, value := range sourceCell {
+				copy[key] = value
+			}
+			if in.Render == "raw_value" {
+				delete(copy, "formula")
+			} else if len(copy["formula"]) == 0 && len(copy["value"]) != 0 {
+				copy["value"] = raw("native display text")
+			}
+			cells[i][j] = copy
+		}
+	}
+	output := map[string]any{"revision": b.source.Revision, "has_more": truncated, "ranges": []any{map[string]any{"range": region, "actual_range": region, "row_indices": indices, "col_indices": []string{"A", "B", "C", "D", "E", "F", "G", "H"}, "truncated": truncated, "cells": cells}}}
+	switch b.revisionMode {
+	case "missing":
+		delete(output, "revision")
+	case "paired-mismatch":
+		if in.Render == "formula" {
+			output["revision"] = b.source.Revision + 1
+		}
+	case "later-page-mismatch":
+		if first > 1 {
+			output["revision"] = b.source.Revision + 1
+		}
+	}
 	payload, _ := json.Marshal(output)
 	reply(w, map[string]any{"output": string(payload)})
 }
@@ -337,20 +368,26 @@ func TestTenThousandRowsThroughSheetsAndBaseCLI(t *testing.T) {
 	before := fingerprint(b.source)
 	artifact := exportArtifact(t, f, 10000)
 	obj := resultObject(t, f.Run(importArgs()...))
-	if len(b.ranges) != 16 || b.writes != 50 || len(b.fields) != 8 || b.sourceWrites != 0 {
+	if len(b.ranges) != 32 || b.writes != 50 || len(b.fields) != 8 || b.sourceWrites != 0 {
 		t.Fatalf("unexpected source pages=%d field reads=%d batches=%d source writes=%d", len(b.ranges), len(b.fields), b.writes, b.sourceWrites)
 	}
-	next := 1
-	for _, region := range b.ranges {
-		var first, last int
-		_, _ = fmt.Sscanf(region, "A%d:H%d", &first, &last)
-		if first != next {
-			t.Fatalf("source page gap/overlap at %s", region)
+	for _, render := range []string{"raw_value", "formula"} {
+		next, pages := 1, 0
+		for i, region := range b.ranges {
+			if b.renders[i] != render {
+				continue
+			}
+			var first, last int
+			_, _ = fmt.Sscanf(region, "A%d:H%d", &first, &last)
+			if first != next {
+				t.Fatalf("source %s page gap/overlap at %s", render, region)
+			}
+			next = last + 1
+			pages++
 		}
-		next = last + 1
-	}
-	if next != 10001 {
-		t.Fatalf("incomplete source pagination ended at %d", next)
+		if next != 10001 || pages != 16 {
+			t.Fatalf("incomplete %s pagination ended at %d after %d pages", render, next, pages)
+		}
 	}
 	if fingerprint(b.source) != before {
 		t.Fatal("source state changed")
@@ -380,22 +417,28 @@ func TestTenThousandRowsThroughSheetsAndBaseCLI(t *testing.T) {
 }
 
 func TestExportedUnsupportedCellsRejectBeforeDestinationWrites(t *testing.T) {
-	for _, kind := range []string{"formula", "style", "precision"} {
+	for _, kind := range []string{"formula", "style", "precision", "empty-text"} {
 		t.Run(kind, func(t *testing.T) {
 			f, b := newTransfer(t, 401, "")
 			last := b.source.Cells[400][1]
 			switch kind {
 			case "formula":
+				last["value"] = raw(2)
 				last["formula"] = raw("=1+1")
 			case "style":
 				last["cell_styles"] = raw(map[string]string{"number_format": "yyyy-mm-dd hh:mm:ss"})
 			case "precision":
 				last["value"] = json.RawMessage("9007199254740993")
+			case "empty-text":
+				b.source.Cells[400][5]["value"] = raw("")
 			}
 			before := fingerprint(b.source)
 			artifact := exportArtifact(t, f, 401)
 			if kind == "precision" && !strings.Contains(string(artifact), "9007199254740993") {
 				t.Fatal("export rounded the unsupported number before import validation")
+			}
+			if kind == "formula" && !strings.Contains(string(artifact), `"formula":"=1+1"`) {
+				t.Fatal("paired export lost explicit formula before Base validation")
 			}
 			result := f.Run(importArgs()...)
 			if result.ExitCode != 2 || result.Stdout != "" || b.writes != 0 {
@@ -418,16 +461,20 @@ func TestExportedUnsupportedCellsRejectBeforeDestinationWrites(t *testing.T) {
 			if _, err := os.Stat(filepath.Join(f.WorkDir, reportFile)); !os.IsNotExist(err) {
 				t.Fatal("rejected import wrote a success report")
 			}
+			receipts, err := filepath.Glob(filepath.Join(f.ConfigDir, "next", "receipts", "*.json"))
+			if err != nil || len(receipts) != 0 {
+				t.Fatal("unsupported handoff created a mutation receipt")
+			}
 		})
 	}
 }
 
 func TestPartialExportCannotBecomeAnImportArtifact(t *testing.T) {
 	f, b := newTransfer(t, 2000, "")
-	b.truncatePage = 2
+	b.truncatePage = 3
 	before := fingerprint(b.source)
 	exported := f.Run(exportArgs(2000)...)
-	if exported.ExitCode == 0 || exported.Stdout != "" || len(b.ranges) != 2 {
+	if exported.ExitCode == 0 || exported.Stdout != "" || len(b.ranges) != 3 {
 		t.Fatalf("partial export accepted: %+v pages=%d", exported, len(b.ranges))
 	}
 	if _, err := os.Stat(filepath.Join(f.WorkDir, sourceFile)); !os.IsNotExist(err) {
@@ -441,6 +488,45 @@ func TestPartialExportCannotBecomeAnImportArtifact(t *testing.T) {
 		t.Fatal("source changed")
 	}
 	verifyStoredPrefix(t, b, 0)
+}
+
+func TestUnverifiedSheetRevisionCannotReachBase(t *testing.T) {
+	for _, mode := range []string{"missing", "paired-mismatch", "later-page-mismatch"} {
+		t.Run(mode, func(t *testing.T) {
+			f, b := newTransfer(t, 2000, "")
+			b.revisionMode = mode
+			before := fingerprint(b.source)
+			exported := f.Run(exportArgs(2000)...)
+			if exported.ExitCode == 0 || exported.Stdout != "" {
+				t.Fatalf("unverified revision exported: %+v", exported)
+			}
+			var failure struct {
+				Error struct{ Subtype string } `json:"error"`
+			}
+			if err := json.Unmarshal([]byte(exported.Stderr), &failure); err != nil {
+				t.Fatal(err)
+			}
+			want := "conflict"
+			if mode == "missing" {
+				want = "invalid_response"
+			}
+			if failure.Error.Subtype != want {
+				t.Fatalf("wrong revision failure: %s", exported.Stderr)
+			}
+			if _, err := os.Stat(filepath.Join(f.WorkDir, sourceFile)); !os.IsNotExist(err) {
+				t.Fatal("unverified paired reads published an artifact")
+			}
+			imported := f.Run(importArgs()...)
+			if imported.ExitCode == 0 || len(b.fields) != 0 || b.writes != 0 || b.sourceWrites != 0 || fingerprint(b.source) != before {
+				t.Fatal("unverified export reached Base or changed source")
+			}
+			verifyStoredPrefix(t, b, 0)
+			receipts, err := filepath.Glob(filepath.Join(f.ConfigDir, "next", "receipts", "*.json"))
+			if err != nil || len(receipts) != 0 {
+				t.Fatal("unverified export created a mutation receipt")
+			}
+		})
+	}
 }
 
 func TestActualExportRejectsChangedEffectiveBindingBeforeDestinationAccess(t *testing.T) {
@@ -498,7 +584,7 @@ func TestActualExportRejectsChangedEffectiveBindingBeforeDestinationAccess(t *te
 			if err := json.Unmarshal([]byte(result.Stderr), &failure); err != nil || result.ExitCode != 2 || result.Stdout != "" || failure.Error.Type != "validation" || failure.Error.Subtype != "failed_precondition" || failure.Error.Param != "--artifact" {
 				t.Fatalf("changed binding was not rejected at artifact boundary: %+v", result)
 			}
-			if len(b.fields) != 0 || b.writes != 0 || len(b.ranges) != 1 || b.sourceWrites != 0 || fingerprint(b.source) != before {
+			if len(b.fields) != 0 || b.writes != 0 || len(b.ranges) != 2 || b.sourceWrites != 0 || fingerprint(b.source) != before {
 				t.Fatal("changed binding accessed destination or changed source")
 			}
 			verifyStoredPrefix(t, b, 0)

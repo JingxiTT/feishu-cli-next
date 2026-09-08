@@ -1,6 +1,6 @@
 # Sheets section reconciliation
 
-Status: **open**. Offline process evidence is distinct from live capability acceptance. No comparative evaluation or held-out task has run for this section. Live mutation verification remains blocked until effective account, tenant, and account-only creation visibility can be proved before a write.
+Status: **open**. Offline process evidence is distinct from live capability acceptance. A bounded private live lifecycle is now executable after independent account, tenant, and creation-visibility checks. Initial live attempts exposed a native formula-export fidelity defect; the diagnosis, correction contract, retained failures, and remaining limits are recorded in [private Sheets live evidence](sheets-private-live.md). This narrow batch does not establish full Sheets parity. Historical comparative measurements retain their original product and fixture conditions.
 
 ## Scope and ownership
 

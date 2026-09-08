@@ -46,6 +46,8 @@ func TestNativeDataRejectsIncompletePages(t *testing.T) {
 	extent, _ := dataRange("A1:B1")
 	for _, raw := range []string{
 		`{"ranges":[]}`,
+		`{"ranges":[{"cells":[[{},{}]]}]}`,
+		`{"ranges":[{"range":"invalid","cells":[[{},{}]]}]}`,
 		`{"has_more":true,"ranges":[{"cells":[[{},{}]]}]}`,
 		`{"ranges":[{"range":"A2:B2","cells":[[{},{}]]}]}`,
 		`{"ranges":[{"actual_range":"C1:D1","cells":[[{},{}]]}]}`,
@@ -139,7 +141,8 @@ func TestNativeFormulaAndLiteralWriteAreDistinct(t *testing.T) {
 }
 
 func TestNativeExportPrecisionAtToolBoundary(t *testing.T) {
-	stdout, err := runShortcutWithStubs(t, DataExport, []string{"--spreadsheet-token", testToken, "--sheet-id", testSheetID, "--range", "A1:B1"}, toolOutputStub(testToken, "read", `{"ranges":[{"range":"A1:B1","cells":[[{"value":9007199254740993},{"value":1.234567890123456789}]]}]}`))
+	page := `{"revision":0,"ranges":[{"range":"A1:B1","cells":[[{"value":9007199254740993},{"value":1.234567890123456789}]]}]}`
+	stdout, err := runShortcutWithStubs(t, DataExport, []string{"--spreadsheet-token", testToken, "--sheet-id", testSheetID, "--range", "A1:B1"}, toolOutputStub(testToken, "read", page), toolOutputStub(testToken, "read", page))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -229,6 +232,67 @@ func TestNativePlainValueReplacesStructuredContent(t *testing.T) {
 			if err != nil || changed != 0 || nativePageChanged(writes) {
 				t.Fatalf("unchanged structured identity caused write: changed=%d err=%v", changed, err)
 			}
+		})
+	}
+}
+
+func TestNativeExportCombinesRawTypesAndExplicitFormula(t *testing.T) {
+	raw := toolOutputStub(testToken, "read", `{"revision":1,"ranges":[{"range":"A1:H1","cells":[[{"value":0},{"value":false},{"value":""},{},{"value":null},{"value":"=literal"},{"value":"001"},{"value":2,"cell_styles":{"number_format":"0.00"}}]]}]}`)
+	formula := toolOutputStub(testToken, "read", `{"revision":1,"ranges":[{"range":"A1:H1","cells":[[{"value":"0"},{"value":"FALSE"},{},{},{},{"value":"=literal"},{"value":"001"},{"formula":"=1+1","value":2}]]}]}`)
+	out, err := runShortcutWithStubs(t, DataExport, []string{"--spreadsheet-token", testToken, "--sheet-id", testSheetID, "--range", "A1:H1"}, raw, formula)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var envelope struct {
+		Data sheetData `json:"data"`
+	}
+	if err := json.Unmarshal([]byte(out), &envelope); err != nil {
+		t.Fatal(err)
+	}
+	want := nativeCells(t, `[[{"value":0},{"value":false},{"value":""},{},{"value":null},{"value":"=literal"},{"value":"001"},{"formula":"=1+1","value":2,"cell_styles":{"number_format":"0.00"}}]]`)
+	gotJSON, _ := json.Marshal(envelope.Data.Cells)
+	wantJSON, _ := json.Marshal(want)
+	if !equalNativeJSON(gotJSON, wantJSON) {
+		t.Fatalf("native identity or typed value lost: %s", gotJSON)
+	}
+	if !strings.Contains(string(raw.CapturedBody), "raw_value") || !strings.Contains(string(formula.CapturedBody), "formula") || len(raw.CapturedBodies) != 1 || len(formula.CapturedBodies) != 1 {
+		t.Fatal("export must issue exactly one read of each rendering")
+	}
+	calls := parseDryRunAPI(t, DataExport, []string{"--spreadsheet-token", testToken, "--sheet-id", testSheetID, "--range", "A1:H1"})
+	if len(calls) != 2 {
+		t.Fatalf("dry-run omitted paired read: %d calls", len(calls))
+	}
+}
+
+func TestNativePageRevisionRequiresIntegerEvidence(t *testing.T) {
+	for _, good := range []string{"0", "1", "9007199254740993"} {
+		got, err := nativePageRevision(`{"revision":` + good + `}`)
+		if err != nil || got != good {
+			t.Fatalf("revision %s: %s %v", good, got, err)
+		}
+	}
+	for _, bad := range []string{`{}`, `{"revision":null}`, `{"revision":"1"}`, `{"revision":true}`, `{"revision":1.5}`, `{"revision":1e2}`, `{"revision":-1}`, `{"revision":[]}`} {
+		_, err := nativePageRevision(bad)
+		requireProblem(t, err, errs.CategoryInternal, errs.SubtypeInvalidResponse, "")
+	}
+}
+
+func TestNativeFormulaMergeRejectsConflictingEvidence(t *testing.T) {
+	for _, tc := range []struct {
+		name, raw, formula string
+		category           errs.Category
+		subtype            errs.Subtype
+	}{
+		{"changed cache", `{"value":2}`, `{"formula":"=1+1","value":3}`, errs.CategoryAPI, errs.SubtypeConflict},
+		{"changed formula", `{"formula":"=1+1","value":2}`, `{"formula":"=2","value":2}`, errs.CategoryAPI, errs.SubtypeConflict},
+		{"missing formula", `{"formula":"=1+1","value":2}`, `{"value":2}`, errs.CategoryAPI, errs.SubtypeConflict},
+		{"null formula", `{"value":2}`, `{"formula":null}`, errs.CategoryInternal, errs.SubtypeInvalidResponse},
+		{"numeric formula", `{"value":2}`, `{"formula":2}`, errs.CategoryInternal, errs.SubtypeInvalidResponse},
+		{"invalid syntax", `{"value":2}`, `{"formula":"SUM(A1)"}`, errs.CategoryInternal, errs.SubtypeInvalidResponse},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			err := mergeNativeFormulas(nativeCells(t, `[[`+tc.raw+`]]`), nativeCells(t, `[[`+tc.formula+`]]`))
+			requireProblem(t, err, tc.category, tc.subtype, "")
 		})
 	}
 }

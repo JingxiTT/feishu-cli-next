@@ -111,13 +111,13 @@ func TestPartialBatchFailureDoesNotClaimRollbackOrReplay(t *testing.T) {
 	require.Equal(t, 1, calls)
 }
 
-// These are selectable, explicitly blocked acceptance scenarios. The current
-// harness cannot prove account-private creation before a write. A skip is not
-// successful live evidence and cannot close the section.
+// These remaining scenarios have no verified complete private live flow. The
+// basic lifecycle is executable via TestSheets_PrivateUserLifecycle in cli_e2e.
+// A skip is not successful live evidence and cannot close the section.
 func TestLivePrivateSheetsAcceptance(t *testing.T) {
-	for _, scenario := range []string{"private-workbook-create-use-cleanup", "typed-cells-formulas-native-roundtrip", "sheet-dimension-range-lifecycle", "chart-pivot-condition-filter-view-sparkline-image-lifecycle", "import-export-large-file-cleanup", "history-revert-status-and-changesets", "generated-filter-and-find-lifecycle"} {
+	for _, scenario := range []string{"typed-cells-formulas-native-roundtrip", "sheet-dimension-range-lifecycle", "chart-pivot-condition-filter-view-sparkline-image-lifecycle", "import-export-large-file-cleanup", "history-revert-status-and-changesets", "generated-filter-and-find-lifecycle"} {
 		t.Run(scenario, func(t *testing.T) {
-			t.Skip("BLOCKED: effective account and tenant plus account-only creation visibility have not been proven; no live writes, delivery, sharing, or cleanup of pre-existing resources permitted")
+			t.Skip("BLOCKED: this full capability lifecycle has not been verified on an authorized private fixture; the separate narrow workbook test is not full parity evidence")
 		})
 	}
 }
