@@ -309,6 +309,7 @@ def main():
     parser.add_argument("--seed", type=int, default=20260907)
     parser.add_argument("--release-held-out", action="store_true")
     parser.add_argument("--section", action="append", help="Evaluate only this inventory section; may repeat")
+    parser.add_argument("--only-arm", choices=("next",), help="Run only the candidate entries from the frozen balanced schedule; not a new balanced comparison")
     args = parser.parse_args()
     try:
         manifest = tasks_from(args.tasks, args.release_held_out)
@@ -319,6 +320,10 @@ def main():
             raise ValueError("unknown or empty section selection")
         arms = comparison_arms(config)
         planned = schedule(selected, args.repeats, args.seed, arms)
+        selected_arms = arms
+        if args.only_arm:
+            planned = [run for run in planned if run[2] == args.only_arm]
+            selected_arms = (args.only_arm,)
         runs = []
         evidence = {"protocol": 1, "mode": config["mode"], "split": manifest["split"],
                     "performance_claims_supported": False, "completed": False, "planned_runs": len(planned),
@@ -326,7 +331,10 @@ def main():
                     "task_manifest_sha256": digest(args.tasks), "config_sha256": digest(args.config),
                     "environment": {key: config[key] for key in ("backend", "model", "tokenizer", "reasoning", "tools", "permissions", "budget", "accounting_method")},
                     "arms": {arm: {key + "_sha256": digest(config["arms"][arm][key]) for key in ("cli", "skill")} for arm in arms},
-                    "runs": runs, **aggregate(runs, arms)}
+                    "runs": runs, **aggregate(runs, selected_arms)}
+        if args.only_arm:
+            evidence["arm_selection"] = {"mode": "candidate_only", "selected": list(selected_arms),
+                                         "schedule": "filtered_balanced", "balanced_comparison": False}
         args.output.parent.mkdir(parents=True, exist_ok=True)
         # Checkpoint each finished attempt before launching another billed model run.
         for planned_run in planned:
@@ -338,8 +346,8 @@ def main():
                 print(json.dumps({"status": "stopped", "completed_attempts": len(runs), "cancelled_before_model": len(planned) - len(runs)}))
                 return 0
             runs.append(run_one(config, *planned_run))
-            evidence.update({"runs": runs, **aggregate(runs, arms), "completed": len(runs) == len(planned),
-                             "performance_claims_supported": config["mode"] == "real" and len(runs) == len(planned)
+            evidence.update({"runs": runs, **aggregate(runs, selected_arms), "completed": len(runs) == len(planned),
+                             "performance_claims_supported": not args.only_arm and config["mode"] == "real" and len(runs) == len(planned)
                              and all(run["usage"] and not run.get("outcome_inconclusive") for run in runs)})
             checkpoint = args.output.with_suffix(args.output.suffix + ".tmp")
             checkpoint.write_text(json.dumps(evidence, indent=2) + "\n", encoding="utf-8")

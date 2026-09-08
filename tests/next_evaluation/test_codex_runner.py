@@ -154,6 +154,17 @@ class CodexAccountingTests(unittest.TestCase):
                  patch.object(batch.subprocess, 'run', side_effect=inspect_config), patch('builtins.print'):
                 self.assertEqual(batch.main(), 0)
             self.assertEqual(len(configs), 1)
+            with patch.object(sys, 'argv', [*args, '--only-arm', 'next']), \
+                 patch.object(sys, 'path', [str(ROOT / 'evaluation'), *sys.path]), \
+                 patch.object(batch.subprocess, 'run', side_effect=inspect_config) as run, \
+                 patch('builtins.print') as printed:
+                self.assertEqual(batch.main(), 0)
+            self.assertEqual(configs[1], configs[0])
+            command = run.call_args.args[0]
+            self.assertEqual(command[-2:], ['--only-arm', 'next'])
+            starting = json.loads(printed.call_args_list[0].args[0])
+            self.assertEqual(starting, {'section': 'docs', 'status': 'starting', 'planned_attempts': 6,
+                                       'only_arm': 'next', 'balanced_comparison': False})
             index = args.index('--previous-next-cli')
             missing = args[:index] + args[index + 2:]
             with patch.object(sys, 'argv', missing), patch.object(batch.subprocess, 'run') as run, \

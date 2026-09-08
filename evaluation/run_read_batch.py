@@ -18,6 +18,7 @@ def main():
     parser.add_argument('--previous-next-source', type=Path, help='Frozen previous Next source; replaces concise arm for a paired before/after comparison')
     parser.add_argument('--previous-next-cli', type=Path, help='Frozen previous Next binary; requires --previous-next-source')
     parser.add_argument('--section', action='append')
+    parser.add_argument('--only-arm', choices=('next',), help='Run only candidate entries from the frozen balanced schedule; not a new balanced comparison')
     parser.add_argument('--prepare-only', action='store_true')
     parser.add_argument('--task-kind', choices=('read', 'scenario', 'scaling', 'business', 'paired'), default='read')
     parser.add_argument('--model', default='gpt-6-astra', help='Codex model identifier; pin explicitly for a new comparison')
@@ -100,13 +101,15 @@ def main():
                 continue
             if (args.output_root / section / 'batch-01.json').exists():
                 raise ValueError('refusing to overwrite completed or partial model evidence')
-            attempts = 9 * sum(task['section'] == section for task in manifest['tasks'])
-            print(json.dumps({'section': section, 'status': 'starting', 'planned_attempts': attempts}), flush=True)
+            attempts = (3 if args.only_arm else 9) * sum(task['section'] == section for task in manifest['tasks'])
+            selection = {'only_arm': args.only_arm, 'balanced_comparison': False} if args.only_arm else {}
+            print(json.dumps({'section': section, 'status': 'starting', 'planned_attempts': attempts, **selection}), flush=True)
             result = subprocess.run([sys.executable, str(ROOT / 'evaluation/harness.py'),
                                      '--tasks', str(manifest_path), '--section', section,
                                      '--config', str(path), '--output', str(args.output_root / section / 'batch-01.json'),
                                      '--seed', str({'read': 20260910, 'scenario': 20260930, 'scaling': 20261020, 'business': 20261101, 'paired': 20260908}[args.task_kind] + index), '--repeats', '3',
-                                     '--stop-file', str(args.output_root / 'STOP')], check=False)
+                                     '--stop-file', str(args.output_root / 'STOP')] +
+                                    (['--only-arm', args.only_arm] if args.only_arm else []), check=False)
             failed |= result.returncode != 0
     print(json.dumps({'status': 'prepared' if args.prepare_only else 'complete_with_failures' if failed else 'complete',
                       'sections': sections}), flush=True)

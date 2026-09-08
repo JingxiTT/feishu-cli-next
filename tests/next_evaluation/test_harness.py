@@ -114,12 +114,13 @@ class AccountingTests(unittest.TestCase):
 
 
 class ProcessE2ETests(unittest.TestCase):
-    def invoke(self, fixture=None, split="controlled", extra_args=(), arms=harness.ARMS):
+    def invoke(self, fixture=None, split="controlled", extra_args=(), arms=harness.ARMS, task_count=1):
         with tempfile.TemporaryDirectory(prefix="feishu-harness-test-") as directory:
             root = Path(directory)
             task = {"id": "increment", "section": "foundation", "prompt": "Increment the fixture value.",
                     "fixture": {"value": 1, **(fixture or {})}, "expected": {"value": 2}}
-            (root / "tasks.json").write_text(json.dumps({"split": split, "tasks": [task]}))
+            tasks = [task] if task_count == 1 else [{**task, "id": f"increment-{n}"} for n in range(task_count)]
+            (root / "tasks.json").write_text(json.dumps({"split": split, "tasks": tasks}))
             config = {"mode": "controlled", "backend": "synthetic-state-v1", "model": "synthetic-model",
                       "tokenizer": "synthetic-counts-v1", "reasoning": "none", "tools": ["python"],
                       "permissions": "isolated-offline-fixture", "budget": {"turns": 2},
@@ -142,6 +143,8 @@ class ProcessE2ETests(unittest.TestCase):
         self.assertEqual(json.loads(completed.stdout)["status"], "pass")
         self.assertFalse(result["performance_claims_supported"])
         self.assertEqual(len(result["runs"]), 6)
+        self.assertEqual(result["planned_runs"], 6)
+        self.assertNotIn("arm_selection", result)
         self.assertTrue(all(run["success"] for run in result["runs"]))
         self.assertEqual(result["runs"][0]["usage"]["total_tokens"], 165)
         self.assertEqual(result["runs"][0]["command_executions"], 1)
@@ -161,6 +164,49 @@ class ProcessE2ETests(unittest.TestCase):
                 self.assertEqual(row["known_total_tokens"], 330)
                 self.assertEqual(row["successes"], 0 if fixture else 2)
             self.assertTrue(all(len(row["pairs"]) == (0 if fixture else 2) for row in result["matched_success"]))
+
+    def test_candidate_only_invokes_filtered_balanced_schedule_and_keeps_costs(self):
+        for arms in (harness.ARMS, harness.BEFORE_AFTER_ARMS):
+            with self.subTest(arms=arms), tempfile.TemporaryDirectory() as directory:
+                log = Path(directory) / "invocations.jsonl"
+                completed, result = self.invoke(
+                    {"invocation_log": str(log), "wrong_effect": True},
+                    extra_args=("--only-arm", "next"), arms=arms)
+                self.assertEqual(completed.returncode, 1, completed.stderr)
+                expected = [(trial, arm) for _, trial, arm in
+                            harness.schedule([{"id": "increment"}], 2, 20260907, arms) if arm == "next"]
+                actual = [json.loads(line) for line in log.read_text().splitlines()]
+                self.assertEqual([(row["trial"], row["arm"]) for row in actual], expected)
+                self.assertEqual([(row["trial"], row["arm"]) for row in result["runs"]], expected)
+                self.assertEqual(result["planned_runs"], 2)
+                self.assertTrue(result["completed"])
+                self.assertEqual(set(result["arms"]), set(arms))
+                self.assertEqual(result["arm_selection"], {
+                    "mode": "candidate_only", "selected": ["next"],
+                    "schedule": "filtered_balanced", "balanced_comparison": False})
+                self.assertFalse(result["performance_claims_supported"])
+                self.assertEqual(result["matched_success"], [])
+                self.assertTrue(all(row["arm"] == "next" and row["known_total_tokens"] == 330
+                                    and row["successes"] == 0 for row in result["groups"]))
+
+    def test_candidate_only_rejects_other_arm_names_before_runner(self):
+        completed, result = self.invoke(extra_args=("--only-arm", "official"))
+        self.assertEqual(completed.returncode, 2)
+        self.assertIsNone(result)
+
+    def test_candidate_only_eight_tasks_three_trials_invokes_24_attempts(self):
+        with tempfile.TemporaryDirectory() as directory:
+            log = Path(directory) / "invocations.jsonl"
+            completed, result = self.invoke({"invocation_log": str(log)}, task_count=8,
+                arms=harness.BEFORE_AFTER_ARMS, extra_args=("--only-arm", "next", "--repeats", "3"))
+            self.assertEqual(completed.returncode, 0, completed.stderr)
+            actual = [json.loads(line) for line in log.read_text().splitlines()]
+            tasks = [{"id": f"increment-{n}"} for n in range(8)]
+            expected = [(task["id"], trial, arm) for task, trial, arm in
+                        harness.schedule(tasks, 3, 20260907, harness.BEFORE_AFTER_ARMS) if arm == "next"]
+            self.assertEqual([(r["task_id"], r["trial"], r["arm"]) for r in actual], expected)
+            self.assertEqual(result["planned_runs"], 24)
+            self.assertEqual(len(result["runs"]), 24)
 
     def test_operator_stop_preserves_active_attempt_and_skips_unstarted_models(self):
         with tempfile.TemporaryDirectory() as directory:
