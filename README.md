@@ -4,7 +4,7 @@ A Feishu/Lark CLI for AI agents that work through a shell and files. It builds o
 
 The goal is to reduce the tokens needed to complete a task while preserving every original command and workflow, data fidelity, and successful outcomes. Results remain task-dependent. The current evaluation targets **more than 50% fewer tokens for Docs read/edit and at least 30% fewer for each other evaluated function versus the original CLI**, with failed-attempt costs included and no observed success regression.
 
-[Quick start](#quick-start) · [Usage](#usage) · [Evaluation report](evaluation/evidence/token-efficiency-05/REPORT.md) · [Implementation status](docs/IMPLEMENTATION.md)
+[Quick start](#quick-start) · [Usage](#usage) · [Evaluation report](evaluation/evidence/token-efficiency-06/REPORT.md) · [Implementation status](docs/IMPLEMENTATION.md)
 
 ## What this project adds
 
@@ -110,6 +110,22 @@ Snapshot checks detect observed conflicts but cannot close the race with a concu
 Those guides are not all injected by installing the entry skill. They can still influence an agent and consume context when it reads them on demand. The evaluation includes that work; Next did call `skills read` in some trials. Upstream examples use `lark-cli`; use `feishu-cli-next` with this distribution.
 
 ## Latest evaluation
+
+**[Read condition 06 →](evaluation/evidence/token-efficiency-06/REPORT.md)**
+
+The Docs-first condition completed **12/12 verified attempts**: Docs read and edit, original/full versus Next, three repetitions each, using **GPT-5.6 Luna with medium reasoning through native Codex CLI 0.153.4**. Both functions missed the strictly greater than 50% token-saving target, so the declared stop rule left **36 attempts across the other six functions not run**.
+
+| Function | Tokens per verified success vs original | Observed success | Gate |
+| --- | ---: | --- | --- |
+| Docs read | 1.0% more | Both 3/3 | Missed |
+| Docs edit | 42.1% less | Both 3/3 | Missed |
+| Other six functions | Not measured | Not run | Not measured |
+
+All 12 attempts had complete usage, totaling **761,257 tokens**. This conditional development comparison retains all attempt and recovery costs; it is not independent confirmation of stable savings or success parity. [Protocol](evaluation/token-efficiency-06.md) · [Stage decision](evaluation/evidence/token-efficiency-06/stage-decision.json).
+
+**Qualification for conditions 05/06:** a later no-model native control found that the harness's disabled-skill directory paths left eight public `CODEX_HOME` catalog entries advertised; exact `SKILL.md` paths suppressed them. Both arms shared the affected configuration. The probe does not quantify billed-token impact or establish a cause for file-read loops. [Qualification and evidence](evaluation/evidence/token-efficiency-05-06-skill-isolation-qualification.md). Historical results remain unchanged.
+
+### Previous full comparison: condition 05
 
 **[Read condition 05 →](evaluation/evidence/token-efficiency-05/REPORT.md)**
 
