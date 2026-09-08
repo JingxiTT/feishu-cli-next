@@ -1,0 +1,1767 @@
+{
+  "protocol": 1,
+  "mode": "real",
+  "split": "development",
+  "performance_claims_supported": true,
+  "completed": true,
+  "planned_runs": 9,
+  "seed": 20260914,
+  "repeats": 3,
+  "fresh_context": true,
+  "task_manifest_sha256": "1e2ff1e7d9fcc3414d9bf1a2e031d93bc92eb4d01fd5101ee87394576f1ca763",
+  "config_sha256": "0e9b3c1b5639fb30bfbe975d309036a7affa1197f0e7af2ddfb033801303a120",
+  "environment": {
+    "backend": "synthetic-scenario-v1",
+    "model": "gpt-5.6-luna",
+    "tokenizer": "provider-undisclosed",
+    "reasoning": "medium",
+    "tools": [
+      "shell",
+      "files"
+    ],
+    "permissions": "workspace-write; managed proxy loopback-only with local binding; isolated synthetic sidecar",
+    "budget": {
+      "timeout_seconds": 180
+    },
+    "accounting_method": "codex-cli 0.153.4 provider turn.completed; cached input included in full"
+  },
+  "arms": {
+    "official": {
+      "cli_sha256": "5e1f582ec5ab9c86d3618fc17bd099b3443d40fe8691fed07d42e83a351ba977",
+      "skill_sha256": "663f104c93934a9d3e732f865abc835bebed770a33ec9290273d33178edf363c"
+    },
+    "official_concise": {
+      "cli_sha256": "5e1f582ec5ab9c86d3618fc17bd099b3443d40fe8691fed07d42e83a351ba977",
+      "skill_sha256": "d1a66d496437b1db4aca0a01b958c29c35f81a58649926f93c9cbd8f082374fb"
+    },
+    "next": {
+      "cli_sha256": "a96268761560efa996ba7ce99c231423de14277cc814f694c18b9b5cbb7a7a48",
+      "skill_sha256": "c0de66cb47e62ca389a691ca7c9549d68e262702cb692d45dd2a5965779c9f1b"
+    }
+  },
+  "runs": [
+    {
+      "task_id": "paired-base",
+      "section": "base",
+      "trial": 1,
+      "arm": "official",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 42795,
+        "cached_input_tokens": 26112,
+        "output_tokens": 607,
+        "total_tokens": 43402
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 42795,
+        "cached_input_tokens": 26112,
+        "output_tokens": 607,
+        "total_tokens": 43402
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-batch-update"
+              ],
+              "flags": [
+                "--as",
+                "--base-token",
+                "--json",
+                "--table-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-get"
+              ],
+              "flags": [
+                "--as",
+                "--base-token",
+                "--field-id",
+                "--format",
+                "--output",
+                "--record-id",
+                "--table-id"
+              ]
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 26.8633337090032,
+      "verification_seconds": 0.061267791999853216,
+      "api_calls": 4,
+      "retries": null,
+      "command_executions": 2
+    },
+    {
+      "task_id": "paired-base",
+      "section": "base",
+      "trial": 0,
+      "arm": "official_concise",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 128747,
+        "cached_input_tokens": 104704,
+        "output_tokens": 1044,
+        "total_tokens": 129791
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 128747,
+        "cached_input_tokens": 104704,
+        "output_tokens": 1044,
+        "total_tokens": 129791
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-get"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-batch-update"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-get"
+              ],
+              "flags": [
+                "--as",
+                "--base-token",
+                "--field-id",
+                "--format",
+                "--record-id",
+                "--table-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-batch-update"
+              ],
+              "flags": [
+                "--as",
+                "--base-token",
+                "--format",
+                "--json",
+                "--table-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-get"
+              ],
+              "flags": [
+                "--as",
+                "--base-token",
+                "--field-id",
+                "--format",
+                "--record-id",
+                "--table-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 43.2475306669985,
+      "verification_seconds": 0.07129462499869987,
+      "api_calls": 9,
+      "retries": null,
+      "command_executions": 7
+    },
+    {
+      "task_id": "paired-base",
+      "section": "base",
+      "trial": 2,
+      "arm": "next",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 148139,
+        "cached_input_tokens": 121600,
+        "output_tokens": 1264,
+        "total_tokens": 149403
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 148139,
+        "cached_input_tokens": 121600,
+        "output_tokens": 1264,
+        "total_tokens": 149403
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "cli",
+              "command": [],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--limit"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "base"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-batch-update"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-upsert"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "base"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-upsert"
+              ],
+              "flags": [
+                "--base-token",
+                "--dry-run",
+                "--format",
+                "--json",
+                "--record-id",
+                "--table-id"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "base"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--limit"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-list"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-get"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-upsert"
+              ],
+              "flags": [
+                "--as",
+                "--base-token",
+                "--format",
+                "--json",
+                "--record-id",
+                "--table-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-get"
+              ],
+              "flags": [
+                "--as",
+                "--base-token",
+                "--field-id",
+                "--format",
+                "--record-id",
+                "--table-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 43.62510083300003,
+      "verification_seconds": 0.06281175000185613,
+      "api_calls": 5,
+      "retries": null,
+      "command_executions": 9
+    },
+    {
+      "task_id": "paired-base",
+      "section": "base",
+      "trial": 0,
+      "arm": "official",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 168257,
+        "cached_input_tokens": 139520,
+        "output_tokens": 1123,
+        "total_tokens": 169380
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 168257,
+        "cached_input_tokens": 139520,
+        "output_tokens": 1123,
+        "total_tokens": 169380
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "base"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-get"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-batch-update"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-get"
+              ],
+              "flags": [
+                "--as",
+                "--base-token",
+                "--field-id",
+                "--format",
+                "--output",
+                "--overwrite",
+                "--record-id",
+                "--table-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-batch-update"
+              ],
+              "flags": [
+                "--as",
+                "--base-token",
+                "--json",
+                "--table-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-get"
+              ],
+              "flags": [
+                "--as",
+                "--base-token",
+                "--field-id",
+                "--format",
+                "--output",
+                "--overwrite",
+                "--record-id",
+                "--table-id"
+              ]
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 38.759880749999866,
+      "verification_seconds": 0.047622875001252396,
+      "api_calls": 9,
+      "retries": null,
+      "command_executions": 7
+    },
+    {
+      "task_id": "paired-base",
+      "section": "base",
+      "trial": 1,
+      "arm": "official_concise",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 158281,
+        "cached_input_tokens": 134144,
+        "output_tokens": 1238,
+        "total_tokens": 159519
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 158281,
+        "cached_input_tokens": 134144,
+        "output_tokens": 1238,
+        "total_tokens": 159519
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-get"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-get"
+              ],
+              "flags": [
+                "--as",
+                "--base-token",
+                "--format",
+                "--record-id",
+                "--table-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-batch-update"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-batch-update"
+              ],
+              "flags": [
+                "--as",
+                "--base-token",
+                "--json",
+                "--table-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-get"
+              ],
+              "flags": [
+                "--as",
+                "--base-token",
+                "--format",
+                "--record-id",
+                "--table-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 42.12323124999966,
+      "verification_seconds": 0.06364970800132141,
+      "api_calls": 9,
+      "retries": null,
+      "command_executions": 8
+    },
+    {
+      "task_id": "paired-base",
+      "section": "base",
+      "trial": 0,
+      "arm": "next",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 91873,
+        "cached_input_tokens": 72960,
+        "output_tokens": 1056,
+        "total_tokens": 92929
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 91873,
+        "cached_input_tokens": 72960,
+        "output_tokens": 1056,
+        "total_tokens": 92929
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "cli",
+              "command": [],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-batch-update"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-batch-update"
+              ],
+              "flags": [
+                "--as",
+                "--base-token",
+                "--json",
+                "--table-id"
+              ]
+            }
+          ],
+          "exit_code": 22
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-get"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-get"
+              ],
+              "flags": [
+                "--as",
+                "--base-token",
+                "--field-id",
+                "--format",
+                "--record-id",
+                "--table-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 43.69081416700283,
+      "verification_seconds": 0.05586212499838439,
+      "api_calls": 4,
+      "retries": null,
+      "command_executions": 7
+    },
+    {
+      "task_id": "paired-base",
+      "section": "base",
+      "trial": 1,
+      "arm": "next",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 116013,
+        "cached_input_tokens": 94208,
+        "output_tokens": 1225,
+        "total_tokens": 117238
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 116013,
+        "cached_input_tokens": 94208,
+        "output_tokens": 1225,
+        "total_tokens": 117238
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-batch-update"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "base"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-list"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-get"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-get"
+              ],
+              "flags": [
+                "--base-token",
+                "--format",
+                "--record-id",
+                "--result-detail",
+                "--table-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-batch-update"
+              ],
+              "flags": [
+                "--base-token",
+                "--format",
+                "--json",
+                "--result-detail",
+                "--table-id"
+              ]
+            }
+          ],
+          "exit_code": 22
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-get"
+              ],
+              "flags": [
+                "--base-token",
+                "--field-id",
+                "--format",
+                "--record-id",
+                "--result-detail",
+                "--table-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 43.07141941699956,
+      "verification_seconds": 0.06360287500137929,
+      "api_calls": 6,
+      "retries": null,
+      "command_executions": 8
+    },
+    {
+      "task_id": "paired-base",
+      "section": "base",
+      "trial": 2,
+      "arm": "official_concise",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 94971,
+        "cached_input_tokens": 73472,
+        "output_tokens": 903,
+        "total_tokens": 95874
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 94971,
+        "cached_input_tokens": 73472,
+        "output_tokens": 903,
+        "total_tokens": 95874
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "base"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "base"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-batch-update"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-get"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-batch-update"
+              ],
+              "flags": [
+                "--as",
+                "--base-token",
+                "--json",
+                "--table-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-get"
+              ],
+              "flags": [
+                "--as",
+                "--base-token",
+                "--field-id",
+                "--format",
+                "--record-id",
+                "--table-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 32.31767116699848,
+      "verification_seconds": 0.06321987499904935,
+      "api_calls": 9,
+      "retries": null,
+      "command_executions": 5
+    },
+    {
+      "task_id": "paired-base",
+      "section": "base",
+      "trial": 2,
+      "arm": "official",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 135724,
+        "cached_input_tokens": 110080,
+        "output_tokens": 930,
+        "total_tokens": 136654
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 135724,
+        "cached_input_tokens": 110080,
+        "output_tokens": 930,
+        "total_tokens": 136654
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-batch-update"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-get"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+field-list"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-get"
+              ],
+              "flags": [
+                "--as",
+                "--base-token",
+                "--field-id",
+                "--format",
+                "--record-id",
+                "--table-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-batch-update"
+              ],
+              "flags": [
+                "--as",
+                "--base-token",
+                "--json",
+                "--table-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-get"
+              ],
+              "flags": [
+                "--as",
+                "--base-token",
+                "--field-id",
+                "--format",
+                "--record-id",
+                "--table-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 42.017167542002426,
+      "verification_seconds": 0.06341858399900957,
+      "api_calls": 9,
+      "retries": null,
+      "command_executions": 6
+    }
+  ],
+  "groups": [
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 359570,
+      "tokens_per_success": 119856.66666666667,
+      "token_distribution": {
+        "min": 92929,
+        "median": 117238,
+        "max": 149403,
+        "stdev": 28327.92315601928
+      },
+      "latency_median_seconds": 43.62510083300003,
+      "api_calls": 15,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 349436,
+      "tokens_per_success": 116478.66666666667,
+      "token_distribution": {
+        "min": 43402,
+        "median": 136654,
+        "max": 169380,
+        "stdev": 65367.40148830557
+      },
+      "latency_median_seconds": 38.759880749999866,
+      "api_calls": 22,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "official_concise",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 385184,
+      "tokens_per_success": 128394.66666666667,
+      "token_distribution": {
+        "min": 95874,
+        "median": 129791,
+        "max": 159519,
+        "stdev": 31845.467751837674
+      },
+      "latency_median_seconds": 42.12323124999966,
+      "api_calls": 27,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "section",
+      "name": "base",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 359570,
+      "tokens_per_success": 119856.66666666667,
+      "token_distribution": {
+        "min": 92929,
+        "median": 117238,
+        "max": 149403,
+        "stdev": 28327.92315601928
+      },
+      "latency_median_seconds": 43.62510083300003,
+      "api_calls": 15,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "section",
+      "name": "base",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 349436,
+      "tokens_per_success": 116478.66666666667,
+      "token_distribution": {
+        "min": 43402,
+        "median": 136654,
+        "max": 169380,
+        "stdev": 65367.40148830557
+      },
+      "latency_median_seconds": 38.759880749999866,
+      "api_calls": 22,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "section",
+      "name": "base",
+      "arm": "official_concise",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 385184,
+      "tokens_per_success": 128394.66666666667,
+      "token_distribution": {
+        "min": 95874,
+        "median": 129791,
+        "max": 159519,
+        "stdev": 31845.467751837674
+      },
+      "latency_median_seconds": 42.12323124999966,
+      "api_calls": 27,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "task_id",
+      "name": "paired-base",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 359570,
+      "tokens_per_success": 119856.66666666667,
+      "token_distribution": {
+        "min": 92929,
+        "median": 117238,
+        "max": 149403,
+        "stdev": 28327.92315601928
+      },
+      "latency_median_seconds": 43.62510083300003,
+      "api_calls": 15,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "task_id",
+      "name": "paired-base",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 349436,
+      "tokens_per_success": 116478.66666666667,
+      "token_distribution": {
+        "min": 43402,
+        "median": 136654,
+        "max": 169380,
+        "stdev": 65367.40148830557
+      },
+      "latency_median_seconds": 38.759880749999866,
+      "api_calls": 22,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "task_id",
+      "name": "paired-base",
+      "arm": "official_concise",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 385184,
+      "tokens_per_success": 128394.66666666667,
+      "token_distribution": {
+        "min": 95874,
+        "median": 129791,
+        "max": 159519,
+        "stdev": 31845.467751837674
+      },
+      "latency_median_seconds": 42.12323124999966,
+      "api_calls": 27,
+      "retries": null,
+      "failure_categories": {}
+    }
+  ],
+  "matched_success": [
+    {
+      "baseline": "official",
+      "pairs": [
+        {
+          "task_id": "paired-base",
+          "trial": 2,
+          "baseline_tokens": 136654,
+          "next_tokens": 149403
+        },
+        {
+          "task_id": "paired-base",
+          "trial": 0,
+          "baseline_tokens": 169380,
+          "next_tokens": 92929
+        },
+        {
+          "task_id": "paired-base",
+          "trial": 1,
+          "baseline_tokens": 43402,
+          "next_tokens": 117238
+        }
+      ]
+    },
+    {
+      "baseline": "official_concise",
+      "pairs": [
+        {
+          "task_id": "paired-base",
+          "trial": 2,
+          "baseline_tokens": 95874,
+          "next_tokens": 149403
+        },
+        {
+          "task_id": "paired-base",
+          "trial": 0,
+          "baseline_tokens": 129791,
+          "next_tokens": 92929
+        },
+        {
+          "task_id": "paired-base",
+          "trial": 1,
+          "baseline_tokens": 159519,
+          "next_tokens": 117238
+        }
+      ]
+    }
+  ]
+}

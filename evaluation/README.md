@@ -1,10 +1,12 @@
 # Agent comparison evaluation
 
-The new [paired function comparison plan](paired-functions-luna-medium.md) pins
-the user-selected `gpt-5.6-luna` model with `medium` reasoning for all three arms,
-using native Codex CLI `0.153.4`. Its eight-task manifest is `tasks.paired.json`,
-selected by `run_read_batch.py --task-kind paired --model gpt-5.6-luna
---reasoning medium`. Historical scenario batches are separate conditions.
+The [completed Luna/medium report](evidence/paired-luna-medium-01/REPORT.md)
+compares eight functions across 72 native Codex CLI trials: 54 verified successes,
+seven inconclusive outcomes and complete accounting for 8,442,585 tokens. Results
+are per task, with failed-attempt costs retained and no pooled efficiency claim.
+The [protocol](paired-functions-luna-medium.md) and `tasks.paired.json` pin the
+three arms, three repetitions and `gpt-5.6-luna` / `medium` settings. Historical
+scenario batches remain separate conditions.
 
 The [provisional assessment](ASSESSMENT.md) compares completed conditions, retains
 regressions and links the remaining release evidence.

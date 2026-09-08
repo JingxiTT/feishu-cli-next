@@ -1,10 +1,13 @@
 # Paired function token comparison
 
-Status: executable eight-task pilot. New fixtures live in `evaluation/paired/`
-and `tasks.paired.json`; the launcher selects them with `--task-kind paired`.
-Product binaries are frozen before execution. Task controls use both binaries
-against signed synthetic backends; trial results and exact frozen hashes are
-recorded separately under `evidence/paired-luna-medium-01/`.
+Status: completed. The [report](evidence/paired-luna-medium-01/REPORT.md) records
+all 72 trials: 54 verified successes, seven inconclusive outcomes, 11 failed
+verifications and 8,442,585 provider tokens with complete usage. No trial was
+removed or overwritten. Markdown coverage and some Sheets strategies prevent
+complete comparisons; those limitations and their costs remain in the report.
+
+The frozen evaluator is `596373b`, selected with `--task-kind paired`; product,
+guidance, native Codex and catalog hashes are recorded in the evidence directory.
 
 ## Fixed settings
 
