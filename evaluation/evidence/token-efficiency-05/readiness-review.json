@@ -1,0 +1,119 @@
+{
+  "schema": "token-efficiency-readiness/v1",
+  "decision": "go",
+  "date_utc": "2026-09-08T17:12:11.459853+00:00",
+  "condition": "token-efficiency-05",
+  "provider_calls_before_decision": 0,
+  "review": "Independent read-only reviewer verified final candidate/evaluator, source and binary hashes, original baseline, native evidence and controls. Conditional protocol hold released.",
+  "candidate_revision": "d667afbb201d09651f121147e147fb0891952f16",
+  "evaluator_revision": "75e57af771a58a9929e03f6221f3e2c1480ca96b",
+  "environment_sha256": "6dabc1e5a306283e957fefc69eb4f538906f86e46d7b072c4bea954e09bde778",
+  "product_checks": [
+    {
+      "check": "unit-test",
+      "exit_code": 0,
+      "seconds": 152.86
+    },
+    {
+      "check": "vet",
+      "exit_code": 0,
+      "seconds": 4.58
+    },
+    {
+      "check": "fmt-check",
+      "exit_code": 0,
+      "seconds": 0.32
+    },
+    {
+      "check": "module-tidy",
+      "exit_code": 0,
+      "seconds": 0.1
+    },
+    {
+      "check": "module-clean",
+      "exit_code": 0,
+      "seconds": 0.01
+    },
+    {
+      "check": "quality-gate",
+      "exit_code": 0,
+      "seconds": 14.43
+    },
+    {
+      "check": "source-guard",
+      "exit_code": 0,
+      "seconds": 6.26
+    },
+    {
+      "check": "source-guard-tests",
+      "exit_code": 0,
+      "seconds": 15.14
+    },
+    {
+      "check": "golangci",
+      "exit_code": 0,
+      "seconds": 74.68
+    }
+  ],
+  "product_checks_sha256": "df535933cdd03b090e9bd64e3f153875301a9625a0eb0045a7942096110c9e10",
+  "python_harness": {
+    "run": 317,
+    "passed": 293,
+    "optional_skips": 24,
+    "exit_code": 0,
+    "evidence_sha256": "34c575507349226317cfd44fc5bd84266774d7ff11ff760105f13745ceb2177b"
+  },
+  "explicit_native_controls": {
+    "paired_passed": 72,
+    "sandbox_passed": 8,
+    "skips": 0,
+    "includes": "Original and candidate routes; candidate Docs read/edit/no-op/rejected local changes through existing native fidelity verifiers",
+    "checks": [
+      {
+        "check": "native-paired",
+        "exit_code": 0,
+        "seconds": 46.18
+      },
+      {
+        "check": "native-sandbox",
+        "exit_code": 0,
+        "seconds": 10.48
+      }
+    ]
+  },
+  "private_docs_workflow": {
+    "evidence": "../docs-workspace-native-live-20260909.json",
+    "sha256": "000d78bd315f77d9b58b2c0f8f946cb11a5a1408f8497e471d25845bdbf46f11",
+    "final_checks_passed": 11,
+    "created_documents": 3,
+    "all_deleted": true,
+    "observed_delete_code": 1770003,
+    "reviewed_private_artifact_hashes": 105,
+    "prior_attempts": "First runtime reported unknown after unstable post-write read; final native fidelity unavailable. Second stopped on unstable fixture initialization. Both were cleaned and retained; final attempt passed.",
+    "same_candidate_source_archive": true,
+    "source_archive_sha256": "fb1d066730e7e76f8bab405b25ddb809061671ccdc6ab785e3ad612ae4399c7b",
+    "binary_difference": "Private QA uses full source SHA as VERSION; evaluation uses seven characters. Exact source archive and 29 Docs source files match; binaries are not byte-identical."
+  },
+  "native_revision_limit": "Stale native revision parameters are accepted. Fresh state comparisons and readback do not provide atomic conflict protection. At most three complete read attempts reconcile observed revision drift; mutations never retry.",
+  "guidance_checks": {
+    "domain_format": "pass",
+    "entry_format": "pass with optional metadata warning",
+    "parsed_affordance": "pass",
+    "embedded_reference": "pass"
+  },
+  "report_preflight": "Exact strict >50% Docs and >=30% other gates, unrounded cross-multiplication, unknown/inconclusive/zero-success handling and refusal before48 completed attempts passed.",
+  "earlier_test_correction": "Root embedded Docs guidance test literals were stale after earlier affordance changes; corrected and full root/product suites rerun. Prior reports remain unchanged.",
+  "model_plan": {
+    "model": "gpt-5.6-luna",
+    "reasoning": "medium",
+    "codex_version": "codex-cli 0.153.4",
+    "arms": [
+      "official",
+      "next"
+    ],
+    "attempts": 48,
+    "repetitions": 3,
+    "reused_attempts": 0
+  },
+  "checks_not_repeated": "No dependency changes or new dependencies; prior license coverage retained. Optional legacy nonpaired native/scaling suites are outside this fresh paired condition."
+}
