@@ -71,5 +71,139 @@
         "search:bot"
       ]
     }
-  }
+  },
+  "resumed_authorized_attempts": [
+    {
+      "timestamp_utc": "2026-09-08T08:00:26.547823+00:00",
+      "authorization": "User resumed private live tests and explicitly authorized search:bot. Coordinator confirmed consent for the current account.",
+      "candidate_revision": "d6ec668174030586e5b249fef867a7c6d90f8111",
+      "build_method": "Canonical make build VERSION=d6ec66817403 in a temporary git-archive snapshot; checksum-verified frozen catalog.",
+      "build_exit": 0,
+      "binary_sha256": "9678d9b4d2eeabbef485109db16dfc9895e6eb8c8f02099bc9fde7ce5ea5c314",
+      "metadata_sha256": "b5375251ff1f0a5939925587b0d514669a748135cde36c56f1c8ab5f5fe266c8",
+      "test_source_sha256": "063091fd2a1d7d7589441cd00961b9015d9da9b5e12ca46ed96c9955ac5bd468",
+      "status": "pass",
+      "selection": "^TestContactNextLiveCurrentAccountReads$",
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-count=1",
+        "-timeout=4m",
+        "./tests/cli_e2e/contact",
+        "-run",
+        "^TestContactNextLiveCurrentAccountReads$"
+      ],
+      "test_exit": 0,
+      "test_events": {
+        "pass": 1,
+        "fail": 0,
+        "skip": 0
+      },
+      "binding": {
+        "auth_status_exit": 0,
+        "auth_verified": true,
+        "self_info_exit": 0,
+        "user_id_match": true,
+        "tenant_observed": true,
+        "expected_values_supplied_only_in_memory_and_child_environment": true
+      },
+      "pre_authorization_search_bot_read": {
+        "attempts": 1,
+        "exit_code": 3,
+        "error": {
+          "type": "authorization",
+          "subtype": "missing_scope",
+          "missing_scopes": [
+            "search:bot"
+          ]
+        },
+        "preserved_as_failed": true
+      },
+      "scope_authorization": {
+        "status": "authorized",
+        "requested_scope": [
+          "search:bot"
+        ],
+        "automatic_refresh_scope": [
+          "offline_access"
+        ],
+        "other_new_scopes_requested": false,
+        "existing_device_flow_primitives_reused": true,
+        "normal_cli_login_completion_used": false,
+        "reason_for_guarded_completion": "Normal login completion stores token and rewrites the profile before checking returned account continuity or retention of previous scopes. A temporary helper reused the existing device authorization/poll/token storage primitives and verified those invariants before storing only the same account token.",
+        "temporary_helper_source_sha256": "4ab08d4b7c24959f9f260aa4b607083d5f612d51bc1dee6b88a7ac809d981059",
+        "guard_checks": {
+          "prior_own_user_info_matches_selected_account": true,
+          "returned_user_id_matches_prior": true,
+          "returned_tenant_matches_prior": true,
+          "all_prior_scopes_retained": true,
+          "search_bot_granted": true,
+          "profile_hash_unchanged_before_and_after": true,
+          "prior_token_generation_unchanged_before_store": true
+        },
+        "token_stored_for_same_account": true,
+        "profile_modified": false,
+        "tokens_deleted": false,
+        "device_code_or_token_values_in_evidence": false,
+        "initial_local_guard_preflight": {
+          "status": "blocked_before_device_request",
+          "reason": "native provider metadata did not itself mark the account verified; helper was corrected to perform an explicit own-user API binding read",
+          "authorization_started": false,
+          "token_stored": false
+        }
+      },
+      "completed_steps": [
+        "fresh_verified_auth_status",
+        "independent_own_user_info_account_and_tenant_binding",
+        "self_get_user",
+        "exact_id_get_user_roundtrip",
+        "id_restricted_user_search_shape_and_identity",
+        "self_user_profiles_array_and_returned_identity_checks",
+        "bounded_rare_keyword_bot_search_array_and_extent"
+      ],
+      "self_search_empty_warning": false,
+      "bot_identity_read": {
+        "status": "pass",
+        "exit_code": 0,
+        "matches_verified_auth_status_open_id": true,
+        "normalized_projection": "data.open_id",
+        "diagnostic_note": "Initial verifier assumed the raw upstream bot object and did not find an ID. A keys/types-only read showed normalized data.open_id; a subsequent exact-path comparison matched. No actual identity mismatch was observed."
+      },
+      "bot_tenant_binding": {
+        "status": "blocked",
+        "read_attempts": 1,
+        "exit_code": 3,
+        "error": {
+          "type": "authorization",
+          "subtype": "app_scope_not_applied",
+          "code": 99991672,
+          "missing_scopes": [
+            "tenant:tenant:readonly"
+          ]
+        },
+        "additional_scope_requested": false
+      },
+      "remaining_unverified": [
+        "bot_identity_tenant_binding",
+        "full_profile_field_completeness_and_visibility_beyond_selected_current_account_assertions"
+      ],
+      "content_created_changed_sent_or_shared": false,
+      "personal_data_persisted": false,
+      "raw_auth_profile_or_test_output_persisted": false,
+      "credentials_persisted_only_via_existing_same_account_token_store": true,
+      "harness_review": {
+        "auto_login": false,
+        "content_mutation_commands": false,
+        "legacy_TEST_credential_fallbacks": "removed from child environment",
+        "retry_policy": "existing bounded retries only for typed retryable read errors",
+        "other_live_tests_selected": false
+      },
+      "temporary_candidate_and_helper_removed": true
+    }
+  ],
+  "latest_selected_workflow_status": "pass",
+  "latest_bot_search_status": "pass",
+  "latest_bot_tenant_binding_status": "blocked",
+  "history_note": "Original top-level failed attempt and single-read diagnostic remain unchanged; resumed_authorized_attempts records later authorized outcomes separately."
 }

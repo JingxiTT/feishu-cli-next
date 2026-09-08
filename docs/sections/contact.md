@@ -125,8 +125,8 @@ logs. Contact needs no content creation or notification. Any subsequent delivery
 is a cross-section action, requires independently verified Ying Wu identity or
 current-account-only private visibility, and is outside these Contact reads.
 An initial missing-fixture blocker was superseded by the coordinator-authorized
-current-account live attempt recorded below. The complete section remains open
-after its final bot-search read failed. Comparative development evidence is
+current-account live attempt recorded below. That attempt remained open after its final bot-search read failed; the
+authorized resumption below subsequently passed the selected workflow. Comparative development evidence is
 owned by the coordinator under `evaluation/evidence/contact/`; this section owner
 did not run model evaluations or held-out tasks.
 
@@ -194,5 +194,45 @@ demonstrated bot-search response/projection defect. The original complete live
 test still counts as failed. The separately recorded diagnostic also failed,
 and neither is converted into a pass. It issued no login, scope request or
 content mutation; its raw output was discarded after extracting only the typed
-error fields. Bot-search live success remains unverified until authorized
-credentials already possess the required scope.
+error fields. At that checkpoint bot-search success was unverified because the selected
+credentials lacked the scope. The authorized resumption below closes that
+particular blocker.
+
+
+## Authorized search:bot resumption
+
+On 2026-09-08 the user authorized the missing `search:bot` permission and resumed
+the selected private live reads. Canonical `make build` ran in a temporary source
+snapshot of `d6ec668174030586e5b249fef867a7c6d90f8111`, using the verified frozen
+catalog. A fresh verified auth status and independent own-user API read bound
+the account and tenant before any selected workflow ran. The initial bot-search
+preflight still returned `authorization/missing_scope`; that failed read remains
+recorded separately.
+
+The existing device flow requested only `search:bot` plus its automatic
+`offline_access` refresh scope. Normal CLI login completion can replace the
+profile's user and stored tokens, so a temporary helper reused the existing
+device-flow and token-storage functions with checks before persistence. It
+verified the returned open ID and tenant against the original account, required
+every prior scope to remain granted, checked for concurrent config/token changes,
+and stored only the same account's token. Browser consent was coordinated by the
+root agent. Authorization succeeded, previous grants were retained, the profile
+hash stayed unchanged, and no tokens were deleted. No consent URL, device code,
+identity value or credential is retained in committed evidence.
+
+The complete `TestContactNextLiveCurrentAccountReads` selection then passed:
+one pass, zero failures and zero skips. This includes current-account lookup,
+exact-ID round-trip, ID-restricted search (which returned a match), personal
+profile response checks, and the bounded rare-keyword bot search. The two earlier
+failed attempts retain their original status in
+[the live evidence](contact-live-evidence.json). No other live test was selected.
+
+A separate bot-info read matched the independently verified bot identity. Bot
+**tenant** binding remains blocked: its read returned exit 3,
+`authorization/app_scope_not_applied`, code `99991672`, requiring
+`tenant:tenant:readonly`. That additional scope was not requested. The selected
+workflow pass does not establish that separate binding or completeness of every
+profile field. No content was created, changed, delivered or shared. Raw response
+and test output stayed in memory; the temporary source, binary and authorization
+helper were removed. Private-resource verification and its ledger remain owned
+by the coordinator.
