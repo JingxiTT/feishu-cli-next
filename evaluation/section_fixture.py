@@ -13,6 +13,7 @@ from urllib.parse import parse_qs, urlsplit
 
 PROXY_KEY = "synthetic-evaluation-proxy-key"
 UNSUPPORTED_REASONS = {
+    "unsupported strategy: historical native Docs revision is outside this fixture": "unsupported_docs_historical_revision",
     "unsupported strategy: native scoped Markdown-document fetch unobserved": "unsupported_markdown_fetch_scope",
     "unsupported strategy: native Sheets structure inspection unobserved": "unsupported_sheets_structure",
     "unsupported strategy: native Sheets CSV inspection unobserved": "unsupported_sheets_csv",

@@ -9,6 +9,7 @@ import re
 import xml.etree.ElementTree as ET
 
 from scenarios import docs as native
+from paired.docs_revision import reject_unmodeled_history
 
 TASK = copy.deepcopy(native.TASK)
 TASK.update(id="paired-docs-edit", section="docs")
@@ -71,6 +72,11 @@ def xml_paragraph(content):
 
 
 class Scenario(native.Scenario):
+    def dispatch(self, method, uri, body_bytes, headers):
+        with self.lock:
+            reject_unmodeled_history(self, method, uri, body_bytes, headers)
+            return super().dispatch(method, uri, body_bytes, headers)
+
     def _fetch(self, data):
         reply = super()._fetch(data)
         reply.json["data"].pop("returned_block_ids", None)

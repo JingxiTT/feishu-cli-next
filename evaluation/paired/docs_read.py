@@ -4,6 +4,7 @@ import json
 from urllib.parse import urlsplit
 
 from scenarios import docs as native
+from paired.docs_revision import reject_unmodeled_history
 
 FACT = "APR-0042"
 BLOCK = native.UNRELATED
@@ -32,6 +33,7 @@ class Scenario(native.Scenario):
         if method != "GET" and not (method == "POST" and urlsplit(uri).path == native.AI_PATH + "/fetch"):
             raise ValueError("read-only task rejects document mutations")
         with self.lock:
+            reject_unmodeled_history(self, method, uri, body_bytes, headers)
             reply = super().dispatch(method, uri, body_bytes, headers)
             # Native fetch exposes block references inside requested XML, not
             # the historical fixture's synthetic returned_block_ids sidecar.
