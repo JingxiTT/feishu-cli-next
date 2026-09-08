@@ -1,0 +1,158 @@
+{
+  "schema": "token-efficiency-readiness/v1",
+  "decision": "go",
+  "date_utc": "2026-09-08T18:47:42.510243+00:00",
+  "condition": "token-efficiency-07",
+  "evaluation_attempts_before_decision": 0,
+  "scope": "Authorize 12 fresh Docs attempts. The other 36 remain conditional on both predeclared Docs gates; no efficiency target is claimed achieved.",
+  "candidate_revision": "dd0fc7a7e62b29790c567959a6daf9fa5ec55c20",
+  "evaluator_revision": "5c86d01a1c36a05fe341f55349c6f473537bff8b",
+  "environment_sha256": "a44991749b2e39d864d35425ee0780f132af63a7d4463ea7a043bc71d438789f",
+  "source_readiness": {
+    "decision": "go",
+    "candidate_identical_to_condition06": true,
+    "candidate_binary_sha256": "1f3538ea4f333347550e7e3e7fb193234bf8f995e47ae7b1d615c553814d16e5",
+    "candidate_archive_sha256": "d75e42e3a44083b75ca769e6a8b503b230fa5232d4ed73bbe868506355ae8ed5",
+    "candidate_archive_files_verified": 3865,
+    "evaluator_archive_matches_git_revision": true,
+    "evaluator_archive_files_verified": 3874,
+    "execution_sources_verified": 34,
+    "only_execution_source_changed_from06": "evaluation/codex_runner.py",
+    "original_binary_and_guidance_verified": true,
+    "candidate_entry_and_inherited_guidance_verified": true,
+    "native_codex_binary_verified": true,
+    "task_manifest_unchanged": true,
+    "stage_algorithm_unchanged_from06": true
+  },
+  "isolation_review": {
+    "commit": "e33c9cccaadeb511ddee260b685527b12d62cb36",
+    "change": "configuration() disables each SKILL.md entry path instead of its directory, shared by both arms. Selected arm guidance is still appended explicitly once. No accounting, verifier or CLI behavior change.",
+    "native_evidence": "../codex-skill-isolation-native-20260909.json",
+    "native_evidence_sha256": "9bec5e1877e429eb2d8f3180f2009ec9ca84fea0a51c5602749728510c5a1dc8",
+    "native_negative_control_advertised_skills": 8,
+    "native_fixed_control_advertised_skills": 0,
+    "model_invocations": 0,
+    "proof_scope": "Pinned native debug prompt-input under denied network with temporary public skill copies and no auth. Shared skill configuration is tested with managed network listeners omitted. This establishes catalog visibility, not a paid exec replay or historical billed token cost.",
+    "privacy": "Sanitized public names and hashes only; raw prompts discarded. No historical result edits or rescoring.",
+    "tests_reviewed": "Exact entry-path unit assertion and native sentinel positive/negative control."
+  },
+  "reused_product_validation": {
+    "source_condition": "token-efficiency-06",
+    "exact_candidate_source_and_binary": true,
+    "checks": [
+      {
+        "check": "unit-test",
+        "exit_code": 0,
+        "seconds": 130.56
+      },
+      {
+        "check": "vet",
+        "exit_code": 0,
+        "seconds": 4.43
+      },
+      {
+        "check": "fmt-check",
+        "exit_code": 0,
+        "seconds": 0.3
+      },
+      {
+        "check": "module-tidy",
+        "exit_code": 0,
+        "seconds": 0.1
+      },
+      {
+        "check": "module-clean",
+        "exit_code": 0,
+        "seconds": 0.01
+      },
+      {
+        "check": "quality-gate",
+        "exit_code": 0,
+        "seconds": 14.99
+      },
+      {
+        "check": "source-guard",
+        "exit_code": 0,
+        "seconds": 6.34
+      },
+      {
+        "check": "source-guard-tests",
+        "exit_code": 0,
+        "seconds": 14.28
+      },
+      {
+        "check": "golangci",
+        "exit_code": 0,
+        "seconds": 69.11
+      }
+    ],
+    "product_checks_sha256": "2a32a1b9b951288d4930ad71d66f85f36e11ee3b263ce25c6c8c906473591170",
+    "readiness_sha256": "b964b971e500a62ddab313752f8f5d7b30442a0a4bfa92e8a1cee8c1933815be",
+    "reason": "Only evaluator configuration changed; candidate code and binary are identical. This reuses validation, not comparison attempts."
+  },
+  "fresh_native_controls": {
+    "paired_passed": 72,
+    "sandbox_passed": 8,
+    "skips": 0,
+    "checks": [
+      {
+        "check": "native-paired",
+        "exit_code": 0,
+        "seconds": 41.25
+      },
+      {
+        "check": "native-sandbox",
+        "exit_code": 0,
+        "seconds": 10.85
+      }
+    ],
+    "summary_sha256": "e82eb9db5e0776ed5d8395c3b8f8364e00e7e2639cd6456a95de13cb0e24076f",
+    "paired_log_sha256": "b1fab75f7d9d529f58381c9ba0f3f796535816201e23de0f8073a6587a9c0f01",
+    "sandbox_log_sha256": "21bc0b27fd0a2ede7301d31d1acf9f717a41ebf3b50def926b43ca1c82756656"
+  },
+  "focused_test_evidence": {
+    "native_adapter_passed": 25,
+    "harness_passed": 27,
+    "provenance": "Implementer observed successful tool outputs; filesystem logs were not retained. Final reviewer inspected source and native evidence without rerunning these tests.",
+    "script_python_passed": 63,
+    "script_python_report_sha256": "d887865ea3c672fb75641528b32b0a37d658292a9ce19b5a2b05a786c63c707d",
+    "full_script_test": "Implementer reports pass, including 166 Node tests; full shell output retained only in tool history."
+  },
+  "prepare_only": {
+    "passed": true,
+    "sections": [
+      "contact",
+      "docs",
+      "markdown",
+      "sheets",
+      "base",
+      "drive"
+    ],
+    "log_sha256": "7af7cc42e43fb1e0ef340216c99c6b760643028b010d1ea118ab8899634c6fca"
+  },
+  "provider_availability": {
+    "decision": "go",
+    "basis": "The 12 immediately preceding condition06 Docs attempts all succeeded with complete usage. No additional paid health probe was needed or performed for07.",
+    "condition06_checkpoint_sha256": "755c272eb18af06ce3e85219b81bd44e20f284dd8eceb19b6b9a782284f4efb1",
+    "limitation": "Recent point-in-time availability only; does not guarantee subsequent task or accounting completion."
+  },
+  "conditional_design": {
+    "first_attempts": 12,
+    "maximum_attempts": 48,
+    "remaining_attempts": 36,
+    "repetitions_per_task_arm": 3,
+    "arms": [
+      "official",
+      "next"
+    ],
+    "reused_attempts": 0,
+    "docs_gate": "Exactly three trials per task and arm; complete usage, no inconclusive outcomes, both success counts positive, Next successes >= original, and 2 * Next_tokens * original_successes < original_tokens * Next_successes. All attempt tokens count; exactly 50 percent fails.",
+    "other_functions": "At least 30 percent reduction with observed success nonregression.",
+    "stop_rule": "Retain all12 and report remaining36 not run when either Docs gate fails or is unavailable. No replacement, pooling or historical baseline substitution.",
+    "limitations": "Conditional repeated development experiment, three repetitions, mutable provider alias. No statistical success parity, stable savings or full functionality coverage claim.",
+    "launcher_sha256": "cb6f2f490113c17100f917fa33c6910a34c1a2a8f2f5625566253697bb387416",
+    "launch_arguments_sha256": "bc4268aa5eab0bfa71d46fbeb0d61765b08df541ce0a9978d683c68b9e8015b1",
+    "protocol_sha256": "abd14d23aa91fa4de513211258bd2a7133aed736cc0544b669892a970147d24a"
+  },
+  "checks_not_repeated": "Reviewer reran no tests or provider calls. Candidate product and private native lifecycle evidence are reused because the exact candidate is unchanged."
+}
