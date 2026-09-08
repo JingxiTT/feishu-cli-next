@@ -9,6 +9,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"os"
+	"path/filepath"
 	"reflect"
 	"strings"
 	"testing"
@@ -26,6 +27,20 @@ func TestBaseNextPrivateLiveLifecycle(t *testing.T) {
 	if os.Getenv("NEXT_BASE_PRIVATE_LIVE") != "1" {
 		t.Skip("requires explicit private live selection and coordinator-verified fixture")
 	}
+	runBaseNextPrivateLiveLifecycle(t, false)
+}
+
+// The supported-input confirmation is a separate selection. It never changes
+// the original empty-string preservation probe or its failed-run evidence.
+func TestBaseNextPrivateSupportedLiveLifecycle(t *testing.T) {
+	if os.Getenv("NEXT_BASE_PRIVATE_SUPPORTED_LIVE") != "1" {
+		t.Skip("requires explicit supported-input private live selection")
+	}
+	runBaseNextPrivateLiveLifecycle(t, true)
+}
+
+func runBaseNextPrivateLiveLifecycle(t *testing.T, supportedInput bool) {
+	t.Helper()
 	fixturePath, proofPath, statePath := os.Getenv("NEXT_BASE_PRIVATE_FIXTURE"), os.Getenv("NEXT_BASE_PRIVATE_BINDING"), os.Getenv("NEXT_BASE_PRIVATE_STATE")
 	if fixturePath == "" || proofPath == "" || statePath == "" {
 		t.Fatal("private live fixture, binding proof and new recovery-state path are required")
@@ -81,8 +96,17 @@ func TestBaseNextPrivateLiveLifecycle(t *testing.T) {
 	})
 	ctx, cancel := context.WithTimeout(context.Background(), 4*time.Minute)
 	t.Cleanup(cancel)
+	capture := func(command string, result *clie2e.Result) {
+		if result != nil {
+			entries, _ := state["commands"].([]map[string]interface{})
+			state["commands"] = append(entries, map[string]interface{}{"command": command, "exit": result.ExitCode, "stdout": result.Stdout, "stderr": result.Stderr})
+			persist()
+		}
+	}
 	once := func(callCtx context.Context, args ...string) (*clie2e.Result, error) {
-		return clie2e.RunCmdWithRetry(callCtx, clie2e.Request{Args: args, DefaultAs: "user", Format: "json"}, clie2e.RetryOptions{Attempts: 1})
+		result, callErr := clie2e.RunCmdWithRetry(callCtx, clie2e.Request{Args: args, DefaultAs: "user", Format: "json"}, clie2e.RetryOptions{Attempts: 1})
+		capture(strings.Join(args[:2], " "), result) // Protected exact output before every assertion.
+		return result, callErr
 	}
 	requireOK := func(label string, result *clie2e.Result, callErr error) string {
 		t.Helper()
@@ -110,6 +134,7 @@ func TestBaseNextPrivateLiveLifecycle(t *testing.T) {
 	// auth status is identity discovery and has no --as flag. All business and
 	// cleanup calls below carry explicit --as user through Request.DefaultAs.
 	auth, authErr := clie2e.RunCmdWithRetry(ctx, clie2e.Request{Args: []string{"auth", "status", "--verify", "--json"}}, clie2e.RetryOptions{Attempts: 1})
+	capture("auth status", auth)
 	if authErr != nil || auth == nil || auth.ExitCode != 0 || !gjson.Get(auth.Stdout, "verified").Bool() || !gjson.Get(auth.Stdout, "identities.user.verified").Bool() {
 		t.Fatal("fresh verified user authentication is required; no content writes performed")
 	}
@@ -190,7 +215,15 @@ func TestBaseNextPrivateLiveLifecycle(t *testing.T) {
 	}
 	state["table_id"] = tableID
 	persist()
-	const rows = `{"create_records":[{"Title":"probe-A","Amount":1.25,"Checked":true,"Note":"保留 Café 🧪"},{"Title":"probe-B","Amount":0,"Checked":false,"Note":""}]}`
+	rows := `{"create_records":[{"Title":"probe-A","Amount":1.25,"Checked":true,"Note":"保留 Café 🧪"},{"Title":"probe-B","Amount":0,"Checked":false,"Note":""}]}`
+	var clearValue interface{} = ""
+	patch := `{"Amount":0,"Note":""}`
+	if supportedInput {
+		clearValue = nil
+		rows = strings.Replace(rows, `"Note":""`, `"Note":null`, 1)
+		patch = `{"Amount":0,"Note":null}`
+		state["input_condition"] = "explicit_null_clear"
+	}
 	records := run("records_create", "base", "+record-batch-create", "--base-token", baseToken, "--table-id", tableID, "--json", rows)
 	ids := gjson.Get(records, "data.record_id_list").Array()
 	if len(ids) != 2 || ids[0].String() == "" || ids[1].String() == "" || ids[0].String() == ids[1].String() {
@@ -212,12 +245,54 @@ func TestBaseNextPrivateLiveLifecycle(t *testing.T) {
 		}
 		t.Fatalf("%s did not preserve all requested types/values within the bounded read window", label)
 	}
-	checkRows("records_read", map[string][]interface{}{ids[0].String(): {"probe-A", 1.25, true, "保留 Café 🧪"}, ids[1].String(): {"probe-B", float64(0), false, ""}})
-	run("record_update", "base", "+record-upsert", "--base-token", baseToken, "--table-id", tableID, "--record-id", ids[0].String(), "--json", `{"Amount":0,"Note":""}`)
-	checkRows("update_readback", map[string][]interface{}{ids[0].String(): {"probe-A", float64(0), true, ""}, ids[1].String(): {"probe-B", float64(0), false, ""}})
-	unchanged := run("unchanged_probe", "base", "+record-upsert", "--base-token", baseToken, "--table-id", tableID, "--record-id", ids[0].String(), "--json", `{"Amount":0,"Note":""}`, "--skip-unchanged")
+	checkRows("records_read", map[string][]interface{}{ids[0].String(): {"probe-A", 1.25, true, "保留 Café 🧪"}, ids[1].String(): {"probe-B", float64(0), false, clearValue}})
+	run("record_update", "base", "+record-upsert", "--base-token", baseToken, "--table-id", tableID, "--record-id", ids[0].String(), "--json", patch)
+	checkRows("update_readback", map[string][]interface{}{ids[0].String(): {"probe-A", float64(0), true, clearValue}, ids[1].String(): {"probe-B", float64(0), false, clearValue}})
+	unchanged := run("unchanged_probe", "base", "+record-upsert", "--base-token", baseToken, "--table-id", tableID, "--record-id", ids[0].String(), "--json", patch, "--skip-unchanged")
 	if !gjson.Get(unchanged, "data.unchanged").Bool() || gjson.Get(unchanged, "data.updated").Bool() || gjson.Get(unchanged, "mutation").Exists() {
 		t.Fatal("unchanged update did not report a mutation-free no-op")
+	}
+	if supportedInput {
+		before := run("empty_import_before", readArgs...)
+		fieldNames, fieldIDs := gjson.Get(before, "data.fields").Array(), gjson.Get(before, "data.field_id_list").Array()
+		noteField := ""
+		for i, name := range fieldNames {
+			if name.String() == "Note" && i < len(fieldIDs) {
+				noteField = fieldIDs[i].String()
+			}
+		}
+		if noteField == "" {
+			t.Fatal("exact Note field ID missing before rejection probe")
+		}
+		// Keep file handoff inside the CLI working-directory allowlist.
+		local, localErr := os.MkdirTemp(".", ".base-live-import-")
+		if localErr != nil {
+			t.Fatal("cannot reserve local rejection input directory")
+		}
+		t.Cleanup(func() {
+			if err := os.RemoveAll(local); err != nil {
+				t.Error("local probe cleanup failed")
+			}
+		})
+		artifact := `{"schema":"feishu-cli-next/result/v1","binding":{},"result":{"ok":true,"data":{"schema":"feishu-cli-next/sheets-data/v1","spreadsheet_token":"synthetic_source","sheet_id":"synthetic_tab","range":"A1:A1","complete":true,"count":1,"cells":[[{"value":""}]]}}}`
+		mapping, _ := json.Marshal([]map[string]interface{}{{"column": 0, "field_id": noteField, "type": "text"}})
+		for name, raw := range map[string][]byte{"source.json": []byte(artifact), "mapping.json": mapping} {
+			if err := os.WriteFile(filepath.Join(local, name), raw, 0600); err != nil {
+				t.Fatal("cannot prepare local rejection probe")
+			}
+		}
+		rejected, rejectErr := once(ctx, "base", "+record-import", "--base-token", baseToken, "--table-id", tableID, "--artifact", "@"+filepath.Join(local, "source.json"), "--mapping", "@"+filepath.Join(local, "mapping.json"))
+		if rejectErr != nil || rejected == nil || rejected.ExitCode != 2 || rejected.Stdout != "" || gjson.Get(rejected.Stderr, "error.type").String() != "validation" || !strings.Contains(gjson.Get(rejected.Stderr, "error.message").String(), "empty text") {
+			t.Fatal("typed empty-text import did not reject during preflight")
+		}
+		after := run("empty_import_after", readArgs...)
+		state["empty_import_before"] = json.RawMessage(validBaseLiveJSON(before))
+		state["empty_import_after"] = json.RawMessage(validBaseLiveJSON(after))
+		persist()
+		if !gjson.Get(before, "data.rev").Exists() || !reflect.DeepEqual(gjson.Get(before, "data").Value(), gjson.Get(after, "data").Value()) {
+			t.Fatal("destination native matrix/revision changed across rejected import")
+		}
+		state["empty_import"] = "validation_rejected_native_matrix_and_revision_unchanged"
 	}
 	state["status"] = "passed"
 	persist()

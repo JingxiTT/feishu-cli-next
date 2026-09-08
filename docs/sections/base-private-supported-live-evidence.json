@@ -1,0 +1,65 @@
+{
+  "schema": "feishu-cli-next/base-private-supported-live-evidence/v1",
+  "date": "2026-09-08",
+  "binary": {
+    "version": "1f73c91-dirty",
+    "sha256": "9a4878103cf7afd4154989897aa3f8a7956098ec932a5afcccd1835a936c06bc",
+    "base_product_fix": "b746eff",
+    "build": "isolated_env: make build BINARY=.tmp/base-supported-live-cli"
+  },
+  "selection": {
+    "test": "TestBaseNextPrivateSupportedLiveLifecycle",
+    "pass": 0,
+    "fail": 1,
+    "skip": 0,
+    "seconds": 20.11
+  },
+  "condition": "Separate explicit-null clearing scenario; original empty-string preservation probes and both failures remain untouched.",
+  "observed_passed_steps": [
+    "current_account",
+    "parent_public",
+    "parent_members",
+    "parent_owner",
+    "base_create",
+    "child_public",
+    "child_members",
+    "child_owner",
+    "table_create",
+    "records_create",
+    "records_read",
+    "record_update",
+    "update_readback",
+    "unchanged_probe",
+    "empty_import_before"
+  ],
+  "supported_values": [
+    "nonempty Unicode text",
+    "number 1.25 and zero",
+    "checkbox true and false",
+    "explicit null text clear"
+  ],
+  "update": "Exact selected row updated to zero/null; omitted title and true checkbox and untouched second row retained.",
+  "noop": "Guard observed unchanged=true, updated=false and no mutation envelope. Independent offline process tests establish zero-write behavior.",
+  "negative_check": {
+    "live_status": "unverified: assertion failed before after-read; original negative command payload was not retained",
+    "diagnosis": "Controlled same-binary offline reproduction shows macOS temporary path outside CLI allowed roots; corrected cwd-local input reproduces expected empty-text validation rejection exit2.",
+    "after_fix": "Private per-command exact stdout/stderr is now persisted before assertions; local input directory stays within CLI working-directory allowlist.",
+    "live_rerun": false
+  },
+  "cleanup": {
+    "acknowledged": true,
+    "independent_exact_id_proof": {
+      "error_type": "api",
+      "code": 1002,
+      "message": "note has been deleted"
+    },
+    "status": "confirmed"
+  },
+  "limits": [
+    "This selected live test failed overall; successful individual steps do not upgrade it to a complete live suite pass.",
+    "No live negative empty-text rejection or unchanged before/after revision claim is made.",
+    "No further Base was created to correct the test path.",
+    "Whole Base capability parity, attachments, date/formula/identity cells and10000row live transfer remain unverified.",
+    "Private identities, resource IDs and raw outputs are excluded."
+  ]
+}
