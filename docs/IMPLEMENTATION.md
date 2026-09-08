@@ -24,6 +24,16 @@ seven inconclusive outcomes and 11 failed verifications, with complete token
 accounting. Its per-function results do not close outstanding live or release
 gates; Markdown and some Sheets strategies remain limited by fixture coverage.
 
+## Latest token-efficiency follow-up
+
+The [condition-04 report](../evaluation/evidence/token-efficiency-04/REPORT.md) records an exploratory comparison of **24 new candidate trials and 48 reused condition-03 baseline trials**, not 72 new model calls. The candidate at `f2ab96b` retains every original command, API route and domain skill. Product changes add native flag descriptions to optional discovery detail (`c85e6a6`), preserve the exact trusted raw Contact basic-profile POST read without a mutation receipt (`5187bc7`), and provide direct task routes with native XML fidelity, existing-record Base updates, validated Sheets artifact completion and guarded Drive transfers. Small needed responses stay inline; larger or explicitly requested artifacts retain the existing output contract.
+
+The candidate verified **24/24 new attempts**, with complete accounting for **1,154,003 new provider tokens**. All eight functions reduced tokens per verified success against reused unchanged Next, and observed success counts matched or exceeded both baselines. The **50% target remains incomplete: 5/8 function gates met**. Discovery, Contact, Docs edit, Base and Sheets met the exploratory point-estimate gate; Docs read (39.5%), Markdown (43.1%) and Drive (40.0%) missed. These are sampled outcomes, not full-product parity evidence. Original Docs-edit usage remains incomplete, and original Markdown/Sheets token comparisons remain unavailable because those baselines have no verified successes.
+
+The primary per-function target is at least 50% fewer all-attempt tokens per verified success than unchanged Next, with observed success nonregression against both reused baselines. Reuse, adaptive tuning, three repetitions and the unpinned model alias limit generalization. Full live parity, held-out evaluation and release acceptance remain open; no functions or verification requirements were removed to meet a token target.
+
+The [balanced condition 02](../evaluation/evidence/token-efficiency-02/REPORT.md) met 4/8 combined function gates but retained a Docs-edit success regression. The [balanced condition 03](../evaluation/evidence/token-efficiency-03/REPORT.md) met 2/8 and retained its failed Docs edit, incomplete original Docs-edit accounting, and documented rejection/recovery limitation. Both ran 72 fresh trials; their outcomes and costs remain separate from the [original paired pilot](../evaluation/evidence/paired-luna-medium-01/REPORT.md). Read the [condition-04 protocol](../evaluation/token-efficiency-04.md) for baseline provenance and exploratory limits.
+
 ## Reference and baseline
 
 - Reference: `../feishu-cli-review`, clean commit `7fd6ef3c07182257ce776cdc5a614e122d5bd4b3`; kept unchanged.

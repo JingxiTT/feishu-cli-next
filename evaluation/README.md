@@ -1,12 +1,18 @@
 # Agent comparison evaluation
 
-The [completed Luna/medium report](evidence/paired-luna-medium-01/REPORT.md)
-compares eight functions across 72 native Codex CLI trials: 54 verified successes,
-seven inconclusive outcomes and complete accounting for 8,442,585 tokens. Results
-are per task, with failed-attempt costs retained and no pooled efficiency claim.
-The [protocol](paired-functions-luna-medium.md) and `tasks.paired.json` pin the
-three arms, three repetitions and `gpt-5.6-luna` / `medium` settings. Historical
-scenario batches remain separate conditions.
+The latest [candidate-only guidance follow-up, condition 04](evidence/token-efficiency-04/REPORT.md), contains **24 new candidate trials compared with 48 reused condition-03 baseline trials**. This exploratory comparison is not a new balanced 72-trial run. It keeps the eight tasks, three candidate repetitions, `gpt-5.6-luna` / `medium`, native Codex CLI `0.153.4`, and native-informed synthetic fixtures. [Protocol and reuse limitations](token-efficiency-04.md).
+
+The new candidate verified **24/24 attempts**, with complete accounting for **1,154,003 new provider tokens**. All eight functions improved tokens per verified success against reused unchanged Next, and all observed success counts matched or exceeded both reused baselines. The combined 50% gate was **not fully met: 5/8 functions met it**. Docs read (39.5%), Markdown (43.1%) and Drive (40.0%) remained below the target. Reused baseline usage is not new spend; the report preserves original Docs-edit incomplete accounting and original Markdown/Sheets zero-success comparisons.
+
+The 50% point-estimate target applies to each function's all-attempt tokens per verified success against unchanged Next, with observed success nonregression against both unchanged Next and original/full. Reused baselines, adaptive selection and three repetitions do not establish statistical parity, stable savings or live-product equivalence. Failed-attempt costs remain included; incomplete usage, inconclusive outcomes and zero successes make affected scores unavailable.
+
+Historical conditions remain immutable:
+
+- [Optimization 03](evidence/token-efficiency-03/REPORT.md): 72 fresh trials, 62 verified, 10 failed, one incomplete usage record; 2/8 combined function gates met. [Protocol](token-efficiency-03.md).
+- [Optimization 02](evidence/token-efficiency-02/REPORT.md): 72 fresh trials, 64 verified, seven failed, one inconclusive; 4/8 gates met, with a Docs-edit success regression. [Protocol](token-efficiency-02.md).
+- [Original paired pilot 01](evidence/paired-luna-medium-01/REPORT.md): 72 fresh trials, 54 verified, 11 failed, seven inconclusive and complete accounting for 8,442,585 tokens. It compared original/full, original/concise and Next; later optimization conditions use unchanged Next instead of original/concise. [Protocol](paired-functions-luna-medium.md).
+
+These are per-task comparisons, not pooled efficiency rankings. Broader fixture coverage does not retrospectively rescore earlier outcomes. Other historical scenario batches below remain separate conditions.
 
 The [provisional assessment](ASSESSMENT.md) compares completed conditions, retains
 regressions and links the remaining release evidence.

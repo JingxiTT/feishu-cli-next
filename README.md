@@ -2,20 +2,20 @@
 
 A Feishu/Lark CLI for AI agents that work through a shell and files. It builds on the official Lark CLI and adds command discovery, compact results, file artifacts, typed data transfer, and mutation recovery evidence.
 
-The goal is to reduce the tokens needed to complete a task while preserving its data and outcome. **Results are task-dependent:** the latest evaluation found substantial savings for Drive, higher usage for several lookup/read tasks, and gaps that prevent conclusions for Markdown.
+The goal is to reduce the tokens needed to complete a task while preserving every original command and workflow, data fidelity, and successful outcomes. Results remain task-dependent; the evaluation tracks the **50% token-reduction target separately for each function**, with failed-attempt costs included.
 
-[Quick start](#quick-start) · [Usage](#usage) · [Evaluation report](evaluation/evidence/paired-luna-medium-01/REPORT.md) · [Implementation status](docs/IMPLEMENTATION.md)
+[Quick start](#quick-start) · [Usage](#usage) · [Evaluation report](evaluation/evidence/token-efficiency-04/REPORT.md) · [Implementation status](docs/IMPLEMENTATION.md)
 
 ## What this project adds
 
 | Capability | What it provides |
 | --- | --- |
-| Command discovery | Search the executable's registered commands with bounded results and optional flag detail. |
+| Command discovery | Search registered commands with bounded results; optional flag descriptions expose accepted inputs without a separate help lookup. |
 | Compact JSON | Full JSON data in compact form by default; optional indentation and field selection. |
 | File artifacts | Save supported read results to versioned, identity-bound files for local processing and handoff. |
 | Typed data workflows | Sheets export/import and Base record workflows with validation, type preservation, and operation-specific no-op detection. |
-| Mutation evidence | Durable local receipts distinguish rejected, partial, and unknown outcomes without automatically replaying writes. |
-| One entry skill | Install a concise English skill into a project; load detailed domain guidance on demand. |
+| Mutation evidence | Durable local receipts distinguish rejected, partial, and unknown outcomes without replaying writes. The exact raw Contact basic-profile POST read retains read-only behavior. |
+| One entry skill | Install direct routes for common tasks, including native XML edits, single-row Base updates, exact Sheets exports and Drive transfers; load deeper guidance on demand. |
 | Upstream compatibility | Retain domain shortcuts, generated service commands, raw API access, authentication, events, and the extension SDK. |
 
 The inherited surface includes Docs, Sheets, Base, Drive, Wiki, Contacts, Messages, Calendar, Tasks, Mail, meetings, and other registered services. See the [capability inventory](docs/reference/README.md) and [section evidence](docs/sections/OWNERSHIP.md) for scope and verification status.
@@ -63,7 +63,7 @@ Use a known command directly. Help, discovery, and schema inspection are availab
 ```sh
 # Inspect one domain or search for a command.
 ./feishu-cli-next contact --help
-./feishu-cli-next discover 'contact open_id' --limit 8
+./feishu-cli-next discover 'contact open_id' --flags --limit 3
 ./feishu-cli-next schema drive files list
 
 # Search for a user or a visible bot using user identity.
@@ -95,26 +95,30 @@ Those guides are not all injected by installing the entry skill. They can still 
 
 ## Latest evaluation
 
-**[Read the complete report →](evaluation/evidence/paired-luna-medium-01/REPORT.md)**
+**[Read the latest report →](evaluation/evidence/token-efficiency-04/REPORT.md)**
 
-The pilot ran **72 real Codex CLI trials** with **GPT-5.6 Luna, medium reasoning**: eight tasks × three arms × three repetitions. The arms were official CLI/full guidance, the same CLI/concise guidance, and Next/its entry skill. Feishu operations used isolated synthetic fixtures informed by native behavior; this was not a live-tenant benchmark.
+Condition 04 is an **exploratory follow-up: 24 new candidate trials compared with 48 reused baseline trials from condition 03**. It is not a new balanced 72-trial experiment. The model is **GPT-5.6 Luna with medium reasoning**, run through native **Codex CLI 0.153.4**, on eight tasks with three fresh candidate contexts each. Feishu operations use signed synthetic fixtures informed by native behavior; this is not a live-tenant benchmark.
 
-**54 verified successes · 11 failed verifications · 7 inconclusive outcomes · 8,442,585 tokens.** Every attempt has complete provider accounting. Cached input is included once, and failed-attempt costs are retained.
+**24/24 new attempts verified · 1,154,003 new provider tokens · the 50% target is not fully met: 5/8 functions met it.** All eight functions used fewer tokens per verified success than the reused unchanged-Next baseline. Each candidate function verified 3/3, matching or exceeding both baselines' observed success counts.
 
-| Function | Observed result |
-| --- | --- |
-| Drive roundtrip | Next used 51.1% fewer tokens than concise guidance, with both at 3/3 successes; 58.7% fewer than official/full on two matched successful trials. |
-| Discovery | Next used 33.0% more tokens than official/full; both passed 3/3. |
-| Contact search | Next used 47.9% more tokens than official/full; both passed 3/3. |
-| Docs read | Next used 91.5% more tokens than official/full; both passed 3/3. |
-| Docs edit | Next used 2.9% fewer tokens than official/full; both passed 3/3. |
-| Base update | Next used 2.9% more tokens than official/full; both passed 3/3. |
-| Sheets export | Next verified 3/3; neither baseline produced a verified export, with one inconclusive baseline attempt. No comparative saving percentage. |
-| Markdown creation | No verified outcomes; six inconclusive attempts. Broader fixture coverage is needed before comparing efficiency. |
+| Function | Token saving vs unchanged Next | 50% target |
+| --- | ---: | --- |
+| Discovery | 52.5% | Met |
+| Contact search | 68.9% | Met |
+| Docs read | 39.5% | Missed |
+| Docs edit | 63.4% | Met |
+| Markdown creation | 43.1% | Missed |
+| Base update | 74.1% | Met |
+| Sheets export | 55.7% | Met |
+| Drive roundtrip | 40.0% | Missed |
 
-Three repetitions do not establish statistical significance or overall product superiority. The full report includes distributions, matched comparisons, fixture limitations, and observed discovery overhead.
+These percentages use the reused unchanged-Next baseline. Against original/full, Docs read used 5.8% more tokens; original Docs-edit accounting is incomplete and original Markdown/Sheets have zero verified successes, making those token comparisons unavailable. The full report retains these distinctions.
 
-[Raw trials and summary](evaluation/evidence/paired-luna-medium-01) · [Frozen environment](evaluation/evidence/paired-luna-medium-01/environment.json) · [Independent audit](evaluation/evidence/paired-luna-medium-01/result-review.json) · [Evaluation protocol](evaluation/paired-functions-luna-medium.md) · [Historical evaluations](evaluation/README.md)
+The primary target compares all-attempt tokens per verified success against unchanged Next; original/full is a separate compatibility and token comparator. Cached input is counted once, failed-attempt costs stay included, and unknown usage prevents an affected finite score. Baselines were reused to avoid another 48 model calls, so timing/cache differences and adaptive guidance tuning limit the comparison. Three repetitions do not establish statistical success-rate parity or stable 50% savings.
+
+[Frozen environment](evaluation/evidence/token-efficiency-04/environment.json) · [Readiness review](evaluation/evidence/token-efficiency-04/readiness-review.json) · [Follow-up protocol](evaluation/token-efficiency-04.md) · [All evaluation conditions](evaluation/README.md)
+
+Earlier reports remain unchanged: [original pilot 01](evaluation/evidence/paired-luna-medium-01/REPORT.md), [balanced optimization 02](evaluation/evidence/token-efficiency-02/REPORT.md), and [balanced optimization 03](evaluation/evidence/token-efficiency-03/REPORT.md). Their costs, failures, inconclusive outcomes and accounting gaps remain recorded separately.
 
 ## Development
 
