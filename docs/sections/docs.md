@@ -124,3 +124,58 @@ run's fixtures. Legacy live tests do not supply these prerequisites and are not 
 Native backend representation, conditional revisions/concurrency, large-media
 multipart recovery, clipboard behavior and live history/preview guarantees remain
 unverified until their respective authorized fixtures run. Section remains open.
+
+### Private live batch, 2026-09-08
+
+The first bounded current-user lifecycle ran after the coordinator verified the
+account's invited-only creation default and an isolated personal parent folder.
+The test repeated account/tenant binding and the parent's closed sharing, sole
+owner/container membership and metadata ownership before creating one document.
+The returned document's ACL was checked independently. No other recipient,
+existing document, new scope, login or parent mutation was involved.
+
+Initial native bold/link/Unicode, table and unrelated paragraph checks passed.
+The plain XML `str_replace` request `Old status` → `New status` returned success
+without warnings, but native readback showed `New status` as plain text, losing
+bold and hyperlink on `status`. This is a **failed preservation observation**, not
+a passed rich-edit gate. The CLI forwards the supplied XML unchanged; frozen
+reference guidance describes replacement within rich text but does not explicitly
+promise style inheritance when replacement content omits markup. No runtime
+semantics were changed to conceal this result. Synthetic inheritance assumptions
+do not prove this backend guarantee.
+
+One create, one edit and one delete occurred without retries. Cleanup completed
+and a separate GET of the exact returned document ID reported native API code
+1770003, `resource deleted`. The parent folder remains intact. The dedicated
+`TestDocsNextPrivateLiveLifecycle` now persists a returned ID and registers guarded
+cleanup before asserting create success, including partial/unknown CLI results;
+it requires explicit deleted evidence rather than empty metadata URLs.
+
+The executable test is in `tests/cli_e2e/docs/docs_next_private_live_test.go`. It
+requires `NEXT_DOCS_LIVE=1`, `LARK_CLI_BIN`, and absolute owner-readable
+`NEXT_DOCS_LIVE_FIXTURE`, `NEXT_DOCS_LIVE_BINDING`, and
+`NEXT_DOCS_LIVE_EVIDENCE_DIR` paths supplied by the coordinator. It never logs
+personal IDs or complete native output into committed evidence. Every invocation
+uses `RunCmdWithRetry` with `Attempts:1`. The default explicit XML edit and optional
+`NEXT_DOCS_LIVE_EDIT_MODE=plain` observation are reported separately; neither can
+replace the other's result. `NEXT_DOCS_LIVE_CHECK_NOOP=1` is a separately selected
+check because an unequal overwrite preflight can perform a real write.
+
+See [sanitized live evidence](docs-private-live-evidence.json). Script/no-op checks
+were not reached in the first attempt. Explicit rich XML, native media/cover,
+history/revert, concurrency, bot access and complete type parity remain open.
+This narrow live batch does not close the section.
+
+A separately authorized fresh lifecycle then used explicit inline XML replacement
+`New <a href="...same URL..."><b>status</b></a>`. It **passed** native bold/link,
+Unicode, table and exact unrelated-block preservation checks, script parsing,
+and single-attempt deletion with independent exact-ID deleted evidence. This
+control establishes the bounded explicit XML workflow; it does not waive the
+plain replacement observation or prove automatic style inheritance. Two total
+run-owned documents were created and deleted across the two attempts; the parent
+was left intact. No-op was not selected.
+
+One concise `+update` affordance tip now explains the observed replacement
+semantics. Its source check and embedded help check pass. This help change follows
+the frozen comparisons and is newly unmeasured; historical benchmark conditions
+and any evaluation validity audit remain separate.

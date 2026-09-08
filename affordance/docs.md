@@ -31,6 +31,7 @@ Apply targeted text or block edits, append content, or deliberately replace an e
 
 ### Tips
 - Prefer `str_replace` or `block_*` commands for targeted edits. Use `overwrite` only when replacing the entire document is intended; it can discard unrelated rich content.
+- Include bold/link markup in replacement content to retain it within the matched span; plain replacement can remove existing formatting.
 - Native block IDs come from `docs +fetch --detail with-ids`; structural edits can invalidate earlier addressing.
 - XML preserves native rich structure; the XML guide describes supported blocks and reference maps when authoring unfamiliar content.
 - Match `--doc-format` to `--content`; for multiline content, prefer `@file` or `-` (stdin).

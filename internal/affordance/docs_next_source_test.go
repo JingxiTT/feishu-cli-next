@@ -15,7 +15,7 @@ func TestDocsNextGuidancePreservesNativeEditingDecisions(t *testing.T) {
 		t.Fatal(err)
 	}
 	content := string(raw)
-	for _, decision := range []string{"document.reference_map", "matching scope", "exact unchanged", "Markdown equality", "concurrent edits", "returned receipts", "pending work"} {
+	for _, decision := range []string{"document.reference_map", "matching scope", "exact unchanged", "Markdown equality", "concurrent edits", "returned receipts", "pending work", "plain replacement can remove existing formatting"} {
 		if !strings.Contains(content, decision) {
 			t.Errorf("Docs guidance missing %q", decision)
 		}

@@ -35,8 +35,13 @@ as Go JSON test events in the section report.
 `TestDocsLivePrivateLifecycle` is independently selectable with `-run
 '^TestDocsLivePrivateLifecycle$'` and deliberately skips. No environment opt-in
 can bypass missing independently verified account, tenant and private-creation
-visibility evidence. The required live lifecycle is described in the skip reason.
-The skip is blocked evidence, never a passed live verification. Parent section
+visibility evidence. The full required lifecycle is described in the skip reason.
+A separate bounded opt-in `TestDocsNextPrivateLiveLifecycle` now lives in
+`tests/cli_e2e/docs/docs_next_private_live_test.go`; it requires coordinator-supplied
+private fixture/account proof and repeats identity/ACL checks before writing.
+Its explicit XML control passed on 2026-09-08; its plain replacement preservation
+check failed. See `docs/sections/docs-private-live-evidence.json` for both outcomes.
+The broader skip remains blocked evidence, never a passed live verification. Parent section
 acceptance also requires domain units, applicable frozen regressions, private
 live fixtures and comparative tasks.
 

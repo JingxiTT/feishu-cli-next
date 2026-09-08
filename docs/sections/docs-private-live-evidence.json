@@ -1,0 +1,147 @@
+{
+  "schema_version": 1,
+  "section": "docs",
+  "date": "2026-09-08",
+  "status": "explicit_xml_lifecycle_passed_plain_replacement_fidelity_failed_section_open",
+  "scope": "One opt-in private current-user Docs-AI create/fetch/precise-edit lifecycle; not full Docs parity.",
+  "binary_sha256": "41a31527990d8b1fa0be8aceaa9b1e1db4c83b13dde8738cd64d021c6e9887cc",
+  "privacy": {
+    "account_and_tenant": "Fresh auth/user_info match to independent hash-only Contact proof",
+    "before_create": "UI-observed invited-only creation default; private personal parent independently verified, then own preflight repeated closed link sharing, sole current full_access/container member and metadata owner",
+    "after_create": "Returned document has closed link sharing and sole current full_access member",
+    "actual_identifiers": "Retained only in owner-readable ignored local evidence; omitted here"
+  },
+  "attempts": {
+    "create": 1,
+    "precise_edit": 1,
+    "delete": 1,
+    "mutation_retries": 0
+  },
+  "observations": {
+    "initial": "Native paragraph contains Old plain; status bold with original hyperlink; Unicode suffix plain. Native table and unrelated Unicode paragraph present.",
+    "edit_request": {
+      "command": "str_replace",
+      "format": "xml",
+      "pattern": "Old status",
+      "content": "New status"
+    },
+    "edit_response": {
+      "exit_code": 0,
+      "result": "success",
+      "warnings": []
+    },
+    "final": "Native paragraph contains New status in one plain run without hyperlink, then unchanged Unicode suffix. The requested preservation check failed.",
+    "unreached": [
+      "script parse",
+      "same-content no-op"
+    ],
+    "cleanup": {
+      "delete_response": "Completed async task, deleted:true",
+      "independent_read": {
+        "route": "GET /open-apis/docx/v1/documents/{run-owned-id}",
+        "exit_code": 1,
+        "api_code": 1770003,
+        "message": "resource deleted"
+      },
+      "parent": "Untouched"
+    }
+  },
+  "diagnosis": {
+    "local_source": "shortcuts/doc/docs_update_v2.go forwards explicit XML pattern/content unchanged; no plain str_replace style-inheritance helper.",
+    "frozen_reference": "lark-doc-update.md describes text replacement within rich text; XML guide represents bold/link with b/a markup. It does not expressly promise inheritance when replacement markup is omitted.",
+    "limit": "Observed behavior may be native replacement semantics; no inferred backend intent or silent product rewrite. Prior synthetic plain replacement inheritance does not establish this live guarantee."
+  },
+  "test_followup": {
+    "creation_recovery": "Capture/persist a returned ID and register guarded cleanup before asserting success, including partial/unknown CLI outcomes.",
+    "cleanup": "Require exact-ID native deleted response after one delete; empty metadata URLs are insufficient."
+  },
+  "private_evidence": "Ignored .tmp/next-live-20260908/docs, mode0700 directory/mode0600 files",
+  "artifact_hashes": {
+    "01-auth-binding.json": "a9125d6d3196b57422b6ce79bdbcb54c9eb8d8f128511d5480702cae326c4fb0",
+    "02-self-binding.json": "ea686a81a90e7e71031620b88deb6eb27d1f2f0411224f3c1602622de9489a99",
+    "03-parent-settings.json": "b0ba3c5066782d8299c9037aa57af78711d2b6a1f9b19868f84594984a12654f",
+    "04-parent-members.json": "5331fcac94b3de0631e03cd8e2957eef178dc28f8c84d1bfd1c5061506bbab61",
+    "05-parent-owner.json": "d4954a892bc8de8d36408c880f77c9c2488912a67b6b2687f39e4d62d5d7b23d",
+    "06-create.json": "a485c585b6ff2c911b253cc876590cceee3cb63ed1f6ea69ec08720049380ca5",
+    "07-document-settings.json": "991dd848f9114456243c2d86a07104fd02f42021cb5b50656fc4cedec9d4204c",
+    "08-document-members.json": "97545e972c204ba067af118362130b26e19d495e22a0ebb765d2d027bea307b5",
+    "09-fetch-initial.json": "945b7cd0c00f8926dd7c63ce134ca13e65520bd49f3790a89aea3fd6ed69ac6d",
+    "10-native-initial.json": "f45c879d937ab18aeda58799352f80ec1647cc5f4781a4a2ff3c375667ac895f",
+    "11-precise-edit.json": "3527c1fefd06a4d76876a93947357f8ee231cd20079611c1d2e28afc4670ac6c",
+    "12-fetch-updated.json": "ff1d2f3fee6d53edbb847b26cc5e2e5c7a6ac4abd2dc821982c4da9041ba7209",
+    "13-native-updated.json": "0f947f26302a93c65a2eaf64fae580cb3020dc1bd2366004eaaf6f4291e2bdf4",
+    "14-cleanup-owner.json": "d6e946019c1877c4b2f9820f965095bc23f41ce1dd436d93a5c415fb11031873",
+    "15-cleanup-delete.json": "e0703b57e5492194aa772f5f496c6d9d7cf846810228696b20ea545b67d8d5ee",
+    "16-cleanup-independent-docx-read.json": "4101134893ea5393ac1a6b47d838e6f0c05299fb84177d4154718af4afc030a4"
+  },
+  "gates_remaining": [
+    "No-op zero-mutation observation",
+    "Media/cover lifecycle",
+    "History revert/status and concurrency",
+    "Bot identity creation/access",
+    "Full section native type parity"
+  ],
+  "explicit_xml_control": {
+    "status": "passed",
+    "fresh_document": true,
+    "command_content": "New <a href=\"<same-synthetic-link>\"><b>status</b></a>",
+    "request_other_flags": "Same str_replace command, exact Old status pattern, doc-format xml, explicit user identity",
+    "native_verification": [
+      "Target New prefix plain",
+      "status retains native bold and original hyperlink URL",
+      "Unicode suffix unchanged",
+      "Native table present",
+      "All unrelated native blocks deep-equal before/after"
+    ],
+    "script_parse": "Positive native block and word counts",
+    "cleanup": {
+      "mutation_attempts": 1,
+      "response": "Async delete ready/deleted true",
+      "independent_exact_id_read": "API1770003 resource deleted"
+    },
+    "attempts": {
+      "create": 1,
+      "edit": 1,
+      "delete": 1,
+      "mutation_retries": 0
+    },
+    "no_op": "Not selected; no zero-mutation claim",
+    "private_evidence": "Ignored .tmp/next-live-20260908/docs-xml",
+    "artifact_hashes": {
+      "01-auth-binding.json": "a9125d6d3196b57422b6ce79bdbcb54c9eb8d8f128511d5480702cae326c4fb0",
+      "02-self-binding.json": "8bf68694f1690060efd49cfe5357851b9db73a2126e25da574d25ebae50ce435",
+      "03-parent-settings.json": "b0ba3c5066782d8299c9037aa57af78711d2b6a1f9b19868f84594984a12654f",
+      "04-parent-members.json": "5331fcac94b3de0631e03cd8e2957eef178dc28f8c84d1bfd1c5061506bbab61",
+      "05-parent-owner.json": "832c128b9d1fef5a9c2987945f3463e8e51fc69e67c62a92ffc2ea5f0adcfb3c",
+      "06-create.json": "16bae68d77968c4acca05c4d5e646afaf19d88e67a3be7ff190d39f3ad3212b1",
+      "07-document-settings.json": "991dd848f9114456243c2d86a07104fd02f42021cb5b50656fc4cedec9d4204c",
+      "08-document-members.json": "97545e972c204ba067af118362130b26e19d495e22a0ebb765d2d027bea307b5",
+      "09-fetch-initial.json": "08717dd86998f96226c8d26f9f92684828a0c326b182e899d621f938d90ae14a",
+      "10-native-initial.json": "649e74f6f99e8b90506afaa92a56d5f5ef89d7ec4cbe29863895fcfaf65be889",
+      "11-precise-edit.json": "6f7902dc6f687da34e1a9012da40a1e80e7431557d4f7ad15baffb94463e9d5c",
+      "12-fetch-updated.json": "d53b17b875688bcd8757d5552e802f25b57d8acc8da78432c7d5725fb1706df7",
+      "13-native-updated.json": "1597d154d740c7c70c02bcf6f9c62980cdac74921cdd9402a40b64c0ba0ee662",
+      "14-script-parse.json": "94ee271f53a9982e5fc8b11ff3b8f86b43e6b52030d31c38e91042532fa1d2d8",
+      "15-cleanup-owner.json": "1bce8f7e67ac281c840c366f3b5400c2a4c8c5742b188d07f496d3538c835fec",
+      "16-cleanup-delete.json": "22039717872d4699ffd37576cc85c71baa4153b3a2c28937b248ad456cce83b7",
+      "17-cleanup-absence.json": "6b656c4979b98e68ba0ba5444f04c063d51437a4d010dccd1a9677af96c65d48"
+    }
+  },
+  "guidance_change": {
+    "path": "affordance/docs.md",
+    "scope": "One +update tip: include formatting markup to retain matched span marks; plain replacement can remove formatting.",
+    "runtime_changes": false,
+    "measurement": "New help guidance was added after the frozen model comparisons and is not model-measured; historical benchmark conditions remain separate."
+  },
+  "offline_followup_validation": {
+    "environment": "scripts.next_test.isolated_env; no user credentials; outbound proxy closed",
+    "checks": [
+      "Docs native verifier positive and lost-bold/wrong-URL/Unicode/incomplete-extent/missing-table negatives",
+      "Exact native deleted proof accepted; missing URL, permission error and string-valued code rejected",
+      "Opt-in lifecycle skips without explicit selection",
+      "Docs affordance source regression",
+      "Compiled embedded docs +update --help includes formatting tip"
+    ],
+    "status": "passed"
+  }
+}
