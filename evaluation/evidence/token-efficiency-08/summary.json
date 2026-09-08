@@ -1,0 +1,472 @@
+{
+  "groups": [
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "next",
+      "attempts": 6,
+      "successes": 6,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 204413,
+      "tokens_per_success": 34068.833333333336,
+      "token_distribution": {
+        "min": 22348,
+        "median": 31187.5,
+        "max": 48915,
+        "stdev": 13143.491855921191
+      },
+      "latency_median_seconds": 26.466282687499188,
+      "api_calls": 48,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "official",
+      "attempts": 6,
+      "successes": 6,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 472979,
+      "tokens_per_success": 78829.83333333333,
+      "token_distribution": {
+        "min": 36031,
+        "median": 68779.0,
+        "max": 134753,
+        "stdev": 45312.12884611213
+      },
+      "latency_median_seconds": 33.068886958502844,
+      "api_calls": 33,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "section",
+      "name": "docs",
+      "arm": "next",
+      "attempts": 6,
+      "successes": 6,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 204413,
+      "tokens_per_success": 34068.833333333336,
+      "token_distribution": {
+        "min": 22348,
+        "median": 31187.5,
+        "max": 48915,
+        "stdev": 13143.491855921191
+      },
+      "latency_median_seconds": 26.466282687499188,
+      "api_calls": 48,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "section",
+      "name": "docs",
+      "arm": "official",
+      "attempts": 6,
+      "successes": 6,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 472979,
+      "tokens_per_success": 78829.83333333333,
+      "token_distribution": {
+        "min": 36031,
+        "median": 68779.0,
+        "max": 134753,
+        "stdev": 45312.12884611213
+      },
+      "latency_median_seconds": 33.068886958502844,
+      "api_calls": 33,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "task_id",
+      "name": "paired-docs-edit",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 137109,
+      "tokens_per_success": 45703.0,
+      "token_distribution": {
+        "min": 39846,
+        "median": 48348,
+        "max": 48915,
+        "stdev": 5080.227258696209
+      },
+      "latency_median_seconds": 33.258767125000304,
+      "api_calls": 36,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "task_id",
+      "name": "paired-docs-edit",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 352101,
+      "tokens_per_success": 117367.0,
+      "token_distribution": {
+        "min": 88758,
+        "median": 128590,
+        "max": 134753,
+        "stdev": 24967.01429887042
+      },
+      "latency_median_seconds": 50.91812995800137,
+      "api_calls": 26,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "task_id",
+      "name": "paired-docs-read",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 67304,
+      "tokens_per_success": 22434.666666666668,
+      "token_distribution": {
+        "min": 22348,
+        "median": 22427,
+        "max": 22529,
+        "stdev": 90.74322747915313
+      },
+      "latency_median_seconds": 20.22610129199893,
+      "api_calls": 12,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "task_id",
+      "name": "paired-docs-read",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 120878,
+      "tokens_per_success": 40292.666666666664,
+      "token_distribution": {
+        "min": 36031,
+        "median": 36047,
+        "max": 48800,
+        "stdev": 7367.57112848823
+      },
+      "latency_median_seconds": 23.838029667000228,
+      "api_calls": 7,
+      "retries": null,
+      "failure_categories": {}
+    }
+  ],
+  "matched_success": [
+    {
+      "baseline": "official",
+      "pairs": [
+        {
+          "task_id": "paired-docs-edit",
+          "trial": 1,
+          "baseline_tokens": 88758,
+          "next_tokens": 39846
+        },
+        {
+          "task_id": "paired-docs-read",
+          "trial": 1,
+          "baseline_tokens": 36047,
+          "next_tokens": 22529
+        },
+        {
+          "task_id": "paired-docs-edit",
+          "trial": 0,
+          "baseline_tokens": 128590,
+          "next_tokens": 48348
+        },
+        {
+          "task_id": "paired-docs-read",
+          "trial": 2,
+          "baseline_tokens": 36031,
+          "next_tokens": 22348
+        },
+        {
+          "task_id": "paired-docs-edit",
+          "trial": 2,
+          "baseline_tokens": 134753,
+          "next_tokens": 48915
+        },
+        {
+          "task_id": "paired-docs-read",
+          "trial": 0,
+          "baseline_tokens": 48800,
+          "next_tokens": 22427
+        }
+      ]
+    }
+  ],
+  "planned_attempts": 48,
+  "completed_attempts": 12,
+  "successes": 12,
+  "inconclusive": 0,
+  "unknown_usage_attempts": 0,
+  "known_tokens": 677392,
+  "input_tokens_observed": 667345,
+  "output_tokens_observed": 10047,
+  "cached_input_tokens_observed": 490752,
+  "failed_or_inconclusive_known_tokens": 0,
+  "failed_verifications": 0,
+  "function_targets": [
+    {
+      "task_id": "paired-docs-edit",
+      "comparisons": {
+        "official": {
+          "token_saving_fraction": 0.610597527414009,
+          "observed_success_nonregression": true
+        }
+      },
+      "required_saving_fraction": 0.5,
+      "required_saving_operator": ">",
+      "primary_token_target": true,
+      "combined_gate": "met"
+    },
+    {
+      "task_id": "paired-docs-read",
+      "comparisons": {
+        "official": {
+          "token_saving_fraction": 0.44320720064858776,
+          "observed_success_nonregression": true
+        }
+      },
+      "required_saving_fraction": 0.5,
+      "required_saving_operator": ">",
+      "primary_token_target": false,
+      "combined_gate": "missed"
+    },
+    {
+      "task_id": "paired-discovery",
+      "required_saving_fraction": 0.3,
+      "required_saving_operator": ">=",
+      "comparisons": {},
+      "primary_token_target": null,
+      "combined_gate": "not measured"
+    },
+    {
+      "task_id": "paired-contact",
+      "required_saving_fraction": 0.3,
+      "required_saving_operator": ">=",
+      "comparisons": {},
+      "primary_token_target": null,
+      "combined_gate": "not measured"
+    },
+    {
+      "task_id": "paired-markdown",
+      "required_saving_fraction": 0.3,
+      "required_saving_operator": ">=",
+      "comparisons": {},
+      "primary_token_target": null,
+      "combined_gate": "not measured"
+    },
+    {
+      "task_id": "paired-base",
+      "required_saving_fraction": 0.3,
+      "required_saving_operator": ">=",
+      "comparisons": {},
+      "primary_token_target": null,
+      "combined_gate": "not measured"
+    },
+    {
+      "task_id": "paired-sheets",
+      "required_saving_fraction": 0.3,
+      "required_saving_operator": ">=",
+      "comparisons": {},
+      "primary_token_target": null,
+      "combined_gate": "not measured"
+    },
+    {
+      "task_id": "paired-drive",
+      "required_saving_fraction": 0.3,
+      "required_saving_operator": ">=",
+      "comparisons": {},
+      "primary_token_target": null,
+      "combined_gate": "not measured"
+    }
+  ],
+  "secondary_attempt_costs": [
+    {
+      "task_id": "paired-docs-edit",
+      "mean_tokens_per_attempt": {
+        "official": 117367.0,
+        "next": 45703.0
+      },
+      "token_saving_fraction": 0.610597527414009,
+      "can_satisfy_primary_gate": false
+    },
+    {
+      "task_id": "paired-docs-read",
+      "mean_tokens_per_attempt": {
+        "official": 40292.666666666664,
+        "next": 22434.666666666668
+      },
+      "token_saving_fraction": 0.44320720064858776,
+      "can_satisfy_primary_gate": false
+    }
+  ],
+  "command_diagnostics": [
+    {
+      "task_id": "paired-docs-edit",
+      "arm": "official",
+      "median_shell_executions": 8,
+      "cli_choices": {
+        "docs +fetch": 8,
+        "docs +update": 5
+      }
+    },
+    {
+      "task_id": "paired-docs-edit",
+      "arm": "next",
+      "median_shell_executions": 4,
+      "cli_choices": {
+        "docs +pull": 3,
+        "docs +push": 3
+      }
+    },
+    {
+      "task_id": "paired-docs-read",
+      "arm": "official",
+      "median_shell_executions": 3,
+      "cli_choices": {
+        "docs +fetch": 3,
+        "docs +fetch --help": 1
+      }
+    },
+    {
+      "task_id": "paired-docs-read",
+      "arm": "next",
+      "median_shell_executions": 2,
+      "cli_choices": {
+        "docs +pull": 3
+      }
+    }
+  ],
+  "verification_failure_reasons": [],
+  "condition": "token-efficiency-08",
+  "design": "conditional_docs_first",
+  "execution_complete": true,
+  "all_planned_attempts_completed": false,
+  "not_run_attempts": 36,
+  "measured_functions": [
+    "paired-docs-edit",
+    "paired-docs-read"
+  ],
+  "not_measured_functions": [
+    "paired-discovery",
+    "paired-contact",
+    "paired-markdown",
+    "paired-base",
+    "paired-sheets",
+    "paired-drive"
+  ],
+  "stage_decision": {
+    "design": "Docs first, all12 retained; remaining36 run only if both Docs gates pass",
+    "docs_stage_exit_code": 0,
+    "gates": {
+      "paired-docs-read": {
+        "attempts": {
+          "official": 3,
+          "next": 3
+        },
+        "successes": {
+          "official": 3,
+          "next": 3
+        },
+        "tokens": {
+          "official": 120878,
+          "next": 67304
+        },
+        "accounting_complete": true,
+        "strict_more_than_50_percent": false,
+        "observed_success_nonregression": true,
+        "passed": false
+      },
+      "paired-docs-edit": {
+        "attempts": {
+          "official": 3,
+          "next": 3
+        },
+        "successes": {
+          "official": 3,
+          "next": 3
+        },
+        "tokens": {
+          "official": 352101,
+          "next": 137109
+        },
+        "accounting_complete": true,
+        "strict_more_than_50_percent": true,
+        "observed_success_nonregression": true,
+        "passed": true
+      }
+    },
+    "continue_remaining_functions": false
+  },
+  "reported_cli_error_diagnostics": [],
+  "diagnostics_affect_verdicts": false,
+  "secondary_combined_docs_workload": {
+    "arms": {
+      "official": {
+        "attempts": 6,
+        "successes": 6,
+        "known_total_tokens": 472979,
+        "usage_complete": true,
+        "inconclusive": 0
+      },
+      "next": {
+        "attempts": 6,
+        "successes": 6,
+        "known_total_tokens": 204413,
+        "usage_complete": true,
+        "inconclusive": 0
+      }
+    },
+    "token_saving_fraction": 0.5678180215189258,
+    "weighting": "Three read and three edit attempts per arm; token-weighted total of this fixed workload.",
+    "can_satisfy_per_function_gate": false
+  },
+  "guidance_delivery": "file",
+  "runtime_validation_reuse": {
+    "condition": "token-efficiency-06",
+    "source_revision": "dd0fc7a7e62b29790c567959a6daf9fa5ec55c20",
+    "candidate_go_module_makefile_delta": [],
+    "scope": "unchanged Go runtime only; candidate entry and binary are newly built and checked",
+    "product_checks_sha256": "2a32a1b9b951288d4930ad71d66f85f36e11ee3b263ce25c6c8c906473591170"
+  },
+  "baseline_trials_reused": false,
+  "runtime_source_comparison": {
+    "unchanged_from_candidate": "dd0fc7a",
+    "scope": "*.go, go.mod, go.sum, Makefile",
+    "exact_candidate_binary_reuse": false
+  },
+  "native_skill_isolation_evidence_sha256": "9bec5e1877e429eb2d8f3180f2009ec9ca84fea0a51c5602749728510c5a1dc8",
+  "source_sha256": {
+    "environment.json": "8eade2cb8fde8e4e446bccf1319300660e7c170d008ea68d6afe544f73d6e8bd",
+    "readiness-review.json": "eec9137f63012dc9e89c6ac80822e989284886cccb1da9975ec5ff5aa5cf4875",
+    "stage-decision.json": "8855056572ed29a5dedb877c7f01980e5eafc2b2e5657091d2ed360b9015bee6",
+    "docs/batch-01.json": "d6bae0732d4e06455b6e22a3a7b233bc81d0da9bb1934bd3e5508a54bd471c98"
+  }
+}
