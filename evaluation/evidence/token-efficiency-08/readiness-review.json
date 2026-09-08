@@ -1,0 +1,197 @@
+{
+  "schema": "token-efficiency-readiness/v1",
+  "decision": "go",
+  "date_utc": "2026-09-08T19:14:02.581157+00:00",
+  "condition": "token-efficiency-08",
+  "evaluation_attempts_before_decision": 0,
+  "scope": "Authorize 12 fresh Docs attempts. The remaining36 are conditional on both predeclared Docs gates. No target is claimed achieved.",
+  "candidate_revision": "6366274a5e0e55cab11ee3d66cc2d5d561adaf03",
+  "evaluator_revision": "6d478f156de4e2cdb02b0af62b5810a0435f051c",
+  "environment_sha256": "8eade2cb8fde8e4e446bccf1319300660e7c170d008ea68d6afe544f73d6e8bd",
+  "source_readiness": {
+    "decision": "go",
+    "candidate_binary_sha256": "df62133b81a33383c5ed232ab77b8d6c67316643e135cf93120646332f21ed05",
+    "candidate_archive_sha256": "4ff073ca9c304f24a8ced23d7743ba27e3a225f80b80b8928008b3619e502735",
+    "candidate_archive_matches_git_revision": true,
+    "candidate_archive_files_verified": 3880,
+    "evaluator_archive_matches_git_revision": true,
+    "evaluator_archive_files_verified": 3881,
+    "execution_sources_verified": 34,
+    "changed_execution_sources_from07": [
+      "evaluation/codex_runner.py",
+      "evaluation/harness.py",
+      "evaluation/run_read_batch.py"
+    ],
+    "original_binary_and_guidance_verified": true,
+    "candidate_entry_and_inherited_guidance_verified": true,
+    "native_codex_binary_verified": true,
+    "task_manifest_unchanged": true,
+    "stage_algorithm_unchanged_from07": true,
+    "launch_pins_shared_file_delivery": true
+  },
+  "delivery_review": {
+    "commit": "6d478f156de4e2cdb02b0af62b5810a0435f051c",
+    "mode": "file",
+    "scope": "The same top-level setting reaches both arms and is stored in config, request settings and batch environment. Invalid modes and any per-arm override reject before provider execution. File mode preserves the exact copied skill/reference trees, omits the inline skill body, and instructs a complete ./guidance/SKILL.md read inside the measured tool loop.",
+    "default_compatibility": "Default and explicit inline retain the prior prompt bytes. Accounting and verifier behavior are unchanged.",
+    "read_requirement": "Complete reading is a shared prompt requirement, not an added independent-verifier success condition; actual model behavior remains part of the measured trial.",
+    "limits": "Delivery and candidate entry length both change relative to07. No causal estimate of either factor alone and no attribution of specific historical read loops or billed costs."
+  },
+  "candidate_guide_review": {
+    "revision": "6366274a5e0e55cab11ee3d66cc2d5d561adaf03",
+    "result": "Shorter entry preserves direct routes, deeper original commands/references, rich-content fallbacks, native identity/marks/links, unknown-mutation reconciliation, success receipts and authorization requirements. No original function removed.",
+    "fresh_checks": "Embedded guide, nextskill and root tests passed; skill format passed with optional metadata warning; metadata/quality gate completed successfully.",
+    "logs_sha256": {
+      "embedded.log": "01e00ce518c6677359e8bcc2f7afd7844cc89c88fa09d5c7c23717ebfc59bf4e",
+      "metadata.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "skill-format.log": "939a2f1fca14e19e9260b09b1ecb7dbfabd523f5eee8c3b7bc62e0f00b3f7410",
+      "quality-gate.log": "4e0b99dac10561dff0452a8668609d5c175e026f25689a0ab64b4fde3f0c497b"
+    }
+  },
+  "runtime_validation_reuse": {
+    "source_condition": "token-efficiency-06",
+    "source_revision": "dd0fc7a7e62b29790c567959a6daf9fa5ec55c20",
+    "verified_go_module_makefile_delta": [],
+    "scope": "Unchanged Go runtime only. Entry and candidate binary are newly built; this does not claim exact binary equality with06.",
+    "product_checks": [
+      {
+        "check": "unit-test",
+        "exit_code": 0,
+        "seconds": 130.56
+      },
+      {
+        "check": "vet",
+        "exit_code": 0,
+        "seconds": 4.43
+      },
+      {
+        "check": "fmt-check",
+        "exit_code": 0,
+        "seconds": 0.3
+      },
+      {
+        "check": "module-tidy",
+        "exit_code": 0,
+        "seconds": 0.1
+      },
+      {
+        "check": "module-clean",
+        "exit_code": 0,
+        "seconds": 0.01
+      },
+      {
+        "check": "quality-gate",
+        "exit_code": 0,
+        "seconds": 14.99
+      },
+      {
+        "check": "source-guard",
+        "exit_code": 0,
+        "seconds": 6.34
+      },
+      {
+        "check": "source-guard-tests",
+        "exit_code": 0,
+        "seconds": 14.28
+      },
+      {
+        "check": "golangci",
+        "exit_code": 0,
+        "seconds": 69.11
+      }
+    ],
+    "product_checks_sha256": "2a32a1b9b951288d4930ad71d66f85f36e11ee3b263ce25c6c8c906473591170",
+    "private_native_lifecycle": "Existing evidence remains applicable to unchanged native mutation semantics; no new native API operation or fidelity algorithm."
+  },
+  "candidate_build": {
+    "revision": "6366274a5e0e55cab11ee3d66cc2d5d561adaf03",
+    "exit_code": 0,
+    "seconds": 0.89,
+    "GOFLAGS": "-tags=authsidecar"
+  },
+  "candidate_build_evidence_sha256": "801ef4ffff9f16f67cf14f0eb81f9c33211efb3897eba2161b693215ec51b4e2",
+  "fresh_frozen_controls": {
+    "paired_passed": 72,
+    "sandbox_passed": 8,
+    "adapter_passed": 27,
+    "harness_passed": 29,
+    "total_passed": 136,
+    "skips": 0,
+    "checks": [
+      {
+        "check": "native-paired",
+        "exit_code": 0,
+        "seconds": 41.23
+      },
+      {
+        "check": "native-sandbox",
+        "exit_code": 0,
+        "seconds": 10.86
+      },
+      {
+        "check": "native-adapter",
+        "exit_code": 0,
+        "seconds": 1.04
+      },
+      {
+        "check": "harness-controls",
+        "exit_code": 0,
+        "seconds": 6.43
+      }
+    ],
+    "summary_sha256": "dc2bbf634b8c1c3b8cf056dab3117d17888ecdc98cb9a3e26da6130f4910fd33",
+    "logs_sha256": {
+      "native-paired.log": "ade8479235904c1515bc50ac4fd1b00f0d514a9bfd1a11d42119d30ce9d366c5",
+      "native-sandbox.log": "c0c8cc737c52b6b023500d2a52f7faa60ddcc1805c0276519f1353d6e1ca5208",
+      "native-adapter.log": "d7769d8e032044bd85cf65ac9032fe95fc497730df38473fc4f482f1a60dc5fe",
+      "harness-controls.log": "e3b3e3a87888f5e9613d6816866e9324d30f3517cf871449bf13a736536826da"
+    }
+  },
+  "precommit_delivery_controls": {
+    "adapter_passed": 27,
+    "harness_passed": 29,
+    "script_test": "passed, including166 Node tests",
+    "logs_sha256": {
+      "adapter-native.log": "0437925892a2f7e44990cab594cb3c114abda6b4adc52fd09e845c093d06f5a8",
+      "harness.log": "5eb1578cd50d002e39cec25c84420093fdd2050bdfe3a9f2367663fdca6b94cf",
+      "script-test.log": "cccf6ed77f48c13443b1c175cebef45d7d33f31444e1f797a69153e2d9eda81f"
+    }
+  },
+  "prepare_only": {
+    "passed": true,
+    "sections": [
+      "contact",
+      "docs",
+      "markdown",
+      "sheets",
+      "base",
+      "drive"
+    ],
+    "log_sha256": "7af7cc42e43fb1e0ef340216c99c6b760643028b010d1ea118ab8899634c6fca"
+  },
+  "provider_availability": {
+    "decision": "go",
+    "basis": "All12 immediately preceding condition07 Docs attempts completed with known usage. No additional paid health probe for08.",
+    "condition07_checkpoint_sha256": "5195b370c28d672404cb0cf1f84cc2313390496820d43c95b5f1e2d635018a76",
+    "limitation": "Recent availability only; future success or complete accounting is not guaranteed."
+  },
+  "conditional_design": {
+    "first_attempts": 12,
+    "maximum_attempts": 48,
+    "remaining_attempts": 36,
+    "repetitions_per_task_arm": 3,
+    "arms": [
+      "official",
+      "next"
+    ],
+    "reused_attempts": 0,
+    "docs_gate": "For each task: three trials per arm, complete usage, no inconclusive outcomes, both success counts positive, Next successes >= original successes, and 2 * Next_tokens * original_successes < original_tokens * Next_successes. All attempt tokens count; exactly50 percent fails.",
+    "other_functions": "At least30 percent reduction with observed success nonregression.",
+    "stop_rule": "Retain all12 and report remaining36 not run if either Docs gate fails or is unavailable. No replacement, old baseline substitution or condition pooling.",
+    "limitations": "Conditional development experiment with three repetitions and mutable provider alias; no stable population savings, statistical parity or full functionality coverage claim.",
+    "launcher_sha256": "38ab8cdcacc5e6ebc6758ac2a0bf25e9327d29c29bde3a420ddf9277d538b563",
+    "launch_arguments_sha256": "619f7a668aba69228e3aae5bcb917046f02796fa6861da2f8dcf3d51f4165467",
+    "protocol_sha256": "7e1936ad0f79e2977825ce7d5c1f5fa904f60d6061359fc588a7e99ada4baaa1"
+  },
+  "review_execution": "Independent source, hash and retained-log inspection only. No tests or provider calls rerun by reviewer."
+}
