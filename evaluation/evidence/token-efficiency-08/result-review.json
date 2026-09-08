@@ -1,0 +1,101 @@
+{
+  "schema_version": 1,
+  "verdict": "pass: retained accounting, strict per-function gates, conditional stop and bounded secondary claims agree",
+  "condition": "token-efficiency-08",
+  "repository_revision_reviewed": "3d709712fd25ddf88e072d7283b6f3fd19487d7e",
+  "candidate_revision": "6366274a5e0e55cab11ee3d66cc2d5d561adaf03",
+  "evaluator_revision": "6d478f156de4e2cdb02b0af62b5810a0435f051c",
+  "review_scope": "Independent recomputation of all 12 retained trials, summary, stage decision, report and latest README claims. Runtime verdicts are retained; discarded provider payloads, workspaces and native receipts were not replayed.",
+  "reviewer_activity": {
+    "provider_calls": 0,
+    "live_calls": 0,
+    "held_out_access": false,
+    "edits_outside_owned_review": false
+  },
+  "totals": {
+    "planned_attempts": 48,
+    "completed_attempts": 12,
+    "successes": 12,
+    "inconclusive": 0,
+    "unknown_usage_attempts": 0,
+    "failed_verifications": 0,
+    "known_tokens": 677392,
+    "input_tokens_observed": 667345,
+    "output_tokens_observed": 10047,
+    "cached_input_tokens_observed": 490752,
+    "failed_or_inconclusive_known_tokens": 0
+  },
+  "not_run_attempts": 36,
+  "not_measured_functions": 6,
+  "primary_results": {
+    "paired-docs-read": {
+      "original_tokens": 120878,
+      "next_tokens": 67304,
+      "original_successes": 3,
+      "next_successes": 3,
+      "saving_fraction_numerator": 26787,
+      "saving_fraction_denominator": 60439,
+      "gate": "missed"
+    },
+    "paired-docs-edit": {
+      "original_tokens": 352101,
+      "next_tokens": 137109,
+      "original_successes": 3,
+      "next_successes": 3,
+      "saving_fraction_numerator": 71664,
+      "saving_fraction_denominator": 117367,
+      "gate": "met"
+    }
+  },
+  "primary_outcome": "Docs read misses strict >50%; Docs edit meets it; overall per-function target remains unmet and conditional continuation correctly stops.",
+  "secondary_combined_docs": {
+    "original_tokens": 472979,
+    "next_tokens": 204413,
+    "original_successes": 6,
+    "next_successes": 6,
+    "attempts_per_arm": 6,
+    "saving_fraction_numerator": 268566,
+    "saving_fraction_denominator": 472979,
+    "rounded_saving_percent": 56.8,
+    "can_satisfy_primary_gate": false
+  },
+  "checks": {
+    "unique_seeded_balanced_attempts": 12,
+    "batch_aggregate_groups": 8,
+    "summary_aggregate_groups": 8,
+    "matched_success_pairs": 6,
+    "command_diagnostic_groups": 4,
+    "all_usage_complete_and_cached_input_counted_once": true,
+    "strict_boundary_uses_unrounded_rational_comparison": true,
+    "success_nonregression_required": true,
+    "no_unrun_attempts_scored_as_failure_or_zero_cost": true,
+    "no_historical_rows_in_scored_cohort": true,
+    "shared_file_delivery_pinned_for_both_arms": true,
+    "actual_binary_catalog_codex_archive_manifest_guidance_hashes_match": true,
+    "execution_sources_hash_checked": 34,
+    "runtime_go_module_makefile_delta_empty": true,
+    "latest_readme_numeric_and_scope_claims_match": true,
+    "all_reviewed_document_links_resolve": true,
+    "bounded_common_credential_private_path_scan_passes": true
+  },
+  "limitations": [
+    "Conditional development results with three repetitions do not establish population success parity or stable savings. Six other functions are not measured.",
+    "Combined saving is the token-weighted sum of three reads and three edits per arm, not an equally weighted mean of function savings and not either primary gate.",
+    "Shorter candidate entry guidance and file-only delivery change together. No isolated causal estimate of either change, nor billed-token attribution to historical ambient skill exposure, is supported.",
+    "Complete skill reading is a shared prompt requirement, not an independently verified success predicate; accounting covers observed model calls without recovering omitted file-read details.",
+    "Source and retained readiness hashes corroborate unchanged runtime validation reuse. This result audit did not rerun tests, native calls or runtime state/artifact verification."
+  ],
+  "source_sha256": {
+    "evaluation/evidence/token-efficiency-08/environment.json": "8eade2cb8fde8e4e446bccf1319300660e7c170d008ea68d6afe544f73d6e8bd",
+    "evaluation/evidence/token-efficiency-08/readiness-review.json": "eec9137f63012dc9e89c6ac80822e989284886cccb1da9975ec5ff5aa5cf4875",
+    "evaluation/evidence/token-efficiency-08/summary.json": "556dbb41528816ea5eaf8cdb7cce2ad9c6428c16657d191e41183f33bd0e6a39",
+    "evaluation/evidence/token-efficiency-08/stage-decision.json": "8855056572ed29a5dedb877c7f01980e5eafc2b2e5657091d2ed360b9015bee6",
+    "evaluation/evidence/token-efficiency-08/docs/batch-01.json": "d6bae0732d4e06455b6e22a3a7b233bc81d0da9bb1934bd3e5508a54bd471c98",
+    "evaluation/evidence/token-efficiency-08/REPORT.md": "49b5bcb410c1a500a55610bd7ae7f95bd2f3b441821ed3c822437ada6095528a",
+    "evaluation/token-efficiency-08.md": "7e1936ad0f79e2977825ce7d5c1f5fa904f60d6061359fc588a7e99ada4baaa1",
+    "README.md": "846ed2fd831dbab4edfeb01963817e0fb47b30f4df38f9d70d631ba30f7c924a",
+    "evaluation/README.md": "2ec0f81e6ec1529945ae5c4aad8561dfee55ac9678b62fb7db438314412dc169"
+  },
+  "stage_launcher_sha256": "38ab8cdcacc5e6ebc6758ac2a0bf25e9327d29c29bde3a420ddf9277d538b563",
+  "report_generator_sha256": "a06f3cd1c7e4b39038137fe98f5cf9790586ac1c6acabebf96eea49f650ac842"
+}
