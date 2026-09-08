@@ -6,6 +6,9 @@
 # 取自己
 lark-cli contact +get-user --as user
 
+# user 按 ID 取他人基本资料
+lark-cli contact +get-user --user-id ou_xxx --as user
+
 # bot 按 ID 取他人
 lark-cli contact +get-user --user-id ou_xxx --as bot
 
@@ -15,5 +18,5 @@ lark-cli contact +get-user --user-id <id> --user-id-type union_id --as bot
 
 ## 注意事项
 
-- **user 身份按 ID 取他人请用 `+search-user --user-ids <id>`**,字段比本命令多(部门 / 邮箱 / 是否激活等)。本命令的 user 模式只回很少字段。
+- **user 身份也支持按 ID 取基本资料**（如姓名）；需要部门 / 邮箱 / 是否激活等更多字段，或批量查询多个 open_id 时，再用 `+search-user --user-ids <id1,id2>`。
 - **`--as bot` 必须传 `--user-id`**:不传会直接报错(只有 user 身份能省略 `--user-id` 取自己)。

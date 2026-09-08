@@ -16,7 +16,8 @@ metadata:
 |---|---|---|
 | 按姓名 / 邮箱搜员工拿 open_id | [`+search-user`](references/lark-contact-search-user.md) | 不支持 |
 | 按关键词搜索当前用户可见的机器人 / 智能体 | [`+search-bot`](references/lark-contact-search-bot.md) | 不支持 |
-| 已知 open_id 取他人资料 | `+search-user --user-ids <id>` | [`+get-user --user-id <id>`](references/lark-contact-get-user.md) |
+| 已知一个 ID 取基本资料（如姓名） | [`+get-user --user-id <id>`](references/lark-contact-get-user.md) | [`+get-user --user-id <id>`](references/lark-contact-get-user.md) |
+| 需要部门 / 邮箱等更多字段，或批量查询多个 open_id | `+search-user --user-ids <id1,id2>` | `+get-user --user-id <id>` 逐个查询可见字段 |
 | 查看自己 | `+get-user` 或 `+search-user --user-ids me` | 不支持 |
 | 查同事的个人状态 / 签名 | `user_profiles batch_query` | 不支持 |
 

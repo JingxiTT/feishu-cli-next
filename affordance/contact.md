@@ -2,7 +2,7 @@
 > skill: lark-contact
 
 ## +search-user
-The primary user lookup for user identity: search by keyword or email, resolve known ids with --user-ids, or get yourself with --user-ids me — it does by-id reads too, so as a user you rarely need `+get-user`. Each match returns an open_id and p2p_chat_id to chain into follow-ups.
+Search by keyword or email, fetch richer profiles, or resolve several known open_ids with --user-ids under user identity. Each match returns an open_id and p2p_chat_id to chain into follow-ups. For one known user’s basic profile, [[+get-user]] also supports user identity.
 
 ### Skills
 - lark-contact/references/lark-contact-search-user.md
@@ -59,14 +59,14 @@ lark-cli contact +search-bot --queries "会议助手,日报助手,审批助手" 
 ```
 
 ## +get-user
-Fetch one user's profile by id, or your own with --user-id omitted. Use it under bot identity — `+search-user` is user-only.
+Use one known user’s basic profile under user or bot identity. Omit --user-id to read yourself under user identity.
 
 ### Skills
 - lark-contact/references/lark-contact-get-user.md
 
 ### Avoid when
 - You don't have the user's id yet, or want to match by name/keyword → use [[+search-user]]
-- Running as a user — [[+search-user]] --user-ids covers by-id reads and more in one tool
+- Need richer fields such as email or departments, or several known open_ids under user identity → use [[+search-user]] --user-ids
 
 ### Tips
 - Self lookup (omit --user-id) needs user identity; a bot must pass --user-id
