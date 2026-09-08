@@ -1,0 +1,71 @@
+{
+  "schema": "feishu-cli-next/base-private-live-evidence/v1",
+  "date": "2026-09-08",
+  "binary": {
+    "version": "e07178d-dirty",
+    "sha256": "a9fe03c357f23ec64b388b791760bfb507a2024610f6ffefe482412a13bd065d",
+    "build": "make build BINARY=.tmp/base-private-live-cli"
+  },
+  "authorization": {
+    "explicit_user": true,
+    "new_scopes": false,
+    "bot_grants": false,
+    "private_at_creation_default": "Only invited members can access",
+    "independent_account_tenant_hash_match": true,
+    "parent_and_child_acl": "closed link; sole current-user full_access/container member; exact matching owner metadata"
+  },
+  "runs": [
+    {
+      "kind": "initial",
+      "result": "failed_typed_read",
+      "typed_matrix_retained": false,
+      "update_or_noop_dispatched": false,
+      "cleanup": "delete acknowledged; native Base deletion proof retained and reviewed after run"
+    },
+    {
+      "kind": "diagnostic",
+      "result": "failed_typed_read",
+      "typed_matrix_retained_privately": true,
+      "update_or_noop_dispatched": false,
+      "cleanup": "confirmed"
+    }
+  ],
+  "observations": {
+    "native_matrix_field_types": [
+      "text",
+      "checkbox",
+      "text",
+      "number"
+    ],
+    "preserved": [
+      "nonempty Unicode text",
+      "number 1.25",
+      "number zero",
+      "checkbox true",
+      "checkbox false"
+    ],
+    "failed_invariant": "explicit empty text string was returned as native null",
+    "guard_kept_strict": true,
+    "cause": "observed backend storage normalization; no CLI null-to-empty coercion",
+    "deletion_proof": {
+      "command": "base +base-get --base-token <exact run-owned ID> --as user",
+      "error_type": "api",
+      "error_subtype": "unknown",
+      "error_code": 1002,
+      "error_message": "note has been deleted"
+    }
+  },
+  "local_verification": {
+    "command": "isolated_env: go test ./tests/cli_e2e/base -run TestBaseNextPrivateLive -count=1 -v; go vet ./tests/cli_e2e/base",
+    "guards": "passed",
+    "opt_in_lifecycle": "skipped without explicit selection"
+  },
+  "limits": [
+    "Narrow live batch does not establish full Base parity.",
+    "Empty/null typed preservation remains a failed live invariant.",
+    "Update and zero-mutation no-op were not reached.",
+    "Attachments, identity cells, dates, formulas, views, roles and 10000-row live handoff were not exercised.",
+    "No mutation retries; each cleanup targeted only the exact returned run-owned Base ID.",
+    "Private raw diagnostics and resource identifiers are excluded from tracked evidence."
+  ]
+}
