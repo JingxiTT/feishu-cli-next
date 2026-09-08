@@ -1,0 +1,471 @@
+{
+  "schema_version": 1,
+  "reviewer": "/root/p3_data_review",
+  "date": "2026-09-08",
+  "verdict": "approved_offline",
+  "purpose": "Independent bounded follow-up review of native observations: lost Sheets formulas in raw-only artifacts and unrepresentable Base empty text. Historical approvals/reports are preserved, not rewritten.",
+  "reviewed_scope": {
+    "paths": 14,
+    "product_paths": 3,
+    "checkpoints": [
+      "b746eff3c87027acfefc083ee512d80aaaf4b90a",
+      "02b6c5faa53c4f99ecfe71b2731a314355fa2bf9"
+    ],
+    "historical_review": "docs/reference/reviews/p3-data-review.json"
+  },
+  "reviews": [
+    {
+      "schema_version": 1,
+      "assignment_id": "base_native_fidelity_followup",
+      "reviewer": "/root/p3_data_review",
+      "verdict": "approved_offline",
+      "review_revision": "b746eff3c87027acfefc083ee512d80aaaf4b90a",
+      "comparison_base": "f9810e69996fbd69bb72efcde21bfa63df4a9412",
+      "paths": [
+        {
+          "path": "shortcuts/base/record_import.go",
+          "review_revision": "b746eff3c87027acfefc083ee512d80aaaf4b90a",
+          "review_sha256": "6b4d342577e8dac827cc5a87efbe424a91b1b95e03a96e3fefab4bc7de1a0ed0",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "The existing typed import shortcut now describes explicit empty-text rejection; native/raw command declarations and mutation machinery are unchanged. Read parse/validate/execute ordering to confirm full preflight precedes schema access and every batch.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": ".tmp/base-empty-reject-gate.json",
+              "sha256": "6eebe22a5425e446ac305cbf2eafab6531e7f86a4af7ce9626f0f79a9ccd7222",
+              "tested_revision": "unbound: historical report or private observation has no complete immutable source manifest",
+              "scope": "Independently recounted stored Go JSON: 1097 unit, 160 selected inherited and 178 process pass events; zero failures and one existing broad live skip."
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/base/record_import_data.go",
+          "review_revision": "b746eff3c87027acfefc083ee512d80aaaf4b90a",
+          "review_sha256": "ede6dcb20549a846a83dba8c0c252358f6fd3115bf92994d9392a78b946e4877",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "A mapped text value equal to the exact empty string returns typed artifact validation before parsing completes. Null, absence, nonempty whitespace, booleans, numeric tokens and existing exact-double checks remain distinct. No coercion or recovery write is introduced.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": ".tmp/base-empty-reject-gate.json",
+              "sha256": "6eebe22a5425e446ac305cbf2eafab6531e7f86a4af7ce9626f0f79a9ccd7222",
+              "tested_revision": "unbound: historical report or private observation has no complete immutable source manifest",
+              "scope": "Independently recounted stored Go JSON: 1097 unit, 160 selected inherited and 178 process pass events; zero failures and one existing broad live skip."
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/base/record_import_test.go",
+          "review_revision": "b746eff3c87027acfefc083ee512d80aaaf4b90a",
+          "review_sha256": "462998e58a250853ba1f1094eb37b14cf776c650dc50f24d2e18c35ebba04986",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Positive scalar/presence test uses explicit nonempty whitespace while retaining independent null/omission checks. New row-401 empty-text test fails the prior parser acceptance.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": ".tmp/base-empty-reject-gate.json",
+              "sha256": "6eebe22a5425e446ac305cbf2eafab6531e7f86a4af7ce9626f0f79a9ccd7222",
+              "tested_revision": "unbound: historical report or private observation has no complete immutable source manifest",
+              "scope": "Independently recounted stored Go JSON: 1097 unit, 160 selected inherited and 178 process pass events; zero failures and one existing broad live skip."
+            }
+          ]
+        },
+        {
+          "path": "tests/next_sections/base/import_e2e_test.go",
+          "review_revision": "b746eff3c87027acfefc083ee512d80aaaf4b90a",
+          "review_sha256": "7c0c9c3542e536ea6891501a3eec20f1dcaa008998a5038878056f7b963a6ad6",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "The actual CLI regression puts empty text in row 401 and asserts exit 2, zero destination mutations, no stdout and no import report. Existing 10,000-row fixture now explicitly tests supported whitespace rather than a disproven empty-text storage assumption.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": ".tmp/base-empty-reject-gate.json",
+              "sha256": "6eebe22a5425e446ac305cbf2eafab6531e7f86a4af7ce9626f0f79a9ccd7222",
+              "tested_revision": "unbound: historical report or private observation has no complete immutable source manifest",
+              "scope": "Independently recounted stored Go JSON: 1097 unit, 160 selected inherited and 178 process pass events; zero failures and one existing broad live skip."
+            }
+          ]
+        },
+        {
+          "path": "docs/sections/base.md",
+          "review_revision": "b746eff3c87027acfefc083ee512d80aaaf4b90a",
+          "review_sha256": "6e6d4f59c7c24433f4ca1fad37aa9bfdf55d42b921f17069e773471df57e4306",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Documents the observed native empty-to-null behavior, narrow rejection policy, prior failed live probes and unresolved update/no-op acceptance. Historical synthetic results are not reclassified as live fidelity.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": ".tmp/base-empty-reject-gate.json",
+              "sha256": "6eebe22a5425e446ac305cbf2eafab6531e7f86a4af7ce9626f0f79a9ccd7222",
+              "tested_revision": "unbound: historical report or private observation has no complete immutable source manifest",
+              "scope": "Independently recounted stored Go JSON: 1097 unit, 160 selected inherited and 178 process pass events; zero failures and one existing broad live skip."
+            }
+          ]
+        }
+      ],
+      "evidence_catalog": [
+        {
+          "path": ".tmp/base-empty-reject-gate.json",
+          "sha256": "6eebe22a5425e446ac305cbf2eafab6531e7f86a4af7ce9626f0f79a9ccd7222",
+          "source_revision": null,
+          "tested_revision": "unbound: historical report or private observation has no complete immutable source manifest",
+          "scope": "Independently recounted stored Go JSON: 1097 unit, 160 selected inherited and 178 process pass events; zero failures and one existing broad live skip."
+        },
+        {
+          "path": "docs/sections/base-private-live-evidence.json",
+          "sha256": "2007af7b234c1b7635415905382e3c39040f8e037af94ccf7d4c4475f82d53b8",
+          "source_revision": "a6c570ed879b681e4d317a4c282c10d3b8d7857c",
+          "tested_revision": "unbound: historical report or private observation has no complete immutable source manifest",
+          "scope": "Sanitized native observation: two prior private probes failed the exact empty-text readback guard; nonempty text/zero/booleans survived; update/no-op were not reached, cleanup was independently checked. This is evidence for rejection, not a passing fidelity gate."
+        }
+      ],
+      "cross_assignment_dependencies": [
+        "Base complete typed preflight consumes the corrected Sheets artifact; integration fixture changes were owned by the Sheets test child and reviewed without modification.",
+        "Shared artifact binding, read-only POST annotation, exclusive publication and mutation receipt owners are unchanged dependencies; no new global approval is claimed."
+      ],
+      "limitations": [
+        "Approval applies only to the exact listed immutable blobs and bounded diffs/current call flows.",
+        "No reviewer live requests, model evaluations, implementation edits or broad test reruns occurred. Stored reports were independently recounted and exact committed assertions read.",
+        "Historical execution reports lack complete immutable source manifests and remain unbound; the approval source hashes themselves are immutable."
+      ]
+    },
+    {
+      "schema_version": 1,
+      "assignment_id": "sheets_native_fidelity_followup",
+      "reviewer": "/root/p3_data_review",
+      "verdict": "approved_offline",
+      "review_revision": "02b6c5faa53c4f99ecfe71b2731a314355fa2bf9",
+      "comparison_base": "1f73c910fdd3073c1a30498ed89a79c0de959db2",
+      "paths": [
+        {
+          "path": "shortcuts/sheets/data_transfer.go",
+          "review_revision": "02b6c5faa53c4f99ecfe71b2731a314355fa2bf9",
+          "review_sha256": "9d6f9e356d3e4dac01bd09f5443a58a4483e8688b930d4d111020d6e6f8b8b42",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Reviewed complete current native read/import flow and exact fix diff. Each bounded page reads raw_value and formula, validates the rectangle independently, and requires the same explicit nonnegative integer revision across both renderings and all pages. Merge keeps every raw field and adds only validated explicit formulas; it never derives formulas from literal values or overwrites raw scalar types with display strings. Malformed/cache/formula/revision disagreements fail before export emission and before the importer builds or executes writes. Dry-run includes both read requests. Read conflict recovery suggests a full reread without adding automatic mutation retry.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": ".tmp/sheets/paired-e2e-report.json",
+              "sha256": "ca882538d6c7406fa11e933e7fd8ae8f2f08750b0caa0143583286b32282d86c",
+              "tested_revision": "unbound: historical report or private observation has no complete immutable source manifest",
+              "scope": "Independently recounted 68 inherited and 300 process passes, zero failures; seven historical skips because the basic placeholder removal was later."
+            },
+            {
+              "path": ".tmp/sheets/paired-focused-report.json",
+              "sha256": "ddecc0bc6062102ccfc60ab110d83e7bc17d18e0bd47010c36e80d891016735e",
+              "tested_revision": "unbound: historical report or private observation has no complete immutable source manifest",
+              "scope": "Independently recounted current placeholder test: six broader scenario skips, one parent pass, zero failures; scoped vet command exits 0. Parent pass is not live acceptance."
+            },
+            {
+              "path": ".tmp/sheets-base/paired-report.json",
+              "sha256": "fd96702d352a0d64fa04202ca58783702049bbf96cdf27af1ab933cbcff6faf5",
+              "tested_revision": "unbound: historical report or private observation has no complete immutable source manifest",
+              "scope": "Independently recounted 23 integration pass events, zero failures/skips; source assertions independently verify 10,000 rows, 32 reads, eight schema checks and 50 batches."
+            }
+          ]
+        },
+        {
+          "path": "shortcuts/sheets/data_transfer_test.go",
+          "review_revision": "02b6c5faa53c4f99ecfe71b2731a314355fa2bf9",
+          "review_sha256": "0c960908e8b203f0cb5a05c54b57a405341edbfb5f1ae2809d1685acd876a6e5",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Exact raw/formula fixtures reproduce cache-only raw reads and display-oriented formula reads. Assertions retain zero, false, empty, null, omission, leading zeros, literal equals text and raw style/precision while restoring explicit formula. Invalid/missing revisions, malformed formula fields and formula/cache conflicts are covered; dry-run and observed call counts require both renderings.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": ".tmp/sheets/paired-e2e-report.json",
+              "sha256": "ca882538d6c7406fa11e933e7fd8ae8f2f08750b0caa0143583286b32282d86c",
+              "tested_revision": "unbound: historical report or private observation has no complete immutable source manifest",
+              "scope": "Independently recounted 68 inherited and 300 process passes, zero failures; seven historical skips because the basic placeholder removal was later."
+            },
+            {
+              "path": ".tmp/sheets/paired-focused-report.json",
+              "sha256": "ddecc0bc6062102ccfc60ab110d83e7bc17d18e0bd47010c36e80d891016735e",
+              "tested_revision": "unbound: historical report or private observation has no complete immutable source manifest",
+              "scope": "Independently recounted current placeholder test: six broader scenario skips, one parent pass, zero failures; scoped vet command exits 0. Parent pass is not live acceptance."
+            },
+            {
+              "path": ".tmp/sheets-base/paired-report.json",
+              "sha256": "fd96702d352a0d64fa04202ca58783702049bbf96cdf27af1ab933cbcff6faf5",
+              "tested_revision": "unbound: historical report or private observation has no complete immutable source manifest",
+              "scope": "Independently recounted 23 integration pass events, zero failures/skips; source assertions independently verify 10,000 rows, 32 reads, eight schema checks and 50 batches."
+            }
+          ]
+        },
+        {
+          "path": "tests/next_sections/sheets/data_test.go",
+          "review_revision": "02b6c5faa53c4f99ecfe71b2731a314355fa2bf9",
+          "review_sha256": "2dbb9d9aceeb1481aec779bbd8cae2ec64f566fdf3e8871632bbb19136cce97a",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Read synthetic fixture projections independently remove formulas from raw rendering and distort static formula-render values. Tests verify exact saved cells, paired request ordering and page extents, unchanged import with zero writes/receipts, plus invalid/missing/mismatched revisions and extent mismatch in both export and import. Failed export publishes no artifact; failed import leaves source bytes intact and sends no writes.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": ".tmp/sheets/paired-e2e-report.json",
+              "sha256": "ca882538d6c7406fa11e933e7fd8ae8f2f08750b0caa0143583286b32282d86c",
+              "tested_revision": "unbound: historical report or private observation has no complete immutable source manifest",
+              "scope": "Independently recounted 68 inherited and 300 process passes, zero failures; seven historical skips because the basic placeholder removal was later."
+            },
+            {
+              "path": ".tmp/sheets/paired-focused-report.json",
+              "sha256": "ddecc0bc6062102ccfc60ab110d83e7bc17d18e0bd47010c36e80d891016735e",
+              "tested_revision": "unbound: historical report or private observation has no complete immutable source manifest",
+              "scope": "Independently recounted current placeholder test: six broader scenario skips, one parent pass, zero failures; scoped vet command exits 0. Parent pass is not live acceptance."
+            },
+            {
+              "path": ".tmp/sheets-base/paired-report.json",
+              "sha256": "fd96702d352a0d64fa04202ca58783702049bbf96cdf27af1ab933cbcff6faf5",
+              "tested_revision": "unbound: historical report or private observation has no complete immutable source manifest",
+              "scope": "Independently recounted 23 integration pass events, zero failures/skips; source assertions independently verify 10,000 rows, 32 reads, eight schema checks and 50 batches."
+            }
+          ]
+        },
+        {
+          "path": "tests/next_sections/sheets/errors_test.go",
+          "review_revision": "02b6c5faa53c4f99ecfe71b2731a314355fa2bf9",
+          "review_sha256": "b9c2ccb435d51e2922ea6d2cf3a06ad149172b5b6cdb2a41c23b7bc3c20fdd47",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Removes only the obsolete unconditional basic-lifecycle skip in favor of a separate explicit opt-in executable test. Six broader capability scenarios remain skips. The historical seven-skip report is expressly distinct from the six-skip current-source focused run.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": ".tmp/sheets/paired-e2e-report.json",
+              "sha256": "ca882538d6c7406fa11e933e7fd8ae8f2f08750b0caa0143583286b32282d86c",
+              "tested_revision": "unbound: historical report or private observation has no complete immutable source manifest",
+              "scope": "Independently recounted 68 inherited and 300 process passes, zero failures; seven historical skips because the basic placeholder removal was later."
+            },
+            {
+              "path": ".tmp/sheets/paired-focused-report.json",
+              "sha256": "ddecc0bc6062102ccfc60ab110d83e7bc17d18e0bd47010c36e80d891016735e",
+              "tested_revision": "unbound: historical report or private observation has no complete immutable source manifest",
+              "scope": "Independently recounted current placeholder test: six broader scenario skips, one parent pass, zero failures; scoped vet command exits 0. Parent pass is not live acceptance."
+            },
+            {
+              "path": ".tmp/sheets-base/paired-report.json",
+              "sha256": "fd96702d352a0d64fa04202ca58783702049bbf96cdf27af1ab933cbcff6faf5",
+              "tested_revision": "unbound: historical report or private observation has no complete immutable source manifest",
+              "scope": "Independently recounted 23 integration pass events, zero failures/skips; source assertions independently verify 10,000 rows, 32 reads, eight schema checks and 50 batches."
+            }
+          ]
+        },
+        {
+          "path": "tests/next_integration/sheets_base/transfer_test.go",
+          "review_revision": "02b6c5faa53c4f99ecfe71b2731a314355fa2bf9",
+          "review_sha256": "2f064512da09d610265210e8575b9ea4414088d45dbdb41e7306fda54c9227b5",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Revised primitive handoff checks both independent renderer page sequences, exact raw typed source values and unchanged source/unrelated destination records. The 10,000-row scenario expects 32 reads, eight schema reads and 50 batches. Source formula metadata must survive export before Base rejects it; late empty text is also rejected before writes. Missing/drifting revisions and truncated exports cannot produce import artifacts, destination effects or receipts. Existing binding and partial/unknown batch behavior remains intact.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": ".tmp/sheets/paired-e2e-report.json",
+              "sha256": "ca882538d6c7406fa11e933e7fd8ae8f2f08750b0caa0143583286b32282d86c",
+              "tested_revision": "unbound: historical report or private observation has no complete immutable source manifest",
+              "scope": "Independently recounted 68 inherited and 300 process passes, zero failures; seven historical skips because the basic placeholder removal was later."
+            },
+            {
+              "path": ".tmp/sheets/paired-focused-report.json",
+              "sha256": "ddecc0bc6062102ccfc60ab110d83e7bc17d18e0bd47010c36e80d891016735e",
+              "tested_revision": "unbound: historical report or private observation has no complete immutable source manifest",
+              "scope": "Independently recounted current placeholder test: six broader scenario skips, one parent pass, zero failures; scoped vet command exits 0. Parent pass is not live acceptance."
+            },
+            {
+              "path": ".tmp/sheets-base/paired-report.json",
+              "sha256": "fd96702d352a0d64fa04202ca58783702049bbf96cdf27af1ab933cbcff6faf5",
+              "tested_revision": "unbound: historical report or private observation has no complete immutable source manifest",
+              "scope": "Independently recounted 23 integration pass events, zero failures/skips; source assertions independently verify 10,000 rows, 32 reads, eight schema checks and 50 batches."
+            }
+          ]
+        },
+        {
+          "path": "tests/cli_e2e/sheets/sheets_private_live_test.go",
+          "review_revision": "02b6c5faa53c4f99ecfe71b2731a314355fa2bf9",
+          "review_sha256": "1ff0a8d0caec234975e3b62be22f8179c787200cbdba1339f0a342996b5a7b46",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Read the complete opt-in harness. Disabled selection skips before credentials. Enabled selection compares current account/tenant to operator-supplied independent preflight identities, checks parent and created-child ACL/ownership, uses one process attempt per request, registers exact returned-ID cleanup immediately, and requires typed/native deletion proof from an exact-ID read. It asserts actual raw scalar types plus explicit formula/cache in the saved bound artifact. This review does not perform or certify a post-fix live execution or replace root preflight authorization.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": ".tmp/sheets/paired-e2e-report.json",
+              "sha256": "ca882538d6c7406fa11e933e7fd8ae8f2f08750b0caa0143583286b32282d86c",
+              "tested_revision": "unbound: historical report or private observation has no complete immutable source manifest",
+              "scope": "Independently recounted 68 inherited and 300 process passes, zero failures; seven historical skips because the basic placeholder removal was later."
+            },
+            {
+              "path": ".tmp/sheets/paired-focused-report.json",
+              "sha256": "ddecc0bc6062102ccfc60ab110d83e7bc17d18e0bd47010c36e80d891016735e",
+              "tested_revision": "unbound: historical report or private observation has no complete immutable source manifest",
+              "scope": "Independently recounted current placeholder test: six broader scenario skips, one parent pass, zero failures; scoped vet command exits 0. Parent pass is not live acceptance."
+            },
+            {
+              "path": ".tmp/sheets-base/paired-report.json",
+              "sha256": "fd96702d352a0d64fa04202ca58783702049bbf96cdf27af1ab933cbcff6faf5",
+              "tested_revision": "unbound: historical report or private observation has no complete immutable source manifest",
+              "scope": "Independently recounted 23 integration pass events, zero failures/skips; source assertions independently verify 10,000 rows, 32 reads, eight schema checks and 50 batches."
+            }
+          ]
+        },
+        {
+          "path": "docs/sections/sheets.md",
+          "review_revision": "02b6c5faa53c4f99ecfe71b2731a314355fa2bf9",
+          "review_sha256": "4cf7d4b2d86381e7c1767297d1203213483e0b75329892c496dd2c6436dd8839",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Links the qualified private lifecycle/native-fidelity report and distinguishes current narrow executable coverage from full unverified capabilities.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": ".tmp/sheets/paired-e2e-report.json",
+              "sha256": "ca882538d6c7406fa11e933e7fd8ae8f2f08750b0caa0143583286b32282d86c",
+              "tested_revision": "unbound: historical report or private observation has no complete immutable source manifest",
+              "scope": "Independently recounted 68 inherited and 300 process passes, zero failures; seven historical skips because the basic placeholder removal was later."
+            },
+            {
+              "path": ".tmp/sheets/paired-focused-report.json",
+              "sha256": "ddecc0bc6062102ccfc60ab110d83e7bc17d18e0bd47010c36e80d891016735e",
+              "tested_revision": "unbound: historical report or private observation has no complete immutable source manifest",
+              "scope": "Independently recounted current placeholder test: six broader scenario skips, one parent pass, zero failures; scoped vet command exits 0. Parent pass is not live acceptance."
+            },
+            {
+              "path": ".tmp/sheets-base/paired-report.json",
+              "sha256": "fd96702d352a0d64fa04202ca58783702049bbf96cdf27af1ab933cbcff6faf5",
+              "tested_revision": "unbound: historical report or private observation has no complete immutable source manifest",
+              "scope": "Independently recounted 23 integration pass events, zero failures/skips; source assertions independently verify 10,000 rows, 32 reads, eight schema checks and 50 batches."
+            }
+          ]
+        },
+        {
+          "path": "docs/sections/sheets-private-live.md",
+          "review_revision": "02b6c5faa53c4f99ecfe71b2731a314355fa2bf9",
+          "review_sha256": "4e6946d48dc6ea6fbbfec6cb80854bbd23d28f8892dfa4ed8e9aaf706eb61649",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Preserves all initial failed attempts and their distinct test/product causes, exact private evidence hashes, raw versus formula rendering contract, optimistic revision limitations, explicit re-export guidance for possibly lossy old v1 artifacts, increased read cost and outstanding final live confirmation.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": ".tmp/sheets/paired-e2e-report.json",
+              "sha256": "ca882538d6c7406fa11e933e7fd8ae8f2f08750b0caa0143583286b32282d86c",
+              "tested_revision": "unbound: historical report or private observation has no complete immutable source manifest",
+              "scope": "Independently recounted 68 inherited and 300 process passes, zero failures; seven historical skips because the basic placeholder removal was later."
+            },
+            {
+              "path": ".tmp/sheets/paired-focused-report.json",
+              "sha256": "ddecc0bc6062102ccfc60ab110d83e7bc17d18e0bd47010c36e80d891016735e",
+              "tested_revision": "unbound: historical report or private observation has no complete immutable source manifest",
+              "scope": "Independently recounted current placeholder test: six broader scenario skips, one parent pass, zero failures; scoped vet command exits 0. Parent pass is not live acceptance."
+            },
+            {
+              "path": ".tmp/sheets-base/paired-report.json",
+              "sha256": "fd96702d352a0d64fa04202ca58783702049bbf96cdf27af1ab933cbcff6faf5",
+              "tested_revision": "unbound: historical report or private observation has no complete immutable source manifest",
+              "scope": "Independently recounted 23 integration pass events, zero failures/skips; source assertions independently verify 10,000 rows, 32 reads, eight schema checks and 50 batches."
+            }
+          ]
+        },
+        {
+          "path": "docs/integration/sheets-base.md",
+          "review_revision": "02b6c5faa53c4f99ecfe71b2731a314355fa2bf9",
+          "review_sha256": "1c95db963f7d87a48642d884599e1e1b0945c7137677b89155b636b5f2910b61",
+          "hash_verified": true,
+          "verdict": "approved_offline",
+          "reviewed_scope": "Separates corrected paired-render/empty-text-reject fixture conditions from historical raw-only/empty-text synthetic assumptions. Describes exact updated counts and explicitly identifies the report as shared-worktree offline evidence, not an immutable release or live result.",
+          "findings": [],
+          "evidence": [
+            {
+              "path": ".tmp/sheets/paired-e2e-report.json",
+              "sha256": "ca882538d6c7406fa11e933e7fd8ae8f2f08750b0caa0143583286b32282d86c",
+              "tested_revision": "unbound: historical report or private observation has no complete immutable source manifest",
+              "scope": "Independently recounted 68 inherited and 300 process passes, zero failures; seven historical skips because the basic placeholder removal was later."
+            },
+            {
+              "path": ".tmp/sheets/paired-focused-report.json",
+              "sha256": "ddecc0bc6062102ccfc60ab110d83e7bc17d18e0bd47010c36e80d891016735e",
+              "tested_revision": "unbound: historical report or private observation has no complete immutable source manifest",
+              "scope": "Independently recounted current placeholder test: six broader scenario skips, one parent pass, zero failures; scoped vet command exits 0. Parent pass is not live acceptance."
+            },
+            {
+              "path": ".tmp/sheets-base/paired-report.json",
+              "sha256": "fd96702d352a0d64fa04202ca58783702049bbf96cdf27af1ab933cbcff6faf5",
+              "tested_revision": "unbound: historical report or private observation has no complete immutable source manifest",
+              "scope": "Independently recounted 23 integration pass events, zero failures/skips; source assertions independently verify 10,000 rows, 32 reads, eight schema checks and 50 batches."
+            }
+          ]
+        }
+      ],
+      "evidence_catalog": [
+        {
+          "path": ".tmp/sheets/paired-e2e-report.json",
+          "sha256": "ca882538d6c7406fa11e933e7fd8ae8f2f08750b0caa0143583286b32282d86c",
+          "source_revision": null,
+          "tested_revision": "unbound: historical report or private observation has no complete immutable source manifest",
+          "scope": "Independently recounted 68 inherited and 300 process passes, zero failures; seven historical skips because the basic placeholder removal was later."
+        },
+        {
+          "path": ".tmp/sheets/paired-focused-report.json",
+          "sha256": "ddecc0bc6062102ccfc60ab110d83e7bc17d18e0bd47010c36e80d891016735e",
+          "source_revision": null,
+          "tested_revision": "unbound: historical report or private observation has no complete immutable source manifest",
+          "scope": "Independently recounted current placeholder test: six broader scenario skips, one parent pass, zero failures; scoped vet command exits 0. Parent pass is not live acceptance."
+        },
+        {
+          "path": ".tmp/sheets-base/paired-report.json",
+          "sha256": "fd96702d352a0d64fa04202ca58783702049bbf96cdf27af1ab933cbcff6faf5",
+          "source_revision": null,
+          "tested_revision": "unbound: historical report or private observation has no complete immutable source manifest",
+          "scope": "Independently recounted 23 integration pass events, zero failures/skips; source assertions independently verify 10,000 rows, 32 reads, eight schema checks and 50 batches."
+        },
+        {
+          "path": ".tmp/next-live-20260908/sheets-diagnosis.json",
+          "sha256": "73af8a8c35d72df8fc75d3fe2dd0254efebfaa2ae8d1ed9ee5687cc8fc2b7eef",
+          "source_revision": null,
+          "tested_revision": "unbound: historical report or private observation has no complete immutable source manifest",
+          "scope": "Read sanitized diagnosis and verified referenced raw artifact/formula-read hashes. Initial failures remain failures."
+        },
+        {
+          "path": ".tmp/next-live-20260908/sheets-private-03/native-cells.json",
+          "sha256": "c7a14a637eba98ecf61c1f9e6ffad0760b7351db30e37291daae17f3d8226b77",
+          "source_revision": null,
+          "tested_revision": "unbound: historical report or private observation has no complete immutable source manifest",
+          "scope": "Inspected only cell/schema evidence without copying private account/resource IDs. Sixth raw cell has cache value 2 and no formula; other raw scalar types survived."
+        },
+        {
+          "path": ".tmp/next-live-20260908/sheets-private-03/07-read.json",
+          "sha256": "0a60e9161803eb97f36f9d01095041ba5d89b3a4899e3df0ab4d5c89f6a72276",
+          "source_revision": null,
+          "tested_revision": "unbound: historical report or private observation has no complete immutable source manifest",
+          "scope": "Inspected independent same-range formula rendering: explicit =1+1 and numeric cache 2; static zero/false become display strings and empty cell omits value. Revision 1 is present."
+        }
+      ],
+      "cross_assignment_dependencies": [
+        "Base complete typed preflight consumes the corrected Sheets artifact; integration fixture changes were owned by the Sheets test child and reviewed without modification.",
+        "Shared artifact binding, read-only POST annotation, exclusive publication and mutation receipt owners are unchanged dependencies; no new global approval is claimed."
+      ],
+      "limitations": [
+        "Approval applies only to the exact listed immutable blobs and bounded diffs/current call flows.",
+        "No reviewer live requests, model evaluations, implementation edits or broad test reruns occurred. Stored reports were independently recounted and exact committed assertions read.",
+        "Historical execution reports lack complete immutable source manifests and remain unbound; the approval source hashes themselves are immutable."
+      ]
+    }
+  ],
+  "findings": [],
+  "important_limits": [
+    "Post-fix live formula fidelity is not established by this offline review; root owns preflight and any authorized final live run.",
+    "Base prior empty-to-null live failures remain failures. The fix rejects that typed transfer rather than claiming storage preserves it. Native/raw writes are unchanged.",
+    "Paired matching revisions are optimistic native evidence, not locks or compare-and-swap protection; concurrent edits after the final read remain possible.",
+    "Previously saved raw-only sheets-data/v1 artifacts may already lack formula identity. They cannot be repaired or recognized from cached values alone; documented guidance requires re-export of potentially affected sources.",
+    "Each bounded page now needs two native reads. Historical performance/model evaluation results do not measure the corrected condition.",
+    "Windows validation is deferred by the user; full capability live, cross-platform and release acceptance remain outside this review."
+  ]
+}
