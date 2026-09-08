@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "verdict": "pass: retained accounting, frozen provenance and strict unmet-gate conclusion agree",
+  "condition": "token-efficiency-05",
+  "report_commit_reviewed": "5db6bf0",
+  "candidate_revision": "d667afbb201d09651f121147e147fb0891952f16",
+  "evaluator_revision": "75e57af771a58a9929e03f6221f3e2c1480ca96b",
+  "scope": "Independent arithmetic and retained evidence audit; no replay of discarded provider payloads, final workspaces or runtime verifier receipts.",
+  "reviewer_activity": {
+    "provider_calls": 0,
+    "live_calls": 0,
+    "held_out_access": false,
+    "product_fixture_guidance_edits": false
+  },
+  "totals": {
+    "planned_attempts": 48,
+    "completed_attempts": 48,
+    "successes": 40,
+    "inconclusive": 0,
+    "unknown_usage_attempts": 4,
+    "known_tokens": 3602432,
+    "input_tokens_observed": 3555543,
+    "output_tokens_observed": 46889,
+    "cached_input_tokens_observed": 2621696,
+    "failed_or_inconclusive_known_tokens": 948275,
+    "failed_verifications": 8
+  },
+  "gate_results": {
+    "paired-base": "met",
+    "paired-contact": "met",
+    "paired-discovery": "missed",
+    "paired-docs-edit": "missed",
+    "paired-docs-read": "missed",
+    "paired-drive": "unavailable",
+    "paired-markdown": "met",
+    "paired-sheets": "unavailable"
+  },
+  "checks": {
+    "unique_balanced_scheduled_attempts": 48,
+    "batch_aggregate_groups": 40,
+    "summary_aggregate_groups": 30,
+    "matched_success_pairs": 17,
+    "command_diagnostic_groups": 16,
+    "primary_secondary_outcome_command_table_rows": 32,
+    "strict_docs_boundary": "Exact rational savings > 1/2; equality fails.",
+    "other_boundary": "Exact rational savings >= 3/10.",
+    "success_nonregression_required": true,
+    "unknown_usage_never_zero_cost_or_finite_efficiency": true,
+    "cached_input_included_once": true,
+    "execution_source_hashes": 34,
+    "actual_cli_catalog_codex_archive_manifest_guidance_hashes_match": true,
+    "report_links_resolve": true,
+    "bounded_public_privacy_scan": "No private host path or common credential markers; retained traces contain public command choices without argument values.",
+    "all_observed_failure_costs_retained": true,
+    "source_files_match_report_commit": true,
+    "tar_commit_ids_match_frozen_revisions": true
+  },
+  "limitations": [
+    "Four Drive attempts have no complete or partial provider usage; 3,602,432 observed tokens is a lower bound, not final experiment spend. Both Drive efficiency scores remain unavailable.",
+    "Sheets original has zero verified outcomes despite complete usage; the secondary lower mean attempt cost cannot establish successful-task savings.",
+    "Docs edit has observed success regression and includes its failed-attempt cost; Docs read misses its strict target. Exactly 50% would not pass either Docs gate.",
+    "Three tasks meet point-estimate gates, three miss and two are unavailable. The overall target is not met; no pooling or matched-only substitution changes it.",
+    "The audit retains runtime verdicts and cannot infer exact product or model failure causes from discarded payloads or public command traces. It does not re-audit live native fidelity.",
+    "Prelaunch readiness and native evidence are separately attributed; implementation/reviewer conversations and native probes are outside measured spend. No claim of held-out generalization or statistical parity."
+  ],
+  "source_sha256": {
+    "REPORT.md": "150b2b2ddeccb25e2c9d7cd5f3807af4d992b3dc42d67dbaafc9965f017ff9ee",
+    "summary.json": "7dcc52b898a26ab44e1cc29f82cc4afb17e8a3b29583f04c6f4a1a9bd68503a0",
+    "environment.json": "6dabc1e5a306283e957fefc69eb4f538906f86e46d7b072c4bea954e09bde778",
+    "readiness-review.json": "367cdec7f60f5173e719aca25788bb3b26b38ca2de6494532cc40a820d2d0491",
+    "base/batch-01.json": "28fb685421548d50243d23899e480628c8cbe2bb104480d6440df035b76a8d67",
+    "contact/batch-01.json": "66910ff6d095071d4535253c721e8a0a428a4b2a1de0c8ae2f90b790123a7e74",
+    "docs/batch-01.json": "d5793383d31477984f3c85bd375e838bac2c56f64fbeef61fa5c9b46b21fffae",
+    "drive/batch-01.json": "73bf42c747764a7570f099cfba3c73f51c3df52a0ee14ec39ec9f246a8bef1b4",
+    "markdown/batch-01.json": "f9404740382ee82c182bcadcd95b417ab467459daff265002e6cfe5ee3cec378",
+    "sheets/batch-01.json": "89a589f9b32609004686841f51e7b9427ec9846556fd5133dd05dc0149739805"
+  },
+  "report_generator_sha256": "9031d787e8fb342b88d5610a58ae377d508a3312c00fe729ec1502fc30f4cc19"
+}
