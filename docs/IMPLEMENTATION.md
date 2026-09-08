@@ -1,6 +1,15 @@
 # Implementation ledger
 
-The release criteria remain those in [PLAN.md](PLAN.md). Imported source is implementation reuse, not evidence of live parity. Scoped foundation measurements are available; no full-product efficiency or release claim is established.
+The release criteria remain those in [PLAN.md](PLAN.md), with the user-directed
+scope adjustment below. Imported source is implementation reuse, not evidence of
+live parity. Scoped foundation measurements are available; no full-product
+efficiency or release claim is established.
+
+On 2026-09-08 the user asked to ignore Windows and proceed with private live tests
+and `search:bot`. Windows execution is deferred by that instruction and is no
+longer a blocker for this requested continuation. Windows artifacts and coverage
+records remain available; deferred checks are not reported as passes. Private
+creation visibility and recipient boundaries from PLAN still apply.
 
 ## Reference and baseline
 
@@ -260,7 +269,7 @@ complete goal.
 | --- | --- |
 | Private live fixtures | Verify current-account and tenant binding plus account-only creation visibility before writing; run the owning live suites and clean up only their resources. |
 | Contact bot search | Current-user authorization for `search:bot`, followed by the failed live scenario and bot binding checks. |
-| OS-specific runtime coverage | Linux arm64 runtime suites and platform comparison pass; delivered archive lifecycles pass on arm64 and under amd64/riscv64 translation. Broader amd64/riscv64 runtime suites have not run. Execute the retained Windows behavior checks and native reference capture on an appropriate OS runner or VM; cross-built archives do not substitute. Darwin/amd64 smoke checks already ran under Rosetta. Additional gaps must name the unverified scenario, not require physical hardware absent from PLAN. |
+| OS-specific runtime coverage | Linux arm64 runtime suites and platform comparison pass; delivered archive lifecycles pass on arm64 and under amd64/riscv64 translation. Broader amd64/riscv64 runtime suites have not run. Windows behavior checks and native reference capture are deferred by the user's 2026-09-08 instruction; cross-built archives are not runtime verification. Darwin/amd64 smoke checks already ran under Rosetta. Additional gaps must name the unverified scenario, not require physical hardware absent from PLAN. |
 | Remote release ownership | An owned Next repository/download destination and package identity, then the documented updater identity integration and remote install/update checks. Public signing/notarization and publication retain their separate prerequisites. |
 | Comparative release evidence | Development size and representative business comparisons are complete and assessed with their tradeoffs. Retain older product conditions and the inconclusive Events baseline separately; perform independently replaced held-out tasks only at the final release gate. |
 
@@ -268,4 +277,4 @@ The read-only Windows-environment check found VirtualBox `7.1.6r167084`, but
 `VBoxManage list vms` and `VBoxManage list runningvms` both returned empty lists
 with exit 0. No Parallels, VMware Fusion or UTM installation was found in the two
 standard Applications directories. A Windows runner or VM is still needed;
-the user has been asked for an available target while independent comparisons run.
+this evidence remains historical after the user's 2026-09-08 Windows deferral.

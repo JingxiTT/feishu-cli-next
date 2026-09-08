@@ -143,8 +143,9 @@ previously disclosed limited exposure. No live backend claims or complete
 capability acceptance follow from these development measurements.
 
 Release acceptance still requires the outstanding private live verification,
-Contact scope prerequisite, Windows behavior/reference capture, release-channel
+Contact scope prerequisite, release-channel
 and lifecycle checks, complete section acceptance and final held-out evidence.
-The provisional result is useful measured improvements on specific workflows,
+Windows behavior/reference capture remains unverified and is deferred by the
+user's 2026-09-08 instruction. The provisional result is useful measured improvements on specific workflows,
 with explicit regressions and unresolved release gates; there is no pooled
 percentage target or current full-product performance claim.
