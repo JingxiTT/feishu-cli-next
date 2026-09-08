@@ -12,7 +12,7 @@ metadata:
 
 ## 场景与 Shortcut 路由
 
-**CRITICAL：先判断场景，再读取该场景的参考文件；不要在任务开始时一次性读取全部参考文件。每个文件只在首次进入对应阶段时读取一次。**
+**CRITICAL：先判断场景。已知文档的正文或原生 block ID 只读查询，在现有指引足够时可直接执行 `+fetch`；其他场景先读取对应参考文件。不要在任务开始时一次性读取全部参考文件；每个文件只在首次进入对应阶段时读取一次。**
 
 **身份：文档操作推荐显式指定 `--as user`。**
 
@@ -20,7 +20,7 @@ metadata:
 
 ### 文档内容
 
-- **读取 / 摘要 — [`+fetch`](references/lark-doc-fetch.md)**：先读参考再获取文档。
+- **读取 / 摘要 — [`+fetch`](references/lark-doc-fetch.md)**：已知 URL/token 且只需正文或原生 block ID 时，按已有指引读取并直接使用结果；需要范围选择、引用或内嵌资源解析，或返回不完整/降级结果时，读取该参考处理。
 - **从零创作 — [`创建工作流`](references/lark-doc-create-workflow.md)**：先完整执行创建工作流，**简单任务不是跳过的理由**；
 - **导入 / 空文档 — [`+create`](references/lark-doc-create.md)**：仅创建空文档或原样导入用户提供的完整内容时，跳过创建工作流。
 - **编辑 / block 直达链接 — [`+update`](references/lark-doc-update.md)**：语义改写、润色、重组、补写或排版均按 update 参考完成。
