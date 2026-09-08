@@ -18,6 +18,8 @@ def main():
     parser.add_argument('--section', action='append')
     parser.add_argument('--prepare-only', action='store_true')
     parser.add_argument('--task-kind', choices=('read', 'scenario', 'scaling', 'business'), default='read')
+    parser.add_argument('--model', default='gpt-6-astra', help='Codex model identifier; pin explicitly for a new comparison')
+    parser.add_argument('--reasoning', default='high', help='Codex reasoning effort; pin explicitly for a new comparison')
     args = parser.parse_args()
     manifest_path = ROOT / 'evaluation' / {'read': 'tasks.read-sections.json', 'scenario': 'tasks.scenarios.json', 'scaling': 'tasks.scaling.json', 'business': 'tasks.business.json'}[args.task_kind]
     manifest = json.loads(manifest_path.read_text())
@@ -60,8 +62,8 @@ def main():
                 from scenarios.extensions import build_host
                 official_cli = build_host(args.official_source, temporary / 'official-host', False)
                 next_cli = build_host(args.next_source, temporary / 'next-host', True)
-            config = {'mode': 'real', 'backend': manifest['backend'], 'model': 'gpt-6-astra',
-                      'reasoning': 'high', 'tokenizer': 'provider-undisclosed', 'tools': ['shell', 'files'],
+            config = {'mode': 'real', 'backend': manifest['backend'], 'model': args.model,
+                      'reasoning': args.reasoning, 'tokenizer': 'provider-undisclosed', 'tools': ['shell', 'files'],
                       'permissions': 'workspace-write; managed proxy loopback-only with local binding; isolated synthetic sidecar',
                       'budget': {'timeout_seconds': 180}, 'timeout_seconds': 210,
                       'accounting_method': 'codex-cli 0.153.4 provider turn.completed; cached input included in full',

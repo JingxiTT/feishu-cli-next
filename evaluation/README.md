@@ -1,5 +1,10 @@
 # Agent comparison evaluation
 
+The new [paired function comparison plan](paired-functions-luna-medium.md) pins
+the user-selected `gpt-5.6-luna` model with `medium` reasoning for all three arms,
+using native Codex CLI `0.153.4`. Its eight-task manifest and native-faithful
+fixtures are not yet complete; historical scenario batches are not that pilot.
+
 The [provisional assessment](ASSESSMENT.md) compares completed conditions, retains
 regressions and links the remaining release evidence.
 
@@ -196,8 +201,12 @@ Start from the config above with these changes:
   `official_concise`; and the next binary and
   `agent-skills/feishu-cli-next/SKILL.md` for `next`.
 
-The current local model/effort selected by the coordinator is `gpt-6-astra` /
-`high`; neither value is an adapter default. Pin both explicitly for all arms.
+The user selected `gpt-5.6-luna` / `medium` for the new comparison. Pass
+`--model gpt-5.6-luna --reasoning medium` to `run_read_batch.py`; both values are
+shared by all arms and forwarded explicitly to Codex CLI. The launcher's old
+`gpt-6-astra` / `high` defaults remain for compatibility with historical commands;
+they are not the selected settings for the new comparison. Neither is an adapter
+default. Pin both explicitly for all arms.
 Provider alias changes cannot be excluded without an immutable provider model
 identifier. Report that limit alongside measured results.
 

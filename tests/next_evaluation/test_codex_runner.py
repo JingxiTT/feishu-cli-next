@@ -74,6 +74,49 @@ class CodexAccountingTests(unittest.TestCase):
             self.assertIn('registrations.json.gz', result.stderr)
             self.assertFalse((archive / 'not-created').exists())
 
+    def test_batch_pins_luna_medium_in_shared_codex_config(self):
+        from unittest.mock import patch
+        spec = importlib.util.spec_from_file_location('run_read_batch', ROOT / 'evaluation/run_read_batch.py')
+        batch = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(batch)
+        captured = []
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / 'official-source'
+            entry = source / 'skills/lark-doc/SKILL.md'
+            entry.parent.mkdir(parents=True)
+            entry.write_text('Controlled official guidance')
+            official, next_cli = root / 'official-cli', root / 'next-cli'
+            official.touch()
+            next_cli.touch()
+            args = ['run_read_batch.py', '--section', 'docs', '--task-kind', 'scenario',
+                    '--model', 'gpt-5.6-luna', '--reasoning', 'medium']
+            values = {'official-source': source, 'official-cli': official,
+                      'next-source': ROOT, 'next-cli': next_cli, 'codex': root / 'codex',
+                      'auth-home': root / 'unused-auth', 'output-root': root / 'results'}
+            for name, path in values.items():
+                args.extend(['--' + name, str(path)])
+
+            def inspect_config(command, **kwargs):
+                self.assertEqual(Path(command[1]).name, 'harness.py')
+                config = json.loads(Path(command[command.index('--config') + 1]).read_text())
+                captured.append(config)
+                self.assertEqual(config['model'], 'gpt-5.6-luna')
+                self.assertEqual(config['reasoning'], 'medium')
+                self.assertEqual(set(config['arms']), {'official', 'official_concise', 'next'})
+                self.assertEqual(config['arms']['official']['cli'], config['arms']['official_concise']['cli'])
+                self.assertEqual(Path(config['runner'][1]).name, 'codex_runner.py')
+                self.assertEqual(config['runner'][-1], 'codex-cli 0.153.4')
+                return subprocess.CompletedProcess(command, 0)
+
+            with patch.object(sys, 'argv', args), \
+                 patch.object(sys, 'path', [str(ROOT / 'evaluation'), *sys.path]), \
+                 patch.object(batch.subprocess, 'run', side_effect=inspect_config), \
+                 patch('builtins.print'):
+                self.assertEqual(batch.main(), 0)
+            self.assertEqual(len(captured), 1)
+            self.assertFalse(values['auth-home'].exists())
+
     def test_trace_keeps_only_public_names_not_content_paths_or_unknown_flags(self):
         command = 'TOKEN=private-value /private/workspace/feishu-cli-next docs +fetch --doc secret-document-id --keyword="private user text" --not-a-real-private-flag=secret && cat /private/secret-file'
         result = runner.command_choices(command)
@@ -174,7 +217,8 @@ if '--version' in sys.argv:
 assert '--ignore-user-config' in sys.argv
 assert '--ephemeral' in sys.argv
 assert '--ignore-rules' in sys.argv
-assert sys.argv[sys.argv.index('--model')+1] == 'synthetic-model'
+assert sys.argv[sys.argv.index('--model')+1] == 'gpt-5.6-luna'
+assert 'model_reasoning_effort="medium"' in sys.argv
 assert 'LARKSUITE_CLI_APP_SECRET' not in os.environ
 assert os.environ['LARKSUITE_CLI_REMOTE_META'] == 'off'
 assert 'Synthetic test guidance' in sys.stdin.read()
@@ -184,7 +228,7 @@ print(json.dumps({'type':'turn.completed','usage':{'input_tokens':200,'cached_in
 ''')
             request = {"workspace": str(workspace), "cli": str(fake), "skill": str(guidance / "SKILL.md"),
                        "prompt": "Inspect the synthetic config.", "settings": {"backend": "offline-foundation-v1",
-                       "model": "synthetic-model", "tokenizer": "provider-undisclosed", "reasoning": "high",
+                       "model": "gpt-5.6-luna", "tokenizer": "provider-undisclosed", "reasoning": "medium",
                        "budget": {"timeout_seconds": 5}}, "fixture": {"answer_schema": {"type": "object", "properties": {}, "required": [], "additionalProperties": False}}}
             process = subprocess.run([sys.executable, str(ROOT / "tests/next_evaluation/python_fixture_entry.py"),
                                       "--entry", str(ROOT / "evaluation/codex_runner.py"), "--fixture", str(fake), "--",
@@ -193,6 +237,7 @@ print(json.dumps({'type':'turn.completed','usage':{'input_tokens':200,'cached_in
             self.assertEqual(process.returncode, 0, process.stderr)
             result = json.loads(process.stdout)
             self.assertTrue(result["accounting_complete"])
+            self.assertEqual(result['model'], 'gpt-5.6-luna')
             self.assertEqual(result["turns"][0]["cached_input_tokens"], 80)
             self.assertTrue((workspace / "answer.json").is_file())
             for name in ("lark-cli", "feishu-cli-next"):
