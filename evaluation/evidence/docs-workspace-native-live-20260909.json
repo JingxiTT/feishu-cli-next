@@ -1,0 +1,92 @@
+{
+  "schema": "feishu-cli-next/private-native-evidence/v1",
+  "tested_at_utc": "2026-09-08T17:06:16.370185+00:00",
+  "status": "passed",
+  "scope": "One current-user private native Docs lifecycle, no model evaluation",
+  "build": {
+    "source_revision": "d667afbb201d09651f121147e147fb0891952f16",
+    "source_archive_sha256": "fb1d066730e7e76f8bab405b25ddb809061671ccdc6ab785e3ad612ae4399c7b",
+    "candidate_binary_sha256": "c6ca70a98d0583bbf798a08b969a16ccaef9901ac29e4228268992933b3aa061",
+    "build_command": [
+      "make",
+      "build",
+      "GOFLAGS=-tags=authsidecar",
+      "BINARY=<ignored candidate-cli>",
+      "VERSION=d667afbb201d09651f121147e147fb0891952f16"
+    ],
+    "original_source_revision": "7fd6ef3c07182257ce776cdc5a614e122d5bd4b3",
+    "original_binary_sha256": "5e1f582ec5ab9c86d3618fc17bd099b3443d40fe8691fed07d42e83a351ba977",
+    "isolated_build_environment": true
+  },
+  "harness_sha256": "ffc9d19782f3e81e3b9e3978cde71071f6397d325f8f972020dbdf266ae64ed1",
+  "privacy": {
+    "account_matches_existing_digest": true,
+    "new_documents": 1,
+    "closed_link_sharing": true,
+    "sole_member_is_current_owner": true,
+    "verified_before_synthetic_content": true,
+    "no_sharing_or_messages": true,
+    "private_ids_and_raw_logs": "ignored local artifacts only",
+    "private_documents_created_total_including_prior_attempts": 3,
+    "all_created_documents_deleted": true
+  },
+  "checks": {
+    "bound_current_user": true,
+    "closed_links_sole_member_owner_before_content": true,
+    "stdout_fact_and_native_block_id": true,
+    "saved_markdown_and_complete_native_sidecar": true,
+    "noop_zero_observed_mutations": true,
+    "dry_run_zero_observed_mutations": true,
+    "two_block_push_internal_verified": true,
+    "original_binary_full_readback_exact_text_styles_links_ids_untouched_resources": true,
+    "output_pair_no_clobber": true,
+    "unsupported_format_and_marker_rejected_without_observed_mutations": true,
+    "known_stale_snapshot_conflict_preserves_external_state": true
+  },
+  "cleanup": {
+    "owned_document_deleted": true,
+    "followup_native_error_code": 1770003,
+    "no_fixture_document_retained": true
+  },
+  "command_invocations": 47,
+  "prior_attempts": [
+    {
+      "source_revision": "6b5b5524d2b7e236892b0b0acfbaf731e0cc4960",
+      "candidate_binary_sha256": "d4fe80438a114f4e9fe2914936a25c4a7a9599efefd994da35c1966fa3cf27f9",
+      "status": "failed",
+      "checks_passed": {
+        "bound_current_user": true,
+        "closed_links_sole_member_owner_before_content": true,
+        "stdout_fact_and_native_block_id": true,
+        "saved_markdown_and_complete_native_sidecar": true,
+        "noop_zero_observed_mutations": true,
+        "dry_run_zero_observed_mutations": true
+      },
+      "failure": "Second post-write snapshot observed a revision change; CLI returned unknown after one block was verified and both PATCH receipts were confirmed applied.",
+      "exact_cause": "unknown; settling versus material content drift was not established",
+      "final_native_fidelity": "unknown: first harness stopped before independent final readback, then cleaned the fixture",
+      "cleanup_confirmed": true,
+      "cleanup_native_code": 1770003,
+      "private_documents_created": 1,
+      "artifact_manifest_sha256": "99b6347a22fe8a887896bf1b84ea3d8d0b2df468b3c9b2d2f9edf5f24605db06"
+    },
+    {
+      "source_revision": "d667afbb201d09651f121147e147fb0891952f16",
+      "candidate_binary_sha256": "c6ca70a98d0583bbf798a08b969a16ccaef9901ac29e4228268992933b3aa061",
+      "status": "fixture_initialization_not_stable",
+      "candidate_workspace_workflow_started": false,
+      "failure": "Original baseline metadata revision changed around its initial full native read after synthetic fixture append. The harness stopped before pull/push and cleaned the document.",
+      "cleanup_confirmed": true,
+      "cleanup_native_code": 1770003,
+      "private_documents_created": 1,
+      "artifact_manifest_sha256": "d19bbd539bd464169ecc864aa0be33b495e5cf5123a21eafa9900c7f58475093"
+    }
+  ],
+  "limits": [
+    "Known stale snapshot was rejected; read/check/write comparisons are not atomic compare-and-swap and cannot eliminate a concurrent writer race.",
+    "Live coverage is one small user-identity document with two targeted native text edits, a bold linked Unicode run, plain text, and an untouched table. Other rich resource types, large pagination, bot identity, and Wiki resolution were not exercised here.",
+    "Zero observed mutation checks combine absent mutation receipts with unchanged native revision and full block state; this is not a transport-level request trace.",
+    "Independent original CLI verified complete native block JSON; this test does not measure model token savings or establish broad functionality parity.",
+    "This evidence identifies an exact runtime source revision; later candidate guidance or code changes require their own readiness checks."
+  ]
+}
