@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "date": "2026-09-08",
+  "scope": "Opt-in supplied-folder Drive file lifecycle only; not full Drive live acceptance.",
+  "binary_sha256": "41a31527990d8b1fa0be8aceaa9b1e1db4c83b13dde8738cd64d021c6e9887cc",
+  "test": "TestDriveNextPrivateFileLifecycle",
+  "identity": "user",
+  "mutation_attempts_per_command": 1,
+  "precreation_evidence": {
+    "source": "Coordinator observed account default restricted to invited members before UI personal-folder creation without collaborators; private Share dialog observed before child upload.",
+    "independent_auth_verified": true,
+    "independent_account_tenant_digest_matched": true,
+    "folder_owner_and_only_collaborator_match_current_user": true,
+    "folder_link_share_entity": "closed",
+    "permissions_changed": false
+  },
+  "passing_attempt": {
+    "local_private_evidence": ".tmp/drive-private-live/attempt-161026",
+    "test_exit": 0,
+    "upload_commands": 1,
+    "delete_commands": 1,
+    "uploaded_file_owner_and_only_collaborator_match_current_user": true,
+    "uploaded_file_link_share_entity": "closed",
+    "bytes": 4096,
+    "payload": "byte[i] = i % 251",
+    "download_exact_bytes": true,
+    "source_unchanged": true,
+    "sha256": "d67c656e01756650d77717b0839985a056ec28ffe174601d690fc407a2ceffca",
+    "cleanup_proof": {
+      "read": "drive +download on the exact returned file token",
+      "exit": 1,
+      "native_code": 1063005,
+      "native_message": "Resource is deleted"
+    },
+    "supplied_folder_preserved": true
+  },
+  "original_failure": {
+    "local_private_evidence": ".tmp/drive-private-live/attempt-160728",
+    "test_exit": 1,
+    "cause": "Metadata remained available after deletion; the metadata-only absence assertion failed.",
+    "upload_commands": 1,
+    "delete_commands": 1,
+    "replayed_mutations": 0,
+    "read_only_followup": "Exact file download returned native code 1063005, Resource is deleted; original failed test retained."
+  },
+  "aggregate_created_files": 2,
+  "aggregate_deleted_files_with_explicit_backend_proof": 2,
+  "verification": [
+    "Two focused privacy/deletion predicate units passed.",
+    "Default live selector skipped without opt-in.",
+    "Actual opt-in live selector passed after preserving the original failed attempt.",
+    "Scoped go vet ./tests/cli_e2e/drive passed.",
+    "Final folder identity/owner assertion checked against saved passing live readback; no additional mutation run required."
+  ],
+  "limits": [
+    "No large/multipart upload, overwrite, copy/move, import/export, sharing, or other Drive live acceptance claimed.",
+    "Metadata survival after deletion is not absence proof.",
+    "The native deleted response currently retains subtype unknown; test checks the exact native code and message.",
+    "Private identities, resource tokens, and raw diagnostics are kept only in ignored local evidence."
+  ]
+}
