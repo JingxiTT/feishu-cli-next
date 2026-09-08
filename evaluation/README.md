@@ -2,8 +2,9 @@
 
 The new [paired function comparison plan](paired-functions-luna-medium.md) pins
 the user-selected `gpt-5.6-luna` model with `medium` reasoning for all three arms,
-using native Codex CLI `0.153.4`. Its eight-task manifest and native-faithful
-fixtures are not yet complete; historical scenario batches are not that pilot.
+using native Codex CLI `0.153.4`. Its eight-task manifest is `tasks.paired.json`,
+selected by `run_read_batch.py --task-kind paired --model gpt-5.6-luna
+--reasoning medium`. Historical scenario batches are separate conditions.
 
 The [provisional assessment](ASSESSMENT.md) compares completed conditions, retains
 regressions and links the remaining release evidence.

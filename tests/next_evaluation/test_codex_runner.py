@@ -23,7 +23,7 @@ class CodexAccountingTests(unittest.TestCase):
             *extra])
 
     def test_all_executable_manifests_have_provider_compatible_object_schemas(self):
-        for name in ('foundation', 'contact', 'read-sections', 'scenarios', 'scaling', 'business'):
+        for name in ('foundation', 'contact', 'read-sections', 'scenarios', 'scaling', 'business', 'paired'):
             tasks = json.loads((ROOT / ('evaluation/tasks.' + name + '.json')).read_text())['tasks']
             for task in tasks:
                 with self.subTest(task=task['id']):
@@ -89,7 +89,7 @@ class CodexAccountingTests(unittest.TestCase):
             official, next_cli = root / 'official-cli', root / 'next-cli'
             official.touch()
             next_cli.touch()
-            args = ['run_read_batch.py', '--section', 'docs', '--task-kind', 'scenario',
+            args = ['run_read_batch.py', '--section', 'docs', '--task-kind', 'paired',
                     '--model', 'gpt-5.6-luna', '--reasoning', 'medium']
             values = {'official-source': source, 'official-cli': official,
                       'next-source': ROOT, 'next-cli': next_cli, 'codex': root / 'codex',

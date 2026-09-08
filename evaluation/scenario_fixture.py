@@ -10,9 +10,12 @@ from types import SimpleNamespace
 from section_fixture import SectionFixture
 
 SECTIONS = frozenset(('base', 'docs', 'drive', 'events', 'extensions', 'markdown', 'packaging', 'sheets', 'task'))
+PAIRED_SECTIONS = frozenset(('discovery', 'contact', 'docs-read', 'docs-edit', 'markdown', 'sheets', 'base', 'drive'))
 
 
 def load_scenario(section, row_count=None, case_id=None):
+    if section.startswith('paired-') and section.removeprefix('paired-') in PAIRED_SECTIONS:
+        return importlib.import_module('paired.' + section.removeprefix('paired-').replace('-', '_'))
     if section == "generated-business-v1":
         module = importlib.import_module("scenarios.generated_business")
         task = module.task(case_id)

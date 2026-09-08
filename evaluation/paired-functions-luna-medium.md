@@ -1,10 +1,10 @@
 # Paired function token comparison
 
-Status: proposed eight-task pilot with user-selected execution settings wired
-into the existing launcher. No provider trials have started for this condition.
-Validation: the isolated evaluation harness ran 234 tests, with 217 passing and
-17 optional skips. Launcher-config and fake-Codex process checks verify the
-selected model and effort without provider calls.
+Status: executable eight-task pilot. New fixtures live in `evaluation/paired/`
+and `tasks.paired.json`; the launcher selects them with `--task-kind paired`.
+Product binaries are frozen before execution. Task controls use both binaries
+against signed synthetic backends; trial results and exact frozen hashes are
+recorded separately under `evidence/paired-luna-medium-01/`.
 
 ## Fixed settings
 
@@ -37,19 +37,19 @@ the limitation that the provider model name may be an alias.
 Every arm receives identical task wording, equivalent initial state and the same
 required final result. Permit alternate command/API/file strategies.
 
-| Function | Task and independent check | Preparation still needed |
+| Function | Task and independent check | Pilot condition |
 | --- | --- | --- |
-| Discovery | Find a correct command to retrieve a user by ID | Adapt foundation discovery into this pilot |
-| Docs read | Find a specified fact with its document/block reference | Add standalone read task |
-| Docs edit | Replace a sentence while retaining bold/link and unrelated blocks | Correct simulated plain-replacement semantics against native evidence |
-| Markdown create | Create headings, links, table and code; inspect native rendering | Align conversion verifier with observed native structure |
-| Sheets export | Export exact range to artifact, retaining raw types and explicit formulas | Correct raw/formula render responses and revision consistency |
-| Base update | Update two fields; preserve other fields and rows | Use a declared representable positive case; keep empty-text rejection separate |
-| Drive transfer | Upload/download identical file bytes | Extend download-only fixture with independently checked upload/roundtrip |
-| Contact search | Find exact user and bot identities | Extend exact-ID lookup with both search workloads |
+| Discovery | Find a correct command to retrieve a user by ID | Evaluator validates returned read command after model exit |
+| Docs read | Find a specified fact with its document/block reference | Independent fact and reference proof; no synthetic block-ID side channel |
+| Docs edit | Replace a sentence while retaining bold/link and unrelated blocks | Plain replacement loses omitted styles; explicit rich content preserves them |
+| Markdown create | Create headings, links, table and code; inspect native rendering | Bounded native rich subset; actual parsed content is checked |
+| Sheets export | Export exact range to artifact, retaining raw types and explicit formulas | Separate explicit renderings, matching revisions; unverified defaults unsupported |
+| Base update | Update two fields; preserve other fields and rows | Numeric zero and explicit JSON null; all unrelated fields preserved |
+| Drive transfer | Upload/download identical file bytes | Signed 4 KiB upload/download, exact bytes, private current-account access |
+| Contact search | Find exact user and bot identities | User and bot search with exact identity corroboration |
 
-Existing manifests must not be presented as this eight-task pilot. First run
-controlled symmetric checks with both binaries and independent verifiers. The
+Historical manifests are separate from this eight-task pilot. Controlled
+checks exercise both binaries and independent verifiers before model trials. The
 [native-fidelity amendment](evidence/native-fidelity-validity-audit-20260908.md)
 explains why old Docs/Sheets/Base assumptions cannot be reused unchanged. Keep
 historical costs/verdicts intact. Do not access held-out tasks for development.
