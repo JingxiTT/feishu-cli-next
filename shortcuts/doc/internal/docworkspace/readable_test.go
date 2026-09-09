@@ -6,6 +6,7 @@ package docworkspace
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"reflect"
 	"strings"
 	"testing"
@@ -200,5 +201,55 @@ func TestReadableNestedListsRetainExplicitHierarchyAndLegacyBytes(t *testing.T) 
 	wantLegacy := "<!-- block:child -->\n> [Opaque native block type 13; preserved unchanged]\n\n<!-- block:parent -->\n> [Opaque native block type 12; preserved unchanged]\n\n"
 	if legacy := rendered(t, blocks); legacy != wantLegacy {
 		t.Fatalf("v1 editing bytes changed: %q", legacy)
+	}
+}
+
+func TestReadableRejectsUnlistedCellContent(t *testing.T) {
+	for name, children := range map[string]string{
+		"omitted": "", "empty": `,"children":[]`, "missing_one": `,"children":["left"]`,
+	} {
+		t.Run(name, func(t *testing.T) {
+			blocks := readableTableFixture()
+			blocks[1] = json.RawMessage(`{"block_id":"c1","parent_id":"table","block_type":32,"table_cell":{}` + children + `}`)
+			got, err := RenderReadable(blocks)
+			var typed *errs.InternalError
+			if got != "" || !errors.As(err, &typed) || typed.Subtype != errs.SubtypeInvalidResponse {
+				t.Fatalf("unlisted cell content must fail before empty/incomplete labels: %q %v", got, err)
+			}
+			// The v1 editing path remains independent of readable validation.
+			legacy := rendered(t, blocks)
+			if edits, err := Plan(blocks, legacy); err != nil || len(edits) != 0 {
+				t.Fatalf("legacy no-op changed: %v %v", edits, err)
+			}
+		})
+	}
+	blocks := readableTableFixture()
+	blocks[1] = json.RawMessage(`{"block_id":"c1","parent_id":"table","block_type":32,"table_cell":{}}`)
+	blocks = []json.RawMessage{blocks[0], blocks[1], blocks[2], blocks[4]}
+	if got := readView(t, blocks); !strings.Contains(got, "Empty native cell") {
+		t.Fatalf("genuinely empty cell no longer readable: %s", got)
+	}
+}
+
+func TestReadableRejectsUnlistedListQuoteChildren(t *testing.T) {
+	for kind, key := range map[int]string{12: "bullet", 13: "ordered", 15: "quote", 17: "todo"} {
+		for name, children := range map[string]string{
+			"omitted": "", "empty": `,"children":[]`, "missing_one": `,"children":["child"]`,
+		} {
+			t.Run(fmt.Sprintf("%s/%s", key, name), func(t *testing.T) {
+				parent := json.RawMessage(fmt.Sprintf(`{"block_id":"parent","block_type":%d,"%s":{"elements":[]}%s}`, kind, key, children))
+				blocks := []json.RawMessage{parent,
+					json.RawMessage(`{"block_id":"child","parent_id":"parent","block_type":2,"text":{"elements":[]}}`),
+					json.RawMessage(`{"block_id":"other","parent_id":"parent","block_type":2,"text":{"elements":[]}}`),
+				}
+				got, err := RenderReadable(blocks)
+				var typed *errs.InternalError
+				if got != "" || !errors.As(err, &typed) || typed.Subtype != errs.SubtypeInvalidResponse {
+					t.Fatalf("unlisted list/quote child must fail: %q %v", got, err)
+				}
+				blocks[0] = json.RawMessage(fmt.Sprintf(`{"block_id":"parent","block_type":%d,"%s":{"elements":[]},"children":["child","other"]}`, kind, key))
+				readView(t, blocks)
+			})
+		}
 	}
 }

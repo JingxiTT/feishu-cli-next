@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"html"
+	"slices"
 	"strconv"
 	"strings"
 	"unicode/utf8"
@@ -212,6 +213,19 @@ func readableStructure(rawBlocks []json.RawMessage) ([]readableBlock, map[string
 	for _, node := range nodes {
 		if node.Type == 32 && cellOwners[node.ID] == "" {
 			return nil, nil, malformedNative("native table cell %s has no containing table", node.ID)
+		}
+		// Forward edges alone cannot justify an empty or complete container:
+		// a child may name that parent while being absent from its child list.
+		parent := byID[node.Parent]
+		switch parent.Type {
+		case 31:
+			if cellOwners[node.ID] != parent.ID {
+				return nil, nil, malformedNative("native table %s does not list child %s", parent.ID, node.ID)
+			}
+		case 12, 13, 15, 17, 32:
+			if !slices.Contains(parent.Children, node.ID) {
+				return nil, nil, malformedNative("native container %s does not list child %s", parent.ID, node.ID)
+			}
 		}
 	}
 	for id, context := range contexts {
