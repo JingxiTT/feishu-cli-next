@@ -1,0 +1,130 @@
+{
+  "schema": "token-efficiency-result-review/v1",
+  "condition": "token-efficiency-09",
+  "reviewed_at_utc": "2026-09-09T08:36:30.937033+00:00",
+  "decision": "accepted",
+  "verdict": "The report correctly records the target as not met: zero task gates met, two missed and one unavailable.",
+  "source_sha256": {
+    "environment.json": "33824b79182c951b09b0245c06dd835e3c79524d8f49b05e585e66f2cbad90e1",
+    "readiness-review.json": "925afcdaeef0c739a98607a4eccfd128e4e6d884123677d40c93f17df7b8edd2",
+    "docs/batch-01.json": "b22c8eacc92df673ad610afc240a2d2f93b7cf0e7677797c5ba8dfc878c8b768",
+    "summary.json": "391c983b4debbf3d7ad21d217910ff6aebb2a1bb25948f84a20b009e4e6bb7bd",
+    "REPORT.md": "0324e21c072e8be4f9726df3ccb25bd75666fd8807729e2e0bfe28cf30ab5517"
+  },
+  "candidate_revision": "cad221ec4fc453d749ed42ac86a3ebd3c90005b3",
+  "evaluator_revision": "b28354fca58a285d64e769cad4c3554adbc91ae2",
+  "report_generator_sha256": "031964eb0014259c8019d2f13141c222e56671df458f050753e338ec13de67d1",
+  "execution_evidence_sha256": "66edc35947c8dcd7535704c8b72e8d805a55635f96f0c166d92a3912fe5f1a49",
+  "verification": {
+    "frozen_provenance_and_all_extracted_archive_files_verified": true,
+    "exact_seeded_schedule_verified": true,
+    "unique_attempts": 18,
+    "tasks": 3,
+    "arms": 2,
+    "repetitions_per_task_arm": 3,
+    "historical_or_replacement_batches": 0,
+    "summary_recomputed_matches": true,
+    "rendered_report_matches": true,
+    "all_usage_complete": true,
+    "all_input_plus_output_identities_verified": true,
+    "cached_input_counted_once_in_full": true,
+    "verified_successes": 17,
+    "next_verified_successes": 9,
+    "original_verified_successes": 8,
+    "inconclusive_outcomes": 1,
+    "failed_verifications": 0,
+    "usage": {
+      "input_tokens": 887153,
+      "output_tokens": 14533,
+      "cached_input_tokens": 550144,
+      "total_tokens": 901686
+    },
+    "nonverified_tokens_retained": 185209
+  },
+  "per_task_independent_arithmetic": [
+    {
+      "task_id": "docs-hard-focused-read",
+      "arms": {
+        "official": {
+          "attempts": 3,
+          "successes": 3,
+          "inconclusive": 0,
+          "tokens": 109889
+        },
+        "next": {
+          "attempts": 3,
+          "successes": 3,
+          "inconclusive": 0,
+          "tokens": 75673
+        }
+      },
+      "token_comparison_available": true,
+      "saving_fraction": 0.31136874482432275,
+      "observed_success_nonregression": true,
+      "strict_greater_than_50_target": false,
+      "gate": "missed"
+    },
+    {
+      "task_id": "docs-hard-multi-edit",
+      "arms": {
+        "official": {
+          "attempts": 3,
+          "successes": 2,
+          "inconclusive": 1,
+          "tokens": 366655
+        },
+        "next": {
+          "attempts": 3,
+          "successes": 3,
+          "inconclusive": 0,
+          "tokens": 162109
+        }
+      },
+      "token_comparison_available": false,
+      "saving_fraction": null,
+      "observed_success_nonregression": true,
+      "strict_greater_than_50_target": null,
+      "gate": "unavailable"
+    },
+    {
+      "task_id": "docs-hard-rich-read",
+      "arms": {
+        "official": {
+          "attempts": 3,
+          "successes": 3,
+          "inconclusive": 0,
+          "tokens": 115765
+        },
+        "next": {
+          "attempts": 3,
+          "successes": 3,
+          "inconclusive": 0,
+          "tokens": 71595
+        }
+      },
+      "token_comparison_available": true,
+      "saving_fraction": 0.3815488273657842,
+      "observed_success_nonregression": true,
+      "strict_greater_than_50_target": false,
+      "gate": "missed"
+    }
+  ],
+  "inconclusive_limit": {
+    "task_id": "docs-hard-multi-edit",
+    "arm": "official",
+    "trial": 0,
+    "retained_reasons": [
+      "request_outside_fixture",
+      "unsupported_xml_fragment"
+    ],
+    "token_comparison": "unavailable; no mean-attempt or matched-success substitute",
+    "cause": "Only the retained unsupported_xml_fragment label is known. Discarded raw XML and exact native error cannot be reconstructed; no product defect attribution or reclassification was made."
+  },
+  "limitations": [
+    "Three repetitions on a new fixed development cohort do not establish statistical success parity or population token savings.",
+    "Two read comparisons show savings of 38.2 percent and 31.1 percent; both miss the strict greater-than-50-percent target.",
+    "The multi-edit mean-attempt reduction is secondary and does not satisfy an unavailable primary comparison.",
+    "No historical results, original baselines or native/product validation costs enter the model comparison."
+  ],
+  "review_execution": "Read-only frozen-source and batch validation, independent arithmetic and retained artifact inspection only. No model/live calls, control reruns or historical modifications."
+}
