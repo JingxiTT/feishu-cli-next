@@ -20,7 +20,8 @@ Use a readable local view for document facts or wording changes while keeping na
 
 ### Tips
 - Read stdout directly for small fact questions. Save a workspace when local editing or a file is needed; keep the Markdown file and its native sidecar together.
-- Unsupported rich blocks remain visible as immutable regions. Use [[+fetch]] for their full native content, comments and reference maps.
+- Read-only stdout also exposes supported list, code, quote, task and table/cell content; saved v1 editing views keep their stable projection. Unsupported rich blocks remain visible as immutable regions. Use [[+fetch]] for their full native content, comments and reference maps.
+- Use keyword scope for a literal, case-insensitive block-local match, or outline/section/range for native block selection. Bounded reads fetch a complete snapshot internally; `complete=false` means an excerpt, not a whole-document answer. Saved working copies require full scope.
 - Existing Markdown marks and block anchors identify the original native content; changing them is not a supported text edit.
 
 ### Skills

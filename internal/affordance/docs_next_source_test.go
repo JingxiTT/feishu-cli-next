@@ -91,7 +91,7 @@ func TestDocsWorkspaceGuidancePreservesNativeBoundaries(t *testing.T) {
 	t.Cleanup(func() { SetSource(previous) })
 	SetSource(os.DirFS("../../affordance"))
 	for command, decisions := range map[string][]string{
-		"+pull": {"Read stdout directly", "native sidecar", "immutable regions", "full native content"},
+		"+pull": {"Read stdout directly", "native sidecar", "immutable regions", "full native content", "literal, case-insensitive block-local match", "complete=false", "Saved working copies require full scope", "saved v1 editing views"},
 		"+push": {"Ambiguous edits across text runs are rejected before writing", "verifies applied changes internally", "partial or unknown effects"},
 	} {
 		raw, ok := For("docs", command)
