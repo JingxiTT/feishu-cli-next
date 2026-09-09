@@ -6,6 +6,7 @@ package doc
 import (
 	"encoding/json"
 	"errors"
+	"os"
 	"strings"
 	"testing"
 
@@ -32,6 +33,35 @@ func TestDocsPullSelectionCoverageAndNoWrites(t *testing.T) {
 	}
 	if reply.Data.Complete || reply.Data.Returned != 1 || reply.Data.Total != 4 || !strings.Contains(reply.Data.Markdown, "block:p2") || strings.Contains(reply.Data.Markdown, "block:p1") || s.patches != 0 {
 		t.Fatalf("bad selection: %s writes=%d", out.String(), s.patches)
+	}
+}
+
+func TestDocsPushMultipleRunNativeReadback(t *testing.T) {
+	f, reg, out := workspaceFactory(t)
+	s := &workspaceServer{revision: 3, blocks: workspaceBlocks()}
+	s.mount(t, reg)
+	md := workspaceMarkdown(t, s.blocks)
+	edited := strings.Replace(strings.Replace(md, "Old 中文", "New 中文", 1), " rest", " remainder", 1)
+	workspaceSave(t, f, s.blocks, edited)
+	if err := workspaceRun(t, DocsPush, f, out, "+push", "--file", "note.md"); err != nil {
+		t.Fatal(err)
+	}
+	var reply struct {
+		Data struct {
+			Verified bool `json:"verified"`
+		} `json:"data"`
+	}
+	if err := json.Unmarshal(out.Bytes(), &reply); err != nil {
+		t.Fatal(err)
+	}
+	if s.patches != 1 || !reply.Data.Verified || !strings.Contains(out.String(), "New 中文 remainder") {
+		t.Fatalf("push=%s patches=%d", out.String(), s.patches)
+	}
+	if !strings.Contains(string(s.blocks[1]), `"bold":true`) || !strings.Contains(string(s.blocks[1]), `"url":"https://example.org"`) {
+		t.Fatalf("native style/link lost: %s", s.blocks[1])
+	}
+	if raw, err := os.ReadFile("note.md"); err != nil || string(raw) != edited {
+		t.Fatalf("local edit changed: %v", err)
 	}
 }
 
