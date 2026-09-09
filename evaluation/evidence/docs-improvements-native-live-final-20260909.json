@@ -1,0 +1,114 @@
+{
+  "schema": "feishu-cli-next/private-native-evidence/v1",
+  "tested_at_utc": "2026-09-09T08:07:45.781554+00:00",
+  "status": "passed",
+  "scope": "Fresh final-candidate private rich Docs reads, focused native Markdown reads and multi styled-run text edits; no model calls",
+  "privacy": {
+    "new_current_user_documents_only": true,
+    "account_matches_existing_digest": true,
+    "before_content_checks": "closed links, sole current owner/member, owner metadata",
+    "no_messages_sharing_or_invitations": true,
+    "raw_private_identifiers_and_logs": "ignored local artifacts only",
+    "created_documents_total": 1,
+    "all_created_documents_deleted": true
+  },
+  "original_binary_sha256": "5e1f582ec5ab9c86d3618fc17bd099b3443d40fe8691fed07d42e83a351ba977",
+  "attempts": [
+    {
+      "source_revision": "cad221ec4fc453d749ed42ac86a3ebd3c90005b3",
+      "candidate_binary_sha256": "c42d5467e084a84a73780c0c8e9714dfe427d32f49fa9bba8793085f528aed42",
+      "source_archive_sha256": "576fb23430284244fcb5d991093ff7fb6212d0149e9df0430a7e7b8d3cbf6731",
+      "passed": true,
+      "checks": {
+        "bound_current_user": true,
+        "closed_links_sole_owner_before_content": true,
+        "multi_run_dry_run_no_observed_mutation": true,
+        "multi_run_push_internal_verified": true,
+        "original_binary_exact_text_styles_links_ids_other_blocks": true,
+        "rich_readable_facts_and_all_native_anchors": true,
+        "saved_v1_noop_preserves_native_state": true,
+        "scoped_read_coverage_and_completeness": true,
+        "unsupported_format_rejected_without_observed_mutation": true
+      },
+      "created_documents": 1,
+      "cleanup_confirmed": true,
+      "command_invocations": 37,
+      "seconds": 37.41,
+      "harness_sha256": "ed5047a2277cedec7ef2889954c61b687842ec540a76442e3e19eab5621fc22d",
+      "artifact_manifest_sha256": "e90c4dcf1888513ab293acb62f897197130982e32bd003971e599b763ba211d9",
+      "artifacts_verified": 46
+    }
+  ],
+  "limits": [
+    "Native check/read/write is not atomic compare-and-swap.",
+    "Small user-identity fixture; no bot, Wiki or large pagination coverage.",
+    "Table text and native context are checked without inferring merge geometry.",
+    "No observed mutation means absent receipts and unchanged complete native state/revision, not transport tracing.",
+    "No token savings or broad original-functionality parity claim.",
+    "The native quote fixture was a quote container (type34) with readable child text; no claim of native type15 quote coverage."
+  ],
+  "observed": {
+    "native_blocks": 24,
+    "block_type_counts": {
+      "1": 1,
+      "12": 2,
+      "13": 2,
+      "17": 1,
+      "2": 9,
+      "3": 1,
+      "31": 1,
+      "32": 4,
+      "34": 1,
+      "4": 2
+    },
+    "scopes": {
+      "full": {
+        "scope": "full",
+        "complete": true,
+        "returned_blocks": 24,
+        "total_blocks": 24
+      },
+      "outline": {
+        "scope": "outline",
+        "complete": false,
+        "returned_blocks": 3,
+        "total_blocks": 24
+      },
+      "keyword": {
+        "scope": "keyword",
+        "complete": false,
+        "returned_blocks": 1,
+        "total_blocks": 24
+      },
+      "section": {
+        "scope": "section",
+        "complete": false,
+        "returned_blocks": 19,
+        "total_blocks": 24
+      },
+      "range": {
+        "scope": "range",
+        "complete": false,
+        "returned_blocks": 2,
+        "total_blocks": 24
+      }
+    },
+    "edited_blocks": 2,
+    "edited_text_runs": 3,
+    "styled_runs_in_one_paragraph": 2,
+    "styles_exercised": [
+      "bold with link",
+      "italic"
+    ],
+    "independent_original_full_json_comparison": "Only the three planned text_run.content replacements changed. All element styles, links, other fields, native IDs, block order and remaining blocks matched exactly.",
+    "revision_advanced": true,
+    "cleanup_native_code": 1770003,
+    "postrun_binary_and_archive_hashes_unchanged": true
+  },
+  "previous_evidence": {
+    "path": "docs-improvements-native-live-20260909.json",
+    "sha256": "d1aa97db5286f6a6191c36c0388b6565dbabe8798879b026799ae0fd3387c70c",
+    "source_revision": "be63cfb4c900f9331c451e4e14b6517de1b83336",
+    "relationship": "Earlier candidate lifecycle retained unchanged; its calls/checks are not counted as this fresh final-candidate run."
+  }
+}
