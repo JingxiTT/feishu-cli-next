@@ -12,7 +12,7 @@ The goal is to reduce the tokens needed to complete a task while preserving ever
 | --- | --- |
 | Command discovery | Search registered commands with bounded results; optional flag descriptions expose accepted inputs without a separate help lookup. |
 | Compact JSON | Full JSON data in compact form by default; optional indentation and field selection. |
-| Local Docs editing | Pull readable Markdown with native block IDs, edit supported text locally, then push targeted native changes with verified text results. |
+| Docs reads and local edits | Read native text and table relationships, select focused excerpts, or save a compatible working copy for verified text edits across unambiguous formatting boundaries. |
 | File artifacts | Save supported read results to versioned, identity-bound files for local processing and handoff. |
 | Typed data workflows | Sheets export/import and Base record workflows with validation, type preservation, and operation-specific no-op detection. |
 | Mutation evidence | Durable local receipts distinguish rejected, partial, and unknown outcomes without replaying writes. The exact raw Contact basic-profile POST read retains read-only behavior. |
@@ -82,6 +82,19 @@ Use a known command directly. Help, discovery, and schema inspection are availab
 
 Replace resource placeholders with your own IDs. Discovery describes the local command surface; access still depends on the selected account and scopes. Shortcuts start with `+`; generated service commands expose catalog methods, and `api` provides raw OpenAPI access.
 
+### Read focused Docs content
+
+Without `--output`, `docs +pull` returns a read-only Markdown view with native anchors, readable lists, tasks, code, quotes, deeper headings and table/cell relationships. Unsupported content stays visibly labeled. Tables retain native cell order and content links; the CLI does not invent coordinates or merged-cell geometry. Contradictory table/list parent-child relationships are rejected before output.
+
+```sh
+./feishu-cli-next docs +pull --doc DOCUMENT_TOKEN --scope keyword --keyword 'budget' --as user
+./feishu-cli-next docs +pull --doc DOCUMENT_TOKEN --scope outline --as user
+./feishu-cli-next docs +pull --doc DOCUMENT_TOKEN --scope section --start-block-id HEADING_ID --as user
+./feishu-cli-next docs +pull --doc DOCUMENT_TOKEN --scope range --start-block-id FIRST_ID --end-block-id LAST_ID --as user
+```
+
+Keyword search is literal, case-insensitive and confined to individual native text blocks. Sections end before the next heading of equal or higher level; range bounds are inclusive. Selection runs locally after reading the complete native snapshot. Check `returned_blocks`, `total_blocks` and `complete`; a complete block selection does not make opaque content readable. A missing keyword match does not prove absence from opaque content. Scoped results cannot be saved as editable working copies. Existing server-scoped `docs +fetch` remains available.
+
 ### Edit Docs through a local working copy
 
 ```sh
@@ -91,11 +104,11 @@ Replace resource placeholders with your own IDs. Discovery describes the local c
 ./feishu-cli-next docs +push --file note.md --as user
 ```
 
-Pull creates `note.md` and its identity-bound `note.md.feishu.json` native sidecar without overwriting either file. Keep them together. Push validates the entire local edit plan, checks current native state, and changes supported paragraph and heading text while preserving its existing styles and link destinations. Its compact result includes `verified` and complete `changed_blocks` texts with native IDs. An unchanged working copy produces no content write. Pull to a fresh path before making further edits after a push.
+Pull with `--output` requires full scope and preserves the original v1 editing projection, including opaque unsupported regions. It creates `note.md` and its identity-bound `note.md.feishu.json` native sidecar without overwriting either file. Existing saved workspaces remain compatible; keep both files together. Push validates the entire local edit plan, checks current native state, and changes supported paragraph and heading text while preserving its existing styles and link destinations. Multiple native text runs can change when unchanged formatting uniquely separates them; adjacent unmarked runs or ambiguous boundaries are rejected rather than assigned guessed styles. Its compact result includes `verified` and complete `changed_blocks` texts with native IDs. An unchanged working copy produces no content write. Pull to a fresh path before making further edits after a push.
 
 This is a text-editing workflow, not a universal Markdown round trip. Unsupported structural or formatting changes stop before writing. Existing `docs +fetch`, `docs +update`, native block operations, media commands and Drive import remain available for rich documents and other original workflows. See the [local Docs guide](skills/lark-doc/references/lark-doc-workspace.md).
 
-Snapshot checks detect observed conflicts but cannot close the race with a concurrent writer; the native revision parameter is not compare-and-swap. Unknown or partial outcomes require reconciliation, not a blind push retry. A [private native lifecycle](evaluation/evidence/docs-workspace-native-live-20260909.json) verified two text edits, bold/link/Unicode preservation and an untouched table through independent original-CLI readback. That bounded test does not establish every rich-document or concurrency case.
+Snapshot checks detect observed conflicts but cannot close the race with a concurrent writer; the native revision parameter is not compare-and-swap. Unknown or partial outcomes require reconciliation, not a blind push retry. The [final private native lifecycle](evaluation/evidence/docs-improvements-native-live-final-20260909.json) passed nine checks on candidate `cad221e`: rich/focused reads, compatible saved-view no-op, and three text-run edits across two blocks with exact original-CLI comparison of styles, links, IDs and remaining native content. Its one run-owned private document was confirmed deleted. This bounded native test does not measure token savings or establish every rich-document or concurrency case.
 
 ### Results and recovery
 
@@ -109,11 +122,27 @@ Snapshot checks detect observed conflicts but cannot close the race with a concu
 
 Those guides are not all injected by installing the entry skill. They can still influence an agent and consume context when it reads them on demand. The evaluation includes that work; Next did call `skills read` in some trials. Upstream examples use `lark-cli`; use `feishu-cli-next` with this distribution.
 
-## Latest evaluation
+## Evaluation results
 
-**[Read condition 08 →](evaluation/evidence/token-efficiency-08/REPORT.md)**
+**[Latest condition 09: harder Docs workloads →](evaluation/evidence/token-efficiency-09/REPORT.md)**
 
-Condition 08 verified **12/12 attempts: original 6/6 and Next 6/6**, using **GPT-5.6 Luna with medium reasoning through native Codex CLI 0.153.4**. The strict per-function target remains **unmet**: Docs edit passed, Docs read missed, and the declared stop rule left **36 attempts across six other functions not run**.
+Condition 09 completed **18 fresh attempts: Next 9/9 verified, original 8/9 verified and one inconclusive**. It used **GPT-5.6 Luna with medium reasoning through native Codex CLI 0.153.4**, comparing candidate `cad221e` against the original CLI. The strict **>50% saving per task remains unmet: zero gates met, two missed and one unavailable**.
+
+| Task | Tokens per verified success vs original | Original verified/attempts | Next verified/attempts | Gate |
+| --- | ---: | ---: | ---: | --- |
+| Read tables and lists | 38.2% less | 3/3 | 3/3 | Missed |
+| Focused retrieval from a larger document | 31.1% less | 3/3 | 3/3 | Missed |
+| Multiple styled wording edits | Unavailable | 2/3; one inconclusive | 3/3 | Unavailable |
+
+All provider usage was complete: **901,686 tokens**, including **185,209** from the inconclusive original editing attempt. Its strategy exceeded the fixture's supported coverage; the missing comparison is not scored as a product failure or a zero-cost success. All attempt and recovery costs remain included. Both arms read full selected guidance from files inside the measured loop.
+
+These are three harder Docs tasks with three repetitions per arm; no other functions were measured. They differ from condition 08's tasks, so its historical **56.8% combined Docs saving** is not a direct before/after comparison with this candidate. The observed counts do not establish statistical success parity, stable savings or exhaustive live functionality. Native lifecycle checks remain separate evidence. [Protocol](evaluation/token-efficiency-09.md) · [Exact results and accounting](evaluation/evidence/token-efficiency-09/summary.json).
+
+### Historical condition 08
+
+**[Historical condition 08 →](evaluation/evidence/token-efficiency-08/REPORT.md)**
+
+Historical condition 08 verified **12/12 attempts: original 6/6 and Next 6/6**, using **GPT-5.6 Luna with medium reasoning through native Codex CLI 0.153.4**. The strict per-function target remains **unmet**: Docs edit passed, Docs read missed, and the declared stop rule left **36 attempts across six other functions not run**.
 
 | Function | Tokens per verified success vs original | Original verified/attempts | Next verified/attempts | Gate |
 | --- | ---: | ---: | ---: | --- |
