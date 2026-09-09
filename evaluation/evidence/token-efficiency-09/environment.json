@@ -1,0 +1,140 @@
+{
+  "schema_version": 1,
+  "model": "gpt-5.6-luna",
+  "reasoning": "medium",
+  "codex_version": "codex-cli 0.153.4",
+  "codex_sha256": "b973d440acac501fd2594a43e7ca9ce41e0a65b9dfb28d0d7a7837c99e1261e3",
+  "official_revision": "7fd6ef3c07182257ce776cdc5a614e122d5bd4b3",
+  "official_binary_sha256": "5e1f582ec5ab9c86d3618fc17bd099b3443d40fe8691fed07d42e83a351ba977",
+  "api_catalog_sha256": "b5375251ff1f0a5939925587b0d514669a748135cde36c56f1c8ab5f5fe266c8",
+  "repeats_per_task_arm": 3,
+  "agent_seconds": 180,
+  "outer_seconds": 210,
+  "provider_alias_limitation": "No immutable provider model snapshot reported; same explicitly requested alias for every arm.",
+  "native_skill_isolation_evidence_sha256": "9bec5e1877e429eb2d8f3180f2009ec9ca84fea0a51c5602749728510c5a1dc8",
+  "condition": "token-efficiency-09",
+  "cohort": "docs-hard-v1",
+  "task_kind": "docs-hard",
+  "comparison_arms": [
+    "official",
+    "next"
+  ],
+  "planned_attempts": 18,
+  "seed": 20260909,
+  "guidance_delivery": "file",
+  "execution_design": "All18 fresh attempts; no performance-based early stop",
+  "baseline_trials_reused": false,
+  "historical_pooling": false,
+  "candidate_revision": "cad221ec4fc453d749ed42ac86a3ebd3c90005b3",
+  "candidate_binary_sha256": "c42d5467e084a84a73780c0c8e9714dfe427d32f49fa9bba8793085f528aed42",
+  "candidate_archive_sha256": "576fb23430284244fcb5d991093ff7fb6212d0149e9df0430a7e7b8d3cbf6731",
+  "candidate_guidance": {
+    "SKILL.md": "025816ca2986943dcc4a94c232759ec2a454ec003c517785437639fbbea84bcc"
+  },
+  "official_guidance_tree_sha256": "efe738218a2b74b19669b02c8491c4dc35c7d057a45eaf3ff5a676b17b5e073e",
+  "candidate_inherited_guidance_tree_sha256": "5b40b1b847e2a376dc8f3b7a4c1cddaebcd772691b112f4f9f69c4dc6d7f2f2b",
+  "candidate_inherited_guidance_delta": {
+    "lark-contact/SKILL.md": {
+      "original": "79041173aad9df428f51adc0435a9bdec2b45366b2003447c18af1ea1f55e7b6",
+      "candidate": "dca2d96e63180f29541a16ab1b4fb15cdc9e5d4c9a39a75c873aa418f2fd835e"
+    },
+    "lark-contact/references/lark-contact-get-user.md": {
+      "original": "24ba2fbd92ec33ebf04de44a6bb10ee9af91e5808aa8d1898486d332da2c5b6e",
+      "candidate": "4519cd3bba33bd8452a7564ec842539892d55ccca1f82ff32080695f24004e60"
+    },
+    "lark-doc/SKILL.md": {
+      "original": "1c2aa910831a117b6ef4484469a3456775cef26a00beb8b38f470ee74654fb96",
+      "candidate": "f5aec1603529d8171540bb4f0c57a2597499bcdaa56b150768f2d0315a719357"
+    },
+    "lark-doc/references/lark-doc-workspace.md": {
+      "original": null,
+      "candidate": "f9addd66de1e5e06ee3736bf612fb7afa1773a467ea32d3667535116d92bf67d"
+    }
+  },
+  "original_docs_entry_sha256": "1c2aa910831a117b6ef4484469a3456775cef26a00beb8b38f470ee74654fb96",
+  "candidate_build": {
+    "command": [
+      "make",
+      "build",
+      "BINARY=candidate-cli",
+      "VERSION=cad221e"
+    ],
+    "environment": {
+      "GOFLAGS": "-tags=authsidecar"
+    }
+  },
+  "evaluator_revision": "b28354fca58a285d64e769cad4c3554adbc91ae2",
+  "evaluator_archive_sha256": "1a470c04dc073e2a55cd0bc8555ee55dd7442196f2b398685a69abd4fe183b93",
+  "task_manifest_sha256": "ebe1906d6fa6bd079824ac5714406c2a839254e0bd10980a77916423e8d1cb04",
+  "protocol_sha256": "012ee7c5ee5c8ef118e5e5ea924a7f64d890dc7280158977855fe127e8429118",
+  "fixture_inputs": {
+    "docs-hard-rich-read": {
+      "native_block_count": 26,
+      "native_xml_utf8_bytes": 965,
+      "plain_text_utf8_bytes": 138,
+      "initial_state_sha256": "0c3aea8b8d69bc93054fbd8171ca716ee65c51b52f8f16b06922bea29c9bc106"
+    },
+    "docs-hard-focused-read": {
+      "native_block_count": 181,
+      "native_xml_utf8_bytes": 28389,
+      "plain_text_utf8_bytes": 22905,
+      "initial_state_sha256": "f90537035e2bf08b0abec6a0d54083ccdfaf90bf5ba1eb4e99c2e72dc2706aa8"
+    },
+    "docs-hard-multi-edit": {
+      "native_block_count": 28,
+      "native_xml_utf8_bytes": 1144,
+      "plain_text_utf8_bytes": 212,
+      "initial_state_sha256": "9db256884142f86a242e96e32de44d19a73526b1fd0f2e71667565e87706d964"
+    }
+  },
+  "schema_preflight": {
+    "selected_tasks_checked": 3,
+    "registry_loaded": true
+  },
+  "primary_target": "Each harder Docs task strictly >50% fewer all-attempt tokens per verified success versus original/full, with observed success nonregression",
+  "secondary_comparison": "Mean cost per attempt and matched successes are diagnostics, not primary-gate substitutes",
+  "task_delta": "New harder cohort: table/list reading, focused larger-document retrieval and three styled wording edits; historical fixed tasks and outcomes unchanged",
+  "comparison_limitations": "Three repetitions on new fixed development tasks; no cross-cohort improvement percentage, stable-population claim, large-size curve or live-parity claim",
+  "fixture_source_limits": "Table/cell shape reuses prior native-checked contract; list projections are source-backed synthetic, not newly live-observed. Ordinary alternatives require both-binary controls before GO.",
+  "execution_sources_sha256": {
+    "evaluation/codex_runner.py": "d4407a1a7976fa4c6aa238920301c3a70eafff4a9e049a0b9e51ecd790ddcdb2",
+    "evaluation/contact_verifier.py": "ccef258755042190a9227be165111722d8a23a7b3b9d9a7d4a9baf670b71fe9e",
+    "evaluation/foundation_verifier.py": "51a3337b8c3517a20956f6550dda62fd56673a9259cf95ebc79b7b33996c0857",
+    "evaluation/harness.py": "c8704b93928ca25215bd5a855de664885143838770c54ae710e36c369e4fa355",
+    "evaluation/paired/__init__.py": "9b588cfbd2371513ca8233005743b0f43ebce0fba6ccd2c43ede3f5022f1a3d6",
+    "evaluation/paired/base.py": "f78930c34e9e132fad608b8db71d91c883b33589eedcfa90cf68d5daa7a7f95b",
+    "evaluation/paired/contact.py": "ebe6a7c3e3f87a1f6eb3245d20b0f614405eeb04d0cfe73d43b5d7b97abeebdb",
+    "evaluation/paired/discovery.py": "61c10aef414e1f1d97c054fe6f34a7c6ffc5353035d51527cd11b317914e20ff",
+    "evaluation/paired/docs_edit.py": "a97a5df273832820a24c0e297c395710077a6ad2890512a9a877055b1112556f",
+    "evaluation/paired/docs_hard_v1.py": "7a7b6364b13b5804dc237296f6962496958dc6d7496d3a521d37923d32d251cc",
+    "evaluation/paired/docs_read.py": "3e49e6e2392ea87dd66650d380591e7c5a6d28ce5e4bb1883925339abd7e27dd",
+    "evaluation/paired/docs_revision.py": "858db6cd278ffcc3e2ed5908fd40c8aa15872d7863199e1a1db6d90295360ec1",
+    "evaluation/paired/drive.py": "6322004558f6ca1f1f56447efde0e6dc5ba679534c57854d25a465da27725e9d",
+    "evaluation/paired/markdown.py": "1f6dfdc4dfaa7e2a8b93e3810e17f42c87925ee5e3649f3985aa5054052a757d",
+    "evaluation/paired/sheets.py": "7afd79f99d5e3fb90eda3286f99875a4864a2e05acba965b46db9e3345bc3c5b",
+    "evaluation/plot_scaling.py": "c9456df0a75ecf692f166c210a30295eaaee142cefcc216e8f6bcaef708f6eb1",
+    "evaluation/read_fixture.py": "593f76bb0f293495d0348afb7cc6f5bac7890b541ba948a14405305b5c25225d",
+    "evaluation/read_verifier.py": "4a799c6d8ac9554c2f7094d5c175902e3161cfc11553892679cb9fc77a5fabc2",
+    "evaluation/run_read_batch.py": "eed91e18d66153d5eeb2ee69e426201dc6fe309e113905dc861d40ef3cdc97f5",
+    "evaluation/scaling/base.py": "10f8d05c3c0a2f54131981271a02bee795b0f6d6ed2be3765e9eb492b3f7b0a3",
+    "evaluation/scaling/sheets.py": "22d2cae1fb3c0e81780b1cecb86ea3f082e6664f4b3ca68c2edbd3d81fb48c43",
+    "evaluation/scenario_fixture.py": "c7b010982e395066710d4e1b5f554c5bef9fce2e511fd877fdcad08ae53be1aa",
+    "evaluation/scenario_protocol.py": "9fe7842451457ced8073c11d134c5cc3ec968257f6aa419ebe1f125eeab1adaa",
+    "evaluation/scenario_verifier.py": "88538027a72aa2ee5ddabbb63097ea7f6ba1bc39339e77e0ba3c2590948c10c8",
+    "evaluation/scenarios/base.py": "ef6ca2a96002098b4ede7f5f7c12bfbb0ba718a6fe7877d5d10008d70f69dab4",
+    "evaluation/scenarios/docs.py": "32fdcd8d1616a05d4192701cb84133fd306c136cd49244a9f9c52761a3f8db8b",
+    "evaluation/scenarios/drive.py": "9b368f3fac67a49e0ec1694a326017c17dfb3895726d65773a3dbb4fec517208",
+    "evaluation/scenarios/events.py": "fabf03e228c533acb303f3baa2906bb0851eb376c2e1fa1a784af00412993ac6",
+    "evaluation/scenarios/extensions.py": "f35b8499eb5af253f2b2d99c29006d2afafbe9757e130d254fc995f19bc08630",
+    "evaluation/scenarios/generated_business.py": "f94ef38fb7d42c5e49e58c52c049ee0b00d8fdd02871aaba05515d72493d39b9",
+    "evaluation/scenarios/markdown.py": "221086f79a69749398c792b134d4e6a32b32c638129b78a6081769417d64ced0",
+    "evaluation/scenarios/packaging.py": "cab8b02b7458c55d32f6663ea448973b071d090108cd50936e8bf837c9c251b4",
+    "evaluation/scenarios/sheets.py": "9a0ab225117803c1f532b6d87f5320bf126d620ac77df8d32dd8ec8a1029a032",
+    "evaluation/scenarios/task.py": "08c615f7e011b32fb61fe94476593f6af10b9e97e098e40fc30b159561ff4192",
+    "evaluation/section_fixture.py": "6a671879d3cbe0648c28819b813ede9d706ab5ad2327414bd72ef3f202b40656"
+  },
+  "launcher_sha256": "f5c6630736088d33d8b29bf784f656ff1756783ae6817b73216d968ac550a33e",
+  "report_generator_sha256": "031964eb0014259c8019d2f13141c222e56671df458f050753e338ec13de67d1",
+  "preparation_script_sha256": "9df04d1c12f69ac4f7cec36df4be91919c94ff71b484c3146e2b002b360aae35",
+  "launch_arguments_sha256": "f622a2195f6ca6b2855f924c128f2996edf37b0237967f6c6af53543a2bf42b3"
+}
