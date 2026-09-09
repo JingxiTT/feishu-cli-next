@@ -65,6 +65,28 @@ func TestDocsPushMultipleRunNativeReadback(t *testing.T) {
 	}
 }
 
+func TestDocsPullReadableStdoutKeepsSavedV1View(t *testing.T) {
+	f, reg, out := workspaceFactory(t)
+	blocks := workspaceBlocks()
+	blocks[0] = json.RawMessage(`{"block_id":"doc1","block_type":1,"children":["p1","p2","image","bullet"],"page":{"elements":[]}}`)
+	blocks = append(blocks, json.RawMessage(`{"block_id":"bullet","parent_id":"doc1","block_type":12,"bullet":{"elements":[{"text_run":{"content":"Launch Friday"}}]}}`))
+	s := &workspaceServer{revision: 3, blocks: blocks}
+	s.mount(t, reg)
+	if err := workspaceRun(t, DocsPull, f, out, "+pull", "--doc", "doc1", "--scope", "keyword", "--keyword", "launch"); err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(out.String(), "Launch Friday") || !strings.Contains(out.String(), "block:bullet") {
+		t.Fatalf("readable text absent: %s", out)
+	}
+	if err := workspaceRun(t, DocsPull, f, out, "+pull", "--doc", "doc1", "--output", "legacy.md"); err != nil {
+		t.Fatal(err)
+	}
+	raw, err := os.ReadFile("legacy.md")
+	if err != nil || string(raw) != workspaceMarkdown(t, blocks) || strings.Contains(string(raw), "Launch Friday") {
+		t.Fatalf("saved v1 projection changed: %s %v", raw, err)
+	}
+}
+
 func TestDocsPullRejectsPartialWorkspaceBeforeRead(t *testing.T) {
 	for _, args := range [][]string{
 		{"--scope", "keyword", "--keyword", "Second", "--output", "note.md"},

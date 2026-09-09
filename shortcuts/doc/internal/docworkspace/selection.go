@@ -52,7 +52,7 @@ func Select(blocks []json.RawMessage, s Selection) (string, int, error) {
 	if err := s.Validate(); err != nil {
 		return "", 0, err
 	}
-	projected, err := project(blocks)
+	projected, err := projectReadable(blocks)
 	if err != nil {
 		return "", 0, err
 	}
