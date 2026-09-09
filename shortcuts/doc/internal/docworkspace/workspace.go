@@ -58,9 +58,10 @@ func Render(blocks []json.RawMessage) (string, error) {
 	return out.String(), nil
 }
 
-// Plan accepts only one contiguous change per block, wholly inside one native
-// text run. Changes to Markdown syntax, block markers, opaque data or ambiguous
-// run boundaries fail before returning any edits. No API calls are performed.
+// Plan accepts text edits whose original runs remain unambiguous. Multiple runs
+// require uniquely aligned unchanged markup. Changes to Markdown syntax, block
+// markers, opaque data or ambiguous run boundaries fail before returning edits.
+// No API calls are performed.
 func Plan(blocks []json.RawMessage, editedMarkdown string) ([]Edit, error) {
 	if !utf8.ValidString(editedMarkdown) {
 		return nil, invalid("Markdown must be valid UTF-8")
@@ -95,37 +96,104 @@ func Plan(blocks []json.RawMessage, editedMarkdown string) ([]Edit, error) {
 		if !b.writable {
 			return nil, invalid("block %s contains unsupported native elements or fields; preserve it unchanged", b.id)
 		}
-		start, oldEnd, newEnd := changeBounds(b.body, body)
-		var candidates []span
-		for _, s := range b.spans {
-			if start >= s.start && oldEnd <= s.end {
-				candidates = append(candidates, s)
-			}
-		}
-		if len(candidates) != 1 {
-			return nil, invalid("block %s edit crosses formatting or an ambiguous text boundary", b.id)
-		}
-		s := candidates[0]
-		encoded := b.body[s.start:start] + body[start:newEnd] + b.body[oldEnd:s.end]
-		content, ok := unescapeText(encoded)
-		if !ok {
-			return nil, invalid("block %s edit changes Markdown formatting; only text edits are supported", b.id)
+		texts, err := editedRunTexts(b, body)
+		if err != nil {
+			return nil, err
 		}
 		elements := make([]json.RawMessage, len(b.elements))
+		changed := false
 		for j, raw := range b.elements {
 			elements[j] = append(json.RawMessage(nil), raw...)
+			if texts[j] == b.texts[j] {
+				continue
+			}
+			changed = true
+			var element, run map[string]json.RawMessage
+			_ = json.Unmarshal(raw, &element)
+			_ = json.Unmarshal(element["text_run"], &run)
+			run["content"], _ = json.Marshal(texts[j])
+			element["text_run"], _ = json.Marshal(run)
+			elements[j], _ = json.Marshal(element)
 		}
-		var element, run map[string]json.RawMessage
-		_ = json.Unmarshal(elements[s.element], &element)
-		_ = json.Unmarshal(element["text_run"], &run)
-		run["content"], _ = json.Marshal(content)
-		element["text_run"], _ = json.Marshal(run)
-		elements[s.element], _ = json.Marshal(element)
-		texts := append([]string(nil), b.texts...)
-		texts[s.element] = content
+		if !changed {
+			continue
+		}
 		edits = append(edits, Edit{BlockID: b.id, Elements: elements, Text: strings.Join(texts, "")})
 	}
 	return edits, nil
+}
+
+// Keep the original single-run route, including large edits and adjacent runs.
+// The multi-run route is intentionally bounded and requires visible separators:
+// assigning changed text between adjacent unmarked runs would guess ownership.
+func editedRunTexts(b block, body string) ([]string, error) {
+	texts := append([]string(nil), b.texts...)
+	start, oldEnd, newEnd := changeBounds(b.body, body)
+	var candidates []span
+	for _, s := range b.spans {
+		if start >= s.start && oldEnd <= s.end {
+			candidates = append(candidates, s)
+		}
+	}
+	if len(candidates) == 1 {
+		s := candidates[0]
+		content, ok := unescapeText(b.body[s.start:start] + body[start:newEnd] + b.body[oldEnd:s.end])
+		if !ok {
+			return nil, invalid("block %s edit changes Markdown formatting; only text edits are supported", b.id)
+		}
+		texts[s.element] = content
+		return texts, nil
+	}
+	const maxMultiRunBytes = 64 << 10
+	const maxMultiRunSpans = 128
+	const maxAlignmentWork = 1 << 20
+	if len(b.body) > maxMultiRunBytes || len(body) > maxMultiRunBytes || len(b.spans) > maxMultiRunSpans {
+		return nil, invalid("block %s multi-run edit exceeds bounded alignment limits; edit one native text run at a time", b.id)
+	}
+	prefix := b.body[:b.spans[0].start]
+	if !strings.HasPrefix(body, prefix) {
+		return nil, invalid("block %s edit changes Markdown formatting", b.id)
+	}
+	remaining, work := body[len(prefix):], 0
+	for i, s := range b.spans {
+		end := len(b.body)
+		if i+1 < len(b.spans) {
+			end = b.spans[i+1].start
+		}
+		separator := b.body[s.end:end]
+		if separator == "" {
+			return nil, invalid("block %s edit crosses an ambiguous unmarked text boundary", b.id)
+		}
+		matched, content := -1, ""
+		for offset := 0; offset <= len(remaining); {
+			next := strings.Index(remaining[offset:], separator)
+			if next < 0 {
+				break
+			}
+			position := offset + next
+			work += position + len(separator)
+			if work > maxAlignmentWork {
+				return nil, invalid("block %s multi-run edit exceeds bounded alignment work; edit one native text run at a time", b.id)
+			}
+			decoded, ok := unescapeText(remaining[:position])
+			if ok {
+				if matched >= 0 {
+					return nil, invalid("block %s edit has ambiguous formatting alignment", b.id)
+				}
+				matched, content = position, decoded
+			}
+			offset = position + 1
+		}
+		if matched < 0 {
+			return nil, invalid("block %s edit changes Markdown formatting or crosses a text boundary", b.id)
+		}
+		texts[s.element] = content
+		remaining = remaining[matched+len(separator):]
+	}
+	if remaining != "" {
+		return nil, invalid("block %s edit changes Markdown formatting", b.id)
+	}
+	return texts, nil
 }
 
 func invalid(format string, args ...any) error {

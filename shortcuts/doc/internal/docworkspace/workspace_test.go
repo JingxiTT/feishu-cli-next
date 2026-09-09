@@ -242,3 +242,69 @@ func TestPlanVisiblePhraseAcrossMarksIsNotFlattened(t *testing.T) {
 	}
 	validation(t, blocks, "<!-- block:p -->\nNew status — 你好\n")
 }
+
+func TestPlanMultipleStyledRunsPreserveNativeFields(t *testing.T) {
+	styled := `{"text_run":{"content":"旧状态","text_element_style":{"bold":true,"italic":true,"link":{"url":"https://example.org/status"},"text_color":4}}}`
+	blocks := []json.RawMessage{paragraph("p", run("Before 你好 "), styled, run(" after 🐈"))}
+	original := rendered(t, blocks)
+	edited := strings.ReplaceAll(strings.ReplaceAll(strings.ReplaceAll(original, "Before 你好", "Updated 您好"), "旧状态", "新状态"), "after 🐈", "after 🐕")
+	edits, err := Plan(blocks, edited)
+	if err != nil || len(edits) != 1 || edits[0].BlockID != "p" || edits[0].Text != "Updated 您好 新状态 after 🐕" {
+		t.Fatalf("multiple runs: %#v %v", edits, err)
+	}
+	var before, after map[string]any
+	_ = json.Unmarshal([]byte(styled), &before)
+	_ = json.Unmarshal(edits[0].Elements[1], &after)
+	before["text_run"].(map[string]any)["content"] = "新状态"
+	if !reflect.DeepEqual(before, after) {
+		t.Fatalf("marks/link/colors changed: %s", edits[0].Elements[1])
+	}
+	if rendered(t, blocks) != original {
+		t.Fatal("snapshot changed")
+	}
+	// Updating either side of an untouched styled element retains its raw bytes.
+	sideEdits, err := Plan(blocks, strings.ReplaceAll(strings.ReplaceAll(original, "Before 你好", "Updated 您好"), "after 🐈", "after 🐕"))
+	if err != nil || len(sideEdits) != 1 || string(sideEdits[0].Elements[1]) != styled {
+		t.Fatalf("untouched element changed: %#v %v", sideEdits, err)
+	}
+}
+
+func TestPlanMultipleRunEscapesAndAmbiguity(t *testing.T) {
+	blocks := []json.RawMessage{paragraph("p", run("one _ ** <br> & "), `{"text_run":{"content":"two ** _","text_element_style":{"bold":true}}}`, run(" three"))}
+	s := rendered(t, blocks)
+	edits, err := Plan(blocks, strings.ReplaceAll(strings.ReplaceAll(s, "one", "first"), "two", "second"))
+	if err != nil || len(edits) != 1 || edits[0].Text != "first _ ** <br> & second ** _ three" {
+		t.Fatalf("escaped delimiter alignment: %#v %v", edits, err)
+	}
+	adjacent := []json.RawMessage{paragraph("p", run("left"), run("middle"), `{"text_run":{"content":"right","text_element_style":{"bold":true}}}`)}
+	validation(t, adjacent, strings.ReplaceAll(strings.ReplaceAll(rendered(t, adjacent), "left", "changed"), "right", "changed"))
+	// Multiple changes cannot rewrite or reorder native style/link boundaries.
+	validation(t, blocks, strings.ReplaceAll(strings.ReplaceAll(s, "one", "first"), "**two", "_second"))
+	validation(t, blocks, strings.ReplaceAll(strings.ReplaceAll(s, "one", "first"), "three", "[third](url)"))
+	other := append([]json.RawMessage{paragraph("valid", run("old"))}, blocks...)
+	validation(t, other, strings.ReplaceAll(strings.ReplaceAll(rendered(t, other), "old", "new"), "block:p", "block:wrong"))
+}
+
+func TestPlanMultiRunAlignmentBoundsPreserveExistingRoutes(t *testing.T) {
+	big := strings.Repeat("x", 70<<10)
+	blocks := []json.RawMessage{paragraph("p", run("old "+big), `{"text_run":{"content":"tail","text_element_style":{"bold":true}}}`)}
+	original := rendered(t, blocks)
+	validation(t, blocks, strings.ReplaceAll(strings.ReplaceAll(original, "old", "new"), "tail", "changed"))
+	// The bound affects the new alignment search, not existing long single edits/no-ops.
+	if edits, err := Plan(blocks, original); err != nil || len(edits) != 0 {
+		t.Fatalf("large no-op: %v %v", edits, err)
+	}
+	if edits, err := Plan(blocks, strings.Replace(original, "old", "new", 1)); err != nil || len(edits) != 1 {
+		t.Fatalf("large single-run edit: %v %v", edits, err)
+	}
+	elements := make([]string, 129)
+	for i := range elements {
+		elements[i] = `{"text_run":{"content":"a","text_element_style":{"bold":true}}}`
+	}
+	many := []json.RawMessage{paragraph("p", elements...)}
+	validation(t, many, strings.ReplaceAll(rendered(t, many), "a**", "b**"))
+	// Repeated escaped separators cannot cause unbounded candidate decoding work.
+	// Underscores match the following italic delimiter; escaped ones must not own it.
+	heavy := []json.RawMessage{paragraph("p", run("before "+strings.Repeat("_", 4000)), `{"text_run":{"content":"after","text_element_style":{"italic":true}}}`)}
+	validation(t, heavy, strings.ReplaceAll(strings.ReplaceAll(rendered(t, heavy), "before", "changed"), "after", "updated"))
+}
