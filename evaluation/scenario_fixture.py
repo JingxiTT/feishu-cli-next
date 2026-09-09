@@ -14,6 +14,13 @@ PAIRED_SECTIONS = frozenset(('discovery', 'contact', 'docs-read', 'docs-edit', '
 
 
 def load_scenario(section, row_count=None, case_id=None):
+    if section == 'docs-hard-v1':
+        from paired import docs_hard_v1
+        task = docs_hard_v1.task(case_id)
+        return SimpleNamespace(TASK=task, Scenario=lambda: docs_hard_v1.Scenario(case_id),
+            verify=lambda workspace, answer, receipt, expected: docs_hard_v1.verify(case_id, workspace, answer, receipt, expected),
+            verification_diagnostics=lambda workspace, answer, receipt, expected:
+                docs_hard_v1.verification_diagnostics(case_id, workspace, answer, receipt, expected))
     if section.startswith('paired-') and section.removeprefix('paired-') in PAIRED_SECTIONS:
         return importlib.import_module('paired.' + section.removeprefix('paired-').replace('-', '_'))
     if section == "generated-business-v1":

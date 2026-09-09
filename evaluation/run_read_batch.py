@@ -19,9 +19,9 @@ def main():
     parser.add_argument('--previous-next-cli', type=Path, help='Frozen previous Next binary; requires --previous-next-source')
     parser.add_argument('--section', action='append')
     parser.add_argument('--only-arm', choices=('next',), help='Run only candidate entries from the frozen balanced schedule; not a new balanced comparison')
-    parser.add_argument('--original-comparison', action='store_true', help='Run a fresh balanced comparison of only the original CLI and Next; requires --task-kind paired')
+    parser.add_argument('--original-comparison', action='store_true', help='Run a fresh balanced comparison of only the original CLI and Next; requires paired or docs-hard tasks')
     parser.add_argument('--prepare-only', action='store_true')
-    parser.add_argument('--task-kind', choices=('read', 'scenario', 'scaling', 'business', 'paired'), default='read')
+    parser.add_argument('--task-kind', choices=('read', 'scenario', 'scaling', 'business', 'paired', 'docs-hard'), default='read')
     parser.add_argument('--model', default='gpt-6-astra', help='Codex model identifier; pin explicitly for a new comparison')
     parser.add_argument('--reasoning', default='high', help='Codex reasoning effort; pin explicitly for a new comparison')
     parser.add_argument('--guidance-delivery', choices=('inline', 'file'), default='inline',
@@ -29,13 +29,13 @@ def main():
     args = parser.parse_args()
     if args.original_comparison and (args.previous_next_source or args.previous_next_cli or args.only_arm):
         parser.error('original comparison cannot combine previous Next or candidate-only options')
-    if args.original_comparison and args.task_kind != 'paired':
-        parser.error('original comparison is supported only for paired tasks')
+    if args.original_comparison and args.task_kind not in ('paired', 'docs-hard'):
+        parser.error('original comparison is supported only for paired tasks or docs-hard tasks')
     if bool(args.previous_next_source) != bool(args.previous_next_cli):
         parser.error('previous Next source and CLI must be supplied together')
     if args.previous_next_source and args.task_kind != 'paired':
         parser.error('previous Next comparison is supported only for paired tasks')
-    manifest_path = ROOT / 'evaluation' / {'read': 'tasks.read-sections.json', 'scenario': 'tasks.scenarios.json', 'scaling': 'tasks.scaling.json', 'business': 'tasks.business.json', 'paired': 'tasks.paired.json'}[args.task_kind]
+    manifest_path = ROOT / 'evaluation' / {'read': 'tasks.read-sections.json', 'scenario': 'tasks.scenarios.json', 'scaling': 'tasks.scaling.json', 'business': 'tasks.business.json', 'paired': 'tasks.paired.json', 'docs-hard': 'tasks.docs-hard.json'}[args.task_kind]
     manifest = json.loads(manifest_path.read_text())
     sections = list(dict.fromkeys(task['section'] for task in manifest['tasks'] if not args.section or task['section'] in args.section))
     if not sections or args.section and set(args.section) - set(sections):
@@ -122,7 +122,7 @@ def main():
             result = subprocess.run([sys.executable, str(ROOT / 'evaluation/harness.py'),
                                      '--tasks', str(manifest_path), '--section', section,
                                      '--config', str(path), '--output', str(args.output_root / section / 'batch-01.json'),
-                                     '--seed', str({'read': 20260910, 'scenario': 20260930, 'scaling': 20261020, 'business': 20261101, 'paired': 20260908}[args.task_kind] + index), '--repeats', '3',
+                                     '--seed', str({'read': 20260910, 'scenario': 20260930, 'scaling': 20261020, 'business': 20261101, 'paired': 20260908, 'docs-hard': 20260909}[args.task_kind] + index), '--repeats', '3',
                                      '--stop-file', str(args.output_root / 'STOP')] +
                                     (['--only-arm', args.only_arm] if args.only_arm else []) +
                                     (['--original-comparison'] if args.original_comparison else []), check=False)

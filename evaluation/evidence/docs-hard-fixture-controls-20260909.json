@@ -1,0 +1,105 @@
+{
+  "schema_version": 1,
+  "date": "2026-09-09",
+  "kind": "deterministic native CLI loopback controls; no model or live account calls",
+  "fixture": "docs-hard-v1",
+  "historical_default_scenarios_and_manifests_changed": false,
+  "binaries": {
+    "original": {
+      "sha256": "5e1f582ec5ab9c86d3618fc17bd099b3443d40fe8691fed07d42e83a351ba977"
+    },
+    "candidate": {
+      "source_revision": "cad221ec4fc453d749ed42ac86a3ebd3c90005b3",
+      "sha256": "c42d5467e084a84a73780c0c8e9714dfe427d32f49fa9bba8793085f528aed42"
+    }
+  },
+  "files": {
+    "evaluation/paired/docs_hard_v1.py": "7a7b6364b13b5804dc237296f6962496958dc6d7496d3a521d37923d32d251cc",
+    "evaluation/tasks.docs-hard.json": "ebe1906d6fa6bd079824ac5714406c2a839254e0bd10980a77916423e8d1cb04",
+    "evaluation/scenario_fixture.py": "c7b010982e395066710d4e1b5f554c5bef9fce2e511fd877fdcad08ae53be1aa",
+    "evaluation/run_read_batch.py": "eed91e18d66153d5eeb2ee69e426201dc6fe309e113905dc861d40ef3cdc97f5",
+    "tests/next_evaluation/test_docs_hard.py": "908c50015d8956e3845090f0a1a63c6e0793ee5287333857a4e4fb864cd99ea2",
+    "evaluation/scenario_verifier.py": "88538027a72aa2ee5ddabbb63097ea7f6ba1bc39339e77e0ba3c2590948c10c8"
+  },
+  "cases": {
+    "docs-hard-rich-read": {
+      "native_blocks": 26,
+      "xml_utf8_bytes": 965,
+      "joined_text_utf8_bytes": 138,
+      "initial_state_sha256": "0c3aea8b8d69bc93054fbd8171ca716ee65c51b52f8f16b06922bea29c9bc106"
+    },
+    "docs-hard-focused-read": {
+      "native_blocks": 181,
+      "xml_utf8_bytes": 28389,
+      "joined_text_utf8_bytes": 22905,
+      "initial_state_sha256": "f90537035e2bf08b0abec6a0d54083ccdfaf90bf5ba1eb4e99c2e72dc2706aa8"
+    },
+    "docs-hard-multi-edit": {
+      "native_blocks": 28,
+      "xml_utf8_bytes": 1144,
+      "joined_text_utf8_bytes": 212,
+      "initial_state_sha256": "9db256884142f86a242e96e32de44d19a73526b1fd0f2e71667565e87706d964"
+    }
+  },
+  "checks": {
+    "native-controls": {
+      "exit_code": 0,
+      "log_sha256": "8f0165b531bd679478e679217446847a230084988bbd086e3fd1d78142e67008"
+    },
+    "adapter": {
+      "exit_code": 0,
+      "log_sha256": "bfa6b1da0349f4a12e21e10d2c3ddb740f3006fc12e4477b4f6dac1cde51f408"
+    },
+    "scenario-loader": {
+      "exit_code": 0,
+      "log_sha256": "3e671da2c60ff7d67ab41f5696004455b045c28b597d99e8b4f1d8437a77ce9f"
+    },
+    "script-test": {
+      "exit_code": 0,
+      "log_sha256": "dd278dd561cebda89919644ae61def4e49fb31d5aa8b17b5761b15c145189b26"
+    },
+    "historical-revision": {
+      "exit_code": 0,
+      "log_sha256": "0e94dda2321c6cec31eebb495ba303fe113ed10b1c359dc9e565f8755f05b21f"
+    }
+  },
+  "native_controls": {
+    "test_methods": 13,
+    "all_passed": true,
+    "both_binaries": [
+      "full XML fetch for both read tasks",
+      "rich XML str_replace for all three changes",
+      "native API block list for rich read and edit",
+      "native API styled PATCH for both edited paragraphs"
+    ],
+    "candidate_only": [
+      "rich readable pull",
+      "focused section pull",
+      "saved Markdown pull, three local wording changes, verified push"
+    ],
+    "environment": [
+      "EVAL_PAIRED_BINARIES: JSON array containing original and candidate paths",
+      "EVAL_DOCS_HARD_NEXT: candidate path"
+    ]
+  },
+  "semantic_controls": [
+    "exact returned native objects or actual XML nodes establish read evidence",
+    "child ID references do not prove table or empty-cell content was read",
+    "outline and XML without IDs cannot alone meet native-reference answer proof",
+    "leading zeros, Unicode, empty strings, table association and list order are exact",
+    "full and focused reads accepted; native pagination exercised with page_size=100",
+    "all unrelated state preserved at every mutation, including change then restore rejection",
+    "correct final words with incorrect bold or hyperlink rejected with valid signed mutation hashes",
+    "equivalent native run splitting accepted",
+    "edited paragraph IDs may change through native paragraph rebuild; unrelated resource IDs must remain",
+    "Only docs-hard-v1 retains definitive answer or signed preservation failures alongside unsupported requests; correct answer with missing completion proof remains inconclusive. Historical classification controls still pass.",
+    "Target marks use the same authenticated final-state criterion with or without unsupported requests; repaired intermediate target marks do not introduce a new failure."
+  ],
+  "limitations": [
+    "Synthetic bounded projections reuse existing paired native inline-edit contracts; these tests do not independently validate live Feishu rendering.",
+    "Table/cell native shapes reuse the previously live-checked paired Markdown fixture; ordered/bullet field shapes follow oapi-sdk-go v3.7.2 and existing XML list converter tests.",
+    "Scoped XML fetching a container without its complete descendants is explicitly unsupported; no general tree editing or full native history engine is added.",
+    "Focused content is 12 distinct operational project records, not a mandatory large-page token target.",
+    "Only the listed ordinary fetch/update/native API and candidate pull/push routes were controlled. No full API coverage or measured token-saving claim is made."
+  ]
+}

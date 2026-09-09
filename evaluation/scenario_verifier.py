@@ -77,6 +77,15 @@ def evaluate(request):
                 item.get('signature_valid') is False or item.get('route') == 'fixture_error' or
                 (item.get('route') == 'rejected' and item.get('rejection') != 'unsupported_strategy')
                 for item in receipt.get('requests', []))
+            # The opt-in harder Docs cohort retains independently proved answer
+            # or preservation failures alongside an unmodeled strategy. Historical
+            # scenario classification and archived evidence remain unchanged.
+            if request['fixture'].get('scenario_section', request['fixture']['scenario']) == 'docs-hard-v1':
+                from paired import docs_hard_v1
+                definite = docs_hard_v1.known_failure_diagnostics(request['fixture']['case_id'],
+                    json.loads((Path(request['workspace']) / 'answer.json').read_text()), receipt)
+                reasons = sorted(set(reasons + definite))
+                known_failure = known_failure or bool(definite)
             limitation = not known_failure and (bool(unsupported_diagnostics(receipt)) or
                                                 'execution_proof_unavailable' in reasons)
     except (ValueError, KeyError, TypeError, AttributeError, OSError):

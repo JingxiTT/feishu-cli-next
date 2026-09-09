@@ -1,0 +1,155 @@
+{
+  "schema_version": 1,
+  "split": "development",
+  "backend": "synthetic-scenario-v1",
+  "basis": "Versioned harder Docs cohort; native typed fidelity, same tasks and backend across comparison arms; no historical pooling.",
+  "tasks": [
+    {
+      "id": "docs-hard-rich-read",
+      "section": "docs",
+      "prompt": "Read document doxcnEvalRichStatus. In its SKU table, return the row whose SKU is 001: sku, label and note, preserving an empty cell as an empty string. Also return table_block_id, the ordered top-level checklist steps as ordered_steps, the nested children of Prepare in their original order as prepare_children, and prepare_block_id. Return JSON; do not modify the document.",
+      "fixture": {
+        "scenario": "docs-hard-v1",
+        "scenario_section": "docs-hard-v1",
+        "case_id": "docs-hard-rich-read",
+        "allow_synthetic_mutations": false,
+        "answer_schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "sku",
+            "label",
+            "note",
+            "table_block_id",
+            "ordered_steps",
+            "prepare_children",
+            "prepare_block_id"
+          ],
+          "properties": {
+            "sku": {
+              "type": "string"
+            },
+            "label": {
+              "type": "string"
+            },
+            "note": {
+              "type": "string"
+            },
+            "table_block_id": {
+              "type": "string"
+            },
+            "ordered_steps": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "prepare_children": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "prepare_block_id": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "expected": {
+        "answer": {
+          "sku": "001",
+          "label": "你好",
+          "note": "",
+          "table_block_id": "hardTable",
+          "ordered_steps": [
+            "Prepare",
+            "Release"
+          ],
+          "prepare_children": [
+            "Inspect seal",
+            "Read label"
+          ],
+          "prepare_block_id": "hardPrepare"
+        }
+      }
+    },
+    {
+      "id": "docs-hard-focused-read",
+      "section": "docs",
+      "prompt": "Read document doxcnEvalRichStatus. Find the final approval code and release lane specifically in the Launch gate Orion section, ignoring archived sections. Return JSON with approval_code, release_lane and the native block_id containing both facts. Full or focused reads are valid. Do not modify the document.",
+      "fixture": {
+        "scenario": "docs-hard-v1",
+        "scenario_section": "docs-hard-v1",
+        "case_id": "docs-hard-focused-read",
+        "allow_synthetic_mutations": false,
+        "answer_schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "approval_code",
+            "release_lane",
+            "block_id"
+          ],
+          "properties": {
+            "approval_code": {
+              "type": "string"
+            },
+            "release_lane": {
+              "type": "string"
+            },
+            "block_id": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "expected": {
+        "answer": {
+          "approval_code": "OR-0731",
+          "release_lane": "cobalt",
+          "block_id": "hardFact1113"
+        }
+      }
+    },
+    {
+      "id": "docs-hard-multi-edit",
+      "section": "docs",
+      "prompt": "In document doxcnEvalRichStatus, make exactly three wording changes: Draft status to Final status; amber to green; legacy portal to current portal. The first two occur in one paragraph. Preserve all remaining text, native bold formatting, hyperlink URLs, Unicode, table/list/media content and hierarchy, permissions and unrelated block IDs. Return JSON with document_id and paragraphs: the complete plain text of the two edited paragraphs in document order. Do not create, share or delete resources.",
+      "fixture": {
+        "scenario": "docs-hard-v1",
+        "scenario_section": "docs-hard-v1",
+        "case_id": "docs-hard-multi-edit",
+        "allow_synthetic_mutations": true,
+        "answer_schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "document_id",
+            "paragraphs"
+          ],
+          "properties": {
+            "document_id": {
+              "type": "string"
+            },
+            "paragraphs": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "expected": {
+        "answer": {
+          "document_id": "doxcnEvalRichStatus",
+          "paragraphs": [
+            "Final status; green flag — 你好",
+            "Open current portal for résumé 😀."
+          ]
+        }
+      }
+    }
+  ]
+}
