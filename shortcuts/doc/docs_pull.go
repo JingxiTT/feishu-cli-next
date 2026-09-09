@@ -21,12 +21,23 @@ var DocsPull = common.Shortcut{
 	Flags: []common.Flag{
 		{Name: "doc", Desc: "document URL or token", Required: true},
 		{Name: "output", Desc: "exclusive .md working-copy path; also saves a .feishu.json native sidecar"},
+		{Name: "scope", Desc: "read-only selection; saved working copies require full", Default: "full", Enum: []string{"full", "outline", "section", "range", "keyword"}},
+		{Name: "start-block-id", Desc: "range start or section heading native block ID"},
+		{Name: "end-block-id", Desc: "inclusive range end native block ID"},
+		{Name: "keyword", Desc: "case-insensitive literal text to find within individual blocks"},
 	},
 	Validate: func(_ context.Context, runtime *common.RuntimeContext) error {
 		if _, err := parseDocumentRef(runtime.Str("doc")); err != nil {
 			return err
 		}
+		selection := docsPullSelection(runtime)
+		if err := selection.Validate(); err != nil {
+			return err
+		}
 		if runtime.Str("output") != "" {
+			if selection.Scope != "full" {
+				return errs.NewValidationError(errs.SubtypeInvalidArgument, "saved working copies require --scope full").WithParam("--output")
+			}
 			_, _, err := docsWorkspaceFilePaths(runtime, runtime.Str("output"), "--output", true)
 			return err
 		}
@@ -34,6 +45,7 @@ var DocsPull = common.Shortcut{
 	},
 	DryRun: func(_ context.Context, runtime *common.RuntimeContext) *common.DryRunAPI {
 		preview := common.NewDryRunAPI().Set("doc", runtime.Str("doc"))
+		preview.Set("selection", docsPullSelection(runtime)).Set("selection_execution", "read the complete native snapshot, then select locally; no mutation")
 		path := "/open-apis/docx/v1/documents/:document_id"
 		if ref, err := parseDocumentRef(runtime.Str("doc")); err == nil {
 			if ref.Kind == "wiki" {
@@ -76,12 +88,20 @@ func executeDocsPull(_ context.Context, runtime *common.RuntimeContext) error {
 	if err != nil {
 		return err
 	}
-	markdown, err := docworkspace.Render(snapshot.Blocks)
+	var markdown string
+	returned := len(snapshot.Blocks)
+	if file == "" {
+		markdown, returned, err = docworkspace.Select(snapshot.Blocks, docsPullSelection(runtime))
+	} else {
+		// Keep the existing v1 editable projection stable for saved workspaces.
+		markdown, err = docworkspace.Render(snapshot.Blocks)
+	}
 	if err != nil {
-		return errs.NewValidationError(errs.SubtypeFailedPrecondition, "cannot project this native document as a working copy").WithCause(err)
+		return err
 	}
 	if file == "" {
-		runtime.Out(map[string]interface{}{"document_id": documentID, "revision_id": snapshot.RevisionID, "markdown": markdown}, nil)
+		runtime.Out(map[string]interface{}{"document_id": documentID, "revision_id": snapshot.RevisionID, "markdown": markdown,
+			"scope": runtime.Str("scope"), "complete": returned == len(snapshot.Blocks), "total_blocks": len(snapshot.Blocks), "returned_blocks": returned}, nil)
 		return nil
 	}
 	saved := docsWorkspace{Schema: docsWorkspaceSchema, Binding: binding, DocumentID: documentID, RevisionID: snapshot.RevisionID, Blocks: snapshot.Blocks}
@@ -101,4 +121,8 @@ func executeDocsPull(_ context.Context, runtime *common.RuntimeContext) error {
 	}
 	runtime.Out(map[string]interface{}{"document_id": documentID, "revision_id": snapshot.RevisionID, "file": file, "sidecar": sidecar, "block_count": len(snapshot.Blocks)}, nil)
 	return nil
+}
+
+func docsPullSelection(runtime *common.RuntimeContext) docworkspace.Selection {
+	return docworkspace.Selection{Scope: runtime.Str("scope"), StartID: runtime.Str("start-block-id"), EndID: runtime.Str("end-block-id"), Keyword: runtime.Str("keyword")}
 }
