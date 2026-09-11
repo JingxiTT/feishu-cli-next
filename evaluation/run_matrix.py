@@ -318,7 +318,11 @@ def report(output, matrix_jobs, env):
     # Pooled score is descriptive for this fixed equal-repetition task mixture,
     # available only with all outcomes/accounting usable. Never an individual gate.
     totals = {r['arm']: r for r in aggregate(all_runs, ORIGINAL_ARMS)['groups'] if r['scope'] == 'all'}
+    summary['arm_totals'] = totals
     summary['pooled_saving_fraction'] = score(totals, False)['saving_fraction'] if completed and len(totals) == 2 else None
+    summary['secondary_raw_token_saving_fraction'] = (1 - totals['next']['known_total_tokens'] / totals['official']['known_total_tokens']
+        if completed and len(totals) == 2 and all(r['usage_complete'] for r in totals.values())
+        and totals['official']['known_total_tokens'] > 0 else None)
     write(output / 'summary.json', summary)
     lines = ['# Full CLI evaluation matrix', '',
              f"Status: **{'complete' if completed else 'in progress'}**; {len(all_runs)}/{summary['planned_attempts']} attempts recorded.", '',
@@ -332,6 +336,15 @@ def report(output, matrix_jobs, env):
         saving = task['saving_fraction']
         lines.append('| ' + ' | '.join([task['suite'], task['task'], *counts,
                      'Unavailable' if saving is None else f'{saving:.1%}', task['gate'], 'Reused' if task['reused'] else 'New']) + ' |')
+    lines += ['', '## Whole-matrix accounting', '',
+              '| Arm | Verified / attempts | Inconclusive | Observed tokens | Complete usage |',
+              '| --- | ---: | ---: | ---: | --- |']
+    for arm, row in totals.items():
+        lines.append(f"| {arm} | {row['successes']}/{row['attempts']} | {row['inconclusive']} | {row['known_total_tokens']:,} | {row['usage_complete']} |")
+    pooled = summary['pooled_saving_fraction']
+    raw = summary['secondary_raw_token_saving_fraction']
+    lines += ['', 'Whole-matrix tokens-per-verified-success saving: **' + ('unavailable' if pooled is None else f'{pooled:.1%}') + '**.', '',
+              'Secondary raw token-spend reduction: **' + ('unavailable' if raw is None else f'{raw:.1%}') + '**. This compares all attempted work, without correcting for success; it cannot establish an efficiency gate or replace unavailable primary comparisons.']
     lines += ['', 'All failed, inconclusive and recovery costs remain included. Cached input is counted once in full. Missing accounting, inconclusive outcomes or zero verified successes make affected savings unavailable. Negative savings mean more tokens.', '',
               'Docs require strictly more than 50% saving; other tasks require at least 30%, with observed success nonregression. Three repetitions do not establish statistical success parity. Historical reuse is noncontemporaneous; the provider model alias has no immutable snapshot.', '',
               'Coverage includes every implemented development matrix: paired functions, harder Docs, domain reads, workflow scenarios, scaling, business, foundation and Contact. The development/held-out inventory stubs are not executable additional trials; held-out release acceptance and live-tenant parity remain separate.', '',
