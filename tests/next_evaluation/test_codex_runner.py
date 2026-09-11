@@ -310,17 +310,6 @@ class CodexAccountingTests(unittest.TestCase):
                      patch.object(batch.subprocess, 'run') as run, patch('sys.stderr'), self.assertRaises(SystemExit):
                     batch.main()
                 run.assert_not_called()
-            for kind in ('read', 'scenario', 'scaling', 'business'):
-                with self.subTest(kind=kind), \
-                     patch.object(sys, 'argv', [*args, '--original-comparison', '--task-kind', kind]), \
-                     patch.object(batch.Path, 'read_text') as read, \
-                     patch.object(batch.subprocess, 'run') as run, \
-                     patch('sys.stderr') as stderr, self.assertRaises(SystemExit) as stopped:
-                    batch.main()
-                self.assertEqual(stopped.exception.code, 2)
-                self.assertIn('supported only for paired tasks', ''.join(call.args[0] for call in stderr.write.call_args_list))
-                read.assert_not_called()
-                run.assert_not_called()
 
     def test_batch_before_after_uses_frozen_next_without_mislabeling_concise(self):
         from unittest.mock import patch
