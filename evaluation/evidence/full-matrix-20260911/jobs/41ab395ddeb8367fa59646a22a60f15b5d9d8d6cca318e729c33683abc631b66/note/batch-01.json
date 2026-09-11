@@ -1,0 +1,1202 @@
+{
+  "protocol": 1,
+  "mode": "real",
+  "split": "development",
+  "performance_claims_supported": true,
+  "completed": true,
+  "planned_runs": 6,
+  "seed": 20260914,
+  "repeats": 3,
+  "fresh_context": true,
+  "task_manifest_sha256": "fe3d9af975b3e9d98b1c9092c2d87c1618628aa7e98f3f76a50bb76d992b950d",
+  "config_sha256": "475b26a0ad3374b1ba869b078e0569569f055b641866c20db86a0146e4c9924d",
+  "environment": {
+    "backend": "synthetic-read-v1",
+    "model": "gpt-5.6-luna",
+    "tokenizer": "provider-undisclosed",
+    "reasoning": "medium",
+    "tools": [
+      "shell",
+      "files"
+    ],
+    "permissions": "workspace-write; managed proxy loopback-only with local binding; isolated synthetic sidecar",
+    "budget": {
+      "timeout_seconds": 180
+    },
+    "accounting_method": "codex-cli 0.153.4 provider turn.completed; cached input included in full",
+    "guidance_delivery": "file"
+  },
+  "arms": {
+    "official": {
+      "cli_sha256": "5e1f582ec5ab9c86d3618fc17bd099b3443d40fe8691fed07d42e83a351ba977",
+      "skill_sha256": "4d55ad009f7475e55240ad9f6be7b25b73f2974553325be84db372dd3c08248b"
+    },
+    "next": {
+      "cli_sha256": "c42d5467e084a84a73780c0c8e9714dfe427d32f49fa9bba8793085f528aed42",
+      "skill_sha256": "025816ca2986943dcc4a94c232759ec2a454ec003c517785437639fbbea84bcc"
+    }
+  },
+  "runs": [
+    {
+      "task_id": "note-dev-01",
+      "section": "note",
+      "trial": 0,
+      "arm": "official",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 76304,
+        "cached_input_tokens": 52992,
+        "output_tokens": 1023,
+        "total_tokens": 77327
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 76304,
+        "cached_input_tokens": 52992,
+        "output_tokens": 1023,
+        "total_tokens": 77327
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": [
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "note_detail",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "note_detail",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "note_transcript",
+          "status": 200
+        }
+      ],
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "note",
+                "+detail"
+              ],
+              "flags": [
+                "--as",
+                "--note-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "note",
+                "+transcript"
+              ],
+              "flags": [
+                "--as",
+                "--note-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 35.804246292000244,
+      "verification_seconds": 0.03737679199912236,
+      "api_calls": 5,
+      "retries": null,
+      "command_executions": 6
+    },
+    {
+      "task_id": "note-dev-01",
+      "section": "note",
+      "trial": 0,
+      "arm": "next",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 218088,
+        "cached_input_tokens": 169216,
+        "output_tokens": 1814,
+        "total_tokens": 219902
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 218088,
+        "cached_input_tokens": 169216,
+        "output_tokens": 1814,
+        "total_tokens": 219902
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": [
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "note_detail",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "note_detail",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "note_transcript",
+          "status": 200
+        }
+      ],
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit"
+              ]
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "note",
+                "+transcript"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "skills",
+                "read"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit"
+              ]
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit"
+              ]
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "note",
+                "+detail"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "note",
+                "+detail"
+              ],
+              "flags": [
+                "--as",
+                "--format",
+                "--note-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "note",
+                "+transcript"
+              ],
+              "flags": [
+                "--as",
+                "--format",
+                "--note-id",
+                "--output",
+                "--transcript-format"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 63.07911283300018,
+      "verification_seconds": 0.029391083000518847,
+      "api_calls": 5,
+      "retries": null,
+      "command_executions": 12
+    },
+    {
+      "task_id": "note-dev-01",
+      "section": "note",
+      "trial": 1,
+      "arm": "official",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 131781,
+        "cached_input_tokens": 90368,
+        "output_tokens": 1428,
+        "total_tokens": 133209
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 131781,
+        "cached_input_tokens": 90368,
+        "output_tokens": 1428,
+        "total_tokens": 133209
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": [
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "note_detail",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "note_detail",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "note_transcript",
+          "status": 200
+        }
+      ],
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 1
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "note",
+                "+detail"
+              ],
+              "flags": [
+                "--as",
+                "--note-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "note",
+                "+transcript"
+              ],
+              "flags": [
+                "--as",
+                "--note-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 44.14371004199893,
+      "verification_seconds": 0.04033379199972842,
+      "api_calls": 5,
+      "retries": null,
+      "command_executions": 8
+    },
+    {
+      "task_id": "note-dev-01",
+      "section": "note",
+      "trial": 2,
+      "arm": "next",
+      "success": false,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 103546,
+        "cached_input_tokens": 75520,
+        "output_tokens": 1768,
+        "total_tokens": 105314
+      },
+      "categories": [
+        "outcome_failure",
+        "misleading_success_claim"
+      ],
+      "known_usage": {
+        "input_tokens": 103546,
+        "cached_input_tokens": 75520,
+        "output_tokens": 1768,
+        "total_tokens": 105314
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [
+        "request_outside_fixture"
+      ],
+      "api_request_trace": [
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "rejected",
+          "status": 403,
+          "native_read": "docx_document_get"
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "note_detail",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "note_detail",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "note_transcript",
+          "status": 200
+        }
+      ],
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "docs",
+                "+pull"
+              ],
+              "flags": [
+                "--as",
+                "--doc"
+              ]
+            }
+          ],
+          "exit_code": 1,
+          "reported_cli_error": {
+            "type": "api",
+            "subtype": "unknown"
+          }
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "note"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "note",
+                "+transcript"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "note",
+                "+detail"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "skills",
+                "read"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "note",
+                "+detail"
+              ],
+              "flags": [
+                "--as",
+                "--format",
+                "--note-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "note",
+                "+transcript"
+              ],
+              "flags": [
+                "--as",
+                "--format",
+                "--note-id",
+                "--output",
+                "--transcript-format"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 58.09385266599929,
+      "verification_seconds": 0.028267417001188733,
+      "api_calls": 7,
+      "retries": null,
+      "command_executions": 10
+    },
+    {
+      "task_id": "note-dev-01",
+      "section": "note",
+      "trial": 2,
+      "arm": "official",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 78506,
+        "cached_input_tokens": 60928,
+        "output_tokens": 1079,
+        "total_tokens": 79585
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 78506,
+        "cached_input_tokens": 60928,
+        "output_tokens": 1079,
+        "total_tokens": 79585
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": [
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "note_detail",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "note_detail",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "note_transcript",
+          "status": 200
+        }
+      ],
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "note",
+                "+detail"
+              ],
+              "flags": [
+                "--as",
+                "--note-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "note",
+                "+transcript"
+              ],
+              "flags": [
+                "--as",
+                "--note-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 41.298824083,
+      "verification_seconds": 0.03516045899959863,
+      "api_calls": 5,
+      "retries": null,
+      "command_executions": 6
+    },
+    {
+      "task_id": "note-dev-01",
+      "section": "note",
+      "trial": 1,
+      "arm": "next",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 40643,
+        "cached_input_tokens": 34560,
+        "output_tokens": 678,
+        "total_tokens": 41321
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 40643,
+        "cached_input_tokens": 34560,
+        "output_tokens": 678,
+        "total_tokens": 41321
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": [
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "note_detail",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "note_transcript",
+          "status": 200
+        }
+      ],
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "note",
+                "+transcript"
+              ],
+              "flags": [
+                "--as",
+                "--format",
+                "--note-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 28.689072416000272,
+      "verification_seconds": 0.04188720799902512,
+      "api_calls": 3,
+      "retries": null,
+      "command_executions": 4
+    }
+  ],
+  "groups": [
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 2,
+      "inconclusive": 0,
+      "success_rate": 0.6666666666666666,
+      "usage_complete": true,
+      "known_total_tokens": 366537,
+      "tokens_per_success": 183268.5,
+      "token_distribution": {
+        "min": 41321,
+        "median": 105314,
+        "max": 219902,
+        "stdev": 90477.14937485597
+      },
+      "latency_median_seconds": 58.09385266599929,
+      "api_calls": 15,
+      "retries": null,
+      "failure_categories": {
+        "misleading_success_claim": 1,
+        "outcome_failure": 1
+      }
+    },
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 290121,
+      "tokens_per_success": 96707.0,
+      "token_distribution": {
+        "min": 77327,
+        "median": 79585,
+        "max": 133209,
+        "stdev": 31631.813795607737
+      },
+      "latency_median_seconds": 41.298824083,
+      "api_calls": 15,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "section",
+      "name": "note",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 2,
+      "inconclusive": 0,
+      "success_rate": 0.6666666666666666,
+      "usage_complete": true,
+      "known_total_tokens": 366537,
+      "tokens_per_success": 183268.5,
+      "token_distribution": {
+        "min": 41321,
+        "median": 105314,
+        "max": 219902,
+        "stdev": 90477.14937485597
+      },
+      "latency_median_seconds": 58.09385266599929,
+      "api_calls": 15,
+      "retries": null,
+      "failure_categories": {
+        "misleading_success_claim": 1,
+        "outcome_failure": 1
+      }
+    },
+    {
+      "scope": "section",
+      "name": "note",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 290121,
+      "tokens_per_success": 96707.0,
+      "token_distribution": {
+        "min": 77327,
+        "median": 79585,
+        "max": 133209,
+        "stdev": 31631.813795607737
+      },
+      "latency_median_seconds": 41.298824083,
+      "api_calls": 15,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "task_id",
+      "name": "note-dev-01",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 2,
+      "inconclusive": 0,
+      "success_rate": 0.6666666666666666,
+      "usage_complete": true,
+      "known_total_tokens": 366537,
+      "tokens_per_success": 183268.5,
+      "token_distribution": {
+        "min": 41321,
+        "median": 105314,
+        "max": 219902,
+        "stdev": 90477.14937485597
+      },
+      "latency_median_seconds": 58.09385266599929,
+      "api_calls": 15,
+      "retries": null,
+      "failure_categories": {
+        "misleading_success_claim": 1,
+        "outcome_failure": 1
+      }
+    },
+    {
+      "scope": "task_id",
+      "name": "note-dev-01",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 290121,
+      "tokens_per_success": 96707.0,
+      "token_distribution": {
+        "min": 77327,
+        "median": 79585,
+        "max": 133209,
+        "stdev": 31631.813795607737
+      },
+      "latency_median_seconds": 41.298824083,
+      "api_calls": 15,
+      "retries": null,
+      "failure_categories": {}
+    }
+  ],
+  "matched_success": [
+    {
+      "baseline": "official",
+      "pairs": [
+        {
+          "task_id": "note-dev-01",
+          "trial": 0,
+          "baseline_tokens": 77327,
+          "next_tokens": 219902
+        },
+        {
+          "task_id": "note-dev-01",
+          "trial": 1,
+          "baseline_tokens": 133209,
+          "next_tokens": 41321
+        }
+      ]
+    }
+  ],
+  "arm_selection": {
+    "mode": "original_comparison",
+    "selected": [
+      "official",
+      "next"
+    ],
+    "schedule": "balanced",
+    "balanced_comparison": true
+  },
+  "resume_contract": {
+    "version": 1,
+    "sha256": "875dd06bbdd0185fc9cb64dd5b5a51da51797a084befd4b9bc85ded9c0ab53a6"
+  }
+}

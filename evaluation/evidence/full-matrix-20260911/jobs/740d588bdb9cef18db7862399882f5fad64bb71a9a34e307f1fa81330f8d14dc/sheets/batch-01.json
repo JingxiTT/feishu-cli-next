@@ -1,0 +1,868 @@
+{
+  "protocol": 1,
+  "mode": "real",
+  "split": "development",
+  "performance_claims_supported": false,
+  "completed": true,
+  "planned_runs": 6,
+  "seed": 20260913,
+  "repeats": 3,
+  "fresh_context": true,
+  "task_manifest_sha256": "d62f4978ea4acfcc594c7854d680fb98c93836d0562662249fd4023e0d98fa9d",
+  "config_sha256": "37ac02d83e2eed3a35f76997f20f8d3a24885e147c15f886352bd51fdca4d0ba",
+  "environment": {
+    "backend": "synthetic-scenario-v1",
+    "model": "gpt-5.6-luna",
+    "tokenizer": "provider-undisclosed",
+    "reasoning": "medium",
+    "tools": [
+      "shell",
+      "files"
+    ],
+    "permissions": "workspace-write; managed proxy loopback-only with local binding; isolated synthetic sidecar",
+    "budget": {
+      "timeout_seconds": 180
+    },
+    "accounting_method": "codex-cli 0.153.4 provider turn.completed; cached input included in full",
+    "guidance_delivery": "file"
+  },
+  "arms": {
+    "official": {
+      "cli_sha256": "5e1f582ec5ab9c86d3618fc17bd099b3443d40fe8691fed07d42e83a351ba977",
+      "skill_sha256": "09393e1be0523ee46aeb31c1a5dbbc816ca9f70c58b10d3ebf9be398bd88e27f"
+    },
+    "next": {
+      "cli_sha256": "c42d5467e084a84a73780c0c8e9714dfe427d32f49fa9bba8793085f528aed42",
+      "skill_sha256": "025816ca2986943dcc4a94c232759ec2a454ec003c517785437639fbbea84bcc"
+    }
+  },
+  "runs": [
+    {
+      "task_id": "paired-sheets",
+      "section": "sheets",
+      "trial": 1,
+      "arm": "official",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 250230,
+        "cached_input_tokens": 209920,
+        "output_tokens": 2110,
+        "total_tokens": 252340
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 250230,
+        "cached_input_tokens": 209920,
+        "output_tokens": 2110,
+        "total_tokens": 252340
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "sheets",
+                "+cells-get"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "sheets",
+                "+cells-get"
+              ],
+              "flags": [
+                "--include",
+                "--output-path",
+                "--range",
+                "--sheet-id",
+                "--spreadsheet-token"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "sheets",
+                "+table-get"
+              ],
+              "flags": [
+                "--no-header",
+                "--range",
+                "--sheet-id",
+                "--spreadsheet-token"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 60.70306312499997,
+      "verification_seconds": 0.06545241700041515,
+      "api_calls": 5,
+      "retries": null,
+      "command_executions": 9
+    },
+    {
+      "task_id": "paired-sheets",
+      "section": "sheets",
+      "trial": 1,
+      "arm": "next",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 32113,
+        "cached_input_tokens": 20736,
+        "output_tokens": 618,
+        "total_tokens": 32731
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 32113,
+        "cached_input_tokens": 20736,
+        "output_tokens": 618,
+        "total_tokens": 32731
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "sheets",
+                "+data-export"
+              ],
+              "flags": [
+                "--range",
+                "--save-result",
+                "--sheet-id",
+                "--spreadsheet-token"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 24.69541216700054,
+      "verification_seconds": 0.07315358300002117,
+      "api_calls": 3,
+      "retries": null,
+      "command_executions": 3
+    },
+    {
+      "task_id": "paired-sheets",
+      "section": "sheets",
+      "trial": 2,
+      "arm": "next",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 32268,
+        "cached_input_tokens": 20736,
+        "output_tokens": 730,
+        "total_tokens": 32998
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 32268,
+        "cached_input_tokens": 20736,
+        "output_tokens": 730,
+        "total_tokens": 32998
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "sheets",
+                "+data-export"
+              ],
+              "flags": [
+                "--range",
+                "--save-result",
+                "--sheet-id",
+                "--spreadsheet-token"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 30.33416833299998,
+      "verification_seconds": 0.0837405829988711,
+      "api_calls": 3,
+      "retries": null,
+      "command_executions": 3
+    },
+    {
+      "task_id": "paired-sheets",
+      "section": "sheets",
+      "trial": 0,
+      "arm": "next",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 31464,
+        "cached_input_tokens": 12800,
+        "output_tokens": 515,
+        "total_tokens": 31979
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 31464,
+        "cached_input_tokens": 12800,
+        "output_tokens": 515,
+        "total_tokens": 31979
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "sheets",
+                "+data-export"
+              ],
+              "flags": [
+                "--range",
+                "--save-result",
+                "--sheet-id",
+                "--spreadsheet-token"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 39.33124599999974,
+      "verification_seconds": 0.07701399999859859,
+      "api_calls": 3,
+      "retries": null,
+      "command_executions": 3
+    },
+    {
+      "task_id": "paired-sheets",
+      "section": "sheets",
+      "trial": 2,
+      "arm": "official",
+      "success": false,
+      "outcome_inconclusive": false,
+      "usage": null,
+      "categories": [
+        "runner_failure",
+        "usage_unavailable",
+        "outcome_failure"
+      ],
+      "known_usage": null,
+      "accounting_diagnostics": [
+        "provider_turn_count_mismatch"
+      ],
+      "verification_failures": [
+        "invalid_verification_input"
+      ],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "sheets",
+                "+cells-get"
+              ],
+              "flags": [
+                "--include",
+                "--output-path",
+                "--range",
+                "--sheet-id",
+                "--spreadsheet-token"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 1,
+      "verifier_exit": 0,
+      "latency_seconds": 180.46821887499937,
+      "verification_seconds": 0.06335525000031339,
+      "api_calls": 2,
+      "retries": null,
+      "command_executions": 5
+    },
+    {
+      "task_id": "paired-sheets",
+      "section": "sheets",
+      "trial": 0,
+      "arm": "official",
+      "success": false,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 331768,
+        "cached_input_tokens": 286208,
+        "output_tokens": 2578,
+        "total_tokens": 334346
+      },
+      "categories": [
+        "outcome_failure",
+        "misleading_success_claim"
+      ],
+      "known_usage": {
+        "input_tokens": 331768,
+        "cached_input_tokens": 286208,
+        "output_tokens": 2578,
+        "total_tokens": 334346
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [
+        "paired_sheets_proof_or_typed_artifact_mismatch"
+      ],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "sheets",
+                "+cells-get"
+              ],
+              "flags": [
+                "--include",
+                "--output-path",
+                "--range",
+                "--sheet-id",
+                "--spreadsheet-token"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "sheets",
+                "+cells-get"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "sheets",
+                "+table-get"
+              ],
+              "flags": [
+                "--output-path",
+                "--range",
+                "--sheet-id",
+                "--spreadsheet-token"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "sheets"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 74.70268404199851,
+      "verification_seconds": 0.07724274999964109,
+      "api_calls": 6,
+      "retries": null,
+      "command_executions": 10
+    }
+  ],
+  "groups": [
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 97708,
+      "tokens_per_success": 32569.333333333332,
+      "token_distribution": {
+        "min": 31979,
+        "median": 32731,
+        "max": 32998,
+        "stdev": 528.3865378047906
+      },
+      "latency_median_seconds": 30.33416833299998,
+      "api_calls": 9,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 1,
+      "inconclusive": 0,
+      "success_rate": 0.3333333333333333,
+      "usage_complete": false,
+      "known_total_tokens": 586686,
+      "tokens_per_success": null,
+      "token_distribution": {
+        "min": 252340,
+        "median": 293343.0,
+        "max": 334346,
+        "stdev": 57986.99869798402
+      },
+      "latency_median_seconds": 74.70268404199851,
+      "api_calls": 13,
+      "retries": null,
+      "failure_categories": {
+        "misleading_success_claim": 1,
+        "outcome_failure": 2,
+        "runner_failure": 1,
+        "usage_unavailable": 1
+      }
+    },
+    {
+      "scope": "section",
+      "name": "sheets",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 97708,
+      "tokens_per_success": 32569.333333333332,
+      "token_distribution": {
+        "min": 31979,
+        "median": 32731,
+        "max": 32998,
+        "stdev": 528.3865378047906
+      },
+      "latency_median_seconds": 30.33416833299998,
+      "api_calls": 9,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "section",
+      "name": "sheets",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 1,
+      "inconclusive": 0,
+      "success_rate": 0.3333333333333333,
+      "usage_complete": false,
+      "known_total_tokens": 586686,
+      "tokens_per_success": null,
+      "token_distribution": {
+        "min": 252340,
+        "median": 293343.0,
+        "max": 334346,
+        "stdev": 57986.99869798402
+      },
+      "latency_median_seconds": 74.70268404199851,
+      "api_calls": 13,
+      "retries": null,
+      "failure_categories": {
+        "misleading_success_claim": 1,
+        "outcome_failure": 2,
+        "runner_failure": 1,
+        "usage_unavailable": 1
+      }
+    },
+    {
+      "scope": "task_id",
+      "name": "paired-sheets",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 97708,
+      "tokens_per_success": 32569.333333333332,
+      "token_distribution": {
+        "min": 31979,
+        "median": 32731,
+        "max": 32998,
+        "stdev": 528.3865378047906
+      },
+      "latency_median_seconds": 30.33416833299998,
+      "api_calls": 9,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "task_id",
+      "name": "paired-sheets",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 1,
+      "inconclusive": 0,
+      "success_rate": 0.3333333333333333,
+      "usage_complete": false,
+      "known_total_tokens": 586686,
+      "tokens_per_success": null,
+      "token_distribution": {
+        "min": 252340,
+        "median": 293343.0,
+        "max": 334346,
+        "stdev": 57986.99869798402
+      },
+      "latency_median_seconds": 74.70268404199851,
+      "api_calls": 13,
+      "retries": null,
+      "failure_categories": {
+        "misleading_success_claim": 1,
+        "outcome_failure": 2,
+        "runner_failure": 1,
+        "usage_unavailable": 1
+      }
+    }
+  ],
+  "matched_success": [
+    {
+      "baseline": "official",
+      "pairs": [
+        {
+          "task_id": "paired-sheets",
+          "trial": 1,
+          "baseline_tokens": 252340,
+          "next_tokens": 32731
+        }
+      ]
+    }
+  ],
+  "arm_selection": {
+    "mode": "original_comparison",
+    "selected": [
+      "official",
+      "next"
+    ],
+    "schedule": "balanced",
+    "balanced_comparison": true
+  },
+  "resume_contract": {
+    "version": 1,
+    "sha256": "7436c9901e69d31b1b4dbe66ac9c715487182e9092bd768603e8cd4fd0555902"
+  }
+}

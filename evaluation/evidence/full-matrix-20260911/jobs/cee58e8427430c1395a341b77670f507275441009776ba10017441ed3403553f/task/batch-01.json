@@ -1,0 +1,1325 @@
+{
+  "protocol": 1,
+  "mode": "real",
+  "split": "development",
+  "performance_claims_supported": true,
+  "completed": true,
+  "planned_runs": 6,
+  "seed": 20260938,
+  "repeats": 3,
+  "fresh_context": true,
+  "task_manifest_sha256": "c7313ca6120ac1a512911401eb30ce0de53ca39328e0c646804d6588ba7eabdf",
+  "config_sha256": "813af377a3581b2f99a6e7b6ae996bc5349a08716d259de39b006915094f93d9",
+  "environment": {
+    "backend": "synthetic-scenario-v1",
+    "model": "gpt-5.6-luna",
+    "tokenizer": "provider-undisclosed",
+    "reasoning": "medium",
+    "tools": [
+      "shell",
+      "files"
+    ],
+    "permissions": "workspace-write; managed proxy loopback-only with local binding; isolated synthetic sidecar",
+    "budget": {
+      "timeout_seconds": 180
+    },
+    "accounting_method": "codex-cli 0.153.4 provider turn.completed; cached input included in full",
+    "guidance_delivery": "file"
+  },
+  "arms": {
+    "official": {
+      "cli_sha256": "5e1f582ec5ab9c86d3618fc17bd099b3443d40fe8691fed07d42e83a351ba977",
+      "skill_sha256": "f69e7f68432723240710a90ad390d97f777f5511868743d00a8478180a6a0d7a"
+    },
+    "next": {
+      "cli_sha256": "c42d5467e084a84a73780c0c8e9714dfe427d32f49fa9bba8793085f528aed42",
+      "skill_sha256": "025816ca2986943dcc4a94c232759ec2a454ec003c517785437639fbbea84bcc"
+    }
+  },
+  "runs": [
+    {
+      "task_id": "task-dev-01",
+      "section": "task",
+      "trial": 2,
+      "arm": "official",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 159455,
+        "cached_input_tokens": 125440,
+        "output_tokens": 1494,
+        "total_tokens": 160949
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 159455,
+        "cached_input_tokens": 125440,
+        "output_tokens": 1494,
+        "total_tokens": 160949
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "task",
+                "tasks"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "task",
+                "tasks",
+                "get"
+              ],
+              "flags": [
+                "--as",
+                "--format",
+                "--task-guid"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "task",
+                "+complete"
+              ],
+              "flags": [
+                "--as",
+                "--format",
+                "--task-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 45.96433837500081,
+      "verification_seconds": 0.06640929199966195,
+      "api_calls": 7,
+      "retries": null,
+      "command_executions": 6
+    },
+    {
+      "task_id": "task-dev-01",
+      "section": "task",
+      "trial": 0,
+      "arm": "next",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 349408,
+        "cached_input_tokens": 251136,
+        "output_tokens": 1988,
+        "total_tokens": 351396
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 349408,
+        "cached_input_tokens": 251136,
+        "output_tokens": 1988,
+        "total_tokens": 351396
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "cli",
+              "command": [],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "task",
+                "tasks"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "task",
+                "tasks",
+                "get"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "task",
+                "tasks",
+                "patch"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "task",
+                "tasks",
+                "get"
+              ],
+              "flags": [
+                "--as",
+                "--format",
+                "--task-guid"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "task",
+                "+complete"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 2
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "task",
+                "+complete"
+              ],
+              "flags": [
+                "--as",
+                "--format",
+                "--task-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "task",
+                "tasks",
+                "get"
+              ],
+              "flags": [
+                "--as",
+                "--format",
+                "--task-guid"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 67.61347108399968,
+      "verification_seconds": 0.058968375000404194,
+      "api_calls": 7,
+      "retries": null,
+      "command_executions": 13
+    },
+    {
+      "task_id": "task-dev-01",
+      "section": "task",
+      "trial": 1,
+      "arm": "official",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 173625,
+        "cached_input_tokens": 142592,
+        "output_tokens": 1402,
+        "total_tokens": 175027
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 173625,
+        "cached_input_tokens": 142592,
+        "output_tokens": 1402,
+        "total_tokens": 175027
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "task"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "task",
+                "+complete"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "task",
+                "tasks"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "task",
+                "tasks",
+                "get"
+              ],
+              "flags": [
+                "--as",
+                "--format",
+                "--params"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "task",
+                "+complete"
+              ],
+              "flags": [
+                "--as",
+                "--format",
+                "--task-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "task",
+                "tasks",
+                "get"
+              ],
+              "flags": [
+                "--as",
+                "--format",
+                "--params"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 46.70851129099901,
+      "verification_seconds": 0.059138959000847535,
+      "api_calls": 11,
+      "retries": null,
+      "command_executions": 7
+    },
+    {
+      "task_id": "task-dev-01",
+      "section": "task",
+      "trial": 0,
+      "arm": "official",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 119011,
+        "cached_input_tokens": 92416,
+        "output_tokens": 1303,
+        "total_tokens": 120314
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 119011,
+        "cached_input_tokens": 92416,
+        "output_tokens": 1303,
+        "total_tokens": 120314
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 1
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_search"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "task"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "task",
+                "+complete"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "task",
+                "tasks",
+                "get"
+              ],
+              "flags": [
+                "--as",
+                "--format",
+                "--params"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "task",
+                "+complete"
+              ],
+              "flags": [
+                "--as",
+                "--format",
+                "--task-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 45.76283391600009,
+      "verification_seconds": 0.04543704099887691,
+      "api_calls": 8,
+      "retries": null,
+      "command_executions": 7
+    },
+    {
+      "task_id": "task-dev-01",
+      "section": "task",
+      "trial": 1,
+      "arm": "next",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 137568,
+        "cached_input_tokens": 97280,
+        "output_tokens": 1655,
+        "total_tokens": 139223
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 137568,
+        "cached_input_tokens": 97280,
+        "output_tokens": 1655,
+        "total_tokens": 139223
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "cli",
+              "command": [],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "task"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "skills",
+                "read"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "skills",
+                "read"
+              ],
+              "flags": []
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "task",
+                "+complete"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "task",
+                "tasks",
+                "get"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "task",
+                "tasks",
+                "get"
+              ],
+              "flags": [
+                "--as",
+                "--format",
+                "--jq",
+                "--task-guid"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "task",
+                "+complete"
+              ],
+              "flags": [
+                "--as",
+                "--format",
+                "--task-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "task",
+                "tasks",
+                "get"
+              ],
+              "flags": [
+                "--as",
+                "--format",
+                "--jq",
+                "--task-guid"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 56.5357753749995,
+      "verification_seconds": 0.06601150000096823,
+      "api_calls": 7,
+      "retries": null,
+      "command_executions": 9
+    },
+    {
+      "task_id": "task-dev-01",
+      "section": "task",
+      "trial": 2,
+      "arm": "next",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 198036,
+        "cached_input_tokens": 163328,
+        "output_tokens": 1717,
+        "total_tokens": 199753
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 198036,
+        "cached_input_tokens": 163328,
+        "output_tokens": 1717,
+        "total_tokens": 199753
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "task",
+                "tasks",
+                "get"
+              ],
+              "flags": [
+                "--as",
+                "--format",
+                "--task-guid"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "task",
+                "+complete"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "task",
+                "+complete"
+              ],
+              "flags": [
+                "--as",
+                "--format",
+                "--task-id"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "task",
+                "tasks",
+                "get"
+              ],
+              "flags": [
+                "--as",
+                "--format",
+                "--task-guid"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 52.52136066700041,
+      "verification_seconds": 0.06333125000128348,
+      "api_calls": 7,
+      "retries": null,
+      "command_executions": 10
+    }
+  ],
+  "groups": [
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 690372,
+      "tokens_per_success": 230124.0,
+      "token_distribution": {
+        "min": 139223,
+        "median": 199753,
+        "max": 351396,
+        "stdev": 109298.41587598606
+      },
+      "latency_median_seconds": 56.5357753749995,
+      "api_calls": 21,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 456290,
+      "tokens_per_success": 152096.66666666666,
+      "token_distribution": {
+        "min": 120314,
+        "median": 160949,
+        "max": 175027,
+        "stdev": 28410.402079754756
+      },
+      "latency_median_seconds": 45.96433837500081,
+      "api_calls": 26,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "section",
+      "name": "task",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 690372,
+      "tokens_per_success": 230124.0,
+      "token_distribution": {
+        "min": 139223,
+        "median": 199753,
+        "max": 351396,
+        "stdev": 109298.41587598606
+      },
+      "latency_median_seconds": 56.5357753749995,
+      "api_calls": 21,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "section",
+      "name": "task",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 456290,
+      "tokens_per_success": 152096.66666666666,
+      "token_distribution": {
+        "min": 120314,
+        "median": 160949,
+        "max": 175027,
+        "stdev": 28410.402079754756
+      },
+      "latency_median_seconds": 45.96433837500081,
+      "api_calls": 26,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "task_id",
+      "name": "task-dev-01",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 690372,
+      "tokens_per_success": 230124.0,
+      "token_distribution": {
+        "min": 139223,
+        "median": 199753,
+        "max": 351396,
+        "stdev": 109298.41587598606
+      },
+      "latency_median_seconds": 56.5357753749995,
+      "api_calls": 21,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "task_id",
+      "name": "task-dev-01",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 456290,
+      "tokens_per_success": 152096.66666666666,
+      "token_distribution": {
+        "min": 120314,
+        "median": 160949,
+        "max": 175027,
+        "stdev": 28410.402079754756
+      },
+      "latency_median_seconds": 45.96433837500081,
+      "api_calls": 26,
+      "retries": null,
+      "failure_categories": {}
+    }
+  ],
+  "matched_success": [
+    {
+      "baseline": "official",
+      "pairs": [
+        {
+          "task_id": "task-dev-01",
+          "trial": 0,
+          "baseline_tokens": 120314,
+          "next_tokens": 351396
+        },
+        {
+          "task_id": "task-dev-01",
+          "trial": 1,
+          "baseline_tokens": 175027,
+          "next_tokens": 139223
+        },
+        {
+          "task_id": "task-dev-01",
+          "trial": 2,
+          "baseline_tokens": 160949,
+          "next_tokens": 199753
+        }
+      ]
+    }
+  ],
+  "arm_selection": {
+    "mode": "original_comparison",
+    "selected": [
+      "official",
+      "next"
+    ],
+    "schedule": "balanced",
+    "balanced_comparison": true
+  },
+  "resume_contract": {
+    "version": 1,
+    "sha256": "d6531441184aa1fda8bf6d95f12f650a4d9c2004c6618019ac74791c8c4d0872"
+  }
+}

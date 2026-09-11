@@ -1,0 +1,909 @@
+{
+  "protocol": 1,
+  "mode": "real",
+  "split": "development",
+  "performance_claims_supported": true,
+  "completed": true,
+  "planned_runs": 6,
+  "seed": 20260913,
+  "repeats": 3,
+  "fresh_context": true,
+  "task_manifest_sha256": "fe3d9af975b3e9d98b1c9092c2d87c1618628aa7e98f3f76a50bb76d992b950d",
+  "config_sha256": "7bf5d2767d6162cabb5bef657daddf71735efaaad08d60f099c530ff4400777a",
+  "environment": {
+    "backend": "synthetic-read-v1",
+    "model": "gpt-5.6-luna",
+    "tokenizer": "provider-undisclosed",
+    "reasoning": "medium",
+    "tools": [
+      "shell",
+      "files"
+    ],
+    "permissions": "workspace-write; managed proxy loopback-only with local binding; isolated synthetic sidecar",
+    "budget": {
+      "timeout_seconds": 180
+    },
+    "accounting_method": "codex-cli 0.153.4 provider turn.completed; cached input included in full",
+    "guidance_delivery": "file"
+  },
+  "arms": {
+    "official": {
+      "cli_sha256": "5e1f582ec5ab9c86d3618fc17bd099b3443d40fe8691fed07d42e83a351ba977",
+      "skill_sha256": "1058e122bb7d3f8d857fa9af7470082c2ce59673455bdaf5305f912dd3b9920f"
+    },
+    "next": {
+      "cli_sha256": "c42d5467e084a84a73780c0c8e9714dfe427d32f49fa9bba8793085f528aed42",
+      "skill_sha256": "025816ca2986943dcc4a94c232759ec2a454ec003c517785437639fbbea84bcc"
+    }
+  },
+  "runs": [
+    {
+      "task_id": "minutes-dev-01",
+      "section": "minutes",
+      "trial": 1,
+      "arm": "official",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 60635,
+        "cached_input_tokens": 44800,
+        "output_tokens": 825,
+        "total_tokens": 61460
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 60635,
+        "cached_input_tokens": 44800,
+        "output_tokens": 825,
+        "total_tokens": 61460
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": [
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "minutes_metadata",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "minutes_artifacts",
+          "status": 200
+        }
+      ],
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "minutes",
+                "+detail"
+              ],
+              "flags": [
+                "--as",
+                "--format",
+                "--minute-tokens",
+                "--transcript"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 30.96096679100083,
+      "verification_seconds": 0.026657874999727937,
+      "api_calls": 3,
+      "retries": null,
+      "command_executions": 5
+    },
+    {
+      "task_id": "minutes-dev-01",
+      "section": "minutes",
+      "trial": 1,
+      "arm": "next",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 96761,
+        "cached_input_tokens": 68864,
+        "output_tokens": 1394,
+        "total_tokens": 98155
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 96761,
+        "cached_input_tokens": 68864,
+        "output_tokens": 1394,
+        "total_tokens": 98155
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": [
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "minutes_metadata",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "minutes_artifacts",
+          "status": 200
+        }
+      ],
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "note"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "note",
+                "+transcript"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "skills",
+                "read"
+              ],
+              "flags": []
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "skills",
+                "read"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "skills",
+                "read"
+              ],
+              "flags": []
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "minutes",
+                "+detail"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "minutes",
+                "+detail"
+              ],
+              "flags": [
+                "--as",
+                "--format",
+                "--minute-tokens",
+                "--output-dir",
+                "--transcript"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 49.69512733300144,
+      "verification_seconds": 0.03864620800050034,
+      "api_calls": 3,
+      "retries": null,
+      "command_executions": 8
+    },
+    {
+      "task_id": "minutes-dev-01",
+      "section": "minutes",
+      "trial": 2,
+      "arm": "next",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 42206,
+        "cached_input_tokens": 20736,
+        "output_tokens": 745,
+        "total_tokens": 42951
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 42206,
+        "cached_input_tokens": 20736,
+        "output_tokens": 745,
+        "total_tokens": 42951
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": [
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "minutes_metadata",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "minutes_artifacts",
+          "status": 200
+        }
+      ],
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "minutes",
+                "+detail"
+              ],
+              "flags": [
+                "--as",
+                "--format",
+                "--minute-tokens",
+                "--output-dir",
+                "--transcript"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 31.2830955419995,
+      "verification_seconds": 0.03311579100045492,
+      "api_calls": 3,
+      "retries": null,
+      "command_executions": 4
+    },
+    {
+      "task_id": "minutes-dev-01",
+      "section": "minutes",
+      "trial": 0,
+      "arm": "next",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 42278,
+        "cached_input_tokens": 20736,
+        "output_tokens": 717,
+        "total_tokens": 42995
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 42278,
+        "cached_input_tokens": 20736,
+        "output_tokens": 717,
+        "total_tokens": 42995
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": [
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "minutes_metadata",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "minutes_artifacts",
+          "status": 200
+        }
+      ],
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "minutes",
+                "+detail"
+              ],
+              "flags": [
+                "--as",
+                "--format",
+                "--minute-tokens",
+                "--output-dir",
+                "--transcript"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 33.21408125000016,
+      "verification_seconds": 0.041046708000067156,
+      "api_calls": 3,
+      "retries": null,
+      "command_executions": 4
+    },
+    {
+      "task_id": "minutes-dev-01",
+      "section": "minutes",
+      "trial": 2,
+      "arm": "official",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 71634,
+        "cached_input_tokens": 47616,
+        "output_tokens": 822,
+        "total_tokens": 72456
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 71634,
+        "cached_input_tokens": 47616,
+        "output_tokens": 822,
+        "total_tokens": 72456
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": [
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "minutes_metadata",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "minutes_artifacts",
+          "status": 200
+        }
+      ],
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "minutes",
+                "+detail"
+              ],
+              "flags": [
+                "--as",
+                "--format",
+                "--minute-tokens",
+                "--transcript"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 30.263699999999517,
+      "verification_seconds": 0.027749540999138844,
+      "api_calls": 3,
+      "retries": null,
+      "command_executions": 5
+    },
+    {
+      "task_id": "minutes-dev-01",
+      "section": "minutes",
+      "trial": 0,
+      "arm": "official",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 74932,
+        "cached_input_tokens": 51968,
+        "output_tokens": 966,
+        "total_tokens": 75898
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 74932,
+        "cached_input_tokens": 51968,
+        "output_tokens": 966,
+        "total_tokens": 75898
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": [
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "minutes_metadata",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "minutes_artifacts",
+          "status": 200
+        }
+      ],
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "minutes",
+                "+detail"
+              ],
+              "flags": [
+                "--as",
+                "--format",
+                "--minute-tokens",
+                "--transcript"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 39.052261458999055,
+      "verification_seconds": 0.040243249999548425,
+      "api_calls": 3,
+      "retries": null,
+      "command_executions": 6
+    }
+  ],
+  "groups": [
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 184101,
+      "tokens_per_success": 61367.0,
+      "token_distribution": {
+        "min": 42951,
+        "median": 42995,
+        "max": 98155,
+        "stdev": 31859.350150309092
+      },
+      "latency_median_seconds": 33.21408125000016,
+      "api_calls": 9,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 209814,
+      "tokens_per_success": 69938.0,
+      "token_distribution": {
+        "min": 61460,
+        "median": 72456,
+        "max": 75898,
+        "stdev": 7541.167283650456
+      },
+      "latency_median_seconds": 30.96096679100083,
+      "api_calls": 9,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "section",
+      "name": "minutes",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 184101,
+      "tokens_per_success": 61367.0,
+      "token_distribution": {
+        "min": 42951,
+        "median": 42995,
+        "max": 98155,
+        "stdev": 31859.350150309092
+      },
+      "latency_median_seconds": 33.21408125000016,
+      "api_calls": 9,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "section",
+      "name": "minutes",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 209814,
+      "tokens_per_success": 69938.0,
+      "token_distribution": {
+        "min": 61460,
+        "median": 72456,
+        "max": 75898,
+        "stdev": 7541.167283650456
+      },
+      "latency_median_seconds": 30.96096679100083,
+      "api_calls": 9,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "task_id",
+      "name": "minutes-dev-01",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 184101,
+      "tokens_per_success": 61367.0,
+      "token_distribution": {
+        "min": 42951,
+        "median": 42995,
+        "max": 98155,
+        "stdev": 31859.350150309092
+      },
+      "latency_median_seconds": 33.21408125000016,
+      "api_calls": 9,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "task_id",
+      "name": "minutes-dev-01",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 209814,
+      "tokens_per_success": 69938.0,
+      "token_distribution": {
+        "min": 61460,
+        "median": 72456,
+        "max": 75898,
+        "stdev": 7541.167283650456
+      },
+      "latency_median_seconds": 30.96096679100083,
+      "api_calls": 9,
+      "retries": null,
+      "failure_categories": {}
+    }
+  ],
+  "matched_success": [
+    {
+      "baseline": "official",
+      "pairs": [
+        {
+          "task_id": "minutes-dev-01",
+          "trial": 1,
+          "baseline_tokens": 61460,
+          "next_tokens": 98155
+        },
+        {
+          "task_id": "minutes-dev-01",
+          "trial": 2,
+          "baseline_tokens": 72456,
+          "next_tokens": 42951
+        },
+        {
+          "task_id": "minutes-dev-01",
+          "trial": 0,
+          "baseline_tokens": 75898,
+          "next_tokens": 42995
+        }
+      ]
+    }
+  ],
+  "arm_selection": {
+    "mode": "original_comparison",
+    "selected": [
+      "official",
+      "next"
+    ],
+    "schedule": "balanced",
+    "balanced_comparison": true
+  },
+  "resume_contract": {
+    "version": 1,
+    "sha256": "f4dc0d3b7b1bcb92e80a8344e0334f4683b617f6209c3a9b9f15eb634624ad9c"
+  }
+}

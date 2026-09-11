@@ -1,0 +1,1314 @@
+{
+  "protocol": 1,
+  "mode": "real",
+  "split": "development",
+  "performance_claims_supported": true,
+  "completed": true,
+  "planned_runs": 6,
+  "seed": 20260912,
+  "repeats": 3,
+  "fresh_context": true,
+  "task_manifest_sha256": "fe3d9af975b3e9d98b1c9092c2d87c1618628aa7e98f3f76a50bb76d992b950d",
+  "config_sha256": "bd4b7185527a43a6af6a1aaf99416ceaa64f430c01b1542b0b1f7c2573a195f8",
+  "environment": {
+    "backend": "synthetic-read-v1",
+    "model": "gpt-5.6-luna",
+    "tokenizer": "provider-undisclosed",
+    "reasoning": "medium",
+    "tools": [
+      "shell",
+      "files"
+    ],
+    "permissions": "workspace-write; managed proxy loopback-only with local binding; isolated synthetic sidecar",
+    "budget": {
+      "timeout_seconds": 180
+    },
+    "accounting_method": "codex-cli 0.153.4 provider turn.completed; cached input included in full",
+    "guidance_delivery": "file"
+  },
+  "arms": {
+    "official": {
+      "cli_sha256": "5e1f582ec5ab9c86d3618fc17bd099b3443d40fe8691fed07d42e83a351ba977",
+      "skill_sha256": "8d272993a64bd892c120da2bb8c1c11083b23aefa51d5e32f2f27e9a47519791"
+    },
+    "next": {
+      "cli_sha256": "c42d5467e084a84a73780c0c8e9714dfe427d32f49fa9bba8793085f528aed42",
+      "skill_sha256": "025816ca2986943dcc4a94c232759ec2a454ec003c517785437639fbbea84bcc"
+    }
+  },
+  "runs": [
+    {
+      "task_id": "im-dev-01",
+      "section": "im",
+      "trial": 2,
+      "arm": "official",
+      "success": false,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 109114,
+        "cached_input_tokens": 83456,
+        "output_tokens": 1733,
+        "total_tokens": 110847
+      },
+      "categories": [
+        "outcome_failure",
+        "misleading_success_claim"
+      ],
+      "known_usage": {
+        "input_tokens": 109114,
+        "cached_input_tokens": 83456,
+        "output_tokens": 1733,
+        "total_tokens": 110847
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [
+        "request_outside_fixture"
+      ],
+      "api_request_trace": [
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "message_mget",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "rejected",
+          "status": 403
+        }
+      ],
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "im",
+                "+messages-mget"
+              ],
+              "flags": [
+                "--format",
+                "--message-ids",
+                "--no-reactions"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "im",
+                "+messages-mget"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 2
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 46.662007124999946,
+      "verification_seconds": 0.04141008400074497,
+      "api_calls": 6,
+      "retries": null,
+      "command_executions": 5
+    },
+    {
+      "task_id": "im-dev-01",
+      "section": "im",
+      "trial": 1,
+      "arm": "official",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 167750,
+        "cached_input_tokens": 120832,
+        "output_tokens": 2171,
+        "total_tokens": 169921
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 167750,
+        "cached_input_tokens": 120832,
+        "output_tokens": 2171,
+        "total_tokens": 169921
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": [
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "message_mget",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "message_get",
+          "status": 200
+        }
+      ],
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "im",
+                "+messages-mget"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "im",
+                "+messages-mget"
+              ],
+              "flags": [
+                "--format",
+                "--message-ids",
+                "--no-reactions"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "im",
+                "messages"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 2
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 2,
+          "reported_cli_error": {
+            "type": "validation",
+            "subtype": "invalid_argument"
+          }
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "api"
+              ],
+              "flags": [
+                "--format"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 62.555167582999275,
+      "verification_seconds": 0.030050291999941692,
+      "api_calls": 9,
+      "retries": null,
+      "command_executions": 8
+    },
+    {
+      "task_id": "im-dev-01",
+      "section": "im",
+      "trial": 2,
+      "arm": "next",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 130045,
+        "cached_input_tokens": 92928,
+        "output_tokens": 2013,
+        "total_tokens": 132058
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 130045,
+        "cached_input_tokens": 92928,
+        "output_tokens": 2013,
+        "total_tokens": 132058
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": [
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "message_mget",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "message_mget",
+          "status": 200
+        }
+      ],
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "im"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "im",
+                "+messages-mget"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "im",
+                "+messages-mget"
+              ],
+              "flags": [
+                "--as",
+                "--format",
+                "--message-ids",
+                "--no-reactions"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "im",
+                "+messages-mget"
+              ],
+              "flags": [
+                "--as",
+                "--message-ids",
+                "--no-reactions",
+                "--result-detail"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "api"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 62.098874249999426,
+      "verification_seconds": 0.03407504200004041,
+      "api_calls": 4,
+      "retries": null,
+      "command_executions": 10
+    },
+    {
+      "task_id": "im-dev-01",
+      "section": "im",
+      "trial": 0,
+      "arm": "next",
+      "success": false,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 128474,
+        "cached_input_tokens": 92672,
+        "output_tokens": 1411,
+        "total_tokens": 129885
+      },
+      "categories": [
+        "outcome_failure",
+        "misleading_success_claim"
+      ],
+      "known_usage": {
+        "input_tokens": 128474,
+        "cached_input_tokens": 92672,
+        "output_tokens": 1411,
+        "total_tokens": 129885
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [
+        "request_outside_fixture"
+      ],
+      "api_request_trace": [
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "message_mget",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "rejected",
+          "status": 403
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "message_mget",
+          "status": 200
+        }
+      ],
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "im",
+                "+messages-mget"
+              ],
+              "flags": [
+                "--as",
+                "--format",
+                "--message-ids",
+                "--no-reactions"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "im",
+                "+chat-messages-list"
+              ],
+              "flags": [
+                "--as",
+                "--chat-id",
+                "--format",
+                "--no-reactions",
+                "--order",
+                "--page-size"
+              ]
+            }
+          ],
+          "exit_code": 1,
+          "reported_cli_error": {
+            "type": "api",
+            "subtype": "unknown"
+          }
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "im",
+                "+messages-mget"
+              ],
+              "flags": [
+                "--as",
+                "--format",
+                "--message-ids",
+                "--no-reactions",
+                "--result-detail"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 44.65107333299966,
+      "verification_seconds": 0.03651433300001372,
+      "api_calls": 6,
+      "retries": null,
+      "command_executions": 7
+    },
+    {
+      "task_id": "im-dev-01",
+      "section": "im",
+      "trial": 1,
+      "arm": "next",
+      "success": false,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 129070,
+        "cached_input_tokens": 90368,
+        "output_tokens": 1525,
+        "total_tokens": 130595
+      },
+      "categories": [
+        "outcome_failure",
+        "misleading_success_claim"
+      ],
+      "known_usage": {
+        "input_tokens": 129070,
+        "cached_input_tokens": 90368,
+        "output_tokens": 1525,
+        "total_tokens": 130595
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [
+        "request_outside_fixture"
+      ],
+      "api_request_trace": [
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "rejected",
+          "status": 403
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "message_mget",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "message_mget",
+          "status": 200
+        }
+      ],
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "im",
+                "+chat-messages-list"
+              ],
+              "flags": [
+                "--as",
+                "--chat-id",
+                "--format",
+                "--no-reactions",
+                "--order",
+                "--page-size"
+              ]
+            }
+          ],
+          "exit_code": 1,
+          "reported_cli_error": {
+            "type": "api",
+            "subtype": "unknown"
+          }
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "im",
+                "+messages-mget"
+              ],
+              "flags": [
+                "--as",
+                "--format",
+                "--message-ids",
+                "--no-reactions"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "im",
+                "+messages-mget"
+              ],
+              "flags": [
+                "--as",
+                "--format",
+                "--message-ids",
+                "--no-reactions",
+                "--result-detail"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 48.12473875000069,
+      "verification_seconds": 0.050044749999869964,
+      "api_calls": 6,
+      "retries": null,
+      "command_executions": 8
+    },
+    {
+      "task_id": "im-dev-01",
+      "section": "im",
+      "trial": 0,
+      "arm": "official",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 137445,
+        "cached_input_tokens": 100608,
+        "output_tokens": 1716,
+        "total_tokens": 139161
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 137445,
+        "cached_input_tokens": 100608,
+        "output_tokens": 1716,
+        "total_tokens": 139161
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": [
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "message_mget",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        }
+      ],
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "im",
+                "+messages-mget"
+              ],
+              "flags": [
+                "--format",
+                "--message-ids",
+                "--no-reactions"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "im",
+                "+messages-mget"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 2,
+          "reported_cli_error": {
+            "type": "validation",
+            "subtype": "invalid_argument"
+          }
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 2,
+          "reported_cli_error": {
+            "type": "validation",
+            "subtype": "invalid_argument"
+          }
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 65.0449791659994,
+      "verification_seconds": 0.042986124999515596,
+      "api_calls": 5,
+      "retries": null,
+      "command_executions": 8
+    }
+  ],
+  "groups": [
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 1,
+      "inconclusive": 0,
+      "success_rate": 0.3333333333333333,
+      "usage_complete": true,
+      "known_total_tokens": 392538,
+      "tokens_per_success": 392538.0,
+      "token_distribution": {
+        "min": 129885,
+        "median": 130595,
+        "max": 132058,
+        "stdev": 1108.031136746617
+      },
+      "latency_median_seconds": 48.12473875000069,
+      "api_calls": 16,
+      "retries": null,
+      "failure_categories": {
+        "misleading_success_claim": 2,
+        "outcome_failure": 2
+      }
+    },
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 2,
+      "inconclusive": 0,
+      "success_rate": 0.6666666666666666,
+      "usage_complete": true,
+      "known_total_tokens": 419929,
+      "tokens_per_success": 209964.5,
+      "token_distribution": {
+        "min": 110847,
+        "median": 139161,
+        "max": 169921,
+        "stdev": 29545.438655287104
+      },
+      "latency_median_seconds": 62.555167582999275,
+      "api_calls": 20,
+      "retries": null,
+      "failure_categories": {
+        "misleading_success_claim": 1,
+        "outcome_failure": 1
+      }
+    },
+    {
+      "scope": "section",
+      "name": "im",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 1,
+      "inconclusive": 0,
+      "success_rate": 0.3333333333333333,
+      "usage_complete": true,
+      "known_total_tokens": 392538,
+      "tokens_per_success": 392538.0,
+      "token_distribution": {
+        "min": 129885,
+        "median": 130595,
+        "max": 132058,
+        "stdev": 1108.031136746617
+      },
+      "latency_median_seconds": 48.12473875000069,
+      "api_calls": 16,
+      "retries": null,
+      "failure_categories": {
+        "misleading_success_claim": 2,
+        "outcome_failure": 2
+      }
+    },
+    {
+      "scope": "section",
+      "name": "im",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 2,
+      "inconclusive": 0,
+      "success_rate": 0.6666666666666666,
+      "usage_complete": true,
+      "known_total_tokens": 419929,
+      "tokens_per_success": 209964.5,
+      "token_distribution": {
+        "min": 110847,
+        "median": 139161,
+        "max": 169921,
+        "stdev": 29545.438655287104
+      },
+      "latency_median_seconds": 62.555167582999275,
+      "api_calls": 20,
+      "retries": null,
+      "failure_categories": {
+        "misleading_success_claim": 1,
+        "outcome_failure": 1
+      }
+    },
+    {
+      "scope": "task_id",
+      "name": "im-dev-01",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 1,
+      "inconclusive": 0,
+      "success_rate": 0.3333333333333333,
+      "usage_complete": true,
+      "known_total_tokens": 392538,
+      "tokens_per_success": 392538.0,
+      "token_distribution": {
+        "min": 129885,
+        "median": 130595,
+        "max": 132058,
+        "stdev": 1108.031136746617
+      },
+      "latency_median_seconds": 48.12473875000069,
+      "api_calls": 16,
+      "retries": null,
+      "failure_categories": {
+        "misleading_success_claim": 2,
+        "outcome_failure": 2
+      }
+    },
+    {
+      "scope": "task_id",
+      "name": "im-dev-01",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 2,
+      "inconclusive": 0,
+      "success_rate": 0.6666666666666666,
+      "usage_complete": true,
+      "known_total_tokens": 419929,
+      "tokens_per_success": 209964.5,
+      "token_distribution": {
+        "min": 110847,
+        "median": 139161,
+        "max": 169921,
+        "stdev": 29545.438655287104
+      },
+      "latency_median_seconds": 62.555167582999275,
+      "api_calls": 20,
+      "retries": null,
+      "failure_categories": {
+        "misleading_success_claim": 1,
+        "outcome_failure": 1
+      }
+    }
+  ],
+  "matched_success": [
+    {
+      "baseline": "official",
+      "pairs": []
+    }
+  ],
+  "arm_selection": {
+    "mode": "original_comparison",
+    "selected": [
+      "official",
+      "next"
+    ],
+    "schedule": "balanced",
+    "balanced_comparison": true
+  },
+  "resume_contract": {
+    "version": 1,
+    "sha256": "161f7f3593fc0d72f2890c81a33bfa278b7d4804b6a91efb5205eda950e1deb7"
+  }
+}

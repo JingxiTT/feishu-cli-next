@@ -1,0 +1,957 @@
+{
+  "protocol": 1,
+  "mode": "real",
+  "split": "development",
+  "performance_claims_supported": true,
+  "completed": true,
+  "planned_runs": 6,
+  "seed": 20260915,
+  "repeats": 3,
+  "fresh_context": true,
+  "task_manifest_sha256": "d62f4978ea4acfcc594c7854d680fb98c93836d0562662249fd4023e0d98fa9d",
+  "config_sha256": "b2872df7df89cbe6492df0844bad9dc6d1795706a8eb6451157c57b9a0bc187f",
+  "environment": {
+    "backend": "synthetic-scenario-v1",
+    "model": "gpt-5.6-luna",
+    "tokenizer": "provider-undisclosed",
+    "reasoning": "medium",
+    "tools": [
+      "shell",
+      "files"
+    ],
+    "permissions": "workspace-write; managed proxy loopback-only with local binding; isolated synthetic sidecar",
+    "budget": {
+      "timeout_seconds": 180
+    },
+    "accounting_method": "codex-cli 0.153.4 provider turn.completed; cached input included in full",
+    "guidance_delivery": "file"
+  },
+  "arms": {
+    "official": {
+      "cli_sha256": "5e1f582ec5ab9c86d3618fc17bd099b3443d40fe8691fed07d42e83a351ba977",
+      "skill_sha256": "b140cd55b62be7f001384fb47627dc269ef08db3b943d0eb8c6aa4ef1bc9b685"
+    },
+    "next": {
+      "cli_sha256": "c42d5467e084a84a73780c0c8e9714dfe427d32f49fa9bba8793085f528aed42",
+      "skill_sha256": "025816ca2986943dcc4a94c232759ec2a454ec003c517785437639fbbea84bcc"
+    }
+  },
+  "runs": [
+    {
+      "task_id": "paired-drive",
+      "section": "drive",
+      "trial": 0,
+      "arm": "next",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 41363,
+        "cached_input_tokens": 28672,
+        "output_tokens": 951,
+        "total_tokens": 42314
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 41363,
+        "cached_input_tokens": 28672,
+        "output_tokens": 951,
+        "total_tokens": 42314
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 32.43212533299993,
+      "verification_seconds": 0.0679635420001432,
+      "api_calls": 7,
+      "retries": null,
+      "command_executions": 4
+    },
+    {
+      "task_id": "paired-drive",
+      "section": "drive",
+      "trial": 1,
+      "arm": "next",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 31834,
+        "cached_input_tokens": 20736,
+        "output_tokens": 762,
+        "total_tokens": 32596
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 31834,
+        "cached_input_tokens": 20736,
+        "output_tokens": 762,
+        "total_tokens": 32596
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 32.25321183300002,
+      "verification_seconds": 0.090628416999607,
+      "api_calls": 7,
+      "retries": null,
+      "command_executions": 3
+    },
+    {
+      "task_id": "paired-drive",
+      "section": "drive",
+      "trial": 1,
+      "arm": "official",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 149188,
+        "cached_input_tokens": 98816,
+        "output_tokens": 1480,
+        "total_tokens": 150668
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 149188,
+        "cached_input_tokens": 98816,
+        "output_tokens": 1480,
+        "total_tokens": 150668
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "drive"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "drive",
+                "+upload"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "drive",
+                "+upload"
+              ],
+              "flags": [
+                "--as",
+                "--file",
+                "--folder-token",
+                "--format",
+                "--name"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 49.184328082999855,
+      "verification_seconds": 0.08889533299952745,
+      "api_calls": 10,
+      "retries": null,
+      "command_executions": 7
+    },
+    {
+      "task_id": "paired-drive",
+      "section": "drive",
+      "trial": 0,
+      "arm": "official",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 114651,
+        "cached_input_tokens": 95488,
+        "output_tokens": 1446,
+        "total_tokens": 116097
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 114651,
+        "cached_input_tokens": 95488,
+        "output_tokens": 1446,
+        "total_tokens": 116097
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "drive",
+                "+upload"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "drive",
+                "+download"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "drive",
+                "+upload"
+              ],
+              "flags": [
+                "--as",
+                "--file",
+                "--folder-token",
+                "--format",
+                "--name"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "drive",
+                "+download"
+              ],
+              "flags": [
+                "--as",
+                "--file-token",
+                "--format",
+                "--output"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 48.69452183300018,
+      "verification_seconds": 0.08474533299886389,
+      "api_calls": 9,
+      "retries": null,
+      "command_executions": 6
+    },
+    {
+      "task_id": "paired-drive",
+      "section": "drive",
+      "trial": 2,
+      "arm": "official",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 102414,
+        "cached_input_tokens": 77568,
+        "output_tokens": 1117,
+        "total_tokens": 103531
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 102414,
+        "cached_input_tokens": 77568,
+        "output_tokens": 1117,
+        "total_tokens": 103531
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "drive"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "drive",
+                "+upload"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "drive",
+                "+download"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "drive",
+                "+upload"
+              ],
+              "flags": [
+                "--as",
+                "--file",
+                "--folder-token",
+                "--format",
+                "--name"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "drive",
+                "+download"
+              ],
+              "flags": [
+                "--as",
+                "--file-token",
+                "--format",
+                "--output"
+              ]
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 40.72541674999957,
+      "verification_seconds": 0.08066850000068371,
+      "api_calls": 10,
+      "retries": null,
+      "command_executions": 5
+    },
+    {
+      "task_id": "paired-drive",
+      "section": "drive",
+      "trial": 2,
+      "arm": "next",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 52343,
+        "cached_input_tokens": 38656,
+        "output_tokens": 1139,
+        "total_tokens": 53482
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 52343,
+        "cached_input_tokens": 38656,
+        "output_tokens": 1139,
+        "total_tokens": 53482
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "drive",
+                "+upload"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "drive",
+                "+download"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "drive",
+                "+upload"
+              ],
+              "flags": [
+                "--as",
+                "--file",
+                "--folder-token",
+                "--json",
+                "--name"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "drive",
+                "+download"
+              ],
+              "flags": [
+                "--as",
+                "--file-token",
+                "--json",
+                "--output"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 37.370432042000175,
+      "verification_seconds": 0.06613154200022109,
+      "api_calls": 7,
+      "retries": null,
+      "command_executions": 5
+    }
+  ],
+  "groups": [
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 128392,
+      "tokens_per_success": 42797.333333333336,
+      "token_distribution": {
+        "min": 32596,
+        "median": 42314,
+        "max": 53482,
+        "stdev": 10451.385426503672
+      },
+      "latency_median_seconds": 32.43212533299993,
+      "api_calls": 21,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 370296,
+      "tokens_per_success": 123432.0,
+      "token_distribution": {
+        "min": 103531,
+        "median": 116097,
+        "max": 150668,
+        "stdev": 24409.54446522917
+      },
+      "latency_median_seconds": 48.69452183300018,
+      "api_calls": 29,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "section",
+      "name": "drive",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 128392,
+      "tokens_per_success": 42797.333333333336,
+      "token_distribution": {
+        "min": 32596,
+        "median": 42314,
+        "max": 53482,
+        "stdev": 10451.385426503672
+      },
+      "latency_median_seconds": 32.43212533299993,
+      "api_calls": 21,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "section",
+      "name": "drive",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 370296,
+      "tokens_per_success": 123432.0,
+      "token_distribution": {
+        "min": 103531,
+        "median": 116097,
+        "max": 150668,
+        "stdev": 24409.54446522917
+      },
+      "latency_median_seconds": 48.69452183300018,
+      "api_calls": 29,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "task_id",
+      "name": "paired-drive",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 128392,
+      "tokens_per_success": 42797.333333333336,
+      "token_distribution": {
+        "min": 32596,
+        "median": 42314,
+        "max": 53482,
+        "stdev": 10451.385426503672
+      },
+      "latency_median_seconds": 32.43212533299993,
+      "api_calls": 21,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "task_id",
+      "name": "paired-drive",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 370296,
+      "tokens_per_success": 123432.0,
+      "token_distribution": {
+        "min": 103531,
+        "median": 116097,
+        "max": 150668,
+        "stdev": 24409.54446522917
+      },
+      "latency_median_seconds": 48.69452183300018,
+      "api_calls": 29,
+      "retries": null,
+      "failure_categories": {}
+    }
+  ],
+  "matched_success": [
+    {
+      "baseline": "official",
+      "pairs": [
+        {
+          "task_id": "paired-drive",
+          "trial": 0,
+          "baseline_tokens": 116097,
+          "next_tokens": 42314
+        },
+        {
+          "task_id": "paired-drive",
+          "trial": 1,
+          "baseline_tokens": 150668,
+          "next_tokens": 32596
+        },
+        {
+          "task_id": "paired-drive",
+          "trial": 2,
+          "baseline_tokens": 103531,
+          "next_tokens": 53482
+        }
+      ]
+    }
+  ],
+  "arm_selection": {
+    "mode": "original_comparison",
+    "selected": [
+      "official",
+      "next"
+    ],
+    "schedule": "balanced",
+    "balanced_comparison": true
+  },
+  "resume_contract": {
+    "version": 1,
+    "sha256": "fba4c45d24a05971f70071804dae4875e97951c30d00499807c713268793b451"
+  }
+}

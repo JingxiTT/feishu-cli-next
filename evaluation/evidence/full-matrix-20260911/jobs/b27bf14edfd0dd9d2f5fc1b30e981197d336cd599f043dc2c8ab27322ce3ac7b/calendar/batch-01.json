@@ -1,0 +1,1330 @@
+{
+  "protocol": 1,
+  "mode": "real",
+  "split": "development",
+  "performance_claims_supported": true,
+  "completed": true,
+  "planned_runs": 6,
+  "seed": 20260919,
+  "repeats": 3,
+  "fresh_context": true,
+  "task_manifest_sha256": "fe3d9af975b3e9d98b1c9092c2d87c1618628aa7e98f3f76a50bb76d992b950d",
+  "config_sha256": "0aa73e490f7ecc95121dd20ef5f03e8fbc26e08032c2d2bb6b09fcc06e11d707",
+  "environment": {
+    "backend": "synthetic-read-v1",
+    "model": "gpt-5.6-luna",
+    "tokenizer": "provider-undisclosed",
+    "reasoning": "medium",
+    "tools": [
+      "shell",
+      "files"
+    ],
+    "permissions": "workspace-write; managed proxy loopback-only with local binding; isolated synthetic sidecar",
+    "budget": {
+      "timeout_seconds": 180
+    },
+    "accounting_method": "codex-cli 0.153.4 provider turn.completed; cached input included in full",
+    "guidance_delivery": "file"
+  },
+  "arms": {
+    "official": {
+      "cli_sha256": "5e1f582ec5ab9c86d3618fc17bd099b3443d40fe8691fed07d42e83a351ba977",
+      "skill_sha256": "31f26bd7c91008edfc890d3693772a14066353ac5a2c8d6b5220bd47f495982c"
+    },
+    "next": {
+      "cli_sha256": "c42d5467e084a84a73780c0c8e9714dfe427d32f49fa9bba8793085f528aed42",
+      "skill_sha256": "025816ca2986943dcc4a94c232759ec2a454ec003c517785437639fbbea84bcc"
+    }
+  },
+  "runs": [
+    {
+      "task_id": "calendar-dev-01",
+      "section": "calendar",
+      "trial": 1,
+      "arm": "next",
+      "success": false,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 153041,
+        "cached_input_tokens": 128512,
+        "output_tokens": 1925,
+        "total_tokens": 154966
+      },
+      "categories": [
+        "outcome_failure",
+        "misleading_success_claim"
+      ],
+      "known_usage": {
+        "input_tokens": 153041,
+        "cached_input_tokens": 128512,
+        "output_tokens": 1925,
+        "total_tokens": 154966
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [
+        "request_outside_fixture"
+      ],
+      "api_request_trace": [
+        {
+          "method": "GET",
+          "route": "calendar_identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "calendar_day",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "calendar_identity",
+          "status": 200
+        },
+        {
+          "method": "POST",
+          "route": "rejected",
+          "status": 403
+        },
+        {
+          "method": "GET",
+          "route": "calendar_identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "calendar_day",
+          "status": 200
+        }
+      ],
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "cli",
+              "command": [],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "calendar"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "skills",
+                "read"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "calendar",
+                "+agenda"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "calendar",
+                "+agenda"
+              ],
+              "flags": [
+                "--as",
+                "--calendar-id",
+                "--end",
+                "--format",
+                "--result-detail",
+                "--start"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "calendar",
+                "+search-event"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "calendar",
+                "+search-event"
+              ],
+              "flags": [
+                "--as",
+                "--end",
+                "--format",
+                "--result-detail",
+                "--start"
+              ]
+            }
+          ],
+          "exit_code": 1
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--limit"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "calendar",
+                "events"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "calendar",
+                "events",
+                "instance_view"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "calendar",
+                "events",
+                "search_event"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "calendar",
+                "events",
+                "instance_view"
+              ],
+              "flags": [
+                "--as",
+                "--calendar-id",
+                "--end-time",
+                "--format",
+                "--start-time"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 56.9378423750004,
+      "verification_seconds": 0.040219874999820604,
+      "api_calls": 6,
+      "retries": null,
+      "command_executions": 10
+    },
+    {
+      "task_id": "calendar-dev-01",
+      "section": "calendar",
+      "trial": 0,
+      "arm": "next",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 116177,
+        "cached_input_tokens": 81152,
+        "output_tokens": 1282,
+        "total_tokens": 117459
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 116177,
+        "cached_input_tokens": 81152,
+        "output_tokens": 1282,
+        "total_tokens": 117459
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": [
+        {
+          "method": "GET",
+          "route": "calendar_identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "calendar_day",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "calendar_identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "calendar_known_event",
+          "status": 200
+        }
+      ],
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "cli",
+              "command": [],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "calendar",
+                "+agenda"
+              ],
+              "flags": [
+                "--as",
+                "--calendar-id",
+                "--end",
+                "--format",
+                "--start"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "calendar",
+                "+get"
+              ],
+              "flags": [
+                "--as",
+                "--calendar-id",
+                "--event-id",
+                "--format"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 42.72272120799971,
+      "verification_seconds": 0.04292933299984725,
+      "api_calls": 4,
+      "retries": null,
+      "command_executions": 7
+    },
+    {
+      "task_id": "calendar-dev-01",
+      "section": "calendar",
+      "trial": 2,
+      "arm": "official",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 65530,
+        "cached_input_tokens": 46080,
+        "output_tokens": 1065,
+        "total_tokens": 66595
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 65530,
+        "cached_input_tokens": 46080,
+        "output_tokens": 1065,
+        "total_tokens": 66595
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": [
+        {
+          "method": "GET",
+          "route": "calendar_identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "calendar_identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "calendar_identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "calendar_day",
+          "status": 200
+        }
+      ],
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "calendar"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "calendar",
+                "+agenda"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "calendar",
+                "+agenda"
+              ],
+              "flags": [
+                "--as",
+                "--calendar-id",
+                "--end",
+                "--format",
+                "--start"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 32.82450941699972,
+      "verification_seconds": 0.04496850000032282,
+      "api_calls": 4,
+      "retries": null,
+      "command_executions": 4
+    },
+    {
+      "task_id": "calendar-dev-01",
+      "section": "calendar",
+      "trial": 1,
+      "arm": "official",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 99572,
+        "cached_input_tokens": 80128,
+        "output_tokens": 1455,
+        "total_tokens": 101027
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 99572,
+        "cached_input_tokens": 80128,
+        "output_tokens": 1455,
+        "total_tokens": 101027
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": [
+        {
+          "method": "GET",
+          "route": "calendar_identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "calendar_identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "calendar_day",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "calendar_identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "calendar_identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "calendar_known_event",
+          "status": 200
+        }
+      ],
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "calendar",
+                "+agenda"
+              ],
+              "flags": [
+                "-h"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "calendar",
+                "+agenda"
+              ],
+              "flags": [
+                "--as",
+                "--calendar-id",
+                "--end",
+                "--format",
+                "--start"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "calendar",
+                "+get"
+              ],
+              "flags": [
+                "-h"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "calendar",
+                "+get"
+              ],
+              "flags": [
+                "--as",
+                "--calendar-id",
+                "--event-id",
+                "--format"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 53.19393658300032,
+      "verification_seconds": 0.04716983300022548,
+      "api_calls": 6,
+      "retries": null,
+      "command_executions": 6
+    },
+    {
+      "task_id": "calendar-dev-01",
+      "section": "calendar",
+      "trial": 0,
+      "arm": "official",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 66799,
+        "cached_input_tokens": 32000,
+        "output_tokens": 1148,
+        "total_tokens": 67947
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 66799,
+        "cached_input_tokens": 32000,
+        "output_tokens": 1148,
+        "total_tokens": 67947
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": [
+        {
+          "method": "GET",
+          "route": "calendar_identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "calendar_identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "calendar_day",
+          "status": 200
+        }
+      ],
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "calendar",
+                "+agenda"
+              ],
+              "flags": [
+                "-h"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "calendar",
+                "+agenda"
+              ],
+              "flags": [
+                "--as",
+                "--calendar-id",
+                "--end",
+                "--format",
+                "--start"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 39.32707750000009,
+      "verification_seconds": 0.03007900000011432,
+      "api_calls": 3,
+      "retries": null,
+      "command_executions": 6
+    },
+    {
+      "task_id": "calendar-dev-01",
+      "section": "calendar",
+      "trial": 2,
+      "arm": "next",
+      "success": false,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 153136,
+        "cached_input_tokens": 126720,
+        "output_tokens": 1544,
+        "total_tokens": 154680
+      },
+      "categories": [
+        "outcome_failure",
+        "misleading_success_claim"
+      ],
+      "known_usage": {
+        "input_tokens": 153136,
+        "cached_input_tokens": 126720,
+        "output_tokens": 1544,
+        "total_tokens": 154680
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [
+        "request_outside_fixture"
+      ],
+      "api_request_trace": [
+        {
+          "method": "GET",
+          "route": "calendar_identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "rejected",
+          "status": 403
+        },
+        {
+          "method": "GET",
+          "route": "calendar_identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "calendar_day",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "calendar_identity",
+          "status": 200
+        },
+        {
+          "method": "POST",
+          "route": "rejected",
+          "status": 403
+        },
+        {
+          "method": "GET",
+          "route": "calendar_identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "calendar_known_event",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "calendar_identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "rejected",
+          "status": 403
+        }
+      ],
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "calendar",
+                "calendars",
+                "list"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "calendar",
+                "+agenda"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "calendar",
+                "calendars",
+                "list"
+              ],
+              "flags": [
+                "--as",
+                "--json",
+                "--page-all"
+              ]
+            }
+          ],
+          "exit_code": 1
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "calendar",
+                "+agenda"
+              ],
+              "flags": [
+                "--as",
+                "--calendar-id",
+                "--end",
+                "--json",
+                "--start"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "calendar",
+                "+search-event"
+              ],
+              "flags": [
+                "--as",
+                "--calendar-id",
+                "--end",
+                "--json",
+                "--page-size",
+                "--start"
+              ]
+            }
+          ],
+          "exit_code": 1,
+          "reported_cli_error": {
+            "type": "api",
+            "subtype": "unknown"
+          }
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "calendar",
+                "+get"
+              ],
+              "flags": [
+                "--as",
+                "--calendar-id",
+                "--event-id",
+                "--json"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "calendar",
+                "+agenda"
+              ],
+              "flags": [
+                "--as",
+                "--calendar-id",
+                "--end",
+                "--json",
+                "--start"
+              ]
+            }
+          ],
+          "exit_code": 1,
+          "reported_cli_error": {
+            "type": "api",
+            "subtype": "unknown"
+          }
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 51.91654325000127,
+      "verification_seconds": 0.027892209000128787,
+      "api_calls": 10,
+      "retries": null,
+      "command_executions": 9
+    }
+  ],
+  "groups": [
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 1,
+      "inconclusive": 0,
+      "success_rate": 0.3333333333333333,
+      "usage_complete": true,
+      "known_total_tokens": 427105,
+      "tokens_per_success": 427105.0,
+      "token_distribution": {
+        "min": 117459,
+        "median": 154680,
+        "max": 154966,
+        "stdev": 21572.58942114584
+      },
+      "latency_median_seconds": 51.91654325000127,
+      "api_calls": 20,
+      "retries": null,
+      "failure_categories": {
+        "misleading_success_claim": 2,
+        "outcome_failure": 2
+      }
+    },
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 235569,
+      "tokens_per_success": 78523.0,
+      "token_distribution": {
+        "min": 66595,
+        "median": 67947,
+        "max": 101027,
+        "stdev": 19500.756087905924
+      },
+      "latency_median_seconds": 39.32707750000009,
+      "api_calls": 13,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "section",
+      "name": "calendar",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 1,
+      "inconclusive": 0,
+      "success_rate": 0.3333333333333333,
+      "usage_complete": true,
+      "known_total_tokens": 427105,
+      "tokens_per_success": 427105.0,
+      "token_distribution": {
+        "min": 117459,
+        "median": 154680,
+        "max": 154966,
+        "stdev": 21572.58942114584
+      },
+      "latency_median_seconds": 51.91654325000127,
+      "api_calls": 20,
+      "retries": null,
+      "failure_categories": {
+        "misleading_success_claim": 2,
+        "outcome_failure": 2
+      }
+    },
+    {
+      "scope": "section",
+      "name": "calendar",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 235569,
+      "tokens_per_success": 78523.0,
+      "token_distribution": {
+        "min": 66595,
+        "median": 67947,
+        "max": 101027,
+        "stdev": 19500.756087905924
+      },
+      "latency_median_seconds": 39.32707750000009,
+      "api_calls": 13,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "task_id",
+      "name": "calendar-dev-01",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 1,
+      "inconclusive": 0,
+      "success_rate": 0.3333333333333333,
+      "usage_complete": true,
+      "known_total_tokens": 427105,
+      "tokens_per_success": 427105.0,
+      "token_distribution": {
+        "min": 117459,
+        "median": 154680,
+        "max": 154966,
+        "stdev": 21572.58942114584
+      },
+      "latency_median_seconds": 51.91654325000127,
+      "api_calls": 20,
+      "retries": null,
+      "failure_categories": {
+        "misleading_success_claim": 2,
+        "outcome_failure": 2
+      }
+    },
+    {
+      "scope": "task_id",
+      "name": "calendar-dev-01",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 235569,
+      "tokens_per_success": 78523.0,
+      "token_distribution": {
+        "min": 66595,
+        "median": 67947,
+        "max": 101027,
+        "stdev": 19500.756087905924
+      },
+      "latency_median_seconds": 39.32707750000009,
+      "api_calls": 13,
+      "retries": null,
+      "failure_categories": {}
+    }
+  ],
+  "matched_success": [
+    {
+      "baseline": "official",
+      "pairs": [
+        {
+          "task_id": "calendar-dev-01",
+          "trial": 0,
+          "baseline_tokens": 67947,
+          "next_tokens": 117459
+        }
+      ]
+    }
+  ],
+  "arm_selection": {
+    "mode": "original_comparison",
+    "selected": [
+      "official",
+      "next"
+    ],
+    "schedule": "balanced",
+    "balanced_comparison": true
+  },
+  "resume_contract": {
+    "version": 1,
+    "sha256": "7d0115db92bcd52f50b0ff9957ebdcba2065c45a9ff009a75136566207b284cc"
+  }
+}

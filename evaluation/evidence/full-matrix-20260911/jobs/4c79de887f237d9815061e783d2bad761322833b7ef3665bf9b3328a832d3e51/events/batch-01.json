@@ -1,0 +1,1078 @@
+{
+  "protocol": 1,
+  "mode": "real",
+  "split": "development",
+  "performance_claims_supported": false,
+  "completed": true,
+  "planned_runs": 6,
+  "seed": 20260933,
+  "repeats": 3,
+  "fresh_context": true,
+  "task_manifest_sha256": "c7313ca6120ac1a512911401eb30ce0de53ca39328e0c646804d6588ba7eabdf",
+  "config_sha256": "378ddf448a7205f0b161a1907649145927efe792bffb95b878942491dd21574d",
+  "environment": {
+    "backend": "synthetic-scenario-v1",
+    "model": "gpt-5.6-luna",
+    "tokenizer": "provider-undisclosed",
+    "reasoning": "medium",
+    "tools": [
+      "shell",
+      "files"
+    ],
+    "permissions": "workspace-write; managed proxy loopback-only with local binding; isolated synthetic sidecar",
+    "budget": {
+      "timeout_seconds": 180
+    },
+    "accounting_method": "codex-cli 0.153.4 provider turn.completed; cached input included in full",
+    "guidance_delivery": "file"
+  },
+  "arms": {
+    "official": {
+      "cli_sha256": "5e1f582ec5ab9c86d3618fc17bd099b3443d40fe8691fed07d42e83a351ba977",
+      "skill_sha256": "e82b31451938a5c6bc5e65c1bc1ea241c75d0097d7deb1406f2ca3876c9802e3"
+    },
+    "next": {
+      "cli_sha256": "c42d5467e084a84a73780c0c8e9714dfe427d32f49fa9bba8793085f528aed42",
+      "skill_sha256": "025816ca2986943dcc4a94c232759ec2a454ec003c517785437639fbbea84bcc"
+    }
+  },
+  "runs": [
+    {
+      "task_id": "events-dev-01",
+      "section": "events",
+      "trial": 2,
+      "arm": "next",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 95469,
+        "cached_input_tokens": 75008,
+        "output_tokens": 1488,
+        "total_tokens": 96957
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 95469,
+        "cached_input_tokens": 75008,
+        "output_tokens": 1488,
+        "total_tokens": 96957
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "cli",
+              "command": [],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "event"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "event",
+                "list"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "event",
+                "list"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "event",
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "event",
+                "consume"
+              ],
+              "flags": [
+                "--as",
+                "--max-events"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 48.113570207999146,
+      "verification_seconds": 0.07538062499952503,
+      "api_calls": 2,
+      "retries": null,
+      "command_executions": 7
+    },
+    {
+      "task_id": "events-dev-01",
+      "section": "events",
+      "trial": 0,
+      "arm": "next",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 87108,
+        "cached_input_tokens": 69632,
+        "output_tokens": 1368,
+        "total_tokens": 88476
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 87108,
+        "cached_input_tokens": 69632,
+        "output_tokens": 1368,
+        "total_tokens": 88476
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "cli",
+              "command": [],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "event"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "event",
+                "consume"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "event",
+                "list"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "event",
+                "consume"
+              ],
+              "flags": [
+                "--as",
+                "--max-events"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 5
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 44.85266545900049,
+      "verification_seconds": 0.07145912500163831,
+      "api_calls": 2,
+      "retries": null,
+      "command_executions": 8
+    },
+    {
+      "task_id": "events-dev-01",
+      "section": "events",
+      "trial": 1,
+      "arm": "next",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 151342,
+        "cached_input_tokens": 113408,
+        "output_tokens": 1758,
+        "total_tokens": 153100
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 151342,
+        "cached_input_tokens": 113408,
+        "output_tokens": 1758,
+        "total_tokens": 153100
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "event"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "event",
+                "list"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "event",
+                "list"
+              ],
+              "flags": [
+                "--format"
+              ]
+            }
+          ],
+          "exit_code": 2
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "event",
+                "list"
+              ],
+              "flags": [
+                "--domain",
+                "--json"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "event",
+                "consume"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "event",
+                "consume"
+              ],
+              "flags": [
+                "--as",
+                "--max-events"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "event",
+                "status"
+              ],
+              "flags": [
+                "--json"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 60.758363875000214,
+      "verification_seconds": 0.07120245899932343,
+      "api_calls": 3,
+      "retries": null,
+      "command_executions": 10
+    },
+    {
+      "task_id": "events-dev-01",
+      "section": "events",
+      "trial": 2,
+      "arm": "official",
+      "success": false,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 90277,
+        "cached_input_tokens": 72960,
+        "output_tokens": 1265,
+        "total_tokens": 91542
+      },
+      "categories": [
+        "outcome_failure",
+        "misleading_success_claim"
+      ],
+      "known_usage": {
+        "input_tokens": 90277,
+        "cached_input_tokens": 72960,
+        "output_tokens": 1265,
+        "total_tokens": 91542
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "event",
+                "consume"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "event",
+                "consume"
+              ],
+              "flags": [
+                "--as",
+                "--max-events"
+              ]
+            }
+          ],
+          "exit_code": 2,
+          "reported_cli_error": {
+            "type": "validation",
+            "subtype": "invalid_argument",
+            "param": "--as"
+          }
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "event",
+                "consume"
+              ],
+              "flags": [
+                "--as",
+                "--max-events"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 45.751776540999344,
+      "verification_seconds": 0.05802895800115948,
+      "api_calls": 4,
+      "retries": null,
+      "command_executions": 7
+    },
+    {
+      "task_id": "events-dev-01",
+      "section": "events",
+      "trial": 1,
+      "arm": "official",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 78808,
+        "cached_input_tokens": 52992,
+        "output_tokens": 1249,
+        "total_tokens": 80057
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 78808,
+        "cached_input_tokens": 52992,
+        "output_tokens": 1249,
+        "total_tokens": 80057
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "event",
+                "consume"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "event",
+                "consume"
+              ],
+              "flags": [
+                "--max-events"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 1
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 46.11600420799914,
+      "verification_seconds": 0.06976083399968047,
+      "api_calls": 3,
+      "retries": null,
+      "command_executions": 6
+    },
+    {
+      "task_id": "events-dev-01",
+      "section": "events",
+      "trial": 0,
+      "arm": "official",
+      "success": false,
+      "outcome_inconclusive": true,
+      "usage": {
+        "input_tokens": 67918,
+        "cached_input_tokens": 50944,
+        "output_tokens": 1300,
+        "total_tokens": 69218
+      },
+      "categories": [
+        "fixture_unsupported"
+      ],
+      "known_usage": {
+        "input_tokens": 67918,
+        "cached_input_tokens": 50944,
+        "output_tokens": 1300,
+        "total_tokens": 69218
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [
+        "execution_proof_unavailable"
+      ],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "event",
+                "consume"
+              ],
+              "flags": [
+                "--as",
+                "--max-events"
+              ]
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "event",
+                "consume"
+              ],
+              "flags": [
+                "--as",
+                "--max-events"
+              ]
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 44.976080500000535,
+      "verification_seconds": 0.07112249999954656,
+      "api_calls": 3,
+      "retries": null,
+      "command_executions": 5
+    }
+  ],
+  "groups": [
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 338533,
+      "tokens_per_success": 112844.33333333333,
+      "token_distribution": {
+        "min": 88476,
+        "median": 96957,
+        "max": 153100,
+        "stdev": 35119.38018150852
+      },
+      "latency_median_seconds": 48.113570207999146,
+      "api_calls": 7,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 1,
+      "inconclusive": 1,
+      "success_rate": null,
+      "usage_complete": true,
+      "known_total_tokens": 240817,
+      "tokens_per_success": null,
+      "token_distribution": {
+        "min": 69218,
+        "median": 80057,
+        "max": 91542,
+        "stdev": 11163.557691584405
+      },
+      "latency_median_seconds": 45.751776540999344,
+      "api_calls": 10,
+      "retries": null,
+      "failure_categories": {
+        "fixture_unsupported": 1,
+        "misleading_success_claim": 1,
+        "outcome_failure": 1
+      }
+    },
+    {
+      "scope": "section",
+      "name": "events",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 338533,
+      "tokens_per_success": 112844.33333333333,
+      "token_distribution": {
+        "min": 88476,
+        "median": 96957,
+        "max": 153100,
+        "stdev": 35119.38018150852
+      },
+      "latency_median_seconds": 48.113570207999146,
+      "api_calls": 7,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "section",
+      "name": "events",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 1,
+      "inconclusive": 1,
+      "success_rate": null,
+      "usage_complete": true,
+      "known_total_tokens": 240817,
+      "tokens_per_success": null,
+      "token_distribution": {
+        "min": 69218,
+        "median": 80057,
+        "max": 91542,
+        "stdev": 11163.557691584405
+      },
+      "latency_median_seconds": 45.751776540999344,
+      "api_calls": 10,
+      "retries": null,
+      "failure_categories": {
+        "fixture_unsupported": 1,
+        "misleading_success_claim": 1,
+        "outcome_failure": 1
+      }
+    },
+    {
+      "scope": "task_id",
+      "name": "events-dev-01",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 338533,
+      "tokens_per_success": 112844.33333333333,
+      "token_distribution": {
+        "min": 88476,
+        "median": 96957,
+        "max": 153100,
+        "stdev": 35119.38018150852
+      },
+      "latency_median_seconds": 48.113570207999146,
+      "api_calls": 7,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "task_id",
+      "name": "events-dev-01",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 1,
+      "inconclusive": 1,
+      "success_rate": null,
+      "usage_complete": true,
+      "known_total_tokens": 240817,
+      "tokens_per_success": null,
+      "token_distribution": {
+        "min": 69218,
+        "median": 80057,
+        "max": 91542,
+        "stdev": 11163.557691584405
+      },
+      "latency_median_seconds": 45.751776540999344,
+      "api_calls": 10,
+      "retries": null,
+      "failure_categories": {
+        "fixture_unsupported": 1,
+        "misleading_success_claim": 1,
+        "outcome_failure": 1
+      }
+    }
+  ],
+  "matched_success": [
+    {
+      "baseline": "official",
+      "pairs": [
+        {
+          "task_id": "events-dev-01",
+          "trial": 1,
+          "baseline_tokens": 80057,
+          "next_tokens": 153100
+        }
+      ]
+    }
+  ],
+  "arm_selection": {
+    "mode": "original_comparison",
+    "selected": [
+      "official",
+      "next"
+    ],
+    "schedule": "balanced",
+    "balanced_comparison": true
+  },
+  "resume_contract": {
+    "version": 1,
+    "sha256": "37cb7f3d43a11f0dd3c767ded6d5a59407f642670d660454d179d39313036f07"
+  }
+}

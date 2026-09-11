@@ -1,0 +1,875 @@
+{
+  "protocol": 1,
+  "mode": "real",
+  "split": "development",
+  "performance_claims_supported": true,
+  "completed": true,
+  "planned_runs": 6,
+  "seed": 20260920,
+  "repeats": 3,
+  "fresh_context": true,
+  "task_manifest_sha256": "fe3d9af975b3e9d98b1c9092c2d87c1618628aa7e98f3f76a50bb76d992b950d",
+  "config_sha256": "52c21ffeac86e557ba7e648eafea8ae5616ddfbabdf9d68a889ee3ab9d23c74d",
+  "environment": {
+    "backend": "synthetic-read-v1",
+    "model": "gpt-5.6-luna",
+    "tokenizer": "provider-undisclosed",
+    "reasoning": "medium",
+    "tools": [
+      "shell",
+      "files"
+    ],
+    "permissions": "workspace-write; managed proxy loopback-only with local binding; isolated synthetic sidecar",
+    "budget": {
+      "timeout_seconds": 180
+    },
+    "accounting_method": "codex-cli 0.153.4 provider turn.completed; cached input included in full",
+    "guidance_delivery": "file"
+  },
+  "arms": {
+    "official": {
+      "cli_sha256": "5e1f582ec5ab9c86d3618fc17bd099b3443d40fe8691fed07d42e83a351ba977",
+      "skill_sha256": "82d73d928956f4423cf2a0d8d9ed661112b1173d0a1272c0736e90a0681997b3"
+    },
+    "next": {
+      "cli_sha256": "c42d5467e084a84a73780c0c8e9714dfe427d32f49fa9bba8793085f528aed42",
+      "skill_sha256": "025816ca2986943dcc4a94c232759ec2a454ec003c517785437639fbbea84bcc"
+    }
+  },
+  "runs": [
+    {
+      "task_id": "mail-dev-01",
+      "section": "mail",
+      "trial": 0,
+      "arm": "official",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 68849,
+        "cached_input_tokens": 48128,
+        "output_tokens": 881,
+        "total_tokens": 69730
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 68849,
+        "cached_input_tokens": 48128,
+        "output_tokens": 881,
+        "total_tokens": 69730
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": [
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "mail_list_two",
+          "status": 200
+        },
+        {
+          "method": "POST",
+          "route": "mail_batch_both",
+          "status": 200
+        }
+      ],
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mail",
+                "+triage"
+              ],
+              "flags": [
+                "--as",
+                "--folder",
+                "--format",
+                "--mailbox",
+                "--max"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 32.26352024999869,
+      "verification_seconds": 0.03892345799977193,
+      "api_calls": 3,
+      "retries": null,
+      "command_executions": 4
+    },
+    {
+      "task_id": "mail-dev-01",
+      "section": "mail",
+      "trial": 2,
+      "arm": "next",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 45664,
+        "cached_input_tokens": 31744,
+        "output_tokens": 736,
+        "total_tokens": 46400
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 45664,
+        "cached_input_tokens": 31744,
+        "output_tokens": 736,
+        "total_tokens": 46400
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": [
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "mail_list_two",
+          "status": 200
+        },
+        {
+          "method": "POST",
+          "route": "mail_batch_both",
+          "status": 200
+        }
+      ],
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mail",
+                "+triage"
+              ],
+              "flags": [
+                "--as",
+                "--folder",
+                "--format",
+                "--mailbox",
+                "--max"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 31.009507250000752,
+      "verification_seconds": 0.05365420800080756,
+      "api_calls": 3,
+      "retries": null,
+      "command_executions": 4
+    },
+    {
+      "task_id": "mail-dev-01",
+      "section": "mail",
+      "trial": 1,
+      "arm": "next",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 57221,
+        "cached_input_tokens": 41728,
+        "output_tokens": 863,
+        "total_tokens": 58084
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 57221,
+        "cached_input_tokens": 41728,
+        "output_tokens": 863,
+        "total_tokens": 58084
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": [
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "mail_list_two",
+          "status": 200
+        },
+        {
+          "method": "POST",
+          "route": "mail_batch_both",
+          "status": 200
+        }
+      ],
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mail",
+                "+triage"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mail",
+                "+triage"
+              ],
+              "flags": [
+                "--as",
+                "--folder",
+                "--format",
+                "--mailbox",
+                "--max"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 34.68445929200061,
+      "verification_seconds": 0.03992925000056857,
+      "api_calls": 3,
+      "retries": null,
+      "command_executions": 5
+    },
+    {
+      "task_id": "mail-dev-01",
+      "section": "mail",
+      "trial": 0,
+      "arm": "next",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 46743,
+        "cached_input_tokens": 25856,
+        "output_tokens": 723,
+        "total_tokens": 47466
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 46743,
+        "cached_input_tokens": 25856,
+        "output_tokens": 723,
+        "total_tokens": 47466
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": [
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "mail_list_two",
+          "status": 200
+        },
+        {
+          "method": "POST",
+          "route": "mail_batch_both",
+          "status": 200
+        }
+      ],
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mail",
+                "+triage"
+              ],
+              "flags": [
+                "--as",
+                "--folder",
+                "--format",
+                "--mailbox",
+                "--max"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 33.065528291999726,
+      "verification_seconds": 0.04188741700090759,
+      "api_calls": 3,
+      "retries": null,
+      "command_executions": 4
+    },
+    {
+      "task_id": "mail-dev-01",
+      "section": "mail",
+      "trial": 1,
+      "arm": "official",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 70505,
+        "cached_input_tokens": 49152,
+        "output_tokens": 815,
+        "total_tokens": 71320
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 70505,
+        "cached_input_tokens": 49152,
+        "output_tokens": 815,
+        "total_tokens": 71320
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": [
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "mail_list_two",
+          "status": 200
+        },
+        {
+          "method": "POST",
+          "route": "mail_batch_both",
+          "status": 200
+        }
+      ],
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "mail",
+                "+triage"
+              ],
+              "flags": [
+                "-h"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mail",
+                "+triage"
+              ],
+              "flags": [
+                "--folder",
+                "--format",
+                "--mailbox",
+                "--max"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 33.473645124999166,
+      "verification_seconds": 0.038643290999971214,
+      "api_calls": 4,
+      "retries": null,
+      "command_executions": 4
+    },
+    {
+      "task_id": "mail-dev-01",
+      "section": "mail",
+      "trial": 2,
+      "arm": "official",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 65568,
+        "cached_input_tokens": 46080,
+        "output_tokens": 750,
+        "total_tokens": 66318
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 65568,
+        "cached_input_tokens": 46080,
+        "output_tokens": 750,
+        "total_tokens": 66318
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": [
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "mail_list_two",
+          "status": 200
+        },
+        {
+          "method": "POST",
+          "route": "mail_batch_both",
+          "status": 200
+        }
+      ],
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "mail",
+                "+triage"
+              ],
+              "flags": [
+                "-h"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "mail",
+                "+triage"
+              ],
+              "flags": [
+                "--as",
+                "--folder",
+                "--format",
+                "--mailbox",
+                "--max"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 30.163453167000625,
+      "verification_seconds": 0.0371345419989666,
+      "api_calls": 4,
+      "retries": null,
+      "command_executions": 4
+    }
+  ],
+  "groups": [
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 151950,
+      "tokens_per_success": 50650.0,
+      "token_distribution": {
+        "min": 46400,
+        "median": 47466,
+        "max": 58084,
+        "stdev": 6460.058513666885
+      },
+      "latency_median_seconds": 33.065528291999726,
+      "api_calls": 9,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 207368,
+      "tokens_per_success": 69122.66666666667,
+      "token_distribution": {
+        "min": 66318,
+        "median": 69730,
+        "max": 71320,
+        "stdev": 2555.7075993417816
+      },
+      "latency_median_seconds": 32.26352024999869,
+      "api_calls": 11,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "section",
+      "name": "mail",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 151950,
+      "tokens_per_success": 50650.0,
+      "token_distribution": {
+        "min": 46400,
+        "median": 47466,
+        "max": 58084,
+        "stdev": 6460.058513666885
+      },
+      "latency_median_seconds": 33.065528291999726,
+      "api_calls": 9,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "section",
+      "name": "mail",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 207368,
+      "tokens_per_success": 69122.66666666667,
+      "token_distribution": {
+        "min": 66318,
+        "median": 69730,
+        "max": 71320,
+        "stdev": 2555.7075993417816
+      },
+      "latency_median_seconds": 32.26352024999869,
+      "api_calls": 11,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "task_id",
+      "name": "mail-dev-01",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 151950,
+      "tokens_per_success": 50650.0,
+      "token_distribution": {
+        "min": 46400,
+        "median": 47466,
+        "max": 58084,
+        "stdev": 6460.058513666885
+      },
+      "latency_median_seconds": 33.065528291999726,
+      "api_calls": 9,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "task_id",
+      "name": "mail-dev-01",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 207368,
+      "tokens_per_success": 69122.66666666667,
+      "token_distribution": {
+        "min": 66318,
+        "median": 69730,
+        "max": 71320,
+        "stdev": 2555.7075993417816
+      },
+      "latency_median_seconds": 32.26352024999869,
+      "api_calls": 11,
+      "retries": null,
+      "failure_categories": {}
+    }
+  ],
+  "matched_success": [
+    {
+      "baseline": "official",
+      "pairs": [
+        {
+          "task_id": "mail-dev-01",
+          "trial": 2,
+          "baseline_tokens": 66318,
+          "next_tokens": 46400
+        },
+        {
+          "task_id": "mail-dev-01",
+          "trial": 1,
+          "baseline_tokens": 71320,
+          "next_tokens": 58084
+        },
+        {
+          "task_id": "mail-dev-01",
+          "trial": 0,
+          "baseline_tokens": 69730,
+          "next_tokens": 47466
+        }
+      ]
+    }
+  ],
+  "arm_selection": {
+    "mode": "original_comparison",
+    "selected": [
+      "official",
+      "next"
+    ],
+    "schedule": "balanced",
+    "balanced_comparison": true
+  },
+  "resume_contract": {
+    "version": 1,
+    "sha256": "0902aa0c9069b96bfc647a3f8960ab7fc92ac3c670e14ae98d5379ac5ef9872b"
+  }
+}

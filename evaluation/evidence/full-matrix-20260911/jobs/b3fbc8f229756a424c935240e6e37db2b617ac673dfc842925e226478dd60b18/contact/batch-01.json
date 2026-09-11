@@ -1,0 +1,1476 @@
+{
+  "protocol": 1,
+  "mode": "real",
+  "split": "development",
+  "performance_claims_supported": true,
+  "completed": true,
+  "planned_runs": 12,
+  "seed": 20260908,
+  "repeats": 3,
+  "fresh_context": true,
+  "task_manifest_sha256": "d62f4978ea4acfcc594c7854d680fb98c93836d0562662249fd4023e0d98fa9d",
+  "config_sha256": "520c1d54387478ae8937ed87d4435e3b4dee82fa5e2d75b39cfbbef120dd06b1",
+  "environment": {
+    "backend": "synthetic-scenario-v1",
+    "model": "gpt-5.6-luna",
+    "tokenizer": "provider-undisclosed",
+    "reasoning": "medium",
+    "tools": [
+      "shell",
+      "files"
+    ],
+    "permissions": "workspace-write; managed proxy loopback-only with local binding; isolated synthetic sidecar",
+    "budget": {
+      "timeout_seconds": 180
+    },
+    "accounting_method": "codex-cli 0.153.4 provider turn.completed; cached input included in full",
+    "guidance_delivery": "file"
+  },
+  "arms": {
+    "official": {
+      "cli_sha256": "5e1f582ec5ab9c86d3618fc17bd099b3443d40fe8691fed07d42e83a351ba977",
+      "skill_sha256": "79041173aad9df428f51adc0435a9bdec2b45366b2003447c18af1ea1f55e7b6"
+    },
+    "next": {
+      "cli_sha256": "c42d5467e084a84a73780c0c8e9714dfe427d32f49fa9bba8793085f528aed42",
+      "skill_sha256": "025816ca2986943dcc4a94c232759ec2a454ec003c517785437639fbbea84bcc"
+    }
+  },
+  "runs": [
+    {
+      "task_id": "paired-discovery",
+      "section": "contact",
+      "trial": 0,
+      "arm": "next",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 47334,
+        "cached_input_tokens": 32768,
+        "output_tokens": 782,
+        "total_tokens": 48116
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 47334,
+        "cached_input_tokens": 32768,
+        "output_tokens": 782,
+        "total_tokens": 48116
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "cli",
+              "command": [],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "contact"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "contact",
+                "+get-user"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 2
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 38.55298266700083,
+      "verification_seconds": 0.05847933400036709,
+      "api_calls": 0,
+      "retries": null,
+      "command_executions": 4
+    },
+    {
+      "task_id": "paired-contact",
+      "section": "contact",
+      "trial": 0,
+      "arm": "official",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 37295,
+        "cached_input_tokens": 23808,
+        "output_tokens": 663,
+        "total_tokens": 37958
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 37295,
+        "cached_input_tokens": 23808,
+        "output_tokens": 663,
+        "total_tokens": 37958
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "contact",
+                "+search-bot"
+              ],
+              "flags": [
+                "--as",
+                "--format",
+                "--queries"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "contact",
+                "+search-user"
+              ],
+              "flags": [
+                "--as",
+                "--format",
+                "--has-enterprise-email",
+                "--query"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 27.65471204200003,
+      "verification_seconds": 0.0655758330012759,
+      "api_calls": 5,
+      "retries": null,
+      "command_executions": 4
+    },
+    {
+      "task_id": "paired-discovery",
+      "section": "contact",
+      "trial": 0,
+      "arm": "official",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 40114,
+        "cached_input_tokens": 26880,
+        "output_tokens": 838,
+        "total_tokens": 40952
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 40114,
+        "cached_input_tokens": 26880,
+        "output_tokens": 838,
+        "total_tokens": 40952
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "contact",
+                "+get-user"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 2
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "contact",
+                "+get-user"
+              ],
+              "flags": [
+                "--as",
+                "--dry-run",
+                "--user-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 29.464721375001318,
+      "verification_seconds": 0.07205870799953118,
+      "api_calls": 3,
+      "retries": null,
+      "command_executions": 3
+    },
+    {
+      "task_id": "paired-discovery",
+      "section": "contact",
+      "trial": 2,
+      "arm": "official",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 38580,
+        "cached_input_tokens": 24832,
+        "output_tokens": 1109,
+        "total_tokens": 39689
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 38580,
+        "cached_input_tokens": 24832,
+        "output_tokens": 1109,
+        "total_tokens": 39689
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "contact"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "contact",
+                "+get-user"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 2
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 36.113485792000574,
+      "verification_seconds": 0.07851287499943282,
+      "api_calls": 3,
+      "retries": null,
+      "command_executions": 3
+    },
+    {
+      "task_id": "paired-contact",
+      "section": "contact",
+      "trial": 1,
+      "arm": "official",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 37474,
+        "cached_input_tokens": 23808,
+        "output_tokens": 764,
+        "total_tokens": 38238
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 37474,
+        "cached_input_tokens": 23808,
+        "output_tokens": 764,
+        "total_tokens": 38238
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "contact",
+                "+search-user"
+              ],
+              "flags": [
+                "--as",
+                "--format",
+                "--has-enterprise-email",
+                "--query"
+              ]
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "contact",
+                "+search-bot"
+              ],
+              "flags": [
+                "--as",
+                "--format",
+                "--query"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 27.937837875000696,
+      "verification_seconds": 0.07039004100079183,
+      "api_calls": 4,
+      "retries": null,
+      "command_executions": 3
+    },
+    {
+      "task_id": "paired-contact",
+      "section": "contact",
+      "trial": 0,
+      "arm": "next",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 32142,
+        "cached_input_tokens": 20736,
+        "output_tokens": 894,
+        "total_tokens": 33036
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 32142,
+        "cached_input_tokens": 20736,
+        "output_tokens": 894,
+        "total_tokens": 33036
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "contact",
+                "+search-bot"
+              ],
+              "flags": [
+                "--as",
+                "--query"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "contact",
+                "+search-user"
+              ],
+              "flags": [
+                "--as",
+                "--query"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "contact",
+                "+get-user"
+              ],
+              "flags": [
+                "--as",
+                "--user-id",
+                "--user-id-type"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 28.095152916999723,
+      "verification_seconds": 0.0589429999999993,
+      "api_calls": 6,
+      "retries": null,
+      "command_executions": 4
+    },
+    {
+      "task_id": "paired-contact",
+      "section": "contact",
+      "trial": 1,
+      "arm": "next",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 42251,
+        "cached_input_tokens": 34560,
+        "output_tokens": 1001,
+        "total_tokens": 43252
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 42251,
+        "cached_input_tokens": 34560,
+        "output_tokens": 1001,
+        "total_tokens": 43252
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "contact",
+                "+search-user"
+              ],
+              "flags": [
+                "--as",
+                "--query"
+              ]
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "contact",
+                "+search-bot"
+              ],
+              "flags": [
+                "--as",
+                "--query"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "contact",
+                "+get-user"
+              ],
+              "flags": [
+                "--as",
+                "--user-id",
+                "--user-id-type"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 33.62735049999901,
+      "verification_seconds": 0.05205558299894619,
+      "api_calls": 6,
+      "retries": null,
+      "command_executions": 4
+    },
+    {
+      "task_id": "paired-contact",
+      "section": "contact",
+      "trial": 2,
+      "arm": "official",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 42630,
+        "cached_input_tokens": 25856,
+        "output_tokens": 817,
+        "total_tokens": 43447
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 42630,
+        "cached_input_tokens": 25856,
+        "output_tokens": 817,
+        "total_tokens": 43447
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "contact"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "contact",
+                "+search-user"
+              ],
+              "flags": [
+                "--as",
+                "--format",
+                "--has-enterprise-email",
+                "--query"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "contact",
+                "+search-bot"
+              ],
+              "flags": [
+                "--as",
+                "--format",
+                "--query"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 30.995721834000506,
+      "verification_seconds": 0.05432195799949113,
+      "api_calls": 5,
+      "retries": null,
+      "command_executions": 4
+    },
+    {
+      "task_id": "paired-discovery",
+      "section": "contact",
+      "trial": 1,
+      "arm": "official",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 32892,
+        "cached_input_tokens": 21760,
+        "output_tokens": 605,
+        "total_tokens": 33497
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 32892,
+        "cached_input_tokens": 21760,
+        "output_tokens": 605,
+        "total_tokens": 33497
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "contact"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "contact",
+                "+get-user"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 2
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 27.575940041999274,
+      "verification_seconds": 0.06593620799867494,
+      "api_calls": 3,
+      "retries": null,
+      "command_executions": 3
+    },
+    {
+      "task_id": "paired-discovery",
+      "section": "contact",
+      "trial": 2,
+      "arm": "next",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 32884,
+        "cached_input_tokens": 20736,
+        "output_tokens": 715,
+        "total_tokens": 33599
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 32884,
+        "cached_input_tokens": 20736,
+        "output_tokens": 715,
+        "total_tokens": 33599
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "cli",
+              "command": [],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "contact",
+                "+get-user"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 29.679398165999373,
+      "verification_seconds": 0.06016033400010201,
+      "api_calls": 0,
+      "retries": null,
+      "command_executions": 3
+    },
+    {
+      "task_id": "paired-contact",
+      "section": "contact",
+      "trial": 2,
+      "arm": "next",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 32030,
+        "cached_input_tokens": 14848,
+        "output_tokens": 796,
+        "total_tokens": 32826
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 32030,
+        "cached_input_tokens": 14848,
+        "output_tokens": 796,
+        "total_tokens": 32826
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "contact",
+                "+search-user"
+              ],
+              "flags": [
+                "--as",
+                "--query"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "contact",
+                "+search-bot"
+              ],
+              "flags": [
+                "--as",
+                "--query"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "contact",
+                "+get-user"
+              ],
+              "flags": [
+                "--as",
+                "--user-id",
+                "--user-id-type"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 29.86561570900085,
+      "verification_seconds": 0.08192737500030489,
+      "api_calls": 6,
+      "retries": null,
+      "command_executions": 3
+    },
+    {
+      "task_id": "paired-discovery",
+      "section": "contact",
+      "trial": 1,
+      "arm": "next",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 45054,
+        "cached_input_tokens": 21760,
+        "output_tokens": 1004,
+        "total_tokens": 46058
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 45054,
+        "cached_input_tokens": 21760,
+        "output_tokens": 1004,
+        "total_tokens": 46058
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "cli",
+              "command": [],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 2,
+          "reported_cli_error": {
+            "type": "validation",
+            "subtype": "invalid_argument"
+          }
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "contact"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "contact",
+                "+get-user"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 68.2780362500016,
+      "verification_seconds": 0.08482783399995242,
+      "api_calls": 0,
+      "retries": null,
+      "command_executions": 7
+    }
+  ],
+  "groups": [
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "next",
+      "attempts": 6,
+      "successes": 6,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 236887,
+      "tokens_per_success": 39481.166666666664,
+      "token_distribution": {
+        "min": 32826,
+        "median": 38425.5,
+        "max": 48116,
+        "stdev": 7105.850671571045
+      },
+      "latency_median_seconds": 31.74648310449993,
+      "api_calls": 18,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "official",
+      "attempts": 6,
+      "successes": 6,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 233781,
+      "tokens_per_success": 38963.5,
+      "token_distribution": {
+        "min": 33497,
+        "median": 38963.5,
+        "max": 43447,
+        "stdev": 3346.707561171128
+      },
+      "latency_median_seconds": 28.701279625001007,
+      "api_calls": 23,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "section",
+      "name": "contact",
+      "arm": "next",
+      "attempts": 6,
+      "successes": 6,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 236887,
+      "tokens_per_success": 39481.166666666664,
+      "token_distribution": {
+        "min": 32826,
+        "median": 38425.5,
+        "max": 48116,
+        "stdev": 7105.850671571045
+      },
+      "latency_median_seconds": 31.74648310449993,
+      "api_calls": 18,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "section",
+      "name": "contact",
+      "arm": "official",
+      "attempts": 6,
+      "successes": 6,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 233781,
+      "tokens_per_success": 38963.5,
+      "token_distribution": {
+        "min": 33497,
+        "median": 38963.5,
+        "max": 43447,
+        "stdev": 3346.707561171128
+      },
+      "latency_median_seconds": 28.701279625001007,
+      "api_calls": 23,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "task_id",
+      "name": "paired-contact",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 109114,
+      "tokens_per_success": 36371.333333333336,
+      "token_distribution": {
+        "min": 32826,
+        "median": 33036,
+        "max": 43252,
+        "stdev": 5959.757153889186
+      },
+      "latency_median_seconds": 29.86561570900085,
+      "api_calls": 18,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "task_id",
+      "name": "paired-contact",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 119643,
+      "tokens_per_success": 39881.0,
+      "token_distribution": {
+        "min": 37958,
+        "median": 38238,
+        "max": 43447,
+        "stdev": 3091.418282924522
+      },
+      "latency_median_seconds": 27.937837875000696,
+      "api_calls": 14,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "task_id",
+      "name": "paired-discovery",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 127773,
+      "tokens_per_success": 42591.0,
+      "token_distribution": {
+        "min": 33599,
+        "median": 46058,
+        "max": 48116,
+        "stdev": 7854.991343088801
+      },
+      "latency_median_seconds": 38.55298266700083,
+      "api_calls": 0,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "task_id",
+      "name": "paired-discovery",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 3,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 114138,
+      "tokens_per_success": 38046.0,
+      "token_distribution": {
+        "min": 33497,
+        "median": 39689,
+        "max": 40952,
+        "stdev": 3989.84247809359
+      },
+      "latency_median_seconds": 29.464721375001318,
+      "api_calls": 9,
+      "retries": null,
+      "failure_categories": {}
+    }
+  ],
+  "matched_success": [
+    {
+      "baseline": "official",
+      "pairs": [
+        {
+          "task_id": "paired-discovery",
+          "trial": 0,
+          "baseline_tokens": 40952,
+          "next_tokens": 48116
+        },
+        {
+          "task_id": "paired-contact",
+          "trial": 0,
+          "baseline_tokens": 37958,
+          "next_tokens": 33036
+        },
+        {
+          "task_id": "paired-contact",
+          "trial": 1,
+          "baseline_tokens": 38238,
+          "next_tokens": 43252
+        },
+        {
+          "task_id": "paired-discovery",
+          "trial": 2,
+          "baseline_tokens": 39689,
+          "next_tokens": 33599
+        },
+        {
+          "task_id": "paired-contact",
+          "trial": 2,
+          "baseline_tokens": 43447,
+          "next_tokens": 32826
+        },
+        {
+          "task_id": "paired-discovery",
+          "trial": 1,
+          "baseline_tokens": 33497,
+          "next_tokens": 46058
+        }
+      ]
+    }
+  ],
+  "arm_selection": {
+    "mode": "original_comparison",
+    "selected": [
+      "official",
+      "next"
+    ],
+    "schedule": "balanced",
+    "balanced_comparison": true
+  },
+  "resume_contract": {
+    "version": 1,
+    "sha256": "80168ca47d4ea4439a4e5b232d067255ef3301c6d4ca61fb21bc4471a19b8216"
+  }
+}

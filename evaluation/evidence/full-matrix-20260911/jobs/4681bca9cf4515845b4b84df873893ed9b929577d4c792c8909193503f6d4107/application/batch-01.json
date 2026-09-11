@@ -1,0 +1,653 @@
+{
+  "protocol": 1,
+  "mode": "real",
+  "split": "development",
+  "performance_claims_supported": true,
+  "completed": true,
+  "planned_runs": 6,
+  "seed": 20260910,
+  "repeats": 3,
+  "fresh_context": true,
+  "task_manifest_sha256": "fe3d9af975b3e9d98b1c9092c2d87c1618628aa7e98f3f76a50bb76d992b950d",
+  "config_sha256": "dc65929f6647bdacfdf18ca94cf9794ec36c9bbd72253f868d90318deea9126f",
+  "environment": {
+    "backend": "synthetic-read-v1",
+    "model": "gpt-5.6-luna",
+    "tokenizer": "provider-undisclosed",
+    "reasoning": "medium",
+    "tools": [
+      "shell",
+      "files"
+    ],
+    "permissions": "workspace-write; managed proxy loopback-only with local binding; isolated synthetic sidecar",
+    "budget": {
+      "timeout_seconds": 180
+    },
+    "accounting_method": "codex-cli 0.153.4 provider turn.completed; cached input included in full",
+    "guidance_delivery": "file"
+  },
+  "arms": {
+    "official": {
+      "cli_sha256": "5e1f582ec5ab9c86d3618fc17bd099b3443d40fe8691fed07d42e83a351ba977",
+      "skill_sha256": "1a49c44a529b00de2afd5e23e8b1deb00f702148ebbb848c25881eedd6b0521a"
+    },
+    "next": {
+      "cli_sha256": "c42d5467e084a84a73780c0c8e9714dfe427d32f49fa9bba8793085f528aed42",
+      "skill_sha256": "025816ca2986943dcc4a94c232759ec2a454ec003c517785437639fbbea84bcc"
+    }
+  },
+  "runs": [
+    {
+      "task_id": "application-dev-01",
+      "section": "application",
+      "trial": 2,
+      "arm": "official",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 22329,
+        "cached_input_tokens": 12800,
+        "output_tokens": 422,
+        "total_tokens": 22751
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 22329,
+        "cached_input_tokens": 12800,
+        "output_tokens": 422,
+        "total_tokens": 22751
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": [
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "application_slash_command_list",
+          "status": 200
+        }
+      ],
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "application",
+                "+slash-command-list"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 19.973443374999988,
+      "verification_seconds": 0.039255125000636326,
+      "api_calls": 2,
+      "retries": null,
+      "command_executions": 2
+    },
+    {
+      "task_id": "application-dev-01",
+      "section": "application",
+      "trial": 0,
+      "arm": "next",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 37734,
+        "cached_input_tokens": 23808,
+        "output_tokens": 635,
+        "total_tokens": 38369
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 37734,
+        "cached_input_tokens": 23808,
+        "output_tokens": 635,
+        "total_tokens": 38369
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": [
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "application_slash_command_list",
+          "status": 200
+        }
+      ],
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "application",
+                "+slash-command-list"
+              ],
+              "flags": [
+                "--as",
+                "--format"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 28.95192141699954,
+      "verification_seconds": 0.04582904199924087,
+      "api_calls": 2,
+      "retries": null,
+      "command_executions": 3
+    },
+    {
+      "task_id": "application-dev-01",
+      "section": "application",
+      "trial": 1,
+      "arm": "next",
+      "success": false,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 50513,
+        "cached_input_tokens": 27904,
+        "output_tokens": 1144,
+        "total_tokens": 51657
+      },
+      "categories": [
+        "outcome_failure",
+        "misleading_success_claim"
+      ],
+      "known_usage": {
+        "input_tokens": 50513,
+        "cached_input_tokens": 27904,
+        "output_tokens": 1144,
+        "total_tokens": 51657
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [
+        "answer_mismatch"
+      ],
+      "api_request_trace": [
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "application_slash_command_list",
+          "status": 200
+        }
+      ],
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "application",
+                "+slash-command-list"
+              ],
+              "flags": [
+                "--as",
+                "--format"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 37.81167891599944,
+      "verification_seconds": 0.03783458299949416,
+      "api_calls": 2,
+      "retries": null,
+      "command_executions": 4
+    },
+    {
+      "task_id": "application-dev-01",
+      "section": "application",
+      "trial": 2,
+      "arm": "next",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 34634,
+        "cached_input_tokens": 21760,
+        "output_tokens": 914,
+        "total_tokens": 35548
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 34634,
+        "cached_input_tokens": 21760,
+        "output_tokens": 914,
+        "total_tokens": 35548
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [],
+      "api_request_trace": [
+        {
+          "method": "GET",
+          "route": "identity",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "route": "application_slash_command_list",
+          "status": 200
+        }
+      ],
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "application",
+                "+slash-command-list"
+              ],
+              "flags": [
+                "--as",
+                "--format"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 30.96300566699938,
+      "verification_seconds": 0.04666770800031372,
+      "api_calls": 2,
+      "retries": null,
+      "command_executions": 4
+    },
+    {
+      "task_id": "application-dev-01",
+      "section": "application",
+      "trial": 1,
+      "arm": "official",
+      "success": false,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 6847,
+        "cached_input_tokens": 0,
+        "output_tokens": 113,
+        "total_tokens": 6960
+      },
+      "categories": [
+        "outcome_failure",
+        "misleading_success_claim"
+      ],
+      "known_usage": {
+        "input_tokens": 6847,
+        "cached_input_tokens": 0,
+        "output_tokens": 113,
+        "total_tokens": 6960
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [
+        "answer_mismatch"
+      ],
+      "api_request_trace": [],
+      "control_trace": [],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 10.113457583000127,
+      "verification_seconds": 0.03409558299972559,
+      "api_calls": 0,
+      "retries": null,
+      "command_executions": 0
+    },
+    {
+      "task_id": "application-dev-01",
+      "section": "application",
+      "trial": 0,
+      "arm": "official",
+      "success": false,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 6837,
+        "cached_input_tokens": 0,
+        "output_tokens": 111,
+        "total_tokens": 6948
+      },
+      "categories": [
+        "outcome_failure",
+        "misleading_success_claim"
+      ],
+      "known_usage": {
+        "input_tokens": 6837,
+        "cached_input_tokens": 0,
+        "output_tokens": 111,
+        "total_tokens": 6948
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": [
+        "answer_mismatch"
+      ],
+      "api_request_trace": [],
+      "control_trace": [],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 12.113169916998231,
+      "verification_seconds": 0.041193582999767386,
+      "api_calls": 0,
+      "retries": null,
+      "command_executions": 0
+    }
+  ],
+  "groups": [
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 2,
+      "inconclusive": 0,
+      "success_rate": 0.6666666666666666,
+      "usage_complete": true,
+      "known_total_tokens": 125574,
+      "tokens_per_success": 62787.0,
+      "token_distribution": {
+        "min": 35548,
+        "median": 38369,
+        "max": 51657,
+        "stdev": 8602.60489619278
+      },
+      "latency_median_seconds": 30.96300566699938,
+      "api_calls": 6,
+      "retries": null,
+      "failure_categories": {
+        "misleading_success_claim": 1,
+        "outcome_failure": 1
+      }
+    },
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 1,
+      "inconclusive": 0,
+      "success_rate": 0.3333333333333333,
+      "usage_complete": true,
+      "known_total_tokens": 36659,
+      "tokens_per_success": 36659.0,
+      "token_distribution": {
+        "min": 6948,
+        "median": 6960,
+        "max": 22751,
+        "stdev": 9120.404175985477
+      },
+      "latency_median_seconds": 12.113169916998231,
+      "api_calls": 2,
+      "retries": null,
+      "failure_categories": {
+        "misleading_success_claim": 2,
+        "outcome_failure": 2
+      }
+    },
+    {
+      "scope": "section",
+      "name": "application",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 2,
+      "inconclusive": 0,
+      "success_rate": 0.6666666666666666,
+      "usage_complete": true,
+      "known_total_tokens": 125574,
+      "tokens_per_success": 62787.0,
+      "token_distribution": {
+        "min": 35548,
+        "median": 38369,
+        "max": 51657,
+        "stdev": 8602.60489619278
+      },
+      "latency_median_seconds": 30.96300566699938,
+      "api_calls": 6,
+      "retries": null,
+      "failure_categories": {
+        "misleading_success_claim": 1,
+        "outcome_failure": 1
+      }
+    },
+    {
+      "scope": "section",
+      "name": "application",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 1,
+      "inconclusive": 0,
+      "success_rate": 0.3333333333333333,
+      "usage_complete": true,
+      "known_total_tokens": 36659,
+      "tokens_per_success": 36659.0,
+      "token_distribution": {
+        "min": 6948,
+        "median": 6960,
+        "max": 22751,
+        "stdev": 9120.404175985477
+      },
+      "latency_median_seconds": 12.113169916998231,
+      "api_calls": 2,
+      "retries": null,
+      "failure_categories": {
+        "misleading_success_claim": 2,
+        "outcome_failure": 2
+      }
+    },
+    {
+      "scope": "task_id",
+      "name": "application-dev-01",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 2,
+      "inconclusive": 0,
+      "success_rate": 0.6666666666666666,
+      "usage_complete": true,
+      "known_total_tokens": 125574,
+      "tokens_per_success": 62787.0,
+      "token_distribution": {
+        "min": 35548,
+        "median": 38369,
+        "max": 51657,
+        "stdev": 8602.60489619278
+      },
+      "latency_median_seconds": 30.96300566699938,
+      "api_calls": 6,
+      "retries": null,
+      "failure_categories": {
+        "misleading_success_claim": 1,
+        "outcome_failure": 1
+      }
+    },
+    {
+      "scope": "task_id",
+      "name": "application-dev-01",
+      "arm": "official",
+      "attempts": 3,
+      "successes": 1,
+      "inconclusive": 0,
+      "success_rate": 0.3333333333333333,
+      "usage_complete": true,
+      "known_total_tokens": 36659,
+      "tokens_per_success": 36659.0,
+      "token_distribution": {
+        "min": 6948,
+        "median": 6960,
+        "max": 22751,
+        "stdev": 9120.404175985477
+      },
+      "latency_median_seconds": 12.113169916998231,
+      "api_calls": 2,
+      "retries": null,
+      "failure_categories": {
+        "misleading_success_claim": 2,
+        "outcome_failure": 2
+      }
+    }
+  ],
+  "matched_success": [
+    {
+      "baseline": "official",
+      "pairs": [
+        {
+          "task_id": "application-dev-01",
+          "trial": 2,
+          "baseline_tokens": 22751,
+          "next_tokens": 35548
+        }
+      ]
+    }
+  ],
+  "arm_selection": {
+    "mode": "original_comparison",
+    "selected": [
+      "official",
+      "next"
+    ],
+    "schedule": "balanced",
+    "balanced_comparison": true
+  },
+  "resume_contract": {
+    "version": 1,
+    "sha256": "19e28c92a22c70dd7cf3566b336687bd8258ba861712d34f263af76c0873ddd3"
+  }
+}
