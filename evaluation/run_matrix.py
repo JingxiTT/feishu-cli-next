@@ -7,13 +7,16 @@ Completed failures are cache hits too. No automatic statistical reruns.
 import argparse
 import ast
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from contextlib import ExitStack
 import fcntl
 import hashlib
 import json
 import os
+import shutil
 from pathlib import Path
 import subprocess
 import sys
+import tempfile
 
 from harness import ORIGINAL_ARMS, aggregate, schedule
 
@@ -143,6 +146,129 @@ def jobs(env):
     return result
 
 
+def retained_hosts(folder, arms):
+    """Locate the two already measured extension executables by sealed bytes."""
+    hosts = {}
+    for arm in ORIGINAL_ARMS:
+        expected = arms[arm]['cli_sha256']
+        for receipt in sorted((folder / '.hosts').glob('*/sha256')):
+            binary = receipt.parent / ('host.exe' if os.name == 'nt' else 'host')
+            if binary.is_file() and receipt.read_text() == expected and sha(binary) == expected:
+                hosts[arm] = {'path': str(binary.relative_to(folder)), 'sha256': expected}
+                break
+        if arm not in hosts:
+            raise ValueError('Completed extension job lacks its exact measured host')
+    return hosts
+
+
+def copy_qualifications(source, output):
+    qualification = source / 'QUALIFICATIONS.md'
+    if not qualification.is_file():
+        return {}
+    # Keep the qualification text and its bounded diagnostic attachments in the
+    # same relative locations, so its report/diagnostic links continue to work.
+    files = [qualification, *sorted(source.glob('*-diagnostics.json'))]
+    hashes = {}
+    for path in files:
+        if path.is_symlink():
+            raise ValueError('Unexpected symlink in cache qualifications')
+        destination = output / path.name
+        if destination.exists() and sha(destination) != sha(path):
+            raise ValueError('Conflicting cache qualifications require review')
+        if not destination.exists():
+            shutil.copy2(path, destination)
+        hashes[path.name] = sha(path)
+    return hashes
+
+
+def import_sibling_jobs(output, matrix_jobs, env):
+    """Reuse complete whole jobs, never pick the best replicate or retry a gap.
+
+    The caller holds the parent cache lock. Source output locks also protect
+    against a still-running older launcher that predates that parent lock.
+    """
+    matches = {job['key']: [] for job in matrix_jobs}
+    indexed = {job['key']: job for job in matrix_jobs}
+    with ExitStack() as locks:
+        for source in sorted(output.parent.iterdir()):
+            if source == output or source.is_symlink() or not source.is_dir():
+                continue
+            environment_path = source / 'environment.json'
+            if not environment_path.is_file() or read(environment_path) != env:
+                continue
+            lock = locks.enter_context((source / '.matrix.lock').open('a'))
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            plan_path = source / 'plan.json'
+            if not plan_path.is_file():
+                raise ValueError('Same-input cache output is incomplete')
+            source_jobs = read(plan_path)['jobs']
+            declared = {job['key'] for job in source_jobs}
+            if len(declared) != len(source_jobs):
+                raise ValueError('Duplicate cache job keys')
+            if any((source / 'jobs' / key).exists() for key in indexed.keys() - declared):
+                raise ValueError('Cache job exists outside its retained plan')
+            for old_job in source_jobs:
+                job = indexed.get(old_job['key'])
+                if job is None:
+                    continue
+                if {key: old_job.get(key) for key in job} != job:
+                    raise ValueError('Cache job fingerprint changed')
+                folder = source / 'jobs' / job['key']
+                batch_path = folder / job['section'] / 'batch-01.json'
+                sealed = folder / 'completed.json'
+                if (not batch_path.is_file() or not sealed.is_file() or
+                        any(folder.rglob('*.inflight.json'))):
+                    raise ValueError('Same-input cache job is partial or in flight; resume its original output')
+                if any(path.is_symlink() and path.name != 'STOP' for path in folder.rglob('*')):
+                    raise ValueError('Unexpected symlink in completed cache job')
+                batch = read(batch_path)
+                validate_batch(batch, old_job, env)
+                if batch.get('completed') is not True or read(sealed) != {'batch_sha256': sha(batch_path)}:
+                    raise ValueError('Completed cache seal does not match')
+                prior = read(folder / 'reuse.json') if (folder / 'reuse.json').is_file() else None
+                if prior is not None and prior.get('batch_sha256') != sha(batch_path):
+                    raise ValueError('Prior reuse provenance does not match')
+                hosts = retained_hosts(folder, old_job['expected_arms']) if job['section'] == 'extensions' else None
+                matches[job['key']].append((source, folder, batch_path, old_job, prior, hosts))
+
+        # Validate all copies before importing any; inconsistent repeated runs
+        # require an explicit audit, not an outcome-dependent cache choice.
+        for job in matrix_jobs:
+            copies = matches[job['key']]
+            own = output / 'jobs' / job['key'] / job['section'] / 'batch-01.json'
+            hashes = {sha(item[2]) for item in copies}
+            if copies and own.exists():
+                hashes.add(sha(own))
+            if len(hashes) > 1:
+                raise ValueError('Conflicting completed cache copies require review')
+        for job in matrix_jobs:
+            copies = matches[job['key']]
+            target = output / 'jobs' / job['key']
+            own = target / job['section'] / 'batch-01.json'
+            if not copies or own.exists():
+                continue
+            if target.exists():
+                raise ValueError('Existing prepared job requires reconciliation before importing cache')
+            provenance = []
+            for source, folder, batch_path, old_job, prior, hosts in copies:
+                provenance.append({'source': str(batch_path.relative_to(output.parent)),
+                    'environment_sha256': sha(source / 'environment.json'), 'plan_sha256': sha(source / 'plan.json'),
+                    'completed_sha256': sha(folder / 'completed.json'), 'prior_reuse': prior,
+                    'qualifications': copy_qualifications(source, output)})
+            source, folder, batch_path, old_job, prior, hosts = copies[0]
+            target.parent.mkdir(parents=True, exist_ok=True)
+            with tempfile.TemporaryDirectory(prefix='.cache-import-', dir=target.parent) as temporary:
+                stage = Path(temporary) / 'job'
+                def ignored(directory, names):
+                    return [name for name in names if name == 'STOP' or name.endswith(('.lock', '.tmp'))]
+                shutil.copytree(folder, stage, ignore=ignored)
+                value = {'kind': 'matrix_cache_reuse', 'batch_sha256': sha(batch_path), 'sources': provenance}
+                if hosts is not None:
+                    value['extension_hosts'] = hosts
+                write(stage / 'reuse.json', value)
+                stage.replace(target)
+
+
 def bind_jobs(matrix_jobs, env, paths, output):
     from run_read_batch import extension_host
     for job in matrix_jobs:
@@ -165,8 +291,18 @@ def bind_jobs(matrix_jobs, env, paths, output):
                 for arm in ORIGINAL_ARMS}
         if section == 'extensions':
             for arm in ORIGINAL_ARMS:
-                source = paths['official_source' if arm == 'official' else 'next_source']
-                arms[arm]['cli_sha256'] = sha(extension_host(source, output / 'jobs' / job['key'], arm == 'next'))
+                folder = output / 'jobs' / job['key']
+                reuse = read(folder / 'reuse.json') if (folder / 'reuse.json').is_file() else {}
+                if 'extension_hosts' in reuse:
+                    retained = reuse['extension_hosts'][arm]
+                    binary = (folder / retained['path']).resolve(strict=True)
+                    if (not binary.is_relative_to((folder / '.hosts').resolve()) or sha(binary) != retained['sha256']
+                            or (binary.parent / 'sha256').read_text() != retained['sha256']):
+                        raise ValueError('Reused extension host changed')
+                    arms[arm]['cli_sha256'] = retained['sha256']
+                else:
+                    source = paths['official_source' if arm == 'official' else 'next_source']
+                    arms[arm]['cli_sha256'] = sha(extension_host(source, folder, arm == 'next'))
         job['expected_arms'] = arms
 
 
@@ -327,7 +463,7 @@ def report(output, matrix_jobs, env):
     lines = ['# Full CLI evaluation matrix', '',
              f"Status: **{'complete' if completed else 'in progress'}**; {len(all_runs)}/{summary['planned_attempts']} attempts recorded.", '',
              'GPT-5.6 Luna / medium; native Codex CLI 0.153.4; original/full versus Next; three repetitions per task and arm; filesystem-only guidance.', '',
-             f'New observed provider usage: **{fresh_tokens:,} tokens**. Reused historical usage: **{reused_tokens:,} tokens** (not new spend). Unknown usage attempts: {summary["unknown_usage_attempts"]}.', '',
+             f'New observed provider usage: **{fresh_tokens:,} tokens**. Reused usage: **{reused_tokens:,} tokens** (not new spend). Unknown usage attempts: {summary["unknown_usage_attempts"]}.', '',
              '| Suite | Task | Original verified | Next verified | Token saving/success | Gate | Evidence |',
              '| --- | --- | ---: | ---: | ---: | --- | --- |']
     for task in tasks:
@@ -349,6 +485,8 @@ def report(output, matrix_jobs, env):
               'Docs require strictly more than 50% saving; other tasks require at least 30%, with observed success nonregression. Three repetitions do not establish statistical success parity. Historical reuse is noncontemporaneous; the provider model alias has no immutable snapshot.', '',
               'Coverage includes every implemented development matrix: paired functions, harder Docs, domain reads, workflow scenarios, scaling, business, foundation and Contact. The development/held-out inventory stubs are not executable additional trials; held-out release acceptance and live-tenant parity remain separate.', '',
               '[Exact results and evidence hashes](summary.json) · [Frozen inputs](environment.json) · [Execution plan](plan.json)', '']
+    if (output / 'QUALIFICATIONS.md').is_file():
+        lines += ['[Interpretation limits and qualifications](QUALIFICATIONS.md)', '']
     (output / 'REPORT.md').write_text('\n'.join(lines))
     return summary
 
@@ -366,16 +504,20 @@ def main():
         parser.error('Historical condition, evaluator and migration review must be supplied together')
     output = args.output.resolve()
     output.mkdir(parents=True, exist_ok=True)
-    with (output / '.matrix.lock').open('a') as lock:
+    with (output.parent / '.matrix-cache.lock').open('a') as cache_lock, (output / '.matrix.lock').open('a') as lock:
+        fcntl.flock(cache_lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         env, paths = environment(read(args.config))
         env_path = output / 'environment.json'
         if env_path.exists() and read(env_path) != env:
             raise ValueError('Inputs changed: use a new output directory; previous evidence is immutable')
-        write(env_path, env)
         matrix_jobs = jobs(env)
+        import_sibling_jobs(output, matrix_jobs, env)
         bind_jobs(matrix_jobs, env, paths, output)
         write(output / 'plan.json', {'jobs': matrix_jobs, 'planned_attempts': sum(j['planned_attempts'] for j in matrix_jobs)})
+        # Publish a new cache identity last. A refused preflight must not leave
+        # a same-input sibling without a plan that blocks the original output.
+        write(env_path, env)
         if args.reuse_condition:
             import_condition(args.reuse_condition.resolve(), args.reuse_evaluator.resolve(), env, matrix_jobs, output, args.reuse_review.resolve())
         pending = []
