@@ -1,6 +1,57 @@
 # Agent comparison evaluation
 
-The latest [condition-09 report](evidence/token-efficiency-09/REPORT.md) completed **18 fresh attempts: Next 9/9 verified, original/full 8/9 verified and one inconclusive**. The **strict >50% savings target per task remains unmet: zero gates met, two missed and one unavailable**. Table/list reading saved **38.2%** and focused retrieval from a larger document saved **31.1%**, with both arms **3/3 verified for each task**. Multiple styled-edit comparison is **unavailable** because the original arm had one strategy outside fixture coverage; its other two attempts and all three Next attempts verified.
+## Automatic full matrix
+
+[`run_matrix.py`](run_matrix.py) completed all **43 implemented development tasks / 258 attempts** across eight suites: paired functions, harder Docs, domain reads, workflow scenarios, scaling, business, foundation and Contact. Each task compares original/full with Next for three repetitions per arm. The [completed report](evidence/full-matrix-20260911/REPORT.md) contains **240 new attempts and 18 reviewed condition 09 attempts reused unchanged**; it is not a fresh simultaneous 258-attempt comparison. See the [execution and measurement protocol](full-matrix.md).
+
+The per-task target remains **unmet: 13 gates met, 22 missed and 8 unavailable**. Next verified **107/129** attempts; original verified **102/129**, with **two inconclusive**. Known usage is a **32,552,258-token lower bound**, comprising **31,650,572 new** and **901,686 historical tokens**. Six attempts lack complete usage, so both whole-matrix tokens-per-verified-success savings and raw token-spend reduction are **unavailable**. An [independent final audit](evidence/full-matrix-20260911/result-review.json) accepted the retained accounting and report claims.
+
+Read the [fixture qualifications](evidence/full-matrix-20260911/QUALIFICATIONS.md) before interpreting the counts. The completed domain-read subset has 26/36 Next and 30/36 original verifications; nine Next and one original failure had correct typed answers and required successful reads but extra requests outside the bounded fixture. Recorded outcomes and all recovery costs remain unchanged.
+
+Create an ignored local JSON configuration containing only absolute paths:
+
+```json
+{
+  "official_source": "/absolute/frozen-original-source",
+  "official_cli": "/absolute/frozen-original-cli",
+  "next_source": "/absolute/frozen-next-source",
+  "next_cli": "/absolute/frozen-next-cli",
+  "codex": "/absolute/native-codex-0.153.4",
+  "auth_home": "/absolute/existing-codex-home"
+}
+```
+
+Use matching frozen source archives and fixture-enabled binaries; keep credentials in the existing protected Codex home, never in this JSON. The matrix pins Luna/medium, native Codex CLI 0.153.4, symmetric file guidance and 180/210-second budgets.
+
+```sh
+# Validate inputs, prepare extension hosts and render retained results; no model calls.
+python3 evaluation/run_matrix.py --config /absolute/local-config.json \
+  --output evaluation/evidence/full-matrix-20260911
+
+# Run missing attempts or safely resume the same fixed matrix.
+python3 evaluation/run_matrix.py --config /absolute/local-config.json \
+  --output evaluation/evidence/full-matrix-20260911 --execute
+```
+
+Unchanged completed jobs are skipped even when their results failed, were inconclusive or lacked complete usage. Matching sealed, complete jobs can also be reused from sibling output directories under the same parent, including their original failure and accounting records. This is not a global cache; imported usage is counted as historical reuse, never new spend. Partial/in-flight sibling matches, busy locks, changed seals or conflicting evidence stop execution for reconciliation. Checkpoint validation preserves those attempts and costs; an unresolved in-flight marker requires reconciliation and is never automatically replayed. Changed measured inputs require a new output directory. Report-only changes do not trigger model reruns. Three section workers run isolated fixtures, retaining each section's serial balanced schedule; task failures and missed savings targets do not stop full coverage. Create `STOP` in the output directory to stop between completed attempts.
+
+Python is part of the measured input identity. Use the same executable and version for reuse; the retained September 11 output pins `/opt/homebrew/opt/python@3.14/bin/python3.14`, with its exact version and hash in `environment.json`. The generic `python3` examples are suitable for a new setup, but a different interpreter cannot reuse this output.
+
+Historical import requires the explicit condition, frozen evaluator and migration-review arguments described in [the protocol](full-matrix.md#run-and-reuse). It verifies the complete prior schedule and measured inputs rather than selecting favorable rows. Reports separate historical usage from new spend and retain unavailable comparisons. Held-out release acceptance and exhaustive live parity remain separate.
+
+### Reading the matrix results
+
+The generated report contains each suite's task rows and evidence links. Keep these measures separate:
+
+- **Coverage:** completed scheduled attempts, with fresh and historically reused work identified separately. A completed attempt is not necessarily verified.
+- **Outcomes:** original and Next verified counts, failures and inconclusive results under each bounded fixture contract. Read the linked qualifications before attributing differences to live product behavior.
+- **Gates and accounting:** each task's all-attempt tokens per verified success, with failed/recovery costs included. Docs require >50% savings and other tasks ≥30%, with observed success nonregression. Missing complete usage or an unavailable outcome comparison prevents a finite primary score; known spend remains a lower bound.
+
+The report retains all six incomplete-usage records and their available costs; it does not estimate missing usage or treat it as zero. No failed or unknown-cost trial is automatically retried to improve the result. The retained 18 condition 09 attempts and their costs remain identified separately from new work.
+
+## Completed condition 09
+
+The completed [condition-09 report](evidence/token-efficiency-09/REPORT.md) completed **18 fresh attempts: Next 9/9 verified, original/full 8/9 verified and one inconclusive**. The **strict >50% savings target per task remains unmet: zero gates met, two missed and one unavailable**. Table/list reading saved **38.2%** and focused retrieval from a larger document saved **31.1%**, with both arms **3/3 verified for each task**. Multiple styled-edit comparison is **unavailable** because the original arm had one strategy outside fixture coverage; its other two attempts and all three Next attempts verified.
 
 All usage was complete: **901,686 tokens**, including **185,209** for the inconclusive attempt. Inconclusive coverage is not scored as product failure, unknown usage is never zero, and every attempt and recovery cost remains. Three harder Docs tasks ran three repetitions per arm using candidate `cad221e`, evaluator `b28354f`, `gpt-5.6-luna` / `medium`, native Codex CLI `0.153.4` and symmetric filesystem-only full guidance. The [final private native lifecycle](evidence/docs-improvements-native-live-final-20260909.json) separately passed **9/9 correctness checks** on the same candidate; it does not measure model token savings. [Protocol](token-efficiency-09.md) · [Frozen environment](evidence/token-efficiency-09/environment.json) · [Exact summary](evidence/token-efficiency-09/summary.json).
 

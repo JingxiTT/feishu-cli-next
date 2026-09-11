@@ -4,7 +4,7 @@ A Feishu/Lark CLI for AI agents that work through a shell and files. It builds o
 
 The goal is to reduce the tokens needed to complete a task while preserving every original command and workflow, data fidelity, and successful outcomes. Results remain task-dependent. The current evaluation targets **more than 50% fewer tokens for Docs read/edit and at least 30% fewer for each other evaluated function versus the original CLI**, with failed-attempt costs included and no observed success regression.
 
-[Quick start](#quick-start) · [Usage](#usage) · [Evaluation report](evaluation/evidence/token-efficiency-09/REPORT.md) · [Implementation status](docs/IMPLEMENTATION.md)
+[Quick start](#quick-start) · [Usage](#usage) · [Full evaluation matrix](evaluation/evidence/full-matrix-20260911/REPORT.md) · [Implementation status](docs/IMPLEMENTATION.md)
 
 ## What this project adds
 
@@ -124,7 +124,32 @@ Those guides are not all injected by installing the entry skill. They can still 
 
 ## Evaluation results
 
-**[Latest condition 09: harder Docs workloads →](evaluation/evidence/token-efficiency-09/REPORT.md)**
+### Full matrix
+
+The [automatic full matrix](evaluation/full-matrix.md) completed all **43 implemented development tasks / 258 attempts** across paired functions, harder Docs, domain reads, workflow scenarios, scaling, business, foundation and Contact. The [completed matrix report](evaluation/evidence/full-matrix-20260911/REPORT.md) includes **240 new attempts and all 18 reviewed condition 09 attempts reused unchanged**. The per-task target remains **unmet: 13 gates met, 22 missed and 8 unavailable**.
+
+| Full-matrix result | Original | Next |
+| --- | ---: | ---: |
+| Verified / attempts | 102/129 | 107/129 |
+| Inconclusive | 2 | 0 |
+| Observed provider tokens (lower bound) | 17,597,508 | 14,954,750 |
+
+**Six attempts lack complete usage**, so both whole-matrix tokens-per-success savings and raw token-spend reduction are **unavailable**. Known usage totals **32,552,258 tokens**: **31,650,572 new** and **901,686 reused historical tokens**, not new spend. Every recorded failure and recovery cost remains included. The [fixture qualifications](evaluation/evidence/full-matrix-20260911/QUALIFICATIONS.md) explain strict route failures despite correct answers; these counts do not establish live reliability or universal savings. An [independent final audit](evaluation/evidence/full-matrix-20260911/result-review.json) accepted the retained accounting and report claims.
+
+After preparing the [local path configuration](evaluation/README.md#automatic-full-matrix), run:
+
+```sh
+python3 evaluation/run_matrix.py --config /absolute/local-config.json \
+  --output evaluation/evidence/full-matrix-20260911 --execute
+```
+
+The command skips unchanged completed results, including failures and inconclusive outcomes, and resumes validated checkpoints. It also reuses matching sealed, complete jobs from sibling output directories under the same parent; this is not a machine-wide cache. Reuse requires identical measured inputs, including the Python executable/version. It never automatically repeats an unresolved in-flight attempt. Omit `--execute` to validate inputs and regenerate the report without model calls. Changed measured inputs require a new output directory. [Configuration, reuse, interpreter pin and resume details](evaluation/full-matrix.md).
+
+The report's suite/task tables separate coverage, verified outcomes and each function's gate. Pooled spend cannot replace the strict Docs >50% or other-task ≥30% targets. Three repetitions per arm and bounded synthetic fixtures do not establish statistical success parity or exhaustive live functionality.
+
+### Completed condition 09
+
+**[Completed condition 09: harder Docs workloads →](evaluation/evidence/token-efficiency-09/REPORT.md)**
 
 Condition 09 completed **18 fresh attempts: Next 9/9 verified, original 8/9 verified and one inconclusive**. It used **GPT-5.6 Luna with medium reasoning through native Codex CLI 0.153.4**, comparing candidate `cad221e` against the original CLI. The strict **>50% saving per task remains unmet: zero gates met, two missed and one unavailable**.
 
