@@ -2,6 +2,8 @@
 """Balanced CLI agent evaluation. Python standard library only."""
 
 import argparse
+from contextlib import contextmanager
+import fcntl
 import hashlib
 import json
 import os
@@ -315,12 +317,145 @@ def aggregate(runs, arms=ARMS):
     return {"groups": rows, "matched_success": matched}
 
 
+class ResumeError(ValueError):
+    """A fixed, payload-free reason why launching another trial is unsafe."""
+
+
+def json_digest(value):
+    return hashlib.sha256(json.dumps(value, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+
+
+def sync_directory(path):
+    descriptor = os.open(path, os.O_RDONLY)
+    try:
+        os.fsync(descriptor)
+    finally:
+        os.close(descriptor)
+
+
+def atomic_json(path, value):
+    temporary = None
+    try:
+        with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", dir=path.parent,
+                                         prefix=path.name + ".", suffix=".tmp", delete=False) as stream:
+            temporary = Path(stream.name)
+            stream.write(json.dumps(value, indent=2) + "\n")
+            stream.flush()
+            os.fsync(stream.fileno())
+        temporary.replace(path)
+        sync_directory(path.parent)
+    finally:
+        if temporary is not None:
+            temporary.unlink(missing_ok=True)
+
+
+@contextmanager
+def output_lock(path):
+    # Keep the lock file: unlinking it permits two processes to lock different
+    # inodes for the same output. flock itself is released when a process dies.
+    with path.with_name(path.name + ".lock").open("a") as stream:
+        try:
+            fcntl.flock(stream.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:
+            raise ResumeError("output_locked") from None
+        try:
+            yield
+        finally:
+            fcntl.flock(stream.fileno(), fcntl.LOCK_UN)
+
+
+def tree_digest(path):
+    path = Path(path)
+    return json_digest([(str(item.relative_to(path)), digest(item))
+                        for item in sorted(path.rglob("*")) if item.is_file() and "__pycache__" not in item.parts])
+
+
+def run_identity(planned_run):
+    task, trial, arm = planned_run
+    return {"task_id": task["id"], "section": task["section"], "trial": trial, "arm": arm}
+
+
+def resume_contract(config, evidence, planned):
+    # Hash public executable inputs, never auth-home directory contents. File
+    # paths may be ephemeral, but bytes, flags and non-file arguments must match.
+    normalized = json.loads(json.dumps(config))
+    normalized["timeout_seconds"] = config.get("timeout_seconds", 120)
+    normalized["guidance_delivery"] = guidance_delivery(config)
+    for name in ("runner", "verifier"):
+        normalized[name] = [{"file_sha256": digest(arg)} if Path(arg).is_absolute() and Path(arg).is_file() else arg
+                            for arg in config[name]]
+    for name, arm in normalized["arms"].items():
+        for key in ("cli", "skill"):
+            arm[key] = {"sha256": digest(config["arms"][name][key])}
+        entry = Path(config["arms"][name]["skill"])
+        arm["guidance_tree_sha256"] = tree_digest(entry.parent)
+        if (entry.parent.parent / "lark-shared").is_dir():
+            arm["linked_skills"] = {child.name: tree_digest(child) for child in sorted(entry.parent.parent.iterdir())
+                                   if child.is_dir() and child.name.startswith("lark-")}
+        if "selected_skill_source" in arm:
+            arm["selected_skill_source"] = {"tree_sha256": tree_digest(arm["selected_skill_source"])}
+    fixed = {key: evidence.get(key) for key in ("protocol", "mode", "split", "planned_runs", "seed", "repeats",
+        "fresh_context", "task_manifest_sha256", "environment", "arms", "arm_selection")}
+    sources = {str(path.relative_to(Path(__file__).parent)): digest(path)
+               for path in sorted(Path(__file__).parent.rglob("*.py"))}
+    return {"version": 1, "sha256": json_digest({"fixed": fixed, "config": normalized,
+        "evaluator_sources": sources, "schedule": [run_identity(run) for run in planned]})}
+
+
+def resumed_evidence(path, expected, planned, arms):
+    previous = read_json(path)
+    if previous.get("resume_contract") != expected["resume_contract"]:
+        raise ResumeError("resume_contract_mismatch")
+    for key in ("protocol", "mode", "split", "planned_runs", "seed", "repeats", "fresh_context",
+                "task_manifest_sha256", "environment", "arms", "arm_selection"):
+        if previous.get(key) != expected.get(key):
+            raise ResumeError("resume_contract_mismatch")
+    runs = previous.get("runs")
+    if not isinstance(runs, list) or len(runs) > len(planned):
+        raise ResumeError("invalid_resume_checkpoint")
+    for row, planned_run in zip(runs, planned):
+        identity = run_identity(planned_run)
+        if (not isinstance(row, dict) or type(row.get("trial")) is not int or
+                any(row.get(key) != value for key, value in identity.items()) or
+                any(key not in row for key in ("success", "outcome_inconclusive", "usage", "categories", "runner_exit",
+                    "verifier_exit", "latency_seconds", "verification_seconds", "api_calls", "retries", "command_executions")) or
+                type(row["success"]) is not bool or type(row["outcome_inconclusive"]) is not bool):
+            raise ResumeError("invalid_resume_checkpoint")
+    if type(previous.get("completed")) is not bool or previous["completed"] != (len(runs) == len(planned)):
+        raise ResumeError("invalid_resume_checkpoint")
+    claims = (previous.get("arm_selection", {}).get("mode") != "candidate_only" and previous["mode"] == "real"
+              and len(runs) == len(planned) and all(row["usage"] and not row["outcome_inconclusive"] for row in runs))
+    if type(previous.get("performance_claims_supported")) is not bool or previous["performance_claims_supported"] != claims:
+        raise ResumeError("invalid_resume_checkpoint")
+    summaries = aggregate(runs, arms)
+    if any(previous.get(key) != value for key, value in summaries.items()):
+        raise ResumeError("invalid_resume_checkpoint")
+    return previous
+
+
+def reconcile_marker(marker, evidence, planned):
+    if not marker.exists():
+        return
+    value = read_json(marker)
+    index = value.get("index")
+    if (type(index) is not int or not 0 <= index < len(planned) or
+            value != {"resume_contract": evidence["resume_contract"], "index": index,
+                      "run": run_identity(planned[index])}):
+        raise ResumeError("invalid_inflight_marker")
+    if index >= len(evidence["runs"]):
+        # It is impossible to know whether billing happened before interruption.
+        raise ResumeError("interrupted_run_requires_review")
+    marker.unlink()
+    sync_directory(marker.parent)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--tasks", type=Path, required=True)
     parser.add_argument("--config", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--repeats", type=int, default=3)
+    parser.add_argument("--resume", action="store_true", help="Reuse the exact completed run prefix; never retry an unresolved in-flight attempt")
     parser.add_argument("--stop-file", type=Path, help="Operator stop request, checked only between complete attempts")
     parser.add_argument("--seed", type=int, default=20260907)
     parser.add_argument("--release-held-out", action="store_true")
@@ -358,26 +493,46 @@ def main():
         elif args.original_comparison:
             evidence["arm_selection"] = {"mode": "original_comparison", "selected": list(selected_arms),
                                          "schedule": "balanced", "balanced_comparison": True}
+        evidence["resume_contract"] = resume_contract(config, evidence, planned)
+        args.output = args.output.resolve()
         args.output.parent.mkdir(parents=True, exist_ok=True)
-        # Checkpoint each finished attempt before launching another billed model run.
-        for planned_run in planned:
-            if args.stop_file and args.stop_file.exists():
-                evidence.update(stopped=True, cancelled_before_model=len(planned) - len(runs))
-                checkpoint = args.output.with_suffix(args.output.suffix + ".tmp")
-                checkpoint.write_text(json.dumps(evidence, indent=2) + "\n", encoding="utf-8")
-                checkpoint.replace(args.output)
-                print(json.dumps({"status": "stopped", "completed_attempts": len(runs), "cancelled_before_model": len(planned) - len(runs)}))
-                return 0
-            runs.append(run_one(config, *planned_run))
-            evidence.update({"runs": runs, **aggregate(runs, selected_arms), "completed": len(runs) == len(planned),
-                             "performance_claims_supported": not args.only_arm and config["mode"] == "real" and len(runs) == len(planned)
-                             and all(run["usage"] and not run.get("outcome_inconclusive") for run in runs)})
-            checkpoint = args.output.with_suffix(args.output.suffix + ".tmp")
-            checkpoint.write_text(json.dumps(evidence, indent=2) + "\n", encoding="utf-8")
-            checkpoint.replace(args.output)
+        marker = args.output.with_name(args.output.name + ".inflight.json")
+        with output_lock(args.output):
+            if args.output.exists():
+                if not args.resume:
+                    raise ResumeError("output_exists_use_resume")
+                evidence = resumed_evidence(args.output, evidence, planned, selected_arms)
+                runs = evidence["runs"]
+            elif marker.exists():
+                raise ResumeError("interrupted_run_requires_review")
+            else:
+                atomic_json(args.output, evidence)
+            reconcile_marker(marker, evidence, planned)
+            # Every terminal result is reused, including failures, unsupported
+            # outcomes and unknown usage. Resume does not rescore or cherry-pick.
+            for index in range(len(runs), len(planned)):
+                if args.stop_file and args.stop_file.exists():
+                    evidence.update(stopped=True, cancelled_before_model=len(planned) - len(runs))
+                    atomic_json(args.output, evidence)
+                    print(json.dumps({"status": "stopped", "completed_attempts": len(runs), "cancelled_before_model": len(planned) - len(runs)}))
+                    return 0
+                evidence.pop("stopped", None)
+                evidence.pop("cancelled_before_model", None)
+                atomic_json(marker, {"resume_contract": evidence["resume_contract"], "index": index,
+                                     "run": run_identity(planned[index])})
+                runs.append(run_one(config, *planned[index]))
+                evidence.update({"runs": runs, **aggregate(runs, selected_arms), "completed": len(runs) == len(planned),
+                                 "performance_claims_supported": not args.only_arm and config["mode"] == "real" and len(runs) == len(planned)
+                                 and all(run["usage"] and not run.get("outcome_inconclusive") for run in runs)})
+                atomic_json(args.output, evidence)
+                marker.unlink()
+                sync_directory(marker.parent)
         print(json.dumps({"status": "pass" if all(run["success"] and run["usage"] for run in runs) else "fail",
                           "mode": config["mode"], "runs": len(runs), "output": str(args.output)}))
         return 0 if all(run["success"] and run["usage"] for run in runs) else 1
+    except ResumeError as error:
+        print(json.dumps({"status": "error", "category": str(error)}), file=sys.stderr)
+        return 2
     except (OSError, ValueError, KeyError, TypeError, AttributeError):
         # Avoid echoing untrusted config/credentials in parse errors.
         print(json.dumps({"status": "error", "category": "invalid_configuration_or_manifest"}), file=sys.stderr)
