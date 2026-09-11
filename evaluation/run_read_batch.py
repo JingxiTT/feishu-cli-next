@@ -21,7 +21,7 @@ def extension_host(source, output_root, next_mode):
     inputs = sorted(path for path in source.rglob('*') if path.is_file())
     for path in inputs:
         # Frozen source archives have no private working directories.
-        if any(part in ('.git', '.tmp') for part in path.relative_to(source).parts):
+        if any(part in ('.git', '.tmp', '__pycache__') for part in path.relative_to(source).parts):
             continue
         digest.update(str(path.relative_to(source)).encode())
         digest.update(hashlib.sha256(path.read_bytes()).digest())
