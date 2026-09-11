@@ -198,8 +198,19 @@ def validate_batch(batch, job, env, complete=True):
             raise ValueError('Invalid provider accounting')
 
 
-def import_condition(directory, old_source, env, matrix_jobs, output):
+def import_condition(directory, old_source, env, matrix_jobs, output, reuse_review):
     """Import reviewed condition09 as whole comparisons, never cherry-pick rows."""
+    migration = read(reuse_review)
+    if migration.get('decision') != 'accepted':
+        raise ValueError('Historical migration lacks accepted equivalence review')
+    for name, expected in migration['current_sources_sha256'].items():
+        if sha(ROOT / 'evaluation' / name) != expected:
+            raise ValueError('Historical migration review does not bind current code')
+    for name, expected in migration['historical_sources_sha256'].items():
+        if sha(directory / name) != expected:
+            raise ValueError('Historical migration review does not bind retained evidence')
+    if digest(env['runtime_sources']) != migration['measured_equivalence']['runtime_sources_sha256']:
+        raise ValueError('Historical migration review does not bind runtime inputs')
     old = read(directory / 'environment.json')
     review = read(directory / 'result-review.json')
     if review.get('decision') != 'accepted':
@@ -233,6 +244,7 @@ def import_condition(directory, old_source, env, matrix_jobs, output):
         target = output / 'jobs' / job['key']
         target.mkdir(parents=True, exist_ok=True)
         provenance = {'kind': 'historical_reuse', 'condition': old['condition'],
+                      'migration_review_sha256': sha(reuse_review),
                       'batch_sha256': sha(origin), 'environment_sha256': sha(directory / 'environment.json'),
                       'review_sha256': sha(directory / 'result-review.json'),
                       'source': str(origin.relative_to(ROOT))}
@@ -335,9 +347,10 @@ def main():
     parser.add_argument('--execute', action='store_true', help='Run missing slots, with safe resume; otherwise plan/report only')
     parser.add_argument('--reuse-condition', type=Path, help='Reviewed historical condition09 directory')
     parser.add_argument('--reuse-evaluator', type=Path, help='Its intact frozen evaluator source')
+    parser.add_argument('--reuse-review', type=Path, help='Reviewed old/new launcher equivalence bound to exact code hashes')
     args = parser.parse_args()
-    if bool(args.reuse_condition) != bool(args.reuse_evaluator):
-        parser.error('Historical condition and evaluator must be supplied together')
+    if len({bool(args.reuse_condition), bool(args.reuse_evaluator), bool(args.reuse_review)}) != 1:
+        parser.error('Historical condition, evaluator and migration review must be supplied together')
     output = args.output.resolve()
     output.mkdir(parents=True, exist_ok=True)
     with (output / '.matrix.lock').open('a') as lock:
@@ -351,7 +364,7 @@ def main():
         bind_jobs(matrix_jobs, env, paths, output)
         write(output / 'plan.json', {'jobs': matrix_jobs, 'planned_attempts': sum(j['planned_attempts'] for j in matrix_jobs)})
         if args.reuse_condition:
-            import_condition(args.reuse_condition.resolve(), args.reuse_evaluator.resolve(), env, matrix_jobs, output)
+            import_condition(args.reuse_condition.resolve(), args.reuse_evaluator.resolve(), env, matrix_jobs, output, args.reuse_review.resolve())
         pending = []
         for job in matrix_jobs:
             folder = output / 'jobs' / job['key']
