@@ -81,21 +81,22 @@ func collect(root *cobra.Command, query string) []entry {
 		path := strings.TrimSpace(strings.TrimPrefix(c.CommandPath(), root.Name()))
 		if c != root && (query != "" || c.Parent() == root) {
 			haystack := strings.ToLower(path + " " + c.Short + " " + strings.Join(c.Aliases, " "))
-			var remaining []string
+			match := true
 			for _, term := range terms {
 				if term != "*" && !strings.Contains(haystack, term) {
-					remaining = append(remaining, term)
+					match = false
+					break
 				}
 			}
-			match := true
-			if len(remaining) > 0 {
+			if !match {
 				var searchable strings.Builder
 				for _, f := range publicFlags(c) {
 					searchable.WriteString(" --" + f.Name + " " + f.Usage)
 				}
 				flagText := strings.ToLower(searchable.String())
-				for _, term := range remaining {
-					if !strings.Contains(flagText, term) {
+				match = true
+				for _, term := range terms {
+					if term != "*" && !strings.Contains(haystack, term) && !strings.Contains(flagText, term) {
 						match = false
 						break
 					}
