@@ -2,6 +2,13 @@
 
 ## Offline CLI probes
 
+The [complete October 7 surface comparison](evidence/cli-surface-20261007/REPORT.md)
+records 1,738 local surfaces: all original commands, methods, event keys and
+embedded guidance files. Every request schema is smaller (61.9% in the sum), but
+936/938 help outputs are larger and current upstream is faster. The function
+ledger exposes 866 original nodes without observed non-help calls in retained
+workflow traces. A lead across every area/function remains unestablished.
+
 [`measure_surface.py`](measure_surface.py) derives its complete schedule from
 the frozen catalog and configured-brand inventory: every command node (including
 hidden commands and inherited command aliases), all 251 methods, every event
