@@ -145,9 +145,20 @@ current shared JSON emitter still serializes an already materialized result in
 process memory. This is not a bounded-memory backend streaming export, and the
 artifact is not a proof of snapshot-consistent pagination.
 
+## Introspection
+
+Local API introspection has a separate schema envelope owned by `internal/schema`.
+`schema <path>` retains its full input/output schema and `_meta` contract.
+Explicit `--input-only` omits only `outputSchema`; input fields (including required
+markers, types, carriers, bounds, defaults and enums), identities, scopes, risk,
+danger and affordance guidance remain identical. It is a request-planning view,
+not a complete MCP tool spec. Exact methods remain objects; broader paths remain
+sorted collections, with the same strict-mode and distribution visibility filters.
+
 ## Verification
 
 Focused tests: `go test ./internal/output`.
+Introspection: `go test ./cmd/schema ./cmd/discover ./internal/schema`.
 Process scenarios: `tests/next_foundation/output_e2e_test.go`, run by
 `python3 scripts/next_test.py --section foundation --suite e2e` at the completed
 foundation gate. The fixture uses the real authsidecar build against a local

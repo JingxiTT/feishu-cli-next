@@ -40,6 +40,9 @@ type SchemaOptions struct {
 	// form ("im.messages.reply") or the space-separated form ("im messages
 	// reply"); apicatalog.ParsePath normalizes both.
 	Args []string
+
+	// InputOnly omits the response schema while retaining request and safety metadata.
+	InputOnly bool
 }
 
 // NewCmdSchema creates the schema command. If runF is non-nil it is called instead of the default runner (test hook).
@@ -72,6 +75,7 @@ func NewCmdSchemaWithVisibility(
 		},
 	}
 	cmdutil.DisableAuthCheck(cmd)
+	cmd.Flags().BoolVar(&opts.InputOnly, "input-only", false, "omit response schema; keep input requirements, scopes, risk and guidance")
 
 	// Tolerated for agent compatibility; ignored — schema only emits the JSON
 	// envelope, and its output is identity-independent (strict-mode filtering
@@ -111,29 +115,21 @@ func completeSchemaPath(
 func schemaRunWithVisibility(opts *SchemaOptions, visibility CommandVisibility) error {
 	out := opts.Factory.IOStreams.Out
 	mode := opts.Factory.ResolveStrictMode(opts.Ctx)
-	return runSchemaWithVisibility(out, apicatalog.ParsePath(opts.Args), mode, visibility)
+	return runSchemaCatalog(out, apicatalog.ParsePath(opts.Args), mode, registry.SchemaCatalog(), visibility, opts.InputOnly)
 }
 
-// runSchemaWithVisibility resolves the path through the schema catalog and renders the
+// runSchemaCatalog resolves the path through the schema catalog and renders the
 // matching envelope(s). The catalog owns navigation (Resolve + MethodRefs) and
 // schema owns rendering (Envelope/Envelopes); this adapter only chooses the
 // output shape — a single resolved method renders as one envelope object,
 // anything broader as an array — and maps resolve failures to hints.
-func runSchemaWithVisibility(
-	out io.Writer,
-	parts []string,
-	mode core.StrictMode,
-	visibility CommandVisibility,
-) error {
-	return runSchemaCatalog(out, parts, mode, registry.SchemaCatalog(), visibility)
-}
-
 func runSchemaCatalog(
 	out io.Writer,
 	parts []string,
 	mode core.StrictMode,
 	catalog apicatalog.Catalog,
 	visibility CommandVisibility,
+	inputOnly bool,
 ) error {
 	// Test the source catalog before presentation projection. A distribution
 	// that intentionally conceals every generated method still has metadata;
@@ -151,16 +147,24 @@ func runSchemaCatalog(
 		return resolveError(err)
 	}
 	refs := catalog.MethodRefs(target, registry.FilterForStrictMode(mode))
+	render := schema.EnvelopeOf
+	if inputOnly {
+		render = schema.InputEnvelopeOf
+	}
 	if target.Kind == apicatalog.TargetMethod {
 		if len(refs) == 0 {
 			return errs.NewValidationError(errs.SubtypeInvalidArgument,
 				"Method %s not available in current identity mode", target.Method.SchemaPath()).
 				WithHint("strict mode hides methods the active account identity cannot call; it is shown for an identity (user or bot) that has the required access token")
 		}
-		output.PrintJson(out, schema.EnvelopeOf(refs[0]))
+		output.PrintJson(out, render(refs[0]))
 		return nil
 	}
-	output.PrintJson(out, schema.Envelopes(refs))
+	if inputOnly {
+		output.PrintJson(out, schema.InputEnvelopes(refs))
+	} else {
+		output.PrintJson(out, schema.Envelopes(refs))
+	}
 	return nil
 }
 

@@ -1,5 +1,34 @@
 # Agent comparison evaluation
 
+## Offline CLI probes
+
+[`measure_cli.py`](measure_cli.py) compares process latency and output context
+size for six generated methods, shared guidance and bounded discovery. Supply
+canonical builds of the [frozen official reference](../docs/reference/README.md),
+Next before/after the change, and optionally a pinned current upstream build:
+
+```sh
+python3 evaluation/measure_cli.py \
+  --reference-cli /absolute/frozen-official-cli \
+  --before-cli /absolute/next-before \
+  --next-cli /absolute/next-after \
+  --current-cli /absolute/current-official-cli \
+  --repetitions 31 --output /absolute/local-probes.json
+```
+
+Optional `--encoding o200k_base` requires `tiktoken` in the selected Python
+environment; without it token counts remain unavailable. Counts cover stdout
+and stderr once, not provider usage or tokens per completed agent task.
+Warm processes run in rotating order with isolated configuration, remote
+metadata and notices disabled. Any failed or unstable probe stops reporting.
+The script requires exact request/permission/guidance parity against the frozen
+reference, unchanged default schema bytes and unchanged discovery bytes. The
+current upstream arm records parity separately because its catalog may differ.
+Binary hashes, per-process durations and output hashes are retained.
+
+These probes complement the full agent matrix below; they cannot establish
+live API speed, successful task parity or the full-task token-efficiency gates.
+
 ## Automatic full matrix
 
 [`run_matrix.py`](run_matrix.py) completed all **43 implemented development tasks / 258 attempts** across eight suites: paired functions, harder Docs, domain reads, workflow scenarios, scaling, business, foundation and Contact. Each task compares original/full with Next for three repetitions per arm. The [completed report](evidence/full-matrix-20260911/REPORT.md) contains **240 new attempts and 18 reviewed condition 09 attempts reused unchanged**; it is not a fresh simultaneous 258-attempt comparison. See the [execution and measurement protocol](full-matrix.md).

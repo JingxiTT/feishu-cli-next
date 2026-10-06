@@ -80,6 +80,10 @@ Use a known command directly. Help, discovery, and schema inspection are availab
   --range A1:E100 --save-result cells.json --as user
 ```
 
+For a generated method's request requirements, use `schema <service.resource.method> --input-only`.
+It retains the full input schema, permissions, risk and command guidance while
+omitting the response schema. Omit the flag when you need response field definitions.
+
 Replace resource placeholders with your own IDs. Discovery describes the local command surface; access still depends on the selected account and scopes. Shortcuts start with `+`; generated service commands expose catalog methods, and `api` provides raw OpenAPI access.
 
 ### Read focused Docs content
