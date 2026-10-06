@@ -2,6 +2,10 @@
 
 ## Offline CLI probes
 
+The [October 7 comparison](evidence/cli-efficiency-20261007/REPORT.md) records
+the request-only schema and discovery changes, both local measurement conditions,
+and the remaining startup gap against current upstream.
+
 [`measure_cli.py`](measure_cli.py) compares process latency and output context
 size for six generated methods, shared guidance and bounded discovery. Supply
 canonical builds of the [frozen official reference](../docs/reference/README.md),
@@ -19,8 +23,9 @@ python3 evaluation/measure_cli.py \
 Optional `--encoding o200k_base` requires `tiktoken` in the selected Python
 environment; without it token counts remain unavailable. Counts cover stdout
 and stderr once, not provider usage or tokens per completed agent task.
-Warm processes run in rotating order with isolated configuration, remote
-metadata and notices disabled. Any failed or unstable probe stops reporting.
+Binary/filesystem caches are warmed; each timed invocation is a fresh process
+in rotating order with isolated configuration, remote metadata and notices
+disabled. Any failed or unstable probe stops reporting.
 The script requires exact request/permission/guidance parity against the frozen
 reference, unchanged default schema bytes and unchanged discovery bytes. The
 current upstream arm records parity separately because its catalog may differ.

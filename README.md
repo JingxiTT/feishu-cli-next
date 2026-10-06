@@ -128,6 +128,10 @@ Those guides are not all injected by installing the entry skill. They can still 
 
 ## Evaluation results
 
+The [October 7 local CLI probes](evaluation/evidence/cli-efficiency-20261007/REPORT.md)
+measure request-only schema context size and discovery latency. They are local
+introspection measurements; the full-task results below remain unchanged.
+
 ### Full matrix
 
 The [automatic full matrix](evaluation/full-matrix.md) completed all **43 implemented development tasks / 258 attempts** across paired functions, harder Docs, domain reads, workflow scenarios, scaling, business, foundation and Contact. The [completed matrix report](evaluation/evidence/full-matrix-20260911/REPORT.md) includes **240 new attempts and all 18 reviewed condition 09 attempts reused unchanged**. The per-task target remains **unmet: 13 gates met, 22 missed and 8 unavailable**.

@@ -1,0 +1,38 @@
+{
+  "code_commit": "2a7e48e040f77b0c2937387427c9cc7092ab0dbe",
+  "reference_commit": "7fd6ef3c07182257ce776cdc5a614e122d5bd4b3",
+  "current_upstream_commit": "7beffb086d7fa3c5b843d8affa7c089f49cfc65e",
+  "go_version": "go version go1.26.4 darwin/arm64",
+  "runner_sha256": "dc9aaac4b59b2dfc2c50164f073b796b28a281b8af8ee083070ef8058c39a1f0",
+  "frozen_catalog_sha256": "b5375251ff1f0a5939925587b0d514669a748135cde36c56f1c8ab5f5fe266c8",
+  "checks": {
+    "build": "pass",
+    "focused_go_tests": "pass",
+    "default_schema_byte_parity": "pass: all 251 methods; sha256 395de478a5dc49bed8304984d9a1b5688f1f3248b30aeba85fe539a2b12f5155",
+    "input_schema_parity": "pass: all 251 methods equal full minus outputSchema",
+    "skill_format": "pass: skills and agent-skills; metadata warning for entry guide",
+    "vet": "pass",
+    "fmt_check": "pass",
+    "script_test": "pass",
+    "evaluation_test": "pass",
+    "integration_test": "pass: all offline E2E suites and sheets_base cross-domain",
+    "examples_build": "pass",
+    "golangci_lint": "pass: --new-from-rev=d383eb1; zero issues",
+    "source_lint": "pass: --changed-from d383eb1",
+    "lint_module_tests": "pass after moving comparison source checkouts outside repository",
+    "licenses": "pass; non-Go assembly inspection warnings",
+    "module_tidy": "pass; go.mod/go.sum unchanged",
+    "quality_gate": "pass after code commit; base d383eb1",
+    "unit_test": "initial run failed only shortcuts/drive TestDriveMirrorRejectsIncompleteListing: macOS /var temporary paths are outside existing FileIO roots; every other package passed",
+    "drive_recheck": "pass: TMPDIR=/tmp go test -race -gcflags=\"all=-N -l\" -count=1 ./shortcuts/drive",
+    "final_focused_race_tests": "pass after both discovery refinements",
+    "final_quality_and_lint": "pass: quality-gate and both linters at code commit 2a7e48e, base d383eb1"
+  },
+  "not_run": [
+    "fresh provider-token agent matrix",
+    "live Feishu API trials (changes are local introspection)",
+    "live skills sync (sync behavior unchanged)",
+    "sidecar-specific tests (sidecar behavior unchanged)"
+  ],
+  "initial_code_commit": "456a666b45dce737b269f437a9b15c90fc233338"
+}
