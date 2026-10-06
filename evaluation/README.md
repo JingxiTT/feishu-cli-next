@@ -2,6 +2,36 @@
 
 ## Offline CLI probes
 
+[`measure_surface.py`](measure_surface.py) derives its complete schedule from
+the frozen catalog and configured-brand inventory: every command node (including
+hidden commands and inherited command aliases), all 251 methods, every event
+key, and every file discoverable in the original binary's embedded skills.
+It compares each surface separately rather than using a domain average. Failed,
+unstable or unavailable probes have no efficiency score; a brand guard that
+bypasses help is recorded without dispatching the command. Extensions and
+packaging are explicitly unmeasured by local introspection.
+
+```sh
+python3 evaluation/measure_surface.py \
+  --reference-cli /absolute/frozen-official-cli \
+  --before-cli /absolute/next-before \
+  --next-cli /absolute/next-after \
+  --current-cli /absolute/current-official-cli \
+  --brand feishu --repetitions 3 --encoding o200k_base \
+  --output /absolute/new-surface-probes.json.gz
+```
+
+The optional tokenizer and isolated process protocol match `measure_cli.py`
+below. The runner refuses to overwrite retained evidence. It checks unchanged
+default schema bytes, request/permission/guidance parity for every method, and
+semantic parity of event definitions. Current upstream differences are retained
+separately and never treated as equivalent work. Three timings describe this
+machine's observations; they cannot establish a universal speed advantage.
+Help/schema/file coverage is **not** execution coverage: mutations, pagination,
+recovery, streams, binary transfers, permission conditions, host SDKs and platform
+builds still require their own correctness and task-efficiency evidence. No
+whole-CLI savings claim follows from a pooled local-output reduction.
+
 The [October 7 comparison](evidence/cli-efficiency-20261007/REPORT.md) records
 the request-only schema and discovery changes, both local measurement conditions,
 and the remaining startup gap against current upstream.

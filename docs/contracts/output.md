@@ -12,6 +12,12 @@ exit code. `--result-detail` indents the full JSON result. It cannot be combined
 with `--result-fields`. Existing domain flags named `--fields` and `--detail`
 keep their original semantics.
 
+Embedded skill reads keep the file bytes intact on stdout. Main-skill reads add
+a short version-matched reference-routing hint on stderr (or the separate
+`guidance` field with `--json`); reference-file reads add no hint. The hint keeps
+both the own-skill command and the cross-skill `../` rewrite without repeating a
+paragraph on every read.
+
 `--result-fields title,owner.name` selects business data fields. Selection applies
 to `data`, or to each item in an array or an `items`, `records`, `rows`, `files`, `messages`, `tasks`, `created_tasks`, or `successful_tasks`
 collection. Dotted paths preserve nested structure; arrays need no `[]` syntax.

@@ -176,8 +176,6 @@ func parseReadTarget(args []string) (name, relpath string, err error) {
 // `skills read lark-foo/...`: the path guard rejects a literal "../", so the
 // relative form must be rewritten.
 func readGuidance(name string) string {
-	return fmt.Sprintf("> Tip: read this skill's own files (e.g. `references/...`) with "+
-		"`lark-cli skills read %s <relative-path>` to keep them in sync with this CLI version. "+
-		"A reference to another skill (`../lark-foo/...`) uses the same command with the "+
-		"leading `../` removed: `lark-cli skills read lark-foo/...`.", name)
+	return fmt.Sprintf("> Tip: read version-matched files: `lark-cli skills read %s <relative-path>`. "+
+		"For `../lark-foo/...`, remove `../`: `lark-cli skills read lark-foo/...`.", name)
 }
