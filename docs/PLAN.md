@@ -10,6 +10,14 @@ Evaluate total agent input/output tokens alongside task success, output quality,
 
 Implement every existing Feishu CLI capability in `feishu-cli-next`, using the sibling `feishu-cli-review` source tree as the reference. Full functional coverage and improved agent usability are joint goals. Implementation agents determine the detailed command inventory and design from the code during implementation; the examples in this plan do not limit scope.
 
+The 2026-10-07 continuation requests speed and token improvements across every
+original area and function. Compare individual capabilities against the complete
+inventory, including lifecycle commands, events, host integrations and platform
+operations. Report unmeasured functions and regressions explicitly; neither a
+sampled schema reduction nor an area-average saving establishes a whole-CLI
+lead. Preserve the reference contracts and keep local introspection measurements
+separate from verified workflow/provider-token evidence.
+
 This document defines the plan; reference code and its tests define the capabilities to preserve. All proposed capabilities remain unverified until their acceptance tests and evaluations pass.
 
 ## Product boundaries

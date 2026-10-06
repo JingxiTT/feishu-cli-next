@@ -32,6 +32,22 @@ recovery, streams, binary transfers, permission conditions, host SDKs and platfo
 builds still require their own correctness and task-efficiency evidence. No
 whole-CLI savings claim follows from a pooled local-output reduction.
 
+[`function_coverage.py`](function_coverage.py) joins this exhaustive surface
+report to the original command inventory and the retained workflow traces. It
+verifies checkpoint hashes, reconstructs task gates using all retained attempts,
+excludes help calls from execution observations, and keeps historical binary
+identities. Each original node is present even when no task called it. The SDK
+symbol index and platform build conditions remain explicit unverified surfaces.
+A verified workflow that calls a command does not establish every mode of that
+function or attribute the entire workflow saving to it.
+
+```sh
+python3 evaluation/function_coverage.py \
+  --probes /absolute/new-surface-probes.json.gz \
+  --matrix evaluation/evidence/full-matrix-20260911 \
+  --output /absolute/function-coverage.json.gz
+```
+
 The [October 7 comparison](evidence/cli-efficiency-20261007/REPORT.md) records
 the request-only schema and discovery changes, both local measurement conditions,
 and the remaining startup gap against current upstream.
