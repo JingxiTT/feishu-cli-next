@@ -73,12 +73,12 @@ func NewCmd(f *cmdutil.Factory, root *cobra.Command) *cobra.Command {
 func collect(root *cobra.Command, query string) []entry {
 	entries := []entry{}
 	terms := strings.Fields(strings.ToLower(query))
-	var walk func(*cobra.Command)
-	walk = func(c *cobra.Command) {
+	var walk func(*cobra.Command, string)
+	walk = func(c *cobra.Command, commandPath string) {
 		if c.Hidden {
 			return
 		}
-		path := strings.TrimSpace(strings.TrimPrefix(c.CommandPath(), root.Name()))
+		path := strings.TrimSpace(strings.TrimPrefix(commandPath, root.Name()))
 		if c != root && (query != "" || c.Parent() == root) {
 			haystack := strings.ToLower(path + " " + c.Short + " " + strings.Join(c.Aliases, " "))
 			match := true
@@ -108,10 +108,10 @@ func collect(root *cobra.Command, query string) []entry {
 			}
 		}
 		for _, child := range c.Commands() {
-			walk(child)
+			walk(child, commandPath+" "+child.Name())
 		}
 	}
-	walk(root)
+	walk(root, root.CommandPath())
 	sort.Slice(entries, func(i, j int) bool { return entries[i].Command < entries[j].Command })
 	return entries
 }

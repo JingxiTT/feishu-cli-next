@@ -54,6 +54,24 @@ func TestDiscoveryDescribesOnlyReturnedPage(t *testing.T) {
 	}
 }
 
+func TestDiscoveryPathsMatchCobraInNestedTree(t *testing.T) {
+	outer := &cobra.Command{Use: "wrapper"}
+	root := &cobra.Command{Use: "test-cli"}
+	outer.AddCommand(root)
+	group := &cobra.Command{Use: "group"}
+	nested := &cobra.Command{Use: "nested"}
+	leaf := &cobra.Command{Use: "read [id]"}
+	root.AddCommand(group)
+	group.AddCommand(nested)
+	nested.AddCommand(leaf)
+	for _, e := range collect(root, "*") {
+		want := strings.TrimSpace(strings.TrimPrefix(e.command.CommandPath(), root.Name()))
+		if e.Command != want {
+			t.Fatalf("command path changed: %q != %q", e.Command, want)
+		}
+	}
+}
+
 func TestDiscoveryReflectsTreeAndRetainsContinuation(t *testing.T) {
 	f, out, _, _ := cmdutil.TestFactory(t, nil)
 	root := &cobra.Command{Use: "test-cli"}
