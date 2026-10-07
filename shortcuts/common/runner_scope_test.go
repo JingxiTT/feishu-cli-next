@@ -18,9 +18,11 @@ import (
 type scopeCheckTokenResolver struct {
 	result *credential.TokenResult
 	err    error
+	calls  int
 }
 
 func (r *scopeCheckTokenResolver) ResolveToken(ctx context.Context, req credential.TokenSpec) (*credential.TokenResult, error) {
+	r.calls++
 	return r.result, r.err
 }
 

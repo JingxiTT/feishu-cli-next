@@ -1123,13 +1123,18 @@ func runShortcut(cmd *cobra.Command, f *cmdutil.Factory, s *Shortcut, botOnly bo
 	// Identity info is now included in the JSON envelope; skip stderr printing.
 	// cmdutil.PrintIdentity(f.IOStreams.ErrOut, as, config, false)
 
-	if err := checkShortcutScopes(f, cmd.Context(), as, config, s.ScopesForIdentity(string(as))); err != nil {
-		return err
-	}
-
-	rctx, err := newRuntimeContext(cmd, f, s, config, as, botOnly)
-	if err != nil {
-		return err
+	dryRun, _ := cmd.Flags().GetBool("dry-run")
+	var rctx *RuntimeContext
+	if dryRun {
+		rctx = newDryRunRuntimeContext(cmd, f, s, config, as, botOnly)
+	} else {
+		if err := checkShortcutScopes(f, cmd.Context(), as, config, s.ScopesForIdentity(string(as))); err != nil {
+			return err
+		}
+		rctx, err = newRuntimeContext(cmd, f, s, config, as, botOnly)
+		if err != nil {
+			return err
+		}
 	}
 	if s.Normalize != nil {
 		// Normalize is opt-in and consumes resolved values. Shortcuts without a
