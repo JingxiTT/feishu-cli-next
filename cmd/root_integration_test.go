@@ -352,6 +352,19 @@ func TestIntegration_StrictModeBot_ProfileOverride_MessagesSearchDryRunSucceeds(
 
 func TestIntegration_StrictModeBot_ProfileOverride_VCSearchDryRunSucceeds(t *testing.T) {
 	f, stdout, stderr := newStrictModeDefaultFactory(t, "target", core.StrictModeBot)
+	// Legacy dry-run scope preflight resolves a token. Keep the production
+	// profile selection while making its token endpoint deterministic and local.
+	client, err := f.HttpClient()
+	if err != nil {
+		t.Fatal(err)
+	}
+	reg := &httpmock.Registry{}
+	t.Cleanup(func() { reg.Verify(t) })
+	reg.Register(&httpmock.Stub{
+		Method: "POST", URL: "/oauth/v3/token",
+		Body: map[string]any{"access_token": "fixture-tenant-token", "token_type": "Bearer", "expires_in": 7200},
+	})
+	client.Transport = reg
 	rootCmd := buildStrictModeIntegrationRootCmd(t, f)
 
 	code := executeRootIntegration(t, f, rootCmd, []string{
