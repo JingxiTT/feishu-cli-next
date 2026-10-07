@@ -1,3 +1,6 @@
+# Copyright (c) 2026 Lark Technologies Pte. Ltd.
+# SPDX-License-Identifier: MIT
+
 """Replay local Docs workflows through a real CLI and the unchanged fidelity gates."""
 import json
 import os

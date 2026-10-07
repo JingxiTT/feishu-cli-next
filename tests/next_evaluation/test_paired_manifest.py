@@ -1,3 +1,6 @@
+# Copyright (c) 2026 Lark Technologies Pte. Ltd.
+# SPDX-License-Identifier: MIT
+
 """Pilot wiring must match the independently controlled scenario definitions."""
 import json
 from pathlib import Path

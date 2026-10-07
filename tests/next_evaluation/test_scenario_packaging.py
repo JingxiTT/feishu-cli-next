@@ -1,3 +1,6 @@
+# Copyright (c) 2026 Lark Technologies Pte. Ltd.
+# SPDX-License-Identifier: MIT
+
 """Filesystem verifier regressions; no live API, model, or user-home access."""
 import hashlib
 import importlib

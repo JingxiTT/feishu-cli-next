@@ -1,3 +1,6 @@
+# Copyright (c) 2026 Lark Technologies Pte. Ltd.
+# SPDX-License-Identifier: MIT
+
 """Synthetic generated-business adapters and independent verifier contracts."""
 from copy import deepcopy
 import hashlib

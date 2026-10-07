@@ -1,3 +1,6 @@
+# Copyright (c) 2026 Lark Technologies Pte. Ltd.
+# SPDX-License-Identifier: MIT
+
 """Offline Task scenario transitions and independent outcome checks."""
 from copy import deepcopy
 import importlib.util

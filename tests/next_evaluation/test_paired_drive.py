@@ -1,3 +1,6 @@
+# Copyright (c) 2026 Lark Technologies Pte. Ltd.
+# SPDX-License-Identifier: MIT
+
 """Independent paired Drive byte/state/proof verification and clean CLI checks."""
 import base64
 import copy

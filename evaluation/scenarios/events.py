@@ -1,3 +1,6 @@
+# Copyright (c) 2026 Lark Technologies Pte. Ltd.
+# SPDX-License-Identifier: MIT
+
 """Two native event deliveries over a private, bounded Unix IPC fixture.
 
 No remote WebSocket, mutation endpoint, persistent replay service, or model call.

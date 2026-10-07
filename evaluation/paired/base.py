@@ -1,3 +1,6 @@
+# Copyright (c) 2026 Lark Technologies Pte. Ltd.
+# SPDX-License-Identifier: MIT
+
 """Paired Base update: numeric zero and an explicit native null clear.
 
 Reuses the reviewed development state machine, never its empty-string task.

@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# Copyright (c) 2026 Lark Technologies Pte. Ltd.
+# SPDX-License-Identifier: MIT
+
 """Join immutable source hashes to explicit per-path review verdicts; never approve code."""
 import argparse
 import collections

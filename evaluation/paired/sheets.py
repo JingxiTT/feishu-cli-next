@@ -1,3 +1,6 @@
+# Copyright (c) 2026 Lark Technologies Pte. Ltd.
+# SPDX-License-Identifier: MIT
+
 """Fresh paired task: native raw values and formula metadata are separate reads.
 
 Live evidence: docs/sections/sheets-private-live-evidence.json. The historical

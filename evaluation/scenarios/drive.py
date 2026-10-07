@@ -1,3 +1,6 @@
+# Copyright (c) 2026 Lark Technologies Pte. Ltd.
+# SPDX-License-Identifier: MIT
+
 """Bounded synthetic binary download; no live or memory-scalability claim."""
 import base64
 import hashlib

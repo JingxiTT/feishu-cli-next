@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# Copyright (c) 2026 Lark Technologies Pte. Ltd.
+# SPDX-License-Identifier: MIT
+
 """Verify contact answers against the external fixture's post-run request receipt."""
 import json
 from pathlib import Path

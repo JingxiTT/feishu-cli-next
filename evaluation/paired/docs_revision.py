@@ -1,3 +1,6 @@
+# Copyright (c) 2026 Lark Technologies Pte. Ltd.
+# SPDX-License-Identifier: MIT
+
 """Bounded historical native revision limitation, without inventing a CAS API."""
 import copy
 from urllib.parse import parse_qs, urlencode, urlsplit, urlunsplit

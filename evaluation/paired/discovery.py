@@ -1,3 +1,6 @@
+# Copyright (c) 2026 Lark Technologies Pte. Ltd.
+# SPDX-License-Identifier: MIT
+
 """Local discovery, validated afterwards by the evaluator's selected CLI only."""
 from copy import deepcopy
 import json

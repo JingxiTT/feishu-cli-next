@@ -1,3 +1,6 @@
+# Copyright (c) 2026 Lark Technologies Pte. Ltd.
+# SPDX-License-Identifier: MIT
+
 """Paired Docs fixtures: no models/live requests, optional archived CLI replay."""
 import copy
 import json

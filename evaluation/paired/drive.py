@@ -1,3 +1,6 @@
+# Copyright (c) 2026 Lark Technologies Pte. Ltd.
+# SPDX-License-Identifier: MIT
+
 """Paired small-file upload/download task using real Drive wire shapes.
 
 Both CLIs may use shortcuts or raw multipart/binary API calls. The frozen

@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# Copyright (c) 2026 Lark Technologies Pte. Ltd.
+# SPDX-License-Identifier: MIT
+
 """Exhaustive local introspection comparison against the frozen CLI inventory.
 
 Every reference command, method, event key and embedded guidance file is named

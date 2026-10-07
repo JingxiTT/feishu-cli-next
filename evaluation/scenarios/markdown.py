@@ -1,3 +1,6 @@
+# Copyright (c) 2026 Lark Technologies Pte. Ltd.
+# SPDX-License-Identifier: MIT
+
 """Synthetic Markdown import contract, not evidence of live conversion fidelity.
 
 The product delegates Markdown-to-DocxXML conversion to Docs. This bounded

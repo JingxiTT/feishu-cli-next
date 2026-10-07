@@ -1,3 +1,6 @@
+# Copyright (c) 2026 Lark Technologies Pte. Ltd.
+# SPDX-License-Identifier: MIT
+
 """Development-only Base import size family; no model or live network calls."""
 from copy import deepcopy
 import hashlib

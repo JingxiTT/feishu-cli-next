@@ -1,3 +1,6 @@
+# Copyright (c) 2026 Lark Technologies Pte. Ltd.
+# SPDX-License-Identifier: MIT
+
 """Versioned harder Docs cohort; bounded native hierarchy, no live resources.
 
 Native table/cell shapes reuse paired.markdown's live-checked contract. List

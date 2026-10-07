@@ -1,3 +1,6 @@
+# Copyright (c) 2026 Lark Technologies Pte. Ltd.
+# SPDX-License-Identifier: MIT
+
 """Paired Contact/discovery controls; no provider or live service calls."""
 from copy import deepcopy
 import hashlib

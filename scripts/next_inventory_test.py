@@ -1,3 +1,6 @@
+# Copyright (c) 2026 Lark Technologies Pte. Ltd.
+# SPDX-License-Identifier: MIT
+
 """Synthetic inventory unit tests; process E2E is separately selectable."""
 import importlib.util
 import json

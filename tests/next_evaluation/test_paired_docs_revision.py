@@ -1,3 +1,6 @@
+# Copyright (c) 2026 Lark Technologies Pte. Ltd.
+# SPDX-License-Identifier: MIT
+
 """Historical native Docs requests stay inconclusive without masking bad input."""
 import copy
 import json

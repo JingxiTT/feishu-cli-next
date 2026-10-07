@@ -1,3 +1,6 @@
+# Copyright (c) 2026 Lark Technologies Pte. Ltd.
+# SPDX-License-Identifier: MIT
+
 """Paired native Docs edit, with live-observed replacement-span semantics.
 
 The old development fixture remains untouched. Its rendering, routing, typed

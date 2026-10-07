@@ -1,3 +1,6 @@
+# Copyright (c) 2026 Lark Technologies Pte. Ltd.
+# SPDX-License-Identifier: MIT
+
 """No live access/model calls; direct synthetic transitions and hostile artifacts."""
 import copy
 import json

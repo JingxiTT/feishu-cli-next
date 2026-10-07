@@ -1,3 +1,6 @@
+# Copyright (c) 2026 Lark Technologies Pte. Ltd.
+# SPDX-License-Identifier: MIT
+
 """Artifact correctness tests run without network, credentials, or optional binaries."""
 from copy import deepcopy
 import json

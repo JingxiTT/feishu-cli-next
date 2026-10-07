@@ -1,3 +1,6 @@
+# Copyright (c) 2026 Lark Technologies Pte. Ltd.
+# SPDX-License-Identifier: MIT
+
 """Resume safety controls: no provider subprocesses or live credentials."""
 import copy
 import io

@@ -1,3 +1,6 @@
+# Copyright (c) 2026 Lark Technologies Pte. Ltd.
+# SPDX-License-Identifier: MIT
+
 """Stateful, non-forwarding Task completion development fixture."""
 from copy import deepcopy
 import json

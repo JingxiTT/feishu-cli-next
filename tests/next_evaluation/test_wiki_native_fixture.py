@@ -1,3 +1,6 @@
+# Copyright (c) 2026 Lark Technologies Pte. Ltd.
+# SPDX-License-Identifier: MIT
+
 """Source-backed Wiki-to-native-Docx fixture equivalence; no model or live runs.
 
 Native route/identity/shape evidence: official oapi-sdk-go/v3 v3.7.2

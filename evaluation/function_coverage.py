@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# Copyright (c) 2026 Lark Technologies Pte. Ltd.
+# SPDX-License-Identifier: MIT
+
 """Account for every original capability without promoting task samples to parity.
 
 Bind local probes and hash-bound historical workflow traces to the inventory.

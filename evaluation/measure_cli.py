@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# Copyright (c) 2026 Lark Technologies Pte. Ltd.
+# SPDX-License-Identifier: MIT
+
 """Offline process latency and context-size probes; never provider-token usage.
 
 Build the frozen reference with the same catalog as Next. A current upstream

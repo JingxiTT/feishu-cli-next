@@ -1,3 +1,6 @@
+# Copyright (c) 2026 Lark Technologies Pte. Ltd.
+# SPDX-License-Identifier: MIT
+
 """Controlled scaling fixture tests; optional clean CLI runs never invoke a model."""
 from copy import deepcopy
 import csv
