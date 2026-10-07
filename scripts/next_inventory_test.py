@@ -18,6 +18,18 @@ spec.loader.exec_module(inventory)
 
 
 class InventoryTests(unittest.TestCase):
+    def test_reviewed_efficiency_additions_remain_exactly_mapped(self):
+        reference = MODULE_PATH.parents[1] / 'docs/reference'
+        mapping = inventory.read(reference / 'next-interface-mapping.json.gz')
+        review = inventory.read(reference / 'reviews/agent-efficiency-interface-additions.json')
+        rows = {inventory.canonical(row) for row in mapping['registration_changes']}
+        self.assertEqual(len(review['registrations']), 10)
+        for entry in review['registrations']:
+            row = entry['registration_change']
+            self.assertEqual(row['kind'], 'added')
+            self.assertEqual(row['candidate_sha256'], inventory.digest(inventory.canonical(entry['value'])))
+            self.assertIn(inventory.canonical(row), rows)
+
     def test_generated_nested_methods_preserve_types_and_options(self):
         fixture = {'services': [{'name': 'test', 'resources': {'parent': {
             'resources': {'child': {'methods': {'create': {'requestBody': {
