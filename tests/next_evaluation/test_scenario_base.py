@@ -1,3 +1,6 @@
+# Copyright (c) 2026 Lark Technologies Pte. Ltd.
+# SPDX-License-Identifier: MIT
+
 """Controlled Base fixture/verifier tests; no models or live backend access."""
 from copy import deepcopy
 import json

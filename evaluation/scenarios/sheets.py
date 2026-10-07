@@ -1,3 +1,6 @@
+# Copyright (c) 2026 Lark Technologies Pte. Ltd.
+# SPDX-License-Identifier: MIT
+
 """Five-cell native Sheets read; producer files and signed reads are checked separately."""
 from copy import deepcopy
 import json

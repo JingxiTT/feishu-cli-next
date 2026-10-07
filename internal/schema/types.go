@@ -21,7 +21,7 @@ type Envelope struct {
 	Name         string        `json:"name"`
 	Description  string        `json:"description"`
 	InputSchema  *InputSchema  `json:"inputSchema"`
-	OutputSchema *OutputSchema `json:"outputSchema"`
+	OutputSchema *OutputSchema `json:"outputSchema,omitempty"`
 	Meta         *Meta         `json:"_meta"`
 }
 

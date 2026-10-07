@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# Copyright (c) 2026 Lark Technologies Pte. Ltd.
+# SPDX-License-Identifier: MIT
+
 """Plan, resume and report the complete implemented original/Next task matrix.
 
 Configuration contains local paths only; public evidence contains content hashes.

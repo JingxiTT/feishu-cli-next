@@ -195,6 +195,20 @@ func newStrictModeDefaultFactory(t *testing.T, profile string, mode core.StrictM
 		cmdutil.NewIOStreams(&bytes.Buffer{}, stdout, stderr),
 		cmdutil.InvocationContext{Profile: profile},
 	)
+	// Keep production profile selection, but isolate all credential-backed
+	// shortcut preflight from real network access. Local help/denial cases need
+	// no token; successful legacy dry-runs may resolve one.
+	client, err := f.HttpClient()
+	if err != nil {
+		t.Fatal(err)
+	}
+	reg := &httpmock.Registry{}
+	t.Cleanup(func() { reg.Verify(t) })
+	reg.Register(&httpmock.Stub{
+		Method: "POST", URL: "/oauth/v3/token", Optional: true,
+		Body: map[string]any{"access_token": "fixture-tenant-token", "token_type": "Bearer", "expires_in": 7200},
+	})
+	client.Transport = reg
 	return f, stdout, stderr
 }
 

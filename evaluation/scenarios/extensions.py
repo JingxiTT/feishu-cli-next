@@ -1,3 +1,6 @@
+# Copyright (c) 2026 Lark Technologies Pte. Ltd.
+# SPDX-License-Identifier: MIT
+
 """Public-host fixture with independently observed, bounded command execution.
 
 The runner supplies selected_cli and calls observe_execution with real completed

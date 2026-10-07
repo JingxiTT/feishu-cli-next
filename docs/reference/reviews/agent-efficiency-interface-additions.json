@@ -1,0 +1,907 @@
+{
+  "candidate_revision": "b1cddcb82bbeba4220fad57b07de1d1b03dc4617",
+  "evidence": [
+    "cmd/schema/schema_test.go",
+    "shortcuts/doc/docs_pull_selection_test.go",
+    "shortcuts/doc/docs_workspace_test.go",
+    "evaluation/evidence/cli-surface-20261007/REPORT.md"
+  ],
+  "previous_mapping_sha256": "3597fe639ab729226de12283f70e002e98f670433f7ee837f18dd52a993b3bd2",
+  "registrations": [
+    {
+      "registration_change": {
+        "candidate_sha256": "3e6fe1157fb27bd370c7160e08608dd5379e7c713873319c37187af9a4dd10c4",
+        "kind": "added",
+        "path": "/feishu/commands/schema/flags/input-only"
+      },
+      "value": {
+        "aliases": null,
+        "annotations": null,
+        "default": "false",
+        "hidden": false,
+        "no_opt_default": "true",
+        "shorthand": "",
+        "type": "bool"
+      }
+    },
+    {
+      "registration_change": {
+        "candidate_sha256": "d7e3925e9ae389218bb750283a3d9af36b5f2c21bf4eea95786f5f82d312bcd7",
+        "kind": "added",
+        "path": "/feishu/commands/docs +pull"
+      },
+      "value": {
+        "aliases": null,
+        "disable_flag_parsing": false,
+        "domain": "docs",
+        "flags": {
+          "as": {
+            "aliases": null,
+            "annotations": null,
+            "default": "",
+            "hidden": false,
+            "no_opt_default": "",
+            "shorthand": "",
+            "type": "string"
+          },
+          "doc": {
+            "aliases": null,
+            "annotations": {
+              "cobra_annotation_bash_completion_one_required_flag": [
+                "true"
+              ]
+            },
+            "default": "",
+            "hidden": false,
+            "no_opt_default": "",
+            "shorthand": "",
+            "type": "string"
+          },
+          "dry-run": {
+            "aliases": null,
+            "annotations": null,
+            "default": "false",
+            "hidden": false,
+            "no_opt_default": "true",
+            "shorthand": "",
+            "type": "bool"
+          },
+          "end-block-id": {
+            "aliases": null,
+            "annotations": null,
+            "default": "",
+            "hidden": false,
+            "no_opt_default": "",
+            "shorthand": "",
+            "type": "string"
+          },
+          "format": {
+            "aliases": null,
+            "annotations": null,
+            "default": "json",
+            "hidden": false,
+            "no_opt_default": "",
+            "shorthand": "",
+            "type": "string"
+          },
+          "jq": {
+            "aliases": null,
+            "annotations": null,
+            "default": "",
+            "hidden": false,
+            "no_opt_default": "",
+            "shorthand": "q",
+            "type": "string"
+          },
+          "json": {
+            "aliases": null,
+            "annotations": null,
+            "default": "false",
+            "hidden": false,
+            "no_opt_default": "true",
+            "shorthand": "",
+            "type": "bool"
+          },
+          "keyword": {
+            "aliases": null,
+            "annotations": null,
+            "default": "",
+            "hidden": false,
+            "no_opt_default": "",
+            "shorthand": "",
+            "type": "string"
+          },
+          "output": {
+            "aliases": null,
+            "annotations": null,
+            "default": "",
+            "hidden": false,
+            "no_opt_default": "",
+            "shorthand": "",
+            "type": "string"
+          },
+          "profile": {
+            "aliases": null,
+            "annotations": null,
+            "default": "",
+            "hidden": false,
+            "no_opt_default": "",
+            "shorthand": "",
+            "type": "string"
+          },
+          "result-detail": {
+            "aliases": null,
+            "annotations": null,
+            "default": "false",
+            "hidden": false,
+            "no_opt_default": "true",
+            "shorthand": "",
+            "type": "bool"
+          },
+          "result-fields": {
+            "aliases": null,
+            "annotations": null,
+            "default": "",
+            "hidden": false,
+            "no_opt_default": "",
+            "shorthand": "",
+            "type": "string"
+          },
+          "save-result": {
+            "aliases": null,
+            "annotations": null,
+            "default": "",
+            "hidden": false,
+            "no_opt_default": "",
+            "shorthand": "",
+            "type": "string"
+          },
+          "scope": {
+            "aliases": null,
+            "annotations": null,
+            "default": "full",
+            "hidden": false,
+            "no_opt_default": "",
+            "shorthand": "",
+            "type": "string"
+          },
+          "start-block-id": {
+            "aliases": null,
+            "annotations": null,
+            "default": "",
+            "hidden": false,
+            "no_opt_default": "",
+            "shorthand": "",
+            "type": "string"
+          }
+        },
+        "hidden": false,
+        "identities": [
+          "user",
+          "bot"
+        ],
+        "risk": "read",
+        "runnable": true,
+        "source": "shortcut"
+      }
+    },
+    {
+      "registration_change": {
+        "candidate_sha256": "d990d9bb8bcedf9abfedc2a2ee4772b8eb706dae624002366a547020c70f5b0a",
+        "kind": "added",
+        "path": "/feishu/commands/docs +push"
+      },
+      "value": {
+        "aliases": null,
+        "disable_flag_parsing": false,
+        "domain": "docs",
+        "flags": {
+          "as": {
+            "aliases": null,
+            "annotations": null,
+            "default": "",
+            "hidden": false,
+            "no_opt_default": "",
+            "shorthand": "",
+            "type": "string"
+          },
+          "dry-run": {
+            "aliases": null,
+            "annotations": null,
+            "default": "false",
+            "hidden": false,
+            "no_opt_default": "true",
+            "shorthand": "",
+            "type": "bool"
+          },
+          "file": {
+            "aliases": null,
+            "annotations": {
+              "cobra_annotation_bash_completion_one_required_flag": [
+                "true"
+              ]
+            },
+            "default": "",
+            "hidden": false,
+            "no_opt_default": "",
+            "shorthand": "",
+            "type": "string"
+          },
+          "format": {
+            "aliases": null,
+            "annotations": null,
+            "default": "json",
+            "hidden": false,
+            "no_opt_default": "",
+            "shorthand": "",
+            "type": "string"
+          },
+          "jq": {
+            "aliases": null,
+            "annotations": null,
+            "default": "",
+            "hidden": false,
+            "no_opt_default": "",
+            "shorthand": "q",
+            "type": "string"
+          },
+          "json": {
+            "aliases": null,
+            "annotations": null,
+            "default": "false",
+            "hidden": false,
+            "no_opt_default": "true",
+            "shorthand": "",
+            "type": "bool"
+          },
+          "profile": {
+            "aliases": null,
+            "annotations": null,
+            "default": "",
+            "hidden": false,
+            "no_opt_default": "",
+            "shorthand": "",
+            "type": "string"
+          },
+          "result-detail": {
+            "aliases": null,
+            "annotations": null,
+            "default": "false",
+            "hidden": false,
+            "no_opt_default": "true",
+            "shorthand": "",
+            "type": "bool"
+          },
+          "result-fields": {
+            "aliases": null,
+            "annotations": null,
+            "default": "",
+            "hidden": false,
+            "no_opt_default": "",
+            "shorthand": "",
+            "type": "string"
+          },
+          "save-result": {
+            "aliases": null,
+            "annotations": null,
+            "default": "",
+            "hidden": false,
+            "no_opt_default": "",
+            "shorthand": "",
+            "type": "string"
+          }
+        },
+        "hidden": false,
+        "identities": [
+          "user",
+          "bot"
+        ],
+        "risk": "write",
+        "runnable": true,
+        "source": "shortcut"
+      }
+    },
+    {
+      "registration_change": {
+        "candidate_sha256": "f6305d7b612c61d06c5bb13f2368be62e2a8f7c42601d42185225bd00cf7d060",
+        "kind": "added",
+        "path": "/feishu/shortcuts/docs +pull"
+      },
+      "value": {
+        "auth_types": [
+          "user",
+          "bot"
+        ],
+        "bot_scopes": [
+          "docx:document:readonly"
+        ],
+        "conditional_bot_scopes": [
+          "wiki:node:retrieve",
+          "tenant:tenant:readonly"
+        ],
+        "conditional_user_scopes": [
+          "wiki:node:retrieve",
+          "tenant:tenant:readonly"
+        ],
+        "dry_run": true,
+        "flag_schemas": {},
+        "flags": [
+          {
+            "Aliases": null,
+            "Default": "",
+            "Desc": "document URL or token",
+            "Enum": null,
+            "Hidden": false,
+            "Input": null,
+            "Name": "doc",
+            "Required": true,
+            "Type": ""
+          },
+          {
+            "Aliases": null,
+            "Default": "",
+            "Desc": "exclusive .md working-copy path; also saves a .feishu.json native sidecar",
+            "Enum": null,
+            "Hidden": false,
+            "Input": null,
+            "Name": "output",
+            "Required": false,
+            "Type": ""
+          },
+          {
+            "Aliases": null,
+            "Default": "full",
+            "Desc": "read-only selection; saved working copies require full",
+            "Enum": [
+              "full",
+              "outline",
+              "section",
+              "range",
+              "keyword"
+            ],
+            "Hidden": false,
+            "Input": null,
+            "Name": "scope",
+            "Required": false,
+            "Type": ""
+          },
+          {
+            "Aliases": null,
+            "Default": "",
+            "Desc": "range start or section heading native block ID",
+            "Enum": null,
+            "Hidden": false,
+            "Input": null,
+            "Name": "start-block-id",
+            "Required": false,
+            "Type": ""
+          },
+          {
+            "Aliases": null,
+            "Default": "",
+            "Desc": "inclusive range end native block ID",
+            "Enum": null,
+            "Hidden": false,
+            "Input": null,
+            "Name": "end-block-id",
+            "Required": false,
+            "Type": ""
+          },
+          {
+            "Aliases": null,
+            "Default": "",
+            "Desc": "case-insensitive literal text to find within individual blocks",
+            "Enum": null,
+            "Hidden": false,
+            "Input": null,
+            "Name": "keyword",
+            "Required": false,
+            "Type": ""
+          }
+        ],
+        "has_validation": true,
+        "risk": "read",
+        "typed_schema": null,
+        "user_scopes": [
+          "docx:document:readonly"
+        ]
+      }
+    },
+    {
+      "registration_change": {
+        "candidate_sha256": "0110a2864b77323509d11a0caa1567af355aa7c8b676c99fddd8d8f5a3770ae3",
+        "kind": "added",
+        "path": "/feishu/shortcuts/docs +push"
+      },
+      "value": {
+        "auth_types": [
+          "user",
+          "bot"
+        ],
+        "bot_scopes": [
+          "docx:document:readonly",
+          "docx:document:write_only"
+        ],
+        "conditional_bot_scopes": [
+          "tenant:tenant:readonly"
+        ],
+        "conditional_user_scopes": [
+          "tenant:tenant:readonly"
+        ],
+        "dry_run": true,
+        "flag_schemas": {},
+        "flags": [
+          {
+            "Aliases": null,
+            "Default": "",
+            "Desc": "edited .md working copy with its original .feishu.json sidecar",
+            "Enum": null,
+            "Hidden": false,
+            "Input": null,
+            "Name": "file",
+            "Required": true,
+            "Type": ""
+          }
+        ],
+        "has_validation": true,
+        "risk": "write",
+        "typed_schema": null,
+        "user_scopes": [
+          "docx:document:readonly",
+          "docx:document:write_only"
+        ]
+      }
+    },
+    {
+      "registration_change": {
+        "candidate_sha256": "3e6fe1157fb27bd370c7160e08608dd5379e7c713873319c37187af9a4dd10c4",
+        "kind": "added",
+        "path": "/lark/commands/schema/flags/input-only"
+      },
+      "value": {
+        "aliases": null,
+        "annotations": null,
+        "default": "false",
+        "hidden": false,
+        "no_opt_default": "true",
+        "shorthand": "",
+        "type": "bool"
+      }
+    },
+    {
+      "registration_change": {
+        "candidate_sha256": "d7e3925e9ae389218bb750283a3d9af36b5f2c21bf4eea95786f5f82d312bcd7",
+        "kind": "added",
+        "path": "/lark/commands/docs +pull"
+      },
+      "value": {
+        "aliases": null,
+        "disable_flag_parsing": false,
+        "domain": "docs",
+        "flags": {
+          "as": {
+            "aliases": null,
+            "annotations": null,
+            "default": "",
+            "hidden": false,
+            "no_opt_default": "",
+            "shorthand": "",
+            "type": "string"
+          },
+          "doc": {
+            "aliases": null,
+            "annotations": {
+              "cobra_annotation_bash_completion_one_required_flag": [
+                "true"
+              ]
+            },
+            "default": "",
+            "hidden": false,
+            "no_opt_default": "",
+            "shorthand": "",
+            "type": "string"
+          },
+          "dry-run": {
+            "aliases": null,
+            "annotations": null,
+            "default": "false",
+            "hidden": false,
+            "no_opt_default": "true",
+            "shorthand": "",
+            "type": "bool"
+          },
+          "end-block-id": {
+            "aliases": null,
+            "annotations": null,
+            "default": "",
+            "hidden": false,
+            "no_opt_default": "",
+            "shorthand": "",
+            "type": "string"
+          },
+          "format": {
+            "aliases": null,
+            "annotations": null,
+            "default": "json",
+            "hidden": false,
+            "no_opt_default": "",
+            "shorthand": "",
+            "type": "string"
+          },
+          "jq": {
+            "aliases": null,
+            "annotations": null,
+            "default": "",
+            "hidden": false,
+            "no_opt_default": "",
+            "shorthand": "q",
+            "type": "string"
+          },
+          "json": {
+            "aliases": null,
+            "annotations": null,
+            "default": "false",
+            "hidden": false,
+            "no_opt_default": "true",
+            "shorthand": "",
+            "type": "bool"
+          },
+          "keyword": {
+            "aliases": null,
+            "annotations": null,
+            "default": "",
+            "hidden": false,
+            "no_opt_default": "",
+            "shorthand": "",
+            "type": "string"
+          },
+          "output": {
+            "aliases": null,
+            "annotations": null,
+            "default": "",
+            "hidden": false,
+            "no_opt_default": "",
+            "shorthand": "",
+            "type": "string"
+          },
+          "profile": {
+            "aliases": null,
+            "annotations": null,
+            "default": "",
+            "hidden": false,
+            "no_opt_default": "",
+            "shorthand": "",
+            "type": "string"
+          },
+          "result-detail": {
+            "aliases": null,
+            "annotations": null,
+            "default": "false",
+            "hidden": false,
+            "no_opt_default": "true",
+            "shorthand": "",
+            "type": "bool"
+          },
+          "result-fields": {
+            "aliases": null,
+            "annotations": null,
+            "default": "",
+            "hidden": false,
+            "no_opt_default": "",
+            "shorthand": "",
+            "type": "string"
+          },
+          "save-result": {
+            "aliases": null,
+            "annotations": null,
+            "default": "",
+            "hidden": false,
+            "no_opt_default": "",
+            "shorthand": "",
+            "type": "string"
+          },
+          "scope": {
+            "aliases": null,
+            "annotations": null,
+            "default": "full",
+            "hidden": false,
+            "no_opt_default": "",
+            "shorthand": "",
+            "type": "string"
+          },
+          "start-block-id": {
+            "aliases": null,
+            "annotations": null,
+            "default": "",
+            "hidden": false,
+            "no_opt_default": "",
+            "shorthand": "",
+            "type": "string"
+          }
+        },
+        "hidden": false,
+        "identities": [
+          "user",
+          "bot"
+        ],
+        "risk": "read",
+        "runnable": true,
+        "source": "shortcut"
+      }
+    },
+    {
+      "registration_change": {
+        "candidate_sha256": "d990d9bb8bcedf9abfedc2a2ee4772b8eb706dae624002366a547020c70f5b0a",
+        "kind": "added",
+        "path": "/lark/commands/docs +push"
+      },
+      "value": {
+        "aliases": null,
+        "disable_flag_parsing": false,
+        "domain": "docs",
+        "flags": {
+          "as": {
+            "aliases": null,
+            "annotations": null,
+            "default": "",
+            "hidden": false,
+            "no_opt_default": "",
+            "shorthand": "",
+            "type": "string"
+          },
+          "dry-run": {
+            "aliases": null,
+            "annotations": null,
+            "default": "false",
+            "hidden": false,
+            "no_opt_default": "true",
+            "shorthand": "",
+            "type": "bool"
+          },
+          "file": {
+            "aliases": null,
+            "annotations": {
+              "cobra_annotation_bash_completion_one_required_flag": [
+                "true"
+              ]
+            },
+            "default": "",
+            "hidden": false,
+            "no_opt_default": "",
+            "shorthand": "",
+            "type": "string"
+          },
+          "format": {
+            "aliases": null,
+            "annotations": null,
+            "default": "json",
+            "hidden": false,
+            "no_opt_default": "",
+            "shorthand": "",
+            "type": "string"
+          },
+          "jq": {
+            "aliases": null,
+            "annotations": null,
+            "default": "",
+            "hidden": false,
+            "no_opt_default": "",
+            "shorthand": "q",
+            "type": "string"
+          },
+          "json": {
+            "aliases": null,
+            "annotations": null,
+            "default": "false",
+            "hidden": false,
+            "no_opt_default": "true",
+            "shorthand": "",
+            "type": "bool"
+          },
+          "profile": {
+            "aliases": null,
+            "annotations": null,
+            "default": "",
+            "hidden": false,
+            "no_opt_default": "",
+            "shorthand": "",
+            "type": "string"
+          },
+          "result-detail": {
+            "aliases": null,
+            "annotations": null,
+            "default": "false",
+            "hidden": false,
+            "no_opt_default": "true",
+            "shorthand": "",
+            "type": "bool"
+          },
+          "result-fields": {
+            "aliases": null,
+            "annotations": null,
+            "default": "",
+            "hidden": false,
+            "no_opt_default": "",
+            "shorthand": "",
+            "type": "string"
+          },
+          "save-result": {
+            "aliases": null,
+            "annotations": null,
+            "default": "",
+            "hidden": false,
+            "no_opt_default": "",
+            "shorthand": "",
+            "type": "string"
+          }
+        },
+        "hidden": false,
+        "identities": [
+          "user",
+          "bot"
+        ],
+        "risk": "write",
+        "runnable": true,
+        "source": "shortcut"
+      }
+    },
+    {
+      "registration_change": {
+        "candidate_sha256": "f6305d7b612c61d06c5bb13f2368be62e2a8f7c42601d42185225bd00cf7d060",
+        "kind": "added",
+        "path": "/lark/shortcuts/docs +pull"
+      },
+      "value": {
+        "auth_types": [
+          "user",
+          "bot"
+        ],
+        "bot_scopes": [
+          "docx:document:readonly"
+        ],
+        "conditional_bot_scopes": [
+          "wiki:node:retrieve",
+          "tenant:tenant:readonly"
+        ],
+        "conditional_user_scopes": [
+          "wiki:node:retrieve",
+          "tenant:tenant:readonly"
+        ],
+        "dry_run": true,
+        "flag_schemas": {},
+        "flags": [
+          {
+            "Aliases": null,
+            "Default": "",
+            "Desc": "document URL or token",
+            "Enum": null,
+            "Hidden": false,
+            "Input": null,
+            "Name": "doc",
+            "Required": true,
+            "Type": ""
+          },
+          {
+            "Aliases": null,
+            "Default": "",
+            "Desc": "exclusive .md working-copy path; also saves a .feishu.json native sidecar",
+            "Enum": null,
+            "Hidden": false,
+            "Input": null,
+            "Name": "output",
+            "Required": false,
+            "Type": ""
+          },
+          {
+            "Aliases": null,
+            "Default": "full",
+            "Desc": "read-only selection; saved working copies require full",
+            "Enum": [
+              "full",
+              "outline",
+              "section",
+              "range",
+              "keyword"
+            ],
+            "Hidden": false,
+            "Input": null,
+            "Name": "scope",
+            "Required": false,
+            "Type": ""
+          },
+          {
+            "Aliases": null,
+            "Default": "",
+            "Desc": "range start or section heading native block ID",
+            "Enum": null,
+            "Hidden": false,
+            "Input": null,
+            "Name": "start-block-id",
+            "Required": false,
+            "Type": ""
+          },
+          {
+            "Aliases": null,
+            "Default": "",
+            "Desc": "inclusive range end native block ID",
+            "Enum": null,
+            "Hidden": false,
+            "Input": null,
+            "Name": "end-block-id",
+            "Required": false,
+            "Type": ""
+          },
+          {
+            "Aliases": null,
+            "Default": "",
+            "Desc": "case-insensitive literal text to find within individual blocks",
+            "Enum": null,
+            "Hidden": false,
+            "Input": null,
+            "Name": "keyword",
+            "Required": false,
+            "Type": ""
+          }
+        ],
+        "has_validation": true,
+        "risk": "read",
+        "typed_schema": null,
+        "user_scopes": [
+          "docx:document:readonly"
+        ]
+      }
+    },
+    {
+      "registration_change": {
+        "candidate_sha256": "0110a2864b77323509d11a0caa1567af355aa7c8b676c99fddd8d8f5a3770ae3",
+        "kind": "added",
+        "path": "/lark/shortcuts/docs +push"
+      },
+      "value": {
+        "auth_types": [
+          "user",
+          "bot"
+        ],
+        "bot_scopes": [
+          "docx:document:readonly",
+          "docx:document:write_only"
+        ],
+        "conditional_bot_scopes": [
+          "tenant:tenant:readonly"
+        ],
+        "conditional_user_scopes": [
+          "tenant:tenant:readonly"
+        ],
+        "dry_run": true,
+        "flag_schemas": {},
+        "flags": [
+          {
+            "Aliases": null,
+            "Default": "",
+            "Desc": "edited .md working copy with its original .feishu.json sidecar",
+            "Enum": null,
+            "Hidden": false,
+            "Input": null,
+            "Name": "file",
+            "Required": true,
+            "Type": ""
+          }
+        ],
+        "has_validation": true,
+        "risk": "write",
+        "typed_schema": null,
+        "user_scopes": [
+          "docx:document:readonly",
+          "docx:document:write_only"
+        ]
+      }
+    }
+  ],
+  "review": {
+    "docs +pull": "Existing bounded document read and optional exclusive Markdown/native-sidecar working copy. Read risk, both identities and declared/conditional scopes preserved.",
+    "docs +push": "Existing original-block edit workflow. Write risk, required file, account/tenant binding, conflict checks and native readback preserved; snapshot checks are not atomic concurrency protection.",
+    "schema --input-only": "Explicit false-default boolean; request, risk, identities, scopes and guidance retained; response schema omitted only on opt-in. Default schemas unchanged across all 251 methods."
+  },
+  "schema_version": 1,
+  "scope": "Ten exact additive registrations only; all previous rows retained; no source-semantic or live approval."
+}

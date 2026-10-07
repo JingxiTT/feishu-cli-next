@@ -12,6 +12,66 @@ import (
 	"github.com/spf13/cobra"
 )
 
+type countedValue struct{ descriptions *int }
+
+func (v countedValue) String() string   { return "" }
+func (v countedValue) Set(string) error { return nil }
+func (v countedValue) Type() string {
+	*v.descriptions++
+	return "string"
+}
+
+func TestDiscoveryDescribesOnlyReturnedPage(t *testing.T) {
+	t.Setenv("LARKSUITE_CLI_CONFIG_DIR", t.TempDir())
+	f, out, _, _ := cmdutil.TestFactory(t, nil)
+	root := &cobra.Command{Use: "test-cli"}
+	counts := make([]int, 3)
+	for i, name := range []string{"alpha", "beta", "gamma"} {
+		cmd := &cobra.Command{Use: name, Short: "Read item"}
+		cmd.Flags().Var(countedValue{&counts[i]}, "item-id", "native identifier")
+		root.AddCommand(cmd)
+	}
+	root.AddCommand(NewCmd(f, root))
+	root.SetArgs([]string{"discover", "item", "--flags", "--offset", "1", "--limit", "1"})
+	if err := root.Execute(); err != nil {
+		t.Fatal(err)
+	}
+	if counts[0] != 0 || counts[1] != 1 || counts[2] != 0 {
+		t.Fatalf("rendered flags outside returned page: %v", counts)
+	}
+	var result struct {
+		Data []entry `json:"data"`
+		Meta struct {
+			Total int `json:"total"`
+			Next  int `json:"next_offset"`
+		} `json:"meta"`
+	}
+	if err := json.Unmarshal(out.Bytes(), &result); err != nil {
+		t.Fatal(err)
+	}
+	if len(result.Data) != 1 || result.Data[0].Command != "beta" || len(result.Data[0].Flags) != 1 || result.Meta.Total != 3 || result.Meta.Next != 2 {
+		t.Fatalf("pagination or flag contract changed: %s", out)
+	}
+}
+
+func TestDiscoveryPathsMatchCobraInNestedTree(t *testing.T) {
+	outer := &cobra.Command{Use: "wrapper"}
+	root := &cobra.Command{Use: "test-cli"}
+	outer.AddCommand(root)
+	group := &cobra.Command{Use: "group"}
+	nested := &cobra.Command{Use: "nested"}
+	leaf := &cobra.Command{Use: "read [id]"}
+	root.AddCommand(group)
+	group.AddCommand(nested)
+	nested.AddCommand(leaf)
+	for _, e := range collect(root, "*") {
+		want := strings.TrimSpace(strings.TrimPrefix(e.command.CommandPath(), root.Name()))
+		if e.Command != want {
+			t.Fatalf("command path changed: %q != %q", e.Command, want)
+		}
+	}
+}
+
 func TestDiscoveryReflectsTreeAndRetainsContinuation(t *testing.T) {
 	f, out, _, _ := cmdutil.TestFactory(t, nil)
 	root := &cobra.Command{Use: "test-cli"}
@@ -44,12 +104,12 @@ func TestDiscoveryReflectsTreeAndRetainsContinuation(t *testing.T) {
 	if len(result.Data[0].Flags) != 1 || !result.Data[0].Flags[0].Required {
 		t.Fatalf("missing required flag: %+v", result.Data[0])
 	}
-	for _, e := range collect(root, "*", false) {
+	for _, e := range collect(root, "*") {
 		if e.Command == "private" || e.Command == "private read" {
 			t.Fatal("hidden subtree leaked")
 		}
 	}
-	groups := collect(root, "", false)
+	groups := collect(root, "")
 	foundDocs := false
 	for _, group := range groups {
 		if strings.Contains(group.Command, " ") {
@@ -103,7 +163,7 @@ func TestDiscoveryMatchesPublicFlagsWithoutChangingOutputShape(t *testing.T) {
 	contact.AddCommand(lookup)
 	root.AddCommand(contact)
 	for _, query := range []string{"contact USER-IDS", "contact UNION_ID", "contact lookup OPEN_ID"} {
-		entries := collect(root, query, false)
+		entries := collect(root, query)
 		if len(entries) != 1 || entries[0].Command != "contact lookup" {
 			t.Fatalf("query %q: %+v", query, entries)
 		}
@@ -123,12 +183,12 @@ func TestDiscoveryMatchesPublicFlagsWithoutChangingOutputShape(t *testing.T) {
 		}
 	}
 	for _, query := range []string{"hidden-canary", "private-selector", "default-canary", "contact union_id missingword"} {
-		if found := collect(root, query, true); len(found) != 0 {
+		if found := collect(root, query); len(found) != 0 {
 			t.Fatalf("query %q leaked hidden/default text or ignored a term: %+v", query, found)
 		}
 	}
-	entries := collect(root, "contact user-ids", true)
-	for _, flag := range entries[0].Flags {
+	entries := collect(root, "contact user-ids")
+	for _, flag := range describeFlags(publicFlags(entries[0].command)) {
 		if flag.Name == "private-selector" {
 			t.Fatal("hidden flag leaked into output")
 		}

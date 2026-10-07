@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# Copyright (c) 2026 Lark Technologies Pte. Ltd.
+# SPDX-License-Identifier: MIT
+
 """Restore the audited build catalog; remote refresh is an explicit inventory change."""
 import gzip
 import hashlib

@@ -36,6 +36,45 @@ func TestSchemaCmd_FlagParsing(t *testing.T) {
 	}
 }
 
+func TestSchemaCmdInputOnlyPreservesRequestAndSafetyMetadata(t *testing.T) {
+	for _, path := range []string{"calendar.events.get", "im.messages.delete", "im.images.create", "im.images"} {
+		t.Run(path, func(t *testing.T) {
+			t.Setenv("LARKSUITE_CLI_CONFIG_DIR", t.TempDir())
+			read := func(inputOnly bool) []map[string]any {
+				f, out, _, _ := cmdutil.TestFactory(t, nil)
+				cmd := NewCmdSchema(f, nil)
+				args := []string{path}
+				if inputOnly {
+					args = append(args, "--input-only")
+				}
+				cmd.SetArgs(args)
+				if err := cmd.Execute(); err != nil {
+					t.Fatal(err)
+				}
+				var envs []map[string]any
+				data := bytes.TrimSpace(out.Bytes())
+				if data[0] != '[' {
+					data = append(append([]byte{'['}, data...), ']')
+				}
+				if err := json.Unmarshal(data, &envs); err != nil {
+					t.Fatal(err)
+				}
+				return envs
+			}
+			full, inputs := read(false), read(true)
+			for _, env := range full {
+				if _, exists := env["outputSchema"]; !exists {
+					t.Fatal("default schema lost its response contract")
+				}
+				delete(env, "outputSchema")
+			}
+			if !reflect.DeepEqual(full, inputs) {
+				t.Fatalf("input-only changed fields besides outputSchema: full=%v input=%v", full, inputs)
+			}
+		})
+	}
+}
+
 func TestSchemaCmd_OutputFlagsAcceptedForCompat(t *testing.T) {
 	// Agents are habituated to --format/--json/--as from api/service commands.
 	// schema must accept them without erroring and always emit the JSON envelope —
@@ -267,7 +306,7 @@ func TestSchemaSurfaceProjectionFiltersExecutionListingAndCompletion(t *testing.
 	}
 
 	var out bytes.Buffer
-	if err := runSchemaCatalog(&out, nil, core.StrictModeOff, catalog, visible); err != nil {
+	if err := runSchemaCatalog(&out, nil, core.StrictModeOff, catalog, visible, false); err != nil {
 		t.Fatalf("broad schema failed: %v", err)
 	}
 	var envelopes []map[string]interface{}
@@ -295,6 +334,7 @@ func TestSchemaSurfaceProjectionFiltersExecutionListingAndCompletion(t *testing.
 		core.StrictModeOff,
 		catalog,
 		visible,
+		false,
 	)
 	if err == nil {
 		t.Fatal("concealed exact method unexpectedly resolved")
@@ -362,10 +402,10 @@ func TestSchemaSurfaceProjectionPreservesDefaultAndDeniedVisibleCatalog(t *testi
 	allVisible := func([]string) bool { return true }
 
 	var defaultOut, projectedOut bytes.Buffer
-	if err := runSchemaCatalog(&defaultOut, nil, core.StrictModeOff, catalog, nil); err != nil {
+	if err := runSchemaCatalog(&defaultOut, nil, core.StrictModeOff, catalog, nil, false); err != nil {
 		t.Fatalf("default schema failed: %v", err)
 	}
-	if err := runSchemaCatalog(&projectedOut, nil, core.StrictModeOff, catalog, allVisible); err != nil {
+	if err := runSchemaCatalog(&projectedOut, nil, core.StrictModeOff, catalog, allVisible, false); err != nil {
 		t.Fatalf("all-visible schema failed: %v", err)
 	}
 	if defaultOut.String() != projectedOut.String() {

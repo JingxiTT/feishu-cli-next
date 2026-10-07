@@ -1,3 +1,6 @@
+# Copyright (c) 2026 Lark Technologies Pte. Ltd.
+# SPDX-License-Identifier: MIT
+
 """State and fidelity checks for the Docs development adapter; no model calls."""
 import copy
 import json

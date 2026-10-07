@@ -1,3 +1,6 @@
+# Copyright (c) 2026 Lark Technologies Pte. Ltd.
+# SPDX-License-Identifier: MIT
+
 """Development-only native export scaling on the existing signed scenario protocol."""
 from copy import deepcopy
 from decimal import Decimal, InvalidOperation

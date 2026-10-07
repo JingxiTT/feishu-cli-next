@@ -1,3 +1,6 @@
+# Copyright (c) 2026 Lark Technologies Pte. Ltd.
+# SPDX-License-Identifier: MIT
+
 """Independent binary/artifact checks; optional signed clean-archive CLI probes."""
 import base64
 import copy

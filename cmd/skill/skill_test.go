@@ -196,6 +196,11 @@ func TestSkillReadRaw(t *testing.T) {
 	if !strings.Contains(stderr, "lark-cli skills read lark-foo/...") {
 		t.Errorf("expected cross-skill refs routed to skills read: got %q", stderr)
 	}
+	// Every main-skill read repeats this hint. Keep the two usable routes
+	// without the former paragraph of redundant instructions.
+	if len(stderr) > 200 {
+		t.Errorf("main-skill hint exceeds 200-byte context budget: %d", len(stderr))
+	}
 	if strings.Contains(stderr, "instead of opening them directly") ||
 		strings.Contains(stderr, "read those directly") {
 		t.Errorf("guidance must not steer cross-skill refs to direct reads: got %q", stderr)

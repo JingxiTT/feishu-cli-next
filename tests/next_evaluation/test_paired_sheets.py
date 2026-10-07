@@ -1,3 +1,6 @@
+# Copyright (c) 2026 Lark Technologies Pte. Ltd.
+# SPDX-License-Identifier: MIT
+
 """Fresh paired native render contract; no models or live network calls."""
 from copy import deepcopy
 import json

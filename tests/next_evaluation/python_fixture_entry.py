@@ -1,3 +1,6 @@
+# Copyright (c) 2026 Lark Technologies Pte. Ltd.
+# SPDX-License-Identifier: MIT
+
 """Portable shebang dispatch for a controlled executable fixture.
 
 The actual adapter/verifier entry point and fixture run in separate real Python

@@ -1,3 +1,6 @@
+# Copyright (c) 2026 Lark Technologies Pte. Ltd.
+# SPDX-License-Identifier: MIT
+
 """Independent paired Markdown state and failure controls; no models/live APIs."""
 import copy
 import json

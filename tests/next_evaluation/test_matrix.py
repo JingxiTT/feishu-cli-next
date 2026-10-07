@@ -1,3 +1,6 @@
+# Copyright (c) 2026 Lark Technologies Pte. Ltd.
+# SPDX-License-Identifier: MIT
+
 """No-provider matrix cache, historical reuse and accounting regression checks."""
 import copy
 import importlib.util

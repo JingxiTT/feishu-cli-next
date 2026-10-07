@@ -1,3 +1,6 @@
+# Copyright (c) 2026 Lark Technologies Pte. Ltd.
+# SPDX-License-Identifier: MIT
+
 """Launcher contract checks: no provider, native CLI, or host compiler execution."""
 import contextlib
 import importlib.util

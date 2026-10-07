@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# Copyright (c) 2026 Lark Technologies Pte. Ltd.
+# SPDX-License-Identifier: MIT
+
 """Small, non-forwarding synthetic sidecar; signed reads and an independent ledger."""
 import hashlib
 import hmac

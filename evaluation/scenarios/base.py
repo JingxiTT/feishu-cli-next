@@ -1,3 +1,6 @@
+# Copyright (c) 2026 Lark Technologies Pte. Ltd.
+# SPDX-License-Identifier: MIT
+
 """Bounded Base record mutation with independent typed preservation evidence."""
 from copy import deepcopy
 import json

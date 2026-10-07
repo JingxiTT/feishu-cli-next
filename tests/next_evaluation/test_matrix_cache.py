@@ -1,3 +1,6 @@
+# Copyright (c) 2026 Lark Technologies Pte. Ltd.
+# SPDX-License-Identifier: MIT
+
 """Cross-output cache controls; no models, credentials, or host builds."""
 import copy
 import fcntl

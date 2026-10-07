@@ -217,6 +217,15 @@ func buildMeta(m meta.Method) *Meta {
 // EnvelopeOf renders the MCP envelope for one method ref — the ref-based entry
 // callers use, since apicatalog.MethodRef is the metadata navigation currency.
 func EnvelopeOf(ref apicatalog.MethodRef) Envelope {
+	env := InputEnvelopeOf(ref)
+	env.OutputSchema = buildOutputSchema(ref.Method)
+	return env
+}
+
+// InputEnvelopeOf renders request requirements and all permission, risk and
+// affordance metadata without building the response schema. Use EnvelopeOf
+// when the consumer also needs to interpret response fields.
+func InputEnvelopeOf(ref apicatalog.MethodRef) Envelope {
 	m := ref.Method
 	// The affordance overlay lives in the CLI, not the metadata; look it up
 	// lazily here (it takes precedence over any affordance the metadata carries).
@@ -230,9 +239,18 @@ func EnvelopeOf(ref apicatalog.MethodRef) Envelope {
 // caller supplies the refs (from apicatalog navigation), so this package owns
 // only rendering — never metadata source selection or traversal.
 func Envelopes(refs []apicatalog.MethodRef) []Envelope {
+	return envelopes(refs, EnvelopeOf)
+}
+
+// InputEnvelopes is the request-only counterpart of Envelopes.
+func InputEnvelopes(refs []apicatalog.MethodRef) []Envelope {
+	return envelopes(refs, InputEnvelopeOf)
+}
+
+func envelopes(refs []apicatalog.MethodRef, render func(apicatalog.MethodRef) Envelope) []Envelope {
 	var out []Envelope
 	for _, ref := range refs {
-		out = append(out, EnvelopeOf(ref))
+		out = append(out, render(ref))
 	}
 	sort.Slice(out, func(i, j int) bool { return out[i].Name < out[j].Name })
 	return out
@@ -248,10 +266,9 @@ func assemble(serviceName string, resourcePath []string, m meta.Method) Envelope
 	name += " " + m.Name
 
 	return Envelope{
-		Name:         name,
-		Description:  normalizeDesc(m.Description),
-		InputSchema:  buildInputSchema(m),
-		OutputSchema: buildOutputSchema(m),
-		Meta:         buildMeta(m),
+		Name:        name,
+		Description: normalizeDesc(m.Description),
+		InputSchema: buildInputSchema(m),
+		Meta:        buildMeta(m),
 	}
 }

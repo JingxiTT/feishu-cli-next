@@ -1,3 +1,6 @@
+# Copyright (c) 2026 Lark Technologies Pte. Ltd.
+# SPDX-License-Identifier: MIT
+
 """Bounded native Markdown creation from the private-live-tested rich subset.
 
 This is a stateful synthetic backend, not evidence about all backend conversion.

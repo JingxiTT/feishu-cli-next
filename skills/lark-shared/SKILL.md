@@ -13,7 +13,7 @@ metadata:
 
 ## 通用准则
 
-1. **调用前先确认用法**：执行前读对应 reference 或跑 `--help`，别猜 flag 盲调。
+1. **按需确认用法**：已知当前版本的命令和参数可直接执行；缺少要求时只读相关 reference 或该命令的 `--help`，别猜 flag。复用本次任务已读的同版本指导，不必重复读取；下方强触发条件仍须遵守。
 
 2. **身份决定你代表谁操作**：`--as user` 代表用户本人（能看到、也能操作其日历、云空间/云盘/云存储等个人资源），`--as bot` 代表应用自己，应用级操作，只能访问bot自己的资源，bot 查用户资源会返回空成功而非报错。动手前先搞清楚身份`identity`。身份模型和权限管理 → [`lark-shared-identity-and-permissions.md`](references/lark-shared-identity-and-permissions.md)。
 

@@ -1,3 +1,6 @@
+# Copyright (c) 2026 Lark Technologies Pte. Ltd.
+# SPDX-License-Identifier: MIT
+
 """Independent paired Base controls; no models, live APIs or old fixture edits."""
 from copy import deepcopy
 import json

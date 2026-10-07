@@ -5,6 +5,19 @@ scope adjustment below. Imported source is implementation reuse, not evidence of
 live parity. Scoped foundation measurements are available; no full-product
 efficiency or release claim is established.
 
+The [2026-10-07 exhaustive local comparison](../evaluation/evidence/cli-surface-20261007/REPORT.md)
+covers all 938 original command nodes (535 shortcuts), 251 methods, 25 event
+keys, inherited aliases and 493 embedded guidance files. All 251 request schemas
+are smaller (61.9% summed output-context savings), with request/permission/risk
+parity and unchanged default schema bytes. Event-schema JSON saves 38.1% with
+semantic parity. The shorter hint removes 30 tokens from each main-skill read
+versus Next-before. These are local introspection measurements, not provider
+tokens per verified task. Help is larger for 936/938 nodes; current upstream is
+faster. The function ledger retains 866 original nodes without observed non-help
+calls in the historical traces, explicit SDK/platform gaps and unchanged
+historical gates (13 met, 22 missed, 8 unavailable). Whole-CLI savings remain
+unestablished; every original area and function stays in scope.
+
 On 2026-09-08 the user asked to ignore Windows and proceed with private live tests
 and `search:bot`. Windows execution is deferred by that instruction and is no
 longer a blocker for this requested continuation. Windows artifacts and coverage

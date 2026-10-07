@@ -1,3 +1,6 @@
+# Copyright (c) 2026 Lark Technologies Pte. Ltd.
+# SPDX-License-Identifier: MIT
+
 """Read one exact document fact and its native block reference; no mutations."""
 import copy
 import json

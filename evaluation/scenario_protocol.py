@@ -1,3 +1,6 @@
+# Copyright (c) 2026 Lark Technologies Pte. Ltd.
+# SPDX-License-Identifier: MIT
+
 """Minimal interface for stateful/artifact/offline development fixtures."""
 from dataclasses import dataclass, field
 

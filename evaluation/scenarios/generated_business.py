@@ -1,3 +1,6 @@
+# Copyright (c) 2026 Lark Technologies Pte. Ltd.
+# SPDX-License-Identifier: MIT
+
 """Supplemental synthetic business tasks; no live/model access or forwarding.
 
 The reviewed contract models only these finite fixtures. Approval effects are

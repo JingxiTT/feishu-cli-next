@@ -1,3 +1,6 @@
+# Copyright (c) 2026 Lark Technologies Pte. Ltd.
+# SPDX-License-Identifier: MIT
+
 """Synthetic native Docs edits; no network or live-account access.
 
 Inline identities belong only to the verifier ledger, not task acceptance.

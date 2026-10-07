@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# Copyright (c) 2026 Lark Technologies Pte. Ltd.
+# SPDX-License-Identifier: MIT
+
 """Freeze and reconcile the reference's real registrations without modifying it.
 
 Source equality is conservative implementation evidence, not proof of live parity.

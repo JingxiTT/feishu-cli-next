@@ -1,3 +1,6 @@
+# Copyright (c) 2026 Lark Technologies Pte. Ltd.
+# SPDX-License-Identifier: MIT
+
 """Read-only paired Contact task, with ambiguous names and signed identity evidence."""
 from copy import deepcopy
 import json

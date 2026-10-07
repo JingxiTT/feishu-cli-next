@@ -1,5 +1,92 @@
 # Agent comparison evaluation
 
+## Offline CLI probes
+
+The [complete October 7 surface comparison](evidence/cli-surface-20261007/REPORT.md)
+records 1,738 local surfaces: all original commands, methods, event keys and
+embedded guidance files. Every request schema is smaller (61.9% in the sum), but
+936/938 help outputs are larger and current upstream is faster. The function
+ledger exposes 866 original nodes without observed non-help calls in retained
+workflow traces. A lead across every area/function remains unestablished.
+
+[`measure_surface.py`](measure_surface.py) derives its complete schedule from
+the frozen catalog and configured-brand inventory: every command node (including
+hidden commands and inherited command aliases), all 251 methods, every event
+key, and every file discoverable in the original binary's embedded skills.
+It compares each surface separately rather than using a domain average. Failed,
+unstable or unavailable probes have no efficiency score; a brand guard that
+bypasses help is recorded without dispatching the command. Extensions and
+packaging are explicitly unmeasured by local introspection.
+
+```sh
+python3 evaluation/measure_surface.py \
+  --reference-cli /absolute/frozen-official-cli \
+  --before-cli /absolute/next-before \
+  --next-cli /absolute/next-after \
+  --current-cli /absolute/current-official-cli \
+  --brand feishu --repetitions 3 --encoding o200k_base \
+  --output /absolute/new-surface-probes.json.gz
+```
+
+The optional tokenizer and isolated process protocol match `measure_cli.py`
+below. The runner refuses to overwrite retained evidence. It checks unchanged
+default schema bytes, request/permission/guidance parity for every method, and
+semantic parity of event definitions. Current upstream differences are retained
+separately and never treated as equivalent work. Three timings describe this
+machine's observations; they cannot establish a universal speed advantage.
+Help/schema/file coverage is **not** execution coverage: mutations, pagination,
+recovery, streams, binary transfers, permission conditions, host SDKs and platform
+builds still require their own correctness and task-efficiency evidence. No
+whole-CLI savings claim follows from a pooled local-output reduction.
+
+[`function_coverage.py`](function_coverage.py) joins this exhaustive surface
+report to the original command inventory and the retained workflow traces. It
+verifies checkpoint hashes, reconstructs task gates using all retained attempts,
+excludes help calls from execution observations, and keeps historical binary
+identities. Each original node is present even when no task called it. The SDK
+symbol index and platform build conditions remain explicit unverified surfaces.
+A verified workflow that calls a command does not establish every mode of that
+function or attribute the entire workflow saving to it.
+
+```sh
+python3 evaluation/function_coverage.py \
+  --probes /absolute/new-surface-probes.json.gz \
+  --matrix evaluation/evidence/full-matrix-20260911 \
+  --output /absolute/function-coverage.json.gz
+```
+
+The [October 7 comparison](evidence/cli-efficiency-20261007/REPORT.md) records
+the request-only schema and discovery changes, both local measurement conditions,
+and the remaining startup gap against current upstream.
+
+[`measure_cli.py`](measure_cli.py) compares process latency and output context
+size for six generated methods, shared guidance and bounded discovery. Supply
+canonical builds of the [frozen official reference](../docs/reference/README.md),
+Next before/after the change, and optionally a pinned current upstream build:
+
+```sh
+python3 evaluation/measure_cli.py \
+  --reference-cli /absolute/frozen-official-cli \
+  --before-cli /absolute/next-before \
+  --next-cli /absolute/next-after \
+  --current-cli /absolute/current-official-cli \
+  --repetitions 31 --output /absolute/local-probes.json
+```
+
+Optional `--encoding o200k_base` requires `tiktoken` in the selected Python
+environment; without it token counts remain unavailable. Counts cover stdout
+and stderr once, not provider usage or tokens per completed agent task.
+Binary/filesystem caches are warmed; each timed invocation is a fresh process
+in rotating order with isolated configuration, remote metadata and notices
+disabled. Any failed or unstable probe stops reporting.
+The script requires exact request/permission/guidance parity against the frozen
+reference, unchanged default schema bytes and unchanged discovery bytes. The
+current upstream arm records parity separately because its catalog may differ.
+Binary hashes, per-process durations and output hashes are retained.
+
+These probes complement the full agent matrix below; they cannot establish
+live API speed, successful task parity or the full-task token-efficiency gates.
+
 ## Automatic full matrix
 
 [`run_matrix.py`](run_matrix.py) completed all **43 implemented development tasks / 258 attempts** across eight suites: paired functions, harder Docs, domain reads, workflow scenarios, scaling, business, foundation and Contact. Each task compares original/full with Next for three repetitions per arm. The [completed report](evidence/full-matrix-20260911/REPORT.md) contains **240 new attempts and 18 reviewed condition 09 attempts reused unchanged**; it is not a fresh simultaneous 258-attempt comparison. See the [execution and measurement protocol](full-matrix.md).

@@ -22,6 +22,7 @@ type entry struct {
 	Risk        string   `json:"risk,omitempty"`
 	Identities  []string `json:"identities,omitempty"`
 	Flags       []flag   `json:"flags,omitempty"`
+	command     *cobra.Command
 }
 
 type flag struct {
@@ -46,9 +47,14 @@ func NewCmd(f *cmdutil.Factory, root *cobra.Command) *cobra.Command {
 				return errs.NewValidationError(errs.SubtypeInvalidArgument, "limit must be 1..1000 and offset must be nonnegative")
 			}
 			query := strings.Join(args, " ")
-			entries := collect(root, query, withFlags)
+			entries := collect(root, query)
 			start := min(offset, len(entries))
 			end := min(start+limit, len(entries))
+			if withFlags {
+				for i := start; i < end; i++ {
+					entries[i].Flags = describeFlags(publicFlags(entries[i].command))
+				}
+			}
 			page := map[string]any{"query": query, "offset": offset, "limit": limit, "total": len(entries), "complete": end == len(entries)}
 			if end < len(entries) {
 				page["next_offset"] = end
@@ -64,23 +70,17 @@ func NewCmd(f *cmdutil.Factory, root *cobra.Command) *cobra.Command {
 	return cmd
 }
 
-func collect(root *cobra.Command, query string, withFlags bool) []entry {
+func collect(root *cobra.Command, query string) []entry {
 	entries := []entry{}
 	terms := strings.Fields(strings.ToLower(query))
-	var walk func(*cobra.Command)
-	walk = func(c *cobra.Command) {
+	var walk func(*cobra.Command, string)
+	walk = func(c *cobra.Command, commandPath string) {
 		if c.Hidden {
 			return
 		}
-		path := strings.TrimSpace(strings.TrimPrefix(c.CommandPath(), root.Name()))
+		path := strings.TrimSpace(strings.TrimPrefix(commandPath, root.Name()))
 		if c != root && (query != "" || c.Parent() == root) {
-			flags := publicFlags(c)
-			var searchable strings.Builder
-			searchable.WriteString(path + " " + c.Short + " " + strings.Join(c.Aliases, " "))
-			for _, flag := range flags {
-				searchable.WriteString(" --" + flag.Name + " " + flag.Usage)
-			}
-			haystack := strings.ToLower(searchable.String())
+			haystack := strings.ToLower(path + " " + c.Short + " " + strings.Join(c.Aliases, " "))
 			match := true
 			for _, term := range terms {
 				if term != "*" && !strings.Contains(haystack, term) {
@@ -88,26 +88,42 @@ func collect(root *cobra.Command, query string, withFlags bool) []entry {
 					break
 				}
 			}
+			if !match {
+				var searchable strings.Builder
+				for _, f := range publicFlags(c) {
+					searchable.WriteString(" --" + f.Name + " " + f.Usage)
+				}
+				flagText := strings.ToLower(searchable.String())
+				match = true
+				for _, term := range terms {
+					if term != "*" && !strings.Contains(haystack, term) && !strings.Contains(flagText, term) {
+						match = false
+						break
+					}
+				}
+			}
 			if match {
 				risk, _ := cmdmeta.Risk(c)
-				e := entry{Command: path, Description: c.Short, Risk: risk, Identities: cmdmeta.Identities(c)}
-				if withFlags {
-					for _, f := range flags {
-						_, required := f.Annotations[cobra.BashCompOneRequiredFlag]
-						e.Flags = append(e.Flags, flag{Name: f.Name, Type: f.Value.Type(), Description: f.Usage, Default: f.DefValue, Required: required})
-					}
-					sort.Slice(e.Flags, func(i, j int) bool { return e.Flags[i].Name < e.Flags[j].Name })
-				}
-				entries = append(entries, e)
+				entries = append(entries, entry{Command: path, Description: c.Short, Risk: risk, Identities: cmdmeta.Identities(c), command: c})
 			}
 		}
 		for _, child := range c.Commands() {
-			walk(child)
+			walk(child, commandPath+" "+child.Name())
 		}
 	}
-	walk(root)
+	walk(root, root.CommandPath())
 	sort.Slice(entries, func(i, j int) bool { return entries[i].Command < entries[j].Command })
 	return entries
+}
+
+func describeFlags(flags []*pflag.Flag) []flag {
+	var result []flag
+	for _, f := range flags {
+		_, required := f.Annotations[cobra.BashCompOneRequiredFlag]
+		result = append(result, flag{Name: f.Name, Type: f.Value.Type(), Description: f.Usage, Default: f.DefValue, Required: required})
+	}
+	sort.Slice(result, func(i, j int) bool { return result[i].Name < result[j].Name })
+	return result
 }
 
 // publicFlags shares visibility and local-shadowing rules between matching and

@@ -1,0 +1,80 @@
+{
+  "schema": 1,
+  "measured_product_commit": "ccdb0e6",
+  "coverage_audit_commit": "c442dd5",
+  "checks_commit": "c442dd5",
+  "pr_base": "d383eb1",
+  "checks": {
+    "canonical_build": {
+      "status": "pass",
+      "command": "make build"
+    },
+    "focused_skill_tests": {
+      "status": "pass",
+      "command": "go test ./cmd/skill ./internal/skillcontent"
+    },
+    "unit_tests": {
+      "status": "pass",
+      "command": "TMPDIR=/tmp make unit-test",
+      "private_log_sha256": "1bf946fa653ae1e6c7a19b198e7ae8d9510a326f39054e948efe951b3b243d8a"
+    },
+    "vet_format_evaluation": {
+      "status": "pass",
+      "command": "make vet fmt-check evaluation-test",
+      "private_log_sha256": "73ce8172a06602e32168774eeef9360c80248625e2da6721e32a3928fd2ec555"
+    },
+    "script_tests": {
+      "status": "pass",
+      "command": "make script-test",
+      "private_log_sha256": "09e271dcd45379ff10fb6fd5236ad636b85112e1a51b8035d459999cde23874c"
+    },
+    "golangci": {
+      "status": "pass",
+      "command": "go run github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.1.6 run --new-from-rev=d383eb1",
+      "private_log_sha256": "6114068728a686e0b06db9181226020989a4c0745a309899cd7bc1ead2ff69a9"
+    },
+    "source_lint": {
+      "status": "pass",
+      "command": "go run -C lint . --changed-from d383eb1 ..",
+      "private_log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "lint_tests": {
+      "status": "pass",
+      "command": "go test -C lint ./... -count=1",
+      "private_log_sha256": "1a557080d7e0609a62c1f35bcc16843e4a388dacf8c2a6230b0009aae75433f2"
+    },
+    "licenses": {
+      "status": "pass",
+      "command": "go run github.com/google/go-licenses/v2@v2.0.1 check ./... --disallowed_types=forbidden,restricted,reciprocal,unknown",
+      "private_log_sha256": "14467ea380f8e679865ae353a2d823cc3d918c556076c9f8fd5ef44f07d5cb97"
+    },
+    "quality_gate_after_code_commit": {
+      "status": "pass",
+      "command": "QUALITY_GATE_CHANGED_FROM=d383eb1 make quality-gate",
+      "private_log_sha256": "ee0d3507b1a31cc991b1a0629428e8dffcbdcc4db309d07a75f98e844a4ef149"
+    },
+    "module_tidy": {
+      "status": "pass",
+      "command": "go mod tidy; git diff --exit-code -- go.mod go.sum"
+    }
+  },
+  "measurements": {
+    "probes_sha256": "18113696fe182132e2dfb5d7f017701b965104286dc555c8c45431d926757d31",
+    "function_coverage_sha256": "eae47ce4d21bb0c9f25c570e5e51c69d42b7d01fb9a449e6b9c686a605cdad40",
+    "report_sha256": "26d8e3a587eab3570ae623a8a4620558a1d72fe558b53b4c31ee0aa7cb70f3df"
+  },
+  "not_run": [
+    "fresh provider/model trials",
+    "live Feishu API trials",
+    "held-out release acceptance",
+    "native Windows execution",
+    "fresh live skills sync",
+    "fresh sidecar-specific checks",
+    "fresh integration/examples suites (passed in the preceding schema/discovery pass; unchanged by the shorter hint)"
+  ],
+  "notes": [
+    "The complete unit suite passed with TMPDIR=/tmp; no FileIO allowlist or product path policy was changed.",
+    "License inspection emitted existing non-Go assembly inspection warnings; golangci emitted the pre-existing disabled hugeParam warning.",
+    "Measured product binary is preserved locally; later commits change evaluation/reporting or build version metadata, not the measured product code."
+  ]
+}

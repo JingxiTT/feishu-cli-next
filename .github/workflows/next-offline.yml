@@ -22,7 +22,7 @@ jobs:
       run:
         shell: bash
     env:
-      NEXT_BINARY: ${{ runner.os == 'Windows' && 'feishu-cli-next.exe' || 'feishu-cli-next' }}
+      NEXT_BINARY: ${{ matrix.os == 'windows-latest' && 'feishu-cli-next.exe' || 'feishu-cli-next' }}
     steps:
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
         with:

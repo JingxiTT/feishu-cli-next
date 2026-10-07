@@ -1,3 +1,6 @@
+# Copyright (c) 2026 Lark Technologies Pte. Ltd.
+# SPDX-License-Identifier: MIT
+
 """Offline event fixture/verifier tests; optional clean-archive CLI subprocesses."""
 import copy
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer

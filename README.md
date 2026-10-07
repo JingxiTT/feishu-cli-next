@@ -80,6 +80,10 @@ Use a known command directly. Help, discovery, and schema inspection are availab
   --range A1:E100 --save-result cells.json --as user
 ```
 
+For a generated method's request requirements, use `schema <service.resource.method> --input-only`.
+It retains the full input schema, permissions, risk and command guidance while
+omitting the response schema. Omit the flag when you need response field definitions.
+
 Replace resource placeholders with your own IDs. Discovery describes the local command surface; access still depends on the selected account and scopes. Shortcuts start with `+`; generated service commands expose catalog methods, and `api` provides raw OpenAPI access.
 
 ### Read focused Docs content
@@ -123,6 +127,10 @@ Snapshot checks detect observed conflicts but cannot close the race with a concu
 Those guides are not all injected by installing the entry skill. They can still influence an agent and consume context when it reads them on demand. The evaluation includes that work; Next did call `skills read` in some trials. Upstream examples use `lark-cli`; use `feishu-cli-next` with this distribution.
 
 ## Evaluation results
+
+The [October 7 local CLI probes](evaluation/evidence/cli-efficiency-20261007/REPORT.md)
+measure request-only schema context size and discovery latency. They are local
+introspection measurements; the full-task results below remain unchanged.
 
 ### Full matrix
 

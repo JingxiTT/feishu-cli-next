@@ -1,3 +1,6 @@
+# Copyright (c) 2026 Lark Technologies Pte. Ltd.
+# SPDX-License-Identifier: MIT
+
 """Offline selected-skill installation and independent filesystem verification."""
 from copy import deepcopy
 import hashlib
