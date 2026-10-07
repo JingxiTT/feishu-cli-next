@@ -53,6 +53,13 @@ results_section="$(awk '
 fork_safe_guard="github.event_name != 'pull_request' || !github.event.pull_request.head.repo.fork"
 live_job_condition="always() && ($fork_safe_guard) && needs.unit-test.result == 'success' && needs.lint.result == 'success' && needs.script-test.result == 'success' && needs.deterministic-gate.result == 'success' && needs.e2e-dry-run.result == 'success' && (needs.e2e-dry-run.outputs.mode == 'full' || needs.e2e-dry-run.outputs.mode == 'subset') && needs.e2e-dry-run.outputs.live_packages != ''"
 
+for e2e_section in "$dry_run_section" "$section"; do
+  if ! grep -Fq 'LARK_CLI_BIN: ${{ github.workspace }}/feishu-cli-next' <<<"$e2e_section"; then
+    echo "CLI E2E must use the feishu-cli-next binary produced by make build" >&2
+    exit 1
+  fi
+done
+
 if ! grep -Fq "run-name: \${{ github.event_name == 'pull_request' && format('CI / {0}', github.event.pull_request.number) || '' }}" "$workflow"; then
   echo "CI should expose a stable PR generation while preserving default push and manual run titles" >&2
   exit 1
@@ -499,7 +506,7 @@ if ! awk '
   in_step && /^ *export / && /LARKSUITE_CLI_TENANT_ACCESS_TOKEN/ { exports_standard_tat = 1 }
   in_step && /LARKSUITE_CLI_APP_ID="\$TEST_BOT1_APP_ID"/ { scopes_preflight_app_id = 1 }
   in_step && /LARKSUITE_CLI_TENANT_ACCESS_TOKEN="\$TEST_TENANT_ACCESS_TOKEN"/ { scopes_preflight_tat = 1 }
-  in_step && /lark-cli whoami --as bot/ { has_preflight = 1 }
+  in_step && /"\$LARK_CLI_BIN" whoami --as bot/ { has_preflight = 1 }
   in_step && /Tenant credential preflight failed/ { checks_preflight = 1 }
   in_step && /TEST_USER_ACCESS_TOKEN/ && /secrets\.TEST_USER_ACCESS_TOKEN/ { has_user_env = 1 }
   in_step && /LARKSUITE_CLI_USER_ACCESS_TOKEN/ && /secrets\.TEST_USER_ACCESS_TOKEN/ { has_global_user_env = 1 }

@@ -346,7 +346,7 @@ jobs:
         run: make build
       - name: Run dry-run E2E tests
         env:
-          LARK_CLI_BIN: ${{ github.workspace }}/lark-cli
+          LARK_CLI_BIN: ${{ github.workspace }}/feishu-cli-next
           LARKSUITE_CLI_APP_ID: dry-run
           LARKSUITE_CLI_APP_SECRET: dry-run
           LARKSUITE_CLI_BRAND: feishu
@@ -416,7 +416,7 @@ jobs:
           RUN_ID: ${{ github.run_id }}
           RUN_NUMBER: ${{ github.run_number }}
           RUN_GENERATION: ${{ github.event_name == 'pull_request' && format('CI / {0}', github.event.pull_request.number) || '' }}
-          LARK_CLI_BIN: ${{ github.workspace }}/lark-cli
+          LARK_CLI_BIN: ${{ github.workspace }}/feishu-cli-next
           E2E_MODE: ${{ needs.e2e-dry-run.outputs.mode }}
           E2E_REASON: ${{ needs.e2e-dry-run.outputs.reason }}
           E2E_LIVE_PACKAGES: ${{ needs.e2e-dry-run.outputs.live_packages }}
@@ -444,7 +444,7 @@ jobs:
           rm -f "$E2E_TENANT_AUTH_FILE"
           if ! LARKSUITE_CLI_APP_ID="$TEST_BOT1_APP_ID" \
             LARKSUITE_CLI_TENANT_ACCESS_TOKEN="$TEST_TENANT_ACCESS_TOKEN" \
-            ./lark-cli whoami --as bot | node -e '
+            "$LARK_CLI_BIN" whoami --as bot | node -e '
             let input = "";
             process.stdin.setEncoding("utf8");
             process.stdin.on("data", (chunk) => { input += chunk; });
