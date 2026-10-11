@@ -8,6 +8,7 @@ Create a new Lark document from DocxXML or Markdown, optionally in a folder or W
 - Match `--doc-format` to `--content`: XML is the default for rich DocxXML; use `--doc-format markdown` for Markdown input.
 - XML preserves native rich structure; the XML guide describes supported blocks and reference maps when authoring unfamiliar content.
 - For multiline `--content`, prefer `@file` or `-` (stdin) to avoid shell-escaping damage.
+- Creation waits for async completion internally. After timeout or an unknown outcome, inspect the receipt and destination before retrying; another create can duplicate the document.
 
 ### Skills
 - lark-doc/references/lark-doc-create-workflow.md

@@ -1,5 +1,37 @@
 # apps
 
+## +export
+Use a source snapshot for inspection or archiving, including a shared app you may download.
+
+### Avoid when
+- Continuing local development → use [[+init]] for a Git workspace.
+
+### Tips
+- Exports the last commit, excluding uncommitted sandbox work; possession of a share token does not grant download permission.
+- The native ZIP is saved at `output`. Generic saved results describe that file; they do not contain its source archive.
+
+### Skills
+- lark-apps/references/lark-apps-export.md
+
+## +release-create
+
+### Tips
+- Use the known app type: `html` omits the reason; `frontend` and `full_stack` use the confirmed reason. Follow the release reference when preparing it.
+- Keep the returned ID and query the same release_id with [[+release-get]]; creating another release is not a status check.
+
+### Skills
+- lark-apps/references/lark-apps-release-create.md
+
+## +release-get
+
+### Tips
+- Terminal status wins over stale node data: `finished` establishes deployment and its returned `online_url`; `failed` uses the returned error evidence. No follow-up app listing is needed.
+- Before completion, `current_node_info.current_status=PENDING` means stop polling and hand off to the configured approval owner. Read the release reference for approval-link handling; do not approve or guess the approver.
+- Poll the same release only while publishing without a pending approval. Stop on top-level pending or unknown status; report the observed state without creating another release.
+
+### Skills
+- lark-apps/references/lark-apps-release-get.md
+
 ## +update
 Use a metadata edit when the target app already exists.
 

@@ -126,3 +126,67 @@ the shared receipt core conservatively reports unknown even when the shortcut's
 API summary is successful. Reconcile before replaying a batch. Relaxing that
 behavior requires authoritative endpoint completion evidence. Historical token
 results remain unchanged and do not establish savings for these new workflows.
+
+## Follow-up against merged Next `e6b64943`
+
+The release comparison above and its 3 new / 92 changed registrations remain
+the baseline. This follow-up builds on the already merged optimization; it does
+not attribute that work or upstream's startup gains to these changes.
+
+- `internal/meta` now validates numeric bounds once and keeps the exact JSON
+  number, removing the redundant copy and decoder from both help and schema.
+  Negative zero, large integers, exponents and JSON whitespace retain their
+  original semantics; invalid and nonnumeric values remain rejected.
+- `internal/output` skips object/array decoding for scalar failure scans. Mail
+  `failed_thread_ids` and Apps `error_logs` with failure evidence preserve the
+  entire result under dotted projection and artifact summaries, including
+  embedded emitters without mutation receipts.
+- The entry guide routes the three new shortcuts directly, recommends batching
+  known Mail IDs, and covers async Docs recovery, IM concise/result controls and
+  narrow Sheets input schemas. Command-specific export, approval and retry
+  details are loaded through affordances and existing references. Reaction
+  enrichment is skipped only when the task does not need it.
+
+Apps ZIP streaming and Mail's sequential batches already use the shared runtime
+and FileIO. Their requests, batch order, identities and receipt classification
+are unchanged. No new dependency, command, flag or API call was added.
+
+### Follow-up measurements
+
+Five sequential samples per arm on Darwin/arm64, Apple M5. The numeric-bound
+and complete-renderer benchmarks use `-benchtime=200ms -count=5`; the failure
+scanner uses `-count=5`. Baseline overlays use `e6b64943` implementation files
+with the same benchmark fixtures. These are local microbenchmarks, not network
+or whole-command latency measurements; host load remains uncontrolled.
+
+| Operation | Median before → after | Bytes/op before → after | Allocations/op |
+| --- | ---: | ---: | ---: |
+| Parse bound `100` | 393.7 → 28.82 ns | 2,656 → 16 | 12 → 1 |
+| Parse bound `9223372036854775807` | 425.2 → 48.01 ns | 2,704 → 16 | 12 → 1 |
+| Parse bound `1.25e+10` | 402.4 → 35.46 ns | 2,656 → 16 | 12 → 1 |
+| Scan 20 messages for unsafe projection | 102.81 → 57.72 µs | 107,976 → 34,576 | 1,638 → 700 |
+| Scan 200 messages for unsafe projection | 1,158.34 → 535.14 µs | 1,048,778 → 325,938 | 15,861 → 6,643 |
+| Render 1,000 records with field selection | 49.84 → 33.58 ms | 18,713,036 → 16,311,802 | 119,178 → 89,160 |
+
+Raw [bounds before](../../../evaluation/evidence/upstream-v1.0.97-followup/bounds-before-clean.txt)
+/ [after](../../../evaluation/evidence/upstream-v1.0.97-followup/bounds-after-clean.txt),
+[scan before](../../../evaluation/evidence/upstream-v1.0.97-followup/output-scan-before.txt)
+/ [after](../../../evaluation/evidence/upstream-v1.0.97-followup/output-scan-after.txt),
+and [renderer before](../../../evaluation/evidence/upstream-v1.0.97-followup/output-render-before.txt)
+/ [after](../../../evaluation/evidence/upstream-v1.0.97-followup/output-render-after.txt)
+retain all samples. Reproduce with `BenchmarkFieldBounds` in `./internal/meta`,
+and `BenchmarkAgentProjectionFailureScan` / `BenchmarkAgentJSON/Fields` in
+`./internal/output`, using `-run '^$' -benchmem` and the options above.
+
+The [context probes](../../../evaluation/evidence/upstream-v1.0.97-followup/context.json)
+verify that six full schemas remain byte-identical to merged Next and that
+`--input-only` removes only `outputSchema`: 10,540 → 2,544 context tokens
+(75.9% fewer). This saving already existed before this follow-up. The new entry
+routes cost 235 extra tokens (884 → 1,119); new command help also grows to carry
+decision and retry guidance. Avoided discovery/enrichment calls are guidance,
+not measured whole-task token savings. Counts use `o200k_base`, tiktoken 0.12.0.
+
+Regression tests fail against the previous implementation for lost failure
+context and unnecessary allocations. The follow-up
+[validation record](../../../evaluation/evidence/upstream-v1.0.97-followup/validation.json)
+records final checks and remaining verification limits.

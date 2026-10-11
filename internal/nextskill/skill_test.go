@@ -10,12 +10,30 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"testing"
 	"testing/fstest"
 
 	"github.com/larksuite/cli/errs"
 	"github.com/larksuite/cli/internal/vfs"
 )
+
+func TestEntryRoutesUpstreamWorkflowsWithoutRepeatedDiscovery(t *testing.T) {
+	content, err := os.ReadFile("../../agent-skills/feishu-cli-next/SKILL.md")
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, decision := range []string{
+		"apps +export --app-id", "--meta-token", "mail +thread-modify --thread-ids", "mail +thread-trash --thread-ids <id,id> --as user --dry-run",
+		"success_thread_ids", "failed_thread_ids", "authorized whole-thread deletion", "--concise", "--no-reactions",
+		"Creation waits for async completion", "inspect the receipt and destination before retrying",
+		"--print-schema --flag-name", "Reuse guidance already read for this version",
+	} {
+		if !strings.Contains(string(content), decision) {
+			t.Errorf("entry guidance missing %q", decision)
+		}
+	}
+}
 
 func fixture(body string) fstest.MapFS {
 	return fstest.MapFS{contentPath: &fstest.MapFile{Data: []byte(body)}}

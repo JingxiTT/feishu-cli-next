@@ -59,6 +59,10 @@ Use this for message history when the conversation is already known.
 - Searching across conversations → use [[+messages-search]].
 - Fetching full details for known message ids → use [[+messages-mget]].
 
+### Tips
+- Keep JSON for result projection/artifacts. Use `--concise` only for user-requested Markdown, without explicit `--format`, enabled `--json`, nonempty `--jq`, `--result-fields` or `--save-result`; dry-run previews remain JSON.
+- Use `--no-reactions` when reactions are irrelevant to avoid enrichment requests. Keep pagination/completeness evidence; compact output does not imply the entire conversation was read.
+
 ### Examples
 
 **List messages in a group chat**
@@ -231,6 +235,10 @@ lark-cli im +messages-send --chat-id oc_xxx --text "Hello"
 
 ## +threads-messages-list
 Use this when a message or thread id is known and the replies inside that thread are needed.
+
+### Tips
+- Keep JSON for result projection/artifacts. Use `--concise` only for user-requested Markdown, without explicit `--format`, enabled `--json`, nonempty `--jq`, `--result-fields` or `--save-result`; dry-run previews remain JSON.
+- Use `--no-reactions` when reactions are irrelevant to avoid enrichment requests. Keep pagination/completeness evidence; compact output does not imply the entire thread was read.
 
 ### Examples
 
