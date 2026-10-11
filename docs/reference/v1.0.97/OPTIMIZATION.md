@@ -37,8 +37,9 @@ records every changed command; the [sync baseline](README.md) describes both bra
   conflicting proof stays unknown. Response bytes and errors are preserved.
 - Validate successful IM JSON without copying it into `json.RawMessage`.
   Invalid input retains its typed error, syntax offset and original cause.
-- Write the existing concise message builder directly, retaining safety checks,
-  byte output and short-write/error handling.
+- Write the existing concise message builder directly and forward the optional
+  `io.StringWriter` capability through our agent output wrapper. This avoids a
+  replacement byte copy while retaining safety checks and write-error handling.
 
 No new dependencies, public SDK interfaces, configuration modes, commands or
 extra API requests were introduced by this optimization.
@@ -50,7 +51,9 @@ use 31 fresh processes per variant, one warm-up, rotating arm order, isolated
 empty configuration and blocked network access. Token counts use `o200k_base`
 with tiktoken 0.12.0 and count stdout/stderr once. These are output-context tokens,
 not provider usage or whole-task savings. Builds use the committed catalog and
-Go trimpath/stripped binaries; binary hashes are recorded. Host load is uncontrolled.
+Go trimpath/stripped binaries; binary hashes are recorded. These process probes
+precede the final duplicate-task guard and string-writer forwarding, which do not
+change the measured schema contracts. Host load is uncontrolled.
 
 | Probe | Pre-update Next | Synced Next | Optimized Next |
 | --- | ---: | ---: | ---: |
@@ -78,17 +81,19 @@ there is no claim of smaller output for every command.
 
 Five local microbenchmark samples per arm compare the synced implementation with
 these optimizations. Concise benchmarks disable the safety provider for both arms
-and use the same synthetic fixture; production safety checks remain enabled.
+and use the same synthetic fixture with the actual `WithAgentOptions` stdout
+wrapper; production safety checks remain enabled.
 
 | Operation | Median before → after | Allocation before → after |
 | --- | ---: | ---: |
 | Validate 1 KiB valid IM JSON | 2,759 → 1,503 ns | 2,480 → 0 B; 5 → 0 allocations |
 | Validate 64 KiB valid IM JSON | 174,437 → 92,275 ns | 147,632 → 0 B; 5 → 0 allocations |
-| Render 50 concise messages | 184,709 → 177,913 ns | 340,110 → 282,661 B |
-| Render 200 concise messages | 765,357 → 731,517 ns | 1,424,748 → 1,203,337 B |
+| Render 50 concise messages | Not compared | 340,120 → 282,650 B; 1,035 → 1,033 allocations |
+| Render 200 concise messages | Not compared | 1,424,760 → 1,203,327 B; 4,043 → 4,040 allocations |
 
-Concise timing differences are modest; the 15.5–16.9% allocation reduction is
-stronger evidence. These microbenchmarks exclude Feishu network time.
+Concurrent test load changed during the concise runs, so their timing samples
+are not used for a speed claim. The 15.5–16.9% allocation reduction remains
+measured with the production output wrapper. These microbenchmarks exclude Feishu network time.
 Raw [JSON before](../../../evaluation/evidence/upstream-v1.0.97-optimization/content-before.txt),
 [JSON after](../../../evaluation/evidence/upstream-v1.0.97-optimization/content-after.txt),
 [concise before](../../../evaluation/evidence/upstream-v1.0.97-optimization/concise-synced-benchmark.txt)

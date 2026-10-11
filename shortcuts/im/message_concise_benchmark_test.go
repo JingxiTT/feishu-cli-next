@@ -12,6 +12,7 @@ import (
 
 	"github.com/larksuite/cli/errs"
 	"github.com/larksuite/cli/internal/cmdutil"
+	"github.com/larksuite/cli/internal/output"
 	"github.com/larksuite/cli/shortcuts/common"
 	"github.com/spf13/cobra"
 )
@@ -60,7 +61,7 @@ func BenchmarkOutputMessagesConcise(b *testing.B) {
 			view := conciseMessageView{Type: conciseMessageViewChat, ChatSections: []conciseChatSection{{ChatID: "oc_fixture", Messages: messages}}}
 			runtime := &common.RuntimeContext{
 				Cmd:     &cobra.Command{Use: "+chat-messages-list"},
-				Factory: &cmdutil.Factory{IOStreams: &cmdutil.IOStreams{Out: io.Discard, ErrOut: io.Discard}},
+				Factory: &cmdutil.Factory{IOStreams: &cmdutil.IOStreams{Out: output.WithAgentOptions(io.Discard, &output.AgentOptions{}), ErrOut: io.Discard}},
 			}
 			b.ReportAllocs()
 			b.ResetTimer()

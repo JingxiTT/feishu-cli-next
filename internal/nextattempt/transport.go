@@ -81,8 +81,8 @@ func (s Summary) ExitCode() int {
 }
 
 // Transport wraps the existing client transport; it neither sends nor retries
-// independently. Resolve runs only for potential mutations, after auth traffic
-// and reads have been excluded without touching credential resolution.
+// independently. Resolve runs for potential mutations and matching pending Docs
+// completion proofs; ordinary reads and auth traffic do not resolve bindings.
 type Transport struct {
 	Base       http.RoundTripper
 	Store      func() Store

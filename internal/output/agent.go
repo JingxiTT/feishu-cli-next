@@ -311,6 +311,13 @@ func (w *agentWriter) Write(p []byte) (int, error) {
 	return w.Writer.Write(p)
 }
 
+func (w *agentWriter) WriteString(s string) (int, error) {
+	if w.options.Fields != "" || w.options.SaveResult != "" {
+		return w.Write(nil) // Keep the same rejection without copying the payload.
+	}
+	return io.WriteString(w.Writer, s)
+}
+
 func (o *AgentOptions) recordError(err error) {
 	if err != nil && o.firstError == nil {
 		o.firstError = err
