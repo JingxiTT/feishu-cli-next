@@ -166,9 +166,11 @@ func addInputObject(is *InputSchema, name, description string, fields []meta.Fie
 	if len(fields) == 0 {
 		return
 	}
-	props := propsOf(fields)
+	var props *OrderedProps
 	if asFlags {
 		props = paramPropsOf(fields)
+	} else {
+		props = propsOf(fields)
 	}
 	req := requiredOf(fields)
 	is.Properties.Set(name, Property{

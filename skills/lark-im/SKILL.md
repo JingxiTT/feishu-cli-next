@@ -10,265 +10,77 @@ metadata:
 
 # im (v1)
 
-**CRITICAL — 开始前 MUST 先用 Read 工具读取 [`../lark-shared/SKILL.md`](../lark-shared/SKILL.md)，其中包含认证、权限处理**
+开始前读取一次 [`lark-shared`](../lark-shared/SKILL.md)，遵守身份、认证、输出与高风险规则；复用本任务已读的同版本指导。已知命令和参数可直接执行，缺少要求时只读下表对应 reference 或该命令 `--help`。
 
-## Core Concepts
+## 身份、资源与安全
 
-- **Message**: A single message in a chat, identified by `message_id` (om_xxx). Supports types: text, post, image, file, audio, video, sticker, interactive (card), share_chat, share_user, merge_forward, etc.
-- **Chat**: A group chat or P2P conversation, identified by `chat_id` (oc_xxx).
-- **Thread**: A reply thread under a message, identified by `thread_id` (om_xxx or omt_xxx).
-- **Reaction**: An emoji reaction on a message.
-- **Flag**: A bookmark on a message or thread.
-- **Feed Shortcut**: A chat pinned to the current user's feed sidebar, identified by `feed_card_id` (an `oc_xxx` open_chat_id for CHAT type).
-- **Feed Group**: A tag that groups feed cards in the feed list, identified by `feed_group_id` (ofg_xxx). Members are feed cards, each identified by `feed_id` + `feed_type`. Two types: `normal` (members managed explicitly) and `rule` (members auto-derived from rules).
+- `--as user` 使用用户的 `user_access_token`；`--as bot` 使用应用的 `tenant_access_token`。支持两者不代表权限相同：群成员身份、所有者/管理员、租户和应用可见范围都按当前操作者检查。群权限/所有权问题读 [`chat identity`](references/lark-im-chat-identity.md)，不要盲目切换身份重试。
+- `chat_id=oc_xxx` 标识群/P2P；`message_id=om_xxx` 标识消息；`thread_id=om_xxx/omt_xxx` 标识话题。Reaction 是消息表情；Flag 是消息/话题书签；Feed Shortcut 是侧栏置顶聊天；Feed Group (`ofg_xxx`) 是会话标签，其成员由 `feed_id + feed_type` 标识。normal 手动管理，rule 按规则派生。
+- 发消息前必须取得用户对收件人、内容和发送身份的明确授权。保留用户给定的目标和内容；不要擅自扩大群成员或接收范围。
+- 优先返回 `chat_app_link`（打开已加入会话）、`message_app_link`（消息）、`share_link`（邀请入群）。手拼会话链接仅用 `https://<applink_host>/client/chat/open?openChatId=<oc_xxx>`，不用 `chatId` 或 `lark://...chat_id=`。
+- **发送、回复、更新 interactive 卡片前，必须读 [`card create`](references/card/lark-im-card-create.md) 并按工作流产出 JSON，不能手写或复制 payload。** [`card action reply`](references/lark-im-card-action-reply.md) 处理 `card.action.trigger`；订阅中的卡片尚无紧凑转换，返回原始事件并在 stderr 提示。
+- `--audio` 仅接受 Opus（`.opus` / Ogg Opus `.ogg`）；其他格式先转换，或用 `--file` 原样发附件。转发文档先以 `--doc-format im-markdown` 获取，再以 `--markdown` 发送；保留原文与 `cite type="user"` 标签。
 
-## Resource Relationships
+## 常用路径
 
-```
-Chat (oc_xxx)
-├── Message (om_xxx)
-│   ├── Thread (reply thread)
-│   ├── Reaction (emoji)
-│   └── Resource (image / file / video / audio)
-└── Member (user / bot)
-```
-
-## Important Notes
-
-### AppLink and Share Links
-
-Prefer CLI-returned links: use `chat_app_link` to open joined conversations, `message_app_link` to open messages, and `share_link` to invite others to groups. If manually building a joined-conversation AppLink, use `https://<applink_host>/client/chat/open?openChatId=<oc_xxx>`, never `chatId=<oc_xxx>` or `lark://...chat_id=<oc_xxx>`.
-
-### Identity and Token Mapping
-
-- `--as user` means **user identity** and uses `user_access_token`. Calls run as the authorized end user, so permissions depend on both the app scopes and that user's own access to the target chat/message/resource.
-- `--as bot` means **bot identity** and uses `tenant_access_token`. Calls run as the app bot, so behavior depends on the bot's membership, app visibility, availability range, and bot-specific scopes.
-- If an IM API says it supports both `user` and `bot`, the token type changes who the operator is. The same API can succeed with one identity and fail with the other because owner/admin status, chat membership, tenant boundary, or app availability are checked against the current caller.
-
-### Sender Name Resolution
-
-When fetching messages (`+chat-messages-list`, `+threads-messages-list`, `+messages-mget`, `+messages-search`), the CLI shows a display name for both user and bot senders:
-
-- **Server-provided name**: the read APIs return `sender_name` (plus the full-i18n `sender_i18n_names` map) on each message `sender`; the CLI surfaces it as the sender's `name` for users and bots alike. No name lookup and no extra permission are needed — **no contact scope** and no `application:bot.basic_info:read`.
-- **Fallback to id**: when the server does not provide a name, the sender is shown by its id and the command still exits 0. There is no contact-directory fallback.
-
-The raw `sender_name` is not duplicated in output (its value is in `name`); the full `sender_i18n_names` map (all locales) is preserved for consumers that need a specific language, alongside an optional `open_bot_id` (`ou_`) for bot senders aligned with the message-receive event channel. System messages (`msg_type: system`) have no sender name — that is normal, not an error.
-
-### Default message enrichment (reactions / update_time)
-
-The four message-pulling shortcuts (`+messages-mget`, `+chat-messages-list`, `+messages-search`, `+threads-messages-list`) automatically attach a `reactions` block and (for edited messages) `update_time` to each returned message — no separate `im.reactions.batch_query` call is needed. Pass `--no-reactions` to opt out. For the full contract (output shape, the `im:message.reactions:read` scope requirement, and the "missing field ≠ fetch failure" data rules), read [`references/lark-im-message-enrichment.md`](references/lark-im-message-enrichment.md).
-
-### Opt-in resource auto-download (`--download-resources`)
-
-`+chat-messages-list`, `+messages-mget`, and `+threads-messages-list` accept `--download-resources` to save eligible attachments into `./lark-im-resources/` and add a `resources` array to each message. It is off by default; stickers are not downloadable. A failed attachment is reported on that resource without aborting the message pull. Use [`+messages-resources-download`](references/lark-im-messages-resources-download.md) for one attachment. See [`references/lark-im-message-enrichment.md`](references/lark-im-message-enrichment.md) for the output contract.
-
-### Card Messages (Interactive)
-
-**Before sending, replying with, or updating any `interactive` card (`+messages-send` / `+messages-reply` / `messages.patch`), you MUST read [`references/card/lark-im-card-create.md`](references/card/lark-im-card-create.md) and follow its workflow.** The card JSON passed to `--msg-type interactive --content` (send/reply) or `messages.patch --data` (update) must be the output of that workflow — never hand-write or copy a card payload.
-
-Card messages (`interactive` type) are not yet supported for compact conversion in event subscriptions. The raw event data will be returned instead, with a hint printed to stderr.
-
-`interactive` cards support callback events (`card.action.trigger`) — see [`references/lark-im-card-action-reply.md`](references/lark-im-card-action-reply.md).
-
-### Audio Messages
-
-`--audio` sends a voice message and supports only Opus audio files, for example `.opus` files or Ogg Opus (`.ogg`) files. For `mp3`, `wav`, or other non-Opus audio, either convert to `.opus` first and keep using `--audio`, or send the original file as an attachment with `--file`.
-
-### Sending Doc Content as a Message
-
-When sending content fetched from a Lark doc as a message, fetch the doc with --doc-format im-markdown, then send it as a message using the --markdown format. The fetched content is already in markdown; in any content-forwarding scenario, keep the fetched original text and send it in the --markdown format. Note: if the doc contains a cite tag with type="user", keep it as-is and do not strip the tag.
-
-### Flag Types
-
-Flags support two layers:
-
-- **Message-layer flag**: `(ItemTypeDefault, FlagTypeMessage)` — regular message bookmark
-- **Feed-layer flag**: `(ItemTypeThread/ItemTypeMsgThread, FlagTypeFeed)` — thread as feed-layer bookmark
-
-Item types for feed-layer flags:
-- **ItemTypeThread** (4) = thread in a topic-style chat
-- **ItemTypeMsgThread** (11) = thread in a regular chat
-
-### Feed Shortcut
-
-Feed shortcuts add chats to the current user's feed sidebar. They are distinct from flags:
-
-- **Flag** = bookmark on a message/thread, scoped to the user's bookmark list.
-- **Feed shortcut** = entry in the user's feed sidebar (currently only chats).
-
-Key limits:
-- Only **CHAT-type** (`feed_card_id` is `oc_xxx`) is exposed via OpenAPI; doc/app/subscription shortcuts exist internally but are not yet whitelisted.
-- All three operations (create/remove/list) are **user-identity only** — they sign with `user_access_token`.
-- Batch size is **10 per call** for create/remove; list is a one-page wrapper with opaque `page_token` pagination.
-
-## Shortcuts（推荐优先使用）
-
-Shortcut 是对常用操作的高级封装（`lark-cli im +<verb> [flags]`）。有 Shortcut 的操作优先使用。
-
-| Shortcut | 说明 |
-|----------|------|
-| [`+chat-create`](references/lark-im-chat-create.md) | Create a group chat or topic chat; user/bot; --chat-mode group|topic; private/public; invites users/bots; optionally sets bot manager |
-| [`+chat-list`](references/lark-im-chat-list.md) | List chats the current user/bot is a member of; defaults to groups; pass --types=p2p,group to include p2p single chats (user-only); user/bot; supports sorting, auto-pagination, --exclude-muted (user-only) |
-| [`+chat-members-list`](references/lark-im-chat-members-list.md) | List members of a chat; returns separate users[] / bots[] buckets; callable as user or bot; --member-types filters which kinds to return; --page-all pagination; surfaces truncations[] when the server caps a bucket |
-| [`+chat-messages-list`](references/lark-im-chat-messages-list.md) | List messages in a chat or P2P conversation; user/bot; accepts --chat-id or --user-id, resolves P2P chat_id, supports time range, --order asc/desc sorting, auto-pagination |
-| [`+chat-search`](references/lark-im-chat-search.md) | Search visible group chats by --query keyword and/or --member-ids; user/bot; e.g. look up chat_id by group name; supports type filters, sorting, auto-pagination, and --exclude-muted (user identity only) |
-| [`+chat-update`](references/lark-im-chat-update.md) | Update group chat name or description; user/bot; updates a chat's name or description |
-| [`+message-read-users`](references/lark-im-message-read-status.md) | List users who read one message; user/bot; identity-specific scopes; supports bounded auto-pagination |
-| [`+messages-edit`](references/lark-im-messages-edit.md) | Edit a message's content (text/post, including the attachment zone); bot-only (user identity is rejected by the server); PUT /open-apis/im/v1/messages/:message_id |
-| [`+messages-mget`](references/lark-im-messages-mget.md) | Batch get messages by IDs; user/bot; fetches up to 50 om_ message IDs, formats sender names, expands thread replies |
-| [`+messages-read-status`](references/lark-im-message-read-status.md) | Batch query whether the current user read 1–50 messages; user-only; returns readable items and invalid message IDs |
-| [`+messages-reply`](references/lark-im-messages-reply.md) | Reply to a message (supports thread replies); user/bot; supports text/markdown/post/media replies, reply-in-thread, idempotency key |
-| [`+messages-resources-download`](references/lark-im-messages-resources-download.md) | Download an image or file attached to a message; user/bot |
-| [`+messages-search`](references/lark-im-messages-search.md) | Search messages across chats (supports keyword, sender, time range filters) with user or bot identity; filters by chat/sender/attachment/time, supports auto-pagination via `--page-all` / `--page-limit`, enriches results via batched mget and chats batch_query |
-| [`+messages-send`](references/lark-im-messages-send.md) | Send a message to a chat or direct message; user/bot; sends to chat-id or user-id with text/markdown/post/media, supports idempotency key |
-| [`+threads-messages-list`](references/lark-im-threads-messages-list.md) | List messages in a thread; user/bot; accepts om_/omt_ input, resolves message IDs to thread_id, supports --order asc/desc sorting, auto-pagination |
-| [`+flag-create`](references/lark-im-flag-create.md) | Create a bookmark on a message; user-only; defaults to message-layer flag; use --flag-type feed for feed-layer flag (item_type auto-detected from chat mode) |
-| [`+flag-cancel`](references/lark-im-flag-cancel.md) | Cancel (remove) a bookmark. When no --flag-type is given, best-effort double-cancel: removes message layer and (when chat_type is determinable) feed layer |
-| [`+flag-list`](references/lark-im-flag-list.md) | List bookmarks; user-only; auto-enriches feed-type thread entries with message content; `--page-all` is capped by `--page-limit` (default 20, max 1000), and `has_more=true` means the result is incomplete |
-| [`+feed-shortcut-create`](references/lark-im-feed-shortcut-create.md) | Add chats to the user's feed shortcuts; user-only; oc_xxx chat IDs only; batch up to 10 per call; `--head`/`--tail` controls insertion order; partial failures return an `ok:false` ledger |
-| [`+feed-shortcut-remove`](references/lark-im-feed-shortcut-remove.md) | Remove chats from the user's feed shortcuts; user-only; batch up to 10 per call; removing an absent shortcut is idempotent success; real per-item failures return an `ok:false` ledger |
-| [`+feed-shortcut-list`](references/lark-im-feed-shortcut-list.md) | List one page of the user's feed shortcuts; user-only; omit `--page-token` for the first page; default output enriches CHAT entries under `detail`; pass `--no-detail` to skip the extra lookup and `im:chat:read` scope |
-| [`+feed-group-list`](references/lark-im-feed-group-list.md) | List the caller's feed groups (tags); user-only; supports `--page-all` auto-pagination |
-| [`+feed-group-list-item`](references/lark-im-feed-group-list-item.md) | List feed cards in a feed group (tag); user-only; enriches each item with chat_name resolved from feed_id; supports --page-all auto-pagination |
-| [`+feed-group-query-item`](references/lark-im-feed-group-query-item.md) | Look up specific feed cards in a feed group (tag) by ID; user-only; enriches each item with chat_name resolved from feed_id |
-
-## API Resources
+已有本版本参数和授权时，直接调用；占位符替换为已确认的 ID：
 
 ```bash
-lark-cli schema im.<resource>.<method>   # 调用 API 前必须先查看参数结构
-lark-cli im <resource> <method> [flags] # 调用 API
+lark-cli im +chat-messages-list --chat-id oc_xxx --as user
+lark-cli im +messages-search --query '关键词' --as user
+lark-cli im +messages-send --user-id ou_xxx --text '已获授权的原文' --as user
 ```
 
-> **重要**：使用原生 API 时，必须先运行 `schema` 查看 `--data` / `--params` 参数结构，不要猜测字段格式。
+消息读取已返回 sender `name`（服务端 `sender_name`，缺失时回退 ID）、完整 `sender_i18n_names` 和可选 `open_bot_id`；system 无姓名属正常。**不要为此另查通讯录或机器人资料**，无需额外 contact / `application:bot.basic_info:read` 权限。
 
-### chats
+四种消息读取（chat/thread list、mget、search）默认补 reactions 和已编辑消息的 update_time，勿另调 reactions batch_query；只需正文可用 `--no-reactions`。chat list/mget 还展开有界的 thread replies。检查分页、截断及逐项失败；字段缺失不等于获取失败，完整契约见 [`message enrichment`](references/lark-im-message-enrichment.md)。chat list/mget/thread list 可选 `--download-resources` 保存到 `./lark-im-resources/`，默认关闭、排除 sticker，单资源失败不终止消息读取。
 
-  - `create` — 创建群。Identity: `bot` only (`tenant_access_token`).
-  - `get` — 获取群信息。Identity: supports `user` and `bot`; the caller must be in the target chat to get full details, and must belong to the same tenant for internal chats.
-  - `link` — 获取群分享链接。Identity: supports `user` and `bot`; the caller must be in the target chat, must be an owner or admin when chat sharing is restricted to owners/admins, and must belong to the same tenant for internal chats.
-  - `update` — 更新群信息。Identity: supports `user` and `bot`.
+## 按意图选 Shortcut / Reference
 
-### chat.members
+有 shortcut 优先用它；无需一次读完所有参考。
 
-  - `create` — 将用户或机器人拉入群聊。Identity: supports `user` and `bot`; the caller must be in the target chat; for `bot` calls, added users must be within the app's availability; for internal chats the operator must belong to the same tenant; if only owners/admins can add members, the caller must be an owner/admin, or a chat-creator bot with `im:chat:operate_as_owner`.
-  - `delete` — 将用户或机器人移出群聊。Identity: supports `user` and `bot`; only group owner, admin, or creator bot can remove others; max 50 users or 5 bots per request.
+| 意图 | 命令与参考 | 关键分流 |
+|---|---|---|
+| 创建群/话题群 | [`+chat-create`](references/lark-im-chat-create.md) | user/bot；可指定 owner/manager |
+| 已加入群/P2P | [`+chat-list`](references/lark-im-chat-list.md) | 默认群；P2P、exclude-muted 仅 user |
+| 搜索可见群 | [`+chat-search`](references/lark-im-chat-search.md) | 关键词/成员筛选；exclude-muted 仅 user |
+| 群成员 | [`+chat-members-list`](references/lark-im-chat-members-list.md) | users/bots 分桶；检查 truncations |
+| 群名/描述 | [`+chat-update`](references/lark-im-chat-update.md) | 权限取决于当前操作者 |
+| 群/P2P 消息 | [`+chat-messages-list`](references/lark-im-chat-messages-list.md) | chat-id 或 user-id；时间、顺序、分页 |
+| 话题消息 | [`+threads-messages-list`](references/lark-im-threads-messages-list.md) | om_/omt_；解析 thread_id |
+| 已知消息 ID | [`+messages-mget`](references/lark-im-messages-mget.md) | 最多 50 条；展开话题回复 |
+| 跨会话搜索 | [`+messages-search`](references/lark-im-messages-search.md) | 关键词/发送者/附件/时间；有界分页 |
+| 发送/回复 | [`+messages-send`](references/lark-im-messages-send.md) / [`+messages-reply`](references/lark-im-messages-reply.md) | text 原文；markdown 轻格式；content 精确 JSON；幂等键 |
+| 编辑消息 | [`+messages-edit`](references/lark-im-messages-edit.md) | **bot-only**；text/post/附件区 |
+| 下载单个附件 | [`+messages-resources-download`](references/lark-im-messages-resources-download.md) | 消息 ID + 资源 key |
+| 已读状态/已读用户 | [`+messages-read-status` / `+message-read-users`](references/lark-im-message-read-status.md) | 前者 user-only、1–50 条；后者依身份检查权限 |
+| 书签创建/取消/列表 | [`+flag-create`](references/lark-im-flag-create.md) / [`+flag-cancel`](references/lark-im-flag-cancel.md) / [`+flag-list`](references/lark-im-flag-list.md) | user-only；message 层为普通书签，feed 层话题 item_type=4、普通群话题=11；默认取消尽力清两层；has_more 表示未读全 |
+| 侧栏置顶 | [`+feed-shortcut-create`](references/lark-im-feed-shortcut-create.md) / [`+feed-shortcut-remove`](references/lark-im-feed-shortcut-remove.md) / [`+feed-shortcut-list`](references/lark-im-feed-shortcut-list.md) | user-only、仅 CHAT (`oc_xxx`)；增删每批 10；list 单页；--no-detail 省额外群查询；检查 ok:false 逐项账本 |
+| 标签列表/成员/已知成员 | [`+feed-group-list`](references/lark-im-feed-group-list.md) / [`+feed-group-list-item`](references/lark-im-feed-group-list-item.md) / [`+feed-group-query-item`](references/lark-im-feed-group-query-item.md) | user-only；已知 ID 用 query，避免全量 list |
+| 标签创建/更新/删除/增删成员 | [`feed.groups.*`](references/lark-im-feed-groups.md) | 执行前读参考；优先 normal、最少规则 |
+| 表情读取/增删 | [`reactions.*`](references/lark-im-reactions.md) | 执行前读参考；只能删自己添加的表情 |
 
-### chat.user_setting
+## 原生 API
 
-  - `batch_query` — 批量查询当前用户在群内的个人偏好设置 (e.g. `is_muted` mutes normal messages, `is_mute_at_all` mutes @all messages); up to 10 chats per request. Identity: `user` only (`user_access_token`); the caller must be in each target chat.
-  - `batch_update` — 批量更新当前用户在群内的个人偏好设置 (e.g. `is_muted` mutes normal messages, `is_mute_at_all` mutes @all messages); up to 10 chats per request. Identity: `user` only (`user_access_token`); the caller must be in each target chat.
+`lark-cli im <resource> <method>` 用 `--params` / `--data`，不要猜字段。首次构造未知请求先查 `lark-cli schema im.<resource>.<method> --input-only`；需要响应定义时省略 `--input-only`。复用已读的同版本 schema。权限以命令 metadata/schema 为准，不在此重复 scope 表。
 
-### chat.nickname
+以下为影响路由或数据安全的限制；其余输入/输出见所选 method 的 schema：
 
-  - `get` — 获取自己的群昵称。Get your own nickname in the chat (self-only). Identity: `user` only (`user_access_token`); returns an empty string when no nickname is set.
-  - `update` — 设置自己的群昵称。Set or update your own nickname in the chat (self-only). Identity: `user` only (`user_access_token`); `nickname` must be a non-empty string (max 300 bytes). Use DELETE to clear it.
-  - `delete` — 清空自己的群昵称。Clear your own nickname in the chat (self-only). Identity: `user` only (`user_access_token`).
-
-### chat.join_requests
-
-  - `list` — 列出群的待审批入群申请（仅群主/管理员，user_access_token）。List pending join requests for a chat. Identity: `user` only (`user_access_token`); the caller must be the chat owner or an admin. Paginated (`page_size` 1-100); stop on `has_more == false` — `page_token` is returned even on the last page, so paging while it is present never terminates.
-  - `handle` — 批量审批入群申请（approve/reject，仅群主/管理员，user_access_token）。Approve or reject pending join requests in bulk (1-50 items, processed in order). Identity: `user` only (`user_access_token`); the caller must be the chat owner or an admin. `results[]` mirrors `items[]` in count and order — check each `result` (`success` / `failed` / `already_handled`); exit 0 does not mean every item succeeded.
-
-### chat.managers
-
-  - `add_managers` — 指定群管理员。Identity: supports `user` and `bot`; only the group owner can add managers; max 10 managers per chat (20 for super-large chats), and at most 5 bots per request.
-  - `delete_managers` — 删除群管理员。Identity: supports `user` and `bot`; only the group owner can remove managers; max 50 users or 5 bots per request.
-
-### chat.moderation
-
-  - `get` — 获取群成员发言权限。Identity: supports `user` and `bot`; the caller must be in the target chat and belong to the same tenant.
-  - `update` — 更新群发言权限。Identity: supports `user` and `bot`; only the group owner (or creator bot with `im:chat:operate_as_owner`) can update; the caller must be in the chat.
-
-### messages
-
-  - `read_status` — 批量查询当前用户对消息的已读状态。Identity: `user` only (`user_access_token`); accepts up to 50 message IDs and returns readable items plus invalid message IDs.[Must-read](references/lark-im-message-read-status.md)
-  - `delete` — 撤回消息。Identity: supports `user` and `bot`; for `bot` calls, the bot must be in the chat to revoke group messages; to revoke another user's group message, the bot must be the owner, an admin, or the creator; for user P2P recalls, the target user must be within the bot's availability.
-  - `forward` — 转发消息。Identity: supports `user` and `bot`.
-  - `merge_forward` — 合并转发消息。Identity: `bot` only (`tenant_access_token`).
-  - `read_users` — 查询消息已读信息。Identity: supports `user` and `bot`; the caller must still be in the chat. A user can query messages they sent within the last 7 days, while a bot can query only messages sent by that bot within the last 7 days.[Must-read](references/lark-im-message-read-status.md)
-  - `patch` — 更新已发送的消息卡片。Update an interactive message card sent by the app. Identity: supports `user` and `bot`; the message must have been sent within the last 14 days, and `content` must be a JSON-serialized string no larger than 30 KB.[Must-read](references/card/lark-im-card-create.md)
-  - `urgent_app` — 发送应用内加急。Identity: `bot` only (`tenant_access_token`); the bot must be the message sender and must be in the conversation that contains the message.
-  - `urgent_phone` — 发送电话加急。Identity: `bot` only (`tenant_access_token`); the bot must be the message sender and must be in the conversation that contains the message.
-  - `urgent_sms` — 发送短信加急。Identity: `bot` only (`tenant_access_token`); the bot must be the message sender and must be in the conversation that contains the message.
-
-### reactions
-
-  - `batch_query` — 批量获取消息表情。Identity: supports `user` and `bot`.[Must-read](references/lark-im-reactions.md)
-  - `create` — 添加消息表情回复。Identity: supports `user` and `bot`; the caller must be in the conversation that contains the message.[Must-read](references/lark-im-reactions.md)
-  - `delete` — 删除消息表情回复。Identity: supports `user` and `bot`; the caller must be in the conversation that contains the message, and can only delete reactions added by itself.[Must-read](references/lark-im-reactions.md)
-  - `list` — 获取消息表情回复。Identity: supports `user` and `bot`; the caller must be in the conversation that contains the message.[Must-read](references/lark-im-reactions.md)
-
-### threads
-
-  - `forward` — 转发话题。Identity: supports `user` and `bot`.
-
-### images
-
-  - `create` — 上传图片。Identity: supports `user` and `bot`; user identity requires `im:resource` scope on the UAT.
-
-### files
-
-  - `create` — 上传文件。Identity: supports `user` and `bot`; user identity requires `im:resource` scope on the UAT.
-
-### pins
-
-  - `create` — Pin 消息。Identity: supports `user` and `bot`.
-  - `delete` — 移除 Pin 消息。Identity: supports `user` and `bot`.
-  - `list` — 获取群内 Pin 消息。Identity: supports `user` and `bot`.
-
-### feed.groups
-
-  - `batch_add_item` — Batch add feed cards to a feed group. Identity: `user` only (`user_access_token`).[Must-read](references/lark-im-feed-groups.md)
-  - `batch_query` — Batch query feed groups. Identity: `user` only (`user_access_token`).[Must-read](references/lark-im-feed-groups.md)
-  - `batch_remove_item` — Batch remove feed cards from a feed group. Identity: `user` only (`user_access_token`).[Must-read](references/lark-im-feed-groups.md)
-  - `create` — Create a feed group. Identity: `user` only (`user_access_token`).[Must-read](references/lark-im-feed-groups.md)
-  - `delete` — Delete a feed group. Identity: `user` only (`user_access_token`).[Must-read](references/lark-im-feed-groups.md)
-  - `update` — Update a feed group. Identity: `user` only (`user_access_token`).[Must-read](references/lark-im-feed-groups.md)
-
-## 权限表
-
-| 方法 | 所需 scope |
-|------|-----------|
-| `chats.create` | `im:chat:create` |
-| `chats.get` | `im:chat:read` |
-| `chats.link` | `im:chat:read` |
-| `chats.update` | `im:chat:update` |
-| `chat.members.create` | `im:chat.members:write_only` |
-| `chat.members.delete` | `im:chat.members:write_only` |
-| `chat.members.get` | `im:chat.members:read` |
-| `+chat-members-list` | `im:chat.members:read` |
-| `chat.user_setting.batch_query` | `im:chat.user_setting:read` |
-| `chat.user_setting.batch_update` | `im:chat.user_setting:write` |
-| `chat.managers.add_managers` | `im:chat.managers:write_only` |
-| `chat.managers.delete_managers` | `im:chat.managers:write_only` |
-| `chat.moderation.get` | `im:chat.moderation:read` |
-| `chat.moderation.update` | `im:chat:moderation:write_only` |
-| `chat.join_requests.list` | `im:chat.membership_application:read` |
-| `chat.join_requests.handle` | `im:chat.membership_application:write` |
-| `+messages-read-status` | user: `im:message:readonly` (recommended), `im:message`, or `im:message:get_as_user` |
-| `+message-read-users` | user: `im:message:readonly` (recommended), `im:message`, `im:message:basic`, or `im:message:get_as_user`; bot: `im:message:readonly` |
-| `messages.read_status` | `im:message:readonly` (recommended), `im:message`, or `im:message:get_as_user` |
-| `messages.delete` | `im:message:recall` |
-| `messages.forward` | `im:message` |
-| `messages.merge_forward` | `im:message` |
-| `messages.read_users` | user: `im:message:readonly` (recommended), `im:message`, `im:message:basic`, or `im:message:get_as_user`; bot: `im:message:readonly` |
-| `messages.patch` | `im:message:update` |
-| `messages.urgent_app` | `im:message.urgent` |
-| `messages.urgent_phone` | `im:message.urgent:phone` |
-| `messages.urgent_sms` | `im:message.urgent:sms` |
-| `reactions.batch_query` | `im:message.reactions:read` |
-| `reactions.create` | `im:message.reactions:write_only` |
-| `reactions.delete` | `im:message.reactions:write_only` |
-| `reactions.list` | `im:message.reactions:read` |
-| `threads.forward` | `im:message` |
-| `images.create` | `im:resource` |
-| `files.create` | `im:resource` |
-| `pins.create` | `im:message.pins:write_only` |
-| `pins.delete` | `im:message.pins:write_only` |
-| `pins.list` | `im:message.pins:read` |
-| `feed.groups.batch_add_item` | `im:feed_group_v1:write` |
-| `feed.groups.batch_query` | `im:feed_group_v1:read` |
-| `feed.groups.batch_remove_item` | `im:feed_group_v1:write` |
-| `feed.groups.create` | `im:feed_group_v1:write` |
-| `feed.groups.delete` | `im:feed_group_v1:write` |
-| `feed.groups.update` | `im:feed_group_v1:write` |
+| 原生资源/方法 | 限制 |
+|---|---|
+| `chats.create` | bot-only；创建群优先上面的 user/bot shortcut |
+| `chats.get/link/update` | 操作者须在群中；内部群须同租户；限制分享时 link 须 owner/admin；update 支持 user/bot |
+| `chat.members.create/delete` | create 须在群中，bot 邀请对象须在应用可见范围，内部群须同租户；仅管理者可邀时须 owner/admin 或持 `im:chat:operate_as_owner` 的建群 bot。delete 须 owner/admin/建群 bot，每次最多 50 用户或 5 bot |
+| `chat.user_setting.batch_query/batch_update` | user-only、须为各目标群成员，每次最多 10 群 |
+| `chat.nickname.get/update/delete` | user-only，只操作自己；update 非空且最多 300 字节，清空用 delete |
+| `chat.join_requests.list/handle` | user-only、owner/admin；list page_size 1–100，**按 has_more 停止，末页仍可能有 page_token**；handle 每次 1–50，逐项检查 results（success/failed/already_handled） |
+| `chat.managers.add_managers/delete_managers` | 仅 owner；管理员上限 10（超大群 20）；每次最多 5 bot，删除用户每次最多 50 |
+| `chat.moderation.get/update` | 操作者须在群；get 须同租户，update 须 owner 或持 `im:chat:operate_as_owner` 的建群 bot |
+| `messages.delete` | bot 撤群消息须在群，撤他人消息须 owner/admin/建群 bot；user P2P 撤回对象须在应用可见范围 |
+| `messages.read_status/read_users` | 必须先读上面的已读参考；read_status user-only 最多 50；read_users 须仍在群，只查该身份自己发出的近 7 天消息 |
+| `messages.patch` | 先读卡片工作流；仅应用近 14 天发出的卡片，content 为 JSON 字符串且最多 30 KB |
+| `messages.merge_forward/urgent_app/urgent_phone/urgent_sms` | bot-only；加急须 bot 为发送者且在会话中 |
+| `messages.forward` / `threads.forward` / `pins.create/delete/list` | user/bot；转发和置顶遵守用户目标与授权 |
+| `images.create/files.create` | user/bot；user 上传须 `im:resource` |
+| `reactions.*` | user/bot、须在消息会话；按上面参考执行 |
+| `feed.groups.*` | user-only；读上面参考，结构化 params/data；三个读取 shortcut 不另拼 raw 方法 |

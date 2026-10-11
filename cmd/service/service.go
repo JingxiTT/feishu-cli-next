@@ -209,12 +209,8 @@ type methodCommandSpec struct {
 // methodPaginates reports whether a method takes a page_token param, the signal
 // that makes the --page-all/--page-limit/--page-delay flags meaningful.
 func methodPaginates(m meta.Method) bool {
-	for _, f := range m.Params() {
-		if f.Name == "page_token" {
-			return true
-		}
-	}
-	return false
+	f, ok := m.Parameters["page_token"]
+	return ok && (f.Location == "path" || f.Location == "query")
 }
 
 func newMethodCommandSpec(ref apicatalog.MethodRef) methodCommandSpec {
@@ -230,7 +226,7 @@ func newMethodCommandSpec(ref apicatalog.MethodRef) methodCommandSpec {
 		params:       m.Params(),
 		fileFields:   detectFileFields(m),
 		acceptsBody:  methodTakesBody(m.HTTPMethod),
-		declaresBody: len(m.Data()) > 0 || len(m.Files()) > 0,
+		declaresBody: len(m.RequestBody) > 0,
 		paginates:    methodPaginates(m),
 	}
 }

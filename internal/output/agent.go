@@ -12,6 +12,7 @@ import (
 
 	"github.com/larksuite/cli/errs"
 	"github.com/larksuite/cli/extension/fileio"
+	"github.com/tidwall/gjson"
 )
 
 // AgentOptions is invocation-scoped. The command validates options before it
@@ -159,13 +160,13 @@ func renderAgentJSON(w io.Writer, data interface{}, opts *AgentOptions, escapeHT
 }
 
 func projectResult(raw json.RawMessage, fields fieldSelection) (json.RawMessage, error) {
+	// Scan the complete result once so an unselected failure preserves every field.
+	if unsafeProjection(raw) {
+		return raw, nil
+	}
 	var object map[string]json.RawMessage
 	if json.Unmarshal(raw, &object) == nil && object != nil {
 		if _, envelope := object["ok"]; envelope {
-			// A failed or unknown result must never be reduced by a success projection.
-			if unsafeProjection(raw) {
-				return raw, nil
-			}
 			if data, found := object["data"]; found {
 				projected, err := projectValue(data, fields)
 				if err != nil {
@@ -180,9 +181,6 @@ func projectResult(raw json.RawMessage, fields fieldSelection) (json.RawMessage,
 }
 
 func projectValue(raw json.RawMessage, fields fieldSelection) (json.RawMessage, error) {
-	if unsafeProjection(raw) {
-		return raw, nil
-	}
 	var array []json.RawMessage
 	if json.Unmarshal(raw, &array) == nil && array != nil {
 		for i, item := range array {
@@ -380,19 +378,19 @@ func (o *AgentOptions) mutation() *mutationResult {
 }
 
 func (o *AgentOptions) annotateMutation(raw json.RawMessage) (json.RawMessage, error) {
-	if !bytes.HasPrefix(bytes.TrimSpace(raw), []byte("{")) {
-		return raw, nil // Only object envelopes can carry mutation metadata.
-	}
-	var envelope map[string]json.RawMessage
-	if err := json.Unmarshal(raw, &envelope); err != nil {
-		return nil, &outputMarshalError{err: err}
-	}
-	if _, exists := envelope["ok"]; !exists {
+	if o == nil || o.ResolveMutation == nil {
 		return raw, nil
+	}
+	if !bytes.HasPrefix(bytes.TrimSpace(raw), []byte("{")) || !gjson.GetBytes(raw, "ok").Exists() {
+		return raw, nil // Only object envelopes can carry mutation metadata.
 	}
 	mutation := o.mutation()
 	if mutation == nil {
 		return raw, nil
+	}
+	var envelope map[string]json.RawMessage
+	if err := json.Unmarshal(raw, &envelope); err != nil {
+		return nil, &outputMarshalError{err: err}
 	}
 	encoded, err := json.Marshal(mutation)
 	if err != nil {
