@@ -27,8 +27,15 @@ func TestWikiAsyncTransfersAndDeletesKeepTaskEvidence(t *testing.T) {
 		{"delete space", "DELETE", "/open-apis/wiki/v2/spaces/123", "delete_space", "delete_space_result", []string{"+delete-space", "--space-id", "123", "--yes"}, map[string]any{"status": "success"}},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
-			var writes, polls atomic.Int32
+			var writes, polls, lookups atomic.Int32
 			f := nextfixture.NewFixture(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				if tc.taskType == "delete_node" && r.URL.Path == "/open-apis/wiki/v2/spaces/node_by_token" {
+					lookups.Add(1)
+					require.Equal(t, "GET", r.Method)
+					require.Equal(t, nodeToken, r.URL.Query().Get("token"))
+					reply(w, map[string]any{"node": node()})
+					return
+				}
 				if r.Method == tc.method && r.URL.Path == tc.path {
 					writes.Add(1)
 					if tc.taskType == "move_wiki_to_docs" {
@@ -53,6 +60,11 @@ func TestWikiAsyncTransfersAndDeletesKeepTaskEvidence(t *testing.T) {
 			require.True(t, gjson.Get(r.Stdout, "data.ready").Bool(), "%+v", r)
 			require.Equal(t, "taskSynthetic", gjson.Get(r.Stdout, "data.task_id").String())
 			require.Contains(t, r.Stderr, "unknown")
+			wantLookups := int32(0)
+			if tc.taskType == "delete_node" {
+				wantLookups = 1
+			}
+			require.Equal(t, wantLookups, lookups.Load())
 			require.Equal(t, int32(1), writes.Load())
 			require.Equal(t, int32(1), polls.Load())
 			result := f.Run("api", "get", "/open-apis/wiki/v2/tasks/taskSynthetic", "--params", `{"task_type":"`+tc.taskType+`"}`, "--as", "user")

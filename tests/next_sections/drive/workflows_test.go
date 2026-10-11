@@ -72,6 +72,11 @@ func TestUploadDownloadAndVersionBytes(t *testing.T) {
 			reply(w, map[string]any{"file_token": "file1", "file_version": "7"})
 		case "/open-apis/drive/v1/lark_cli_file_event/report":
 			reply(w, map[string]any{})
+		case "/open-apis/drive/v2/files/query_by_token":
+			if r.Method != "GET" || r.URL.RawQuery != "token=file1" {
+				t.Errorf("wrong lookup %s %s", r.Method, r.URL)
+			}
+			reply(w, map[string]any{"obj_token": "file1", "obj_type": "file"})
 		case "/open-apis/drive/v1/metas/batch_query":
 			reply(w, map[string]any{"metas": []any{map[string]any{"doc_token": "file1", "doc_type": "file", "title": "原文.bin", "url": "https://example.feishu.cn/file/file1"}}})
 		case "/open-apis/drive/v1/permissions/file1/members/auth":

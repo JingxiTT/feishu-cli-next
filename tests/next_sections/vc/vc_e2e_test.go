@@ -43,7 +43,7 @@ func resultData(t *testing.T, result nextfixture.Result) map[string]any {
 	return out.Data
 }
 func TestFrozenVCDiscovery(t *testing.T) {
-	file, err := os.Open("../../../docs/reference/registrations.json.gz")
+	file, err := os.Open("../../../docs/reference/v1.0.97/registrations.json.gz")
 	if err != nil {
 		t.Fatal(err)
 	}

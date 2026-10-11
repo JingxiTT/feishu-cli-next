@@ -37,7 +37,7 @@ type inventory struct {
 
 func frozen(t *testing.T) inventory {
 	t.Helper()
-	file, err := os.Open("../../../docs/reference/registrations.json.gz")
+	file, err := os.Open("../../../docs/reference/v1.0.97/registrations.json.gz")
 	require.NoError(t, err)
 	defer file.Close()
 	reader, err := gzip.NewReader(file)

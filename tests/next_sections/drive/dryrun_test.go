@@ -61,7 +61,7 @@ func TestEveryDriveShortcutDryRun(t *testing.T) {
 		{"+secure-label-list", "--page-size 2 --page-token next --lang en", "label"},
 		{"+secure-label-update", "--token source --type docx --label-id 7", "label"},
 		{"+search", "--query 测试 --doc-types docx,sheet --page-size 2 --page-token next --only-title", "doc_wiki/search"},
-		{"+inspect", "--url https://example.feishu.cn/wiki/wiki1", "get_node"},
+		{"+inspect", "--url https://example.feishu.cn/wiki/wiki1", "node_by_token"},
 	}
 	if len(rows) != 41 {
 		t.Fatal("frozen Drive shortcut mapping must cover all 41 commands")
