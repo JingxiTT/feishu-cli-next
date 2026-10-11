@@ -5,7 +5,7 @@ remains open for authorized live verification and comparative agent evaluation.
 
 Reference: unchanged sibling `feishu-cli-review` at
 `7fd6ef3c07182257ce776cdc5a614e122d5bd4b3`; the task shortcut tree and frozen
-`docs/reference/registrations.json.gz` / `meta_data.json.gz` were inspected before
+`baseline/registrations.json.gz` / `meta_data.json.gz` were inspected before
 changes. There are 17 shortcuts and 34 generated v2 methods. All retain their
 original command paths, flags, identities, scopes, and rich payload escape hatches.
 No endpoint is replaced with an unreviewed raw forwarding command.

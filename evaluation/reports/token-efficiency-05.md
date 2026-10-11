@@ -32,7 +32,7 @@ references remain unchanged; this corrects selection, not the baseline CLI.
 Other original domain selections are unchanged. Record this correction in the
 environment and report instead of carrying forward the earlier routing error.
 
-The [private revision probe](evidence/docs-workspace-native-cas-20260909.json)
+The [private revision probe](../../evidence/evaluation/docs-workspace-native-cas-20260909.json)
 established that native block reads can return historical state and native block
 PATCH accepts a stale revision. The new paired fixtures must not fabricate a
 conflict for these requests. Well-formed historical native block operations
@@ -101,7 +101,7 @@ missing values with zero or treat failed baseline workflows as completed tasks. 
 cost per attempt separately when accounting is complete, together with success
 counts; that secondary measure cannot satisfy the primary acceptance gate.
 
-The previous [condition-04 result](evidence/token-efficiency-04/REPORT.md) gives
+The previous [condition-04 result](../../evidence/evaluation/token-efficiency-04/REPORT.md) gives
 exploratory original/full savings of 38.4% for discovery, 33.8% for Contact,
 47.6% for Base and 55.9% for Drive. Docs read used 5.8% more. Original Docs-edit
 usage was incomplete, and original Markdown/Sheets had no verified successes.

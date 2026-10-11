@@ -121,7 +121,7 @@ def reported_cli_error(output, choices, exit_code):
 @functools.lru_cache(maxsize=1)
 def trace_vocabulary():
     """Only published command/flag names may appear in retained trace evidence."""
-    snapshot = Path(__file__).resolve().parents[1] / "docs/reference/registrations.json.gz"
+    snapshot = Path(__file__).resolve().parents[1] / "baseline/registrations.json.gz"
     with gzip.open(snapshot, "rt", encoding="utf-8") as stream:
         registrations = json.load(stream)
     paths = {("discover",), ("guide",), ("im", "+fixture-host"), ("sheets", "+data-export"),

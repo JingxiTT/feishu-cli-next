@@ -4,7 +4,7 @@ Status: offline section boundary passed; live backend verification and coordinat
 
 ## Ownership and frozen mapping
 
-Reference: sibling `../feishu-cli-review` at `7fd6ef3c07182257ce776cdc5a614e122d5bd4b3`; catalog and registrations are the captured `docs/reference/meta_data.json.gz` and `registrations.json.gz`. All 14 shortcut implementations and all 18 generic v4 methods are retained. Existing implementations supply workflow behavior; no replacement forwarding layer was added. Parent command groups remain reachable. No frozen Calendar event projection exists; event mechanics stay with the events owner.
+Reference: sibling `../feishu-cli-review` at `7fd6ef3c07182257ce776cdc5a614e122d5bd4b3`; catalog and registrations are the captured `baseline/meta_data.json.gz` and `registrations.json.gz`. All 14 shortcut implementations and all 18 generic v4 methods are retained. Existing implementations supply workflow behavior; no replacement forwarding layer was added. Parent command groups remain reachable. No frozen Calendar event projection exists; event mechanics stay with the events owner.
 
 Owner: `shortcuts/calendar/`, Calendar affordance when present, `tests/cli_e2e/calendar/`, `tests/next_sections/calendar/`, and this report. Dependencies: shared runtime, identity resolution, file input, generic catalog/schema, result output/artifacts/receipts; rich-description images use Drive upload. The coordinator owns these shared surfaces.
 

@@ -7,7 +7,7 @@ scope adjustment below. Imported source is implementation reuse, not evidence of
 live parity. Scoped foundation measurements are available; no full-product
 efficiency or release claim is established.
 
-The [2026-10-07 exhaustive local comparison](../evaluation/evidence/cli-surface-20261007/REPORT.md)
+The [2026-10-07 exhaustive local comparison](../evidence/evaluation/cli-surface-20261007/REPORT.md)
 covers all 938 original command nodes (535 shortcuts), 251 methods, 25 event
 keys, inherited aliases and 493 embedded guidance files. All 251 request schemas
 are smaller (61.9% summed output-context savings), with request/permission/risk
@@ -26,14 +26,14 @@ longer a blocker for this requested continuation. Windows artifacts and coverage
 records remain available; deferred checks are not reported as passes. Private
 creation visibility and recipient boundaries from PLAN still apply.
 
-The [2026-09-08 native-fidelity audit](../evaluation/evidence/native-fidelity-validity-audit-20260908.md)
+The [2026-09-08 native-fidelity audit](../evidence/evaluation/native-fidelity-validity-audit-20260908.md)
 qualifies the historical comparisons below: Docs plain replacement, Sheets native
 renderings and Base create-time empty-text behavior differ from the development
 fixtures. Preserve all costs and synthetic verdicts, but withhold affected live
 same-fidelity efficiency conclusions. Small Base update fidelity remains
 unvalidated; native create behavior alone does not establish update behavior.
 Sheets/Base correctness changes and the Docs help tip were not covered by those
-historical batches. The subsequent [Luna/medium paired pilot](../evaluation/evidence/paired-luna-medium-01/REPORT.md)
+historical batches. The subsequent [Luna/medium paired pilot](../evidence/evaluation/paired-luna-medium-01/REPORT.md)
 ran 72 model trials against corrected synthetic fixtures: 54 verified successes,
 seven inconclusive outcomes and 11 failed verifications, with complete token
 accounting. Its per-function results do not close outstanding live or release
@@ -47,43 +47,43 @@ Read-only `--scope keyword`, `outline`, `section` and `range` select locally fro
 
 The edit planner now accepts changes in multiple native text runs when unchanged Markdown formatting has a unique alignment. Ambiguous adjacent unmarked runs, formatting changes and bounded-alignment overflows still fail before writes. Existing styles, links, IDs and untouched elements remain exact; all intended changes are planned before native updates, and complete readback verifies results. No-op edits make no content write. Every original command remains available for rich structures and other workflows; this is not a general Markdown round trip.
 
-The [fresh final-candidate native lifecycle](../evaluation/evidence/docs-improvements-native-live-final-20260909.json), recorded in `07b3739`, passed **9/9 checks** on `cad221e`: complete rich/focused read coverage, saved-v1 no-op compatibility, dry-run and unsupported-format safeguards, and three text-run edits across two blocks with exact independent original-CLI comparison. The fixture exercised two styled runs in one paragraph (bold/link and italic), retained all other native fields and content, and confirmed deletion of its one run-owned private document. This is bounded native correctness evidence, not model success or token-efficiency measurement; the native quote was a type-34 container with readable child text, not a type-15 quote test. The completed condition-09 model comparison is separate evidence below.
+The [fresh final-candidate native lifecycle](../evidence/evaluation/docs-improvements-native-live-final-20260909.json), recorded in `07b3739`, passed **9/9 checks** on `cad221e`: complete rich/focused read coverage, saved-v1 no-op compatibility, dry-run and unsupported-format safeguards, and three text-run edits across two blocks with exact independent original-CLI comparison. The fixture exercised two styled runs in one paragraph (bold/link and italic), retained all other native fields and content, and confirmed deletion of its one run-owned private document. This is bounded native correctness evidence, not model success or token-efficiency measurement; the native quote was a type-34 container with readable child text, not a type-15 quote test. The completed condition-09 model comparison is separate evidence below.
 
-The earlier [private native lifecycle](../evaluation/evidence/docs-workspace-native-live-20260909.json) at `d667afb` passed two targeted edits with bold/link/Unicode text and an untouched table, independently reread through the original CLI. No-clobber, no-op, dry-run, unsupported edits and known-stale-state controls passed; all three documents created across attempts were independently confirmed deleted. The earlier failed readback and interrupted fixture initialization remain recorded. Native revision parameters do not provide compare-and-swap: snapshot checks and readback detect observed conflicts but cannot prevent every concurrent writer race. Up to three complete read attempts reconcile observed revision drift; mutations are never replayed.
+The earlier [private native lifecycle](../evidence/evaluation/docs-workspace-native-live-20260909.json) at `d667afb` passed two targeted edits with bold/link/Unicode text and an untouched table, independently reread through the original CLI. No-clobber, no-op, dry-run, unsupported edits and known-stale-state controls passed; all three documents created across attempts were independently confirmed deleted. The earlier failed readback and interrupted fixture initialization remain recorded. Native revision parameters do not provide compare-and-swap: snapshot checks and readback detect observed conflicts but cannot prevent every concurrent writer race. Up to three complete read attempts reconcile observed revision drift; mutations are never replayed.
 
 ### Condition 09: harder Docs tasks
 
-The [condition-09 report](../evaluation/evidence/token-efficiency-09/REPORT.md) completed **18 fresh attempts**, with **Next 9/9 verified and original 8/9 verified plus one inconclusive**. Candidate `cad221e` and evaluator `b28354f` compare three harder Docs tasks, three repetitions per arm, using GPT-5.6 Luna at medium reasoning through native Codex CLI 0.153.4. Both arms read full selected guidance from files within the measured loop. No historical trials enter these scores.
+The [condition-09 report](../evidence/evaluation/token-efficiency-09/REPORT.md) completed **18 fresh attempts**, with **Next 9/9 verified and original 8/9 verified plus one inconclusive**. Candidate `cad221e` and evaluator `b28354f` compare three harder Docs tasks, three repetitions per arm, using GPT-5.6 Luna at medium reasoning through native Codex CLI 0.153.4. Both arms read full selected guidance from files within the measured loop. No historical trials enter these scores.
 
 Table/list reading saved **38.2%** and focused retrieval from a larger document saved **31.1%**, with **3/3 verified in both arms for each task**. Both miss the strict >50% gate. The multiple styled-edit comparison is **unavailable**: Next verified **3/3**, while original verified **2/3** with one strategy outside fixture coverage. No gate is satisfied by unavailable data: **zero met, two missed and one unavailable**. These observed counts do not establish a population success-rate increase or parity.
 
-Complete usage totals **901,686 tokens**, including **185,209** for the inconclusive attempt; all failure and recovery costs remain. The fixture's unsupported strategy is not proof of an original-product failure. Only these three Docs tasks were measured. They use different documents and goals from condition 08, so the historical combined **56.8%** saving is not an improvement percentage for the new candidate. Three repetitions, one larger document size and synthetic contracts do not establish stable savings, scaling behavior or full live functionality. [Protocol](../evaluation/token-efficiency-09.md) · [Exact summary](../evaluation/evidence/token-efficiency-09/summary.json).
+Complete usage totals **901,686 tokens**, including **185,209** for the inconclusive attempt; all failure and recovery costs remain. The fixture's unsupported strategy is not proof of an original-product failure. Only these three Docs tasks were measured. They use different documents and goals from condition 08, so the historical combined **56.8%** saving is not an improvement percentage for the new candidate. Three repetitions, one larger document size and synthetic contracts do not establish stable savings, scaling behavior or full live functionality. [Protocol](../evaluation/reports/token-efficiency-09.md) · [Exact summary](../evidence/evaluation/token-efficiency-09/summary.json).
 
 ### Historical condition 08
 
-The historical [condition-08 report](../evaluation/evidence/token-efficiency-08/REPORT.md) records **12/12 verified attempts: original/full 6/6 and Next 6/6**, using Luna at medium reasoning through native Codex CLI 0.153.4. Docs read saved **44.3%** with both arms **3/3 verified** and missed its strict >50% gate. Docs edit saved **61.1%**, also **3/3 in each arm**, and passed. The declared stop rule left **36 attempts across the other six functions not run**. Complete provider usage totals **677,392 tokens**. The strict per-function target remains unmet.
+The historical [condition-08 report](../evidence/evaluation/token-efficiency-08/REPORT.md) records **12/12 verified attempts: original/full 6/6 and Next 6/6**, using Luna at medium reasoning through native Codex CLI 0.153.4. Docs read saved **44.3%** with both arms **3/3 verified** and missed its strict >50% gate. Docs edit saved **61.1%**, also **3/3 in each arm**, and passed. The declared stop rule left **36 attempts across the other six functions not run**. Complete provider usage totals **677,392 tokens**. The strict per-function target remains unmet.
 
 For the **secondary combined Docs workload**, original used **472,979 tokens with 6/6 verified**, versus Next **204,413 with 6/6 verified**: **56.8% fewer tokens**. Three read and three edit attempts are summed per arm, so expensive edits contribute greater token weight. This workload result cannot substitute for the separate read gate or establish savings on other task mixes.
 
-Candidate `6366274` shortens the installed entry guide while retaining all original routes, native write/fidelity behavior and detailed guidance on demand. The evaluator delivers the selected skill by file path for both arms; complete skill reading remains in the measured loop. Runtime validation reuse is limited to unchanged Go/module/Makefile source; the candidate binary and embedded guide were newly checked. Guide length and delivery changed together, so historical differences are not a pure estimate of either factor. The [condition-08 protocol](../evaluation/token-efficiency-08.md), [environment](../evaluation/evidence/token-efficiency-08/environment.json) and [stage decision](../evaluation/evidence/token-efficiency-08/stage-decision.json) retain those boundaries.
+Candidate `6366274` shortens the installed entry guide while retaining all original routes, native write/fidelity behavior and detailed guidance on demand. The evaluator delivers the selected skill by file path for both arms; complete skill reading remains in the measured loop. Runtime validation reuse is limited to unchanged Go/module/Makefile source; the candidate binary and embedded guide were newly checked. Guide length and delivery changed together, so historical differences are not a pure estimate of either factor. The [condition-08 protocol](../evaluation/reports/token-efficiency-08.md), [environment](../evidence/evaluation/token-efficiency-08/environment.json) and [stage decision](../evidence/evaluation/token-efficiency-08/stage-decision.json) retain those boundaries.
 
-Historical [condition 07](../evaluation/evidence/token-efficiency-07/REPORT.md) verified 11/12, with 36.1% read savings (both 3/3) and 67.0% edit savings (Next 3/3, original 2/3); [condition 06](../evaluation/evidence/token-efficiency-06/REPORT.md) verified 12/12, with 1.0% more read tokens and 42.1% fewer edit tokens. Both stopped before other functions. The [05/06 skill-isolation qualification](../evaluation/evidence/token-efficiency-05-06-skill-isolation-qualification.md) records the later ambient-catalog finding without attributing historical read loops or token costs to it. All historical outcomes remain unchanged; bounded synthetic results do not establish full live parity or statistical success equivalence.
+Historical [condition 07](../evidence/evaluation/token-efficiency-07/REPORT.md) verified 11/12, with 36.1% read savings (both 3/3) and 67.0% edit savings (Next 3/3, original 2/3); [condition 06](../evidence/evaluation/token-efficiency-06/REPORT.md) verified 12/12, with 1.0% more read tokens and 42.1% fewer edit tokens. Both stopped before other functions. The [05/06 skill-isolation qualification](../evidence/evaluation/token-efficiency-05-06-skill-isolation-qualification.md) records the later ambient-catalog finding without attributing historical read loops or token costs to it. All historical outcomes remain unchanged; bounded synthetic results do not establish full live parity or statistical success equivalence.
 
 ### Historical condition 05
 
-The [condition-05 protocol](../evaluation/token-efficiency-05.md) established the target of **strictly more than 50% fewer all-attempt tokens per verified success for Docs read/edit and at least 30% fewer for each other evaluated function versus original/full**, with no observed success regression or fidelity loss. Its 48 fresh trials use eight development tasks, three repetitions and the original and Next arms. Native product QA and [readiness checks](../evaluation/evidence/token-efficiency-05/readiness-review.json) passed before execution. The [completed report](../evaluation/evidence/token-efficiency-05/REPORT.md) records 40/48 verified outcomes (Next 22/24, original 18/24) and **3/8 gates met, 3 missed and 2 unavailable**. Docs read saved only 6.4% with both arms 3/3 verified. Docs edit used 172.0% more tokens per verified success and regressed to 2/3 from original 3/3. Contact, Markdown creation and Base met their gates; Discovery missed. Sheets has no verified original successes; Drive has four incomplete usage records and no original successes. Observed spend of 3,602,432 tokens is a lower bound. The target is not achieved. This fresh comparator does not revise condition 04's historical unchanged-Next results.
+The [condition-05 protocol](../evaluation/reports/token-efficiency-05.md) established the target of **strictly more than 50% fewer all-attempt tokens per verified success for Docs read/edit and at least 30% fewer for each other evaluated function versus original/full**, with no observed success regression or fidelity loss. Its 48 fresh trials use eight development tasks, three repetitions and the original and Next arms. Native product QA and [readiness checks](../evidence/evaluation/token-efficiency-05/readiness-review.json) passed before execution. The [completed report](../evidence/evaluation/token-efficiency-05/REPORT.md) records 40/48 verified outcomes (Next 22/24, original 18/24) and **3/8 gates met, 3 missed and 2 unavailable**. Docs read saved only 6.4% with both arms 3/3 verified. Docs edit used 172.0% more tokens per verified success and regressed to 2/3 from original 3/3. Contact, Markdown creation and Base met their gates; Discovery missed. Sheets has no verified original successes; Drive has four incomplete usage records and no original successes. Observed spend of 3,602,432 tokens is a lower bound. The target is not achieved. This fresh comparator does not revise condition 04's historical unchanged-Next results.
 
 Candidate Docs-edit traces retain rejected `+push` calls followed by `+update` fallback. Missing local file contents and validation-error text prevent an exact-cause diagnosis; all fallback costs and the failed final verification remain counted. Private native correctness checks do not substitute for model task success or establish token savings.
 
 ### Historical condition 04
 
-The [condition-04 report](../evaluation/evidence/token-efficiency-04/REPORT.md) records an exploratory comparison of **24 new candidate trials and 48 reused condition-03 baseline trials**, not 72 new model calls. The candidate at `f2ab96b` retains every original command, API route and domain skill. Product changes add native flag descriptions to optional discovery detail (`c85e6a6`), preserve the exact trusted raw Contact basic-profile POST read without a mutation receipt (`5187bc7`), and provide direct task routes with native XML fidelity, existing-record Base updates, validated Sheets artifact completion and guarded Drive transfers. Small needed responses stay inline; larger or explicitly requested artifacts retain the existing output contract.
+The [condition-04 report](../evidence/evaluation/token-efficiency-04/REPORT.md) records an exploratory comparison of **24 new candidate trials and 48 reused condition-03 baseline trials**, not 72 new model calls. The candidate at `f2ab96b` retains every original command, API route and domain skill. Product changes add native flag descriptions to optional discovery detail (`c85e6a6`), preserve the exact trusted raw Contact basic-profile POST read without a mutation receipt (`5187bc7`), and provide direct task routes with native XML fidelity, existing-record Base updates, validated Sheets artifact completion and guarded Drive transfers. Small needed responses stay inline; larger or explicitly requested artifacts retain the existing output contract.
 
 The candidate verified **24/24 new attempts**, with complete accounting for **1,154,003 new provider tokens**. All eight functions reduced tokens per verified success against reused unchanged Next, and observed success counts matched or exceeded both baselines. The **50% target remains incomplete: 5/8 function gates met**. Discovery, Contact, Docs edit, Base and Sheets met the exploratory point-estimate gate; Docs read (39.5%), Markdown (43.1%) and Drive (40.0%) missed. These are sampled outcomes, not full-product parity evidence. Original Docs-edit usage remains incomplete, and original Markdown/Sheets token comparisons remain unavailable because those baselines have no verified successes.
 
 Condition 04's primary per-function target was at least 50% fewer all-attempt tokens per verified success than unchanged Next, with observed success nonregression against both reused baselines. Reuse, adaptive tuning, three repetitions and the unpinned model alias limit generalization. Full live parity, held-out evaluation and release acceptance remain open; no functions or verification requirements were removed to meet a token target.
 
-The [balanced condition 02](../evaluation/evidence/token-efficiency-02/REPORT.md) met 4/8 combined function gates but retained a Docs-edit success regression. The [balanced condition 03](../evaluation/evidence/token-efficiency-03/REPORT.md) met 2/8 and retained its failed Docs edit, incomplete original Docs-edit accounting, and documented rejection/recovery limitation. Both ran 72 fresh trials; their outcomes and costs remain separate from the [original paired pilot](../evaluation/evidence/paired-luna-medium-01/REPORT.md). Read the [condition-04 protocol](../evaluation/token-efficiency-04.md) for baseline provenance and exploratory limits.
+The [balanced condition 02](../evidence/evaluation/token-efficiency-02/REPORT.md) met 4/8 combined function gates but retained a Docs-edit success regression. The [balanced condition 03](../evidence/evaluation/token-efficiency-03/REPORT.md) met 2/8 and retained its failed Docs edit, incomplete original Docs-edit accounting, and documented rejection/recovery limitation. Both ran 72 fresh trials; their outcomes and costs remain separate from the [original paired pilot](../evidence/evaluation/paired-luna-medium-01/REPORT.md). Read the [condition-04 protocol](../evaluation/reports/token-efficiency-04.md) for baseline provenance and exploratory limits.
 
 ## Reference and baseline
 
@@ -116,7 +116,7 @@ remain explicitly tracked for semantic review and subsequent fix reconciliation.
 foundation unit/process suite, plugin and sidecar checks, static checks and
 quality gate pass, with explicit skips and revision boundaries. Read-only live
 checks verified the current user; the later private fixture evidence is recorded below.
-The [foundation model report](../evaluation/evidence/foundation/REPORT.md)
+The [foundation model report](../evidence/evaluation/foundation/REPORT.md)
 records 18/18 compatible trials, actual token usage, a task-level regression,
 earlier unknown-cost failures and trace limitations. Held-out trials have not run.
 
@@ -145,28 +145,28 @@ Drive import now reconciles a pending receipt only from an exact, successful
 native task response for the captured invocation (`032b922`, `68126ee`).
 Contradictory, redirected, non-200 or unpersisted completion evidence cannot
 authorize the dependent bot grant. The independent
-[Drive receipt review](reference/reviews/p3-drive-import-receipt-review.json)
+[Drive receipt review](../evidence/reference/reviews/p3-drive-import-receipt-review.json)
 closed all three findings. Full affected suites recorded 1,748 Drive and 1,903
 Sheets pass events; seven Sheets live blockers remain. The fresh combined gate
 at immutable `8d92e52` now covers these changes, with the results below.
 
-The [Contact comparison](../evaluation/evidence/contact/REPORT.md) records nine
+The [Contact comparison](../evidence/evaluation/contact/REPORT.md) records nine
 successful trials and complete usage accounting, but a regression: Next used
 66,811 tokens per success versus 59,485 for the official arm and 41,233 for its
 concise-guidance arm. The small sample and sanitized queries limit causal claims.
 Commit `ced4030` makes public flag descriptions searchable and clarifies literal
 keyword discovery; it has no measured improvement claim yet. The frozen
-[nine-section comparison](../evaluation/evidence/read-312af93/REPORT.md)
+[nine-section comparison](../evidence/evaluation/read-312af93/REPORT.md)
 completed 75/81 verified successes with 8,419,135 provider tokens, retaining all
 failed costs. Among its eight fully successful sections, Next used fewer tokens
 than the official arm in seven, but fewer than concise official guidance only in
 IM. A separately versioned
-[corrected Wiki comparison](../evaluation/evidence/wiki-native-74/REPORT.md)
+[corrected Wiki comparison](../evidence/evaluation/wiki-native-74/REPORT.md)
 passed 9/9 after a demonstrated fixture gap was fixed; historical failures and
 diagnostic costs remain separate. The guide clarification in `43bdff2` has no
 measured improvement claim. Remaining development comparisons and controlled
 100/1,000/10,000-row scaling experiments use separately frozen candidates.
-The [Calendar, Mail and OKR comparison](../evaluation/evidence/read-8d92e5/REPORT.md)
+The [Calendar, Mail and OKR comparison](../evidence/evaluation/read-8d92e5/REPORT.md)
 at `8d92e52` completed 27/27 successful trials and 3,647,948 provider tokens.
 Each task has three fresh trials per arm; Next used fewer tokens per success
 than both baselines on these workloads. Independent recount verifies the
@@ -175,8 +175,8 @@ This small development sample does not establish a full-product improvement.
 The following scenario queue stopped on a provider-rejected Base answer schema,
 before any Base CLI calls. Its nine starts retain unknown usage; the one completed
 Docs trial and its cost remain separately recorded in the
-[stopped-series report](../evaluation/evidence/scenarios-8d92e5/REPORT.md).
-The following [81-trial scenario series](../evaluation/evidence/scenarios-8d-schema02/REPORT.md)
+[stopped-series report](../evidence/evaluation/scenarios-8d92e5/REPORT.md).
+The following [81-trial scenario series](../evidence/evaluation/scenarios-8d-schema02/REPORT.md)
 at `8d92e52` records 63 verified outcomes and 18 inconclusive outcomes after
 explicit interpretation reviews; frozen raw verdicts remain intact. Known usage
 is a lower bound of 12,201,326 tokens, including 2,282,405 from non-verified
@@ -189,17 +189,17 @@ concise guidance on Markdown. Fixture corrections for Docs, Extensions and
 Packaging received separate balanced comparisons below. Events retains an explicit
 missing-exit-proof limitation. Data-size and generated-business comparisons
 remain outstanding; no full-product efficiency claim follows from these results.
-The [corrected Docs, Extensions and Packaging series](../evaluation/evidence/scenarios-8d-corrected03/REPORT.md)
+The [corrected Docs, Extensions and Packaging series](../evidence/evaluation/scenarios-8d-corrected03/REPORT.md)
 (`193c424`) verifies all 27 outcomes with complete usage totaling 3,702,291 tokens.
 Independent recount confirms the three trials per arm/task, all group totals,
 API sums, distributions and matched-success pairs. Next regresses against both
 baselines on Docs, improves against both on Extensions, and uses slightly more
 than official guidance but less than concise official guidance on Packaging.
-The [Docs trace review](../evaluation/evidence/scenarios-8d-corrected03/docs-trace.md)
+The [Docs trace review](../evidence/evaluation/scenarios-8d-corrected03/docs-trace.md)
 records additional discovery/processing with equal API counts against the concise
 baseline; it provides no per-command token attribution or causal guarantee.
 Earlier failed and inconclusive attempts remain separate, with their costs intact.
-The first [size-series condition](../evaluation/evidence/scaling-8d-schema02/REPORT.md)
+The first [size-series condition](../evidence/evaluation/scaling-8d-schema02/REPORT.md)
 stopped after seven Base attempts exposed missing valid metadata reads and an
 unstated optional-report convention. One recorded outcome is verified; all
 1,258,267 provider tokens, including 1,112,364 from non-verified attempts, remain
@@ -209,10 +209,10 @@ supports no size curve or success-rate claim. Twenty unstarted Base slots and
 found analogous Sheets preview-read gaps before its first trial. These defects
 require a separate corrected condition for new balanced comparisons.
 The corrected size/business fixtures are committed at `c61ad62`, with
-[independent Base/business review](reference/reviews/evaluation-fixture-v2-review.json)
-and saved controlled results: [Base 15/15](../evaluation/evidence/scaling-base-v2-controlled.json),
-[Sheets 19/19](../evaluation/evidence/scaling-sheets-v2-controlled.json), and
-[business 14/14](../evaluation/evidence/business-v2-controlled.json). These include
+[independent Base/business review](../evidence/reference/reviews/evaluation-fixture-v2-review.json)
+and saved controlled results: [Base 15/15](../evidence/evaluation/scaling-base-v2-controlled.json),
+[Sheets 19/19](../evidence/evaluation/scaling-sheets-v2-controlled.json), and
+[business 14/14](../evidence/evaluation/business-v2-controlled.json). These include
 actual clean-binary workflows; the reports retain their hash and synthetic-model
 limitations. Sheets' final enum distinction has a separate focused pass. The
 shared loader/diagnostic follow-up passes 10 tests with one explicit optional skip
@@ -220,7 +220,7 @@ on independent rerun; known failures cannot be promoted to inconclusive by a
 separate unsupported read. Committed control copies and reviewed hashes were
 checked. No Go runtime source or shipped guide changed. Earlier costs and outcomes
 remain separate from fresh comparisons under this new evaluator condition.
-The [interrupted archive probe](../evaluation/evidence/scaling-8d-fixture03/REPORT.md)
+The [interrupted archive probe](../evidence/evaluation/scaling-8d-fixture03/REPORT.md)
 (`8a566f7`) preserves two later nonverified starts: one has unknown usage and the
 other has 237,389 actual provider tokens. Independent recount confirms those
 numbers plus 27 recorded API calls and 28 commands for the accounted attempt.
@@ -231,7 +231,7 @@ slots never started. The minimal `4b3abc6` preflight checks that dependency befo
 provider startup, with 16 independently rerun controlled tests passing. New
 balanced trials use the complete pinned archive; these two interrupted
 attempts remain outside its comparison and cannot establish a size curve.
-The [completed fresh size series](../evaluation/evidence/scaling-8d-archive04/REPORT.md)
+The [completed fresh size series](../evidence/evaluation/scaling-8d-archive04/REPORT.md)
 under `4b3abc6` contains 54 attempts: Base 25/27 and Sheets 26/27 verified.
 Known provider cost is 9,780,669 tokens, including 499,819 from two nonverified
 Base attempts. One concise-official Sheets 1,000-row attempt timed out under the
@@ -243,7 +243,7 @@ overlapping labels. Next improves Base tokens at 10,000 rows but regresses at
 smaller sizes; Sheets token savings coexist with more Next API requests at 10,000
 rows under the historical synthetic condition. The native-fidelity amendment
 withholds live same-fidelity conclusions; no uniform scaling claim follows.
-The [representative business comparison](../evaluation/evidence/business-8d-archive03/REPORT.md)
+The [representative business comparison](../evidence/evaluation/business-8d-archive03/REPORT.md)
 completed 18/18 verified attempts with complete provider accounting: 2,741,785
 tokens under the same immutable evaluator. Independent recount verifies all
 12 groups and 12 matched-success pairs, distributions, cached-input accounting
@@ -252,42 +252,42 @@ the approval and Mindnote tasks. These sampled synthetic workflows do not close
 full generated-command or live acceptance. Runtime and guide remain frozen.
 Held-out trials have not run. A coordinator search exposed fragments of the Base
 and Sheets held-out prompts and one size field. The
-[exposure record](../evaluation/evidence/held-out-exposure.json) quarantines those
+[exposure record](../evidence/evaluation/held-out-exposure.json) quarantines those
 examples for independent replacement after product freeze; full coordinator
 blinding is not claimed.
 
-[Live Contact evidence](sections/contact-live-evidence.json) preserves the initial
+[Live Contact evidence](../evidence/sections/contact-live-evidence.json) preserves the initial
 missing-`search:bot` failure and the authorized 2026-09-08 resumption (`e07178d`).
 The narrow grant retained every previous scope and the exact account/tenant;
 the selected current-account read suite then passed, including bot search.
 Separate bot identity verification passed. Bot tenant verification remains
 blocked by the additional, unrequested `tenant:tenant:readonly` app scope.
 
-The [Drive privacy revalidation](sections/drive-privacy-prerequisites.json)
+The [Drive privacy revalidation](../evidence/sections/drive-privacy-prerequisites.json)
 records readable official guidance on folder inheritance and configurable
 new-document sharing defaults. It does not establish this account's effective
 defaults or the exact API creation rule. A private parent alone therefore does
 not close the precreation requirement; no authenticated calls or writes were made
 for this documentation check.
 
-The [2026-09-08 private fixture preflight](sections/private-live-preflight-20260908.json)
+The [2026-09-08 private fixture preflight](../evidence/sections/private-live-preflight-20260908.json)
 adds actual current-account evidence: the UI's new-document default was already
 invited-only, a personal test folder was created with no invited collaborators,
 and independent CLI checks matched its owner and sole collaborator to the verified
 current account with link sharing closed. No sharing setting was changed.
-The bounded [Drive lifecycle](sections/drive-private-live-evidence.json) passes
+The bounded [Drive lifecycle](../evidence/sections/drive-private-live-evidence.json) passes
 exact byte/hash preservation and independently confirmed deletion (`b5505a9`).
-The [Docs live evidence](sections/docs-private-live-evidence.json) retains a failed
+The [Docs live evidence](../evidence/sections/docs-private-live-evidence.json) retains a failed
 plain replacement that removed formatting and a passing explicit rich-XML
 lifecycle (`f917e22`), with both documents independently confirmed deleted.
 These are named private workflows, not full section live acceptance.
 
-The [Markdown private lifecycle](sections/markdown-private-live-evidence.json)
+The [Markdown private lifecycle](../evidence/sections/markdown-private-live-evidence.json)
 (`45e4698`) passed exact source-file byte preservation and native Markdown
 heading, bold/link, table, Unicode and code readback. Both run-owned resources
 were independently confirmed deleted. The initial file-path validation attempt
 created no resources and remains recorded separately.
-The [batch closure](sections/private-live-summary-20260908.json) records 13 created
+The [batch closure](../evidence/sections/private-live-summary-20260908.json) records 13 created
 children, all independently confirmed deleted, followed by a fresh complete empty
 parent listing and one parent delete. Its exact-folder listing returned native
 `1061007 / file has been delete.`; successful post-delete permission metadata was
@@ -299,14 +299,14 @@ Base empty text normalizing to null. The reviewed Base fix (`b746eff`) rejects
 explicit empty text during complete typed-import preflight before destination
 reads or writes; full Base offline suites pass (1,097 unit, 160 legacy and 178
 process events, one existing broad-live skip). The separate
-[supported Base live scenario](sections/base-private-supported-live-evidence.json)
+[supported Base live scenario](../evidence/sections/base-private-supported-live-evidence.json)
 verified native create/read, zero/null update/readback and unchanged no-op. Its
 negative import assertion failed on a test file-path problem, so the selected
 suite remains failed and the live negative check remains unverified. The harness
 path and diagnostic capture are corrected; cleanup independently confirmed the
 Base deleted. The offline regression proves empty-text rejection before any write.
 
-The [Sheets fix and final private lifecycle](sections/sheets-private-live-evidence.json)
+The [Sheets fix and final private lifecycle](../evidence/sections/sheets-private-live-evidence.json)
 (`02b6c5f`, evidence `17b275e`) preserve raw scalar types and explicit formulas
 using paired native renderings with matching revisions. Its complete affected
 unit suite, 68 inherited checks, 300 process checks and 23 cross-section checks
@@ -314,11 +314,11 @@ pass; six broader live lifecycles remain unverified. A fresh live workbook passe
 all six typed/formula assertions and exact-ID deletion. The coordinator rechecked
 eight evidence hashes and the native artifact independently. Earlier raw-only
 artifacts may lack formula identity and must be re-exported before reuse.
-The [independent fix review](reference/reviews/p3-native-fidelity-review.json)
+The [independent fix review](../evidence/reference/reviews/p3-native-fidelity-review.json)
 approves both changes at exact source hashes. Failed attempts remain retained;
 no replacement model comparisons have run.
 
-The [post-change checks](sections/private-live-final-gates-20260908.json) record
+The [post-change checks](../evidence/sections/private-live-final-gates-20260908.json) record
 129 passing packages in the broad race run and four path-related failing packages.
 All four pass their separate race rerun under a short isolated `/tmp` directory
 (1,551 test events). The root package passes after updating its existing embedded
@@ -335,22 +335,22 @@ exposed cross-batch duplicate IDs being accepted by the importer; `f080e43` and
 evidence. This is separate from Base's earlier import-only test and does not
 establish live conversion behavior.
 
-The [complete isolated race gate](sections/p3-unit-evidence.json) at `8d92e52`
+The [complete isolated race gate](../evidence/sections/p3-unit-evidence.json) at `8d92e52`
 passes 18,656 tests with no failures or races and 12 explained skips, including
 the root package. Earlier failed checkpoints remain in the report. The
-[static gate](sections/p3-static-evidence.json) passed nine checks and initially
+[static gate](../evidence/sections/p3-static-evidence.json) passed nine checks and initially
 failed pinned Go lint on four intentionally suppressed proof-assembly errors.
 The comment-only clarification in `8ce0688` has focused regression coverage,
 independent review and a passing full pinned-lint follow-up. The original failed
 run remains visible; no runtime statements changed.
 
-The [complete offline E2E checkpoint](sections/p3-e2e-evidence.json) at `8d92e52`
+The [complete offline E2E checkpoint](../evidence/sections/p3-e2e-evidence.json) at `8d92e52`
 passes 3,525 test events with zero failures and 55 explicit skips. All 23 section
 suites, the 18-event transfer suite, scripts and controlled evaluator ran.
 Optional native evaluator checks have their own separately recorded execution;
 the default harness skips are not counted as passes.
 
-The [actual Linux runtime checkpoint](sections/linux-runtime-evidence.json) at
+The [actual Linux runtime checkpoint](../evidence/sections/linux-runtime-evidence.json) at
 `8ce0688` records 18,641 race-test passes and 14 skips, plus 3,544 offline
 E2E/harness pass events and 57 skips across all 23 section suites and supporting
 checks. The script gate also passes, including 166 Node tests. These runs used
@@ -364,7 +364,7 @@ Linux CLI follow-up with all 5,742 approved differences and no new exceptions.
 Four closure-artifact hashes and unchanged product source/binary were independently
 verified. The original failed report and separate semantic-review requirement remain.
 
-[Packaging evidence](sections/packaging-evidence.json) covers all 14 cross-built
+[Packaging evidence](../evidence/sections/packaging-evidence.json) covers all 14 cross-built
 platform/variant archives, local installation/update/removal, and actual Node 16
 runtime tests. The final `8ce0688` refresh also verifies both darwin/amd64 variants
 under existing Rosetta, including startup and project guide installation. That
@@ -392,10 +392,10 @@ Version validation and a public source repository do not close these gates.
 
 P2 domain acceptance, remaining private live scenarios,
 remaining OS-specific and remote lifecycle checks, full release checks and held-out
-evaluation remain open. The [source review aggregate](reference/p3-effective-review-current.json)
+evaluation remain open. The [source review aggregate](../evidence/reference/p3-effective-review-current.json)
 records exact-hash offline approvals for all runtime/build paths; it grants no
 live or release acceptance. Its `cb3a750` checkpoint includes the platform guard
-correction; the [earlier aggregate](reference/p3-effective-review-final.json)
+correction; the [earlier aggregate](../evidence/reference/p3-effective-review-final.json)
 retains the `8ce0688` boundary. The concrete cross-section workflow audit and 18-event
 transfer/binding follow-up close the previously identified offline composition
 gap; they do not establish live guarantees. Completed offline transfer and local

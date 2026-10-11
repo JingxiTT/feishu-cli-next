@@ -103,7 +103,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--probes", type=Path, required=True)
     parser.add_argument("--matrix", type=Path, required=True)
-    parser.add_argument("--reference-dir", type=Path, default=ROOT / "docs/reference")
+    parser.add_argument("--reference-dir", type=Path, default=ROOT / "baseline")
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     probes = read(args.probes)

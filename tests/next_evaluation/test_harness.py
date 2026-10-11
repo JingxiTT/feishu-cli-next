@@ -97,7 +97,7 @@ class AccountingTests(unittest.TestCase):
 
     def test_development_manifest_covers_inventory_sections(self):
         manifest = harness.tasks_from(ROOT / "evaluation/tasks.development.json")
-        inventory = json.loads((ROOT / "docs/reference/coverage.json").read_text())
+        inventory = json.loads((ROOT / "baseline/coverage.json").read_text())
         self.assertEqual({task["section"] for task in manifest["tasks"]}, set(inventory["sections"]))
 
     def test_incomplete_runs_keep_known_cost_without_finite_efficiency(self):

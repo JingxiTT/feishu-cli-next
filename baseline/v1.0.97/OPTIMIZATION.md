@@ -12,7 +12,7 @@ Official command nodes increased **938 → 941**, shortcuts **535 → 538**;
 **251 generated methods and 25 event keys** remain. There are **3 added commands,
 no removed commands and 92 existing command registration changes** in the frozen
 Feishu snapshots. Registration counts do not include every implementation change.
-[Complete registration delta](../../../evaluation/evidence/upstream-v1.0.97-optimization/command-delta.json)
+[Complete registration delta](../../evidence/evaluation/upstream-v1.0.97-optimization/command-delta.json)
 records every changed command; the [sync baseline](README.md) describes both brands.
 
 | Area | New or changed behavior | Next integration |
@@ -46,7 +46,7 @@ extra API requests were introduced by this optimization.
 
 ## Local measurements
 
-[Raw process samples](../../../evaluation/evidence/upstream-v1.0.97-optimization/probes.json)
+[Raw process samples](../../evidence/evaluation/upstream-v1.0.97-optimization/probes.json)
 use 31 fresh processes per variant, one warm-up, rotating arm order, isolated
 empty configuration and blocked network access. Token counts use `o200k_base`
 with tiktoken 0.12.0 and count stdout/stderr once. These are output-context tokens,
@@ -94,10 +94,10 @@ wrapper; production safety checks remain enabled.
 Concurrent test load changed during the concise runs, so their timing samples
 are not used for a speed claim. The 15.5–16.9% allocation reduction remains
 measured with the production output wrapper. These microbenchmarks exclude Feishu network time.
-Raw [JSON before](../../../evaluation/evidence/upstream-v1.0.97-optimization/content-before.txt),
-[JSON after](../../../evaluation/evidence/upstream-v1.0.97-optimization/content-after.txt),
-[concise before](../../../evaluation/evidence/upstream-v1.0.97-optimization/concise-synced-benchmark.txt)
-and [concise after](../../../evaluation/evidence/upstream-v1.0.97-optimization/concise-candidate-benchmark.txt)
+Raw [JSON before](../../evidence/evaluation/upstream-v1.0.97-optimization/content-before.txt),
+[JSON after](../../evidence/evaluation/upstream-v1.0.97-optimization/content-after.txt),
+[concise before](../../evidence/evaluation/upstream-v1.0.97-optimization/concise-synced-benchmark.txt)
+and [concise after](../../evidence/evaluation/upstream-v1.0.97-optimization/concise-candidate-benchmark.txt)
 retain every sample. Reproduce with:
 
 ```sh
@@ -107,7 +107,7 @@ go test ./shortcuts/im -run '^$' \
 
 ## Verification and limits
 
-[Validation record](../../../evaluation/evidence/upstream-v1.0.97-optimization/validation.json)
+[Validation record](../../evidence/evaluation/upstream-v1.0.97-optimization/validation.json)
 records completed checks. Regression tests reproduced the original concise
 preflight, release projection and premature Docs completion failures before fixes.
 Transport fixtures cover exact identity/origin/task binding, synchronous/async
@@ -168,17 +168,17 @@ or whole-command latency measurements; host load remains uncontrolled.
 | Scan 200 messages for unsafe projection | 1,158.34 → 535.14 µs | 1,048,778 → 325,938 | 15,861 → 6,643 |
 | Render 1,000 records with field selection | 49.84 → 33.58 ms | 18,713,036 → 16,311,802 | 119,178 → 89,160 |
 
-Raw [bounds before](../../../evaluation/evidence/upstream-v1.0.97-followup/bounds-before-clean.txt)
-/ [after](../../../evaluation/evidence/upstream-v1.0.97-followup/bounds-after-clean.txt),
-[scan before](../../../evaluation/evidence/upstream-v1.0.97-followup/output-scan-before.txt)
-/ [after](../../../evaluation/evidence/upstream-v1.0.97-followup/output-scan-after.txt),
-and [renderer before](../../../evaluation/evidence/upstream-v1.0.97-followup/output-render-before.txt)
-/ [after](../../../evaluation/evidence/upstream-v1.0.97-followup/output-render-after.txt)
+Raw [bounds before](../../evidence/evaluation/upstream-v1.0.97-followup/bounds-before-clean.txt)
+/ [after](../../evidence/evaluation/upstream-v1.0.97-followup/bounds-after-clean.txt),
+[scan before](../../evidence/evaluation/upstream-v1.0.97-followup/output-scan-before.txt)
+/ [after](../../evidence/evaluation/upstream-v1.0.97-followup/output-scan-after.txt),
+and [renderer before](../../evidence/evaluation/upstream-v1.0.97-followup/output-render-before.txt)
+/ [after](../../evidence/evaluation/upstream-v1.0.97-followup/output-render-after.txt)
 retain all samples. Reproduce with `BenchmarkFieldBounds` in `./internal/meta`,
 and `BenchmarkAgentProjectionFailureScan` / `BenchmarkAgentJSON/Fields` in
 `./internal/output`, using `-run '^$' -benchmem` and the options above.
 
-The [context probes](../../../evaluation/evidence/upstream-v1.0.97-followup/context.json)
+The [context probes](../../evidence/evaluation/upstream-v1.0.97-followup/context.json)
 verify that six full schemas remain byte-identical to merged Next and that
 `--input-only` removes only `outputSchema`: 10,540 → 2,544 context tokens
 (75.9% fewer). This saving already existed before this follow-up. The new entry
@@ -188,5 +188,5 @@ not measured whole-task token savings. Counts use `o200k_base`, tiktoken 0.12.0.
 
 Regression tests fail against the previous implementation for lost failure
 context and unnecessary allocations. The follow-up
-[validation record](../../../evaluation/evidence/upstream-v1.0.97-followup/validation.json)
+[validation record](../../evidence/evaluation/upstream-v1.0.97-followup/validation.json)
 records final checks and remaining verification limits.

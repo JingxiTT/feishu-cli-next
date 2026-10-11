@@ -4,7 +4,7 @@ The complete scope and acceptance criteria are in [PLAN.md](../PLAN.md). This is
 implementation coordination guidance; it is not part of the shipped agent skill.
 
 P2 starts after the coordinator records the P1 shared-interface gate. Every
-section inspects its frozen registrations in `docs/reference/coverage.json`,
+section inspects its frozen registrations in `baseline/coverage.json`,
 catalog, source hashes, and the unchanged sibling reference. Reuse the existing
 implementation. Do not replace complete domain commands with raw forwarding or
 count registration alone as behavioral verification.

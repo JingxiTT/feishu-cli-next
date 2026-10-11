@@ -30,7 +30,7 @@ func success(t *testing.T, r nextfixture.Result, want string) {
 }
 
 func TestFrozenOKRDiscovery(t *testing.T) {
-	f, e := os.Open("../../../docs/reference/v1.0.97/registrations.json.gz")
+	f, e := os.Open("../../../baseline/v1.0.97/registrations.json.gz")
 	if e != nil {
 		t.Fatal(e)
 	}

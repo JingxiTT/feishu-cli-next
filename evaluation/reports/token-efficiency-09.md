@@ -24,7 +24,7 @@ The focused source contains twelve distinct project records with fourteen operat
 | `docs-hard-focused-read` | 181 | 28,389 | 22,905 |
 | `docs-hard-multi-edit` | 28 | 1,144 | 212 |
 
-These counts were recomputed from `initial(case)` and checked against the [fixture control evidence](evidence/docs-hard-fixture-controls-20260909.json). That artifact also records each complete initial-state SHA-256; sizes are input descriptors, not token estimates.
+These counts were recomputed from `initial(case)` and checked against the [fixture control evidence](../../evidence/evaluation/docs-hard-fixture-controls-20260909.json). That artifact also records each complete initial-state SHA-256; sizes are input descriptors, not token estimates.
 
 The rich-read task measures whether the agent can use the readable representation without losing table/list meaning. It does not grade exact Markdown whitespace or require the candidate's rendering. Check readable table/list rendering separately through deterministic product controls. Original XML, native JSON and a local transformation remain valid ways to answer the task.
 
@@ -52,13 +52,13 @@ Report actual input and output tokens, count cached input once in full, and keep
 
 The separate `evaluation/paired/docs_hard_v1.py` factory, `evaluation/tasks.docs-hard.json` manifest, `docs-hard-v1` loader entry and `--task-kind docs-hard --original-comparison` opt-in preserve historical defaults. The factory extends the existing signed `Scenario`/`Reply` transport with hierarchical table/list projections, exact returned-content read proof and a multi-target verifier. It reuses the established native inline-edit semantics. It does not turn the old single-target fixture into this harder cohort or add a general document engine.
 
-The [fixture control artifact](evidence/docs-hard-fixture-controls-20260909.json), SHA-256 `cadf90db69705ee2f308e6feaaf2bce11280a79c2ec76d5344d7de0a9a48b827`, binds the manifest, module, loader, launcher, classifier and test hashes. Its manifest SHA-256 is `ebe1906d6fa6bd079824ac5714406c2a839254e0bd10980a77916423e8d1cb04`. Input sizes and all six recorded source/test hashes were independently checked against that evidence during protocol finalization.
+The [fixture control artifact](../../evidence/evaluation/docs-hard-fixture-controls-20260909.json), SHA-256 `cadf90db69705ee2f308e6feaaf2bce11280a79c2ec76d5344d7de0a9a48b827`, binds the manifest, module, loader, launcher, classifier and test hashes. Its manifest SHA-256 is `ebe1906d6fa6bd079824ac5714406c2a839254e0bd10980a77916423e8d1cb04`. Input sizes and all six recorded source/test hashes were independently checked against that evidence during protocol finalization.
 
 Both clean binaries passed controls for full XML fetches of both read cases, native block-list reads, rich XML `str_replace` for the three changes, and native styled text-element PATCH for the two edited paragraphs. The final candidate additionally passed readable rich `+pull`, focused section `+pull`, and saved Markdown pull/local edits/verified push. Factory controls also cover focused keyword/section reads, 100+81 pagination, paragraph rebuild with changed edited IDs, equivalent native run splitting, wrong marks/URLs, table/list loss, forged or insufficient read proof, and unrelated change-then-restore rejection. No call count or exact rendering is prescribed to the model.
 
 The final candidate is `cad221ec4fc453d749ed42ac86a3ebd3c90005b3`, binary SHA-256 `c42d5467e084a84a73780c0c8e9714dfe427d32f49fa9bba8793085f528aed42`; the unchanged original binary is SHA-256 `5e1f582ec5ab9c86d3618fc17bd099b3443d40fe8691fed07d42e83a351ba977`. All 13 harder-fixture test methods passed against those binaries. The owner also recorded passing loader, historical-revision, adapter and script controls. The final evaluator revision is the committed integration containing this protocol and the approved fixture; its archive and every referenced dependency must be pinned before execution.
 
-Candidate product validation and the [final private native lifecycle](evidence/docs-improvements-native-live-final-20260909.json) are separate readiness evidence. The private lifecycle recorded nine passing checks and 37 calls with cleanup; neither those calls nor implementation/reviewer work are included in model attempt counts or provider spend. Earlier pre-fix or incomplete probes remain separate and are not silently rebound to the final binary.
+Candidate product validation and the [final private native lifecycle](../../evidence/evaluation/docs-improvements-native-live-final-20260909.json) are separate readiness evidence. The private lifecycle recorded nine passing checks and 37 calls with cleanup; neither those calls nor implementation/reviewer work are included in model attempt counts or provider spend. Earlier pre-fix or incomplete probes remain separate and are not silently rebound to the final binary.
 
 ## Bounded native and classification limits
 

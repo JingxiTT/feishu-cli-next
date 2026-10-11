@@ -9,20 +9,20 @@ Create an ignored local JSON configuration with absolute paths for `official_sou
 ```sh
 # Plan, validate pinned inputs, build isolated extension hosts, and render results.
 python3 evaluation/run_matrix.py --config /absolute/local-config.json \
-  --output evaluation/evidence/full-matrix-20260911
+  --output evidence/evaluation/full-matrix-20260911
 
 # Execute missing slots or resume a safely checkpointed interruption.
 python3 evaluation/run_matrix.py --config /absolute/local-config.json \
-  --output evaluation/evidence/full-matrix-20260911 --execute
+  --output evidence/evaluation/full-matrix-20260911 --execute
 ```
 
-The same command on unchanged completed inputs makes **zero model calls**, including when previous results failed, were inconclusive, or had incomplete accounting. A new output directory also discovers matching sealed, complete jobs in sibling directories under the same parent. For example, dated outputs under `evaluation/evidence/` can reuse each other's exact matching jobs. This is **same-parent reuse**, not a machine-wide cache. Environment and job fingerprints must match; reuse copies the complete job without selecting favorable rows. Every imported token is counted as reused rather than fresh spend. Jobs already complete in the same output retain their existing fresh/reused accounting.
+The same command on unchanged completed inputs makes **zero model calls**, including when previous results failed, were inconclusive, or had incomplete accounting. A new output directory also discovers matching sealed, complete jobs in sibling directories under the same parent. For example, dated outputs under `evidence/evaluation/` can reuse each other's exact matching jobs. This is **same-parent reuse**, not a machine-wide cache. Environment and job fingerprints must match; reuse copies the complete job without selecting favorable rows. Every imported token is counted as reused rather than fresh spend. Jobs already complete in the same output retain their existing fresh/reused accounting.
 
 Sibling reuse preserves exact measured extension-host binaries without rebuilding, historical provenance, qualifications and diagnostic attachments. Locks coordinate the parent cache and individual outputs. A partial/in-flight match, a busy source/cache lock, changed seal, conflicting completed bytes or conflicting qualification requires reconciliation before dispatch; these states do not authorize a replacement trial. Lock files and STOP markers are not imported.
 
 The command regenerates the report from retained evidence. It never repeats a trial to seek a passing outcome. Inputs changing in an existing output directory fail closed; select a new directory deliberately after reviewing the code change. A report-only edit is not a reason to rebuild the candidate binary or rerun the evaluation. Existing frozen candidate `cad221e` remains the product under evaluation for this matrix.
 
-Historical condition 09 can be imported once with `--reuse-condition evaluation/evidence/token-efficiency-09 --reuse-evaluator /absolute/condition09-frozen-evaluator --reuse-review /absolute/migration-review.json`. Import requires its accepted independent review, unchanged evidence hashes, matching binaries/full guidance/Codex/settings, identical measured trial/fixture/scoring code, and the exact complete schedule. It retains all 18 attempts, including the inconclusive editing result. The imported 901,686 tokens are historical usage, not new spend. The other **240 attempts are new**. This is explicitly a matrix with historical reuse, not a fresh 258-trial simultaneous experiment.
+Historical condition 09 can be imported once with `--reuse-condition evidence/evaluation/token-efficiency-09 --reuse-evaluator /absolute/condition09-frozen-evaluator --reuse-review /absolute/migration-review.json`. Import requires its accepted independent review, unchanged evidence hashes, matching binaries/full guidance/Codex/settings, identical measured trial/fixture/scoring code, and the exact complete schedule. It retains all 18 attempts, including the inconclusive editing result. The imported 901,686 tokens are historical usage, not new spend. The other **240 attempts are new**. This is explicitly a matrix with historical reuse, not a fresh 258-trial simultaneous experiment.
 
 Python is part of the cache identity: both the resolved executable hash and version must match. To reuse the retained September 11 output, invoke `/opt/homebrew/opt/python@3.14/bin/python3.14` in place of `python3`; `environment.json` records the exact interpreter version/hash. Generic `python3` is suitable for a new setup, but a different interpreter requires a distinct measured environment.
 

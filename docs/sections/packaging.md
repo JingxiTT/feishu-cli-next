@@ -70,7 +70,7 @@ acceptance scope follow them; later evidence does not rewrite earlier runs.
   zero skips; installer/release JavaScript tests also passed in all three files.
   No global runtime installation was performed. The official archive and checksum
   URLs, digest, versions and exact command are recorded in the evidence JSON.
-- [Sanitized evidence](packaging-evidence.json) records checksums, test counts
+- [Sanitized evidence](../../evidence/sections/packaging-evidence.json) records checksums, test counts
   and limitations. The matrix ran against the active shared P2 checkout; it is
   not an immutable release candidate. Final documentation was repacked without
   changing compiled binary bytes after the full matrix completed.
@@ -87,7 +87,7 @@ Existing shared lifecycle evidence must be mapped to those scenarios when
 assessing coverage; physical Intel hardware is not an additional acceptance gate.
 
 Linux arm64 now has actual source-built unit/race and packaging-suite evidence
-in [linux-runtime-evidence.json](linux-runtime-evidence.json). A separate bounded
+in [linux-runtime-evidence.json](../../evidence/sections/linux-runtime-evidence.json). A separate bounded
 follow-up executed both delivered immutable Linux arm64 archives in a new
 resource-capped Linux aarch64 container inside the existing VM. Archive/binary
 checksums, startup/version, exact guide, normal/sidecar distinction, project
@@ -125,7 +125,7 @@ hashes were verified before and after the move, and the full tree's bytes, modes
 and links were unchanged. The source archive, fourteen binary archives, npm
 package and logs remain at their original `.tmp/packaging-release-8ce0688` paths.
 The exact old/new source paths and unchanged archive hash are recorded in
-`.tmp/source-location.json` and [packaging-evidence.json](packaging-evidence.json).
+`.tmp/source-location.json` and [packaging-evidence.json](../../evidence/sections/packaging-evidence.json).
 Historical logs may refer to the old source path.
 
 Windows runtime behavior, broader Linux amd64/riscv64 runtime suites, and the

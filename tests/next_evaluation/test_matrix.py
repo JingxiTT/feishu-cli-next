@@ -21,7 +21,7 @@ class MatrixTests(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
         self.output = Path(self.temp.name)
-        self.batch = matrix.read(ROOT / 'evaluation/evidence/token-efficiency-09/docs/batch-01.json')
+        self.batch = matrix.read(ROOT / 'evidence/evaluation/token-efficiency-09/docs/batch-01.json')
         self.env = {'model': 'gpt-5.6-luna', 'reasoning': 'medium', 'guidance_delivery': 'file', 'agent_seconds': 180}
         self.job = next(j for j in matrix.jobs(self.env) if j['suite'] == 'docs-hard')
         self.job['expected_arms'] = self.batch['arms']

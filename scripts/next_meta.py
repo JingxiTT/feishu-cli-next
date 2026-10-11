@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def restore(root=ROOT):
-    reference = root / 'docs/reference'
+    reference = root / 'baseline'
     expected = json.loads((reference / 'coverage.json').read_text())['reference']['metadata_sha256']
     content = gzip.decompress((reference / 'meta_data.json.gz').read_bytes())
     if hashlib.sha256(content).hexdigest() != expected:
