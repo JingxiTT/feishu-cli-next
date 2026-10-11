@@ -97,6 +97,8 @@ class OfflineWorkflowTests(unittest.TestCase):
         self.assertIn('script-test: next-script-test\n', self.makefile)
         self.assertIn('test: vet fmt-check script-test unit-test examples-build integration-test evaluation-test', self.makefile)
         self.assertIn('bash scripts/ci-workflow.test.sh', self.makefile)
+        script_target = self.makefile.split('script-test: next-script-test\n', 1)[1].split('\n\n', 1)[0]
+        self.assertIn('\tbash scripts/check-doc-tokens.sh\n', script_target)
         self.assertIn('--harness scripts', self.makefile)
         self.assertIn('--harness evaluation', self.makefile)
         self.assertIn('--integration sheets_base', self.makefile)

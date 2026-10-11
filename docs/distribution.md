@@ -3,9 +3,10 @@
 The npm package and executable are `feishu-cli-next`. This derivative never
 installs or publishes `@larksuite/cli`, and retains the upstream MIT license.
 The npm package is private and publishing workflows are disabled pending P4.
-A public repository, owned npm name, release credentials, trusted publishing,
-and signing/notarization identities must be accepted before enabling the
-reference-equivalent automated public release channel. Apple signing is optional
+The source repository is public at `Zhujingxi/feishu-cli-next`. npm name ownership,
+release credentials, trusted publishing, and signing/notarization identities
+must be accepted before enabling the reference-equivalent automated public
+release channel. Apple signing is optional
 for source builds and unsigned local archives.
 The native `update` command currently reports an unconfigured release channel.
 CI and Next offline correctness run on pull requests, main pushes, and manual
@@ -13,11 +14,16 @@ runs on Linux only. Automated CI uses offline and dry-run tests and requires no
 Feishu app credentials or live tenant. Live API tests remain available for local
 runs with explicitly configured test credentials; CI does not verify live API
 behavior or macOS/Windows runtime behavior.
+The workflow source gate checks every workflow for Feishu credential inputs and
+live API entrypoints; the dry-run job uses literal placeholder app credentials.
+Unrelated GitHub, model-review, coverage and release-signing credentials retain
+their separate uses.
 
-Build the current host with `./build.sh` or `make build`. Python 3 and Go are
-required; frozen metadata is restored without network. Dependencies must already
-be cached for offline builds. `python3 scripts/next_package.py --output .tmp/release`
-builds all seven OS/architecture pairs, each in normal and `authsidecar` variants,
+Build the current host with canonical `make build` (or `./build.sh`), using Go
+1.26.9+ and the committed embedded API catalog. Neither Python nor a metadata
+fetch is needed for this build. Python 3 is required for the packaging and prefix
+installation tools. Go dependencies must already be cached for offline builds.
+`python3 scripts/next_package.py --output .tmp/release` builds all seven OS/architecture pairs, each in normal and `authsidecar` variants,
 and writes SHA-256 checksums plus a local npm wrapper. An existing output directory
 is refused. `--target linux/amd64 --variant normal` selects a smaller build.
 
@@ -79,3 +85,47 @@ a test-only QEMU package in a disposable container. Windows execution remains
 unverified; broader Linux amd64/riscv64 suites were not run. The retained
 automated public release channel also requires macOS signing/notarization
 verification. See the [packaging evidence](sections/packaging.md) for exact scope.
+
+## Before enabling public distribution
+
+`npm run release:check` checks stable/beta version consistency only; success does
+not certify release readiness. The publication check additionally fails closed
+while the npm package is private or the installer's artifact repository is unset
+or differs from `Zhujingxi/feishu-cli-next`:
+
+```sh
+npm run release:check -- --publish --tag v0.1.0-beta.1
+```
+
+The tag helper and dormant release workflow both use this publication check. A
+public source repository alone does not establish npm ownership, artifact
+authenticity, or a usable update channel.
+
+Before changing the private-package, release-workflow, preview-workflow, or
+GoReleaser guards, retain reviewable evidence for these prerequisites:
+
+- Finish the outstanding domain, live, platform and comparative acceptance in
+  [IMPLEMENTATION.md](IMPLEMENTATION.md#outstanding-release-evidence), tied to the
+  candidate revision. Offline tests and cross-compiles do not close live or
+  OS-specific checks.
+- Verify ownership of the `feishu-cli-next` npm name and configure npm trusted
+  publishing for this repository and workflow. Configure protected release tags
+  and the `npm-production` environment; verify its signing inputs and required
+  approval policy.
+- Configure the installer and the existing updater owners for the same Next
+  package/repository, following the identity checklist in
+  [packaging.md](sections/packaging.md#reference-applicability-of-remaining-release-checks).
+  The updater must never install the official upstream product or rewrite
+  unrelated global skills.
+- Rehearse a checksummed candidate on both macOS architectures, including signing
+  and notarization verification, plus isolated remote install, upgrade, failed
+  upgrade, and removal checks against the accepted channel. Retain package
+  integrity/provenance and artifact-to-candidate verification.
+- Run the required build, unit, vet, format, lint, license, vulnerability,
+  secret and quality checks on the exact candidate; resolve blocking findings
+  rather than waiving them for publication.
+
+The publication preflight enforces wiring prerequisites. The evidence above
+remains a release review responsibility; passing the preflight is not a live
+acceptance result. Until those prerequisites are met, local installation and
+explicit local upgrades remain the available paths.

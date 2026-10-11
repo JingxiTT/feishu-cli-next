@@ -3,8 +3,12 @@
 
 const assert = require("node:assert/strict");
 const { describe, it } = require("node:test");
+const fs = require("node:fs");
+const os = require("node:os");
+const path = require("node:path");
+const { spawnSync } = require("node:child_process");
 
-const { validateReleasePreflight, validateReleaseSourcePolicy } = require("./release-preflight");
+const { validateReleasePreflight, validateReleaseSourcePolicy, validateReleasePublication } = require("./release-preflight");
 
 function metadata(version = "1.2.3") {
   return {
@@ -168,5 +172,61 @@ describe("validateReleaseSourcePolicy", () => {
 
     assert.equal(result.ok, true);
     assert.match(result.data.warning, /unintended beta version was merged into main/);
+  });
+});
+
+describe("publication wiring preflight", () => {
+  const packageJson = { name: "feishu-cli-next", private: false };
+  const repository = "Zhujingxi/feishu-cli-next";
+
+  it("requires an explicit public-package decision", () => {
+    for (const privateValue of [true, undefined, null, "false"]) {
+      assertRejected(validateReleasePublication({ ...packageJson, private: privateValue }, repository));
+    }
+  });
+
+  it("rejects an absent or upstream installer channel even after private is removed", () => {
+    for (const artifactRepository of [null, undefined, "", "larksuite/cli"]) {
+      assertRejected(validateReleasePublication(packageJson, artifactRepository));
+    }
+    assertRejected(validateReleasePublication({ ...packageJson, name: "@larksuite/cli" }, repository));
+  });
+
+  it("accepts only the matching Next package and artifact identity", () => {
+    assert.equal(validateReleasePublication(packageJson, repository).ok, true);
+  });
+
+  it("keeps version checks available while publication rejects an unconfigured installer", (t) => {
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), "next-release-preflight-"));
+    t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+    fs.mkdirSync(path.join(root, "scripts"));
+    fs.copyFileSync(path.join(__dirname, "release-preflight.js"), path.join(root, "scripts/release-preflight.js"));
+    fs.writeFileSync(path.join(root, "scripts/install.js"), "module.exports = { REPO: null };\n");
+    const fixture = metadata();
+    fs.writeFileSync(path.join(root, "package.json"), JSON.stringify({ ...fixture.packageJson, ...packageJson }));
+    fs.writeFileSync(path.join(root, "package-lock.json"), JSON.stringify(fixture.packageLockJson));
+    const script = path.join(root, "scripts/release-preflight.js");
+    const versionCheck = spawnSync(process.execPath, [script, "--tag", "v1.2.3"], { encoding: "utf8" });
+    assert.equal(versionCheck.status, 0, versionCheck.stderr);
+    assert.equal(JSON.parse(versionCheck.stdout).ok, true);
+    const publicationCheck = spawnSync(process.execPath, [script, "--publish", "--tag", "v1.2.3"], { encoding: "utf8" });
+    assert.equal(publicationCheck.status, 1);
+    assert.equal(publicationCheck.stdout, "");
+    const failure = JSON.parse(publicationCheck.stderr);
+    assertRejected(failure);
+    assert.equal(failure.error.observed.artifactRepository, null);
+    if (process.platform !== "win32") {
+      fs.copyFileSync(path.join(__dirname, "tag-release.sh"), path.join(root, "scripts/tag-release.sh"));
+      const sentinel = path.join(root, "git-called");
+      fs.mkdirSync(path.join(root, "fake-bin"));
+      fs.writeFileSync(path.join(root, "fake-bin/git"), '#!/bin/sh\nprintf invoked > "$GIT_SENTINEL"\nexit 1\n', { mode: 0o755 });
+      const tagCheck = spawnSync("bash", [path.join(root, "scripts/tag-release.sh")], {
+        encoding: "utf8",
+        env: { ...process.env, GIT_SENTINEL: sentinel, PATH: `${path.join(root, "fake-bin")}${path.delimiter}${process.env.PATH}` },
+      });
+      assert.equal(tagCheck.status, 1);
+      assertRejected(JSON.parse(tagCheck.stderr));
+      assert.equal(fs.existsSync(sentinel), false, "publication must reject before any git/network operation");
+    }
   });
 });

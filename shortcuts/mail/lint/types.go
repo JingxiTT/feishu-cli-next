@@ -57,6 +57,10 @@ type Options struct{}
 // `null` so AI / test consumers can rely on `data.lint_applied[]` /
 // `data.original_blocked[]` unconditionally.
 type Report struct {
+	// ParseError means the HTML could not be inspected safely. Callers must
+	// reject the input before writing it; CleanedHTML is unavailable.
+	ParseError error `json:"-"`
+
 	// Applied surfaces warning-tier findings that the lib rewrote in place
 	// (e.g. <font> -> <span style>). Each entry corresponds to a single rule
 	// firing on a single tag / attribute / style property.

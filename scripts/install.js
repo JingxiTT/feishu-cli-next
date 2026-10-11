@@ -380,4 +380,4 @@ if (require.main === module) {
   }
 }
 
-module.exports = { getExpectedChecksum, verifyChecksum, assertAllowedHost, resolveMirrorUrls, resolveReleaseAsset, curlSupportsSslRevokeBestEffort, isCurlVersionSupported };
+module.exports = { REPO, getExpectedChecksum, verifyChecksum, assertAllowedHost, resolveMirrorUrls, resolveReleaseAsset, curlSupportsSslRevokeBestEffort, isCurlVersionSupported };

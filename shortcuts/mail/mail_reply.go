@@ -309,7 +309,10 @@ var MailReply = common.Shortcut{
 			// Lark quote markup such as adit-html-block* / history-quote-* /
 			// lark-mail-doc-quote (these classes are intentionally allow-listed
 			// in the tag classification "通过" row).
-			cleaned, rep := runWritePathLint(bodyWithSig)
+			cleaned, rep, lintErr := runWritePathLint(bodyWithSig)
+			if lintErr != nil {
+				return lintErr
+			}
 			bodyWithSig = cleaned
 			lintApplied, lintBlocked = rep.Applied, rep.Blocked
 			composedHTMLBody = bodyWithSig + quoted

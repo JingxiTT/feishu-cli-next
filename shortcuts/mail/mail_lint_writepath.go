@@ -42,15 +42,20 @@ var showLintDetailsFlag = common.Flag{
 //     callers are expected to gate the call on their existing useHTML
 //     branch so the plain-text path doesn't pay the parse cost.
 //
+// Parsing failures return a typed validation error before any body is written.
 // Returns the cleaned HTML + the report. Callers MUST use the returned
 // `cleaned` value as the body that goes to bld.HTMLBody / draftpkg.Apply
 // (writing the original `body` would defeat the safety contract).
-func runWritePathLint(body string) (cleaned string, rep lint.Report) {
+func runWritePathLint(body string) (cleaned string, rep lint.Report, err error) {
 	if body == "" {
-		return "", lint.EmptyReport("")
+		return "", lint.EmptyReport(""), nil
 	}
 	rep = lint.Run(body, lint.Options{})
-	return rep.CleanedHTML, rep
+	if rep.ParseError != nil {
+		return "", rep, mailValidationError("HTML body could not be parsed safely").
+			WithHint("Reduce HTML nesting to at most 512 elements and retry.").WithCause(rep.ParseError)
+	}
+	return rep.CleanedHTML, rep, nil
 }
 
 // applyLintToEnvelope mutates the OutFormat data map by adding the

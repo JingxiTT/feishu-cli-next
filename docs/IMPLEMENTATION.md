@@ -386,6 +386,10 @@ unverified or unavailable. Local evidence does not establish public release read
 
 ## Outstanding release evidence
 
+Public-channel prerequisites and the fail-closed publication wiring check are
+documented in [distribution.md](distribution.md#before-enabling-public-distribution).
+Version validation and a public source repository do not close these gates.
+
 P2 domain acceptance, remaining private live scenarios,
 remaining OS-specific and remote lifecycle checks, full release checks and held-out
 evaluation remain open. The [source review aggregate](reference/p3-effective-review-current.json)
@@ -404,7 +408,7 @@ complete goal.
 | Private live workflows | The named private folder and current account were verified; all 13 run-created children and parent are deleted. Bounded Drive, explicit-XML Docs, Sheets and Markdown lifecycles pass. Sheets formula correction and its private lifecycle pass; Base supported steps pass but its selected suite retains a failed negative assertion. Remaining section live scenarios and broader type/concurrency guarantees stay open. |
 | Contact bot tenant binding | Requested `search:bot` grant and selected read suite passed. Separate bot tenant verification still requires the unrequested `tenant:tenant:readonly` app scope. |
 | OS-specific runtime coverage | Linux arm64 runtime suites and platform comparison pass; delivered archive lifecycles pass on arm64 and under amd64/riscv64 translation. Broader amd64/riscv64 runtime suites have not run. Windows behavior checks and native reference capture are deferred by the user's 2026-09-08 instruction; cross-built archives are not runtime verification. Darwin/amd64 smoke checks already ran under Rosetta. Additional gaps must name the unverified scenario, not require physical hardware absent from PLAN. |
-| Remote release ownership | An owned Next repository/download destination and package identity, then the documented updater identity integration and remote install/update checks. Public signing/notarization and publication retain their separate prerequisites. |
+| Remote release ownership | The public source repository is `Zhujingxi/feishu-cli-next`; npm package ownership and a trusted artifact/update channel remain unverified. Complete the documented updater identity integration and remote install/update checks. Public signing/notarization and publication retain their separate prerequisites. |
 | Comparative release evidence | Development comparisons retain all costs and tradeoffs. The native-fidelity audit withholds affected Docs/Sheets/Base-size same-fidelity claims; small Base update fidelity is unvalidated. New correctness changes have no model measurements. Retain older product conditions and the inconclusive Events baseline separately; perform independently replaced held-out tasks only at the final release gate. |
 
 The read-only Windows-environment check found VirtualBox `7.1.6r167084`, but

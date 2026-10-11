@@ -6,7 +6,7 @@ The goal is to reduce the tokens needed to complete a task while preserving ever
 
 Synced with [official Lark CLI v1.0.97](https://github.com/larksuite/cli/releases/tag/v1.0.97). See the [upgrade comparison and optimization measurements](docs/reference/v1.0.97/OPTIMIZATION.md). The original frozen reference remains available for historical comparisons.
 
-[Quick start](#quick-start) · [Usage](#usage) · [Full evaluation matrix](evaluation/evidence/full-matrix-20260911/REPORT.md) · [Implementation status](docs/IMPLEMENTATION.md)
+[中文说明](README.zh.md) · [Quick start](#quick-start) · [Usage](#usage) · [Full evaluation matrix](evaluation/evidence/full-matrix-20260911/REPORT.md) · [Implementation status](docs/IMPLEMENTATION.md)
 
 ## What this project adds
 
@@ -27,7 +27,7 @@ The inherited surface includes Docs, Sheets, Base, Drive, Wiki, Contacts, Messag
 
 ## Quick start
 
-Requires **Go 1.23+** and `make`. The first build may download Go dependencies. The official v1.0.97 API catalog ships with the source and is embedded directly. Python 3 is needed for inventory, packaging, and evaluation scripts.
+Requires **Go 1.26.9+** and `make`. The first build may download Go dependencies. The official v1.0.97 API catalog ships with the source and is embedded directly. Python 3 is needed for inventory, packaging, evaluation, and prefix installation scripts.
 
 ```sh
 git clone https://github.com/Zhujingxi/feishu-cli-next.git

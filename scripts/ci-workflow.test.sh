@@ -139,15 +139,79 @@ if ! grep -Fq "Write public content metadata" <<<"$deterministic_section"; then
   exit 1
 fi
 
-ruby -ryaml <<'RUBY'
+ruby -ropen3 -rtempfile -ryaml <<'RUBY'
 ci = YAML.load_file(".github/workflows/ci.yml")
-if ci.fetch("jobs").key?("e2e-live") || File.read(".github/workflows/ci.yml").match?(/secrets\.TEST_|fetch_e2e_tat|needs\.e2e-live/)
-  abort("CI must not require a live Feishu tenant")
+FEISHU_AUTH_KEY = /(?:TEST_(?:BOT\d+_APP_(?:ID|SECRET)|TENANT_ACCESS_TOKEN|USER_ACCESS_TOKEN)|LARKSUITE_CLI_(?:APP_ID|APP_SECRET|TENANT_ACCESS_TOKEN|USER_ACCESS_TOKEN))/
+def check_offline_feishu_workflow(value, file)
+  case value
+  when Hash
+    value.fetch("env", {}).each do |name, configured|
+      next unless name.match?(/\A#{FEISHU_AUTH_KEY}\z/)
+      allowed = name.start_with?("LARKSUITE_CLI_APP_") ? [nil, "", "dry-run"] : [nil, ""]
+      raise ArgumentError, "#{file}: #{name} must not enable real Feishu authentication in CI" unless allowed.include?(configured)
+    end
+    value.each_value { |item| check_offline_feishu_workflow(item, file) }
+  when Array
+    value.each { |item| check_offline_feishu_workflow(item, file) }
+  when String
+    if value.match?(/(?:secrets|vars)\s*(?:\.\s*(?:TEST_|FEISHU_|LARKSUITE_CLI_)|\[\s*['"](?:TEST_|FEISHU_|LARKSUITE_CLI_))|fetch_e2e_tat|--allow-live|--suite[= ]+live|needs\.e2e-live/)
+      raise ArgumentError, "#{file}: workflows must not require real Feishu credentials or live API tests"
+    end
+    if value.match?(/(?:\A|[;\n])\s*(?:(?:export|env)\s+|echo\s+["']?)?#{FEISHU_AUTH_KEY}\s*=[^\n]*\$\{\{\s*(?:secrets|vars)\s*[.\[]/)
+      raise ArgumentError, "#{file}: shell assignments must not inject real Feishu authentication in CI"
+    end
+  end
+end
+# Exercise isolated workflow values so placeholder and unrelated secrets stay valid.
+[
+  [{ "env" => { "LARKSUITE_CLI_APP_SECRET" => "dry-run" } }, true],
+  [{ "run" => 'LARKSUITE_CLI_APP_SECRET=dry-run go test ./...' }, true],
+  [{ "env" => { "ARK_API_KEY" => '${{ secrets.ARK_API_KEY }}' } }, true],
+  [{ "run" => 'if name == "LARKSUITE_CLI_APP_SECRET=${{ secrets.UNRELATED }}"; then exit 1; fi' }, true],
+  [{ "env" => { "LARKSUITE_CLI_APP_SECRET" => '${{ secrets.UNRELATED }}' } }, false],
+  [{ "run" => 'LARKSUITE_CLI_APP_SECRET="${{ secrets.UNRELATED }}" go test ./...' }, false],
+  [{ "run" => 'export TEST_USER_ACCESS_TOKEN=${{ vars.UNRELATED }}' }, false],
+  [{ "run" => 'echo "LARKSUITE_CLI_APP_SECRET=${{ secrets["UNRELATED"] }}" >> "$GITHUB_ENV"' }, false],
+].each do |fixture, expected|
+  accepted = begin
+    check_offline_feishu_workflow(fixture, "fixture.yml")
+    true
+  rescue ArgumentError
+    false
+  end
+  abort("Feishu-auth workflow guard regression: #{fixture.inspect}") unless accepted == expected
+end
+Dir.glob(".github/workflows/*.{yml,yaml}").each do |file|
+  config = YAML.load_file(file)
+  abort("#{file}: CI must not contain a live Feishu E2E job") if config.fetch("jobs").key?("e2e-live")
+  begin
+    check_offline_feishu_workflow(config, file)
+  rescue ArgumentError => error
+    abort(error.message)
+  end
 end
 results = ci.dig("jobs", "results")
 unless results.fetch("needs").include?("e2e-dry-run") &&
        results.fetch("steps").any? { |step| step.fetch("run", "").include?("needs.e2e-dry-run.result") }
   abort("dry-run E2E must remain a required result")
+end
+security = ci.dig("jobs", "security")
+scan = security.fetch("steps").find { |step| step["name"] == "govulncheck" }
+abort("security job must run for every CI event and block failures") if security["if"] || security["continue-on-error"]
+unless scan && !scan["continue-on-error"] && !scan["if"] &&
+       scan["run"] == "go run golang.org/x/vuln/cmd/govulncheck@v1.9.0 ./..."
+  abort("govulncheck must run directly and fail CI on vulnerabilities")
+end
+abort("security must remain a required result") unless results.fetch("needs").include?("security")
+%w[success failure cancelled].each do |security_result|
+  run = results.fetch("steps").find { |step| step["name"] == "Evaluate results" }.fetch("run")
+  run = run.gsub(/\$\{\{ needs\.([\w-]+)\.result \}\}/) { Regexp.last_match(1) == "security" ? security_result : "success" }
+  Tempfile.create("ci-security-summary") do |summary|
+    _stdout, stderr, status = Open3.capture3({ "GITHUB_STEP_SUMMARY" => summary.path }, "bash", "-e", "-c", run)
+    unless status.success? == (security_result == "success")
+      abort("results must propagate security #{security_result}: #{stderr}")
+    end
+  end
 end
 %w[ci next-offline skill-format-check pr-labels-test pkg-pr-new].each do |name|
   config = YAML.load_file(".github/workflows/#{name}.yml")

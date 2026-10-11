@@ -5,9 +5,12 @@ package mail
 
 import (
 	"encoding/json"
+	"errors"
 	"os"
 	"strings"
 	"testing"
+
+	"github.com/larksuite/cli/errs"
 )
 
 // =====================================================================
@@ -270,5 +273,18 @@ func TestMailLintHTML_FindingsAreJSONSerialisable(t *testing.T) {
 	data := decodeShortcutEnvelopeData(t, stdout)
 	if _, err := json.Marshal(data); err != nil {
 		t.Errorf("envelope not JSON-serialisable: %v", err)
+	}
+}
+
+func TestMailLintHTMLRejectsUnparseableHTML(t *testing.T) {
+	f, stdout, _, _ := mailShortcutTestFactory(t)
+	body := strings.Repeat("<div>", 600) + `<script>alert(1)</script>` + strings.Repeat("</div>", 600)
+	err := runMountedMailShortcut(t, MailLintHTML, []string{"+lint-html", "--body", body}, f, stdout)
+	var typed *errs.ValidationError
+	if !errors.As(err, &typed) || typed.Subtype != errs.SubtypeInvalidArgument || errors.Unwrap(typed) == nil {
+		t.Fatalf("expected typed validation failure preserving parser cause, got %v", err)
+	}
+	if stdout.Len() != 0 {
+		t.Fatalf("parse failure must not emit success: %s", stdout.String())
 	}
 }

@@ -107,7 +107,10 @@ var MailLintHTML = common.Shortcut{
 		if !bodyIsHTML(body) {
 			rep = lint.EmptyReport(body)
 		} else {
-			rep = lint.Run(body, lint.Options{})
+			_, rep, err = runWritePathLint(body)
+			if err != nil {
+				return err
+			}
 		}
 
 		// Public envelope shape: token-frugal by default. `cleaned_html` is
@@ -132,8 +135,9 @@ var MailLintHTML = common.Shortcut{
 		})
 
 		// The lib already removed errors and rewrote warnings in place;
-		// `+lint-html` is a preview / advisory tool and never bumps the
-		// exit code. CI scripts that want to gate on findings should
+		// `+lint-html` is a preview / advisory tool; findings do not change
+		// the exit code. Unparseable HTML is rejected above. CI scripts
+		// that want to gate on findings should
 		// post-process the envelope (e.g. with `--show-lint-details` and
 		// jq on `errors[]` / `warnings[]`).
 		return nil

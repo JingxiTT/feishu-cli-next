@@ -19,7 +19,9 @@ import (
 func plainTextFromHTML(raw string) string {
 	doc, err := xhtml.Parse(strings.NewReader(raw))
 	if err != nil {
-		return strings.TrimSpace(raw)
+		// The tree parser rejects nesting over 512 elements. Tokenization
+		// preserves the plain-text fallback without bypassing that limit.
+		doc = plainTextHTMLTokens(raw)
 	}
 
 	var buf bytes.Buffer
@@ -82,6 +84,55 @@ func plainTextFromHTML(raw string) string {
 		}
 	}
 	return strings.Join(out, "\n")
+}
+
+func plainTextHTMLTokens(raw string) *xhtml.Node {
+	doc := &xhtml.Node{Type: xhtml.DocumentNode}
+	tokens := xhtml.NewTokenizer(strings.NewReader(raw))
+	var skipped string
+	var skipDepth int
+	for {
+		kind := tokens.Next()
+		if kind == xhtml.ErrorToken {
+			return doc
+		}
+		token := tokens.Token()
+		if skipped != "" {
+			if token.Data == skipped {
+				switch kind {
+				case xhtml.StartTagToken:
+					skipDepth++
+				case xhtml.EndTagToken:
+					skipDepth--
+					if skipDepth == 0 {
+						skipped = ""
+					}
+				}
+			}
+			continue
+		}
+		node := &xhtml.Node{Type: xhtml.ElementNode, Data: token.Data}
+		switch kind {
+		case xhtml.TextToken:
+			node.Type = xhtml.TextNode
+		case xhtml.StartTagToken, xhtml.SelfClosingTagToken:
+			if isHTMLNonTextTag(node) {
+				// HTML ignores the slash on non-void elements. Head is only
+				// structural: visible content implicitly closes it.
+				if node.Data != "meta" && node.Data != "link" && node.Data != "head" {
+					skipped, skipDepth = node.Data, 1
+				}
+				continue
+			}
+		case xhtml.EndTagToken:
+			if !isHTMLBlockBoundary(node) {
+				continue
+			}
+		default:
+			continue
+		}
+		doc.AppendChild(node)
+	}
 }
 
 func bufLastByte(buf *bytes.Buffer) byte {
