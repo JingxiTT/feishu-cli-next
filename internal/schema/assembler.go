@@ -218,8 +218,8 @@ func buildMeta(m meta.Method) *Meta {
 
 // EnvelopeOf renders the MCP envelope for one method ref — the ref-based entry
 // callers use, since apicatalog.MethodRef is the metadata navigation currency.
-func EnvelopeOf(ref apicatalog.MethodRef) Envelope {
-	env := InputEnvelopeOf(ref)
+func EnvelopeOf(guidance *affordance.Resolver, ref apicatalog.MethodRef) Envelope {
+	env := InputEnvelopeOf(guidance, ref)
 	env.OutputSchema = buildOutputSchema(ref.Method)
 	return env
 }
@@ -227,26 +227,28 @@ func EnvelopeOf(ref apicatalog.MethodRef) Envelope {
 // InputEnvelopeOf renders request requirements and all permission, risk and
 // affordance metadata without building the response schema. Use EnvelopeOf
 // when the consumer also needs to interpret response fields.
-func InputEnvelopeOf(ref apicatalog.MethodRef) Envelope {
+func InputEnvelopeOf(guidance *affordance.Resolver, ref apicatalog.MethodRef) Envelope {
 	m := ref.Method
 	// The affordance overlay lives in the CLI, not the metadata; look it up
 	// lazily here (it takes precedence over any affordance the metadata carries).
-	if raw, ok := affordance.For(ref.Service.Name, m.ID); ok {
+	if raw, ok := guidance.For(ref.Service.Name, m.ID); ok {
 		m.Affordance = raw
 	}
-	return assemble(ref.Service.Name, ref.ResourcePath, m)
+	env := assemble(ref.Service.Name, ref.ResourcePath, m)
+	env.OutputSchema = nil
+	return env
 }
 
 // Envelopes renders the given method refs into envelopes, sorted by name. The
 // caller supplies the refs (from apicatalog navigation), so this package owns
 // only rendering — never metadata source selection or traversal.
-func Envelopes(refs []apicatalog.MethodRef) []Envelope {
-	return envelopes(refs, EnvelopeOf)
+func Envelopes(guidance *affordance.Resolver, refs []apicatalog.MethodRef) []Envelope {
+	return envelopes(refs, func(ref apicatalog.MethodRef) Envelope { return EnvelopeOf(guidance, ref) })
 }
 
 // InputEnvelopes is the request-only counterpart of Envelopes.
-func InputEnvelopes(refs []apicatalog.MethodRef) []Envelope {
-	return envelopes(refs, InputEnvelopeOf)
+func InputEnvelopes(guidance *affordance.Resolver, refs []apicatalog.MethodRef) []Envelope {
+	return envelopes(refs, func(ref apicatalog.MethodRef) Envelope { return InputEnvelopeOf(guidance, ref) })
 }
 
 func envelopes(refs []apicatalog.MethodRef, render func(apicatalog.MethodRef) Envelope) []Envelope {

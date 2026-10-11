@@ -153,8 +153,16 @@ func TestPushPullPreservesDirectoryFiles(t *testing.T) {
 
 func TestCoverAndSourcePreviewArtifacts(t *testing.T) {
 	payload := []byte("synthetic preview bytes")
-	var calls atomic.Int32
+	var calls, lookups atomic.Int32
 	f := nextfixture.NewFixture(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/open-apis/drive/v2/files/query_by_token" {
+			lookups.Add(1)
+			if r.Method != "GET" || r.URL.RawQuery != "token=file1" {
+				t.Errorf("wrong lookup %s %s", r.Method, r.URL)
+			}
+			reply(w, map[string]any{"obj_token": "file1", "obj_type": "file"})
+			return
+		}
 		calls.Add(1)
 		if r.URL.Path != "/open-apis/drive/v1/medias/file1/preview_download" || r.URL.Query().Get("preview_type") == "" {
 			t.Errorf("wrong preview request %s", r.URL)
@@ -174,7 +182,7 @@ func TestCoverAndSourcePreviewArtifacts(t *testing.T) {
 			t.Fatalf("preview byte corruption %s: %v", name, err)
 		}
 	}
-	if calls.Load() != 2 {
+	if calls.Load() != 2 || lookups.Load() != 1 {
 		t.Fatal("unexpected preview replay")
 	}
 }

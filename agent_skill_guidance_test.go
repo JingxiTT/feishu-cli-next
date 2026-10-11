@@ -10,7 +10,7 @@ import (
 	"testing"
 )
 
-// Compact entry guides must keep their previous workflow destinations available
+// Compact entry guides must keep their current workflow destinations available
 // in the shipped binary; source-only files cannot satisfy these links.
 func TestCompactSkillRoutesRemainEmbedded(t *testing.T) {
 	routes := map[string][]string{
@@ -57,7 +57,6 @@ func TestCompactSkillRoutesRemainEmbedded(t *testing.T) {
 			"references/lark-sheets-formula-translation.md",
 			"references/lark-sheets-formula-verify.md",
 			"references/lark-sheets-history.md",
-			"references/lark-sheets-legacy-command-migration.md",
 			"references/lark-sheets-pivot-table.md",
 			"references/lark-sheets-range-operations.md",
 			"references/lark-sheets-read-data.md",

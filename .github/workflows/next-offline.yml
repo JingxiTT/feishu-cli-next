@@ -47,15 +47,14 @@ jobs:
                   value = subprocess.check_output(['go', 'env', name], text=True).strip()
                   stream.write(name + '=' + value + '\n')
           PY
-      - name: Build with frozen audited metadata
+      - name: Build with committed API catalog
         id: build
         run: |
-          python scripts/next_meta.py
           go build -trimpath -o "$NEXT_BINARY" .
       - name: Compare configured-brand capability registrations
         id: capabilities
         if: ${{ always() && steps.dependencies.outcome == 'success' && steps.build.outcome == 'success' }}
-        run: python scripts/next_inventory.py gate --target . --out .tmp/next-ci/capabilities.json
+        run: python scripts/next_inventory.py gate --target . --reference-dir docs/reference/v1.0.97 --mapping docs/reference/v1.0.97/next-interface-mapping.json.gz --out .tmp/next-ci/capabilities.json
       - name: Inventory, metadata, runner and workflow tests
         id: scripts
         if: ${{ always() && steps.dependencies.outcome == 'success' }}

@@ -34,8 +34,16 @@ func TestResourceAndVersionOperations(t *testing.T) {
 	}
 	for _, row := range rows {
 		t.Run(row.command, func(t *testing.T) {
-			var calls atomic.Int32
+			var calls, lookups atomic.Int32
 			f := nextfixture.NewFixture(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				if row.command == "+preview" && r.URL.Path == "/open-apis/drive/v2/files/query_by_token" {
+					lookups.Add(1)
+					if r.Method != "GET" || r.URL.RawQuery != "token=file1" {
+						t.Errorf("wrong lookup %s %s", r.Method, r.URL)
+					}
+					reply(w, map[string]any{"obj_token": "file1", "obj_type": "file"})
+					return
+				}
 				calls.Add(1)
 				if r.Method != row.method || r.URL.Path != row.path {
 					t.Errorf("wrong request %s %s", r.Method, r.URL)
@@ -51,6 +59,13 @@ func TestResourceAndVersionOperations(t *testing.T) {
 			args := append([]string{"drive", row.command, "--as", "user"}, strings.Fields(row.flags)...)
 			got := f.Run(args...)
 			successful(t, got)
+			wantLookups := int32(0)
+			if row.command == "+preview" {
+				wantLookups = 1
+			}
+			if lookups.Load() != wantLookups {
+				t.Fatalf("wrong lookup count: %d", lookups.Load())
+			}
 			if !strings.Contains(strings.ToLower(got.Stdout), strings.ToLower(row.want)) || calls.Load() != 1 {
 				t.Fatalf("wrong result/count: %s calls=%d", got.Stdout, calls.Load())
 			}

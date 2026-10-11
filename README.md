@@ -4,6 +4,8 @@ A Feishu/Lark CLI for AI agents that work through a shell and files. It builds o
 
 The goal is to reduce the tokens needed to complete a task while preserving every original command and workflow, data fidelity, and successful outcomes. Results remain task-dependent. The current evaluation targets **more than 50% fewer tokens for Docs read/edit and at least 30% fewer for each other evaluated function versus the original CLI**, with failed-attempt costs included and no observed success regression.
 
+Synced with [official Lark CLI v1.0.97](https://github.com/larksuite/cli/releases/tag/v1.0.97). The original frozen reference remains available for historical comparisons.
+
 [Quick start](#quick-start) · [Usage](#usage) · [Full evaluation matrix](evaluation/evidence/full-matrix-20260911/REPORT.md) · [Implementation status](docs/IMPLEMENTATION.md)
 
 ## What this project adds
@@ -25,7 +27,7 @@ The inherited surface includes Docs, Sheets, Base, Drive, Wiki, Contacts, Messag
 
 ## Quick start
 
-Requires **Go 1.23+**, **Python 3**, and `make`. The first build may download Go dependencies. The frozen API catalog ships with the source and is verified/restored during the build.
+Requires **Go 1.23+** and `make`. The first build may download Go dependencies. The official v1.0.97 API catalog ships with the source and is embedded directly. Python 3 is needed for inventory, packaging, and evaluation scripts.
 
 ```sh
 git clone https://github.com/Zhujingxi/feishu-cli-next.git

@@ -66,9 +66,10 @@ func TestWikiNodeLifecycleAndMemberPermissions(t *testing.T) {
 			require.Equal(t, "origin", body["node_type"])
 			nodes[nodeToken] = n
 			reply(w, map[string]any{"node": n})
-		case r.Method == "GET" && p == "/open-apis/wiki/v2/spaces/get_node":
-			require.Equal(t, nodeToken, r.URL.Query().Get("token"))
-			reply(w, map[string]any{"node": nodes[nodeToken]})
+		case r.Method == "GET" && p == "/open-apis/wiki/v2/spaces/node_by_token":
+			token := r.URL.Query().Get("token")
+			require.Contains(t, nodes, token)
+			reply(w, map[string]any{"node": nodes[token]})
 		case r.Method == "GET" && p == "/open-apis/wiki/v2/spaces/123/nodes":
 			require.Equal(t, parentToken, r.URL.Query().Get("parent_node_token"))
 			reply(w, map[string]any{"items": []any{nodes[nodeToken]}, "has_more": false})
@@ -198,9 +199,9 @@ func TestWikiPaginationArtifactAndCycle(t *testing.T) {
 func TestWikiInvalidInputAndIdentityBeforeBusinessRequests(t *testing.T) {
 	f := nextfixture.NewFixture(t, nil)
 	for _, args := range [][]string{
-		{"+node-get", "--node-token", "short"},
+		{"+node-get", "--node-token", "short/path"},
 		{"+node-get", "--node-token", nodeToken, "--token", parentToken},
-		{"+node-get", "--node-token", "https://example.feishu.cn/docx/" + objToken, "--obj-type", "sheet"},
+		{"+node-get", "--node-token", "https://example.feishu.cn/unknown/" + objToken, "--obj-type", "sheet"},
 		{"+node-create", "--as", "bot", "--space-id", "my_library"},
 		{"+node-create", "--space-id", "123", "--obj-type", "file"},
 		{"+node-create", "--space-id", "123", "--node-type", "shortcut"},

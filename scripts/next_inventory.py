@@ -78,17 +78,24 @@ def source_inventory(root):
             'test_files': [n for n in files if n.endswith(('_test.go', '.test.js', '.test.sh'))]}
 
 
-def exporter_source(surface):
+def exporter_source(surface, committed_catalog=False):
     """Select the real distribution surface without importing next into upstream."""
     source = EXPORTER.read_text(encoding='utf-8')
-    if surface == 'legacy':
+    if surface == 'legacy' and not committed_catalog:
         return source
-    if surface != 'next':
+    if surface not in ('next', 'legacy'):
         raise ValueError('surface must be next or legacy')
     anchor = 'rootcmd.WithoutPlugins(), rootcmd.WithoutStrictMode(),'
     if source.count(anchor) != 1:
         raise ValueError('inventory exporter Build options changed; update surface selection')
-    return source.replace(anchor, anchor + '\n\t\trootcmd.WithAgentMode(),')
+    source = source.replace('"github.com/larksuite/cli/internal/registry"',
+                            '"github.com/larksuite/cli/internal/apicatalog"\n\t"github.com/larksuite/cli/internal/meta"')
+    source = source.replace('func main() {', 'func main() {\n    data, err := os.ReadFile("internal/registry/meta_data.json")\n    if err != nil { panic(err) }\n    metadata, err := meta.Parse(data)\n    if err != nil { panic(err) }\n    frozenCatalog := apicatalog.New(apicatalog.SourceEmbedded, metadata.Services)\n')
+    source = source.replace('registry.EmbeddedServicesTyped()', 'frozenCatalog.Services()')
+    source = source.replace('registry.EmbeddedCatalog()', 'frozenCatalog')
+    if surface == 'next':
+        source = source.replace(anchor, anchor + '\n\t\trootcmd.WithAgentMode(),')
+    return source
 
 
 def build_context():
@@ -110,7 +117,7 @@ def export(root, metadata, brand, surface='legacy'):
                 target = work / name
                 target.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copyfile(source, target)
-        (work / 'scripts/next_inventory_export.go').write_text(exporter_source(surface), encoding='utf-8')
+        (work / 'scripts/next_inventory_export.go').write_text(exporter_source(surface, (root / 'internal/registry/catalog/manifest.json').is_file()), encoding='utf-8')
         (work / 'internal/registry/meta_data.json').write_bytes(metadata)
         env = {k: v for k, v in os.environ.items() if not k.startswith(('LARKSUITE_CLI_', 'FEISHU_'))}
         env.update(LARKSUITE_CLI_CONFIG_DIR=str(Path(temporary) / 'config'),
@@ -156,6 +163,7 @@ def section(path, contract):
 
 
 def freeze(reference, metadata_path, out):
+    committed_catalog = (reference / 'internal/registry/catalog/manifest.json').is_file()
     metadata = metadata_path.read_bytes()
     parsed = json.loads(metadata)
     methods = metadata_methods(parsed)
@@ -168,8 +176,8 @@ def freeze(reference, metadata_path, out):
         'local_changes': git(reference, 'status', '--porcelain=v1'),
         'distribution': '@larksuite/cli', 'binary': 'lark-cli', 'license': 'MIT',
         'metadata_sha256': digest(metadata), 'metadata_services': sorted(s['name'] for s in parsed['services']),
-        'metadata_source': 'https://open.feishu.cn/api/tools/open/api_definition?protocol=meta',
-        'metadata_note': 'Frozen build catalog fetched by target canonical build; absent in clean reference. Both brands use this exact catalog; remote overlay updates are separate runtime behavior.',
+        'metadata_source': ('internal/registry/catalog/manifest.json + services/*.json' if committed_catalog else 'https://open.feishu.cn/api/tools/open/api_definition?protocol=meta'),
+        'metadata_note': ('Exact service JSON from the official committed snapshot, assembled into the typed registry document for comparison; both brands use this catalog.' if committed_catalog else 'Frozen build catalog fetched by target canonical build; absent in clean reference. Both brands use this exact catalog; remote overlay updates are separate runtime behavior.'),
         'go_version': subprocess.check_output(['go', 'version']).decode().strip()},
         'sections': sections, 'counts': {'commands_including_root': len(commands),
         'shortcuts': len(variants['feishu']['shortcuts']), 'generated_methods': len(methods),
@@ -373,7 +381,7 @@ def check(reference_dir, target, surface='next', reference_registrations=None):
             'reference_registrations': str(registration_path),
             'reference_context_notice': ('Explicit alternate registration supplement; inspect its capture context.' if reference_registrations else 'Original frozen bootstrap inventory; use the configured-brand supplement for runtime brand conditions.'),
             'reference_registrations_sha256': digest(registration_path.read_bytes()),
-            'exporter_source_sha256': digest(exporter_source(surface).encode()),
+            'exporter_source_sha256': digest(exporter_source(surface, (target / 'internal/registry/catalog/manifest.json').is_file()).encode()),
             'metadata_sha256': digest(metadata), 'registration_changes': changes,
             'candidate_revision': initial_state['revision'],
             'candidate_state_before': initial_state, 'candidate_state_after': final_state,
@@ -413,7 +421,7 @@ def capture_brands(reference_dir, reference, output):
             'reference_local_changes': git(reference, 'status', '--porcelain=v1'),
             'metadata_sha256': digest(metadata), 'registrations': str(output),
             'registrations_sha256': digest(output.read_bytes()),
-            'exporter_source_sha256': digest(exporter_source('legacy').encode()),
+            'exporter_source_sha256': digest(exporter_source('legacy', (reference / 'internal/registry/catalog/manifest.json').is_file()).encode()),
             'brand_context': 'Production environment credential provider plus explicit WithStartupBrand and an isolated synthetic app account; no command executes; remote metadata disabled and external proxies point to an unreachable loopback port.',
             'frozen_snapshot_boundary': 'Existing registrations.json.gz is an unrestricted bootstrap inventory: setting brand environment alone did not configure the legacy registration guard. This supplement preserves it and captures configured runtime brand conditions.',
             'hidden_commands': {brand: sorted(p for p, c in value['commands'].items() if c['hidden']) for brand, value in variants.items()}}

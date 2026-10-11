@@ -41,7 +41,8 @@ func writeFile(t *testing.T, path, content string) {
 	}
 }
 
-// Each expected request was captured from an isolated build of frozen 7fd6ef3,
+// Requests were captured from isolated official builds: 7fd6ef3 for the original
+// commands and v1.0.97 for +export,
 // not generated from the implementation under test. This covers every API
 // shortcut's process/validation/dry-run routing, alongside the inherited units.
 func TestAppsFrozenRequestMapping(t *testing.T) {
@@ -87,7 +88,7 @@ func TestAppsFrozenRequestMapping(t *testing.T) {
 			}
 		})
 	}
-	file, err := os.Open("../../../docs/reference/registrations.json.gz")
+	file, err := os.Open("../../../docs/reference/v1.0.97/registrations.json.gz")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -106,8 +107,8 @@ func TestAppsFrozenRequestMapping(t *testing.T) {
 			t.Errorf("unmapped frozen command %s", command)
 		}
 	}
-	if len(covered) != 97 {
-		t.Fatalf("mapped %d, want 97 frozen leaves", len(covered))
+	if len(covered) != 98 {
+		t.Fatalf("mapped %d, want 98 frozen leaves", len(covered))
 	}
 }
 
@@ -370,7 +371,7 @@ type frozenAppMetadata struct {
 
 func frozenAppsMetadata(t *testing.T) []frozenAppMetadata {
 	t.Helper()
-	file, err := os.Open("../../../docs/reference/registrations.json.gz")
+	file, err := os.Open("../../../docs/reference/v1.0.97/registrations.json.gz")
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -73,7 +73,7 @@ const appNoContainerMessage = "this app has no running container; online metrics
 // status check; a failed metrics read alone does not authorize a release. It
 // names existing commands with a stable placeholder arg so a harness can act on
 // it without parsing natural-language error text.
-const appNoContainerHint = "check the app's deployment status with `lark-cli apps +release-list --app-id <app_id> --status finished` (a newly created or undeployed app has no finished release, so it produces no metrics yet); if it is not deployed, ask the user whether to deploy — deploying takes the whole app live and can affect existing production traffic — and only if confirmed run `lark-cli apps +release-create --app-id <app_id>`, then retry once it is serving traffic"
+const appNoContainerHint = "check the app's deployment status with `lark-cli apps +release-list --app-id <app_id> --status finished` (a newly created or undeployed app has no finished release, so it produces no metrics yet); if it is not deployed, inspect its type with `lark-cli apps +get --app-id <app_id> --jq '.data.app.app_type'`, then ask the user whether to deploy — deploying takes the whole app live and can affect existing production traffic — and only if confirmed run `lark-cli apps +release-create --help` and follow the matching app-type example; retry once the app is serving traffic"
 
 // appNoContainerMessageMarkers are lowercase substrings of the raw "Container
 // not exists" server message, used as a fallback when the business code is not
@@ -141,6 +141,13 @@ func withObservabilityHint(err error) error {
 // terms and any generic hint would be less actionable. That failure is only
 // produced by db endpoints, so the override is safe to check for every apps
 // command that funnels through here.
+//
+// Second special case: db failures whose numeric code is a shared
+// responsibility bucket and whose real reason is a `k_dl_` subcode on the message
+// (see applyDBSubcode). Checked here, at the chokepoint, because the collapse is a
+// property of the db OpenAPI rather than of any one command — audit, env-create
+// and their neighbours all receive the same code for unrelated reasons. Matching
+// requires an exact known subcode, so commands that never see one are unaffected.
 func withAppsHint(err error, hint string) error {
 	if err == nil {
 		return nil
@@ -150,6 +157,11 @@ func withAppsHint(err error, hint string) error {
 		if isAppNoDatabaseError(p) {
 			p.Message = appNoDatabaseMessage
 			p.Hint = appNoDatabaseHint
+			return err
+		}
+		// Before the generic hint: the subcode identifies one scenario, so its
+		// guidance always beats a per-command fallback written for the whole family.
+		if applyDBSubcode(p) {
 			return err
 		}
 		if strings.TrimSpace(p.Hint) == "" && hintExplainsFailure(p) {

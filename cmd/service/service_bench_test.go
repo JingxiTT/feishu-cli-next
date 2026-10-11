@@ -13,7 +13,11 @@ import (
 )
 
 func BenchmarkMethodCommandSpecs(b *testing.B) {
-	refs := registry.RuntimeCatalog().WalkMethods(nil)
+	snapshot, err := registry.OpenSnapshot()
+	if err != nil {
+		b.Fatal(err)
+	}
+	refs := snapshot.Catalog().WalkMethods(nil)
 	b.ReportAllocs()
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -24,7 +28,11 @@ func BenchmarkMethodCommandSpecs(b *testing.B) {
 }
 
 func BenchmarkRegisterServiceCommands(b *testing.B) {
-	catalog := registry.RuntimeCatalog()
+	snapshot, err := registry.OpenSnapshot()
+	if err != nil {
+		b.Fatal(err)
+	}
+	catalog := snapshot.Catalog()
 	f := &cmdutil.Factory{}
 	b.ReportAllocs()
 	b.ResetTimer()

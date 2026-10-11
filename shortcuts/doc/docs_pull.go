@@ -49,7 +49,7 @@ var DocsPull = common.Shortcut{
 		path := "/open-apis/docx/v1/documents/:document_id"
 		if ref, err := parseDocumentRef(runtime.Str("doc")); err == nil {
 			if ref.Kind == "wiki" {
-				preview.GET("/open-apis/wiki/v2/spaces/get_node").Params(map[string]interface{}{"token": ref.Token}).Desc("Resolve the wiki node to its native document")
+				preview.GET("/open-apis/wiki/v2/spaces/node_by_token").Params(map[string]interface{}{"token": ref.Token}).Desc("Resolve the wiki node to its native document")
 			} else if ref.Kind == "docx" {
 				preview.Set("document_id", ref.Token)
 				path = docsWorkspacePath(ref.Token)

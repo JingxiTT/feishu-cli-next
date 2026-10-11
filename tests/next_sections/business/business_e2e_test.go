@@ -48,7 +48,7 @@ var methods = []methodCase{
 	{command: "approval tasks remind", method: "POST", path: "/open-apis/approval/v4/instances/remind", highRisk: true, body: `{"instance_code":"instance_fixture","task_ids":["task_fixture","task_other"],"comment":"催办"}`},
 	{command: "attendance user_tasks query", method: "POST", path: "/open-apis/attendance/v1/user_tasks/query", bot: true, flags: []string{"--employee-type", "employee_no", "--ignore-invalid-users=false", "--include-terminated-user=true"}, query: url.Values{"employee_type": {"employee_no"}, "ignore_invalid_users": {"false"}, "include_terminated_user": {"true"}}, body: `{"user_ids":["000001"],"check_date_from":20260901,"check_date_to":20260907,"need_overtime_result":false}`},
 	{command: "mindnotes nodes create", method: "POST", path: "/open-apis/mindnote/v1/mindnotes/mind_fixture/nodes", bot: true, flags: []string{"--mindnote-id", "mind_fixture", "--user-id-type", "union_id"}, query: url.Values{"user_id_type": {"union_id"}}, body: `{"client_token":"mind-idempotency-fixture","nodes":[{"node_id":"node_fixture","parent_id":"root_fixture","finish":false,"highlight":"grey","images":[{"token":"img_synthetic"}],"texts":[{"element_type":"text","text":{"content":"  Unicode 👋\n"},"style":{"bold":true,"italic":false}},{"element_type":"link","link":{"url":"https://example.invalid/?q=%20","content":"link"}},{"element_type":"user","mention_user":{"user_id":"on_synthetic"}},{"element_type":"doc","mention_doc":{"token":"doc_synthetic"}}],"notes":[{"element_type":"text","text":{"content":""},"style":{}},{"element_type":"link","link":{"url":"https://example.invalid"}},{"element_type":"user","mention_user":{"user_id":"on_synthetic"}},{"element_type":"doc","mention_doc":{"token":"doc_synthetic"}}]}]}`},
-	{command: "mindnotes nodes list", method: "GET", path: "/open-apis/mindnote/v1/mindnotes/mind_fixture/nodes", flags: []string{"--mindnote-id", "mind_fixture", "--user-id-type", "open_id"}, query: url.Values{"user_id_type": {"open_id"}}},
+	{command: "mindnotes nodes list", method: "GET", path: "/open-apis/mindnote/v1/mindnotes/mind_fixture/nodes", bot: true, flags: []string{"--mindnote-id", "mind_fixture", "--user-id-type", "open_id"}, query: url.Values{"user_id_type": {"open_id"}}},
 }
 
 func argsFor(tc methodCase, identity string) []string {
@@ -249,7 +249,7 @@ func TestBusinessValidationAndDryRunNeverDispatch(t *testing.T) {
 }
 
 func TestFrozenBusinessSchemaAndRouting(t *testing.T) {
-	file, err := os.Open("../../../docs/reference/meta_data.json.gz")
+	file, err := os.Open("../../../docs/reference/v1.0.97/meta_data.json.gz")
 	require.NoError(t, err)
 	defer file.Close()
 	zipped, err := gzip.NewReader(file)

@@ -21,6 +21,8 @@ metadata:
 - **发送、回复、更新 interactive 卡片前，必须读 [`card create`](references/card/lark-im-card-create.md) 并按工作流产出 JSON，不能手写或复制 payload。** [`card action reply`](references/lark-im-card-action-reply.md) 处理 `card.action.trigger`；订阅中的卡片尚无紧凑转换，返回原始事件并在 stderr 提示。
 - `--audio` 仅接受 Opus（`.opus` / Ogg Opus `.ogg`）；其他格式先转换，或用 `--file` 原样发附件。转发文档先以 `--doc-format im-markdown` 获取，再以 `--markdown` 发送；保留原文与 `cite type="user"` 标签。
 
+`--concise` 提供消息列表的紧凑 Markdown 输出；仅在用户要求时使用，不能与显式 `--format`、启用的 `--json` 或非空 `--jq` 组合。资源下载和文件夹展开见 `references/lark-im-message-enrichment.md`。
+
 ## 常用路径
 
 已有本版本参数和授权时，直接调用；占位符替换为已确认的 ID：

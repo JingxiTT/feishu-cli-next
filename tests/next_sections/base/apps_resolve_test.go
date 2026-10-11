@@ -42,7 +42,7 @@ func appScenarios() []scenario {
 func resolveScenarios() []scenario {
 	return []scenario{
 		{"url-resolve-local", args("url-resolve", "--url", "https://example.invalid/base/bas_fixture"), nil, `{"base_token":"bas_fixture","resource_type":"bitable"}`},
-		{"url-resolve-wiki", args("url-resolve", "--url", "https://example.invalid/wiki/wik_fixture"), []exchange{ex("GET", "/open-apis/wiki/v2/spaces/get_node", "token=wik_fixture", "", `{"node":{"obj_token":"bas_fixture","obj_type":"bitable"}}`)}, `{"base_token":"bas_fixture"}`},
+		{"url-resolve-wiki", args("url-resolve", "--url", "https://example.invalid/wiki/wik_fixture"), []exchange{ex("GET", "/open-apis/wiki/v2/spaces/node_by_token", "token=wik_fixture", "", `{"node":{"obj_token":"bas_fixture","obj_type":"bitable"}}`)}, `{"base_token":"bas_fixture"}`},
 		one(args("title-resolve", "--title", "计划"), ex("POST", "/open-apis/search/v2/doc_wiki/search", "", `{"query":"计划","page_size":5,"doc_filter":{"doc_types":["BITABLE"]},"wiki_filter":{"doc_types":["BITABLE"]}}`, `{"res_units":[{"title_highlighted":"<h>计划</h>","result_meta":{"doc_types":"BITABLE","token":"bas_fixture","url":"https://example.invalid/base/bas_fixture"}}]}`), `{"base_token":"bas_fixture","title":"计划"}`),
 	}
 }

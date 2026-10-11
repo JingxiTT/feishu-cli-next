@@ -8,6 +8,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/larksuite/cli/internal/apicatalog"
 	"github.com/larksuite/cli/internal/meta"
 )
 
@@ -33,7 +34,7 @@ func TestDocsTargetedEditGuidanceIsParsedIntoCommandTips(t *testing.T) {
 	previous := mdSource
 	t.Cleanup(func() { SetSource(previous) })
 	SetSource(os.DirFS("../../affordance"))
-	raw, ok := For("docs", "+update")
+	raw, ok := For(apicatalog.Catalog{}, "docs", "+update")
 	if !ok {
 		t.Fatal("missing docs +update overlay")
 	}
@@ -60,7 +61,7 @@ func TestDocsFactReadGuidanceIsParsedIntoCommandTips(t *testing.T) {
 	previous := mdSource
 	t.Cleanup(func() { SetSource(previous) })
 	SetSource(os.DirFS("../../affordance"))
-	raw, ok := For("docs", "+fetch")
+	raw, ok := For(apicatalog.Catalog{}, "docs", "+fetch")
 	if !ok {
 		t.Fatal("missing docs +fetch overlay")
 	}
@@ -94,7 +95,7 @@ func TestDocsWorkspaceGuidancePreservesNativeBoundaries(t *testing.T) {
 		"+pull": {"Read stdout directly", "native sidecar", "immutable regions", "full native content", "literal, case-insensitive block-local match", "complete=false", "Saved working copies require full scope", "saved v1 editing views"},
 		"+push": {"Ambiguous edits across text runs are rejected before writing", "verifies applied changes internally", "partial or unknown effects"},
 	} {
-		raw, ok := For("docs", command)
+		raw, ok := For(apicatalog.Catalog{}, "docs", command)
 		if !ok {
 			t.Fatalf("missing %s guidance", command)
 		}

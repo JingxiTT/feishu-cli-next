@@ -290,7 +290,7 @@ func buildColumnStats(records []Record, columnIndex int, column Column, timezone
 		}
 		return ColumnStats{NullCount: &nullCount, TrueCount: &trueCount}
 
-	case "location":
+	case "location", "button", "not_support":
 		nullCount := 0
 		for _, record := range records {
 			if columnIndex >= len(record.Values) || record.Values[columnIndex] == nil {

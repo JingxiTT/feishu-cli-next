@@ -10,53 +10,30 @@ import (
 
 	"github.com/larksuite/cli/internal/cmdutil"
 	"github.com/larksuite/cli/internal/core"
-	"github.com/larksuite/cli/shortcuts"
+	"github.com/larksuite/cli/internal/registry"
 )
 
 func TestBrandFilter_AppsExcludedOnLark(t *testing.T) {
-	feishuDomains := builtinResolver().allKnown(core.BrandFeishu)
+	feishuDomains := builtinResolver(t).allKnown(core.BrandFeishu)
 	if !feishuDomains["apps"] {
 		t.Errorf("expected apps domain to be known on Feishu brand")
 	}
 
-	larkDomains := builtinResolver().allKnown(core.BrandLark)
+	larkDomains := builtinResolver(t).allKnown(core.BrandLark)
 	if larkDomains["apps"] {
 		t.Errorf("expected apps domain to be EXCLUDED on Lark brand")
 	}
 
-	feishuScopes := builtinResolver().scopesFor([]string{"apps"}, "user", core.BrandFeishu)
+	feishuScopes := builtinResolver(t).scopesFor([]string{"apps"}, "user", core.BrandFeishu)
 	if len(feishuScopes) == 0 {
 		t.Errorf("expected non-empty scopes for apps on Feishu brand, got %d", len(feishuScopes))
 	}
 
-	larkScopes := builtinResolver().scopesFor([]string{"apps"}, "user", core.BrandLark)
+	larkScopes := builtinResolver(t).scopesFor([]string{"apps"}, "user", core.BrandLark)
 	if len(larkScopes) != 0 {
 		t.Errorf("expected empty scopes for apps on Lark brand, got %d: %v", len(larkScopes), larkScopes)
 	}
 }
-
-func TestInteractiveDomainMetadataUsesActiveBrand(t *testing.T) {
-	registered := shortcuts.AllShortcuts()
-	feishuDomains := newDomainResolver(registered).metadata("en", core.BrandFeishu)
-	if !containsDomainMetadata(feishuDomains, "apps") {
-		t.Fatal("apps domain is missing for Feishu interactive login")
-	}
-
-	larkDomains := newDomainResolver(registered).metadata("en", core.BrandLark)
-	if containsDomainMetadata(larkDomains, "apps") {
-		t.Fatal("apps domain is present for Lark interactive login")
-	}
-}
-
-func containsDomainMetadata(domains []domainMeta, name string) bool {
-	for _, domain := range domains {
-		if domain.Name == name {
-			return true
-		}
-	}
-	return false
-}
-
 func TestLoginHelpBrandDoesNotResolveCredentialConfig(t *testing.T) {
 	priorCompletion := cmdutil.FlagCompletionsEnabled()
 	cmdutil.SetFlagCompletionsEnabled(true)
@@ -65,12 +42,17 @@ func TestLoginHelpBrandDoesNotResolveCredentialConfig(t *testing.T) {
 	for _, brand := range []core.LarkBrand{core.BrandFeishu, core.BrandLark} {
 		t.Run(string(brand), func(t *testing.T) {
 			factory, _, _, _ := cmdutil.TestFactory(t, &core.CliConfig{Brand: brand})
+			snapshot, err := registry.OpenSnapshot()
+			if err != nil {
+				t.Fatal(err)
+			}
+			factory.APICatalog = snapshot.Catalog()
 			factory.Config = func() (*core.CliConfig, error) {
 				t.Fatal("constructor/help resolved credential config")
 				return nil, nil
 			}
 			login := NewCmdAuthLogin(factory, nil)
-			want := "available: " + strings.Join(builtinResolver().sorted(brand), ", ") + ", all"
+			want := "available: " + strings.Join(builtinResolver(t).sorted(brand), ", ") + ", all"
 			if usage := login.Flag("domain").Usage; !strings.Contains(usage, want) {
 				t.Fatalf("%s help: %s", brand, usage)
 			}

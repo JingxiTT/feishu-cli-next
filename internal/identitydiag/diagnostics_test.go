@@ -5,19 +5,79 @@ package identitydiag
 
 import (
 	"context"
+	"errors"
 	"net/http"
 	"strings"
 	"testing"
 	"time"
 
+	"github.com/larksuite/cli/errs"
 	extcred "github.com/larksuite/cli/extension/credential"
 	larkauth "github.com/larksuite/cli/internal/auth"
 	"github.com/larksuite/cli/internal/cmdutil"
 	"github.com/larksuite/cli/internal/core"
 	"github.com/larksuite/cli/internal/credential"
 	"github.com/larksuite/cli/internal/httpmock"
+	"github.com/larksuite/cli/internal/keychain"
+	"github.com/larksuite/cli/internal/recovery"
+	"github.com/larksuite/cli/internal/surface"
 	"github.com/zalando/go-keyring"
 )
+
+func TestFilterRecoveryProjectsTopLevelAndNestedErrorHintTogether(t *testing.T) {
+	hint := recovery.Join("; ",
+		recovery.Text("check keychain access"),
+		recovery.Command(recovery.TargetConfigKeychainDowngrade,
+			"run lark-cli config keychain-downgrade"),
+	)
+	source := recovery.Attach(
+		errs.NewInternalError(errs.SubtypeStorage, "stored token read failed").
+			WithCause(errors.New("keychain unavailable")),
+		hint,
+	)
+	problem, ok := errs.ProblemOf(source)
+	if !ok {
+		t.Fatalf("source error = %T, want typed problem", source)
+	}
+	identity := Identity{
+		Status:        StatusError,
+		Hint:          problem.Hint,
+		Error:         problem,
+		recoveryError: source,
+	}
+
+	plan := surface.NewPlan(map[surface.CommandID]surface.CommandState{
+		surface.CommandConfigKeychainDowngrade: surface.CommandConcealed,
+	})
+	projector := recovery.NewProjector(func() *surface.Plan { return plan })
+	got := FilterRecovery(Result{User: identity}, projector).User
+	if got.Hint != "check keychain access" {
+		t.Errorf("top-level hint = %q, want generic recovery only", got.Hint)
+	}
+	if got.Error == nil || got.Error.ProblemDetail().Hint != got.Hint {
+		t.Fatalf("nested error hint = %#v, want %q", got.Error, got.Hint)
+	}
+}
+
+func TestFilterRecoveryPreservesPolicyFieldsWithoutMutatingSource(t *testing.T) {
+	source := errs.NewSecurityPolicyError(errs.SubtypeChallengeRequired, "challenge required").
+		WithChallengeURL("https://example.com/challenge").WithHint("run auth login")
+	identity := withCommandRecovery(withPolicyError(Identity{}, source), recovery.TargetAuthLogin, source.Hint)
+	plan := surface.NewPlan(map[surface.CommandID]surface.CommandState{
+		surface.CommandAuthLogin: surface.CommandConcealed,
+	})
+	got := FilterRecovery(Result{User: identity}, recovery.NewProjector(func() *surface.Plan { return plan })).User
+	var policyErr *errs.SecurityPolicyError
+	if !errors.As(got.Error, &policyErr) || policyErr.ChallengeURL != source.ChallengeURL {
+		t.Fatalf("projected error = %#v, want policy error with original challenge URL", got.Error)
+	}
+	if got.Hint != "" || policyErr.Hint != "" {
+		t.Fatalf("projected hints = (%q, %q), want empty", got.Hint, policyErr.Hint)
+	}
+	if source.Hint != "run auth login" {
+		t.Fatalf("source hint = %q, want unchanged", source.Hint)
+	}
+}
 
 func TestDiagnose_NoUserReportsBotReadyAndUserMissing(t *testing.T) {
 	cfg := &core.CliConfig{AppID: "test-app", AppSecret: "secret", Brand: core.BrandFeishu}
@@ -234,6 +294,31 @@ func TestDiagnose_VerifyUserIdentity_ServerRejects(t *testing.T) {
 	if !strings.Contains(got.User.Message, "server rejected token") {
 		t.Fatalf("user message = %q, want 'server rejected token'", got.User.Message)
 	}
+
+	stored, err := larkauth.GetStoredToken(cfg.AppID, cfg.UserOpenId)
+	if err != nil {
+		t.Fatalf("GetStoredToken() error = %v", err)
+	}
+	if stored == nil {
+		t.Fatal("GetStoredToken() = nil")
+	}
+	stored.ExpiresAt = now.Add(-time.Minute).UnixMilli()
+	if err := larkauth.SetStoredToken(stored); err != nil {
+		t.Fatalf("SetStoredToken() refresh fixture error = %v", err)
+	}
+
+	const refreshMessage = "User token refresh was denied by policy"
+	f, _, _, reg = cmdutil.TestFactory(t, cfg)
+	reg.Register(&httpmock.Stub{
+		Method: http.MethodPost,
+		URL:    larkauth.PathOAuthTokenV2,
+		Error:  errs.NewSecurityPolicyError(errs.SubtypeAccessDenied, "%s", refreshMessage).WithCode(21001),
+	})
+	got = Diagnose(context.Background(), f, cfg, true)
+	var policyErr *errs.SecurityPolicyError
+	if !errors.As(got.User.Error, &policyErr) || policyErr.Code != 21001 || policyErr.Message != refreshMessage {
+		t.Fatalf("user error = %#v, want policy error 21001 with message %q", got.User.Error, refreshMessage)
+	}
 }
 
 func TestDiagnose_UserIdentityExpired(t *testing.T) {
@@ -306,6 +391,7 @@ func TestStatusMessage(t *testing.T) {
 		StatusVerifyFailed:  "verify failed",
 		StatusNeedsRefresh:  "needs refresh",
 		StatusMissing:       "missing",
+		StatusError:         "error",
 		"unknown":           "unknown",
 	}
 	for in, want := range cases {
@@ -482,4 +568,42 @@ func TestDiagnose_External_VerifyUserTokenUnavailable(t *testing.T) {
 		t.Fatalf("verified = %v, want false", got.User.Verified)
 	}
 	assertExternalHint(t, got.User.Hint)
+}
+
+func TestDiagnose_CorruptStoredTokenCarriesReauthorizationRecovery(t *testing.T) {
+	keyring.MockInit()
+	t.Setenv("HOME", t.TempDir())
+	t.Setenv("LARKSUITE_CLI_DATA_DIR", t.TempDir())
+
+	cfg := &core.CliConfig{
+		AppID:      "test-app-corrupt",
+		AppSecret:  "secret",
+		Brand:      core.BrandFeishu,
+		UserOpenId: "ou_corrupt",
+		UserName:   "tester",
+	}
+	if err := keychain.Set(keychain.LarkCliService, cfg.AppID+":"+cfg.UserOpenId, `{"accessToken":`); err != nil {
+		t.Fatalf("keychain.Set() error = %v", err)
+	}
+	f, _, _, _ := cmdutil.TestFactory(t, cfg)
+
+	got := Diagnose(context.Background(), f, cfg, false).User
+	if got.Status != StatusError || got.Available {
+		t.Fatalf("user = %#v, want error and unavailable", got)
+	}
+	if !strings.Contains(got.Hint, "auth login") || got.Error == nil || got.Error.ProblemDetail().Hint != got.Hint {
+		t.Fatalf("user hint = %q, error = %#v; want re-authorization guidance on both", got.Hint, got.Error)
+	}
+
+	concealed := surface.NewPlan(map[surface.CommandID]surface.CommandState{
+		surface.CommandAuthLogin: surface.CommandConcealed,
+	})
+	projector := recovery.NewProjector(func() *surface.Plan { return concealed })
+	projected := FilterRecovery(Result{User: got}, projector).User
+	if strings.Contains(projected.Hint, "auth login") || !strings.Contains(projected.Hint, "supported authorization flow") {
+		t.Fatalf("projected hint = %q, want the reduced-distribution fallback instead of a dead auth login pointer", projected.Hint)
+	}
+	if projected.Error == nil || projected.Error.ProblemDetail().Hint != projected.Hint {
+		t.Fatalf("projected error = %#v, want nested hint to follow the top-level projection %q", projected.Error, projected.Hint)
+	}
 }

@@ -67,6 +67,7 @@ func NewCmd(f *cmdutil.Factory, root *cobra.Command) *cobra.Command {
 	cmd.Flags().BoolVar(&withFlags, "flags", false, "include flag descriptions, types, defaults and required markers")
 	cmdutil.DisableAuthCheck(cmd)
 	cmdutil.SetRisk(cmd, "read")
+	cmdmeta.SetRequiresFullTree(cmd)
 	return cmd
 }
 

@@ -8,6 +8,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/larksuite/cli/internal/apicatalog"
 	"github.com/larksuite/cli/internal/meta"
 )
 
@@ -26,7 +27,7 @@ func TestTaskAffordanceMutationSemantics(t *testing.T) {
 		"+set-ancestor":      "deliberately detaches",
 		"+upload-attachment": "append effect",
 	} {
-		raw, ok := For("task", command)
+		raw, ok := For(apicatalog.Catalog{}, "task", command)
 		if !ok || !strings.Contains(string(raw), phrase) {
 			t.Errorf("%s missing %q: %s", command, phrase, raw)
 		}

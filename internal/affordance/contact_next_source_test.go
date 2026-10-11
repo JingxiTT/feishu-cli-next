@@ -8,6 +8,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/larksuite/cli/internal/apicatalog"
 	"github.com/larksuite/cli/internal/meta"
 )
 
@@ -15,7 +16,7 @@ func TestContactBasicProfileGuidanceAllowsUserIdentity(t *testing.T) {
 	previous := mdSource
 	t.Cleanup(func() { SetSource(previous) })
 	SetSource(os.DirFS("../../affordance"))
-	raw, ok := For("contact", "+get-user")
+	raw, ok := For(apicatalog.Catalog{}, "contact", "+get-user")
 	if !ok {
 		t.Fatal("missing get-user overlay")
 	}

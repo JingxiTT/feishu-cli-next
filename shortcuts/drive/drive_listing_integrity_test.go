@@ -15,6 +15,8 @@ import (
 func TestDriveMirrorRejectsIncompleteListing(t *testing.T) {
 	for _, scenario := range []string{"missing_cursor", "repeated_cursor", "folder_cycle", "malformed_entry", "malformed_collection", "malformed_pagination"} {
 		t.Run(scenario, func(t *testing.T) {
+			dir := t.TempDir()
+			withDriveWorkingDir(t, dir)
 			f, stdout, _, reg := cmdutil.TestFactory(t, driveTestConfig())
 			calls := 0
 			data := map[string]interface{}{"files": []interface{}{}, "has_more": true}
@@ -38,7 +40,7 @@ func TestDriveMirrorRejectsIncompleteListing(t *testing.T) {
 				reg.Register(&httpmock.Stub{Method: "GET", URL: "/open-apis/drive/v1/files", Body: map[string]interface{}{"code": 0, "data": data}, OnMatch: func(*http.Request) { calls++ }})
 			}
 			// Overwrite plus deletion makes silently accepting a partial list destructive.
-			err := mountAndRunDrive(t, DrivePush, []string{"+push", "--local-dir", t.TempDir(), "--folder-token", "root", "--if-exists", "overwrite", "--delete-remote", "--yes", "--as", "bot"}, f, stdout)
+			err := mountAndRunDrive(t, DrivePush, []string{"+push", "--local-dir", dir, "--folder-token", "root", "--if-exists", "overwrite", "--delete-remote", "--yes", "--as", "bot"}, f, stdout)
 			problem, ok := errs.ProblemOf(err)
 			if !ok || problem.Subtype != errs.SubtypeInvalidResponse {
 				t.Fatalf("want typed invalid_response, got %v", err)

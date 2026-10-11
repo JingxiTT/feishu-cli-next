@@ -383,7 +383,7 @@ func TestWikiResolutionAndEffectiveIdentities(t *testing.T) {
 					if r.Header.Get("X-Lark-Proxy-Identity") != identity {
 						t.Error(r.Header.Get("X-Lark-Proxy-Identity"))
 					}
-					if strings.HasSuffix(r.URL.Path, "/get_node") {
+					if r.URL.Path == "/open-apis/wiki/v2/spaces/node_by_token" {
 						if r.URL.Query().Get("token") != "wikcn123" {
 							t.Error(r.URL)
 						}

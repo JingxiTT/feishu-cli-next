@@ -93,7 +93,13 @@ func TestWikiSupportedKindsAndNotificationDryRun(t *testing.T) {
 			} {
 				r := f.Run(args...)
 				require.Equal(t, 0, r.ExitCode, "%+v", r)
-				require.Contains(t, r.Stdout, kind)
+				if args[1] == "+node-get" {
+					require.Equal(t, "/open-apis/wiki/v2/spaces/node_by_token", gjson.Get(r.Stdout, "data.api.0.url").String())
+					require.Equal(t, objToken, gjson.Get(r.Stdout, "data.api.0.params.token").String())
+					require.False(t, gjson.Get(r.Stdout, "data.api.0.params.obj_type").Exists())
+				} else {
+					require.Contains(t, r.Stdout, kind)
+				}
 			}
 		})
 	}
@@ -172,7 +178,7 @@ func assertWikiDiscovery(t *testing.T, f *nextfixture.Fixture, command string) {
 		"+node-copy":     {"space-id", "node-token", "target-space-id", "target-parent-node-token", "title", "yes"},
 		"+node-create":   {"space-id", "parent-node-token", "title", "node-type", "obj-type", "origin-node-token"},
 		"+node-delete":   {"node-token", "obj-type", "space-id", "include-children", "yes"},
-		"+node-get":      {"node-token", "obj-type", "space-id"},
+		"+node-get":      {"node-token", "space-id"},
 		"+node-list":     {"space-id", "parent-node-token", "page-size", "page-token", "page-all", "page-limit"},
 		"+space-create":  {"name", "description"},
 		"+space-list":    {"page-size", "page-token", "page-all", "page-limit"},
@@ -235,6 +241,9 @@ func assertWikiDiscovery(t *testing.T, f *nextfixture.Fixture, command string) {
 	flags := map[string]gjson.Result{}
 	for _, flag := range target.Get("flags").Array() {
 		flags[flag.Get("name").String()] = flag
+	}
+	if command == "+node-get" {
+		require.NotContains(t, flags, "obj-type", "server detects token type; compatibility flag stays hidden")
 	}
 	// Authsidecar intentionally hides --profile; discovery includes public flags only.
 	expectedFlags := append([]string{"as", "dry-run"}, flagNames[command]...)

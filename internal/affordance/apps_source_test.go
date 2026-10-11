@@ -8,6 +8,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/larksuite/cli/internal/apicatalog"
 	"github.com/larksuite/cli/internal/meta"
 )
 
@@ -25,7 +26,7 @@ func TestAppsWorkflowGuidance(t *testing.T) {
 	}
 	for _, tc := range cases {
 		t.Run(tc.command, func(t *testing.T) {
-			raw, ok := For("apps", tc.command)
+			raw, ok := For(apicatalog.Catalog{}, "apps", tc.command)
 			if !ok {
 				t.Fatal("missing Apps guidance")
 			}

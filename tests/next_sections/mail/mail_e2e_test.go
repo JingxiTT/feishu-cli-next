@@ -42,7 +42,7 @@ func data(t *testing.T, result nextfixture.Result) map[string]any {
 // Every frozen mail command and nonhidden option must remain discoverable.
 // Workflow tests below and the reference unit suite independently check behavior.
 func TestFrozenMailDiscovery(t *testing.T) {
-	file, err := os.Open("../../../docs/reference/registrations.json.gz")
+	file, err := os.Open("../../../docs/reference/v1.0.97/registrations.json.gz")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -82,7 +82,7 @@ func TestFrozenMailDiscovery(t *testing.T) {
 			}
 		})
 	}
-	if count != 102 {
+	if count != 104 {
 		t.Fatalf("frozen command count %d", count)
 	}
 }

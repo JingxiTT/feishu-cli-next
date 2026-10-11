@@ -1,7 +1,7 @@
 ---
 name: lark-sheets
-version: 3.1.8
-description: "飞书电子表格：创建和操作电子表格。支持创建表格、管理工作表与行列结构（增删/合并/调整尺寸/隐藏/冻结）、读写单元格（值/公式/样式/批注/单元格图片）、查找替换、多操作批量更新，以及图表、透视表、条件格式、筛选器、迷你图、浮动图片等对象的创建与维护。当用户需要创建电子表格、管理工作表、批量读写或编辑数据、统计汇总与可视化、表格美化、公式计算（含 Excel 公式迁移）、金融/财务建模（DCF、三张表、预算、Sensitivity 等）等任务时使用。若用户是想按名称或关键词搜索云空间（云盘/云存储）里的表格文件，请改用 lark-drive 的 drive +search 先定位资源。当用户给出 doubao.com 的 /sheets/ URL/token 时，也应直接使用本 skill，不要因为域名不是飞书而回退到 WebFetch；路由依据是 URL 路径模式和 token，而不是域名。"
+version: 3.5.2
+description: "飞书电子表格：创建和操作电子表格。支持工作表与行列结构（增删/合并/尺寸/隐藏/冻结/分组）、单元格读写（值/公式/样式/批注/单元格图片）、区域复制移动排序填充、查找替换、批量更新，图表、透视表、条件格式、筛选器与筛选视图、下拉列表、迷你图、浮动图片等对象的创建与维护，以及公式校验、历史版本回滚、本地 Excel/CSV 与飞书表格的导入导出。当用户需要创建或编辑表格、统计汇总与可视化、表格美化、公式计算（含 Excel 公式迁移）、金融/财务建模（DCF、三张表、预算、Sensitivity 等）时使用。多维表格（Base/bitable）请改用 lark-base；若用户是想按名称或关键词搜索云空间（云盘/云存储）里的表格文件，请改用 lark-drive 的 drive +search 先定位资源。当用户给出 doubao.com 的 /sheets/ URL/token 时，也应直接使用本 skill，不要因为域名不是飞书而回退到 WebFetch；路由依据是 URL 路径模式和 token，而不是域名。"
 metadata:
   requires:
     bins: ["lark-cli"]
@@ -59,7 +59,6 @@ metadata:
 | 有序跨类型写链/批量清除 | `+batch-update` / `+cells-batch-clear` | [`batch update`](references/lark-sheets-batch-update.md)；高风险门禁；失败按参考处置 |
 | 历史/异步回滚 | `+history-list/revert/revert-status` | [`history`](references/lark-sheets-history.md)；查询状态，不重放不明回滚 |
 | 复核编辑 changeset | `+changeset-get` | [`changeset`](references/lark-sheets-changeset.md)；版本差最多 20 |
-| 旧命令 unknown subcommand | 查替代及协议差异 | [`legacy migration`](references/lark-sheets-legacy-command-migration.md)；旧 42 命令已删除，不凭名称迁移 payload |
 
 ## 公共 flag 速查
 
