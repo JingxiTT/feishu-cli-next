@@ -35,6 +35,9 @@ approval URL and status, even with dotted selections or artifact summaries.
 Other nested resource objects use explicit dotted paths. Results containing failed, partial,
 unknown or unsupported outcomes retain their full data. This conservative shared
 projection must not replace a domain-specific schema that has more outcome fields.
+Nonempty Mail `failed_thread_ids` and Apps release `error_logs` also retain the
+full result, including failure reasons, under dotted selection and artifact
+summaries. Empty failure collections still allow compact successful results.
 Projection never mutates caller data. JSON numbers use their serialized decimal
 representation without a float64 conversion; null, empty string, omitted fields,
 Unicode and leading-zero strings remain distinct. Numeric precision already lost

@@ -250,15 +250,23 @@ func protectedField(key string) bool {
 // or unsupported content. Future domain-specific projections may be narrower
 // only after defining and testing that domain's outcome schema.
 func unsafeProjection(raw json.RawMessage) bool {
-	var object map[string]json.RawMessage
-	if json.Unmarshal(raw, &object) == nil && object != nil {
+	raw = bytes.TrimSpace(raw)
+	if len(raw) == 0 {
+		return false
+	}
+	switch raw[0] {
+	case '{':
+		var object map[string]json.RawMessage
+		if json.Unmarshal(raw, &object) != nil {
+			return false
+		}
 		for key, value := range object {
 			switch key {
 			case "ok":
 				if string(value) == "false" {
 					return true
 				}
-			case "error", "errors", "unsupported", "unsupported_types", "warning", "warnings", "missing_scopes":
+			case "error", "errors", "error_logs", "failed_thread_ids", "unsupported", "unsupported_types", "warning", "warnings", "missing_scopes":
 				if string(value) != "null" && string(value) != "[]" && string(value) != "{}" && string(value) != "false" {
 					return true
 				}
@@ -278,10 +286,11 @@ func unsafeProjection(raw json.RawMessage) bool {
 				return true
 			}
 		}
-		return false
-	}
-	var array []json.RawMessage
-	if json.Unmarshal(raw, &array) == nil {
+	case '[':
+		var array []json.RawMessage
+		if json.Unmarshal(raw, &array) != nil {
+			return false
+		}
 		for _, value := range array {
 			if unsafeProjection(value) {
 				return true

@@ -1,0 +1,38 @@
+{
+  "date": "2026-10-11",
+  "base": "e6b649433c23da8dd3578d89e07c045286022cb5",
+  "checks": {
+    "focused_meta_schema_service": "pass",
+    "focused_output": "pass",
+    "focused_guidance": "pass",
+    "bounds_allocation_canonical_race": "pass",
+    "regressions_fail_against_base": "pass: failure reasons/logs and allocation guards",
+    "unit_race_vet_format_script_checks": "pass through make test",
+    "make_test": "in progress: offline integration and evaluation remaining",
+    "root_errs_events_nextskill": "pass after updating embedded Docs tip expectation",
+    "skill_format": "pass",
+    "capability_gate_v1_0_97": "pass: 5770 registration changes checked",
+    "go_mod_tidy_unchanged": "pass",
+    "lint_module_tests": "pass",
+    "go_licenses": "pass",
+    "independent_review": "one Mail example identity finding fixed; no other actionable findings"
+  },
+  "pending": [
+    "post-commit quality gate",
+    "diff-scoped golangci and source lint"
+  ],
+  "not_run": [
+    "live Feishu tenant workflows",
+    "provider-token task trials",
+    "live skills sync",
+    "auth sidecar tests (unchanged)",
+    "native Linux/Windows execution"
+  ],
+  "measurement_limits": "Synthetic local microbenchmarks and offline output-context counts only; no end-to-end network latency or provider-token savings claim. The entry guide grows by 235 tokens to include current workflow routes. Existing request-only schema savings are retained, not newly introduced.",
+  "initial_failures": [
+    "Root embedded Docs affordance test pinned the prior tip list; updated the exact expectation for new async recovery guidance and reran successfully."
+  ],
+  "nonblocking_warnings": [
+    "go-licenses cannot inspect assembly dependencies inside golang.org/x/sys/unix."
+  ]
+}

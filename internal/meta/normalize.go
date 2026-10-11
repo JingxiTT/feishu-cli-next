@@ -4,11 +4,11 @@
 package meta
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"sort"
 	"strconv"
+	"strings"
 )
 
 // CanonicalType maps meta_data's non-standard type names to the standard
@@ -209,21 +209,14 @@ func (f Field) MinBound() *json.Number { return parseBound(f.Min) }
 func (f Field) MaxBound() *json.Number { return parseBound(f.Max) }
 
 func parseBound(s string) *json.Number {
-	if s == "" {
+	if s == "" || !json.Valid([]byte(s)) {
 		return nil
 	}
-	var raw json.RawMessage
-	if err := json.Unmarshal([]byte(s), &raw); err != nil {
+	s = strings.TrimSpace(s)
+	// Valid JSON starting with a minus or digit is a number; keep its exact spelling.
+	if s[0] != '-' && (s[0] < '0' || s[0] > '9') {
 		return nil
 	}
-	dec := json.NewDecoder(bytes.NewReader(raw))
-	dec.UseNumber()
-	var value any
-	if err := dec.Decode(&value); err != nil {
-		return nil
-	}
-	if n, ok := value.(json.Number); ok {
-		return &n
-	}
-	return nil
+	n := json.Number(s)
+	return &n
 }
