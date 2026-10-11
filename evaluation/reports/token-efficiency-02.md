@@ -1,7 +1,7 @@
 # Token reduction with original functionality preserved
 
 This condition evaluates the token-efficiency changes requested after the
-[first Luna pilot](evidence/paired-luna-medium-01/REPORT.md). Historical results
+[first Luna pilot](../../evidence/evaluation/paired-luna-medium-01/REPORT.md). Historical results
 are immutable. No functions, formats, required evidence, or success checks may
 be removed to reach the target.
 

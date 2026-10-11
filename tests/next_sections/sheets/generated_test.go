@@ -49,7 +49,7 @@ func assertFields(t *testing.T, fields, schema map[string]any) {
 	}
 }
 func TestGeneratedSchemasAndRequests(t *testing.T) {
-	file, e := os.Open("../../../docs/reference/v1.0.97/meta_data.json.gz")
+	file, e := os.Open("../../../baseline/v1.0.97/meta_data.json.gz")
 	require.NoError(t, e)
 	defer file.Close()
 	z, e := gzip.NewReader(file)

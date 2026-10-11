@@ -6,7 +6,7 @@ receipt implementations remain coordinator-owned. Packaging owns released
 platform artifacts and non-native runtime checks.
 
 The implementation reuses the complete frozen SDK. All 92 files under
-`extension/` in `docs/reference/sources.json` match their recorded SHA-256 and
+`extension/` in `baseline/sources.json` match their recorded SHA-256 and
 the clean sibling reference `7fd6ef3c07182257ce776cdc5a614e122d5bd4b3`.
 The ledger indexes 301 declarations in 54 files, with 31 reference test files.
 These counts describe the ledger, not a promise that its simple symbol extractor

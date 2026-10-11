@@ -43,7 +43,7 @@ func TestFrozenCatalogRequests(t *testing.T) {
 	if len(cases) != 34 {
 		t.Fatalf("catalog coverage changed: %d", len(cases))
 	}
-	frozenFile, err := os.Open("../../../docs/reference/v1.0.97/registrations.json.gz")
+	frozenFile, err := os.Open("../../../baseline/v1.0.97/registrations.json.gz")
 	if err != nil {
 		t.Fatal(err)
 	}

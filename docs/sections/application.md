@@ -8,7 +8,7 @@ and comparative development evaluation remain open. This is not release acceptan
 Inspected frozen sibling `../feishu-cli-review` at
 `7fd6ef3c07182257ce776cdc5a614e122d5bd4b3`, its entire
 `shortcuts/application/` implementation and tests, `affordance/application.md`,
-`events/application/`, and `docs/reference/{coverage.json,registrations.json.gz,sources.json}`.
+`events/application/`, and `baseline/{coverage.json,registrations.json.gz,sources.json}`.
 The section has exactly five command inventory entries: the `application` domain
 and four shortcuts. Both frozen Feishu/Lark registration variants reuse these
 shortcuts. The raw v7 slash-command endpoints are deliberately absent from the

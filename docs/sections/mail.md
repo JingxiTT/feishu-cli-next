@@ -4,7 +4,7 @@ Status: complete offline section suite passed; required live and comparative
 acceptance remain open.
 Reference: unchanged sibling `../feishu-cli-review` at
 `7fd6ef3c07182257ce776cdc5a614e122d5bd4b3`; frozen registrations,
-service catalog and source inventory in `docs/reference/`.
+service catalog and source inventory in `baseline/`.
 
 ## Ownership and complete mapping
 

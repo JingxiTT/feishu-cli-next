@@ -1,6 +1,6 @@
 # Paired function token comparison
 
-Status: completed. The [report](evidence/paired-luna-medium-01/REPORT.md) records
+Status: completed. The [report](../../evidence/evaluation/paired-luna-medium-01/REPORT.md) records
 all 72 trials: 54 verified successes, seven inconclusive outcomes, 11 failed
 verifications and 8,442,585 provider tokens with complete usage. No trial was
 removed or overwritten. Markdown coverage and some Sheets strategies prevent
@@ -53,7 +53,7 @@ required final result. Permit alternate command/API/file strategies.
 
 Historical manifests are separate from this eight-task pilot. Controlled
 checks exercise both binaries and independent verifiers before model trials. The
-[native-fidelity amendment](evidence/native-fidelity-validity-audit-20260908.md)
+[native-fidelity amendment](../../evidence/evaluation/native-fidelity-validity-audit-20260908.md)
 explains why old Docs/Sheets/Base assumptions cannot be reused unchanged. Keep
 historical costs/verdicts intact. Do not access held-out tasks for development.
 

@@ -35,11 +35,11 @@ Reproduce the supplement without modifying the reference checkout:
 ```sh
 python3 scripts/next_inventory.py capture-brands \
   --reference ../feishu-cli-review \
-  --out docs/reference/configured-brand-registrations.json.gz \
-  > docs/reference/configured-brand-context.json
+  --out baseline/configured-brand-registrations.json.gz \
+  > baseline/configured-brand-context.json
 
 python3 scripts/next_inventory.py check --surface next --target . \
-  --reference-registrations docs/reference/configured-brand-registrations.json.gz
+  --reference-registrations baseline/configured-brand-registrations.json.gz
 ```
 
 Use an immutable target clone for a stable checkpoint. The checker continues to
@@ -48,7 +48,7 @@ supplement is not an approval mechanism. A check against the original bootstrap
 file now reports configured Lark guard changes rather than silently treating
 the bootstrap tree as a configured account.
 
-[Candidate capture](p3-next-post-mail-reconciliation.json) uses immutable commit
+[Candidate capture](../evidence/reference/p3-next-post-mail-reconciliation.json) uses immutable commit
 `1058824` and matches both configured brand guards. It retains all 938 reference
 nodes, 535 shortcuts, 251 pinned generated methods and 25 event keys, with no
 missing or changed existing flag contracts. Candidate counts are 951 nodes and
@@ -56,7 +56,7 @@ missing or changed existing flag contracts. Candidate counts are 951 nodes and
 including the three additional Mail query risk annotations; source differences
 remain separate.
 
-The [Mail mapping](p3-post-mail-interface-mapping.json) binds exact native IDs,
+The [Mail mapping](../evidence/reference/p3-post-mail-interface-mapping.json) binds exact native IDs,
 POST templates and frozen risk hashes to the next-only corrections. Independent
 recount of its owner evidence confirms 1,643 Mail unit, 14 inherited selected E2E
 and 215 process passes, with one explicit live skip. Arbitrary raw POST and

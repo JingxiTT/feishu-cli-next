@@ -2,7 +2,7 @@
 
 The foundation is ready for parallel P2 implementation at `00f3e8e`. This accepts
 the shared prerequisites and their scoped checks, not full release or live domain
-parity. [Machine-readable evidence](foundation-evidence.json) records revisions,
+parity. [Machine-readable evidence](../../evidence/sections/foundation-evidence.json) records revisions,
 commands, skips and limitations. Complete raw offline logs remain in `.tmp`.
 
 The shared foundation reuses authentication, profiles, credentials, runtime,
@@ -33,7 +33,7 @@ define the interfaces consumed by domain owners.
 - Read-only live auth and own-user-info checks verified the current user. Bot
   verification was unavailable in that run; independent tenant consistency is
   not exposed by auth status. No content was written or delivered.
-- [Balanced development evaluation](../../evaluation/evidence/foundation/REPORT.md)
+- [Balanced development evaluation](../../evidence/evaluation/foundation/REPORT.md)
   passed 18/18 compatible trials at `d873c0d`, with actual provider token usage.
   It includes the small status-task regression and earlier unknown-cost failed
   attempts. This is scoped foundation evidence, not a full-product claim.

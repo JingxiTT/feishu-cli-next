@@ -127,7 +127,7 @@ current-account-only private visibility, and is outside these Contact reads.
 An initial missing-fixture blocker was superseded by the coordinator-authorized
 current-account live attempt recorded below. That attempt remained open after its final bot-search read failed; the
 authorized resumption below subsequently passed the selected workflow. Comparative development evidence is
-owned by the coordinator under `evaluation/evidence/contact/`; this section owner
+owned by the coordinator under `evidence/evaluation/contact/`; this section owner
 did not run model evaluations or held-out tasks.
 
 ## Recorded offline results
@@ -178,7 +178,7 @@ read diagnostic is recorded below; no login or scope change was performed.
 
 The selected test recorded zero passes, one failure and zero skips. Full Contact
 live acceptance, bot-search success and bot-identity tenant binding remain open.
-[Sanitized live evidence](contact-live-evidence.json) retains only build/test
+[Sanitized live evidence](../../evidence/sections/contact-live-evidence.json) retains only build/test
 hashes, revision, status, binding booleans and the code failure location. Raw
 auth/profile data, identifiers, tokens and test output were kept in memory only
 and discarded; the temporary build directory was removed. No content was
@@ -225,7 +225,7 @@ one pass, zero failures and zero skips. This includes current-account lookup,
 exact-ID round-trip, ID-restricted search (which returned a match), personal
 profile response checks, and the bounded rare-keyword bot search. The two earlier
 failed attempts retain their original status in
-[the live evidence](contact-live-evidence.json). No other live test was selected.
+[the live evidence](../../evidence/sections/contact-live-evidence.json). No other live test was selected.
 
 A separate bot-info read matched the independently verified bot identity. Bot
 **tenant** binding remains blocked: its read returned exit 3,

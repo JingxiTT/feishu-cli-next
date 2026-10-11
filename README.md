@@ -4,9 +4,9 @@ A Feishu/Lark CLI for AI agents that work through a shell and files. It builds o
 
 The goal is to reduce the tokens needed to complete a task while preserving every original command and workflow, data fidelity, and successful outcomes. Results remain task-dependent. The current evaluation targets **more than 50% fewer tokens for Docs read/edit and at least 30% fewer for each other evaluated function versus the original CLI**, with failed-attempt costs included and no observed success regression.
 
-Synced with [official Lark CLI v1.0.97](https://github.com/larksuite/cli/releases/tag/v1.0.97). See the [upgrade comparison and optimization measurements](docs/reference/v1.0.97/OPTIMIZATION.md). The original frozen reference remains available for historical comparisons.
+Synced with [official Lark CLI v1.0.97](https://github.com/larksuite/cli/releases/tag/v1.0.97). See the [upgrade comparison and optimization measurements](baseline/v1.0.97/OPTIMIZATION.md). The original frozen reference remains available for historical comparisons.
 
-[中文说明](README.zh.md) · [Quick start](#quick-start) · [Usage](#usage) · [Full evaluation matrix](evaluation/evidence/full-matrix-20260911/REPORT.md) · [Implementation status](docs/IMPLEMENTATION.md)
+[中文说明](README.zh.md) · [Quick start](#quick-start) · [Usage](#usage) · [Full evaluation matrix](evidence/evaluation/full-matrix-20260911/REPORT.md) · [Implementation status](docs/IMPLEMENTATION.md)
 
 ## What this project adds
 
@@ -21,7 +21,7 @@ Synced with [official Lark CLI v1.0.97](https://github.com/larksuite/cli/release
 | One entry skill | Install direct routes for common tasks, including local Docs text edits, native XML operations, single-row Base updates, exact Sheets exports and Drive transfers; load deeper guidance on demand. |
 | Upstream compatibility | Retain domain shortcuts, generated service commands, raw API access, authentication, events, and the extension SDK. |
 
-The inherited surface includes Docs, Sheets, Base, Drive, Wiki, Contacts, Messages, Calendar, Tasks, Mail, meetings, and other registered services. See the [capability inventory](docs/reference/README.md) and [section evidence](docs/sections/OWNERSHIP.md) for scope and verification status.
+The inherited surface includes Docs, Sheets, Base, Drive, Wiki, Contacts, Messages, Calendar, Tasks, Mail, meetings, and other registered services. See the [capability inventory](baseline/README.md) and [section evidence](docs/sections/OWNERSHIP.md) for scope and verification status.
 
 **Status:** development distribution. Full live parity and release acceptance remain open. Source builds and local installation are available; a public release/update channel is not configured. Windows execution is deferred. See [distribution details](docs/distribution.md).
 
@@ -114,7 +114,7 @@ Pull with `--output` requires full scope and preserves the original v1 editing p
 
 This is a text-editing workflow, not a universal Markdown round trip. Unsupported structural or formatting changes stop before writing. Existing `docs +fetch`, `docs +update`, native block operations, media commands and Drive import remain available for rich documents and other original workflows. See the [local Docs guide](skills/lark-doc/references/lark-doc-workspace.md).
 
-Snapshot checks detect observed conflicts but cannot close the race with a concurrent writer; the native revision parameter is not compare-and-swap. Unknown or partial outcomes require reconciliation, not a blind push retry. The [final private native lifecycle](evaluation/evidence/docs-improvements-native-live-final-20260909.json) passed nine checks on candidate `cad221e`: rich/focused reads, compatible saved-view no-op, and three text-run edits across two blocks with exact original-CLI comparison of styles, links, IDs and remaining native content. Its one run-owned private document was confirmed deleted. This bounded native test does not measure token savings or establish every rich-document or concurrency case.
+Snapshot checks detect observed conflicts but cannot close the race with a concurrent writer; the native revision parameter is not compare-and-swap. Unknown or partial outcomes require reconciliation, not a blind push retry. The [final private native lifecycle](evidence/evaluation/docs-improvements-native-live-final-20260909.json) passed nine checks on candidate `cad221e`: rich/focused reads, compatible saved-view no-op, and three text-run edits across two blocks with exact original-CLI comparison of styles, links, IDs and remaining native content. Its one run-owned private document was confirmed deleted. This bounded native test does not measure token savings or establish every rich-document or concurrency case.
 
 ### Results and recovery
 
@@ -130,13 +130,13 @@ Those guides are not all injected by installing the entry skill. They can still 
 
 ## Evaluation results
 
-The [October 7 local CLI probes](evaluation/evidence/cli-efficiency-20261007/REPORT.md)
+The [October 7 local CLI probes](evidence/evaluation/cli-efficiency-20261007/REPORT.md)
 measure request-only schema context size and discovery latency. They are local
 introspection measurements; the full-task results below remain unchanged.
 
 ### Full matrix
 
-The [automatic full matrix](evaluation/full-matrix.md) completed all **43 implemented development tasks / 258 attempts** across paired functions, harder Docs, domain reads, workflow scenarios, scaling, business, foundation and Contact. The [completed matrix report](evaluation/evidence/full-matrix-20260911/REPORT.md) includes **240 new attempts and all 18 reviewed condition 09 attempts reused unchanged**. The per-task target remains **unmet: 13 gates met, 22 missed and 8 unavailable**.
+The [automatic full matrix](evaluation/reports/full-matrix.md) completed all **43 implemented development tasks / 258 attempts** across paired functions, harder Docs, domain reads, workflow scenarios, scaling, business, foundation and Contact. The [completed matrix report](evidence/evaluation/full-matrix-20260911/REPORT.md) includes **240 new attempts and all 18 reviewed condition 09 attempts reused unchanged**. The per-task target remains **unmet: 13 gates met, 22 missed and 8 unavailable**.
 
 | Full-matrix result | Original | Next |
 | --- | ---: | ---: |
@@ -144,22 +144,22 @@ The [automatic full matrix](evaluation/full-matrix.md) completed all **43 implem
 | Inconclusive | 2 | 0 |
 | Observed provider tokens (lower bound) | 17,597,508 | 14,954,750 |
 
-**Six attempts lack complete usage**, so both whole-matrix tokens-per-success savings and raw token-spend reduction are **unavailable**. Known usage totals **32,552,258 tokens**: **31,650,572 new** and **901,686 reused historical tokens**, not new spend. Every recorded failure and recovery cost remains included. The [fixture qualifications](evaluation/evidence/full-matrix-20260911/QUALIFICATIONS.md) explain strict route failures despite correct answers; these counts do not establish live reliability or universal savings. An [independent final audit](evaluation/evidence/full-matrix-20260911/result-review.json) accepted the retained accounting and report claims.
+**Six attempts lack complete usage**, so both whole-matrix tokens-per-success savings and raw token-spend reduction are **unavailable**. Known usage totals **32,552,258 tokens**: **31,650,572 new** and **901,686 reused historical tokens**, not new spend. Every recorded failure and recovery cost remains included. The [fixture qualifications](evidence/evaluation/full-matrix-20260911/QUALIFICATIONS.md) explain strict route failures despite correct answers; these counts do not establish live reliability or universal savings. An [independent final audit](evidence/evaluation/full-matrix-20260911/result-review.json) accepted the retained accounting and report claims.
 
 After preparing the [local path configuration](evaluation/README.md#automatic-full-matrix), run:
 
 ```sh
 python3 evaluation/run_matrix.py --config /absolute/local-config.json \
-  --output evaluation/evidence/full-matrix-20260911 --execute
+  --output evidence/evaluation/full-matrix-20260911 --execute
 ```
 
-The command skips unchanged completed results, including failures and inconclusive outcomes, and resumes validated checkpoints. It also reuses matching sealed, complete jobs from sibling output directories under the same parent; this is not a machine-wide cache. Reuse requires identical measured inputs, including the Python executable/version. It never automatically repeats an unresolved in-flight attempt. Omit `--execute` to validate inputs and regenerate the report without model calls. Changed measured inputs require a new output directory. [Configuration, reuse, interpreter pin and resume details](evaluation/full-matrix.md).
+The command skips unchanged completed results, including failures and inconclusive outcomes, and resumes validated checkpoints. It also reuses matching sealed, complete jobs from sibling output directories under the same parent; this is not a machine-wide cache. Reuse requires identical measured inputs, including the Python executable/version. It never automatically repeats an unresolved in-flight attempt. Omit `--execute` to validate inputs and regenerate the report without model calls. Changed measured inputs require a new output directory. [Configuration, reuse, interpreter pin and resume details](evaluation/reports/full-matrix.md).
 
 The report's suite/task tables separate coverage, verified outcomes and each function's gate. Pooled spend cannot replace the strict Docs >50% or other-task ≥30% targets. Three repetitions per arm and bounded synthetic fixtures do not establish statistical success parity or exhaustive live functionality.
 
 ### Completed condition 09
 
-**[Completed condition 09: harder Docs workloads →](evaluation/evidence/token-efficiency-09/REPORT.md)**
+**[Completed condition 09: harder Docs workloads →](evidence/evaluation/token-efficiency-09/REPORT.md)**
 
 Condition 09 completed **18 fresh attempts: Next 9/9 verified, original 8/9 verified and one inconclusive**. It used **GPT-5.6 Luna with medium reasoning through native Codex CLI 0.153.4**, comparing candidate `cad221e` against the original CLI. The strict **>50% saving per task remains unmet: zero gates met, two missed and one unavailable**.
 
@@ -171,11 +171,11 @@ Condition 09 completed **18 fresh attempts: Next 9/9 verified, original 8/9 veri
 
 All provider usage was complete: **901,686 tokens**, including **185,209** from the inconclusive original editing attempt. Its strategy exceeded the fixture's supported coverage; the missing comparison is not scored as a product failure or a zero-cost success. All attempt and recovery costs remain included. Both arms read full selected guidance from files inside the measured loop.
 
-These are three harder Docs tasks with three repetitions per arm; no other functions were measured. They differ from condition 08's tasks, so its historical **56.8% combined Docs saving** is not a direct before/after comparison with this candidate. The observed counts do not establish statistical success parity, stable savings or exhaustive live functionality. Native lifecycle checks remain separate evidence. [Protocol](evaluation/token-efficiency-09.md) · [Exact results and accounting](evaluation/evidence/token-efficiency-09/summary.json).
+These are three harder Docs tasks with three repetitions per arm; no other functions were measured. They differ from condition 08's tasks, so its historical **56.8% combined Docs saving** is not a direct before/after comparison with this candidate. The observed counts do not establish statistical success parity, stable savings or exhaustive live functionality. Native lifecycle checks remain separate evidence. [Protocol](evaluation/reports/token-efficiency-09.md) · [Exact results and accounting](evidence/evaluation/token-efficiency-09/summary.json).
 
 ### Historical condition 08
 
-**[Historical condition 08 →](evaluation/evidence/token-efficiency-08/REPORT.md)**
+**[Historical condition 08 →](evidence/evaluation/token-efficiency-08/REPORT.md)**
 
 Historical condition 08 verified **12/12 attempts: original 6/6 and Next 6/6**, using **GPT-5.6 Luna with medium reasoning through native Codex CLI 0.153.4**. The strict per-function target remains **unmet**: Docs edit passed, Docs read missed, and the declared stop rule left **36 attempts across six other functions not run**.
 
@@ -187,15 +187,15 @@ Historical condition 08 verified **12/12 attempts: original 6/6 and Next 6/6**, 
 
 **Secondary combined Docs workload: 56.8% fewer tokens**, from **472,979 original** to **204,413 Next**, with both arms **6/6 verified**. This totals three read and three edit attempts per arm, weighting the more expensive edits more heavily. It does **not** satisfy the separate >50% read gate or establish savings for other task mixes.
 
-All usage was complete, totaling **677,392 tokens across both arms**. Every attempt and recovery cost is included. Both arms received their selected skill by file path and were instructed to read it within the measured tool loop. Next's entry guide also became shorter; its runtime, native fidelity checks and original command surface stayed unchanged. Because guidance length and delivery both changed, earlier-condition differences cannot isolate either factor. These small development samples do not establish statistical success parity or full live functionality. [Protocol](evaluation/token-efficiency-08.md) · [Stage decision](evaluation/evidence/token-efficiency-08/stage-decision.json).
+All usage was complete, totaling **677,392 tokens across both arms**. Every attempt and recovery cost is included. Both arms received their selected skill by file path and were instructed to read it within the measured tool loop. Next's entry guide also became shorter; its runtime, native fidelity checks and original command surface stayed unchanged. Because guidance length and delivery both changed, earlier-condition differences cannot isolate either factor. These small development samples do not establish statistical success parity or full live functionality. [Protocol](evaluation/reports/token-efficiency-08.md) · [Stage decision](evidence/evaluation/token-efficiency-08/stage-decision.json).
 
-Historical [condition 07](evaluation/evidence/token-efficiency-07/REPORT.md) retained 11/12 verified attempts, 36.1% Docs-read savings and 67.0% Docs-edit savings; original edit verified 2/3 versus Next 3/3. [Condition 06](evaluation/evidence/token-efficiency-06/REPORT.md) retained 12/12 verified, 1.0% more read tokens and 42.1% fewer edit tokens. Both stopped before the other six functions; neither is pooled with condition 08.
+Historical [condition 07](evidence/evaluation/token-efficiency-07/REPORT.md) retained 11/12 verified attempts, 36.1% Docs-read savings and 67.0% Docs-edit savings; original edit verified 2/3 versus Next 3/3. [Condition 06](evidence/evaluation/token-efficiency-06/REPORT.md) retained 12/12 verified, 1.0% more read tokens and 42.1% fewer edit tokens. Both stopped before the other six functions; neither is pooled with condition 08.
 
-**Qualification for conditions 05/06:** a later no-model native control found that disabled-skill directory paths left eight public `CODEX_HOME` catalog entries advertised; exact `SKILL.md` paths suppressed them. Both arms shared the affected configuration. Corrected suppression is retained in condition 08. The probe does not quantify billed-token impact or establish a cause for file-read loops. [Qualification and evidence](evaluation/evidence/token-efficiency-05-06-skill-isolation-qualification.md). Historical results remain unchanged.
+**Qualification for conditions 05/06:** a later no-model native control found that disabled-skill directory paths left eight public `CODEX_HOME` catalog entries advertised; exact `SKILL.md` paths suppressed them. Both arms shared the affected configuration. Corrected suppression is retained in condition 08. The probe does not quantify billed-token impact or establish a cause for file-read loops. [Qualification and evidence](evidence/evaluation/token-efficiency-05-06-skill-isolation-qualification.md). Historical results remain unchanged.
 
 ### Previous full comparison: condition 05
 
-**[Read condition 05 →](evaluation/evidence/token-efficiency-05/REPORT.md)**
+**[Read condition 05 →](evidence/evaluation/token-efficiency-05/REPORT.md)**
 
 The target was **not met: 3/8 functions met their gate, 3 missed and 2 were unavailable**. Condition 05 completed 48 fresh attempts against the original CLI: eight tasks, three repetitions, two arms, using **GPT-5.6 Luna with medium reasoning through native Codex CLI 0.153.4**. The benchmark uses signed synthetic Feishu fixtures; private native QA is separate evidence.
 
@@ -216,9 +216,9 @@ The primary gate requires strictly more than 50% savings for Docs read/edit and 
 
 Docs-edit traces show rejected `+push` calls followed by `+update` fallback. The retained traces omit local file contents and validation-error text, so they do not establish the rejection's exact cause. The failed result and fallback costs remain included.
 
-[Frozen environment](evaluation/evidence/token-efficiency-05/environment.json) · [Readiness review](evaluation/evidence/token-efficiency-05/readiness-review.json) · [Protocol](evaluation/token-efficiency-05.md) · [All evaluation conditions](evaluation/README.md)
+[Frozen environment](evidence/evaluation/token-efficiency-05/environment.json) · [Readiness review](evidence/evaluation/token-efficiency-05/readiness-review.json) · [Protocol](evaluation/reports/token-efficiency-05.md) · [All evaluation conditions](evaluation/README.md)
 
-Historical [condition 04](evaluation/evidence/token-efficiency-04/REPORT.md) remains a separate exploratory comparison: 24 new candidate attempts, 48 reused baselines and 5/8 gates met against unchanged Next. Its 50% target and reused-baseline results do not satisfy condition 05's original-CLI comparison. Earlier [pilot 01](evaluation/evidence/paired-luna-medium-01/REPORT.md), [condition 02](evaluation/evidence/token-efficiency-02/REPORT.md) and [condition 03](evaluation/evidence/token-efficiency-03/REPORT.md) retain all their costs, failures and accounting limits.
+Historical [condition 04](evidence/evaluation/token-efficiency-04/REPORT.md) remains a separate exploratory comparison: 24 new candidate attempts, 48 reused baselines and 5/8 gates met against unchanged Next. Its 50% target and reused-baseline results do not satisfy condition 05's original-CLI comparison. Earlier [pilot 01](evidence/evaluation/paired-luna-medium-01/REPORT.md), [condition 02](evidence/evaluation/token-efficiency-02/REPORT.md) and [condition 03](evidence/evaluation/token-efficiency-03/REPORT.md) retain all their costs, failures and accounting limits.
 
 ## Development
 

@@ -27,7 +27,7 @@ class MatrixCacheTests(unittest.TestCase):
         self.output = self.root / 'new-output'
         self.output.mkdir()
         self.env = {'model': 'gpt-5.6-luna', 'reasoning': 'medium', 'guidance_delivery': 'file', 'agent_seconds': 180}
-        self.batch = matrix.read(ROOT / 'evaluation/evidence/token-efficiency-09/docs/batch-01.json')
+        self.batch = matrix.read(ROOT / 'evidence/evaluation/token-efficiency-09/docs/batch-01.json')
         self.job = next(j for j in matrix.jobs(self.env) if j['suite'] == 'docs-hard')
         self.job['expected_arms'] = self.batch['arms']
 
