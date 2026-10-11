@@ -332,7 +332,10 @@ func buildRawEMLForDraftCreate(
 		// applyTemplate (in caller) + ResolveLocalImagePaths +
 		// injectSignatureIntoBody so the lint sees the final HTML the
 		// recipient renderer will see.
-		cleaned, rep := runWritePathLint(resolved)
+		cleaned, rep, lintErr := runWritePathLint(resolved)
+		if lintErr != nil {
+			return "", lintApplied, lintBlocked, lintErr
+		}
 		resolved = cleaned
 		lintApplied, lintBlocked = rep.Applied, rep.Blocked
 		composedHTMLBody = resolved

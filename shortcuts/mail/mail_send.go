@@ -269,7 +269,10 @@ var MailSend = common.Shortcut{
 			// applyTemplate (above) + ResolveLocalImagePaths +
 			// injectSignatureIntoBody so the lint sees the final HTML the
 			// recipient renderer will see.
-			cleanedHTML, rep := runWritePathLint(resolved)
+			cleanedHTML, rep, lintErr := runWritePathLint(resolved)
+			if lintErr != nil {
+				return lintErr
+			}
 			resolved = cleanedHTML
 			lintApplied, lintBlocked = rep.Applied, rep.Blocked
 			composedHTMLBody = resolved

@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 env:
-  RELEASE_GO_VERSION: '1.26.8'
+  RELEASE_GO_VERSION: '1.26.9'
 
 concurrency:
   group: release-${{ github.ref_name }}
@@ -55,11 +55,11 @@ jobs:
           TAG: ${{ github.ref_name }}
         run: |
           set -euo pipefail
-          [[ "$REPOSITORY" == "larksuite/cli" ]] || { echo "Release tags are accepted only from larksuite/cli." >&2; exit 1; }
+          [[ "$REPOSITORY" == "Zhujingxi/feishu-cli-next" ]] || { echo "Release tags are accepted only from Zhujingxi/feishu-cli-next." >&2; exit 1; }
           [[ "$REF_PROTECTED" == "true" ]] || { echo "Release tag ${TAG} must be protected by a repository ruleset." >&2; exit 1; }
 
           preflight_file="${RUNNER_TEMP}/release-preflight.json"
-          node scripts/release-preflight.js --tag "$TAG" > "$preflight_file"
+          node scripts/release-preflight.js --publish --tag "$TAG" > "$preflight_file"
           git fetch --no-tags origin main
           head_sha="$(git rev-parse --verify 'HEAD^{commit}')"
           tag_sha="$(git rev-parse --verify "refs/tags/${TAG}^{commit}")"

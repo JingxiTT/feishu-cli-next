@@ -308,7 +308,10 @@ var MailReplyAll = common.Shortcut{
 			// only; the `quoted` block from the original message must NOT be
 			// re-linted (it may contain Feishu-native quote-block classes that
 			// the lint allow-list intentionally permits in pass-through).
-			cleaned, rep := runWritePathLint(bodyWithSig)
+			cleaned, rep, lintErr := runWritePathLint(bodyWithSig)
+			if lintErr != nil {
+				return lintErr
+			}
 			bodyWithSig = cleaned
 			lintApplied, lintBlocked = rep.Applied, rep.Blocked
 			composedHTMLBody = bodyWithSig + quoted

@@ -102,6 +102,29 @@ function validateReleasePreflight(packageJson, packageLockJson, tag) {
   return { ok: true, data: { ...observed, tagVersion, releaseChannel } };
 }
 
+function validateReleasePublication(packageJson, artifactRepository) {
+  const observed = {
+    packageName: packageJson?.name ?? null,
+    private: packageJson?.private ?? null,
+    artifactRepository,
+  };
+  if (packageJson?.private !== false) {
+    return releaseError(
+      "Release publication is disabled until the Next channel is accepted",
+      observed,
+      "Complete the prerequisites in docs/distribution.md before removing the private-package and workflow guards.",
+    );
+  }
+  if (packageJson?.name !== "feishu-cli-next" || artifactRepository !== "Zhujingxi/feishu-cli-next") {
+    return releaseError(
+      "Next package and installer release identities must match the publication repository",
+      observed,
+      "Verify npm package ownership and configure the installer for Zhujingxi/feishu-cli-next before publishing; never use the upstream channel.",
+    );
+  }
+  return { ok: true, data: observed };
+}
+
 function writeResult(result) {
   (result.ok ? process.stdout : process.stderr).write(`${JSON.stringify(result)}\n`);
   if (!result.ok) process.exitCode = 1;
@@ -109,14 +132,16 @@ function writeResult(result) {
 
 function main() {
   const args = process.argv.slice(2);
+  const publication = args[0] === "--publish";
+  if (publication) args.shift();
   let tag;
   if (args.length === 2 && args[0] === "--tag") {
     tag = args[1];
   } else if (args.length !== 0) {
     writeResult(releaseError(
-      "Expected no arguments or --tag vX.Y.Z[-beta.N]",
+      "Expected [--publish] [--tag vX.Y.Z[-beta.N]]",
       { arguments: args },
-      "Run release:check without arguments or pass exactly one --tag value.",
+      "Run release:check for version validation; add --publish for publication wiring validation and optionally pass one --tag value.",
     ));
     return;
   }
@@ -125,7 +150,14 @@ function main() {
   try {
     const packageJson = JSON.parse(fs.readFileSync(path.join(repoRoot, "package.json"), "utf8"));
     const packageLockJson = JSON.parse(fs.readFileSync(path.join(repoRoot, "package-lock.json"), "utf8"));
-    writeResult(validateReleasePreflight(packageJson, packageLockJson, tag));
+    const versionResult = validateReleasePreflight(packageJson, packageLockJson, tag);
+    if (!versionResult.ok || !publication) {
+      writeResult(versionResult);
+      return;
+    }
+    const { REPO } = require("./install");
+    const publicationResult = validateReleasePublication(packageJson, REPO);
+    writeResult(publicationResult.ok ? versionResult : publicationResult);
   } catch (error) {
     writeResult(releaseError(
       "Could not read release package metadata",
@@ -135,6 +167,6 @@ function main() {
   }
 }
 
-module.exports = { validateReleasePreflight, validateReleaseSourcePolicy };
+module.exports = { validateReleasePreflight, validateReleaseSourcePolicy, validateReleasePublication };
 
 if (require.main === module) main();

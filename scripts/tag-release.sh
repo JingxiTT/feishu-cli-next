@@ -5,12 +5,10 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 cd "${REPO_ROOT}"
 
-node -e 'if (require("./package.json").private !== false) { console.error("Release publication is disabled until the next channel is accepted."); process.exit(1); }'
-
 VERSION=$(node -p "require('./package.json').version")
 TAG="v${VERSION}"
 
-node "${SCRIPT_DIR}/release-preflight.js" --tag "${TAG}"
+node "${SCRIPT_DIR}/release-preflight.js" --publish --tag "${TAG}"
 
 echo "Version: ${VERSION}"
 echo "Tag: ${TAG}"

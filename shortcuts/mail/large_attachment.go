@@ -548,6 +548,20 @@ func preprocessLargeAttachmentsForDraftEdit(
 	snapshot *draftpkg.DraftSnapshot,
 	patch draftpkg.Patch,
 ) (draftpkg.Patch, error) {
+	// Reject unreadable card removals before uploading any new attachments.
+	for _, op := range patch.Ops {
+		if op.Op != "remove_attachment" || strings.TrimSpace(op.Target.Token) == "" ||
+			strings.TrimSpace(op.Target.PartID) != "" || strings.TrimSpace(op.Target.CID) != "" {
+			continue
+		}
+		if htmlPart := draftpkg.FindHTMLBodyPart(snapshot.Body); htmlPart != nil && len(htmlPart.Body) > 0 {
+			if _, _, err := draftpkg.RemoveLargeFileItemFromHTMLChecked(string(htmlPart.Body), op.Target.Token); err != nil {
+				return patch, mailValidationError("cannot safely remove attachment from draft HTML").
+					WithHint("Reduce HTML nesting to at most 512 elements and retry.").WithCause(err)
+			}
+		}
+		break
+	}
 	// Reconstruct missing large attachment HTML cards from the server-format
 	// header metadata. Must run before normalizeLargeAttachmentHeader which
 	// discards file_name/file_size.

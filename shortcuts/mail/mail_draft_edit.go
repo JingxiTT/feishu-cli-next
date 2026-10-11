@@ -174,12 +174,6 @@ var MailDraftEdit = common.Shortcut{
 				patch.Ops[i].CalendarICS = calData
 			}
 		}
-		// Pre-process add_attachment ops for large attachment support:
-		// extract oversized files, upload them, inject HTML into the snapshot body.
-		patch, err = preprocessLargeAttachmentsForDraftEdit(ctx, runtime, snapshot, patch)
-		if err != nil {
-			return err
-		}
 		// Writing-path lint for body ops only: set_body / set_reply_body
 		// rewrite the body field; other ops (set_subject / set_recipients /
 		// add_attachment / etc.) operate on non-HTML fields and MUST NOT be
@@ -201,10 +195,19 @@ var MailDraftEdit = common.Shortcut{
 				// is irrelevant), but the envelope still surfaces empty arrays.
 				continue
 			}
-			cleaned, rep := runWritePathLint(op.Value)
+			cleaned, rep, lintErr := runWritePathLint(op.Value)
+			if lintErr != nil {
+				return lintErr
+			}
 			op.Value = cleaned
 			lintApplied = append(lintApplied, rep.Applied...)
 			lintBlocked = append(lintBlocked, rep.Blocked...)
+		}
+		// Pre-process add_attachment ops for large attachment support:
+		// extract oversized files, upload them, inject HTML into the snapshot body.
+		patch, err = preprocessLargeAttachmentsForDraftEdit(ctx, runtime, snapshot, patch)
+		if err != nil {
+			return err
 		}
 		dctx := &draftpkg.DraftCtx{FIO: runtime.FileIO()}
 		if len(patch.Ops) > 0 {

@@ -258,11 +258,23 @@ func removeLargeAttachment(snapshot *DraftSnapshot, token string) error {
 	if token == "" {
 		return fmt.Errorf("remove_attachment: token is empty")
 	}
+	// Prepare the body change before altering the authoritative header.
+	htmlPart := FindHTMLBodyPart(snapshot.Body)
+	var newBody string
+	var changed bool
+	if htmlPart != nil && len(htmlPart.Body) > 0 {
+		var err error
+		newBody, changed, err = RemoveLargeFileItemFromHTMLChecked(string(htmlPart.Body), token)
+		if err != nil {
+			return fmt.Errorf("remove_attachment: cannot safely update HTML body: %w", err)
+		}
+	}
 	if err := removeTokenFromIDsHeader(snapshot, token); err != nil {
 		return err
 	}
-	if err := removeTokenFromHTMLBody(snapshot, token); err != nil {
-		return err
+	if changed {
+		htmlPart.Body = []byte(newBody)
+		htmlPart.Dirty = true
 	}
 	return nil
 }
@@ -318,42 +330,26 @@ func removeTokenFromIDsHeader(snapshot *DraftSnapshot, token string) error {
 	return nil
 }
 
-// removeTokenFromHTMLBody walks the HTML body, removes the single
-// large-file-item whose anchor has data-mail-token == token, and if the
-// enclosing container becomes empty (no more large-file-item children),
-// removes the whole container.
-//
-// It is not an error if the HTML body or item is missing — the header
-// removal is still considered the authoritative operation. This handles
-// cases where the HTML was already edited out but the header wasn't.
-func removeTokenFromHTMLBody(snapshot *DraftSnapshot, token string) error {
-	htmlPart := FindHTMLBodyPart(snapshot.Body)
-	if htmlPart == nil || len(htmlPart.Body) == 0 {
-		return nil
-	}
-	body := string(htmlPart.Body)
-	newBody, changed := RemoveLargeFileItemFromHTML(body, token)
-	if !changed {
-		return nil
-	}
-	htmlPart.Body = []byte(newBody)
-	htmlPart.Dirty = true
-	return nil
-}
-
 // RemoveLargeFileItemFromHTML parses the HTML, finds the large-file-item
 // containing an <a> whose token matches (via data-mail-token attribute or
 // href URL token= parameter), removes that item, and if the enclosing
 // large-file-area container becomes empty, removes the container as well.
 // Returns the updated HTML and a changed flag.
 func RemoveLargeFileItemFromHTML(htmlBody, token string) (string, bool) {
+	updated, changed, _ := RemoveLargeFileItemFromHTMLChecked(htmlBody, token)
+	return updated, changed
+}
+
+// RemoveLargeFileItemFromHTMLChecked distinguishes a missing item from a
+// parse/render failure. Mutation callers must reject failures before writing.
+func RemoveLargeFileItemFromHTMLChecked(htmlBody, token string) (string, bool, error) {
 	doc, err := xhtml.Parse(strings.NewReader(htmlBody))
 	if err != nil {
-		return htmlBody, false
+		return htmlBody, false, err
 	}
 	item := findLargeFileItemByToken(doc, token)
 	if item == nil {
-		return htmlBody, false
+		return htmlBody, false, nil
 	}
 	container := item.Parent
 	// Detach the item from its parent.
@@ -369,9 +365,9 @@ func RemoveLargeFileItemFromHTML(htmlBody, token string) (string, bool) {
 	}
 	var buf bytes.Buffer
 	if err := xhtml.Render(&buf, doc); err != nil {
-		return htmlBody, false
+		return htmlBody, false, err
 	}
-	return stripHTMLEnvelope(buf.String()), true
+	return stripHTMLEnvelope(buf.String()), true, nil
 }
 
 func findLargeFileItemByToken(n *xhtml.Node, token string) *xhtml.Node {
