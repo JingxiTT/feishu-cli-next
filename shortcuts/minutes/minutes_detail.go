@@ -8,8 +8,10 @@ package minutes
 import (
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	"io"
+	"io/fs"
 	"net/http"
 	"path/filepath"
 	"regexp"
@@ -252,7 +254,11 @@ func saveDetailTranscript(runtime *common.RuntimeContext, minuteToken, title str
 	}
 
 	fmt.Fprintf(errOut, "%s writing transcript: %s\n", minutesDetailLogPrefix, transcriptPath)
-	if _, err := runtime.FileIO().Save(transcriptPath, fileio.SaveOptions{}, bytes.NewReader(content)); err != nil {
+	if _, err := common.SaveWithOverwrite(runtime.FileIO(), transcriptPath, fileio.SaveOptions{}, bytes.NewReader(content), runtime.Bool("overwrite")); err != nil {
+		if !runtime.Bool("overwrite") && errors.Is(err, fs.ErrExist) {
+			fmt.Fprintf(errOut, "%s transcript already exists: %s (use --overwrite to replace)\n", minutesDetailLogPrefix, transcriptPath)
+			return transcriptPath, nil
+		}
 		fmt.Fprintf(errOut, "%s failed to write transcript: %v\n", minutesDetailLogPrefix, err)
 		return "", err
 	}

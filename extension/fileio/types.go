@@ -51,6 +51,8 @@ type FileIO interface {
 // promise otherwise, so a provider that cannot must leave this interface
 // unimplemented -- callers then reject the policy explicitly instead of
 // appearing to enforce it.
+// Shortcut downloads and exports that refuse overwrite require this capability;
+// saves with explicit overwrite permission continue to use FileIO.Save.
 type ExclusiveFileIO interface {
 	FileIO
 

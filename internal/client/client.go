@@ -147,10 +147,17 @@ func (c *APIClient) DoSDKRequest(ctx context.Context, req *larkcore.ApiReq, as c
 	}
 
 	opts = append(opts, extraOpts...)
+	var fileDownload bool
+	opts = append(opts, func(option *larkcore.RequestOption) { fileDownload = option.FileDownload })
 	requestCtx := core.WithRequestIdentity(core.WithCredentialSource(ctx, token.Source), requestIdentity)
 	resp, err := c.SDK.Do(requestCtx, req, opts...)
 	if err != nil {
 		return nil, WrapDoAPIError(err)
+	}
+	if fileDownload && resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		if err := c.checkDownloadError(resp.Header, resp.RawBody, as); err != nil {
+			return nil, err
+		}
 	}
 	return resp, nil
 }
@@ -161,7 +168,8 @@ func (c *APIClient) DoSDKRequest(ctx context.Context, req *larkcore.ApiReq, as c
 // Auth is resolved via Credential (same as DoSDKRequest). Security headers and
 // any extra headers from opts are applied automatically.
 // HTTP errors (status >= 400) are handled internally: the body is read (up to 4 KB),
-// closed, and returned as a typed error — callers only receive successful responses.
+// closed, and returned as a typed error. Small JSON API error envelopes are also
+// rejected before callers can publish them as files.
 func (c *APIClient) DoStream(ctx context.Context, req *larkcore.ApiReq, as core.Identity, opts ...Option) (*http.Response, error) {
 	cfg := buildConfig(opts)
 
@@ -279,6 +287,21 @@ func (c *APIClient) DoStream(ctx context.Context, req *larkcore.ApiReq, as core.
 		return nil, netErr
 	}
 
+	if probeDownloadError(resp.Header) {
+		prefix, err := io.ReadAll(io.LimitReader(resp.Body, downloadErrorProbeLimit+1))
+		if err != nil {
+			resp.Body.Close()
+			return nil, wrapTransportError(ctx, err, cfg.replaySafe, "read download response: %s", err)
+		}
+		if err := c.checkDownloadError(resp.Header, prefix, as); err != nil {
+			resp.Body.Close()
+			return nil, err
+		}
+		resp.Body = struct {
+			io.Reader
+			io.Closer
+		}{io.MultiReader(bytes.NewReader(prefix), resp.Body), resp.Body}
+	}
 	return resp, nil
 }
 

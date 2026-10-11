@@ -346,10 +346,13 @@ func downloadMediaFile(ctx context.Context, client *http.Client, downloadURL, mi
 		}
 	}
 
-	result, err := opts.fio.Save(outputPath, fileio.SaveOptions{
+	result, err := common.SaveWithOverwrite(opts.fio, outputPath, fileio.SaveOptions{
 		ContentType:   resp.Header.Get("Content-Type"),
 		ContentLength: resp.ContentLength,
-	}, resp.Body)
+	}, resp.Body, opts.overwrite)
+	if errors.Is(err, fs.ErrExist) {
+		return nil, errs.NewValidationError(errs.SubtypeFailedPrecondition, "output file already exists: %s (use --overwrite to replace)", outputPath).WithCause(err)
+	}
 	if err != nil {
 		return nil, common.WrapSaveErrorTyped(err)
 	}

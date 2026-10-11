@@ -120,10 +120,10 @@ var VCMeetingScreenshot = common.Shortcut{
 		if !validMeetingScreenshotJPEG(image) {
 			return errs.NewInternalError(errs.SubtypeInvalidResponse, "invalid screenshot JPEG response")
 		}
-		result, err := runtime.FileIO().Save(outputPath, fileio.SaveOptions{
+		result, err := common.SaveWithOverwrite(runtime.FileIO(), outputPath, fileio.SaveOptions{
 			ContentType:   contentType,
 			ContentLength: int64(len(image)),
-		}, bytes.NewReader(image))
+		}, bytes.NewReader(image), runtime.Bool("overwrite"))
 		if err != nil {
 			return common.WrapSaveErrorTyped(err)
 		}

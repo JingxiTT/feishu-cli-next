@@ -21,6 +21,7 @@ import (
 type tatResponse struct {
 	Code             int    `json:"code"`
 	AccessToken      string `json:"access_token"`
+	ExpiresIn        int    `json:"expires_in"`
 	Error            string `json:"error"`
 	ErrorDescription string `json:"error_description"`
 	Msg              string `json:"msg"`
@@ -37,7 +38,7 @@ type tatResponse struct {
 //
 // A deterministic client-side rejection (e.g. invalid_client) returns the
 // canonical typed error from classifyTATResponseCode — the SAME classification
-// doResolveTAT (and thus every token-resolving command) produces, so callers
+// resolveTAT (and thus every token-resolving command) produces, so callers
 // see one consistent envelope. Transport failures, unreadable/unparseable
 // bodies, and transient server-side failures (5xx / server_error) are returned
 // raw (untyped), leaving them ambiguous. HTTP 429 is the exception: it carries

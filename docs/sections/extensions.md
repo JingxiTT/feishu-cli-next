@@ -48,10 +48,12 @@ dependency module. See the public [platform guide](../../extension/platform/READ
 
 In agent mode, public command contributions participate in compact full JSON,
 projection, read artifacts and durable mutation outcomes without new business
-command APIs. The [output contract](../contracts/output.md) requires an optional
-exclusive FileIO capability only for result artifacts. A legacy provider remains
-usable for ordinary reads. Unsupported saves and denied paths fail before the
-business request. A concurrent destination is rejected at commit and preserved.
+command APIs. The [output contract](../contracts/output.md) requires the optional
+exclusive FileIO capability for result artifacts. Shortcut downloads and exports
+that refuse overwrite also require it; ordinary reads and explicitly overwriting
+saves remain usable with a legacy provider. Unsupported artifact saves and denied
+artifact paths fail before the business request. A concurrent destination is
+rejected at commit and preserved.
 Artifacts retain full Unicode/content, leading-zero IDs and the host's canonical
 reference; a projection does not become the stored data.
 

@@ -473,10 +473,10 @@ func downloadDrivePreviewArtifactWithParams(ctx context.Context, runtime *common
 		return nil, err
 	}
 
-	result, err := runtime.FileIO().Save(finalPath, fileio.SaveOptions{
+	result, err := common.SaveWithOverwrite(runtime.FileIO(), finalPath, fileio.SaveOptions{
 		ContentType:   resp.Header.Get("Content-Type"),
 		ContentLength: resp.ContentLength,
-	}, resp.Body)
+	}, resp.Body, ifExists == drivePreviewIfExistsOverwrite)
 	if err != nil {
 		return nil, driveSaveError(err)
 	}

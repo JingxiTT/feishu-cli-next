@@ -5,6 +5,7 @@ package drive
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io/fs"
 	"os"
@@ -226,7 +227,12 @@ var DrivePull = common.Shortcut{
 				}
 			}
 
-			if err := drivePullDownload(ctx, runtime, downloadToken, target, targetFile.ModifiedTime, safeRoot); err != nil {
+			if err := drivePullDownload(ctx, runtime, downloadToken, target, targetFile.ModifiedTime, safeRoot, ifExists != drivePullIfExistsSkip); err != nil {
+				if ifExists == drivePullIfExistsSkip && errors.Is(err, fs.ErrExist) {
+					items = append(items, drivePullItem{RelPath: rel, FileToken: itemFileToken, SourceID: itemSourceID, Action: "skipped"})
+					skipped++
+					continue
+				}
 				item, terminal := drivePullFailedItem(rel, itemFileToken, itemSourceID, "failed", "download", err)
 				items = append(items, item)
 				failed++
@@ -349,7 +355,7 @@ func drivePullFailedItem(relPath, fileToken, sourceID, action, phase string, err
 
 // drivePullDownload streams one Drive file into the local mirror target and
 // then best-effort aligns the local mtime to Drive's modified_time.
-func drivePullDownload(ctx context.Context, runtime *common.RuntimeContext, fileToken, target, remoteModifiedTime, mirrorRoot string) error {
+func drivePullDownload(ctx context.Context, runtime *common.RuntimeContext, fileToken, target, remoteModifiedTime, mirrorRoot string, overwrite bool) error {
 	resolved, err := runtime.ResolveSavePath(target)
 	if err != nil {
 		return driveSaveError(err)
@@ -366,10 +372,10 @@ func drivePullDownload(ctx context.Context, runtime *common.RuntimeContext, file
 		return wrapDriveNetworkErr(err, "download %s: %s", common.MaskToken(fileToken), err)
 	}
 	defer resp.Body.Close()
-	if _, err := runtime.FileIO().Save(target, fileio.SaveOptions{
+	if _, err := common.SaveWithOverwrite(runtime.FileIO(), target, fileio.SaveOptions{
 		ContentType:   resp.Header.Get("Content-Type"),
 		ContentLength: resp.ContentLength,
-	}, resp.Body); err != nil {
+	}, resp.Body, overwrite); err != nil {
 		return driveSaveError(err)
 	}
 	if err := drivePullApplyRemoteModifiedTime(target, remoteModifiedTime, runtime); err != nil {

@@ -16,10 +16,15 @@ const (
 // DedupFilter: seen map is sole authority; ring only bounds map size via overflow eviction.
 type DedupFilter struct {
 	seen map[string]time.Time
-	ring []string
+	ring []dedupEntry
 	pos  int
 	ttl  time.Duration
 	mu   sync.Mutex
+}
+
+type dedupEntry struct {
+	id     string
+	seenAt time.Time
 }
 
 func NewDedupFilter() *DedupFilter {
@@ -29,7 +34,7 @@ func NewDedupFilter() *DedupFilter {
 func NewDedupFilterWithSize(ringSize int, ttl time.Duration) *DedupFilter {
 	return &DedupFilter{
 		seen: make(map[string]time.Time),
-		ring: make([]string, ringSize),
+		ring: make([]dedupEntry, ringSize),
 		ttl:  ttl,
 	}
 }
@@ -49,10 +54,10 @@ func (d *DedupFilter) IsDuplicate(eventID string) bool {
 
 	d.seen[eventID] = now
 
-	if old := d.ring[d.pos]; old != "" && old != eventID {
-		delete(d.seen, old)
+	if old := d.ring[d.pos]; old.id != "" && d.seen[old.id] == old.seenAt {
+		delete(d.seen, old.id)
 	}
-	d.ring[d.pos] = eventID
+	d.ring[d.pos] = dedupEntry{id: eventID, seenAt: now}
 	d.pos = (d.pos + 1) % len(d.ring)
 
 	if d.pos%1000 == 0 {

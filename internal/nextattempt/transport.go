@@ -250,7 +250,10 @@ func hasItemFailure(data []byte) bool {
 		switch x := v.(type) {
 		case map[string]any:
 			for k, v := range x {
-				if (k == "code" && v != float64(0)) || ((k == "success" || k == "ok") && v == false) {
+				if code, ok := v.(float64); k == "code" && ok && code != 0 {
+					return true
+				}
+				if (k == "success" || k == "ok") && v == false {
 					return true
 				}
 				if (k == "failed_items" || k == "failures" || k == "errors") && v != nil {

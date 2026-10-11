@@ -609,9 +609,9 @@ func saveOutputFile(outPath, ext, token string, runtime *common.RuntimeContext, 
 		contentType = "text/plain"
 	}
 
-	savResult, err := runtime.FileIO().Save(finalPath, fileio.SaveOptions{
+	savResult, err := common.SaveWithOverwrite(runtime.FileIO(), finalPath, fileio.SaveOptions{
 		ContentType: contentType,
-	}, data)
+	}, data, runtime.Bool("overwrite"))
 	if err != nil {
 		return "", 0, wbSaveError(err)
 	}
@@ -718,9 +718,9 @@ func saveResolvedOutputFile(finalPath, contentType string, runtime *common.Runti
 		return "", 0, errs.NewInternalError(errs.SubtypeFileIO, "cannot check file existence: %s", err).WithCause(err)
 	}
 
-	savResult, err := runtime.FileIO().Save(finalPath, fileio.SaveOptions{
+	savResult, err := common.SaveWithOverwrite(runtime.FileIO(), finalPath, fileio.SaveOptions{
 		ContentType: contentType,
-	}, data)
+	}, data, runtime.Bool("overwrite"))
 	if err != nil {
 		return "", 0, wbSaveError(err)
 	}

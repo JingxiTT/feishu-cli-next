@@ -157,6 +157,10 @@ func (f *failingSaveFileIO) Save(string, fileio.SaveOptions, io.Reader) (fileio.
 	return nil, &fileio.WriteError{Err: f.err}
 }
 
+func (f *failingSaveFileIO) SaveExclusive(string, fileio.SaveOptions, io.Reader) (fileio.SaveResult, error) {
+	return nil, &fileio.WriteError{Err: f.err}
+}
+
 type stubFileInfo struct {
 	size int64
 }

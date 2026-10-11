@@ -89,10 +89,10 @@ var MarkdownFetch = common.Shortcut{
 			return markdownValidationParamError("--output", "output file already exists: %s (use --overwrite to replace)", outputPath)
 		}
 
-		result, err := runtime.FileIO().Save(outputPath, fileio.SaveOptions{
+		result, err := common.SaveWithOverwrite(runtime.FileIO(), outputPath, fileio.SaveOptions{
 			ContentType:   resp.Header.Get("Content-Type"),
 			ContentLength: resp.ContentLength,
-		}, resp.Body)
+		}, resp.Body, runtime.Bool("overwrite"))
 		if err != nil {
 			return common.WrapSaveErrorTyped(err)
 		}
