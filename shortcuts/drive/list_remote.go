@@ -7,8 +7,10 @@ import (
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"path"
+	"path/filepath"
 	"sort"
 	"strconv"
 	"strings"
@@ -120,11 +122,25 @@ func listRemoteFolderTree(ctx context.Context, runtime *common.RuntimeContext, f
 			if !ok {
 				return nil, errs.NewInternalError(errs.SubtypeInvalidResponse, "Drive listing contains a malformed file entry")
 			}
-			fType := common.GetString(f, "type")
-			fName := common.GetString(f, "name")
-			fToken := common.GetString(f, "token")
+			var entry struct {
+				Name  string `json:"name"`
+				Token string `json:"token"`
+				Type  string `json:"type"`
+			}
+			raw, err := json.Marshal(f)
+			if err != nil {
+				return nil, errs.NewInternalError(errs.SubtypeInvalidResponse, "invalid Drive listing entry").WithCause(err)
+			}
+			if err := json.Unmarshal(raw, &entry); err != nil {
+				return nil, errs.NewInternalError(errs.SubtypeInvalidResponse, "invalid Drive listing entry").WithCause(err)
+			}
+			fType, fName, fToken := entry.Type, entry.Name, entry.Token
 			if fName == "" || fToken == "" || fType == "" {
 				return nil, errs.NewInternalError(errs.SubtypeInvalidResponse, "Drive listing entry is missing name, token, or type").WithHint("The listing is incomplete; resolve the backend response before retrying the mirror")
+			}
+			// Remote names are single components, never paths within the workspace.
+			if fName == "." || fName == ".." || strings.ContainsAny(fName, "/\\\x00") || !filepath.IsLocal(fName) {
+				return nil, errs.NewInternalError(errs.SubtypeInvalidResponse, "Drive listing contains an unsafe entry name %q", fName)
 			}
 			rel := joinRelDrive(relBase, fName)
 			out = append(out, driveRemoteEntry{

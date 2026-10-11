@@ -8,6 +8,8 @@ and signing/notarization identities must be accepted before enabling the
 reference-equivalent automated public release channel. Apple signing is optional
 for source builds and unsigned local archives.
 The native `update` command currently reports an unconfigured release channel.
+CI and Next offline correctness run on pull requests, main pushes, and manual
+runs. Fork pull requests run the offline gates without live-test secrets.
 
 Build the current host with `./build.sh` or `make build`. Python 3 and Go are
 required; frozen metadata is restored without network. Dependencies must already

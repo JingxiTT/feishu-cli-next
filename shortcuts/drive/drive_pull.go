@@ -226,7 +226,7 @@ var DrivePull = common.Shortcut{
 				}
 			}
 
-			if err := drivePullDownload(ctx, runtime, downloadToken, target, targetFile.ModifiedTime); err != nil {
+			if err := drivePullDownload(ctx, runtime, downloadToken, target, targetFile.ModifiedTime, safeRoot); err != nil {
 				item, terminal := drivePullFailedItem(rel, itemFileToken, itemSourceID, "failed", "download", err)
 				items = append(items, item)
 				failed++
@@ -349,7 +349,15 @@ func drivePullFailedItem(relPath, fileToken, sourceID, action, phase string, err
 
 // drivePullDownload streams one Drive file into the local mirror target and
 // then best-effort aligns the local mtime to Drive's modified_time.
-func drivePullDownload(ctx context.Context, runtime *common.RuntimeContext, fileToken, target, remoteModifiedTime string) error {
+func drivePullDownload(ctx context.Context, runtime *common.RuntimeContext, fileToken, target, remoteModifiedTime, mirrorRoot string) error {
+	resolved, err := runtime.ResolveSavePath(target)
+	if err != nil {
+		return driveSaveError(err)
+	}
+	rel, err := filepath.Rel(mirrorRoot, resolved)
+	if err != nil || !filepath.IsLocal(rel) {
+		return errs.NewValidationError(errs.SubtypeInvalidArgument, "download target escapes --local-dir: %s", target).WithParam("--local-dir")
+	}
 	resp, err := runtime.DoAPIStream(ctx, &larkcore.ApiReq{
 		HttpMethod: "GET",
 		ApiPath:    fmt.Sprintf("/open-apis/drive/v1/files/%s/download", validate.EncodePathSegment(fileToken)),

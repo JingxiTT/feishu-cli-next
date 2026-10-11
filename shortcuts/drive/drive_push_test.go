@@ -2253,7 +2253,7 @@ func TestDrivePushOverwriteNestedFileUsesParentFolderToken(t *testing.T) {
 	}
 }
 
-func TestDrivePushOverwriteNestedFileReportsParentEnsureFailure(t *testing.T) {
+func TestDrivePushOverwriteNestedFileRejectsPathInRemoteName(t *testing.T) {
 	f, stdout, _, reg := cmdutil.TestFactory(t, driveTestConfig())
 
 	tmpDir := t.TempDir()
@@ -2279,8 +2279,8 @@ func TestDrivePushOverwriteNestedFileReportsParentEnsureFailure(t *testing.T) {
 		},
 	})
 	reg.Register(&httpmock.Stub{
-		Method: "POST",
-		URL:    "/open-apis/drive/v1/files/create_folder",
+		Optional: true, Method: "POST",
+		URL: "/open-apis/drive/v1/files/create_folder",
 		Body: map[string]interface{}{
 			"code": 9999,
 			"msg":  "create parent failed",
@@ -2294,11 +2294,12 @@ func TestDrivePushOverwriteNestedFileReportsParentEnsureFailure(t *testing.T) {
 		"--if-exists", "overwrite",
 		"--as", "bot",
 	}, f, stdout)
-	if err == nil {
-		t.Fatalf("expected parent ensure failure\nstdout: %s", stdout.String())
+	var typed *errs.InternalError
+	if !errors.As(err, &typed) || typed.Subtype != errs.SubtypeInvalidResponse {
+		t.Fatalf("expected unsafe listing rejection, got %v", err)
 	}
-	if !strings.Contains(stdout.String(), `"action": "failed"`) || !strings.Contains(stdout.String(), "create parent failed") {
-		t.Fatalf("expected failed item with create_folder error, got: %s", stdout.String())
+	if stdout.Len() != 0 {
+		t.Fatalf("must reject listing before changes: %s", stdout.String())
 	}
 }
 

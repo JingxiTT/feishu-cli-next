@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"runtime"
 	"strings"
 	"testing"
 
@@ -128,5 +129,39 @@ func TestPaginationLaterFailureNeverReturnsAggregateSuccess(t *testing.T) {
 				}
 			})
 		}
+	}
+}
+
+// Check live heap while the stream is still running: completed pages must be
+// collectible, even when the backend keeps supplying more continuation tokens.
+func TestStreamPagesReleasesCompletedPagePayloads(t *testing.T) {
+	const pageBytes = 1 << 20
+	calls, streamed := 0, 0
+	ac, _ := newTestAPIClient(t, roundTripFunc(func(r *http.Request) (*http.Response, error) {
+		calls++
+		return jsonResponse(map[string]interface{}{"code": 0, "data": map[string]interface{}{
+			"items": []interface{}{strings.Repeat("x", pageBytes)}, "has_more": calls < 20, "page_token": fmt.Sprint(calls),
+		}}), nil
+	}))
+	var baseline uint64
+	result, hasItems, err := ac.StreamPages(context.Background(), RawApiRequest{Method: "GET", URL: "/open-apis/fixture/items", As: core.AsUser}, func(items []interface{}) error {
+		streamed++
+		if streamed == 2 || streamed == 20 {
+			runtime.GC()
+			var memory runtime.MemStats
+			runtime.ReadMemStats(&memory)
+			if streamed == 2 {
+				baseline = memory.HeapAlloc
+			} else if memory.HeapAlloc > baseline+8*pageBytes {
+				t.Fatalf("stream retained earlier page payloads: grew by %d bytes", memory.HeapAlloc-baseline)
+			}
+		}
+		return nil
+	}, PaginationOptions{PageDelay: -1})
+	if err != nil || !hasItems || streamed != 20 {
+		t.Fatalf("streamed=%d hasItems=%t error=%v", streamed, hasItems, err)
+	}
+	if token := result.(map[string]interface{})["data"].(map[string]interface{})["page_token"]; token != "20" {
+		t.Fatalf("lost last page: %v", token)
 	}
 }

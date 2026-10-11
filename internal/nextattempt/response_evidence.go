@@ -43,18 +43,11 @@ func classifyKnownResponse(r *Receipt, req *http.Request, data json.RawMessage, 
 		if !decodeRequestEvidence(req, &request) || request.ToolName == "" || json.Unmarshal(data, &result) != nil || strings.TrimSpace(result.Output) == "" || !json.Valid([]byte(result.Output)) {
 			return unknown("sheets_tool_output_unverifiable")
 		}
-		// Batch tool output is nested inside a JSON string. Envelope success cannot
-		// prove every operation completed; domain-specific item reconciliation is
-		// required before replay, even when a partial results array looks successful.
-		if (request.ToolName == "batch_update" || request.ToolName == "history_revert") || hasItemFailure([]byte(result.Output)) {
-			return unknown("sheets_tool_items_require_reconciliation")
+		complete, evidence := SheetsToolOutputComplete(request.ToolName, result.Output)
+		if !complete {
+			return unknown(evidence)
 		}
-		var object map[string]json.RawMessage
-		var array []json.RawMessage
-		if (json.Unmarshal([]byte(result.Output), &object) != nil || len(object) == 0) && (json.Unmarshal([]byte(result.Output), &array) != nil || len(array) == 0) {
-			return unknown("sheets_tool_output_unverifiable")
-		}
-		return applied("sheets_tool_response_decoded")
+		return applied(evidence)
 	}
 	if requestMatches(req, "POST", "/open-apis/base/v3/bases/{base}/tables/{table}/records") || requestMatches(req, "PATCH", "/open-apis/base/v3/bases/{base}/tables/{table}/records/{record}") {
 		var result struct {
@@ -363,4 +356,19 @@ func requestMatches(req *http.Request, method, pattern string) bool {
 		}
 	}
 	return true
+}
+
+// SheetsToolOutputComplete applies the receipt layer's established nested-output
+// evidence rules. Envelope success alone does not prove a write page completed.
+func SheetsToolOutputComplete(toolName, raw string) (bool, string) {
+	if toolName == "batch_update" || toolName == "history_revert" || hasItemFailure([]byte(raw)) {
+		return false, "sheets_tool_items_require_reconciliation"
+	}
+	var object map[string]json.RawMessage
+	var array []json.RawMessage
+	if (json.Unmarshal([]byte(raw), &object) == nil && len(object) > 0) ||
+		(json.Unmarshal([]byte(raw), &array) == nil && len(array) > 0) {
+		return true, "sheets_tool_response_decoded"
+	}
+	return false, "sheets_tool_output_unverifiable"
 }

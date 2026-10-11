@@ -143,6 +143,11 @@ func executeRecordImport(r *common.RuntimeContext) error {
 		report.Created += len(ids)
 		report.CompletedBatches++
 		report.NextRow = end
+		if summary := r.Factory.AgentAttemptSummary(); summary.Unknown > 0 || summary.Unapplied > 0 || summary.PersistenceFailed {
+			report.Status = "unknown"
+			operationErr = errs.NewInternalError(errs.SubtypeStorage, "import mutation evidence is incomplete").WithHint("Inspect mutation receipts and read destination records before deciding whether to retry")
+			break
+		}
 	}
 	if operationErr != nil {
 		if typed, ok := errs.UnwrapTypedError(operationErr); ok {

@@ -2,6 +2,8 @@ name: CI
 run-name: ${{ github.event_name == 'pull_request' && format('CI / {0}', github.event.pull_request.number) || '' }}
 
 on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited]
   push:
     branches: [main]
   workflow_dispatch:

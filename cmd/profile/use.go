@@ -34,48 +34,50 @@ func NewCmdProfileUse(f *cmdutil.Factory) *cobra.Command {
 }
 
 func profileUseRun(f *cmdutil.Factory, name string) error {
-	multi, err := core.LoadOrNotConfigured()
-	if err != nil {
-		return err
-	}
-
-	// Handle "-" for toggle-back
-	if name == "-" {
-		if multi.PreviousApp == "" {
-			return errs.NewValidationError(errs.SubtypeFailedPrecondition, "no previous profile to switch back to").
-				WithHint("switch to a profile by name first: lark-cli profile use <name>")
+	return core.WithConfigLock(func() error {
+		multi, err := core.LoadOrNotConfigured()
+		if err != nil {
+			return err
 		}
-		name = multi.PreviousApp
-	}
 
-	app := multi.FindApp(name)
-	if app == nil {
-		return errs.NewValidationError(errs.SubtypeInvalidArgument, "profile %q not found, available profiles: %s", name, strings.Join(multi.ProfileNames(), ", "))
-	}
+		// Handle "-" for toggle-back
+		if name == "-" {
+			if multi.PreviousApp == "" {
+				return errs.NewValidationError(errs.SubtypeFailedPrecondition, "no previous profile to switch back to").
+					WithHint("switch to a profile by name first: lark-cli profile use <name>")
+			}
+			name = multi.PreviousApp
+		}
 
-	targetName := app.ProfileName()
+		app := multi.FindApp(name)
+		if app == nil {
+			return errs.NewValidationError(errs.SubtypeInvalidArgument, "profile %q not found, available profiles: %s", name, strings.Join(multi.ProfileNames(), ", "))
+		}
 
-	// Short-circuit if already on the target profile
-	currentApp := multi.CurrentAppConfig("")
-	if currentApp != nil && currentApp.ProfileName() == targetName {
-		fmt.Fprintf(f.IOStreams.ErrOut, "Already on profile %q\n", targetName)
+		targetName := app.ProfileName()
+
+		// Short-circuit if already on the target profile
+		currentApp := multi.CurrentAppConfig("")
+		if currentApp != nil && currentApp.ProfileName() == targetName {
+			fmt.Fprintf(f.IOStreams.ErrOut, "Already on profile %q\n", targetName)
+			warnShadowedByEnvironment(f, targetName)
+			return nil
+		}
+
+		// Update previous and current
+		if currentApp != nil {
+			multi.PreviousApp = currentApp.ProfileName()
+		}
+		multi.CurrentApp = targetName
+
+		if err := core.SaveMultiAppConfig(multi); err != nil {
+			return errs.NewInternalError(errs.SubtypeStorage, "failed to save config: %v", err).WithCause(err)
+		}
+
+		output.PrintSuccess(f.IOStreams.ErrOut, fmt.Sprintf("Switched to profile %q (%s, %s)", targetName, app.AppId, app.Brand))
 		warnShadowedByEnvironment(f, targetName)
 		return nil
-	}
-
-	// Update previous and current
-	if currentApp != nil {
-		multi.PreviousApp = currentApp.ProfileName()
-	}
-	multi.CurrentApp = targetName
-
-	if err := core.SaveMultiAppConfig(multi); err != nil {
-		return errs.NewInternalError(errs.SubtypeStorage, "failed to save config: %v", err).WithCause(err)
-	}
-
-	output.PrintSuccess(f.IOStreams.ErrOut, fmt.Sprintf("Switched to profile %q (%s, %s)", targetName, app.AppId, app.Brand))
-	warnShadowedByEnvironment(f, targetName)
-	return nil
+	})
 }
 
 // warnShadowedByEnvironment tells the user when the persistent default they

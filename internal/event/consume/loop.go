@@ -18,6 +18,7 @@ import (
 	"time"
 
 	"github.com/itchyny/gojq"
+	"github.com/larksuite/cli/errs"
 	"github.com/larksuite/cli/internal/event"
 	"github.com/larksuite/cli/internal/event/adapter/localbus/protocol"
 	"github.com/larksuite/cli/internal/event/processing"
@@ -144,6 +145,8 @@ func consumeLoop(ctx context.Context, conn net.Conn, br *bufio.Reader, keyDef *e
 		workers = 1
 	}
 
+	var sinkErr error
+	var sinkErrOnce sync.Once
 	var wg sync.WaitGroup
 	wg.Add(workers)
 	for i := 0; i < workers; i++ {
@@ -167,9 +170,11 @@ func consumeLoop(ctx context.Context, conn net.Conn, br *bufio.Reader, keyDef *e
 						cancel()
 						return
 					}
-					if !opts.Quiet {
-						fmt.Fprintf(opts.ErrOut, "WARN: sink write failed, skipping event: %v\n", err)
-					}
+					sinkErrOnce.Do(func() {
+						sinkErr = errs.NewInternalError(errs.SubtypeFileIO, "event sink write failed").WithCause(err)
+					})
+					cancel()
+					return
 				}
 			}
 		}()
@@ -196,7 +201,7 @@ func consumeLoop(ctx context.Context, conn net.Conn, br *bufio.Reader, keyDef *e
 
 	wg.Wait()
 
-	return nil
+	return sinkErr
 }
 
 // diagnosticErrMaxLen caps how much of a Process error text reaches stderr.

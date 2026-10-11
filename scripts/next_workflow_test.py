@@ -20,6 +20,14 @@ class OfflineWorkflowTests(unittest.TestCase):
         self.workflow = (ROOT / '.github/workflows/next-offline.yml').read_text()
         self.makefile = (ROOT / 'Makefile').read_text()
 
+    def test_correctness_workflows_run_on_pull_requests(self):
+        for name in ('ci', 'next-offline'):
+            workflow = (ROOT / f'.github/workflows/{name}.yml').read_text()
+            triggers = workflow.split('on:\n', 1)[1].split('\n\n', 1)[0]
+            self.assertIn('  pull_request:\n', triggers)
+            self.assertIn('  push:\n    branches: [main]', triggers)
+            self.assertNotIn('pull_request_target:', triggers)
+
     def test_native_matrix_keeps_every_gate_required(self):
         self.assertIn('os: [ubuntu-latest, macos-latest, windows-latest]', self.workflow)
         self.assertNotIn('continue-on-error', self.workflow)

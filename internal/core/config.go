@@ -236,7 +236,8 @@ func LoadMultiAppConfig() (*MultiAppConfig, error) {
 	return &multi, nil
 }
 
-// SaveMultiAppConfig saves config to disk.
+// SaveMultiAppConfig atomically replaces config on disk.
+// Read-modify-write callers must hold WithConfigLock across the entire mutation.
 func SaveMultiAppConfig(config *MultiAppConfig) error {
 	dir := GetConfigDir()
 	if err := vfs.MkdirAll(dir, 0700); err != nil {

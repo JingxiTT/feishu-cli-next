@@ -35,52 +35,54 @@ func NewCmdProfileRemove(f *cmdutil.Factory) *cobra.Command {
 }
 
 func profileRemoveRun(f *cmdutil.Factory, name string) error {
-	multi, err := core.LoadOrNotConfigured()
-	if err != nil {
-		return err
-	}
+	return core.WithConfigLock(func() error {
+		multi, err := core.LoadOrNotConfigured()
+		if err != nil {
+			return err
+		}
 
-	idx := multi.FindAppIndex(name)
-	if idx < 0 {
-		return errs.NewValidationError(errs.SubtypeInvalidArgument, "profile %q not found, available profiles: %s", name, strings.Join(multi.ProfileNames(), ", "))
-	}
+		idx := multi.FindAppIndex(name)
+		if idx < 0 {
+			return errs.NewValidationError(errs.SubtypeInvalidArgument, "profile %q not found, available profiles: %s", name, strings.Join(multi.ProfileNames(), ", "))
+		}
 
-	if len(multi.Apps) == 1 {
-		return recovery.Attach(
-			errs.NewValidationError(errs.SubtypeFailedPrecondition, "cannot remove the only profile"),
-			recovery.Join("",
-				recovery.Command(recovery.TargetProfileAdd, "add another profile first: lark-cli profile add"),
-			).WithFallback("configure another profile through this distribution before removing the only profile"),
-		)
-	}
+		if len(multi.Apps) == 1 {
+			return recovery.Attach(
+				errs.NewValidationError(errs.SubtypeFailedPrecondition, "cannot remove the only profile"),
+				recovery.Join("",
+					recovery.Command(recovery.TargetProfileAdd, "add another profile first: lark-cli profile add"),
+				).WithFallback("configure another profile through this distribution before removing the only profile"),
+			)
+		}
 
-	app := &multi.Apps[idx]
-	removedName := app.ProfileName()
-	appId := app.AppId
-	appSecret := app.AppSecret
-	users := app.Users
+		app := &multi.Apps[idx]
+		removedName := app.ProfileName()
+		appId := app.AppId
+		appSecret := app.AppSecret
+		users := app.Users
 
-	// Remove from slice
-	multi.Apps = append(multi.Apps[:idx], multi.Apps[idx+1:]...)
+		// Remove from slice
+		multi.Apps = append(multi.Apps[:idx], multi.Apps[idx+1:]...)
 
-	// Fix currentApp / previousApp references
-	if multi.CurrentApp == removedName {
-		multi.CurrentApp = multi.Apps[0].ProfileName()
-	}
-	if multi.PreviousApp == removedName {
-		multi.PreviousApp = ""
-	}
+		// Fix currentApp / previousApp references
+		if multi.CurrentApp == removedName {
+			multi.CurrentApp = multi.Apps[0].ProfileName()
+		}
+		if multi.PreviousApp == removedName {
+			multi.PreviousApp = ""
+		}
 
-	if err := core.SaveMultiAppConfig(multi); err != nil {
-		return errs.NewInternalError(errs.SubtypeStorage, "failed to save config: %v", err).WithCause(err)
-	}
+		if err := core.SaveMultiAppConfig(multi); err != nil {
+			return errs.NewInternalError(errs.SubtypeStorage, "failed to save config: %v", err).WithCause(err)
+		}
 
-	// Best-effort credential cleanup after config commit
-	core.RemoveSecretStore(appSecret, f.Keychain)
-	for _, user := range users {
-		larkauth.RemoveStoredToken(appId, user.UserOpenId)
-	}
+		// Best-effort credential cleanup after config commit
+		core.RemoveSecretStore(appSecret, f.Keychain)
+		for _, user := range users {
+			larkauth.RemoveStoredToken(appId, user.UserOpenId)
+		}
 
-	output.PrintSuccess(f.IOStreams.ErrOut, fmt.Sprintf("Profile %q removed", removedName))
-	return nil
+		output.PrintSuccess(f.IOStreams.ErrOut, fmt.Sprintf("Profile %q removed", removedName))
+		return nil
+	})
 }

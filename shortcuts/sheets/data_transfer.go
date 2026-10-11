@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/larksuite/cli/errs"
+	"github.com/larksuite/cli/internal/nextattempt"
 	"github.com/larksuite/cli/internal/output"
 	"github.com/larksuite/cli/shortcuts/common"
 )
@@ -437,9 +438,16 @@ var DataImport = common.Shortcut{
 			if !nativePageChanged(page) {
 				continue
 			}
-			_, err := callTool(ctx, r, r.Str("spreadsheet-token"), ToolKindWrite, "set_cell_range", map[string]interface{}{"excel_id": r.Str("spreadsheet-token"), "sheet_id": r.Str("sheet-id"), "range": region, "cells": page})
+			raw, err := callToolOutput(ctx, r, r.Str("spreadsheet-token"), ToolKindWrite, "set_cell_range", map[string]interface{}{"excel_id": r.Str("spreadsheet-token"), "sheet_id": r.Str("sheet-id"), "range": region, "cells": page})
+			if err == nil {
+				summary := r.Factory.AgentAttemptSummary()
+				complete, _ := nextattempt.SheetsToolOutputComplete("set_cell_range", raw)
+				if !complete || summary.Unknown > 0 || summary.Unapplied > 0 || summary.PersistenceFailed {
+					err = errs.NewInternalError(errs.SubtypeInvalidResponse, "sheet write completion evidence is incomplete").WithHint("Inspect mutation receipts and read target cells before deciding whether to retry")
+				}
+			}
 			if err != nil {
-				r.Out(map[string]interface{}{"status": "incomplete", "acknowledged_pages": acknowledged, "failed_range": region, "retry": "inspect mutation receipts and read target cells before deciding whether to retry"}, nil)
+				r.OutPartialFailure(map[string]interface{}{"status": "incomplete", "acknowledged_pages": acknowledged, "failed_range": region, "retry": "inspect mutation receipts and read target cells before deciding whether to retry"}, nil)
 				return err
 			}
 			acknowledged++

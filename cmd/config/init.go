@@ -210,18 +210,21 @@ func saveAsOnlyApp(appId string, secret core.SecretInput, brand core.LarkBrand, 
 // saveInitConfig saves a new/updated app config, respecting --profile mode.
 // With profileName: appends or updates the named profile (preserves other profiles).
 // Without profileName: cleans up old config and saves as the only app.
-func saveInitConfig(profileName string, existing *core.MultiAppConfig, f *cmdutil.Factory, appId string, secret core.SecretInput, brand core.LarkBrand, lang string) error {
-	if profileName != "" {
-		return saveAsProfile(existing, f.Keychain, profileName, appId, secret, brand, lang)
-	}
-	cleanupOldConfig(existing, f, appId)
-	var prior i18n.Lang
-	if existing != nil {
-		if app := existing.CurrentAppConfig(""); app != nil {
-			prior = app.Lang
+func saveInitConfig(profileName string, f *cmdutil.Factory, appId string, secret core.SecretInput, brand core.LarkBrand, lang string) error {
+	return core.WithConfigLock(func() error {
+		existing, _ := core.LoadMultiAppConfig()
+		if profileName != "" {
+			return saveAsProfile(existing, f.Keychain, profileName, appId, secret, brand, lang)
 		}
-	}
-	return saveAsOnlyApp(appId, secret, brand, string(preferredLang(i18n.Lang(lang), prior)))
+		cleanupOldConfig(existing, f, appId)
+		var prior i18n.Lang
+		if existing != nil {
+			if app := existing.CurrentAppConfig(""); app != nil {
+				prior = app.Lang
+			}
+		}
+		return saveAsOnlyApp(appId, secret, brand, string(preferredLang(i18n.Lang(lang), prior)))
+	})
 }
 
 // wrapSaveConfigError passes an already-typed error (e.g. the --name conflict
@@ -318,6 +321,13 @@ func wrapUpdateExistingProfileErr(err error) error {
 	return errs.NewInternalError(errs.SubtypeSDKError, "failed to save config: %v", err).WithCause(err)
 }
 
+func saveExistingProfileWithoutSecret(profileName, appID string, brand core.LarkBrand, lang string) error {
+	return core.WithConfigLock(func() error {
+		existing, _ := core.LoadMultiAppConfig()
+		return updateExistingProfileWithoutSecret(existing, profileName, appID, brand, lang)
+	})
+}
+
 func updateExistingProfileWithoutSecret(existing *core.MultiAppConfig, profileName, appID string, brand core.LarkBrand, lang string) error {
 	if existing == nil {
 		return errs.NewValidationError(errs.SubtypeInvalidArgument, "App Secret cannot be empty for new configuration").
@@ -388,7 +398,7 @@ func configInitRun(opts *ConfigInitOptions) error {
 		if err != nil {
 			return errs.NewInternalError(errs.SubtypeSDKError, "%v", err).WithCause(err)
 		}
-		if err := saveInitConfig(opts.ProfileName, existing, f, opts.AppID, secret, brand, opts.Lang); err != nil {
+		if err := saveInitConfig(opts.ProfileName, f, opts.AppID, secret, brand, opts.Lang); err != nil {
 			return wrapSaveConfigError(err)
 		}
 		output.PrintSuccess(f.IOStreams.ErrOut, fmt.Sprintf("Configuration saved to %s", core.GetConfigPath()))
@@ -423,12 +433,11 @@ func configInitRun(opts *ConfigInitOptions) error {
 		if result == nil {
 			return errs.NewInternalError(errs.SubtypeSDKError, "app creation returned no result")
 		}
-		existing, _ := core.LoadMultiAppConfig()
 		secret, err := core.ForStorage(result.AppID, core.PlainSecret(result.AppSecret), f.Keychain)
 		if err != nil {
 			return errs.NewInternalError(errs.SubtypeSDKError, "%v", err).WithCause(err)
 		}
-		if err := saveInitConfig(opts.ProfileName, existing, f, result.AppID, secret, result.Brand, opts.Lang); err != nil {
+		if err := saveInitConfig(opts.ProfileName, f, result.AppID, secret, result.Brand, opts.Lang); err != nil {
 			return wrapSaveConfigError(err)
 		}
 		printLangPreferenceConfirmation(opts)
@@ -450,20 +459,18 @@ func configInitRun(opts *ConfigInitOptions) error {
 				WithParam("--app-id")
 		}
 
-		existing, _ := core.LoadMultiAppConfig()
-
 		if result.AppSecret != "" {
 			// New secret provided (either from "create" or "existing" with input)
 			secret, err := core.ForStorage(result.AppID, core.PlainSecret(result.AppSecret), f.Keychain)
 			if err != nil {
 				return errs.NewInternalError(errs.SubtypeSDKError, "%v", err).WithCause(err)
 			}
-			if err := saveInitConfig(opts.ProfileName, existing, f, result.AppID, secret, result.Brand, opts.Lang); err != nil {
+			if err := saveInitConfig(opts.ProfileName, f, result.AppID, secret, result.Brand, opts.Lang); err != nil {
 				return wrapSaveConfigError(err)
 			}
 		} else if result.Mode == "existing" && result.AppID != "" {
 			// Existing app with unchanged secret — update app ID and brand only
-			if err := wrapUpdateExistingProfileErr(updateExistingProfileWithoutSecret(existing, opts.ProfileName, result.AppID, result.Brand, opts.Lang)); err != nil {
+			if err := wrapUpdateExistingProfileErr(saveExistingProfileWithoutSecret(opts.ProfileName, result.AppID, result.Brand, opts.Lang)); err != nil {
 				return err
 			}
 		} else {
@@ -563,7 +570,7 @@ func configInitRun(opts *ConfigInitOptions) error {
 	if err != nil {
 		return errs.NewInternalError(errs.SubtypeSDKError, "%v", err).WithCause(err)
 	}
-	if err := saveInitConfig(opts.ProfileName, existing, f, resolvedAppId, storedSecret, parseBrand(resolvedBrand), opts.Lang); err != nil {
+	if err := saveInitConfig(opts.ProfileName, f, resolvedAppId, storedSecret, parseBrand(resolvedBrand), opts.Lang); err != nil {
 		return wrapSaveConfigError(err)
 	}
 	output.PrintSuccess(f.IOStreams.ErrOut, fmt.Sprintf("Configuration saved to %s", core.GetConfigPath()))

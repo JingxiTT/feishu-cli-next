@@ -6,8 +6,6 @@
 package keychain
 
 import (
-	"crypto/aes"
-	"crypto/cipher"
 	"crypto/rand"
 	"errors"
 	"fmt"
@@ -88,9 +86,11 @@ func getMasterKey(service string, allowCreate bool) ([]byte, error) {
 		return nil, err
 	}
 
-	// Atomic rename to prevent multi-process master key initialization collision
-	if err := vfs.Rename(tmpKeyPath, keyPath); err != nil {
-		// If rename fails, another process might have created it. Try reading again.
+	// Publish the complete key without replacing another process's winning key.
+	if err := vfs.Link(tmpKeyPath, keyPath); err != nil {
+		if !errors.Is(err, os.ErrExist) {
+			return nil, err
+		}
 		existingKey, readErr := vfs.ReadFile(keyPath)
 		if readErr == nil && len(existingKey) == masterKeyBytes {
 			return existingKey, nil
@@ -99,52 +99,6 @@ func getMasterKey(service string, allowCreate bool) ([]byte, error) {
 	}
 
 	return key, nil
-}
-
-// encryptData encrypts data using AES-GCM.
-func encryptData(plaintext string, key []byte) ([]byte, error) {
-	block, err := aes.NewCipher(key)
-	if err != nil {
-		return nil, err
-	}
-	aesGCM, err := cipher.NewGCM(block)
-	if err != nil {
-		return nil, err
-	}
-
-	iv := make([]byte, ivBytes)
-	if _, err := rand.Read(iv); err != nil {
-		return nil, err
-	}
-
-	ciphertext := aesGCM.Seal(nil, iv, []byte(plaintext), nil)
-	result := make([]byte, 0, ivBytes+len(ciphertext))
-	result = append(result, iv...)
-	result = append(result, ciphertext...)
-	return result, nil
-}
-
-// decryptData decrypts data using AES-GCM.
-func decryptData(data []byte, key []byte) (string, error) {
-	if len(data) < ivBytes+tagBytes {
-		return "", os.ErrInvalid
-	}
-	block, err := aes.NewCipher(key)
-	if err != nil {
-		return "", err
-	}
-	aesGCM, err := cipher.NewGCM(block)
-	if err != nil {
-		return "", err
-	}
-
-	iv := data[:ivBytes]
-	ciphertext := data[ivBytes:]
-	plaintext, err := aesGCM.Open(nil, iv, ciphertext, nil)
-	if err != nil {
-		return "", err
-	}
-	return string(plaintext), nil
 }
 
 // platformGet retrieves a value from the file system.
