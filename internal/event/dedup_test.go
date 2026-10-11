@@ -106,7 +106,7 @@ func TestDedupFilter_ConcurrentFirstSeenExactlyOnce(t *testing.T) {
 // Reinserting an ID that already occupies its own ring slot must not delete the fresh seen entry.
 func TestDedupFilter_SelfEvictionPreservesFreshEntry(t *testing.T) {
 	d := NewDedupFilterWithSize(2, time.Hour)
-	d.ring[0] = dedupEntry{id: "X"}
+	d.ring[0] = "X"
 	d.pos = 0
 
 	if d.IsDuplicate("X") {
@@ -121,10 +121,15 @@ func TestDedupFilter_OldSlotPreservesReinsertedEntry(t *testing.T) {
 	d := NewDedupFilterWithSize(3, time.Hour)
 	d.IsDuplicate("A")
 	d.IsDuplicate("B")
-	d.seen["A"] = time.Now().Add(-2 * time.Hour)
+	firstSeenAt := d.seen["A"].seenAt
+	d.seen["A"] = dedupEntry{seenAt: time.Now().Add(-2 * time.Hour), slot: 0}
 	if d.IsDuplicate("A") {
 		t.Fatal("expired A must be accepted")
 	}
+	// Model two insertions receiving the same timestamp on a coarse clock.
+	fresh := d.seen["A"]
+	fresh.seenAt = firstSeenAt
+	d.seen["A"] = fresh
 	d.IsDuplicate("C") // Evicts A's old slot, not its fresh entry.
 	if !d.IsDuplicate("A") {
 		t.Fatal("old ring slot removed the fresh duplicate check")
