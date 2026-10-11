@@ -17,7 +17,7 @@ require (
 	github.com/spf13/cobra v1.10.2 // flag-error-text contract: see cmd/root.go unknownFlagName
 	github.com/spf13/pflag v1.0.10
 	github.com/stretchr/testify v1.12.1
-	github.com/tidwall/gjson v1.18.0
+	github.com/tidwall/gjson v1.20.0
 	github.com/zalando/go-keyring v0.2.8
 	golang.org/x/net v0.61.0
 	golang.org/x/sync v0.24.0
