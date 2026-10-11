@@ -9,145 +9,47 @@ metadata:
 
 # OpenAPI Explorer
 
-> **前置条件：** 先阅读 [`../lark-shared/SKILL.md`](../lark-shared/SKILL.md) 了解认证、身份切换和安全规则。
+先阅读一次 [`lark-shared`](../lark-shared/SKILL.md)，遵守认证、身份、输出与安全规则；复用本任务已读的同版本指导。本 skill 仅用于现有 shortcut / 已注册 API 无法满足的请求，不把已有命令绕成裸调。
 
-当用户的需求**无法被现有 skill 或 CLI 已注册 API 覆盖**时，使用本技能从飞书官方 markdown 文档库中逐层挖掘原生 OpenAPI 接口，然后通过 `lark-cli api` 裸调完成任务。
+## 先查本地能力
 
-## 文档库结构
+已知命令和参数时直接执行。未知命令用简短字面关键词做有界发现；仅缺 flag 要求时加 `--flags`：
 
-飞书 OpenAPI 文档以 markdown 层级组织：
-
-```
-llms.txt                          ← 顶层索引，列出所有模块文档链接
-  └─ llms-<module>.txt            ← 模块文档，包含功能概述 + 底层 API 文档链接
-       └─ <api-doc>.md            ← 单个 API 的完整说明（方法/路径/参数/响应/错误码）
+```bash
+feishu-cli-next discover 'im members' --limit 3
+feishu-cli-next discover 'im members' --limit 3 --flags
 ```
 
-文档入口：
+结果不足时细化关键词；宿主没有 Next discover 时，直接检查 `lark-cli <service> --help` 及相关 resource 的帮助。单次未命中不能证明没有能力。已有方法只缺请求形状时，查**一个具体 method** 的 request schema；需要响应定义再省略 `--input-only`，不要裸跑 schema 倾倒全目录：
 
-| 品牌 | 入口 URL |
-|------|----------|
-| 飞书 (Feishu) | `https://open.feishu.cn/llms.txt` |
+```bash
+lark-cli schema im.chat.members.create --input-only
+```
+
+例如拉人进群已有 `im chat.members create`；按 [`lark-im`](../lark-im/SKILL.md) 的成员/身份指导执行，不为它抓取外部文档或另拼 raw API。仅确认本地能力不覆盖后，继续下方流程。
+
+## 按需读取官方规范
+
+按实际品牌选入口，未知默认飞书：
+
+| 品牌 | 文档索引 |
+|---|---|
+| Feishu | `https://open.feishu.cn/llms.txt` |
 | Lark | `https://open.larksuite.com/llms.txt` |
 
-> 所有文档以**中文**编写。如果用户使用英文交流，需将文档内容翻译为英文后输出。
+文档层级是 `llms.txt` → `llms-<module>.txt` → 单 API markdown。已有准确官方 API 文档链接时直接读取该页；缺模块/接口链接时逐层定位，**不要猜路径、字段或跳过所需规范**。只读取当前接口需要的材料，复用已读的规范。
 
-## 挖掘流程
+从单 API 文档确认 HTTP 方法/路径、路径与查询参数、请求体类型和必填项、响应、身份/scope、错误与限制。官方文档为中文；用户用英文时用英文解释。
 
-严格按以下步骤逐层检索，**不要跳步或猜测 API**：
-
-### Step 1：确认现有能力不足
+确认规范和用户意图后，通过 CLI 裸调，保留原始参数语义：
 
 ```bash
-# 先检查是否已有对应的 skill 或已注册 API
-lark-cli <可能的service> --help
-```
-
-如果已有对应命令或 shortcut，直接使用，**不需要继续挖掘**。
-
-### Step 2：从顶层索引定位模块
-
-用 WebFetch 获取顶层索引，找到与需求相关的模块文档链接：
-
-```
-WebFetch https://open.feishu.cn/llms.txt
-  → 提取问题："列出所有模块文档链接，找出与 <用户需求关键词> 相关的链接"
-```
-
-- 飞书品牌使用 `open.feishu.cn`
-- Lark 品牌使用 `open.larksuite.com`
-- 如不确定用户品牌，默认使用飞书
-
-### Step 3：从模块文档定位具体 API
-
-用 WebFetch 获取模块文档，找到具体 API 的文档链接：
-
-```
-WebFetch https://open.feishu.cn/llms-docs/zh-CN/llms-<module>.txt
-  → 提取问题："找出与 <用户需求> 相关的 API 说明和文档链接"
-```
-
-### Step 4：获取 API 完整规范
-
-用 WebFetch 获取具体 API 文档，提取完整的调用规范：
-
-```
-WebFetch https://open.feishu.cn/document/server-docs/.../<api>.md
-  → 提取问题："返回完整 API 规范：HTTP 方法、URL 路径、路径参数、查询参数、请求体字段（名称/类型/必填/说明）、响应字段、所需权限、错误码"
-```
-
-### Step 5：通过 CLI 调用 API
-
-使用 `lark-cli api` 裸调：
-
-```bash
-# GET 请求
 lark-cli api GET /open-apis/<path> --params '{"key":"value"}'
-
-# POST 请求
 lark-cli api POST /open-apis/<path> --data '{"key":"value"}'
-
-# PUT 请求
 lark-cli api PUT /open-apis/<path> --data '{"key":"value"}'
-
-# DELETE 请求
 lark-cli api DELETE /open-apis/<path>
 ```
 
-## 输出规范
+写入/删除前确认用户意图，敏感操作说明影响范围；支持 dry-run 时先预览。遵守 lark-shared 的高风险审批与未知结果恢复要求，不能静默绕过确认门禁。
 
-向用户呈现挖掘结果时，按以下格式组织：
-
-1. **API 名称与功能**：一句话描述
-2. **HTTP 方法与路径**：`METHOD /open-apis/...`
-3. **关键参数**：列出必填和常用可选参数
-4. **所需权限**：scope 列表
-5. **调用示例**：给出 `lark-cli api` 的完整命令
-6. **注意事项**：频率限制、特殊约束等
-
-如果用户使用英文交流，将以上所有内容翻译为英文。
-
-## 安全规则
-
-- **写入/删除类 API**（POST/PUT/DELETE）调用前必须确认用户意图
-- 建议先用 `--dry-run` 预览请求（如支持）
-- 不要猜测 API 路径或参数——必须从文档中获取确认
-- 涉及敏感操作（删除群、移除成员等）时，向用户说明影响范围
-
-## 使用场景示例
-
-### 场景 1：用户需要拉人进群（未被 CLI 封装）
-
-```bash
-# Step 1: 确认 CLI 没有封装
-lark-cli im --help
-# → 发现没有 chat_members 相关的 create 命令
-
-# Step 2-4: 通过文档挖掘获得 API 规范
-# → POST /open-apis/im/v1/chats/:chat_id/members
-
-# Step 5: 调用
-lark-cli api POST /open-apis/im/v1/chats/oc_xxx/members \
-  --data '{"id_list":["ou_xxx","ou_yyy"]}' \
-  --params '{"member_id_type":"open_id"}'
-```
-
-### 场景 2：用户需要设置群公告
-
-```bash
-# Step 1: 确认 CLI 没有封装
-lark-cli im --help
-# → 没有 announcement 相关命令
-
-# Step 2-4: 挖掘文档
-# → PATCH /open-apis/im/v1/chats/:chat_id/announcement
-
-# Step 5: 调用
-lark-cli api PATCH /open-apis/im/v1/chats/oc_xxx/announcement \
-  --data '{"revision":"0","requests":["<html>公告内容</html>"]}'
-```
-
-## 参考
-
-- [lark-shared](../lark-shared/SKILL.md) — 认证和全局参数
-- [lark-skill-maker](../lark-skill-maker/SKILL.md) — 如需将挖掘到的 API 固化为新 Skill
+向用户给出一句话功能、HTTP 方法/路径、关键参数、scope、完整调用示例及相关限制；无需倾倒整页规范。如需把已验证的缺口固化成技能，见 [`lark-skill-maker`](../lark-skill-maker/SKILL.md)。

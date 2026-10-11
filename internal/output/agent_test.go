@@ -75,13 +75,19 @@ func TestAgentProjectionPreservesEnvelopeIdentityAndPagination(t *testing.T) {
 
 func TestAgentProjectionRetainsPartialUnknownUnsupported(t *testing.T) {
 	for _, status := range []string{`"ok":false`, `"outcome":"unknown"`, `"partial":true`, `"unsupported_types":["new"]`, `"error":{"message":"lost"}`} {
-		raw := json.RawMessage(`{"ok":true,"data":{"items":[{"id":"1","content":"keep",` + status + `}]}}`)
-		var buf bytes.Buffer
-		if err := output.WriteJSON(output.WithAgentOptions(&buf, &output.AgentOptions{Fields: "id"}), raw); err != nil {
-			t.Fatal(err)
-		}
-		if strings.TrimSpace(buf.String()) != string(raw) {
-			t.Fatalf("unsafe projection reduced result: %s", buf.String())
+		item := `{"id":"1","content":"keep",` + status + `}`
+		for _, raw := range []json.RawMessage{
+			json.RawMessage(`{"ok":true,"data":{"items":[` + item + `]}}`),
+			json.RawMessage(`{"title":"keep","unselected":{"nested":[` + item + `]}}`),
+			json.RawMessage(`[{"id":"safe","content":"keep"},` + item + `]`),
+		} {
+			var buf bytes.Buffer
+			if err := output.WriteJSON(output.WithAgentOptions(&buf, &output.AgentOptions{Fields: "id"}), raw); err != nil {
+				t.Fatal(err)
+			}
+			if strings.TrimSpace(buf.String()) != string(raw) {
+				t.Fatalf("unsafe projection reduced result: %s", buf.String())
+			}
 		}
 	}
 }
