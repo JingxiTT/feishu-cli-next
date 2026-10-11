@@ -6,6 +6,7 @@ package drive
 import (
 	"errors"
 	"fmt"
+	"io/fs"
 	"net/http"
 	"strings"
 
@@ -105,8 +106,13 @@ func driveSaveError(err error) error {
 	if err == nil {
 		return nil
 	}
+	if _, ok := errs.ProblemOf(err); ok {
+		return err
+	}
 	var me *fileio.MkdirError
 	switch {
+	case errors.Is(err, fs.ErrExist):
+		return errs.NewValidationError(errs.SubtypeInvalidArgument, "output file already exists: %s", err).WithCause(err)
 	case errors.Is(err, fileio.ErrPathValidation):
 		return errs.NewValidationError(errs.SubtypeInvalidArgument, "unsafe output path: %s", err).WithCause(err)
 	case errors.As(err, &me):

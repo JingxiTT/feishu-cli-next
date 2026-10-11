@@ -76,7 +76,7 @@ var AppsExport = common.Shortcut{
 			Body:       exportBody(rctx),
 		})
 		if err != nil {
-			return classifyExportErr(err)
+			return annotateExportEnvelopeErr(classifyExportErr(err))
 		}
 		defer resp.Body.Close()
 

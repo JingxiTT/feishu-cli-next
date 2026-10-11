@@ -556,7 +556,7 @@ func (ctx *RuntimeContext) DoAPIAsBot(req *larkcore.ApiReq, opts ...larkcore.Req
 // DoAPIStream executes a streaming HTTP request via APIClient.DoStream.
 // Unlike DoAPI (which buffers the full body via the SDK), DoAPIStream returns
 // a live *http.Response whose Body is an io.Reader for streaming consumption.
-// HTTP errors (status >= 400) are handled internally by DoStream.
+// HTTP errors and JSON API error envelopes are handled internally by DoStream.
 func (ctx *RuntimeContext) DoAPIStream(callCtx context.Context, req *larkcore.ApiReq, opts ...client.Option) (*http.Response, error) {
 	ac, err := ctx.getAPIClient()
 	if err != nil {

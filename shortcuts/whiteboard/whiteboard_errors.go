@@ -27,6 +27,9 @@ func wbSaveError(err error) error {
 	if err == nil {
 		return nil
 	}
+	if _, ok := errs.ProblemOf(err); ok {
+		return err
+	}
 	var me *fileio.MkdirError
 	switch {
 	case errors.Is(err, fileio.ErrPathValidation):

@@ -16,6 +16,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"io/fs"
 	"net/http"
 	"path/filepath"
 	"regexp"
@@ -510,7 +511,11 @@ func saveTranscriptToFile(runtime *common.RuntimeContext, minuteToken, title str
 	}
 
 	fmt.Fprintf(errOut, "%s writing transcript: %s\n", logPrefix, transcriptPath)
-	if _, err := runtime.FileIO().Save(transcriptPath, fileio.SaveOptions{}, bytes.NewReader(content)); err != nil {
+	if _, err := common.SaveWithOverwrite(runtime.FileIO(), transcriptPath, fileio.SaveOptions{}, bytes.NewReader(content), runtime.Bool("overwrite")); err != nil {
+		if !runtime.Bool("overwrite") && errors.Is(err, fs.ErrExist) {
+			fmt.Fprintf(errOut, "%s transcript already exists: %s (use --overwrite to replace)\n", logPrefix, transcriptPath)
+			return transcriptPath
+		}
 		var me *fileio.MkdirError
 		switch {
 		case errors.Is(err, fileio.ErrPathValidation):

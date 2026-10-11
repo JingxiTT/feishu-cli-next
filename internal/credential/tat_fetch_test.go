@@ -61,6 +61,9 @@ func TestFetchTAT_Success(t *testing.T) {
 	if result.AccessToken != "t-abc" || result.StatusMessage != statusMessage {
 		t.Errorf("result = (%q, %q), want token and status message", result.AccessToken, result.StatusMessage)
 	}
+	if result.ExpiresIn != 7200 {
+		t.Fatalf("expires_in = %d, want 7200", result.ExpiresIn)
+	}
 	if rt.gotReq.URL.String() != "https://accounts.feishu.cn/oauth/v3/token" {
 		t.Errorf("url = %s", rt.gotReq.URL.String())
 	}
@@ -78,7 +81,7 @@ func TestFetchTAT_Success(t *testing.T) {
 // invalid_client (wrong app_id/app_secret on the client_credentials grant) is a
 // deterministic client-side rejection that FetchTAT routes to
 // classifyTATResponseCode as CategoryConfig / SubtypeInvalidClient — the same
-// typed error doResolveTAT (and thus every token-resolving command) returns.
+// typed error resolveTAT (and thus every token-resolving command) returns.
 // The v3 endpoint reports it as HTTP 400 with the OAuth2 error body (wrong
 // secret → code 20002, unknown app → code 20048).
 func TestFetchTAT_InvalidClient_ConfigInvalidClient(t *testing.T) {

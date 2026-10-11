@@ -9,6 +9,7 @@ import (
 	"io"
 	"net/http"
 	"sync"
+	"time"
 
 	"github.com/larksuite/cli/errs"
 	"github.com/larksuite/cli/internal/auth"
@@ -116,9 +117,10 @@ type DefaultTokenProvider struct {
 	httpClient  func() (*http.Client, error)
 	errOut      io.Writer
 
-	tatOnce   sync.Once
-	tatResult *TokenResult
-	tatErr    error
+	tatMu        sync.Mutex
+	tatAccount   *Account
+	tatResult    *TokenResult
+	tatExpiresAt time.Time
 }
 
 func NewDefaultTokenProvider(defaultAcct *DefaultAccountProvider, httpClient func() (*http.Client, error), errOut io.Writer) *DefaultTokenProvider {
@@ -159,24 +161,30 @@ func (p *DefaultTokenProvider) resolveUAT(ctx context.Context) (*TokenResult, er
 	return &TokenResult{Token: token, Scopes: scopes}, nil
 }
 
-// resolveTAT resolves a tenant access token. The result is cached after the first
-// call via sync.Once — only the context from the first call is used.
+// resolveTAT refreshes the cached tenant token before expiry and serializes mints.
 func (p *DefaultTokenProvider) resolveTAT(ctx context.Context) (*TokenResult, error) {
-	p.tatOnce.Do(func() {
-		p.tatResult, p.tatErr = p.doResolveTAT(ctx)
-	})
-	return p.tatResult, p.tatErr
-}
-
-func (p *DefaultTokenProvider) doResolveTAT(ctx context.Context) (*TokenResult, error) {
-	acct, err := p.defaultAcct.ResolveAccount(ctx)
-	if err != nil {
+	p.tatMu.Lock()
+	defer p.tatMu.Unlock()
+	if err := ctx.Err(); err != nil {
 		return nil, err
+	}
+	if p.tatResult != nil && time.Now().Before(p.tatExpiresAt) {
+		return p.tatResult, nil
+	}
+	// A config/profile change in another process must not switch this invocation's app.
+	acct := p.tatAccount
+	if acct == nil {
+		var err error
+		acct, err = p.defaultAcct.ResolveAccount(ctx)
+		if err != nil {
+			return nil, err
+		}
 	}
 	httpClient, err := p.httpClient()
 	if err != nil {
 		return nil, err
 	}
+	mintedAt := time.Now()
 	result, err := FetchTAT(ctx, httpClient, acct.Brand, acct.AppID, acct.AppSecret)
 	if err != nil {
 		return nil, err
@@ -184,5 +192,11 @@ func (p *DefaultTokenProvider) doResolveTAT(ctx context.Context) (*TokenResult, 
 	if result.StatusMessage != "" && p.errOut != nil {
 		fmt.Fprintf(p.errOut, "[lark-cli] tat-client: %s\n", result.StatusMessage)
 	}
-	return &TokenResult{Token: result.AccessToken}, nil
+	// Missing expiry leaves the token uncached rather than guessing its lifetime.
+	lifetime := time.Duration(result.ExpiresIn) * time.Second
+	margin := min(30*time.Second, lifetime/10)
+	p.tatExpiresAt = mintedAt.Add(lifetime - margin)
+	p.tatAccount = acct
+	p.tatResult = &TokenResult{Token: result.AccessToken}
+	return p.tatResult, nil
 }

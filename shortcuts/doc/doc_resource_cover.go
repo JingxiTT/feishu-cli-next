@@ -124,10 +124,10 @@ var DocResourceDownload = common.Shortcut{
 			}
 		}
 
-		result, err := runtime.FileIO().Save(finalPath, fileio.SaveOptions{
+		result, err := common.SaveWithOverwrite(runtime.FileIO(), finalPath, fileio.SaveOptions{
 			ContentType:   resp.Header.Get("Content-Type"),
 			ContentLength: resp.ContentLength,
-		}, resp.Body)
+		}, resp.Body, runtime.Bool("overwrite"))
 		if err != nil {
 			return common.WrapSaveErrorTyped(err)
 		}

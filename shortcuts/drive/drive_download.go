@@ -265,10 +265,10 @@ var DriveDownload = common.Shortcut{
 			return errs.NewValidationError(errs.SubtypeInvalidArgument, "output file already exists: %s (use --overwrite to replace)", outputPath).WithParam("--output")
 		}
 
-		result, err := runtime.FileIO().Save(outputPath, fileio.SaveOptions{
+		result, err := common.SaveWithOverwrite(runtime.FileIO(), outputPath, fileio.SaveOptions{
 			ContentType:   resp.Header.Get("Content-Type"),
 			ContentLength: resp.ContentLength,
-		}, resp.Body)
+		}, resp.Body, overwrite)
 		if err != nil {
 			return driveSaveError(err)
 		}

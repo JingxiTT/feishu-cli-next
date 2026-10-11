@@ -126,7 +126,7 @@ var NoteTranscript = common.Shortcut{
 			return err
 		}
 
-		saved, err := runtime.FileIO().Save(outPath, fileio.SaveOptions{}, bytes.NewReader(content))
+		saved, err := common.SaveWithOverwrite(runtime.FileIO(), outPath, fileio.SaveOptions{}, bytes.NewReader(content), runtime.Bool("overwrite"))
 		if err != nil {
 			return common.WrapSaveErrorTyped(err)
 		}

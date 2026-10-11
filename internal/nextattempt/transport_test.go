@@ -97,6 +97,7 @@ func TestResponseEvidence(t *testing.T) {
 		{"missing code", "/create", `{}`, Unknown, 200},
 		{"batch", "/batch_create", `{"code":0}`, Unknown, 200},
 		{"item failure", "/create", `{"code":0,"data":{"items":[{"code":1}]}}`, Unknown, 200},
+		{"Docs code block", "/open-apis/docx/v1/documents/doc123/blocks/block123", `{"code":0,"data":{"block":{"block_id":"block123","block_type":14,"code":{"style":{"language":22},"elements":[{"text_run":{"content":"hello"}}]}}}}`, Applied, 200},
 		{"accepted", "/create", `{"code":0}`, Unknown, 202},
 		{"permission", "/create", `{}`, Unapplied, 403},
 	}

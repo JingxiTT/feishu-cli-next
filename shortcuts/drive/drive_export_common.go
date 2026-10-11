@@ -556,7 +556,7 @@ func parseDriveExportStatus(ticket string, data map[string]interface{}) driveExp
 }
 
 // saveContentToOutputDir validates the target path, enforces overwrite policy,
-// and writes the payload atomically via FileIO.Save.
+// and commits the payload atomically, exclusively unless overwrite is requested.
 func saveContentToOutputDir(fio fileio.FileIO, outputDir, fileName string, payload []byte, overwrite bool) (string, error) {
 	if outputDir == "" {
 		outputDir = "."
@@ -574,7 +574,7 @@ func saveContentToOutputDir(fio fileio.FileIO, outputDir, fileName string, paylo
 		}
 	}
 
-	if _, err := fio.Save(target, fileio.SaveOptions{}, bytes.NewReader(payload)); err != nil {
+	if _, err := common.SaveWithOverwrite(fio, target, fileio.SaveOptions{}, bytes.NewReader(payload), overwrite); err != nil {
 		return "", driveSaveError(err)
 	}
 	resolvedPath, _ := fio.ResolvePath(target)

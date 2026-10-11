@@ -15,11 +15,16 @@ const (
 
 // DedupFilter: seen map is sole authority; ring only bounds map size via overflow eviction.
 type DedupFilter struct {
-	seen map[string]time.Time
+	seen map[string]dedupEntry
 	ring []string
 	pos  int
 	ttl  time.Duration
 	mu   sync.Mutex
+}
+
+type dedupEntry struct {
+	seenAt time.Time
+	slot   int
 }
 
 func NewDedupFilter() *DedupFilter {
@@ -28,7 +33,7 @@ func NewDedupFilter() *DedupFilter {
 
 func NewDedupFilterWithSize(ringSize int, ttl time.Duration) *DedupFilter {
 	return &DedupFilter{
-		seen: make(map[string]time.Time),
+		seen: make(map[string]dedupEntry),
 		ring: make([]string, ringSize),
 		ttl:  ttl,
 	}
@@ -40,18 +45,18 @@ func (d *DedupFilter) IsDuplicate(eventID string) bool {
 
 	now := time.Now()
 
-	if ts, ok := d.seen[eventID]; ok {
-		if now.Sub(ts) < d.ttl {
+	if entry, ok := d.seen[eventID]; ok {
+		if now.Sub(entry.seenAt) < d.ttl {
 			return true
 		}
 		delete(d.seen, eventID)
 	}
 
-	d.seen[eventID] = now
-
-	if old := d.ring[d.pos]; old != "" && old != eventID {
+	// Slot ownership distinguishes reinserts even when the clock has not advanced.
+	if old := d.ring[d.pos]; old != "" && d.seen[old].slot == d.pos {
 		delete(d.seen, old)
 	}
+	d.seen[eventID] = dedupEntry{seenAt: now, slot: d.pos}
 	d.ring[d.pos] = eventID
 	d.pos = (d.pos + 1) % len(d.ring)
 
@@ -63,8 +68,8 @@ func (d *DedupFilter) IsDuplicate(eventID string) bool {
 }
 
 func (d *DedupFilter) cleanupExpired(now time.Time) {
-	for id, ts := range d.seen {
-		if now.Sub(ts) >= d.ttl {
+	for id, entry := range d.seen {
+		if now.Sub(entry.seenAt) >= d.ttl {
 			delete(d.seen, id)
 		}
 	}

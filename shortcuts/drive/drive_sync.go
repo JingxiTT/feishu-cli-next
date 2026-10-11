@@ -313,7 +313,7 @@ var DriveSync = common.Shortcut{
 				continue
 			}
 			target := filepath.Join(rootRelToCwd, entry.RelPath)
-			if err := drivePullDownload(ctx, runtime, targetFile.DownloadToken, target, targetFile.ModifiedTime, safeRoot); err != nil {
+			if err := drivePullDownload(ctx, runtime, targetFile.DownloadToken, target, targetFile.ModifiedTime, safeRoot, true); err != nil {
 				item, terminal := driveSyncFailedItem(entry.RelPath, entry.FileToken, "failed", "pull", "download", err)
 				items = append(items, item)
 				failed++
@@ -396,7 +396,7 @@ var DriveSync = common.Shortcut{
 					continue
 				}
 				target := filepath.Join(rootRelToCwd, entry.RelPath)
-				if err := drivePullDownload(ctx, runtime, targetFile.DownloadToken, target, targetFile.ModifiedTime, safeRoot); err != nil {
+				if err := drivePullDownload(ctx, runtime, targetFile.DownloadToken, target, targetFile.ModifiedTime, safeRoot, true); err != nil {
 					item, terminal := driveSyncFailedItem(entry.RelPath, entry.FileToken, "failed", "pull", "download", err)
 					items = append(items, item)
 					failed++
@@ -497,7 +497,7 @@ var DriveSync = common.Shortcut{
 					continue
 				}
 				target := filepath.Join(rootRelToCwd, entry.RelPath)
-				if err := drivePullDownload(ctx, runtime, targetFile.DownloadToken, target, targetFile.ModifiedTime, safeRoot); err != nil {
+				if err := drivePullDownload(ctx, runtime, targetFile.DownloadToken, target, targetFile.ModifiedTime, safeRoot, true); err != nil {
 					downloadErr := err
 					rollbackErr := driveSyncRollbackRenamedLocal(oldAbsPath, newAbsPath)
 					errMsg := err.Error()
