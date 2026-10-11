@@ -223,7 +223,8 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
       - name: Check coverage threshold
         run: |
-          total=$(go tool cover -func=coverage.txt | grep total | awk '{print $3}' | tr -d '%')
+          total=$(go tool cover -func=coverage.txt | awk '$1 == "total:" {sub(/%$/, "", $3); print $3}')
+          [[ "$total" =~ ^[0-9]+([.][0-9]+)?$ ]] || { echo "::error::Invalid coverage total: $total"; exit 1; }
           threshold=40
           echo "Coverage: ${total}% (threshold: ${threshold}%)"
           if (( $(echo "$total < $threshold" | bc -l) )); then
@@ -237,7 +238,7 @@ jobs:
             echo "No coverage data available" >> $GITHUB_STEP_SUMMARY
             exit 0
           fi
-          total=$(go tool cover -func=coverage.txt | grep total | awk '{print $3}')
+          total=$(go tool cover -func=coverage.txt | awk '$1 == "total:" {print $3}')
           echo "## Coverage Report" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Total coverage: ${total}**" >> $GITHUB_STEP_SUMMARY

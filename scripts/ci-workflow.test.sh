@@ -204,6 +204,23 @@ unless results.fetch("needs").include?("e2e-dry-run") &&
        results.fetch("steps").any? { |step| step.fetch("run", "").include?("needs.e2e-dry-run.result") }
   abort("dry-run E2E must remain a required result")
 end
+# Run the actual threshold step with cover output containing misleading names.
+coverage_check = ci.dig("jobs", "coverage", "steps").find { |step| step["name"] == "Check coverage threshold" }.fetch("run")
+Dir.mktmpdir("ci-coverage") do |directory|
+  go = File.join(directory, "go")
+  File.write(go, "#!/bin/bash\nprintf '%s\\n' \"$COVER_OUTPUT\"\n")
+  File.chmod(0755, go)
+  [
+    ["83.4%", true], ["40.0%", true], ["39.9%", false], ["invalid", false], [nil, false],
+  ].each do |percent, expected|
+    output = "example/total.go:10:\ttotalCount\t0.0%\n"
+    output += "total: (statements) #{percent}\n" if percent
+    _stdout, stderr, status = Open3.capture3(
+      { "PATH" => "#{directory}:#{ENV.fetch('PATH')}", "COVER_OUTPUT" => output },
+      "bash", "-e", "-o", "pipefail", "-c", coverage_check)
+    abort("coverage threshold regression for #{percent.inspect}: #{stderr}") unless status.success? == expected
+  end
+end
 security = ci.dig("jobs", "security")
 scan = security.fetch("steps").find { |step| step["name"] == "govulncheck" }
 abort("security job must run for every CI event and block failures") if security["if"] || security["continue-on-error"]
