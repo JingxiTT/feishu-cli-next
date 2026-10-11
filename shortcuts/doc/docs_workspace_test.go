@@ -339,7 +339,7 @@ func TestDocsWorkspacePullOfflineAndExclusive(t *testing.T) {
 	if err := workspaceRun(t, DocsPull, f, out, "+pull", "--doc", "https://example.feishu.cn/wiki/wiki1", "--output", "note.md", "--dry-run"); err != nil {
 		t.Fatal(err)
 	}
-	if !strings.Contains(out.String(), "get_node") || !strings.Contains(out.String(), "binding") {
+	if !strings.Contains(out.String(), "node_by_token") || !strings.Contains(out.String(), "binding") {
 		t.Fatalf("missing planned conditional effects: %s", out)
 	}
 	if _, err := os.Stat("note.md"); !os.IsNotExist(err) {

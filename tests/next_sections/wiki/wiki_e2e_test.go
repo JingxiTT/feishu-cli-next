@@ -66,7 +66,7 @@ func TestWikiNodeLifecycleAndMemberPermissions(t *testing.T) {
 			require.Equal(t, "origin", body["node_type"])
 			nodes[nodeToken] = n
 			reply(w, map[string]any{"node": n})
-		case r.Method == "GET" && p == "/open-apis/wiki/v2/spaces/get_node":
+		case r.Method == "GET" && p == "/open-apis/wiki/v2/spaces/node_by_token":
 			require.Equal(t, nodeToken, r.URL.Query().Get("token"))
 			reply(w, map[string]any{"node": nodes[nodeToken]})
 		case r.Method == "GET" && p == "/open-apis/wiki/v2/spaces/123/nodes":

@@ -121,7 +121,7 @@ func TestWikiCopyMoveAndGuardedRename(t *testing.T) {
 	var copied, moved, patches atomic.Int32
 	f := nextfixture.NewFixture(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
-		case "/open-apis/wiki/v2/spaces/get_node":
+		case "/open-apis/wiki/v2/spaces/node_by_token":
 			reply(w, map[string]any{"node": map[string]any{"node_token": "wiki1", "obj_token": "source1", "obj_type": "file", "title": "原文.bin"}})
 		case "/open-apis/drive/explorer/v2/root_folder/meta":
 			reply(w, map[string]any{"token": "root"})
