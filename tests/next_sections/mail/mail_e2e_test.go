@@ -82,7 +82,7 @@ func TestFrozenMailDiscovery(t *testing.T) {
 			}
 		})
 	}
-	if count != 102 {
+	if count != 104 {
 		t.Fatalf("frozen command count %d", count)
 	}
 }
