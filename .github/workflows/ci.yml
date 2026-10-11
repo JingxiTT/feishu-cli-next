@@ -4,13 +4,9 @@ run-name: ${{ github.event_name == 'pull_request' && format('CI / {0}', github.e
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
-    types: [opened, synchronize, reopened, edited]
   workflow_dispatch:
 
-# PR metadata edits can retrigger full CI for the same head. Keep only the
-# newest run for a pull request; push and manual runs use a unique run ID.
+# Push and manual runs use a unique run ID so they remain independent.
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}

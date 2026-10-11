@@ -152,10 +152,17 @@ if ! grep -Fq "Write public content metadata" <<<"$deterministic_section"; then
   exit 1
 fi
 
-if ! grep -Fq "types: [opened, synchronize, reopened, edited]" "$workflow"; then
-  echo "CI pull_request trigger should include edited so PR title/body changes are rescanned"
-  exit 1
-fi
+ruby -ryaml <<'RUBY'
+%w[ci next-offline skill-format-check pr-labels-test pkg-pr-new].each do |name|
+  config = YAML.load_file(".github/workflows/#{name}.yml")
+  triggers = config.fetch("on") { config.fetch(true) }
+  expected = name == "pkg-pr-new" ? %w[workflow_dispatch] : %w[push workflow_dispatch]
+  abort("#{name} must use only #{expected.join(', ')} triggers") unless triggers.keys.sort == expected
+  if expected.include?("push")
+    abort("#{name} must retain main push runs") unless triggers.dig("push", "branches") == ["main"]
+  end
+end
+RUBY
 
 if ! grep -Fq "script-test:" <<<"$script_test_section"; then
   echo "CI should run make script-test so workflow and publisher contract tests are not local-only"
