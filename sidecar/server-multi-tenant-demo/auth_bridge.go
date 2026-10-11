@@ -423,31 +423,33 @@ func (ab *authBridge) resolveUserTokenByClient(clientName string) (string, error
 }
 
 func addUserToConfig(appID, openID, userName string) error {
-	multi, err := core.LoadMultiAppConfig()
-	if err != nil {
-		return err
-	}
-	for i := range multi.Apps {
-		if multi.Apps[i].AppId != appID {
-			continue
+	return core.WithConfigLock(func() error {
+		multi, err := core.LoadMultiAppConfig()
+		if err != nil {
+			return err
 		}
-		found := false
-		for j := range multi.Apps[i].Users {
-			if multi.Apps[i].Users[j].UserOpenId == openID {
-				multi.Apps[i].Users[j].UserName = userName
-				found = true
-				break
+		for i := range multi.Apps {
+			if multi.Apps[i].AppId != appID {
+				continue
 			}
+			found := false
+			for j := range multi.Apps[i].Users {
+				if multi.Apps[i].Users[j].UserOpenId == openID {
+					multi.Apps[i].Users[j].UserName = userName
+					found = true
+					break
+				}
+			}
+			if !found {
+				multi.Apps[i].Users = append(multi.Apps[i].Users, core.AppUser{
+					UserOpenId: openID,
+					UserName:   userName,
+				})
+			}
+			return core.SaveMultiAppConfig(multi)
 		}
-		if !found {
-			multi.Apps[i].Users = append(multi.Apps[i].Users, core.AppUser{
-				UserOpenId: openID,
-				UserName:   userName,
-			})
-		}
-		return core.SaveMultiAppConfig(multi)
-	}
-	return fmt.Errorf("app %s not found in config", appID)
+		return fmt.Errorf("app %s not found in config", appID)
+	})
 }
 
 func fetchUserInfoDirect(client *http.Client, openBase, accessToken string) (openID, name string, err error) {

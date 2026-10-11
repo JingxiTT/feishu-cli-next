@@ -89,71 +89,73 @@ func profileAddRun(f *cmdutil.Factory, name, appID string, appSecretStdin bool, 
 			WithParam("--app-secret-stdin")
 	}
 
-	// Load or create config
-	multi, err := core.LoadMultiAppConfig()
-	if err != nil {
-		if !errors.Is(err, os.ErrNotExist) {
-			return errs.NewInternalError(errs.SubtypeFileIO, "failed to load config: %v", err).WithCause(err)
+	return core.WithConfigLock(func() error {
+		// Load or create config
+		multi, err := core.LoadMultiAppConfig()
+		if err != nil {
+			if !errors.Is(err, os.ErrNotExist) {
+				return errs.NewInternalError(errs.SubtypeFileIO, "failed to load config: %v", err).WithCause(err)
+			}
+			multi = &core.MultiAppConfig{}
 		}
-		multi = &core.MultiAppConfig{}
-	}
 
-	// Check name uniqueness
-	if multi.FindApp(name) != nil {
-		return errs.NewValidationError(errs.SubtypeFailedPrecondition, "profile %q already exists", name).
-			WithHint("choose a different name, or remove the existing profile first").
-			WithParam("--name")
-	}
-
-	// Check app-id uniqueness — keychain stores secrets by appId, so
-	// multiple profiles sharing the same appId would collide on credentials.
-	for _, a := range multi.Apps {
-		if a.AppId == appID {
-			return errs.NewValidationError(errs.SubtypeFailedPrecondition, "app-id %q is already used by profile %q; each profile must have a unique app-id", appID, a.ProfileName()).
-				WithParam("--app-id")
+		// Check name uniqueness
+		if multi.FindApp(name) != nil {
+			return errs.NewValidationError(errs.SubtypeFailedPrecondition, "profile %q already exists", name).
+				WithHint("choose a different name, or remove the existing profile first").
+				WithParam("--name")
 		}
-	}
 
-	// Store secret securely
-	secret, err := core.ForStorage(appID, core.PlainSecret(appSecret), f.Keychain)
-	if err != nil {
-		return errs.NewInternalError(errs.SubtypeStorage, "%v", err).WithCause(err)
-	}
-
-	parsedBrand := core.ParseBrand(brand)
-
-	// Capture current profile before appending (avoid setting PreviousApp to self)
-	var previousName string
-	if useAfter {
-		if currentApp := multi.CurrentAppConfig(""); currentApp != nil {
-			previousName = currentApp.ProfileName()
+		// Check app-id uniqueness — keychain stores secrets by appId, so
+		// multiple profiles sharing the same appId would collide on credentials.
+		for _, a := range multi.Apps {
+			if a.AppId == appID {
+				return errs.NewValidationError(errs.SubtypeFailedPrecondition, "app-id %q is already used by profile %q; each profile must have a unique app-id", appID, a.ProfileName()).
+					WithParam("--app-id")
+			}
 		}
-	}
 
-	// Append profile
-	multi.Apps = append(multi.Apps, core.AppConfig{
-		Name:      name,
-		AppId:     appID,
-		AppSecret: secret,
-		Brand:     parsedBrand,
-		Lang:      i18n.Lang(lang),
-		Users:     []core.AppUser{},
+		// Store secret securely
+		secret, err := core.ForStorage(appID, core.PlainSecret(appSecret), f.Keychain)
+		if err != nil {
+			return errs.NewInternalError(errs.SubtypeStorage, "%v", err).WithCause(err)
+		}
+
+		parsedBrand := core.ParseBrand(brand)
+
+		// Capture current profile before appending (avoid setting PreviousApp to self)
+		var previousName string
+		if useAfter {
+			if currentApp := multi.CurrentAppConfig(""); currentApp != nil {
+				previousName = currentApp.ProfileName()
+			}
+		}
+
+		// Append profile
+		multi.Apps = append(multi.Apps, core.AppConfig{
+			Name:      name,
+			AppId:     appID,
+			AppSecret: secret,
+			Brand:     parsedBrand,
+			Lang:      i18n.Lang(lang),
+			Users:     []core.AppUser{},
+		})
+
+		if useAfter {
+			if previousName != "" {
+				multi.PreviousApp = previousName
+			}
+			multi.CurrentApp = name
+		}
+
+		if err := core.SaveMultiAppConfig(multi); err != nil {
+			return errs.NewInternalError(errs.SubtypeStorage, "failed to save config: %v", err).WithCause(err)
+		}
+
+		output.PrintSuccess(f.IOStreams.ErrOut, fmt.Sprintf("Profile %q added (%s, %s)", name, appID, parsedBrand))
+		if useAfter {
+			output.PrintSuccess(f.IOStreams.ErrOut, fmt.Sprintf("Switched to profile %q", name))
+		}
+		return nil
 	})
-
-	if useAfter {
-		if previousName != "" {
-			multi.PreviousApp = previousName
-		}
-		multi.CurrentApp = name
-	}
-
-	if err := core.SaveMultiAppConfig(multi); err != nil {
-		return errs.NewInternalError(errs.SubtypeStorage, "failed to save config: %v", err).WithCause(err)
-	}
-
-	output.PrintSuccess(f.IOStreams.ErrOut, fmt.Sprintf("Profile %q added (%s, %s)", name, appID, parsedBrand))
-	if useAfter {
-		output.PrintSuccess(f.IOStreams.ErrOut, fmt.Sprintf("Switched to profile %q", name))
-	}
-	return nil
 }

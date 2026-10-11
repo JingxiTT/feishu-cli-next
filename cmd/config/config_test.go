@@ -207,7 +207,7 @@ func TestSaveInitConfig_OmitLangPreservesPrior(t *testing.T) {
 		t.Fatalf("seed config: %v", err)
 	}
 
-	if err := saveInitConfig("", existing, f, "cli_x", core.PlainSecret("s2"), core.BrandFeishu, ""); err != nil {
+	if err := saveInitConfig("", f, "cli_x", core.PlainSecret("s2"), core.BrandFeishu, ""); err != nil {
 		t.Fatalf("saveInitConfig (no --lang): %v", err)
 	}
 
@@ -350,6 +350,11 @@ func TestConfigRemoveRun_SaveFailurePreservesExistingConfigAndSecrets(t *testing
 	f, _, _, _ := cmdutil.TestFactory(t, nil)
 	f.Keychain = kc
 
+	// Initialize the persistent lock before making the directory read-only;
+	// this test must reach the save failure, rather than lock-file creation.
+	if err := core.WithConfigLock(func() error { return nil }); err != nil {
+		t.Fatal(err)
+	}
 	// Make subsequent config saves fail while keeping the existing config readable.
 	if err := os.Chmod(configDir, 0500); err != nil {
 		t.Fatalf("Chmod(%s) error = %v", configDir, err)

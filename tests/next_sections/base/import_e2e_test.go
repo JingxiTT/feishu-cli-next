@@ -380,3 +380,47 @@ func TestRecordImportLateEmptyTextRejectsBeforeAnyDestinationMutation(t *testing
 		t.Fatal("preflight rejection created a mutation report")
 	}
 }
+
+func TestRecordImportReceiptSaveFailureStopsLaterBatches(t *testing.T) {
+	var f *nextfixture.Fixture
+	var writes atomic.Int32
+	f = nextfixture.NewFixture(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if importFieldResponse(w, r) {
+			return
+		}
+		writes.Add(1)
+		dir := filepath.Join(f.ConfigDir, "next", "receipts")
+		if err := os.Rename(dir, dir+"-held"); err != nil {
+			t.Error(err)
+		}
+		if err := os.WriteFile(dir, []byte("block receipt persistence"), 0600); err != nil {
+			t.Error(err)
+		}
+		ids := make([]string, 200)
+		for i := range ids {
+			ids[i] = fmt.Sprintf("rec_%d", i)
+		}
+		_ = json.NewEncoder(w).Encode(map[string]any{"code": 0, "data": map[string]any{"record_id_list": ids}})
+	}))
+	saveImportSource(t, f, 401, nil)
+	result := f.Run(importArguments()...)
+	if result.ExitCode != 22 || writes.Load() != 1 {
+		t.Fatalf("must stop on receipt failure: writes=%d result=%+v", writes.Load(), result)
+	}
+	raw, err := os.ReadFile(filepath.Join(f.WorkDir, "import-report.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	var report struct {
+		Status  string   `json:"status"`
+		Created int      `json:"created"`
+		Next    int      `json:"first_unconfirmed_row"`
+		IDs     []string `json:"record_ids"`
+	}
+	if err := json.Unmarshal(raw, &report); err != nil {
+		t.Fatal(err)
+	}
+	if report.Status != "unknown" || report.Created != 200 || report.Next != 200 || len(report.IDs) != 200 {
+		t.Fatalf("lost confirmed first batch: %s", raw)
+	}
+}

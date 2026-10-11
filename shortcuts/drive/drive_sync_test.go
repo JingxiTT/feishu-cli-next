@@ -2535,7 +2535,7 @@ func TestDriveSyncStatusRemoteFilesUsesStableTokens(t *testing.T) {
 	}
 }
 
-func TestDriveSyncLocalWinsNestedFileReportsParentEnsureFailure(t *testing.T) {
+func TestDriveSyncLocalWinsNestedFileRejectsPathInRemoteName(t *testing.T) {
 	syncTestConfig := &core.CliConfig{
 		AppID: "drive-sync-local-wins-parent-fail", AppSecret: "test-secret", Brand: core.BrandFeishu,
 	}
@@ -2564,15 +2564,15 @@ func TestDriveSyncLocalWinsNestedFileReportsParentEnsureFailure(t *testing.T) {
 		},
 	})
 	reg.Register(&httpmock.Stub{
-		Method:  "GET",
+		Optional: true, Method: "GET",
 		URL:     "/open-apis/drive/v1/files/tok_nested/download",
 		Status:  200,
 		Body:    []byte("remote-a"),
 		Headers: http.Header{"Content-Type": []string{"application/octet-stream"}},
 	})
 	reg.Register(&httpmock.Stub{
-		Method: "POST",
-		URL:    "/open-apis/drive/v1/files/create_folder",
+		Optional: true, Method: "POST",
+		URL: "/open-apis/drive/v1/files/create_folder",
 		Body: map[string]interface{}{
 			"code": 9999,
 			"msg":  "create parent failed",
@@ -2586,13 +2586,12 @@ func TestDriveSyncLocalWinsNestedFileReportsParentEnsureFailure(t *testing.T) {
 		"--on-conflict", "local-wins",
 		"--as", "bot",
 	}, f, stdout)
-	if err == nil {
-		t.Fatalf("expected parent ensure failure\nstdout: %s", stdout.String())
+	var typed *errs.InternalError
+	if !errors.As(err, &typed) || typed.Subtype != errs.SubtypeInvalidResponse {
+		t.Fatalf("expected unsafe listing rejection, got %v", err)
 	}
-	assertDriveSyncPartialFailure(t, err)
-	items := driveSyncStdoutItems(t, stdout.Bytes())
-	if len(items) == 0 || !strings.Contains(items[0].Error, "create parent failed") {
-		t.Fatalf("expected failed item with create_folder error, got detail: %#v", stdout.String())
+	if stdout.Len() != 0 {
+		t.Fatalf("must reject listing before changes: %s", stdout.String())
 	}
 }
 

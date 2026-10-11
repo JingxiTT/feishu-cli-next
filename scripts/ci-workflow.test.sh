@@ -156,8 +156,15 @@ ruby -ryaml <<'RUBY'
 %w[ci next-offline skill-format-check pr-labels-test pkg-pr-new].each do |name|
   config = YAML.load_file(".github/workflows/#{name}.yml")
   triggers = config.fetch("on") { config.fetch(true) }
-  expected = name == "pkg-pr-new" ? %w[workflow_dispatch] : %w[push workflow_dispatch]
+  expected = case name
+             when "ci", "next-offline" then %w[pull_request push workflow_dispatch]
+             when "pkg-pr-new" then %w[workflow_dispatch]
+             else %w[push workflow_dispatch]
+             end
   abort("#{name} must use only #{expected.join(', ')} triggers") unless triggers.keys.sort == expected
+  if name == "ci"
+    abort("CI must rerun metadata gates after PR edits") unless triggers.dig("pull_request", "types") == %w[opened synchronize reopened edited]
+  end
   if expected.include?("push")
     abort("#{name} must retain main push runs") unless triggers.dig("push", "branches") == ["main"]
   end

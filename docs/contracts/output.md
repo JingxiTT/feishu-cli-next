@@ -103,6 +103,11 @@ not published after these failures. Streaming formats may already have emitted
 earlier successful pages; their nonzero exit and typed stderr error indicate that
 the stream is incomplete. An explicit page limit retains `has_more:true` when
 more pages exist; the aggregate is not a snapshot or a resumable cursor container.
+Sheets native-cell imports stop before the next page when nested tool output
+shows failure or completion evidence is missing. Sheets and Base imports also
+stop on unknown, unapplied, or receipt-persistence failure evidence. Base recovery
+reports retain IDs already confirmed by the response. Neither flow rolls back
+earlier writes; inspect receipts and read back remote state before retrying.
 HTTP 4xx/5xx remains a failure even if a JSON body omits a business error code or
 contains `code:0`. A structured nonzero business error keeps its original typed
 classification and diagnostic fields; otherwise the HTTP status supplies it.

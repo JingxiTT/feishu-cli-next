@@ -396,9 +396,9 @@ func (c *APIClient) CallAPI(ctx context.Context, request RawApiRequest) (interfa
 }
 
 // paginateLoop runs the core pagination loop. For each successful page (code == 0),
-// it calls onResult if non-nil. It always accumulates and returns all raw page results.
-func (c *APIClient) paginateLoop(ctx context.Context, request RawApiRequest, opts PaginationOptions, onResult func(interface{}) error) ([]interface{}, error) {
-	var allResults []interface{}
+// it calls onResult if non-nil. It retains only the last page and page count;
+// callers that need aggregation collect pages in their callback.
+func (c *APIClient) paginateLoop(ctx context.Context, request RawApiRequest, opts PaginationOptions, onResult func(interface{}) error) (last interface{}, pages int, err error) {
 	var pageToken string
 	seenTokens := make(map[string]bool)
 	if initial, ok := request.Params["page_token"].(string); ok && initial != "" {
@@ -438,27 +438,27 @@ func (c *APIClient) paginateLoop(ctx context.Context, request RawApiRequest, opt
 		})
 		if err != nil {
 			fmt.Fprintf(c.ErrOut, "[page %d] error, stopping pagination\n", page)
-			return allResults, err
+			return last, pages, err
 		}
 
 		if resultMap, ok := result.(map[string]interface{}); ok {
 			code, _ := util.ToFloat64(resultMap["code"])
 			if code != 0 {
-				allResults = append(allResults, result)
+				last, pages = result, page
 				if page == 1 {
-					return allResults, nil
+					return last, pages, nil
 				}
 				fmt.Fprintf(c.ErrOut, "[page %d] API error (code=%.0f), stopping pagination\n", page, code)
-				return allResults, c.CheckResponse(result, identity)
+				return last, pages, c.CheckResponse(result, identity)
 			}
 		}
 
 		if onResult != nil {
 			if err := onResult(result); err != nil {
-				return allResults, err
+				return last, pages, err
 			}
 		}
-		allResults = append(allResults, result)
+		last, pages = result, page
 
 		pageToken = ""
 		if resultMap, ok := result.(map[string]interface{}); ok {
@@ -471,7 +471,7 @@ func (c *APIClient) paginateLoop(ctx context.Context, request RawApiRequest, opt
 						pageToken = pt
 					}
 					if pageToken == "" {
-						return allResults, errs.NewInternalError(errs.SubtypeInvalidResponse,
+						return last, pages, errs.NewInternalError(errs.SubtypeInvalidResponse,
 							"pagination response has_more is true without a continuation token")
 					}
 				}
@@ -482,7 +482,7 @@ func (c *APIClient) paginateLoop(ctx context.Context, request RawApiRequest, opt
 			break
 		}
 		if seenTokens[pageToken] {
-			return allResults, errs.NewInternalError(errs.SubtypeInvalidResponse,
+			return last, pages, errs.NewInternalError(errs.SubtypeInvalidResponse,
 				"pagination response repeats a continuation token")
 		}
 		seenTokens[pageToken] = true
@@ -496,21 +496,25 @@ func (c *APIClient) paginateLoop(ctx context.Context, request RawApiRequest, opt
 			time.Sleep(time.Duration(pageDelay) * time.Millisecond)
 		}
 	}
-	return allResults, nil
+	return last, pages, nil
 }
 
 // PaginateAll fetches all pages and returns a single merged result.
 // Use this for formats that need the complete dataset (e.g. JSON).
 func (c *APIClient) PaginateAll(ctx context.Context, request RawApiRequest, opts PaginationOptions) (interface{}, error) {
-	results, err := c.paginateLoop(ctx, request, opts, nil)
+	var results []interface{}
+	last, pages, err := c.paginateLoop(ctx, request, opts, func(result interface{}) error {
+		results = append(results, result)
+		return nil
+	})
 	if err != nil {
 		return nil, err
 	}
-	if len(results) == 0 {
+	if pages == 0 {
 		return map[string]interface{}{}, nil
 	}
-	if len(results) == 1 {
-		return results[0], nil
+	if pages == 1 {
+		return last, nil
 	}
 	return mergePagedResults(c.ErrOut, results), nil
 }
@@ -520,7 +524,7 @@ func (c *APIClient) PaginateAll(ctx context.Context, request RawApiRequest, opts
 // and any network error. Use this for streaming formats (ndjson, table, csv).
 func (c *APIClient) StreamPages(ctx context.Context, request RawApiRequest, onItems func([]interface{}) error, opts PaginationOptions) (result interface{}, hasItems bool, err error) {
 	totalItems := 0
-	results, loopErr := c.paginateLoop(ctx, request, opts, func(r interface{}) error {
+	last, pages, loopErr := c.paginateLoop(ctx, request, opts, func(r interface{}) error {
 		resultMap, ok := r.(map[string]interface{})
 		if !ok {
 			return nil
@@ -549,11 +553,11 @@ func (c *APIClient) StreamPages(ctx context.Context, request RawApiRequest, onIt
 	}
 
 	if hasItems {
-		fmt.Fprintf(c.ErrOut, "[pagination] streamed %d pages, %d total items\n", len(results), totalItems)
+		fmt.Fprintf(c.ErrOut, "[pagination] streamed %d pages, %d total items\n", pages, totalItems)
 	}
 
-	if len(results) > 0 {
-		return results[len(results)-1], hasItems, nil
+	if pages > 0 {
+		return last, hasItems, nil
 	}
 	return map[string]interface{}{"code": 0, "msg": "success", "data": map[string]interface{}{}}, false, nil
 }

@@ -20,38 +20,48 @@ func NewCmdConfigDefaultAs(f *cmdutil.Factory) *cobra.Command {
 		Long:  "Without arguments, shows the current default identity. Pass user, bot, or auto to set a new default.",
 		Args:  cobra.MaximumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			multi, err := core.LoadOrNotConfigured()
-			if err != nil {
-				return err
-			}
-
-			app, err := multi.RequireAppConfig(f.Invocation.Profile, f.Invocation.ProfileSource)
-			if err != nil {
-				return err
-			}
-
-			if len(args) == 0 {
-				current := app.DefaultAs
-				if current == "" {
-					current = "auto"
-				}
-				fmt.Fprintf(f.IOStreams.Out, "default-as: %s\n", current)
-				return nil
-			}
-
-			value := args[0]
-			if value != "user" && value != "bot" && value != "auto" {
-				return errs.NewValidationError(errs.SubtypeInvalidArgument, "invalid identity type %q, valid values: user | bot | auto", value)
-			}
-
-			app.DefaultAs = core.Identity(value)
-			if err := core.SaveMultiAppConfig(multi); err != nil {
-				return errs.NewInternalError(errs.SubtypeStorage, "failed to save config: %v", err).WithCause(err)
-			}
-			fmt.Fprintf(f.IOStreams.ErrOut, "Default identity set to: %s\n", value)
-			return nil
+			return configDefaultAsRun(f, args)
 		},
 	}
 	cmdutil.SetRisk(cmd, "write")
 	return cmd
+}
+
+func configDefaultAsRun(f *cmdutil.Factory, args []string) error {
+	run := func() error {
+		multi, err := core.LoadOrNotConfigured()
+		if err != nil {
+			return err
+		}
+
+		app, err := multi.RequireAppConfig(f.Invocation.Profile, f.Invocation.ProfileSource)
+		if err != nil {
+			return err
+		}
+
+		if len(args) == 0 {
+			current := app.DefaultAs
+			if current == "" {
+				current = "auto"
+			}
+			fmt.Fprintf(f.IOStreams.Out, "default-as: %s\n", current)
+			return nil
+		}
+
+		value := args[0]
+		if value != "user" && value != "bot" && value != "auto" {
+			return errs.NewValidationError(errs.SubtypeInvalidArgument, "invalid identity type %q, valid values: user | bot | auto", value)
+		}
+
+		app.DefaultAs = core.Identity(value)
+		if err := core.SaveMultiAppConfig(multi); err != nil {
+			return errs.NewInternalError(errs.SubtypeStorage, "failed to save config: %v", err).WithCause(err)
+		}
+		fmt.Fprintf(f.IOStreams.ErrOut, "Default identity set to: %s\n", value)
+		return nil
+	}
+	if len(args) == 0 {
+		return run()
+	}
+	return core.WithConfigLock(run)
 }

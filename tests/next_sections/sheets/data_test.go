@@ -314,3 +314,66 @@ func TestNativePairedReadsRejectUnverifiedRevisionBeforeEffects(t *testing.T) {
 		}
 	}
 }
+
+func TestNativeImportStopsAfterIncompleteWrite(t *testing.T) {
+	for _, mode := range []string{"nested_failure", "empty", "null", "receipt_failure", "success"} {
+		t.Run(mode, func(t *testing.T) {
+			importing, writes := false, 0
+			var fixture *nextfixture.Fixture
+			fixture = nextfixture.NewFixture(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				if strings.HasSuffix(r.URL.Path, "invoke_write") {
+					writes++
+					switch mode {
+					case "nested_failure":
+						toolReply(w, map[string]any{"success": false, "errors": []any{map[string]any{"message": "rejected page"}}})
+					case "empty":
+						toolReply(w, map[string]any{})
+					case "null":
+						toolReply(w, nil)
+					default:
+						if mode == "receipt_failure" {
+							// Dispatch already persisted a pending receipt; make its final save fail.
+							dir := filepath.Join(fixture.ConfigDir, "next", "receipts")
+							require.NoError(t, os.RemoveAll(dir))
+							require.NoError(t, os.WriteFile(dir, []byte("block receipt persistence"), 0600))
+						}
+						toolReply(w, map[string]any{"success": true})
+					}
+					return
+				}
+				var body struct{ Input string }
+				require.NoError(t, json.NewDecoder(r.Body).Decode(&body))
+				input := decode(t, body.Input)
+				region := input["ranges"].([]any)[0].(string)
+				var first, last int
+				_, err := fmt.Sscanf(region, "A%d:A%d", &first, &last)
+				require.NoError(t, err)
+				value := json.RawMessage(`{"value":"new"}`)
+				if importing {
+					value = json.RawMessage(`{"value":"old"}`)
+				}
+				rows := make([][]json.RawMessage, last-first+1)
+				for i := range rows {
+					rows[i] = []json.RawMessage{value}
+				}
+				nativePageReply(t, w, region, input["value_render_option"].(string), rows, 17)
+			}))
+			success(t, fixture.Run("sheets", "+data-export", "--as", "user", "--spreadsheet-token", "shtFixture", "--sheet-id", "sh1", "--range", "A1:A5001", "--save-result", "pages.json"))
+			importing = true
+			result := fixture.Run("sheets", "+data-import", "--as", "user", "--spreadsheet-token", "shtFixture", "--sheet-id", "sh1", "--range", "A1:A5001", "--artifact", "@pages.json")
+			if mode == "success" {
+				require.Zero(t, result.ExitCode, result.Stderr)
+				require.Equal(t, 2, writes)
+				require.Equal(t, float64(2), decode(t, result.Stdout)["data"].(map[string]any)["acknowledged_pages"])
+				return
+			}
+			require.NotZero(t, result.ExitCode)
+			require.Equal(t, 1, writes, "must stop before dispatching another page")
+			data := decode(t, result.Stdout)["data"].(map[string]any)
+			require.Equal(t, "incomplete", data["status"])
+			require.Equal(t, float64(0), data["acknowledged_pages"])
+			require.Equal(t, "A1:A5000", data["failed_range"])
+			require.Equal(t, false, decode(t, result.Stdout)["ok"])
+		})
+	}
+}
