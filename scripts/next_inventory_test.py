@@ -19,7 +19,7 @@ spec.loader.exec_module(inventory)
 
 class InventoryTests(unittest.TestCase):
     def test_v1097_platform_projection_changes_only_non_darwin_risk(self):
-        reference = MODULE_PATH.parents[1] / 'docs/reference/v1.0.97'
+        reference = MODULE_PATH.parents[1] / 'baseline/v1.0.97'
         native = inventory.read(reference / 'configured-brand-registrations.json.gz')
         projected = inventory.read(reference / 'configured-brand-registrations-non-darwin.json.gz')
         changes = inventory.registration_changes(native, projected)
@@ -39,9 +39,9 @@ class InventoryTests(unittest.TestCase):
                 self.assertFalse(row['path'].endswith(('/hidden', '/disable_flag_parsing')))
 
     def test_reviewed_efficiency_additions_remain_exactly_mapped(self):
-        reference = MODULE_PATH.parents[1] / 'docs/reference'
+        reference = MODULE_PATH.parents[1] / 'baseline'
         mapping = inventory.read(reference / 'next-interface-mapping.json.gz')
-        review = inventory.read(reference / 'reviews/agent-efficiency-interface-additions.json')
+        review = inventory.read(MODULE_PATH.parents[1] / 'evidence/reference/reviews/agent-efficiency-interface-additions.json')
         rows = {inventory.canonical(row) for row in mapping['registration_changes']}
         self.assertEqual(len(review['registrations']), 10)
         for entry in review['registrations']:

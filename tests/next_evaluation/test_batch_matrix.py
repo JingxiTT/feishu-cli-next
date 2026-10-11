@@ -50,7 +50,7 @@ class BatchMatrixTests(unittest.TestCase):
             self.write(source / 'go.mod', 'module synthetic')
             self.write(source / 'go.sum', '')
             self.write(source / 'main.go', 'package main')
-            self.write(source / 'docs/reference/registrations.json.gz', 'catalog')
+            self.write(source / 'baseline/registrations.json.gz', 'catalog')
         self.official = self.root / 'official-cli'
         self.next_cli = self.root / 'next-cli'
         self.official.touch()

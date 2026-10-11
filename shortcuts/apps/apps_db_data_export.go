@@ -6,7 +6,6 @@ package apps
 import (
 	"bytes"
 	"context"
-	"encoding/csv"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -221,33 +220,4 @@ func exportFormatAndOutput(rctx *common.RuntimeContext) (format, outPath string,
 		return "", "", ferr
 	}
 	return f, out, nil
-}
-
-// countExportRows measures serialized rows without interpreting database values.
-// SQL dumps and malformed content do not establish a row count or completeness.
-func countExportRows(body []byte, format string) (int, bool) {
-	switch format {
-	case "csv":
-		reader := csv.NewReader(bytes.NewReader(body))
-		reader.FieldsPerRecord = -1
-		count := -1 // header
-		for {
-			_, err := reader.Read()
-			if err == io.EOF {
-				return max(count, 0), true
-			}
-			if err != nil {
-				return 0, false
-			}
-			count++
-		}
-	case "json":
-		var rows []json.RawMessage
-		if err := json.Unmarshal(body, &rows); err == nil {
-			return len(rows), true
-		}
-		return 0, false
-	default:
-		return 0, false
-	}
 }

@@ -23,8 +23,8 @@ run the capability gate. It needs no credentials:
 
 ```bash
 python3 scripts/next_inventory.py gate --target . \
-  --reference-dir docs/reference/v1.0.97 \
-  --mapping docs/reference/v1.0.97/next-interface-mapping.json.gz \
+  --reference-dir baseline/v1.0.97 \
+  --mapping baseline/v1.0.97/next-interface-mapping.json.gz \
   --out .tmp/capability-gate.json
 ```
 
@@ -33,7 +33,7 @@ python3 scripts/next_inventory.py gate --target . \
 | One domain, or shared output/receipts/discovery (`foundation`) | `python3 scripts/next_test.py --section <name> --suite all --binary ./feishu-cli-next --report .tmp/next-tests/<name>.json` |
 | Command, help, or schema surface; `skills/` | `make quality-gate` (compares the base with `HEAD`, so commit first) |
 | `affordance/` | `go test ./internal/affordance ./cmd/service ./internal/schema` |
-| `scripts/`, workflows | `make script-test` |
+| `scripts/`, workflows, an upstream file not yet in `docs/upstream-footprint.md`, or a file added, moved, or removed under `docs/`, `evidence/`, or the root | `make script-test` |
 | `evaluation/` | `make evaluation-test` |
 | `extension/` | `make examples-build`, `go test ./tests/plugin_e2e/...` |
 
@@ -58,7 +58,7 @@ dry-run only. In the PR, state which relevant checks you did not run.
 - Breaking or renaming an inherited contract.
 - Running anything against a real tenant.
 - Updating `next-interface-mapping.json.gz`; see
-  [docs/reference/CI.md](docs/reference/CI.md).
+  [baseline/CI.md](baseline/CI.md).
 - Editing upstream-owned files outside a sync: `internal/registry/catalog/`,
   `CHANGELOG.md`, `README.upstream.md`.
 - Adding a dependency.
@@ -70,8 +70,10 @@ dry-run only. In the PR, state which relevant checks you did not run.
   get a pass.
 - Replay a mutation whose outcome is unknown, or report a partial read as
   complete.
-- Edit retained evidence (`evaluation/evidence/`, frozen `docs/reference/`
-  snapshots, `*-evidence.json`) or use `evaluation/tasks.held-out.json`.
+- Edit, rename, or delete retained evidence (`evidence/`, frozen `baseline/`
+  snapshots) or use `evaluation/tasks.held-out.json`. Add a record and run
+  `python3 scripts/next_layout.py seal`; see
+  [evidence/README.md](evidence/README.md).
 - Claim an efficiency or parity result that no recorded run supports.
 - Commit credentials, tokens, internal endpoints, or real tenant data.
 
@@ -82,6 +84,36 @@ developer credentials. Before any command that can reach a real tenant, read
 [Authorization boundaries for all testing](docs/PLAN.md#authorization-boundaries-for-all-testing).
 Use only private resources the run created, and clean them up. These limits
 apply to testing; never encode them in the product or a shipped skill.
+
+## Layout
+
+Paths that upstream ships never move, so a sync stays a content merge. The fork
+adds a bounded layer, and each of its directories has one job:
+
+| Path | Holds |
+|------|-------|
+| `docs/` | Markdown to read: contracts, section guides, plan, status |
+| `baseline/` | What the capability gate compares against; replaced only by a sync |
+| `evidence/` | Sealed records of past runs and reviews; add-only |
+| `evaluation/` | The comparison harness, task sets, fixtures, and `reports/` |
+| `agent-skills/` | The entry skill |
+| `tests/next_*`, `scripts/next_*` | Fork suites and tooling beside upstream's |
+
+Fork code inside upstream's tree goes, in order of preference, in:
+
+1. A package the fork owns: `internal/next<area>/`, `cmd/<name>/`, or a
+   sub-package under the domain.
+2. A new file in the upstream package. Declarations that support an upstream
+   file `<name>.go` live in `<name>_next.go` (tests in `<name>_next_test.go`).
+3. An edit to the upstream file, kept to a call into 1 or 2. Never re-indent,
+   rename, or relocate upstream lines to wrap them; for the config lock use
+   `core.LockConfig()` with `defer release(&err)`.
+
+[docs/upstream-footprint.md](docs/upstream-footprint.md) lists every upstream
+file the fork edits. `scripts/next_layout.py check` enforces that list, the
+root allowlist, markdown-only `docs/`, and the evidence seal; run
+`python3 scripts/next_layout.py footprint` after editing or restoring an
+upstream file.
 
 ## Where changes go
 
@@ -98,6 +130,7 @@ apply to testing; never encode them in the product or a shipped skill.
 | Plugin or host integration | `extension/`; exported symbols are compatibility commitments |
 | Per-command guidance | `affordance/<domain>.md` |
 | Domain guidance for agents | `skills/<name>/SKILL.md` and `references/` |
+| Result of a run, review, or reconciliation | A new sealed file under `evidence/`; its write-up under `evaluation/reports/` or `docs/sections/` |
 
 ## Contracts
 

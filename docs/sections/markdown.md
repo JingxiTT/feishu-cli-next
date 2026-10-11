@@ -3,9 +3,9 @@
 Owner: Markdown. Frozen reference: `7fd6ef3c07182257ce776cdc5a614e122d5bd4b3`
 in the unchanged sibling `feishu-cli-review`. The five shortcut implementations
 were identical to that snapshot before this section's changes. Registration
-contracts are `docs/reference/registrations.json.gz#/feishu/commands/markdown*`
+contracts are `baseline/registrations.json.gz#/feishu/commands/markdown*`
 (and the corresponding Lark entries); coverage is the six `markdown` entries
-including the parent group in `docs/reference/coverage.json`. No Markdown-only
+including the parent group in `baseline/coverage.json`. No Markdown-only
 generated OpenAPI methods or events exist in that group.
 
 ## Complete mapping and owners
@@ -141,7 +141,7 @@ and absolute `NEXT_MARKDOWN_LIVE_FIXTURE`, `NEXT_MARKDOWN_LIVE_BINDING`, and
 `NEXT_MARKDOWN_LIVE_EVIDENCE_DIR` paths supplied by the coordinator. It creates at
 most the two described resources. No new scope, login, Wiki/shared space, bot,
 recipient, version/patch operation or model task is involved. See
-[the sanitized evidence](markdown-private-live-evidence.json) for byte hashes,
+[the sanitized evidence](../../evidence/sections/markdown-private-live-evidence.json) for byte hashes,
 command counts and retained failure hashes; private IDs are omitted.
 
 This narrows the live gap but does not close full P2 acceptance. Multipart,

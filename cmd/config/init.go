@@ -210,21 +210,24 @@ func saveAsOnlyApp(appId string, secret core.SecretInput, brand core.LarkBrand, 
 // saveInitConfig saves a new/updated app config, respecting --profile mode.
 // With profileName: appends or updates the named profile (preserves other profiles).
 // Without profileName: cleans up old config and saves as the only app.
-func saveInitConfig(profileName string, f *cmdutil.Factory, appId string, secret core.SecretInput, brand core.LarkBrand, lang string) error {
-	return core.WithConfigLock(func() error {
-		existing, _ := core.LoadMultiAppConfig()
-		if profileName != "" {
-			return saveAsProfile(existing, f.Keychain, profileName, appId, secret, brand, lang)
+func saveInitConfig(profileName string, f *cmdutil.Factory, appId string, secret core.SecretInput, brand core.LarkBrand, lang string) (err error) {
+	release, err := core.LockConfig()
+	if err != nil {
+		return err
+	}
+	defer release(&err)
+	existing, _ := core.LoadMultiAppConfig()
+	if profileName != "" {
+		return saveAsProfile(existing, f.Keychain, profileName, appId, secret, brand, lang)
+	}
+	cleanupOldConfig(existing, f, appId)
+	var prior i18n.Lang
+	if existing != nil {
+		if app := existing.CurrentAppConfig(""); app != nil {
+			prior = app.Lang
 		}
-		cleanupOldConfig(existing, f, appId)
-		var prior i18n.Lang
-		if existing != nil {
-			if app := existing.CurrentAppConfig(""); app != nil {
-				prior = app.Lang
-			}
-		}
-		return saveAsOnlyApp(appId, secret, brand, string(preferredLang(i18n.Lang(lang), prior)))
-	})
+	}
+	return saveAsOnlyApp(appId, secret, brand, string(preferredLang(i18n.Lang(lang), prior)))
 }
 
 // wrapSaveConfigError passes an already-typed error (e.g. the --name conflict

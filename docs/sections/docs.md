@@ -10,7 +10,7 @@ section integration and all acceptance evidence belong to the Docs owner.
 
 Inspected the unchanged sibling at `7fd6ef3c07182257ce776cdc5a614e122d5bd4b3`,
 its registrations, tests and content implementation, and the frozen
-`docs/reference/{coverage.json,registrations.json.gz,sources.json,meta_data.json.gz}`.
+`baseline/{coverage.json,registrations.json.gz,sources.json,meta_data.json.gz}`.
 The frozen `docs` tree contains its domain node and **16 leaf shortcuts**. Fifteen
 are returned by `shortcuts/doc/shortcuts.go`; `docs +whiteboard-update` is registered
 by the Whiteboard section. There are no generated methods under the `docs` domain
@@ -87,7 +87,7 @@ without treating a projected/partial response as a whole-document replacement.
 ## Evidence commands and outstanding verification
 
 Implementation commit: `f72a408` (`fix(docs): preserve native content and exact input values`).
-[Machine-readable evidence](docs-evidence.json) preserves commands, selected/excluded
+[Machine-readable evidence](../../evidence/sections/docs-evidence.json) preserves commands, selected/excluded
 tests, source hashes, skips and limitations. The completed section boundary ran:
 
 ```sh
@@ -161,7 +161,7 @@ uses `RunCmdWithRetry` with `Attempts:1`. The default explicit XML edit and opti
 replace the other's result. `NEXT_DOCS_LIVE_CHECK_NOOP=1` is a separately selected
 check because an unequal overwrite preflight can perform a real write.
 
-See [sanitized live evidence](docs-private-live-evidence.json). Script/no-op checks
+See [sanitized live evidence](../../evidence/sections/docs-private-live-evidence.json). Script/no-op checks
 were not reached in the first attempt. Explicit rich XML, native media/cover,
 history/revert, concurrency, bot access and complete type parity remain open.
 This narrow live batch does not close the section.

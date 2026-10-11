@@ -34,8 +34,8 @@ Run the current capability gate with:
 
 ```sh
 python3 scripts/next_inventory.py gate --target . \
-  --reference-dir docs/reference/v1.0.97 \
-  --mapping docs/reference/v1.0.97/next-interface-mapping.json.gz \
+  --reference-dir baseline/v1.0.97 \
+  --mapping baseline/v1.0.97/next-interface-mapping.json.gz \
   --out .tmp/upstream-sync/capabilities.json
 ```
 

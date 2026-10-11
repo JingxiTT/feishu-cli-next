@@ -2,7 +2,7 @@
 
 ## Offline CLI probes
 
-The [complete October 7 surface comparison](evidence/cli-surface-20261007/REPORT.md)
+The [complete October 7 surface comparison](../evidence/evaluation/cli-surface-20261007/REPORT.md)
 records 1,738 local surfaces: all original commands, methods, event keys and
 embedded guidance files. Every request schema is smaller (61.9% in the sum), but
 936/938 help outputs are larger and current upstream is faster. The function
@@ -51,17 +51,17 @@ function or attribute the entire workflow saving to it.
 ```sh
 python3 evaluation/function_coverage.py \
   --probes /absolute/new-surface-probes.json.gz \
-  --matrix evaluation/evidence/full-matrix-20260911 \
+  --matrix evidence/evaluation/full-matrix-20260911 \
   --output /absolute/function-coverage.json.gz
 ```
 
-The [October 7 comparison](evidence/cli-efficiency-20261007/REPORT.md) records
+The [October 7 comparison](../evidence/evaluation/cli-efficiency-20261007/REPORT.md) records
 the request-only schema and discovery changes, both local measurement conditions,
 and the remaining startup gap against current upstream.
 
 [`measure_cli.py`](measure_cli.py) compares process latency and output context
 size for six generated methods, shared guidance and bounded discovery. Supply
-canonical builds of the [frozen official reference](../docs/reference/README.md),
+canonical builds of the [frozen official reference](../baseline/README.md),
 Next before/after the change, and optionally a pinned current upstream build:
 
 ```sh
@@ -89,11 +89,11 @@ live API speed, successful task parity or the full-task token-efficiency gates.
 
 ## Automatic full matrix
 
-[`run_matrix.py`](run_matrix.py) completed all **43 implemented development tasks / 258 attempts** across eight suites: paired functions, harder Docs, domain reads, workflow scenarios, scaling, business, foundation and Contact. Each task compares original/full with Next for three repetitions per arm. The [completed report](evidence/full-matrix-20260911/REPORT.md) contains **240 new attempts and 18 reviewed condition 09 attempts reused unchanged**; it is not a fresh simultaneous 258-attempt comparison. See the [execution and measurement protocol](full-matrix.md).
+[`run_matrix.py`](run_matrix.py) completed all **43 implemented development tasks / 258 attempts** across eight suites: paired functions, harder Docs, domain reads, workflow scenarios, scaling, business, foundation and Contact. Each task compares original/full with Next for three repetitions per arm. The [completed report](../evidence/evaluation/full-matrix-20260911/REPORT.md) contains **240 new attempts and 18 reviewed condition 09 attempts reused unchanged**; it is not a fresh simultaneous 258-attempt comparison. See the [execution and measurement protocol](reports/full-matrix.md).
 
-The per-task target remains **unmet: 13 gates met, 22 missed and 8 unavailable**. Next verified **107/129** attempts; original verified **102/129**, with **two inconclusive**. Known usage is a **32,552,258-token lower bound**, comprising **31,650,572 new** and **901,686 historical tokens**. Six attempts lack complete usage, so both whole-matrix tokens-per-verified-success savings and raw token-spend reduction are **unavailable**. An [independent final audit](evidence/full-matrix-20260911/result-review.json) accepted the retained accounting and report claims.
+The per-task target remains **unmet: 13 gates met, 22 missed and 8 unavailable**. Next verified **107/129** attempts; original verified **102/129**, with **two inconclusive**. Known usage is a **32,552,258-token lower bound**, comprising **31,650,572 new** and **901,686 historical tokens**. Six attempts lack complete usage, so both whole-matrix tokens-per-verified-success savings and raw token-spend reduction are **unavailable**. An [independent final audit](../evidence/evaluation/full-matrix-20260911/result-review.json) accepted the retained accounting and report claims.
 
-Read the [fixture qualifications](evidence/full-matrix-20260911/QUALIFICATIONS.md) before interpreting the counts. The completed domain-read subset has 26/36 Next and 30/36 original verifications; nine Next and one original failure had correct typed answers and required successful reads but extra requests outside the bounded fixture. Recorded outcomes and all recovery costs remain unchanged.
+Read the [fixture qualifications](../evidence/evaluation/full-matrix-20260911/QUALIFICATIONS.md) before interpreting the counts. The completed domain-read subset has 26/36 Next and 30/36 original verifications; nine Next and one original failure had correct typed answers and required successful reads but extra requests outside the bounded fixture. Recorded outcomes and all recovery costs remain unchanged.
 
 Create an ignored local JSON configuration containing only absolute paths:
 
@@ -113,18 +113,18 @@ Use matching frozen source archives and fixture-enabled binaries; keep credentia
 ```sh
 # Validate inputs, prepare extension hosts and render retained results; no model calls.
 python3 evaluation/run_matrix.py --config /absolute/local-config.json \
-  --output evaluation/evidence/full-matrix-20260911
+  --output evidence/evaluation/full-matrix-20260911
 
 # Run missing attempts or safely resume the same fixed matrix.
 python3 evaluation/run_matrix.py --config /absolute/local-config.json \
-  --output evaluation/evidence/full-matrix-20260911 --execute
+  --output evidence/evaluation/full-matrix-20260911 --execute
 ```
 
 Unchanged completed jobs are skipped even when their results failed, were inconclusive or lacked complete usage. Matching sealed, complete jobs can also be reused from sibling output directories under the same parent, including their original failure and accounting records. This is not a global cache; imported usage is counted as historical reuse, never new spend. Partial/in-flight sibling matches, busy locks, changed seals or conflicting evidence stop execution for reconciliation. Checkpoint validation preserves those attempts and costs; an unresolved in-flight marker requires reconciliation and is never automatically replayed. Changed measured inputs require a new output directory. Report-only changes do not trigger model reruns. Three section workers run isolated fixtures, retaining each section's serial balanced schedule; task failures and missed savings targets do not stop full coverage. Create `STOP` in the output directory to stop between completed attempts.
 
 Python is part of the measured input identity. Use the same executable and version for reuse; the retained September 11 output pins `/opt/homebrew/opt/python@3.14/bin/python3.14`, with its exact version and hash in `environment.json`. The generic `python3` examples are suitable for a new setup, but a different interpreter cannot reuse this output.
 
-Historical import requires the explicit condition, frozen evaluator and migration-review arguments described in [the protocol](full-matrix.md#run-and-reuse). It verifies the complete prior schedule and measured inputs rather than selecting favorable rows. Reports separate historical usage from new spend and retain unavailable comparisons. Held-out release acceptance and exhaustive live parity remain separate.
+Historical import requires the explicit condition, frozen evaluator and migration-review arguments described in [the protocol](reports/full-matrix.md#run-and-reuse). It verifies the complete prior schedule and measured inputs rather than selecting favorable rows. Reports separate historical usage from new spend and retain unavailable comparisons. Held-out release acceptance and exhaustive live parity remain separate.
 
 ### Reading the matrix results
 
@@ -138,33 +138,33 @@ The report retains all six incomplete-usage records and their available costs; i
 
 ## Completed condition 09
 
-The completed [condition-09 report](evidence/token-efficiency-09/REPORT.md) completed **18 fresh attempts: Next 9/9 verified, original/full 8/9 verified and one inconclusive**. The **strict >50% savings target per task remains unmet: zero gates met, two missed and one unavailable**. Table/list reading saved **38.2%** and focused retrieval from a larger document saved **31.1%**, with both arms **3/3 verified for each task**. Multiple styled-edit comparison is **unavailable** because the original arm had one strategy outside fixture coverage; its other two attempts and all three Next attempts verified.
+The completed [condition-09 report](../evidence/evaluation/token-efficiency-09/REPORT.md) completed **18 fresh attempts: Next 9/9 verified, original/full 8/9 verified and one inconclusive**. The **strict >50% savings target per task remains unmet: zero gates met, two missed and one unavailable**. Table/list reading saved **38.2%** and focused retrieval from a larger document saved **31.1%**, with both arms **3/3 verified for each task**. Multiple styled-edit comparison is **unavailable** because the original arm had one strategy outside fixture coverage; its other two attempts and all three Next attempts verified.
 
-All usage was complete: **901,686 tokens**, including **185,209** for the inconclusive attempt. Inconclusive coverage is not scored as product failure, unknown usage is never zero, and every attempt and recovery cost remains. Three harder Docs tasks ran three repetitions per arm using candidate `cad221e`, evaluator `b28354f`, `gpt-5.6-luna` / `medium`, native Codex CLI `0.153.4` and symmetric filesystem-only full guidance. The [final private native lifecycle](evidence/docs-improvements-native-live-final-20260909.json) separately passed **9/9 correctness checks** on the same candidate; it does not measure model token savings. [Protocol](token-efficiency-09.md) · [Frozen environment](evidence/token-efficiency-09/environment.json) · [Exact summary](evidence/token-efficiency-09/summary.json).
+All usage was complete: **901,686 tokens**, including **185,209** for the inconclusive attempt. Inconclusive coverage is not scored as product failure, unknown usage is never zero, and every attempt and recovery cost remains. Three harder Docs tasks ran three repetitions per arm using candidate `cad221e`, evaluator `b28354f`, `gpt-5.6-luna` / `medium`, native Codex CLI `0.153.4` and symmetric filesystem-only full guidance. The [final private native lifecycle](../evidence/evaluation/docs-improvements-native-live-final-20260909.json) separately passed **9/9 correctness checks** on the same candidate; it does not measure model token savings. [Protocol](reports/token-efficiency-09.md) · [Frozen environment](../evidence/evaluation/token-efficiency-09/environment.json) · [Exact summary](../evidence/evaluation/token-efficiency-09/summary.json).
 
 This new development cohort uses different documents and goals from condition 08. Condition 08's historical **56.8% combined Docs saving** is not a direct before/after improvement for condition 09, and no historical attempts are reused or pooled. No other functions were measured in condition 09. Small samples, bounded fixtures and one larger document size do not establish statistical success parity, stable savings, scaling behavior or complete live functionality.
 
-The historical [condition-08 report](evidence/token-efficiency-08/REPORT.md) records **12/12 verified attempts**, original/full **6/6** and Next **6/6**, on the declared Docs-first stage. **The per-function target remains unmet:** Docs read saved **44.3%** and missed >50%; Docs edit saved **61.1%** and passed. Both arms verified **3/3 for each function**. The stop rule left **36 attempts across six other functions not run**, not failed or measured. All usage was complete: **677,392 tokens** across both arms. [Protocol](token-efficiency-08.md) · [Stage decision](evidence/token-efficiency-08/stage-decision.json) · [Frozen environment](evidence/token-efficiency-08/environment.json).
+The historical [condition-08 report](../evidence/evaluation/token-efficiency-08/REPORT.md) records **12/12 verified attempts**, original/full **6/6** and Next **6/6**, on the declared Docs-first stage. **The per-function target remains unmet:** Docs read saved **44.3%** and missed >50%; Docs edit saved **61.1%** and passed. Both arms verified **3/3 for each function**. The stop rule left **36 attempts across six other functions not run**, not failed or measured. All usage was complete: **677,392 tokens** across both arms. [Protocol](reports/token-efficiency-08.md) · [Stage decision](../evidence/evaluation/token-efficiency-08/stage-decision.json) · [Frozen environment](../evidence/evaluation/token-efficiency-08/environment.json).
 
 The **secondary combined Docs workload saved 56.8%**: original **472,979 tokens, 6/6 verified**, versus Next **204,413 tokens, 6/6 verified**. This sums three read and three edit attempts per arm; expensive edits have greater token weight. The combined percentage cannot satisfy the separate read target or predict other workload mixes. All attempt and recovery costs remain included.
 
 In condition 08, both arms received only the selected skill's filesystem path and had to read its contents within the measured tool loop. Next also used the shorter entry guide; its Go runtime, native fidelity checks and full original command surface stayed unchanged for that comparison. File delivery and guide length changed together, so that comparison does not isolate either change. Corrected ambient-skill suppression, `gpt-5.6-luna` / `medium`, native Codex CLI `0.153.4`, signed fixtures, independent verification and fresh contexts remain. Three repetitions and conditional continuation do not establish population success parity, stable savings or complete functionality coverage. No earlier baselines enter the scores.
 
-Historical [condition 07](evidence/token-efficiency-07/REPORT.md) verified **11/12** (Next 6/6, original 5/6), with **36.1% read savings** (both 3/3) and **67.0% edit savings** (Next 3/3, original 2/3), using **720,698 tokens**. [Condition 06](evidence/token-efficiency-06/REPORT.md) verified **12/12**, with **1.0% more read tokens**, **42.1% fewer edit tokens**, and **761,257 total tokens**. Both stopped after Docs; all other functions were unmeasured. Their results remain separate and unchanged.
+Historical [condition 07](../evidence/evaluation/token-efficiency-07/REPORT.md) verified **11/12** (Next 6/6, original 5/6), with **36.1% read savings** (both 3/3) and **67.0% edit savings** (Next 3/3, original 2/3), using **720,698 tokens**. [Condition 06](../evidence/evaluation/token-efficiency-06/REPORT.md) verified **12/12**, with **1.0% more read tokens**, **42.1% fewer edit tokens**, and **761,257 total tokens**. Both stopped after Docs; all other functions were unmeasured. Their results remain separate and unchanged.
 
-**Conditions 05/06 have an additional isolation qualification:** a later no-model native control confirmed that disabled-skill directory paths left eight public `CODEX_HOME` catalog entries advertised, while exact `SKILL.md` entry paths suppressed them. Both arms used the affected configuration. Selected guidance was explicitly supplied once; the probe found no real-home `.agents` paths. No billed-token impact or cause of file-read loops is established. Read the [qualification addendum](evidence/token-efficiency-05-06-skill-isolation-qualification.md) and its native evidence before attributing these results solely to the selected CLI guidance. Historical outcomes and costs remain unchanged.
+**Conditions 05/06 have an additional isolation qualification:** a later no-model native control confirmed that disabled-skill directory paths left eight public `CODEX_HOME` catalog entries advertised, while exact `SKILL.md` entry paths suppressed them. Both arms used the affected configuration. Selected guidance was explicitly supplied once; the probe found no real-home `.agents` paths. No billed-token impact or cause of file-read loops is established. Read the [qualification addendum](../evidence/evaluation/token-efficiency-05-06-skill-isolation-qualification.md) and its native evidence before attributing these results solely to the selected CLI guidance. Historical outcomes and costs remain unchanged.
 
-The previous full [condition-05 report](evidence/token-efficiency-05/REPORT.md) records 48 fresh attempts: eight tasks, three repetitions, original/full versus Next. The target is **strictly more than 50% lower all-attempt tokens per verified success for Docs read/edit and at least 30% lower for every other evaluated function**, with no observed success regression. It replaces the unchanged-Next comparator for this new decision. **The target was not met: 3/8 gates met, 3 missed and 2 were unavailable.** [Protocol](token-efficiency-05.md) · [Frozen environment](evidence/token-efficiency-05/environment.json) · [Readiness review](evidence/token-efficiency-05/readiness-review.json).
+The previous full [condition-05 report](../evidence/evaluation/token-efficiency-05/REPORT.md) records 48 fresh attempts: eight tasks, three repetitions, original/full versus Next. The target is **strictly more than 50% lower all-attempt tokens per verified success for Docs read/edit and at least 30% lower for every other evaluated function**, with no observed success regression. It replaces the unchanged-Next comparator for this new decision. **The target was not met: 3/8 gates met, 3 missed and 2 were unavailable.** [Protocol](reports/token-efficiency-05.md) · [Frozen environment](../evidence/evaluation/token-efficiency-05/environment.json) · [Readiness review](../evidence/evaluation/token-efficiency-05/readiness-review.json).
 
 The batch verified **40/48 attempts**: Next 22/24 and original 18/24. Contact, Markdown creation and Base met their gates. Docs read saved only **6.4%**, with both arms 3/3 verified; Docs edit used **172.0% more tokens per verified success**, with Next **2/3 versus original 3/3**. Discovery used 14.8% more. Sheets' original arm had no verified successes; Drive had four incomplete usage records and no original successes, so both primary comparisons are unavailable. Observed provider spend is a **3,602,432-token lower bound**. The report retains all failed-attempt costs and missing accounting.
 
 Docs-edit traces show `+push` exit 2 and `+update` fallback, but omit edited local files and validation-error text. Their exact rejection cause is unknown. Neither fallback costs nor the failed verification are removed from the results.
 
-The candidate adds a local Docs `+pull` / `+push` text workflow while retaining all original commands and rich-content routes. A [private native lifecycle](evidence/docs-workspace-native-live-20260909.json) passed independent original-CLI checks of text, styles, links, IDs and an untouched table. That product check is separate from the synthetic model benchmark and does not establish universal Markdown conversion or atomic concurrency protection. The [revision probe](evidence/docs-workspace-native-cas-20260909.json) showed stale native PATCH revisions are accepted; current-state fixtures must not fabricate a compare-and-swap guarantee.
+The candidate adds a local Docs `+pull` / `+push` text workflow while retaining all original commands and rich-content routes. A [private native lifecycle](../evidence/evaluation/docs-workspace-native-live-20260909.json) passed independent original-CLI checks of text, styles, links, IDs and an untouched table. That product check is separate from the synthetic model benchmark and does not establish universal Markdown conversion or atomic concurrency protection. The [revision probe](../evidence/evaluation/docs-workspace-native-cas-20260909.json) showed stale native PATCH revisions are accepted; current-state fixtures must not fabricate a compare-and-swap guarantee.
 
 Condition 05 retains `gpt-5.6-luna` / `medium`, native Codex CLI `0.153.4`, signed fixtures and independent verification. Original Markdown import now starts from its unchanged `lark-drive` skill, correcting the prior entry selection. Both original guidance bytes and historical results remain intact. Incomplete accounting, inconclusive fixture coverage or zero verified successes make the affected primary comparison unavailable; failed and inconclusive attempts retain their costs. Three repetitions provide point estimates, not population success-rate parity.
 
-The historical [candidate-only guidance follow-up, condition 04](evidence/token-efficiency-04/REPORT.md), contains **24 new candidate trials compared with 48 reused condition-03 baseline trials**. This exploratory comparison is not a new balanced 72-trial run. It keeps the eight tasks, three candidate repetitions, `gpt-5.6-luna` / `medium`, native Codex CLI `0.153.4`, and native-informed synthetic fixtures. [Protocol and reuse limitations](token-efficiency-04.md).
+The historical [candidate-only guidance follow-up, condition 04](../evidence/evaluation/token-efficiency-04/REPORT.md), contains **24 new candidate trials compared with 48 reused condition-03 baseline trials**. This exploratory comparison is not a new balanced 72-trial run. It keeps the eight tasks, three candidate repetitions, `gpt-5.6-luna` / `medium`, native Codex CLI `0.153.4`, and native-informed synthetic fixtures. [Protocol and reuse limitations](reports/token-efficiency-04.md).
 
 The new candidate verified **24/24 attempts**, with complete accounting for **1,154,003 new provider tokens**. All eight functions improved tokens per verified success against reused unchanged Next, and all observed success counts matched or exceeded both reused baselines. The combined 50% gate was **not fully met: 5/8 functions met it**. Docs read (39.5%), Markdown (43.1%) and Drive (40.0%) remained below the target. Reused baseline usage is not new spend; the report preserves original Docs-edit incomplete accounting and original Markdown/Sheets zero-success comparisons.
 
@@ -172,13 +172,13 @@ Condition 04's 50% point-estimate target applies to each function's all-attempt 
 
 Historical conditions remain immutable:
 
-- [Optimization 03](evidence/token-efficiency-03/REPORT.md): 72 fresh trials, 62 verified, 10 failed, one incomplete usage record; 2/8 combined function gates met. [Protocol](token-efficiency-03.md).
-- [Optimization 02](evidence/token-efficiency-02/REPORT.md): 72 fresh trials, 64 verified, seven failed, one inconclusive; 4/8 gates met, with a Docs-edit success regression. [Protocol](token-efficiency-02.md).
-- [Original paired pilot 01](evidence/paired-luna-medium-01/REPORT.md): 72 fresh trials, 54 verified, 11 failed, seven inconclusive and complete accounting for 8,442,585 tokens. It compared original/full, original/concise and Next; later optimization conditions use unchanged Next instead of original/concise. [Protocol](paired-functions-luna-medium.md).
+- [Optimization 03](../evidence/evaluation/token-efficiency-03/REPORT.md): 72 fresh trials, 62 verified, 10 failed, one incomplete usage record; 2/8 combined function gates met. [Protocol](reports/token-efficiency-03.md).
+- [Optimization 02](../evidence/evaluation/token-efficiency-02/REPORT.md): 72 fresh trials, 64 verified, seven failed, one inconclusive; 4/8 gates met, with a Docs-edit success regression. [Protocol](reports/token-efficiency-02.md).
+- [Original paired pilot 01](../evidence/evaluation/paired-luna-medium-01/REPORT.md): 72 fresh trials, 54 verified, 11 failed, seven inconclusive and complete accounting for 8,442,585 tokens. It compared original/full, original/concise and Next; later optimization conditions use unchanged Next instead of original/concise. [Protocol](reports/paired-functions-luna-medium.md).
 
 These are per-task comparisons, not pooled efficiency rankings. Broader fixture coverage does not retrospectively rescore earlier outcomes. Other historical scenario batches below remain separate conditions.
 
-The [provisional assessment](ASSESSMENT.md) compares completed conditions, retains
+The [provisional assessment](reports/ASSESSMENT.md) compares completed conditions, retains
 regressions and links the remaining release evidence.
 
 Run the isolated harness acceptance suite:
@@ -203,10 +203,10 @@ for interface tuning. The release flag is intentionally required to execute them
 
 `codex_runner.py` and `foundation_verifier.py` implement real Codex execution
 and independent checks for two offline foundation tasks described below.
-The [foundation report](evidence/foundation/REPORT.md) records the completed
+The [foundation report](../evidence/evaluation/foundation/REPORT.md) records the completed
 18-trial compatible comparison and all earlier failed attempts. All predeclared sections now have controlled adapters; broader comparative results
-remain incomplete. The corrected [Wiki comparison](evidence/wiki-native-74/REPORT.md)
-and [nine-section batch](evidence/read-312af93/REPORT.md) retain mixed results and failures.
+remain incomplete. The corrected [Wiki comparison](../evidence/evaluation/wiki-native-74/REPORT.md)
+and [nine-section batch](../evidence/evaluation/read-312af93/REPORT.md) retain mixed results and failures.
 Use the runner and independently implemented verifier
 with the protocol below; model
 usage must come from the provider across every turn. A CLI output byte count,
@@ -551,14 +551,14 @@ The first controlled integration against candidate `312af93` found a Mail
 `user_mailbox.messages batch_get` metadata read returning exit 22 as an unknown
 mutation; the original reference returned 0. This occurred before any Mail model
 trial. The corrected accepted candidate `8d92e5` passed controlled acceptance and
-the subsequent [Calendar/Mail/OKR comparison](evidence/read-8d92e5/REPORT.md), with
+the subsequent [Calendar/Mail/OKR comparison](../evidence/evaluation/read-8d92e5/REPORT.md), with
 all 27 independently verified trials. The earlier 81-trial nine-section read batch
 keeps its original candidate and evaluator snapshots.
 
 A coordinator search accidentally exposed limited held-out snippets during later
 scaling-coverage review. Files remain unchanged and no held-out trial ran, but
 complete blinding can no longer be claimed for the affected examples. See
-[evidence/held-out-exposure.json](evidence/held-out-exposure.json). They require
+[evidence/held-out-exposure.json](../evidence/evaluation/held-out-exposure.json). They require
 independent blind replacement after product freeze before release evaluation.
 
 Future read-only runs retain only allowlisted route IDs, HTTP methods/statuses and
@@ -649,13 +649,13 @@ No supplemental model trials have run yet.
 
 ## Completed size-series plot
 
-The [native-fidelity audit](evidence/native-fidelity-validity-audit-20260908.md) qualifies the Base and Sheets fixtures underlying the retained size plot. Its provider costs remain historical, and its outcome markers denote synthetic checks; it does not establish live same-fidelity efficiency. The original figure remains unchanged.
+The [native-fidelity audit](../evidence/evaluation/native-fidelity-validity-audit-20260908.md) qualifies the Base and Sheets fixtures underlying the retained size plot. Its provider costs remain historical, and its outcome markers denote synthetic checks; it does not establish live same-fidelity efficiency. The original figure remains unchanged.
 
 After both Base and Sheets batches contain all 27 planned attempts, export the
 provider-token plot with Matplotlib (3.10.8 used for this work):
 
 ```sh
-python3 evaluation/plot_scaling.py evaluation/evidence/scaling-8d-archive04
+python3 evaluation/plot_scaling.py evidence/evaluation/scaling-8d-archive04
 ```
 
 The script produces PNG/SVG files beside the batch reports and embeds their

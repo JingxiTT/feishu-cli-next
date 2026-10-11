@@ -2,7 +2,7 @@
 
 The current product is synced with [official v1.0.97](v1.0.97/README.md). The inventory below remains the original historical baseline; current CI selects the separate v1.0.97 baseline explicitly.
 
-For configured Feishu/Lark guard coverage, use the [separate brand supplement](BRANDS.md) and pass `--reference-registrations docs/reference/configured-brand-registrations.json.gz` to the checker. The original frozen registration file is an unrestricted bootstrap inventory; its two brand labels do not establish configured runtime conditions.
+For configured Feishu/Lark guard coverage, use the [separate brand supplement](BRANDS.md) and pass `--reference-registrations baseline/configured-brand-registrations.json.gz` to the checker. The original frozen registration file is an unrestricted bootstrap inventory; its two brand labels do not establish configured runtime conditions.
 
 The source reference is `7fd6ef3c07182257ce776cdc5a614e122d5bd4b3` of
 `github.com/larksuite/cli`, with no tracked or untracked local changes at capture.
@@ -42,7 +42,7 @@ the exact downloaded bytes; its SHA-256 is in `coverage.json`. Rebuilding the
 frozen catalog does not require another metadata fetch:
 
 ```sh
-python3 -c 'import gzip,pathlib; pathlib.Path("internal/registry/meta_data.json").write_bytes(gzip.decompress(pathlib.Path("docs/reference/meta_data.json.gz").read_bytes()))'
+python3 -c 'import gzip,pathlib; pathlib.Path("internal/registry/meta_data.json").write_bytes(gzip.decompress(pathlib.Path("baseline/meta_data.json.gz").read_bytes()))'
 make build
 ```
 

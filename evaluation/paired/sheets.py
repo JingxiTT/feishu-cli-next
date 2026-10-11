@@ -3,7 +3,7 @@
 
 """Fresh paired task: native raw values and formula metadata are separate reads.
 
-Live evidence: docs/sections/sheets-private-live-evidence.json. The historical
+Live evidence: evidence/sections/sheets-private-live-evidence.json. The historical
 scenario is reused for resource selection, metadata and artifact validation;
 its render behavior and coverage-only proof are not reused. A separate private
 live probe through both frozen binaries establishes default/formatted rendering

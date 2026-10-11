@@ -4,12 +4,12 @@ The measurements show task-specific gains and substantial regressions. They do
 not establish a general token-efficiency advantage or release readiness. The
 implementation retains the full reference capability target; sampling successful
 agent tasks does not replace capability reconciliation, section correctness or
-live verification. [Release requirements and outstanding gates](../docs/IMPLEMENTATION.md)
+live verification. [Release requirements and outstanding gates](../../docs/IMPLEMENTATION.md)
 remain authoritative.
 
 ## Native fidelity amendment — 2026-09-08
 
-The [independent validity audit](evidence/native-fidelity-validity-audit-20260908.md)
+The [independent validity audit](../../evidence/evaluation/native-fidelity-validity-audit-20260908.md)
 qualifies the historical Docs, Sheets and Base results below. Private native tests
 contradicted Docs plain-replacement style inheritance, Sheets render-mode fidelity
 and Base create-time empty-text preservation assumed by the development fixtures.
@@ -37,25 +37,25 @@ reports.
 
 | Task | Official | Concise official | Next | Interpretation within this task |
 | --- | ---: | ---: | ---: | --- |
-| [Calendar](evidence/read-8d92e5/REPORT.md) | 153,198.67 | 146,588.67 | 98,273.33 | Lower than both baselines |
-| [Mail](evidence/read-8d92e5/REPORT.md) | 258,457.00 | 116,976.33 | 68,579.00 | Lower than both baselines |
-| [OKR](evidence/read-8d92e5/REPORT.md) | 169,457.00 | 120,259.00 | 84,193.67 | Lower than both baselines |
-| [Base](evidence/scenarios-8d-schema02/REPORT.md) | 89,044.67 | 93,971.67 | 126,085.67 | Higher synthetic cost; empty-text update fidelity unvalidated |
-| [Drive](evidence/scenarios-8d-schema02/REPORT.md) | 160,570.33 | 141,622.00 | 66,597.67 | Lower than both baselines |
-| [Markdown](evidence/scenarios-8d-schema02/REPORT.md) | 252,573.67 | 161,417.33 | 182,177.00 | Lower than official; higher than concise |
-| [Sheets](evidence/scenarios-8d-schema02/REPORT.md) | 238,373.00 | 196,719.33 | 78,226.00 | Lower synthetic cost; same-fidelity conclusion withheld |
-| [Tasks](evidence/scenarios-8d-schema02/REPORT.md) | 272,985.33 | 185,645.33 | 123,521.00 | Lower than both baselines |
-| [Docs, corrected fixture](evidence/scenarios-8d-corrected03/REPORT.md) | 161,107.00 | 76,104.33 | 206,796.33 | Higher synthetic cost; same-fidelity conclusion withheld |
-| [Extensions, corrected observer](evidence/scenarios-8d-corrected03/REPORT.md) | 199,107.33 | 305,044.00 | 94,401.67 | Lower than both in this synthetic host task |
-| [Packaging, corrected path verification](evidence/scenarios-8d-corrected03/REPORT.md) | 58,075.33 | 73,169.00 | 60,292.00 | Slightly higher than official; lower than concise |
-| [Generated approval workflow](evidence/business-8d-archive03/REPORT.md) | 196,014.67 | 182,855.33 | 120,166.00 | Lower than both baselines |
-| [Generated Mindnote edit](evidence/business-8d-archive03/REPORT.md) | 158,449.67 | 150,169.33 | 106,273.33 | Lower than both baselines |
+| [Calendar](../../evidence/evaluation/read-8d92e5/REPORT.md) | 153,198.67 | 146,588.67 | 98,273.33 | Lower than both baselines |
+| [Mail](../../evidence/evaluation/read-8d92e5/REPORT.md) | 258,457.00 | 116,976.33 | 68,579.00 | Lower than both baselines |
+| [OKR](../../evidence/evaluation/read-8d92e5/REPORT.md) | 169,457.00 | 120,259.00 | 84,193.67 | Lower than both baselines |
+| [Base](../../evidence/evaluation/scenarios-8d-schema02/REPORT.md) | 89,044.67 | 93,971.67 | 126,085.67 | Higher synthetic cost; empty-text update fidelity unvalidated |
+| [Drive](../../evidence/evaluation/scenarios-8d-schema02/REPORT.md) | 160,570.33 | 141,622.00 | 66,597.67 | Lower than both baselines |
+| [Markdown](../../evidence/evaluation/scenarios-8d-schema02/REPORT.md) | 252,573.67 | 161,417.33 | 182,177.00 | Lower than official; higher than concise |
+| [Sheets](../../evidence/evaluation/scenarios-8d-schema02/REPORT.md) | 238,373.00 | 196,719.33 | 78,226.00 | Lower synthetic cost; same-fidelity conclusion withheld |
+| [Tasks](../../evidence/evaluation/scenarios-8d-schema02/REPORT.md) | 272,985.33 | 185,645.33 | 123,521.00 | Lower than both baselines |
+| [Docs, corrected fixture](../../evidence/evaluation/scenarios-8d-corrected03/REPORT.md) | 161,107.00 | 76,104.33 | 206,796.33 | Higher synthetic cost; same-fidelity conclusion withheld |
+| [Extensions, corrected observer](../../evidence/evaluation/scenarios-8d-corrected03/REPORT.md) | 199,107.33 | 305,044.00 | 94,401.67 | Lower than both in this synthetic host task |
+| [Packaging, corrected path verification](../../evidence/evaluation/scenarios-8d-corrected03/REPORT.md) | 58,075.33 | 73,169.00 | 60,292.00 | Slightly higher than official; lower than concise |
+| [Generated approval workflow](../../evidence/evaluation/business-8d-archive03/REPORT.md) | 196,014.67 | 182,855.33 | 120,166.00 | Lower than both baselines |
+| [Generated Mindnote edit](../../evidence/evaluation/business-8d-archive03/REPORT.md) | 158,449.67 | 150,169.33 | 106,273.33 | Lower than both baselines |
 
 Events remains separate: its three official outcomes lack sufficient execution
 proof and are inconclusive. Its verified concise/Next results do not establish a
 complete three-arm comparison. Earlier Docs, Extensions and Packaging attempts
 also retain their original costs and inconclusive interpretations. The
-[81-attempt report](evidence/scenarios-8d-schema02/REPORT.md) records these limits;
+[81-attempt report](../../evidence/evaluation/scenarios-8d-schema02/REPORT.md) records these limits;
 corrected balanced trials do not retroactively turn discarded outcomes into
 successes.
 
@@ -64,8 +64,8 @@ successes.
 The current Docs regression accompanies additional discovery, help, skill reads
 and local processing. Next and concise official guidance each made 24 total API
 requests, so their request totals do not explain the token difference. The
-[bounded trace review](evidence/scenarios-8d-corrected03/docs-trace.md) preserves
-this distinction. The [Base trace review](evidence/scenarios-8d-schema02/base-trace.md)
+[bounded trace review](../../evidence/evaluation/scenarios-8d-corrected03/docs-trace.md) preserves
+this distinction. The [Base trace review](../../evidence/evaluation/scenarios-8d-schema02/base-trace.md)
 also records additional discovery and different read/artifact choices. Neither
 trace assigns provider tokens to individual commands or establishes that every
 extra step was unnecessary.
@@ -77,7 +77,7 @@ Raw API composition passed the corrected synthetic Docs verifier; retained trace
 do not establish which native mutation or rich-text payload it used.
 No product or guide tuning was applied during the frozen comparison series.
 
-The [10,000-row cross-section process test](../docs/integration/sheets-base.md)
+The [10,000-row cross-section process test](../../docs/integration/sheets-base.md)
 separately verifies preservation of 80,000 cells through actual export/import
 commands. It supports the earlier artifact handoff under its controlled
 assumptions; the
@@ -88,7 +88,7 @@ bounded CLI output sizes cannot substitute for provider-token measurements.
 
 ## Historical size comparison
 
-The [fresh size comparison](evidence/scaling-8d-archive04/REPORT.md) completed
+The [fresh size comparison](../../evidence/evaluation/scaling-8d-archive04/REPORT.md) completed
 54 attempts under evaluator `4b3abc6`: 51 verified, two Base attempts nonverified,
 and one Sheets timeout with unknown total usage. The 9,780,669 recorded provider
 tokens are a lower bound, including 499,819 tokens from the nonverified Base
@@ -104,7 +104,7 @@ give verified attempts out of three. Unknown total usage prevents a finite score
 | Sheets, 1,000 | 277,664.67 (3/3) | Unknown (2/3) | 106,845.00 (3/3) |
 | Sheets, 10,000 | 328,489.33 (3/3) | 256,691.00 (3/3) | 117,159.00 (3/3) |
 
-![All recorded size-trial token totals; unknown usage explicitly disclosed](evidence/scaling-8d-archive04/usage-by-size.png)
+![All recorded size-trial token totals; unknown usage explicitly disclosed](../../evidence/evaluation/scaling-8d-archive04/usage-by-size.png)
 
 These are costs under the original synthetic verifier, whose Base empty-text and
 Sheets rendering assumptions conflict with native behavior. They cannot establish
@@ -124,10 +124,10 @@ descriptive observations, not a uniform scaling or asymptotic claim.
 
 | Condition | Evidence and limitation |
 | --- | --- |
-| [Foundation, candidate reported `d873c0d`](evidence/foundation/REPORT.md) | 18/18 verified across two tasks. Document discovery improved against both arms; unconfigured status was slightly worse than concise official guidance. The reference binary reports imported source `0c1ac75`; exact hashes are retained. |
-| [Contact, `4ce36da`](evidence/contact/REPORT.md) | 9/9 verified, with Next worse than both arms. Subsequent discovery changes have no measured improvement claim on this task. |
-| [Nine sections, `312af93`](evidence/read-312af93/REPORT.md) | 75/81 verified. Of eight fully successful sections, Next beat official guidance in seven but concise guidance only in IM; Application regressed against both. Six failed Wiki attempts and their costs remain. Later shared runtime changes prevent treating these as a final-product retest. |
-| [Corrected Wiki, `74b6b53`](evidence/wiki-native-74/REPORT.md) | 9/9 verified with lower Next tokens than both arms after a source-backed fixture correction. It uses the earlier guide and remains separate from the older failed series and later product conditions. |
+| [Foundation, candidate reported `d873c0d`](../../evidence/evaluation/foundation/REPORT.md) | 18/18 verified across two tasks. Document discovery improved against both arms; unconfigured status was slightly worse than concise official guidance. The reference binary reports imported source `0c1ac75`; exact hashes are retained. |
+| [Contact, `4ce36da`](../../evidence/evaluation/contact/REPORT.md) | 9/9 verified, with Next worse than both arms. Subsequent discovery changes have no measured improvement claim on this task. |
+| [Nine sections, `312af93`](../../evidence/evaluation/read-312af93/REPORT.md) | 75/81 verified. Of eight fully successful sections, Next beat official guidance in seven but concise guidance only in IM; Application regressed against both. Six failed Wiki attempts and their costs remain. Later shared runtime changes prevent treating these as a final-product retest. |
+| [Corrected Wiki, `74b6b53`](../../evidence/evaluation/wiki-native-74/REPORT.md) | 9/9 verified with lower Next tokens than both arms after a source-backed fixture correction. It uses the earlier guide and remains separate from the older failed series and later product conditions. |
 
 Language, domain-specific guidance and reference bundles vary between arms.
 Application and Extensions have explicitly documented source-matched guidance
@@ -139,9 +139,9 @@ effect in every domain. No language-specific claim follows.
 ## Costs, uncertainty and remaining evidence
 
 All-attempt costs remain in their original reports, including unsuccessful,
-inconclusive and interrupted attempts. The [first size condition](evidence/scaling-8d-schema02/REPORT.md)
+inconclusive and interrupted attempts. The [first size condition](../../evidence/evaluation/scaling-8d-schema02/REPORT.md)
 retains 1,258,267 complete provider tokens across seven unbalanced attempts. The
-[later archive-preparation probe](evidence/scaling-8d-fixture03/REPORT.md) retains
+[later archive-preparation probe](../../evidence/evaluation/scaling-8d-fixture03/REPORT.md) retains
 237,389 known tokens and one unknown-cost attempt. The latter total is only a
 lower bound. Canceled slots that never launched a model are distinguished from
 failed attempts. These interrupted series support no size curve.
@@ -153,13 +153,13 @@ are unavailable in several conditions. Concurrent correctness work limits some
 latency comparisons. Unknown accounting prevents a finite efficiency score;
 early failure is not evidence of efficiency.
 
-The [representative business comparison](evidence/business-8d-archive03/REPORT.md)
+The [representative business comparison](../../evidence/evaluation/business-8d-archive03/REPORT.md)
 completed all 18 attempts with verified outcomes and complete accounting under
 evaluator `4b3abc6`: 2,741,785 provider tokens. Next also made fewer API requests
 on both tasks: approval 24 versus official 50 and concise official 42; Mindnote
 18 versus 39 and 35. These two synthetic workflows support the measured
 comparisons, not acceptance of every generated business operation. The
-[business trace review](evidence/business-8d-archive03/trace-notes.md) records
+[business trace review](../../evidence/evaluation/business-8d-archive03/trace-notes.md) records
 readback after an uncertain Mindnote mutation rather than blind write replay,
 alongside discovery and schema choices. Route-level request traces and
 per-command token attribution are unavailable. Held-out evaluation remains

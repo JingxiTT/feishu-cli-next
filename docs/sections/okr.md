@@ -4,7 +4,7 @@ Status: offline implementation and section verification ready; P2 remains open f
 live backend verification and coordinator-run comparative development tasks.
 Reference: `7fd6ef3c07182257ce776cdc5a614e122d5bd4b3`; shared foundation accepted
 at `ce68188`. Source reconciliation verified all 43 frozen OKR implementation and
-legacy test files against `docs/reference/sources.json` and the unchanged sibling.
+legacy test files against `baseline/sources.json` and the unchanged sibling.
 
 ## Scope, ownership and dependencies
 

@@ -40,7 +40,7 @@ A separate bounded opt-in `TestDocsNextPrivateLiveLifecycle` now lives in
 `tests/cli_e2e/docs/docs_next_private_live_test.go`; it requires coordinator-supplied
 private fixture/account proof and repeats identity/ACL checks before writing.
 Its explicit XML control passed on 2026-09-08; its plain replacement preservation
-check failed. See `docs/sections/docs-private-live-evidence.json` for both outcomes.
+check failed. See `evidence/sections/docs-private-live-evidence.json` for both outcomes.
 The broader skip remains blocked evidence, never a passed live verification. Parent section
 acceptance also requires domain units, applicable frozen regressions, private
 live fixtures and comparative tasks.

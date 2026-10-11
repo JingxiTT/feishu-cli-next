@@ -201,7 +201,7 @@ class BusinessScenarioTests(unittest.TestCase):
 
     def test_list_rows_match_frozen_native_required_fields_and_status_enums(self):
         import gzip
-        catalog = json.load(gzip.open(ROOT / "docs/reference/meta_data.json.gz"))
+        catalog = json.load(gzip.open(ROOT / "baseline/meta_data.json.gz"))
         approval = next(service for service in catalog["services"] if service["name"] == "approval")
         _, receipt = self.run_case("approval-pagination")
         for request in receipt["requests"]:

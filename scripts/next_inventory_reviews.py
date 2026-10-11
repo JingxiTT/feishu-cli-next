@@ -55,9 +55,9 @@ def effective_status(current_hash, records):
 
 
 def category(path):
-    if path.startswith("evaluation/") or path.startswith("tests/next_evaluation/"):
+    if path.startswith(("evaluation/", "evidence/evaluation/", "tests/next_evaluation/")):
         return "evaluation"
-    if path.startswith("docs/") or path.endswith(".md"):
+    if path.startswith(("docs/", "baseline/", "evidence/")) or path.endswith(".md"):
         return "documentation_evidence"
     if path.startswith("tests/") or path.endswith("_test.go") or "_test." in path:
         return "tests_harness"
@@ -77,13 +77,13 @@ def generate(root, revision, review_dir):
         for entry in archive:
             if entry.isfile():
                 hashes[entry.name] = digest(archive.extractfile(entry).read())
-    assignments = json.loads((root / "docs/reference/p3-review-assignments.json").read_text(encoding="utf-8"))
+    assignments = json.loads((root / "evidence/reference/p3-review-assignments.json").read_text(encoding="utf-8"))
     initial = {p["path"]: {"assignment": a["id"], **p} for a in assignments["assignments"] for p in a["paths"]}
-    frozen = json.loads((root / "docs/reference/sources.json").read_text(encoding="utf-8"))
+    frozen = json.loads((root / "baseline/sources.json").read_text(encoding="utf-8"))
     changed_reference = {p for p, h in frozen["files"].items() if hashes.get(p) != h}
     new_runtime = {p for p in hashes if p not in frozen["files"] and p.endswith(".go") and not p.endswith("_test.go") and p.startswith(("cmd/", "internal/", "shortcuts/", "errs/"))}
     later = set(git("diff", "--name-only", assignments["checkpoint"], revision).decode().splitlines())
-    excluded_evidence = sorted(p for p in later if p.startswith("docs/reference/"))
+    excluded_evidence = sorted(p for p in later if p.startswith(("docs/reference/", "baseline/", "evidence/reference/")))
     scope = set(initial) | changed_reference | new_runtime | (later - set(excluded_evidence))
     reviews_revision = git("rev-parse", "HEAD").decode().strip()
     tracked = set(git("ls-tree", "-r", "--name-only", "-z", reviews_revision).decode().strip("\0").split("\0"))
@@ -124,7 +124,7 @@ def main():
     parser.add_argument("--out", type=pathlib.Path, required=True)
     args = parser.parse_args()
     root = args.target.resolve()
-    report = generate(root, args.revision, root / "docs/reference/reviews")
+    report = generate(root, args.revision, root / "evidence/reference/reviews")
     args.out.write_text(json.dumps(report, ensure_ascii=False, sort_keys=True, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(report["counts"], sort_keys=True))
     return 1 if report["invalid_review_hashes"] else 0

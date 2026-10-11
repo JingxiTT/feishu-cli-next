@@ -167,7 +167,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     for label in ("reference", "before", "next", "current"):
         parser.add_argument(f"--{label}-cli", type=Path, required=label != "current")
-    parser.add_argument("--reference-dir", type=Path, default=ROOT / "docs/reference")
+    parser.add_argument("--reference-dir", type=Path, default=ROOT / "baseline")
     parser.add_argument("--brand", choices=("feishu", "lark"), default="feishu")
     parser.add_argument("--repetitions", type=int, default=3)
     parser.add_argument("--encoding")

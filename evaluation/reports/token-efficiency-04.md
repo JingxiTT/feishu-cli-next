@@ -1,7 +1,7 @@
 # Candidate-only guidance follow-up
 
 This exploratory condition measures a small guidance correction after the
-completed [second balanced run](evidence/token-efficiency-03/REPORT.md).
+completed [second balanced run](../../evidence/evaluation/token-efficiency-03/REPORT.md).
 It contains **24 new candidate trials compared with 48 reused condition-03
 baseline trials**, not a new balanced 72-trial experiment.
 
