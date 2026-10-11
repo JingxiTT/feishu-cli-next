@@ -16,7 +16,8 @@ PUBLIC_CONTENT_METADATA ?= $(QUALITY_GATE_DIR)/public-content-metadata.json
 LDFLAGS  := -s -w -X $(MODULE)/internal/build.Version=$(VERSION) -X $(MODULE)/internal/build.Date=$(DATE)
 PREFIX   ?= /usr/local
 
-# The repository's Go 1.23 CI toolchain does not support -race on riscv64.
+# Keep the validated riscv64 test mode until race-enabled execution is verified
+# on that architecture with the upgraded Go toolchain.
 # Prefer GOARCH passed to make (for example, `make GOARCH=riscv64 unit-test`)
 # over `go env GOARCH`, because command-line make variables are not visible to
 # $(shell ...).
@@ -54,6 +55,7 @@ evaluation-test:
 	python3 scripts/next_test.py --harness evaluation --report .tmp/next-tests/evaluation.json
 
 script-test: next-script-test
+	bash scripts/check-doc-tokens.sh
 	bash scripts/resolve-changed-from.test.sh
 	bash scripts/ci-workflow.test.sh
 	bash scripts/release-workflow.test.sh

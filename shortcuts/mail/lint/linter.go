@@ -49,9 +49,9 @@ func Run(html string, opts Options) Report {
 	bodyContext := &xhtml.Node{Type: xhtml.ElementNode, DataAtom: atom.Body, Data: "body"}
 	nodes, err := xhtml.ParseFragment(strings.NewReader(html), bodyContext)
 	if err != nil {
-		// Parser failure is exceptional (the parser is permissive by design);
-		// fall back to the original input so we don't lose user content.
-		return EmptyReport(html)
+		// In particular, excessive nesting must not bypass the safety pass.
+		rep.ParseError = err
+		return rep
 	}
 
 	// Wrap fragment nodes in a synthetic root so the recursive walker has a
@@ -81,10 +81,7 @@ func Run(html string, opts Options) Report {
 // classification. Children are iterated via the next-sibling pointer because
 // we mutate the tree in place (replace / remove nodes).
 //
-// The walker is iterative-style via explicit recursion because the html
-// parser's typical nesting depth (≤ 256 by default) is well below Go's
-// goroutine stack limit; the existing draft package's plainTextFromHTML
-// (mail/draft/htmltext.go) similarly recurses for the same reason.
+// The parser bounds nesting to 512 elements, below Go's goroutine stack limit.
 func walk(parent *xhtml.Node, rep *Report) {
 	child := parent.FirstChild
 	for child != nil {

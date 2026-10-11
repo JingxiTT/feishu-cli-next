@@ -289,7 +289,11 @@ var MailForward = common.Shortcut{
 			processedBody := buildBodyDiv(body, bodyIsHTML(body))
 			origLargeAttCard := stripLargeAttachmentCard(&orig)
 			for id := range sourceMsg.FailedAttachmentIDs {
-				if updated, ok := draftpkg.RemoveLargeFileItemFromHTML(origLargeAttCard, id); ok {
+				updated, ok, removeErr := draftpkg.RemoveLargeFileItemFromHTMLChecked(origLargeAttCard, id)
+				if removeErr != nil {
+					return mailValidationError("forward attachment card could not be parsed safely").WithCause(removeErr)
+				}
+				if ok {
 					origLargeAttCard = updated
 				}
 			}
@@ -311,7 +315,10 @@ var MailForward = common.Shortcut{
 			// forward quote / large-attachment card derived from the original
 			// message (re-linting quote blocks risks dropping allow-listed
 			// Feishu-native quote markup).
-			cleaned, rep := runWritePathLint(bodyWithSig)
+			cleaned, rep, lintErr := runWritePathLint(bodyWithSig)
+			if lintErr != nil {
+				return lintErr
+			}
 			bodyWithSig = cleaned
 			lintApplied, lintBlocked = rep.Applied, rep.Blocked
 			composedHTMLBody = bodyWithSig + origLargeAttCard + forwardQuote

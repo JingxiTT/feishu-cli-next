@@ -44,6 +44,13 @@ def action_references(value)
 end
 
 jobs = workflow.fetch("jobs")
+preflight_steps = jobs.fetch("preflight").fetch("steps")
+validate_step = preflight_steps.find { |step| step["id"] == "validate" }
+validate_run = validate_step.fetch("run")
+contract_error("release preflight must validate publication wiring") unless validate_run.include?('node scripts/release-preflight.js --publish --tag "$TAG"')
+contract_error("release tags must target the Next repository") unless validate_run.include?('[[ "$REPOSITORY" == "Zhujingxi/feishu-cli-next" ]]')
+contract_error("release workflow must not use the upstream publication identity") if scalar_values(workflow).grep(String).any? { |value| value.include?("larksuite/cli") || value.include?("@larksuite/cli") }
+contract_error("tagging must validate publication wiring before git operations") unless File.read("scripts/tag-release.sh").include?('release-preflight.js" --publish --tag')
 jobs.each do |job_name, job|
   job.fetch("steps", []).each do |step|
     run = step["run"]
@@ -54,7 +61,7 @@ jobs.each do |job_name, job|
   end
 end
 
-expect_equal(workflow.dig("env", "RELEASE_GO_VERSION"), "1.26.8", "release Go version")
+expect_equal(workflow.dig("env", "RELEASE_GO_VERSION"), "1.26.9", "release Go version")
 
 expected_jobs = %w[preflight build-sign-notarize create-draft-release verify-macos publish-github publish-npm retry-guidance]
 expect_equal(jobs.keys.sort, expected_jobs.sort, "release jobs")

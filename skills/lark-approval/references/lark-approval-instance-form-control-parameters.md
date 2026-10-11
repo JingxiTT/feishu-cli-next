@@ -175,7 +175,7 @@ interval | float | 是 | 时长（天）。
     "id":"widget1",
     "type":"contact",
     "value": ["f8ca557e"], // string 类型的数组
-    "open_ids": ["ou_12345"] // string 类型的数组
+    "open_ids": ["ou_EXAMPLE_TOKEN"] // string 类型的数组
 }
 ```
 其中，value 包含的是用户 `user_id`；open_ids 包含的是用户 `open_id`。
@@ -202,7 +202,7 @@ interval | float | 是 | 时长（天）。
     "id": "widget1",
     "type": "document",
     "value": {
-           "token":"TLLKdcpDro9ijQxA33ycNMabcef",
+           "token":"doccn_EXAMPLE_TOKEN",
            "type":"docx",
     }
 }
@@ -458,7 +458,7 @@ message                                            | 说明                     
       "id":"widgetWorkGroupOvertimeWorkers",
       "type":"contact",
       "value": ["f8ca557e"],
-      "open_ids": ["ou_12345"]
+      "open_ids": ["ou_EXAMPLE_TOKEN"]
     },
     {
       "id": "widgetWorkGroupType",
@@ -505,7 +505,7 @@ value中包含的子控件值说明:
 
 id | 类型 | JSON示例 | 描述
 ---|---|---|---
-widgetWorkGroupOvertimeWorkers | contact | ```<br>{<br>"id":"widgetWorkGroupOvertimeWorkers",<br>"type":"contact",<br>"value": ["f8ca557e"], <br>"open_ids": ["ou_12345"]<br>}<br>``` | 加班人员列表，具体格式可参考联系人控件，如果定义中配置「允许代多人提交」则该字段必填，如果是提交人给自己提交需填写提交人的ID
+widgetWorkGroupOvertimeWorkers | contact | ```<br>{<br>"id":"widgetWorkGroupOvertimeWorkers",<br>"type":"contact",<br>"value": ["f8ca557e"], <br>"open_ids": ["ou_EXAMPLE_TOKEN"]<br>}<br>``` | 加班人员列表，具体格式可参考联系人控件，如果定义中配置「允许代多人提交」则该字段必填，如果是提交人给自己提交需填写提交人的ID
 widgetWorkGroupType | radioV2 | ```<br>{<br>"id": "widgetWorkGroupType",<br>"type": "radioV2",<br>"value": "7259635026038505475" // 对应的类型选项ID<br>}<br>``` | 加班类型，具体格式可参考单选控件，如果定义中关闭「关联加班规则」则需要填写该字段
 widgetWorkGroupTimeRangeFieldList | fieldList | ```<br>{<br>"id":"widgetWorkGroupTimeRangeFieldList",<br>"type":"fieldList",<br>"value":[<br>[<br>{<br>"id":"widgetWorkGroupStartTime",<br>"type":"date",<br>"value":"2019-10-01T08:12:01+08:00"<br>},<br>{<br>"id":"widgetWorkGroupEndTime",<br>"type":"date",<br>"value":"2019-10-01T08:12:01+08:00"<br>}<br>]<br>]<br>}<br>``` | 加班时段，具体格式可参考明细控件，如果定义中打开「允许提交多个加班时段」则可以传多个，最多支持30个，否则只会取第一个，单次加班时长不可超过两天
 widgetWorkGroupReason | textarea | ```<br>{<br>"id": "widgetWorkGroupReason",<br>"type": "textarea",<br>"value": "111"<br>}<br>``` | 加班事由，如果定义中配置了「加班事由」必填，则必须填写该字段
