@@ -456,6 +456,7 @@ jobs:
         if: ${{ steps.pr.outputs.stale != 'true' }}
         with:
           go-version-file: go.mod
+          cache: false # This runner retains Go caches locally.
 
       - name: Verify semantic facts artifact metadata
         id: artifact

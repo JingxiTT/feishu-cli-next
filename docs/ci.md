@@ -9,7 +9,8 @@ the existing checks, permissions, offline isolation and evidence artifacts.
 The runner supplies Git, GCC, Make, Python 3.12 in the Actions tool cache, Node,
 Ruby, `bc`, the GitHub CLI and Docker. Workflow setup actions continue to select
 their declared Go/Node/Python versions. Go build/module and Actions tool caches
-persist on the runner. Temporary job data belongs under `RUNNER_TEMP`, which
+persist on the runner. `setup-go` disables the redundant Actions cache transfer;
+the local Go caches remain active. Temporary job data belongs under `RUNNER_TEMP`, which
 the Actions runner cleans between jobs. Do not put tokens or machine addresses
 in this public repository.
 

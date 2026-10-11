@@ -65,6 +65,14 @@ class OfflineWorkflowTests(unittest.TestCase):
         self.assertNotIn('runner.', job_env)
         self.assertIn("NEXT_BINARY: feishu-cli-next", job_env)
 
+    def test_local_go_caches_do_not_round_trip_through_actions_cache(self):
+        for path in (ROOT / '.github/workflows').glob('*.yml'):
+            if path.name == 'release.yml':
+                continue
+            for step in re.split(r'\n\s+- uses:', path.read_text())[1:]:
+                if step.lstrip().startswith('actions/setup-go@'):
+                    self.assertIn('cache: false', step, str(path))
+
     def test_capability_guard_executes_actual_helper_as_required_stage(self):
         stage = self.workflow.split('      - name: Compare configured-brand capability registrations\n', 1)[1].split('      - name:', 1)[0]
         self.assertIn('id: capabilities', stage)
