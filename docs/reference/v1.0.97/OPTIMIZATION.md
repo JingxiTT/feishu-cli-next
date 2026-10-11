@@ -98,8 +98,12 @@ Raw [JSON before](../../../evaluation/evidence/upstream-v1.0.97-optimization/con
 [JSON after](../../../evaluation/evidence/upstream-v1.0.97-optimization/content-after.txt),
 [concise before](../../../evaluation/evidence/upstream-v1.0.97-optimization/concise-synced-benchmark.txt)
 and [concise after](../../../evaluation/evidence/upstream-v1.0.97-optimization/concise-candidate-benchmark.txt)
-retain every sample. Reproduce with `go test ./shortcuts/im -run '^$' -bench
-'Benchmark(ValidateMessageContentJSON|OutputMessagesConcise)' -benchmem -count=5`.
+retain every sample. Reproduce with:
+
+```sh
+go test ./shortcuts/im -run '^$' \
+  -bench 'Benchmark(ValidateMessageContentJSON|OutputMessagesConcise)' -benchmem -count=5
+```
 
 ## Verification and limits
 
