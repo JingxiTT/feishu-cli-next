@@ -46,8 +46,7 @@ func TestBaseURLResolveWikiDryRun(t *testing.T) {
 			"--url", "https://example.larkoffice.com/wiki/wik_x",
 			"--dry-run",
 		},
-		BinaryPath: "../../../lark-cli",
-		DefaultAs:  "bot",
+		DefaultAs: "bot",
 	})
 	require.NoError(t, err)
 	result.AssertExitCode(t, 0)
