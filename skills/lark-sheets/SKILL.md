@@ -59,7 +59,6 @@ metadata:
 | 有序跨类型写链/批量清除 | `+batch-update` / `+cells-batch-clear` | [`batch update`](references/lark-sheets-batch-update.md)；高风险门禁；失败按参考处置 |
 | 历史/异步回滚 | `+history-list/revert/revert-status` | [`history`](references/lark-sheets-history.md)；查询状态，不重放不明回滚 |
 | 复核编辑 changeset | `+changeset-get` | [`changeset`](references/lark-sheets-changeset.md)；版本差最多 20 |
-| 旧命令 unknown subcommand | 查替代及协议差异 | [`legacy migration`](references/lark-sheets-legacy-command-migration.md)；旧 42 命令已删除，不凭名称迁移 payload |
 
 ## 公共 flag 速查
 
