@@ -17,23 +17,35 @@ import (
 // Load, validation, dependent credential changes, and SaveMultiAppConfig must all
 // happen inside fn. It is not reentrant; never hold it across interactive input.
 func WithConfigLock(fn func() error) (err error) {
+	release, err := LockConfig()
+	if err != nil {
+		return err
+	}
+	defer release(&err)
+	return fn()
+}
+
+// LockConfig is WithConfigLock for a function that takes the lock partway
+// through its own body: acquire here, then `defer release(&err)` on the named
+// result. release reports a failed unlock only when the caller's own result was
+// nil, so the guarded function's error always wins.
+func LockConfig() (release func(*error), err error) {
 	if err := vfs.MkdirAll(GetConfigDir(), 0700); err != nil {
-		return errs.NewInternalError(errs.SubtypeStorage, "prepare config lock").WithCause(err)
+		return nil, errs.NewInternalError(errs.SubtypeStorage, "prepare config lock").WithCause(err)
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 	lock := flock.New(filepath.Join(GetConfigDir(), "config.lock"))
 	locked, err := lock.TryLockContext(ctx, 25*time.Millisecond)
 	if err != nil {
-		return errs.NewInternalError(errs.SubtypeStorage, "acquire config lock").WithCause(err)
+		return nil, errs.NewInternalError(errs.SubtypeStorage, "acquire config lock").WithCause(err)
 	}
 	if !locked {
-		return errs.NewInternalError(errs.SubtypeStorage, "timed out waiting for config lock").WithCause(context.DeadlineExceeded).WithRetryable()
+		return nil, errs.NewInternalError(errs.SubtypeStorage, "timed out waiting for config lock").WithCause(context.DeadlineExceeded).WithRetryable()
 	}
-	defer func() {
-		if unlockErr := lock.Unlock(); err == nil && unlockErr != nil {
-			err = errs.NewInternalError(errs.SubtypeStorage, "release config lock").WithCause(unlockErr)
+	return func(result *error) {
+		if unlockErr := lock.Unlock(); *result == nil && unlockErr != nil {
+			*result = errs.NewInternalError(errs.SubtypeStorage, "release config lock").WithCause(unlockErr)
 		}
-	}()
-	return fn()
+	}, nil
 }

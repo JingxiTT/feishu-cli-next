@@ -36,8 +36,41 @@ explicit user confirmation — never run on your own initiative.`,
   lark-cli config strict-mode bot --global  # set globally
   lark-cli config strict-mode --reset       # clear profile override`,
 		Args: cobra.MaximumNArgs(1),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			return configStrictModeRun(cmd.Context(), f, args, reset, global)
+		RunE: func(cmd *cobra.Command, args []string) (err error) {
+			// Reads take no lock; a mutation holds it from load through save.
+			if len(args) != 0 || reset {
+				release, lockErr := core.LockConfig()
+				if lockErr != nil {
+					return lockErr
+				}
+				defer release(&err)
+			}
+			multi, err := core.LoadOrNotConfigured()
+			if err != nil {
+				return err
+			}
+
+			if reset {
+				app, err := multi.RequireAppConfig(f.Invocation.Profile, f.Invocation.ProfileSource)
+				if err != nil {
+					return err
+				}
+				return resetStrictMode(f, multi, app, global, args)
+			}
+			if len(args) == 0 {
+				app, err := multi.RequireAppConfig(f.Invocation.Profile, f.Invocation.ProfileSource)
+				if err != nil {
+					return err
+				}
+				return showStrictMode(cmd.Context(), f, multi, app)
+			}
+			// --global tolerates a missing profile: the mutation targets the
+			// shared scope, so only the profile-scoped path requires one.
+			app := multi.CurrentAppConfig(f.Invocation.Profile)
+			if !global && app == nil {
+				return multi.ProfileNotFoundError(f.Invocation.Profile, f.Invocation.ProfileSource)
+			}
+			return setStrictMode(f, multi, app, args[0], global)
 		},
 	}
 
@@ -46,41 +79,6 @@ explicit user confirmation — never run on your own initiative.`,
 	cmdutil.SetRisk(cmd, "write")
 
 	return cmd
-}
-
-func configStrictModeRun(ctx context.Context, f *cmdutil.Factory, args []string, reset, global bool) error {
-	run := func() error {
-		multi, err := core.LoadOrNotConfigured()
-		if err != nil {
-			return err
-		}
-
-		if reset {
-			app, err := multi.RequireAppConfig(f.Invocation.Profile, f.Invocation.ProfileSource)
-			if err != nil {
-				return err
-			}
-			return resetStrictMode(f, multi, app, global, args)
-		}
-		if len(args) == 0 {
-			app, err := multi.RequireAppConfig(f.Invocation.Profile, f.Invocation.ProfileSource)
-			if err != nil {
-				return err
-			}
-			return showStrictMode(ctx, f, multi, app)
-		}
-		// --global tolerates a missing profile: the mutation targets the
-		// shared scope, so only the profile-scoped path requires one.
-		app := multi.CurrentAppConfig(f.Invocation.Profile)
-		if !global && app == nil {
-			return multi.ProfileNotFoundError(f.Invocation.Profile, f.Invocation.ProfileSource)
-		}
-		return setStrictMode(f, multi, app, args[0], global)
-	}
-	if len(args) == 0 && !reset {
-		return run()
-	}
-	return core.WithConfigLock(run)
 }
 
 func resetStrictMode(f *cmdutil.Factory, multi *core.MultiAppConfig, app *core.AppConfig, global bool, args []string) error {

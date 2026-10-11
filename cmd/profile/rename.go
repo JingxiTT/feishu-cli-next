@@ -29,50 +29,53 @@ func NewCmdProfileRename(f *cmdutil.Factory) *cobra.Command {
 	return cmd
 }
 
-func profileRenameRun(f *cmdutil.Factory, oldName, newName string) error {
+func profileRenameRun(f *cmdutil.Factory, oldName, newName string) (err error) {
 	if err := core.ValidateProfileName(newName); err != nil {
 		return errs.NewValidationError(errs.SubtypeInvalidArgument, "%v", err).WithCause(err)
 	}
 
-	return core.WithConfigLock(func() error {
-		multi, err := core.LoadOrNotConfigured()
-		if err != nil {
-			return err
-		}
+	release, err := core.LockConfig()
+	if err != nil {
+		return err
+	}
+	defer release(&err)
+	multi, err := core.LoadOrNotConfigured()
+	if err != nil {
+		return err
+	}
 
-		idx := multi.FindAppIndex(oldName)
-		if idx < 0 {
-			return errs.NewValidationError(errs.SubtypeInvalidArgument, "profile %q not found, available profiles: %s", oldName, strings.Join(multi.ProfileNames(), ", "))
-		}
+	idx := multi.FindAppIndex(oldName)
+	if idx < 0 {
+		return errs.NewValidationError(errs.SubtypeInvalidArgument, "profile %q not found, available profiles: %s", oldName, strings.Join(multi.ProfileNames(), ", "))
+	}
 
-		// Check new name uniqueness across other profiles, allowing renames to this
-		// profile's own appId or current name.
-		for i := range multi.Apps {
-			if i == idx {
-				continue
-			}
-			if multi.Apps[i].Name == newName || multi.Apps[i].AppId == newName {
-				return errs.NewValidationError(errs.SubtypeFailedPrecondition, "profile %q already exists", newName).
-					WithHint("choose a different name")
-			}
+	// Check new name uniqueness across other profiles, allowing renames to this
+	// profile's own appId or current name.
+	for i := range multi.Apps {
+		if i == idx {
+			continue
 		}
-
-		oldProfileName := multi.Apps[idx].ProfileName()
-		multi.Apps[idx].Name = newName
-
-		// Update currentApp / previousApp references
-		if multi.CurrentApp == oldProfileName {
-			multi.CurrentApp = newName
+		if multi.Apps[i].Name == newName || multi.Apps[i].AppId == newName {
+			return errs.NewValidationError(errs.SubtypeFailedPrecondition, "profile %q already exists", newName).
+				WithHint("choose a different name")
 		}
-		if multi.PreviousApp == oldProfileName {
-			multi.PreviousApp = newName
-		}
+	}
 
-		if err := core.SaveMultiAppConfig(multi); err != nil {
-			return errs.NewInternalError(errs.SubtypeStorage, "failed to save config: %v", err).WithCause(err)
-		}
+	oldProfileName := multi.Apps[idx].ProfileName()
+	multi.Apps[idx].Name = newName
 
-		output.PrintSuccess(f.IOStreams.ErrOut, fmt.Sprintf("Profile renamed: %q -> %q", oldProfileName, newName))
-		return nil
-	})
+	// Update currentApp / previousApp references
+	if multi.CurrentApp == oldProfileName {
+		multi.CurrentApp = newName
+	}
+	if multi.PreviousApp == oldProfileName {
+		multi.PreviousApp = newName
+	}
+
+	if err := core.SaveMultiAppConfig(multi); err != nil {
+		return errs.NewInternalError(errs.SubtypeStorage, "failed to save config: %v", err).WithCause(err)
+	}
+
+	output.PrintSuccess(f.IOStreams.ErrOut, fmt.Sprintf("Profile renamed: %q -> %q", oldProfileName, newName))
+	return nil
 }

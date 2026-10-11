@@ -197,28 +197,6 @@ func (p *CredentialProvider) ResolveAccount(ctx context.Context) (*Account, erro
 	return p.account, p.accountErr
 }
 
-// ResolveSupportedIdentities reads provider account metadata without resolving
-// tokens or calling user_info. Command-tree construction and local discovery can
-// apply strict mode without authenticating a user. Account selection is shared
-// with ResolveAccount so later platform requests keep the same provider.
-func (p *CredentialProvider) ResolveSupportedIdentities(ctx context.Context) (uint8, error) {
-	account, _, err := p.resolveAccountMetadata(ctx)
-	if err != nil {
-		return 0, err
-	}
-	if account == nil {
-		return 0, nil
-	}
-	return account.SupportedIdentities, nil
-}
-
-func (p *CredentialProvider) resolveAccountMetadata(ctx context.Context) (*Account, credentialSource, error) {
-	p.metadataOnce.Do(func() {
-		p.metadataAccount, p.metadataSource, p.metadataErr = p.selectAccount(ctx)
-	})
-	return p.metadataAccount, p.metadataSource, p.metadataErr
-}
-
 func (p *CredentialProvider) selectAccount(ctx context.Context) (*Account, credentialSource, error) {
 	for _, prov := range p.providers {
 		account, err := prov.ResolveAccount(ctx)
