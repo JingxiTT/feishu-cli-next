@@ -203,6 +203,9 @@ func projectValue(raw json.RawMessage, fields fieldSelection) (json.RawMessage, 
 	for key, value := range object {
 		selected, exists := fields[key]
 		switch {
+		case key == "current_node_info":
+			// Release approval state and recovery context must remain together, even with dotted selection.
+			projected[key] = value
 		case exists && selected == nil:
 			projected[key] = value
 		case exists:
@@ -237,7 +240,7 @@ func protectedField(key string) bool {
 		return true
 	}
 	switch key {
-	case "id", "guid", "token", "url", "identity", "resource", "binding", "ok", "status", "state", "outcome", "unchanged", "no_op", "noop", "confirmed", "updated_fields", "updated_event", "failed_tasks", "tasklist_guid", "type", "unsupported", "unsupported_types", "error", "errors", "warning", "warnings", "missing_scopes", "summary", "meta", "pagination", "has_more", "complete", "completeness", "partial", "truncated", "unknown", "count", "total", "receipt", "recovery", "artifact", "notice", "_notice", "_content_safety_alert":
+	case "id", "guid", "token", "url", "identity", "resource", "binding", "ok", "status", "state", "outcome", "unchanged", "no_op", "noop", "confirmed", "updated_fields", "updated_event", "current_node_info", "failed_tasks", "tasklist_guid", "type", "unsupported", "unsupported_types", "error", "errors", "warning", "warnings", "missing_scopes", "summary", "meta", "pagination", "has_more", "complete", "completeness", "partial", "truncated", "unknown", "count", "total", "receipt", "recovery", "artifact", "notice", "_notice", "_content_safety_alert":
 		return true
 	}
 	return false
@@ -306,6 +309,13 @@ func (w *agentWriter) Write(p []byte) (int, error) {
 		return 0, err
 	}
 	return w.Writer.Write(p)
+}
+
+func (w *agentWriter) WriteString(s string) (int, error) {
+	if w.options.Fields != "" || w.options.SaveResult != "" {
+		return w.Write(nil) // Keep the same rejection without copying the payload.
+	}
+	return io.WriteString(w.Writer, s)
 }
 
 func (o *AgentOptions) recordError(err error) {

@@ -14,7 +14,10 @@ import (
 	"github.com/larksuite/cli/errs"
 	"github.com/larksuite/cli/internal/cmdmeta"
 	"github.com/larksuite/cli/internal/cmdutil"
+	"github.com/larksuite/cli/internal/core"
 	"github.com/larksuite/cli/internal/output"
+	"github.com/larksuite/cli/shortcuts/common"
+	"github.com/larksuite/cli/shortcuts/im"
 	"github.com/spf13/cobra"
 )
 
@@ -104,6 +107,92 @@ func TestAgentRejectsUnsupportedResultModesBeforeExecution(t *testing.T) {
 			}
 			if err := validateAgentOutput(f, c, &test.opts); err == nil {
 				t.Fatal("invalid result mode accepted")
+			}
+		})
+	}
+}
+
+func TestAgentOutputModesStopBeforeCommandExecution(t *testing.T) {
+	for _, test := range []struct {
+		name   string
+		mode   string
+		value  string
+		opts   output.AgentOptions
+		reject bool
+	}{
+		{"concise projection", "concise", "true", output.AgentOptions{Fields: "id"}, true},
+		{"concise artifact", "concise", "true", output.AgentOptions{SaveResult: "result.json"}, true},
+		{"concise disabled", "concise", "false", output.AgentOptions{Fields: "id"}, false},
+		{"concise alone", "concise", "true", output.AgentOptions{}, false},
+		{"raw projection", "raw", "true", output.AgentOptions{Fields: "id"}, true},
+		{"raw disabled", "raw", "false", output.AgentOptions{Fields: "id"}, false},
+		{"jq projection", "jq", ".data", output.AgentOptions{Fields: "id"}, true},
+		{"stream projection", "stream", "true", output.AgentOptions{Fields: "id"}, true},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			t.Setenv("LARKSUITE_CLI_CONFIG_DIR", t.TempDir())
+			f, _, _, _ := cmdutil.TestFactory(t, nil)
+			f.IOStreams.Out = output.WithAgentOptions(f.IOStreams.Out, &test.opts)
+			executions := 0
+			c := &cobra.Command{Use: "operation", RunE: func(c *cobra.Command, args []string) error {
+				executions++
+				return output.WriteJSON(f.IOStreams.Out, map[string]any{"id": "fixture"})
+			}}
+			cmdmeta.SetSource(c, cmdmeta.SourceShortcut, false)
+			cmdutil.SetRisk(c, "read")
+			if test.mode == "jq" {
+				c.Flags().String(test.mode, "", "")
+			} else {
+				c.Flags().Bool(test.mode, false, "")
+			}
+			root := &cobra.Command{Use: "next", SilenceErrors: true, SilenceUsage: true}
+			root.AddCommand(c)
+			finalizeAgentFoundation(f, root, &test.opts)
+			root.SetArgs([]string{"operation", "--" + test.mode + "=" + test.value})
+			err := root.Execute()
+			if !test.reject {
+				if err != nil || executions != 1 {
+					t.Fatalf("valid mode did not execute: executions=%d, err=%v", executions, err)
+				}
+				return
+			}
+			var validation *errs.ValidationError
+			if !errors.As(err, &validation) || validation.Subtype != errs.SubtypeInvalidArgument || validation.Param != "--"+test.mode {
+				t.Fatalf("expected typed mode conflict, got %#v", err)
+			}
+			if executions != 0 {
+				t.Fatalf("invalid output mode executed command %d times", executions)
+			}
+		})
+	}
+}
+
+func TestAgentConciseDryRunKeepsStructuredProjection(t *testing.T) {
+	t.Setenv("LARKSUITE_CLI_CONFIG_DIR", t.TempDir())
+	for _, test := range []struct {
+		shortcut common.Shortcut
+		args     []string
+	}{
+		{im.ImChatMessageList, []string{"--chat-id", "oc_fixture"}},
+		{im.ImThreadsMessagesList, []string{"--thread", "omt_fixture"}},
+	} {
+		t.Run(test.shortcut.Command, func(t *testing.T) {
+			f, stdout, _, _ := cmdutil.TestFactory(t, &core.CliConfig{})
+			root := &cobra.Command{Use: "next", SilenceErrors: true, SilenceUsage: true}
+			opts := configureAgentFoundation(f, root)
+			test.shortcut.Mount(root, f)
+			finalizeAgentFoundation(f, root, opts)
+			args := append([]string{test.shortcut.Command}, test.args...)
+			root.SetArgs(append(args, "--dry-run", "--concise", "--no-reactions", "--result-fields", "method,url"))
+			if err := root.Execute(); err != nil {
+				t.Fatal(err)
+			}
+			var result map[string]any
+			if err := json.Unmarshal(stdout.Bytes(), &result); err != nil {
+				t.Fatalf("dry-run did not emit JSON: %v: %s", err, stdout)
+			}
+			if result["ok"] != true || result["dry_run"] != true {
+				t.Fatalf("dry-run envelope lost metadata: %s", stdout)
 			}
 		})
 	}

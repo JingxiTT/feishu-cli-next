@@ -4,7 +4,6 @@
 package im
 
 import (
-	"bytes"
 	"fmt"
 	"io"
 	"strings"
@@ -105,11 +104,7 @@ func outputMessagesConcise(runtime *common.RuntimeContext, view conciseMessageVi
 		}
 	}
 
-	var rendered bytes.Buffer
-	if err := renderMessagesConcise(&rendered, view); err != nil {
-		return errs.NewInternalError(errs.SubtypeUnknown, "failed to render concise output").WithCause(err)
-	}
-	if _, err := io.Copy(streams.Out, &rendered); err != nil {
+	if err := renderMessagesConcise(streams.Out, view); err != nil {
 		return errs.NewInternalError(errs.SubtypeUnknown, "failed to write concise output").WithCause(err)
 	}
 	return nil
@@ -186,7 +181,10 @@ func renderMessagesConcise(w io.Writer, view conciseMessageView) error {
 		fmt.Fprintf(&b, "- next_token: %s\n", conciseCode(view.NextToken))
 	}
 
-	_, err := io.WriteString(w, b.String())
+	n, err := io.WriteString(w, b.String())
+	if err == nil && n != b.Len() {
+		return io.ErrShortWrite
+	}
 	return err
 }
 

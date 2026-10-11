@@ -1,0 +1,65 @@
+{
+  "date": "2026-10-11",
+  "base": "e79ea062",
+  "checks": {
+    "focused_cmd_im": "pass",
+    "focused_output": "pass",
+    "focused_nextattempt_cmdutil": "pass",
+    "focused_docs_race": "pass",
+    "make_test": "pass: vet, fmt-check, script tests, race-enabled unit tests, example builds, all offline E2E and evaluation harness tests",
+    "capability_gate_v1_0_97": "pass",
+    "go_mod_tidy_unchanged": "pass",
+    "go_licenses": "pass",
+    "lint_module_tests": "pass",
+    "final_go_checks": "pass: TMPDIR=/tmp make unit-test vet fmt-check after final string-writer change (race enabled)",
+    "post_commit_quality_gate": "pass at 267cba2d against e79ea062",
+    "golangci_lint": "pass: 0 issues at 267cba2d against e79ea062",
+    "source_lint": "pass at 267cba2d against e79ea062",
+    "root_errs_events_unit": "pass",
+    "changed_im_apps_mail_dryrun": "pass",
+    "string_writer_regression": "failed with pre-forwarding overlay, passed with forwarding implementation",
+    "independent_review": "passed, including duplicate async-task and string-writer follow-ups",
+    "canonical_build": "pass: make build through post-commit quality gate"
+  },
+  "not_run": [
+    "live Feishu tenant workflows",
+    "provider-token task trials",
+    "live skills sync",
+    "native Linux/Windows execution"
+  ],
+  "measurement_limits": "Local introspection/output context and synthetic microbenchmarks; no end-to-end task savings or universal performance claim. Startup gains primarily originate in the upstream sync. Concise timings with the actual agent writer are not compared because host load changed; reported allocation counts use that writer. Process probes preceded final duplicate-task and string-writer refinements.",
+  "initial_setup_failures": [
+    "Capability gate ignores untracked files; staged new implementation files before successful rerun.",
+    "Flag-owner source guard scanned temporary archived baseline sources; moved them outside repository before successful rerun."
+  ],
+  "implementation_revisions": [
+    "65cdc410",
+    "267cba2d"
+  ],
+  "nonblocking_gate_warnings": [
+    "existing im +feed-shortcut-list default-limit warning",
+    "existing shortcuts/im/helpers.go bare helper error warning outside changed helper"
+  ],
+  "offline_harness_summaries": {
+    "scripts": {
+      "status": "pass",
+      "evidence": "offline",
+      "command_count": 1
+    },
+    "cross-domain": {
+      "status": "pass",
+      "evidence": "offline",
+      "command_count": 1
+    },
+    "integration": {
+      "status": "pass",
+      "evidence": "offline",
+      "command_count": 5
+    },
+    "evaluation": {
+      "status": "pass",
+      "evidence": "offline",
+      "command_count": 1
+    }
+  }
+}

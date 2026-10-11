@@ -4,7 +4,7 @@ A Feishu/Lark CLI for AI agents that work through a shell and files. It builds o
 
 The goal is to reduce the tokens needed to complete a task while preserving every original command and workflow, data fidelity, and successful outcomes. Results remain task-dependent. The current evaluation targets **more than 50% fewer tokens for Docs read/edit and at least 30% fewer for each other evaluated function versus the original CLI**, with failed-attempt costs included and no observed success regression.
 
-Synced with [official Lark CLI v1.0.97](https://github.com/larksuite/cli/releases/tag/v1.0.97). The original frozen reference remains available for historical comparisons.
+Synced with [official Lark CLI v1.0.97](https://github.com/larksuite/cli/releases/tag/v1.0.97). See the [upgrade comparison and optimization measurements](docs/reference/v1.0.97/OPTIMIZATION.md). The original frozen reference remains available for historical comparisons.
 
 [Quick start](#quick-start) · [Usage](#usage) · [Full evaluation matrix](evaluation/evidence/full-matrix-20260911/REPORT.md) · [Implementation status](docs/IMPLEMENTATION.md)
 

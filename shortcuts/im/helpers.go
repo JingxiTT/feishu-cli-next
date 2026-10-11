@@ -53,6 +53,10 @@ func normalizeAtMentions(content string) string {
 }
 
 func validateMessageContentJSON(content string) error {
+	// File/stdin content needs validation, not a second copy of the payload.
+	if json.Valid([]byte(content)) {
+		return nil
+	}
 	var value json.RawMessage
 	if err := json.Unmarshal([]byte(content), &value); err != nil {
 		message := "--content is not valid JSON"

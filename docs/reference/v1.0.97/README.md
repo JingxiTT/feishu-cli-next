@@ -5,6 +5,9 @@ The fork integrated official release `v1.0.97`, commit
 upstream commits after the original `7fd6ef3` reference. The historical parent
 reference directory and its evaluation evidence remain unchanged.
 
+The [optimization comparison](OPTIMIZATION.md) records changed capabilities,
+shared-core fixes, local timing/context measurements and verification limits.
+
 The official snapshot contains 941 command nodes, 538 shortcuts, 251 generated
 methods, and 25 event keys. The fork contains 956 nodes and 543 shortcuts and
 retains every official node, shortcut, event, and existing command flag contract
