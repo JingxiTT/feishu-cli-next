@@ -183,6 +183,15 @@ end
 end
 Dir.glob(".github/workflows/*.{yml,yaml}").each do |file|
   config = YAML.load_file(file)
+  # The paused release pipeline retains native macOS signing/verification.
+  # Every other checked-in workflow belongs to the repository-scoped runner.
+  unless File.basename(file) == "release.yml"
+    config.fetch("jobs").each do |name, job|
+      unless job["runs-on"] == ["self-hosted", "linux", "x64", "feishu-ci"]
+        abort("#{file}: #{name} must use the repository-scoped Linux CI runner")
+      end
+    end
+  end
   abort("#{file}: CI must not contain a live Feishu E2E job") if config.fetch("jobs").key?("e2e-live")
   begin
     check_offline_feishu_workflow(config, file)

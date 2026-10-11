@@ -9,7 +9,7 @@ permissions:
 jobs:
   publish:
     if: ${{ false }} # Next preview packages are local until P4 channel acceptance.
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux, x64, feishu-ci]
 
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
