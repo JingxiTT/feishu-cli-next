@@ -102,7 +102,7 @@ def runtime_sources(root):
         elif rel.parts[0] in ('runtime', 'contracts'):
             values[str(rel)] = sha(p)
     values['harness_trial_contract'] = trial_contract(root / 'evaluation/harness.py')
-    for name in ('docs/reference/registrations.json.gz', 'scripts/next_test.py'):
+    for name in ('baseline/registrations.json.gz', 'scripts/next_test.py'):
         values[name] = sha(root / name)
     return values
 

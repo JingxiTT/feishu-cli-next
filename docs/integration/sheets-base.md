@@ -122,7 +122,7 @@ The historical binding follow-up suite passed all 17 test/subtest events, with n
 or skips, in `.tmp/sheets-base/binding-followup.json`. This initial run used the
 shared working tree and is not an immutable release-candidate result. After
 adding the unchanged-binding control, a detached clone at `1f1ce4e` passed all
-18 events with zero failures or skips. The [binding evidence](sheets-base-binding-evidence.json)
+18 events with zero failures or skips. The [binding evidence](../../evidence/integration/sheets-base-binding-evidence.json)
 records exact source/binary hashes and independently recounted test outcomes.
 An initial missing-binary setup rejection is retained separately.
 

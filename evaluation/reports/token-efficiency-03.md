@@ -1,7 +1,7 @@
 # Second token-efficiency pass
 
 This is a new balanced condition after the immutable
-[first improvement results](evidence/token-efficiency-02/REPORT.md): four of
+[first improvement results](../../evidence/evaluation/token-efficiency-02/REPORT.md): four of
 eight functions met the combined gate, and one candidate document edit failed.
 The second pass improves existing command guidance for precise document edits,
 single known Base records, validated Sheets exports, and Drive transfers.

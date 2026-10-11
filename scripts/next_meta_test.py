@@ -18,7 +18,7 @@ class MetadataTest(unittest.TestCase):
     def test_hash_verification_and_exact_restoration(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
-            reference = root / 'docs/reference'
+            reference = root / 'baseline'
             reference.mkdir(parents=True)
             target = root / 'internal/registry/meta_data.json'
             target.parent.mkdir(parents=True)

@@ -249,7 +249,7 @@ func TestBusinessValidationAndDryRunNeverDispatch(t *testing.T) {
 }
 
 func TestFrozenBusinessSchemaAndRouting(t *testing.T) {
-	file, err := os.Open("../../../docs/reference/v1.0.97/meta_data.json.gz")
+	file, err := os.Open("../../../baseline/v1.0.97/meta_data.json.gz")
 	require.NoError(t, err)
 	defer file.Close()
 	zipped, err := gzip.NewReader(file)

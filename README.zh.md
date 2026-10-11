@@ -70,6 +70,6 @@ make install PREFIX="$HOME/.local"
 
 ## 验证状态与贡献
 
-[实现状态](docs/IMPLEMENTATION.md)记录离线测试、限定范围的线上验证及尚未完成的验收项。[评估报告](evaluation/evidence/full-matrix-20260911/REPORT.md)保留失败尝试、缺失用量及各项限制；有限样本不能证明所有任务的可靠性或统一 token 节省。
+[实现状态](docs/IMPLEMENTATION.md)记录离线测试、限定范围的线上验证及尚未完成的验收项。[评估报告](evidence/evaluation/full-matrix-20260911/REPORT.md)保留失败尝试、缺失用量及各项限制；有限样本不能证明所有任务的可靠性或统一 token 节省。
 
 代码沿用 [MIT 许可证](LICENSE)和原有版权声明，Go 模块路径保留为 `github.com/larksuite/cli` 以兼容源码及扩展。开发规则见 [AGENTS.md](AGENTS.md)，输出契约见[输出说明](docs/contracts/output.md)，漏洞报告方式见 [SECURITY.md](SECURITY.md)。

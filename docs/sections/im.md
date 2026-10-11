@@ -16,8 +16,8 @@ forwarding substitute or product recipient restriction was introduced.
 
 The frozen inventory contains 84 IM tree entries: 24 shortcuts, 45 generated
 API methods and 15 domain/resource nodes. API contracts come from
-`docs/reference/meta_data.json.gz`, registrations from
-`docs/reference/registrations.json.gz`; all flag, identity, risk and schema
+`baseline/meta_data.json.gz`, registrations from
+`baseline/registrations.json.gz`; all flag, identity, risk and schema
 metadata is retained except the intentional additive changes below.
 
 ## Intentional changes
@@ -168,7 +168,7 @@ gates remain coordinator-owned. Live and comparative work above remain open.
 
 The combined `052357e` E2E run exposed six generated mutation stubs whose generic
 `items:[]` data did not satisfy the stricter shared receipt classifier introduced
-by `1bcdb68`. The frozen `docs/reference/meta_data.json.gz` response definitions
+by `1bcdb68`. The frozen `baseline/meta_data.json.gz` response definitions
 now supply the fixture shapes: membership creation has explicit empty
 `invalid_id_list`, `not_existed_id_list`, and `pending_approval_id_list` arrays;
 membership deletion has `invalid_id_list:[]`; all three urgency methods have

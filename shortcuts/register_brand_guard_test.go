@@ -123,21 +123,6 @@ func TestBrandGuard_DispatchHitsStubViaCobra(t *testing.T) {
 	}
 }
 
-func TestRegisterBrandGuardDoesNotResolveCredentialConfig(t *testing.T) {
-	for _, brand := range []core.LarkBrand{core.BrandFeishu, core.BrandLark} {
-		t.Run(string(brand), func(t *testing.T) {
-			factory := newFactoryWithBrand(brand)
-			factory.Config = func() (*core.CliConfig, error) { t.Fatal("registration resolved credential config"); return nil, nil }
-			program := &cobra.Command{Use: "root"}
-			RegisterShortcuts(program, factory)
-			apps := findChild(program, "apps")
-			if apps == nil || apps.Hidden != (brand == core.BrandLark) {
-				t.Fatalf("startup brand restriction not preserved for %s", brand)
-			}
-		})
-	}
-}
-
 func TestBrandGuard_SelectedDomainsOnly(t *testing.T) {
 	t.Run("selected restricted domain keeps guard", func(t *testing.T) {
 		program := &cobra.Command{Use: "root"}

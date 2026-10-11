@@ -146,7 +146,7 @@ skips. The final targeted process run includes the escaped-ID receipt regression
 `go vet ./cmd/event/... ./events/... ./shortcuts/event/...
 ./tests/next_sections/events/...` passed, owned Go files are gofmt-clean, and
 `git diff --check` passed. Machine-readable counts and commands are in
-[events-evidence.json](events-evidence.json); raw isolated logs are retained in
+[events-evidence.json](../../evidence/sections/events-evidence.json); raw isolated logs are retained in
 `.tmp/p2-events-*.json`.
 
 The command/internal event packages were additionally run with

@@ -30,5 +30,5 @@ options, assertions and limitations in `docs/sections/contact.md`.
 `TestContactNextLiveCurrentAccountReads` is a separately selectable account/tenant
 bound read-only live workflow. Its authorized attempt failed at the final
 bot-search read after preceding self/account/profile assertions completed; see
-`docs/sections/contact-live-evidence.json`. It does not establish full live
+`evidence/sections/contact-live-evidence.json`. It does not establish full live
 coverage. No offline or skipped result should be counted as live verification.

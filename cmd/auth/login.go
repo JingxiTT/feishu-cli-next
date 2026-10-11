@@ -539,31 +539,34 @@ func authLoginPollDeviceCode(opts *LoginOptions, config *core.CliConfig, msg *lo
 }
 
 // syncLoginUserToProfile persists the logged-in user info into the named profile.
-func syncLoginUserToProfile(profileName, appID, openID, userName string) error {
-	return core.WithConfigLock(func() error {
-		multi, err := core.LoadMultiAppConfig()
-		if err != nil {
-			return errs.NewInternalError(errs.SubtypeStorage, "load config: %v", err).WithCause(err)
-		}
+func syncLoginUserToProfile(profileName, appID, openID, userName string) (err error) {
+	release, err := core.LockConfig()
+	if err != nil {
+		return err
+	}
+	defer release(&err)
+	multi, err := core.LoadMultiAppConfig()
+	if err != nil {
+		return errs.NewInternalError(errs.SubtypeStorage, "load config: %v", err).WithCause(err)
+	}
 
-		app := findProfileByName(multi, profileName)
-		if app == nil {
-			return errs.NewConfigError(errs.SubtypeNotConfigured, "profile %q not found in config", profileName)
-		}
+	app := findProfileByName(multi, profileName)
+	if app == nil {
+		return errs.NewConfigError(errs.SubtypeNotConfigured, "profile %q not found in config", profileName)
+	}
 
-		oldUsers := append([]core.AppUser(nil), app.Users...)
-		app.Users = []core.AppUser{{UserOpenId: openID, UserName: userName}}
-		if err := core.SaveMultiAppConfig(multi); err != nil {
-			return errs.NewInternalError(errs.SubtypeStorage, "save config: %v", err).WithCause(err)
-		}
+	oldUsers := append([]core.AppUser(nil), app.Users...)
+	app.Users = []core.AppUser{{UserOpenId: openID, UserName: userName}}
+	if err := core.SaveMultiAppConfig(multi); err != nil {
+		return errs.NewInternalError(errs.SubtypeStorage, "save config: %v", err).WithCause(err)
+	}
 
-		for _, oldUser := range oldUsers {
-			if oldUser.UserOpenId != openID {
-				_ = larkauth.RemoveStoredToken(appID, oldUser.UserOpenId)
-			}
+	for _, oldUser := range oldUsers {
+		if oldUser.UserOpenId != openID {
+			_ = larkauth.RemoveStoredToken(appID, oldUser.UserOpenId)
 		}
-		return nil
-	})
+	}
+	return nil
 }
 
 // findProfileByName returns the AppConfig matching profileName, or nil.

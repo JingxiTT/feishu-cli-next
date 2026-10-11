@@ -98,3 +98,31 @@ func TestConfigLockPreservesCallbackErrorAndReleases(t *testing.T) {
 		t.Fatalf("lock not released: %v", err)
 	}
 }
+
+func TestLockConfigHoldsUntilReleaseAndKeepsCallerError(t *testing.T) {
+	t.Setenv("LARKSUITE_CLI_CONFIG_DIR", t.TempDir())
+	cause := errs.NewValidationError(errs.SubtypeInvalidArgument, "synthetic failure")
+	guarded := func(result error) (err error) {
+		release, err := LockConfig()
+		if err != nil {
+			return err
+		}
+		defer release(&err)
+		// A second holder in this process must wait while the lock is held.
+		acquired := make(chan error, 1)
+		go func() { acquired <- WithConfigLock(func() error { return nil }) }()
+		select {
+		case err := <-acquired:
+			return fmt.Errorf("lock was not held: %v", err)
+		case <-time.After(100 * time.Millisecond):
+		}
+		go func() { <-acquired }()
+		return result
+	}
+	if got := guarded(cause); !errors.Is(got, cause) {
+		t.Fatalf("lost guarded error: %v", got)
+	}
+	if err := guarded(nil); err != nil {
+		t.Fatalf("lock not released after the guarded function returned: %v", err)
+	}
+}

@@ -9,7 +9,7 @@ The frozen sibling at `7fd6ef3c07182257ce776cdc5a614e122d5bd4b3` was compared
 file by file with this section before implementation. All ten shortcut implementations
 are reused. The only pre-existing section difference was the deterministic media
 DNS test correction from `111eefc`, which is preserved. The captured
-`docs/reference/registrations.json.gz` and `coverage.json` also map the generic
+`baseline/registrations.json.gz` and `coverage.json` also map the generic
 `minutes minutes get` endpoint and two command groups. No endpoint was replaced
 with raw API forwarding or dropped.
 

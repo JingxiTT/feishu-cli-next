@@ -8,7 +8,7 @@ The section is not accepted for release until those required checks pass.
 
 The reference is sibling `feishu-cli-review` at
 `7fd6ef3c07182257ce776cdc5a614e122d5bd4b3`. Inspection of
-`docs/reference/registrations.json.gz`, `meta_data.json.gz`, `coverage.json` and
+`baseline/registrations.json.gz`, `meta_data.json.gz`, `coverage.json` and
 `sources.json` found **16 VC registrations: 13 shortcuts, one generated API
 method, and two grouping commands**. The frozen catalog exposes only
 `vc meeting get`; it has no reservation or room/resource CRUD registrations.

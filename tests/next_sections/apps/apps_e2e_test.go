@@ -88,7 +88,7 @@ func TestAppsFrozenRequestMapping(t *testing.T) {
 			}
 		})
 	}
-	file, err := os.Open("../../../docs/reference/v1.0.97/registrations.json.gz")
+	file, err := os.Open("../../../baseline/v1.0.97/registrations.json.gz")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -371,7 +371,7 @@ type frozenAppMetadata struct {
 
 func frozenAppsMetadata(t *testing.T) []frozenAppMetadata {
 	t.Helper()
-	file, err := os.Open("../../../docs/reference/v1.0.97/registrations.json.gz")
+	file, err := os.Open("../../../baseline/v1.0.97/registrations.json.gz")
 	if err != nil {
 		t.Fatal(err)
 	}

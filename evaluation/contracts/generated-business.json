@@ -7,7 +7,7 @@
     "native_lists": "Support initiated definition_code filtering with native required fields and state-dependent pre/post-create rows. Optional search keyword may be empty. Initiated rows use instance_status 1/2 and definition_code; no fabricated task_id/status fields.",
     "deterministic_pagination_correction": "Unread task rows use native status 17 plus required user_id/title/definition_code/instance_status/topic fields. Deterministic pagination expectations were corrected from invented PENDING/APPROVED labels to native status strings; this is not an extra model task.",
     "unchanged": "The two representative public prompts, answer schemas, case bindings and all native mutation/idempotency logic remain unchanged. Twelve deterministic cases cover seventeen methods; only approval-flow and mindnote-edit are model sampled.",
-    "controls": "evaluation/evidence/business-v2-controlled.json"
+    "controls": "evidence/evaluation/business-v2-controlled.json"
   },
   "schema_version": 1,
   "section": "business",
@@ -549,8 +549,8 @@
     }
   ],
   "references": [
-    "docs/reference/meta_data.json.gz:approval,attendance,mindnotes",
-    "docs/reference/registrations.json.gz#/feishu/commands",
+    "baseline/meta_data.json.gz:approval,attendance,mindnotes",
+    "baseline/registrations.json.gz#/feishu/commands",
     "docs/sections/business.md",
     "tests/next_sections/business/business_e2e_test.go:TestEveryBusinessMethodWireAndFileInput",
     "tests/next_sections/business/business_e2e_test.go:TestEveryBusinessMethodIdentityPermissionAndUnknown",

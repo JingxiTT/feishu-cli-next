@@ -8,7 +8,7 @@ accepted.
 
 This supplement owns the 17 frozen generated methods under `approval`,
 `attendance`, and `mindnotes`, plus their eight routing nodes. The original
-`docs/reference/coverage.json` classified these as foundation because their Cobra
+`baseline/coverage.json` classified these as foundation because their Cobra
 domain annotation was empty. The frozen capture is unchanged; the coordinator's
 supplemental reconciliation ledger assigns the business process suite.
 
