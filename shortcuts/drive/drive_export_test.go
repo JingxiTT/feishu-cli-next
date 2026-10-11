@@ -264,7 +264,7 @@ func TestDriveExportWikiShortcutMarkdown(t *testing.T) {
 	reg.Register(&httpmock.Stub{
 		Method: "POST", URL: "/open-apis/drive/v1/metas/batch_query",
 		Body: map[string]interface{}{"code": 0, "data": map[string]interface{}{
-			"metas": []map[string]interface{}{{"title": "Original title"}},
+			"metas": []map[string]interface{}{{"doc_token": "docxOriginal", "doc_type": "docx", "title": "Original title"}},
 		}},
 	})
 	dir := t.TempDir()
