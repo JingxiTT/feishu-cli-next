@@ -1,0 +1,26 @@
+{
+  "date": "2026-10-11",
+  "base": "e79ea062",
+  "checks": {
+    "focused_cmd_im": "pass",
+    "focused_output": "pass",
+    "focused_nextattempt_cmdutil": "pass",
+    "focused_docs_race": "pass",
+    "make_test": "running",
+    "capability_gate_v1_0_97": "pass",
+    "go_mod_tidy_unchanged": "pass",
+    "go_licenses": "pass",
+    "lint_module_tests": "pass after moving temporary baseline sources outside scanned repository"
+  },
+  "not_run": [
+    "live Feishu tenant workflows",
+    "provider-token task trials",
+    "live skills sync",
+    "native Linux/Windows execution"
+  ],
+  "measurement_limits": "Local introspection/output context and synthetic microbenchmarks; no end-to-end task savings or universal performance claim. Startup gains primarily originate in the upstream sync.",
+  "initial_setup_failures": [
+    "Capability gate ignores untracked files; staged new implementation files before successful rerun.",
+    "Flag-owner source guard scanned temporary archived baseline sources; moved them outside repository before successful rerun."
+  ]
+}

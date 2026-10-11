@@ -70,10 +70,22 @@ func classifyKnownResponse(r *Receipt, req *http.Request, data json.RawMessage, 
 	}
 	if requestMatches(req, "POST", "/open-apis/docs_ai/v1/documents") || requestMatches(req, "PUT", "/open-apis/docs_ai/v1/documents/{document}") {
 		var result struct {
-			Result string `json:"result"`
+			Result string          `json:"result"`
+			Task   *docsCreateTask `json:"task"`
 		}
 		if json.Unmarshal(data, &result) != nil || strings.EqualFold(strings.TrimSpace(result.Result), "failed") {
 			return unknown("docs_result_failed_or_invalid")
+		}
+		if result.Task != nil {
+			if req.Method == "POST" && journal.captureDocsCreate(*r, req, result.Task) {
+				if completedDocsCreate(result.Task, result.Task.TaskID) {
+					return applied("docs_create_task_completed")
+				}
+				if status := strings.ToLower(strings.TrimSpace(result.Task.Status)); status == "" || status == "processing" {
+					return unknown("docs_create_task_pending")
+				}
+			}
+			return unknown("async_task_requires_reconciliation")
 		}
 		return false
 	}

@@ -30,7 +30,9 @@ URLs, types, identity, status, `unchanged`/`no_op`/`noop` no-op markers, paginat
 notices and safety alerts remain visible. Task collections retain native GUIDs
 and tasklist identity, `confirmed` fields, `updated_fields` and failed-task details.
 Calendar's `updated_event` effect object retains the event identity and attendee
-change counts. Other nested resource objects use explicit dotted paths. Results containing failed, partial,
+change counts. Apps release `current_node_info` stays complete, including its
+approval URL and status, even with dotted selections or artifact summaries.
+Other nested resource objects use explicit dotted paths. Results containing failed, partial,
 unknown or unsupported outcomes retain their full data. This conservative shared
 projection must not replace a domain-specific schema that has more outcome fields.
 Projection never mutates caller data. JSON numbers use their serialized decimal
@@ -38,8 +40,11 @@ representation without a float64 conversion; null, empty string, omitted fields,
 Unicode and leading-zero strings remain distinct. Numeric precision already lost
 by an upstream decoder cannot be recovered here.
 
-Projection and result artifacts require non-streaming JSON without `--raw` or
-`--jq`. Explicit CSV, NDJSON, table and pretty renderers retain their contracts.
+Projection and result artifacts require non-streaming JSON without `--raw`,
+`--jq`, or IM's `--concise` Markdown mode. These conflicts are rejected before
+command execution; explicitly disabling a boolean mode remains valid. IM dry-run
+previews remain JSON and support result controls even with `--concise`.
+Explicit CSV, NDJSON, table and pretty renderers retain their contracts.
 Default agent formatting does not intercept arbitrary raw, jq or stream bytes.
 Native structured XML/HTML renderers (`OutRaw`/`OutFormatRaw`) use an internal
 `DisableHTMLEscape` encoding option, distinct from explicit raw mode. Their JSON

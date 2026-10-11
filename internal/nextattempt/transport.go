@@ -32,6 +32,7 @@ type Journal struct {
 	baseCreatedSize int
 	driveImports    map[string]driveImportAttempt
 	driveImportSize int
+	docsCreates     map[string]docsCreateAttempt
 }
 
 func (j *Journal) Add(r Receipt) {
@@ -101,7 +102,11 @@ var _ transport.RoundTripperDecorator = (*Transport)(nil)
 
 func (t *Transport) RoundTrip(req *http.Request) (*http.Response, error) {
 	if !t.IsMutation(req) {
-		return t.Base.RoundTrip(req)
+		response, err := t.Base.RoundTrip(req)
+		if err == nil {
+			t.observeDocsCreate(req, response)
+		}
+		return response, err
 	}
 	binding, err := t.Resolve(req)
 	if err != nil {
@@ -168,14 +173,7 @@ func classifyResponse(r *Receipt, resp *http.Response, requestErr error, req *ht
 	if resp.Body == nil {
 		return
 	}
-	original := resp.Body
-	data, readErr := io.ReadAll(io.LimitReader(original, responseEvidenceLimit+1))
-	// Replay exactly what was consumed, including the original terminal error.
-	var tail io.Reader = original
-	if readErr != nil {
-		tail = &errorReader{err: readErr}
-	}
-	resp.Body = &replayBody{Reader: io.MultiReader(bytes.NewReader(data), tail), Closer: original}
+	data, readErr := readResponseEvidence(resp)
 	if readErr != nil {
 		r.Evidence = "response_read_error"
 		return
@@ -225,6 +223,18 @@ func classifyResponse(r *Receipt, resp *http.Response, requestErr error, req *ht
 	default:
 		r.Evidence = "api_error_requires_reconciliation"
 	}
+}
+
+func readResponseEvidence(resp *http.Response) ([]byte, error) {
+	original := resp.Body
+	data, err := io.ReadAll(io.LimitReader(original, responseEvidenceLimit+1))
+	// Replay exactly what was consumed, including the original terminal error.
+	var tail io.Reader = original
+	if err != nil {
+		tail = &errorReader{err: err}
+	}
+	resp.Body = &replayBody{Reader: io.MultiReader(bytes.NewReader(data), tail), Closer: original}
+	return data, err
 }
 
 type errorReader struct{ err error }

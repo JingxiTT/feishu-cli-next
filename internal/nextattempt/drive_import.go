@@ -117,7 +117,7 @@ func (j *Journal) ReconcileDriveImport(store Store, binding Binding, origin, tic
 		completed := receipt
 		completed.Outcome, completed.Evidence = Applied, "drive_import_task_completed"
 		completed.UpdatedAt = time.Now().UTC()
-		if persistDriveImportCompletion(store, receipt, completed) == nil {
+		if persistPendingCompletion(store, receipt, completed) == nil {
 			j.receipts[i] = completed
 			return
 		}
@@ -126,7 +126,7 @@ func (j *Journal) ReconcileDriveImport(store Store, binding Binding, origin, tic
 	}
 }
 
-func persistDriveImportCompletion(store Store, pending, completed Receipt) error {
+func persistPendingCompletion(store Store, pending, completed Receipt) error {
 	if err := store.validateDir(false); err != nil {
 		return err
 	}

@@ -104,7 +104,11 @@ func finalizeAgentFoundation(f *cmdutil.Factory, root *cobra.Command, opts *outp
 
 func validateAgentOutput(f *cmdutil.Factory, c *cobra.Command, opts *output.AgentOptions) error {
 	if opts.Fields != "" || opts.SaveResult != "" {
-		for _, name := range []string{"raw", "jq", "stream"} {
+		dryRun, _ := c.Flags().GetBool("dry-run")
+		for _, name := range []string{"raw", "jq", "stream", "concise"} {
+			if name == "concise" && dryRun {
+				continue // IM dry-run previews remain JSON even with --concise.
+			}
 			flag := c.Flags().Lookup(name)
 			if flag != nil && flag.Changed && flag.Value.String() != "false" && flag.Value.String() != "" {
 				return errs.NewValidationError(errs.SubtypeInvalidArgument, "result projection/artifacts cannot be combined with --%s", name).WithParam("--" + name)

@@ -70,6 +70,8 @@ not generalize field names to unrelated endpoints.
 
 - Docs native create/update `result:failed` and all history/revert acknowledgements
   stay unknown; there is no verified completed status for the history operation.
+  Async create acknowledgements stay unknown until native task completion is
+  observed under the same invocation and identity, as described below.
 - IM urgency, membership, settings, and join-request handling retain unknown for
   rejected, nonexistent, pending-approval, or failed recipients. Empty failure
   arrays preserve the normal acknowledgement semantics. Missing/null outcome
@@ -139,6 +141,23 @@ capture holds at most 128 imports and 4 MiB of source/ticket/origin strings, wit
 no eviction. Exhaustion and duplicate tickets remain unknown. Dependent Drive
 permission changes separately require the same strict completion proof, including
 in compatibility mode, and stop when receipt persistence fails.
+
+Native Docs creates retain at most 128 task IDs (up to 4096 bytes each) in memory,
+bound to their original receipt, origin and effective identity. Pending, failed,
+expired or malformed task responses stay unknown. Only the exact task GET's
+successful HTTP/API response with matching `task_id`, `status:succeeded`, and
+a valid `result.create_document` JSON document containing a nonempty
+`document_id` confirms application. Contradictory failure evidence is rejected.
+The transport observes the individual request before redirects are followed;
+a response from another origin or task cannot supply completion proof. A complete
+task returned directly by create uses the same proof check. Synchronous create
+responses keep their existing behavior.
+
+Task completion uses the same durable receipt update as Drive imports and records
+`docs_create_task_completed`; failed persistence keeps the invocation unknown with
+exit 22. Standalone reads, duplicate task IDs and exhausted capture capacity cannot
+upgrade receipts. Task IDs and document content are never persisted, and no extra
+poll or mutation retry is introduced.
 
 ## Classification and storage boundary
 
