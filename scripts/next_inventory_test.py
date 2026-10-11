@@ -18,6 +18,26 @@ spec.loader.exec_module(inventory)
 
 
 class InventoryTests(unittest.TestCase):
+    def test_v1097_platform_projection_changes_only_non_darwin_risk(self):
+        reference = MODULE_PATH.parents[1] / 'docs/reference/v1.0.97'
+        native = inventory.read(reference / 'configured-brand-registrations.json.gz')
+        projected = inventory.read(reference / 'configured-brand-registrations-non-darwin.json.gz')
+        changes = inventory.registration_changes(native, projected)
+        self.assertEqual([row['path'] for row in changes], [
+            '/feishu/commands/config keychain-downgrade/risk',
+            '/lark/commands/config keychain-downgrade/risk'])
+        profiles = inventory.read(reference / 'configured-brand-platforms.json')['platforms']
+        for platform in ('linux', 'windows'):
+            self.assertEqual(profiles[platform]['native_reference_capture'], 'not_run')
+            self.assertEqual(profiles[platform]['reference_sha256'], inventory.digest(
+                (reference / profiles[platform]['reference_file']).read_bytes()))
+        mapping = inventory.read(reference / 'next-interface-mapping.json.gz')
+        for row in mapping['registration_changes']:
+            self.assertNotEqual(row['kind'], 'missing')
+            if row['kind'] == 'changed' and '/commands/' in row['path']:
+                self.assertNotIn('/flags/', row['path'])
+                self.assertFalse(row['path'].endswith(('/hidden', '/disable_flag_parsing')))
+
     def test_reviewed_efficiency_additions_remain_exactly_mapped(self):
         reference = MODULE_PATH.parents[1] / 'docs/reference'
         mapping = inventory.read(reference / 'next-interface-mapping.json.gz')
@@ -84,6 +104,19 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(inventory.exporter_source('next').count('rootcmd.WithAgentMode()'), 1)
         with self.assertRaises(ValueError):
             inventory.exporter_source('invalid')
+
+    def test_next_exporter_injects_frozen_catalog_after_snapshot_migration(self):
+        source = inventory.exporter_source('next')
+        self.assertIn('meta.Parse(data)', source)
+        self.assertIn('rootcmd.WithServiceCatalog(frozenCatalog)', source)
+        self.assertIn('frozenCatalog.Services()', source)
+        self.assertNotIn('registry.EmbeddedCatalog()', source)
+        self.assertNotIn('registry.EmbeddedServicesTyped()', source)
+        self.assertIn('registry.EmbeddedCatalog()', inventory.exporter_source('legacy'))
+        modern = inventory.exporter_source('legacy', committed_catalog=True)
+        self.assertIn('rootcmd.WithServiceCatalog(frozenCatalog)', modern)
+        self.assertNotIn('WithAgentMode', modern)
+        self.assertNotIn('registry.EmbeddedCatalog()', modern)
 
     def test_exporter_configures_actual_startup_brand_and_captures_guard(self):
         for mode in ('next', 'legacy'):

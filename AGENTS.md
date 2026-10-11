@@ -45,27 +45,23 @@ at the decision point.
 
 ## Build
 
-Run `make build` for the canonical local build; it writes `./feishu-cli-next` with
-version metadata and the embedded service catalog. It, `make vet`,
-`make unit-test`, `make live-skills-test`, and dependent targets first run
-`python3 scripts/next_meta.py`, so Python 3 is required. It verifies and restores
-the frozen catalog from `docs/reference/meta_data.json.gz` into the ignored
-`internal/registry/meta_data.json`; this step requires no network. Go dependencies
-may need downloading on the first build. `scripts/fetch_meta.py` remains an
-explicit upstream refresh tool, not the canonical build path.
-`make live-skills-test` requires working `npx` and network access.
+Run `make build` for the canonical local build; it writes `./feishu-cli-next`
+with version metadata and the committed catalog embedded from
+`internal/registry/catalog/manifest.json` and `services/*.json`. Build and Go test
+targets consume this tracked snapshot without a metadata fetch or Python
+prerequisite. Python 3 remains required for the fork's inventory, evaluation,
+packaging, and offline process-test scripts. `make live-skills-test` requires
+working `npx` and network access.
 
-If catalog restoration fails before Go starts, report the missing Python or
-checksum/archive error instead of changing product code or generated metadata. `go build .`
-may compile against the tracked empty fallback metadata, but that is only a
-degraded compile check without the full service catalog.
+`make fetch_meta` restores the historical frozen comparison catalog for inventory
+tools only; it does not change the product's embedded catalog.
 
 ## Choose the Correct Surface
 
 | Need | Implement in | Rule |
 |------|--------------|------|
 | Agent/human-friendly workflow, composition, or smart defaults | `shortcuts/<domain>/` via `common.Shortcut` | Must add UX or workflow value beyond exposing one endpoint. |
-| One-to-one supported OpenAPI method | Upstream service metadata + generic `cmd/service/` machinery | Verify it with `schema` after the canonical metadata fetch. `internal/registry/meta_data.json` is generated and ignored; never hand-edit it or add a shortcut merely to expose a missing catalog method. |
+| One-to-one supported OpenAPI method | Committed catalog under `internal/registry/catalog/` + generic `cmd/service/` machinery | Verify it with `schema`. Update the manifest and matching service snapshot together; do not add a shortcut merely to expose a missing catalog method. |
 | Arbitrary OpenAPI endpoint | Generic `cmd/api/` machinery | Keep it endpoint-agnostic. |
 | Auth, config, profile, update, or CLI lifecycle | `cmd/<area>/` plus the owning shared/internal package | Keep new Cobra code as wiring when a lower owner exists. |
 | EventKey, payload shape, or domain projection | `events/<domain>/` | Shared event mechanics stay in `internal/event/`; CLI assembly stays in `cmd/event/`. |

@@ -10,13 +10,17 @@ import (
 )
 
 func BenchmarkInputEnvelopes(b *testing.B) {
-	refs := registry.EmbeddedCatalog().WalkMethods(nil)
+	snapshot, err := registry.OpenSnapshot()
+	if err != nil {
+		b.Fatal(err)
+	}
+	refs := snapshot.Catalog().WalkMethods(nil)
 	if len(refs) == 0 {
-		b.Skip("restore the frozen catalog with make fetch_meta")
+		b.Skip("embedded catalog contains no methods")
 	}
 	b.ReportAllocs()
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		InputEnvelopes(refs)
+		InputEnvelopes(nil, refs)
 	}
 }

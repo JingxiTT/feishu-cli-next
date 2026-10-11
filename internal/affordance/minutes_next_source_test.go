@@ -7,6 +7,8 @@ import (
 	"os"
 	"strings"
 	"testing"
+
+	"github.com/larksuite/cli/internal/apicatalog"
 )
 
 func TestMinutesNextRecoveryAndEqualityGuidance(t *testing.T) {
@@ -19,7 +21,7 @@ func TestMinutesNextRecoveryAndEqualityGuidance(t *testing.T) {
 		"+todo":         {"distinct todo IDs", "missing list never implies deletion"},
 		"+word-replace": {"never repeat successful replacements", "Missing or unknown outcomes", "read-only transcript check"},
 	} {
-		raw, ok := For("minutes", method)
+		raw, ok := For(apicatalog.Catalog{}, "minutes", method)
 		if !ok {
 			t.Fatalf("missing minutes %s guidance", method)
 		}

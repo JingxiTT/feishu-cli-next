@@ -8,6 +8,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/larksuite/cli/internal/apicatalog"
 	"github.com/larksuite/cli/internal/meta"
 )
 
@@ -16,7 +17,7 @@ func TestBaseNextGuidancePreservesMutationAndConversionDecisions(t *testing.T) {
 	t.Cleanup(func() { SetSource(previous) })
 	SetSource(os.DirFS("../../affordance"))
 	for command, phrase := range map[string]string{"+field-create": "skills read lark-base references/lark-base-field-formula.md", "+field-update": "installed legacy skill", "+record-upsert": "does not prevent concurrent edits", "+record-batch-update": "every record exists", "+record-import": "does not authorize replay", "+record-list": "not a snapshot"} {
-		raw, ok := For("base", command)
+		raw, ok := For(apicatalog.Catalog{}, "base", command)
 		if !ok || !strings.Contains(string(raw), phrase) {
 			t.Errorf("%s missing %q", command, phrase)
 		}

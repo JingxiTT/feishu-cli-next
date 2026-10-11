@@ -298,7 +298,7 @@ func appendDriveImportFolderTokenWikiCheckDryRun(dry *common.DryRunAPI, spec dri
 		return
 	}
 
-	dry.GET("/open-apis/wiki/v2/spaces/get_node").
+	dry.GET("/open-apis/wiki/v2/spaces/node_by_token").
 		Desc("[0] Validate whether --folder-token is a wiki node").
 		Params(map[string]interface{}{"token": folderToken})
 }
@@ -311,7 +311,7 @@ func rejectDriveImportWikiFolderToken(runtime *common.RuntimeContext, folderToke
 
 	data, err := runtime.CallAPITyped(
 		"GET",
-		"/open-apis/wiki/v2/spaces/get_node",
+		"/open-apis/wiki/v2/spaces/node_by_token",
 		map[string]interface{}{"token": folderToken},
 		nil,
 	)

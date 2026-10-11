@@ -145,3 +145,28 @@ func TestAgentRawReadCannotPersistCredentialArtifacts(t *testing.T) {
 		}
 	}
 }
+
+func TestAgentDiscoveryWithInvocationArgsKeepsDomainCommands(t *testing.T) {
+	t.Setenv("LARKSUITE_CLI_CONFIG_DIR", t.TempDir())
+	var out, errOut bytes.Buffer
+	root := Build(context.Background(), cmdutil.InvocationContext{},
+		WithIO(strings.NewReader(""), &out, &errOut), WithoutPlugins(), WithoutStrictMode(),
+		WithAgentMode(), WithInvocationArgs([]string{"discover", "docs +pull", "--limit", "1"}))
+	if err := root.Execute(); err != nil {
+		t.Fatal(err)
+	}
+	var result struct {
+		Data []struct {
+			Command string `json:"command"`
+		} `json:"data"`
+	}
+	if err := json.Unmarshal(out.Bytes(), &result); err != nil {
+		t.Fatal(err)
+	}
+	if len(result.Data) != 1 || result.Data[0].Command != "docs +pull" {
+		t.Fatalf("target-aware discovery lost domain commands: %s", &out)
+	}
+	if strings.Count(out.String(), "\n") != 1 {
+		t.Fatalf("target-aware build lost compact output: %s", &out)
+	}
+}

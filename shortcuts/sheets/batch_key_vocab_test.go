@@ -288,41 +288,39 @@ func TestCellsSetInput_MatrixPrecheck(t *testing.T) {
 			"+cells-clear",
 		},
 		{
-			"row count mismatch",
-			map[string]interface{}{"sheet_name": "S1", "range": "A1:B3",
-				"cells": []interface{}{
-					[]interface{}{map[string]interface{}{"value": "a"}, map[string]interface{}{"value": "b"}},
-				}},
-			"--cells is 1 rows × 2 columns but --range \"A1:B3\" spans 3 rows × 2 columns",
-		},
-		{
-			"column count mismatch",
+			// A stated rectangle is a boundary: a payload that does not fit
+			// inside it is refused rather than widened past it. Narrowing
+			// stays allowed (TestCellsSet_RangeSizedFromPayload owns that).
+			"payload larger than the stated rectangle is refused",
 			map[string]interface{}{"sheet_name": "S1", "range": "A1:B1",
 				"cells": []interface{}{
-					[]interface{}{map[string]interface{}{"value": "a"}},
+					[]interface{}{map[string]interface{}{"value": "a"}, map[string]interface{}{"value": "b"}},
+					[]interface{}{map[string]interface{}{"value": "c"}, map[string]interface{}{"value": "d"}},
 				}},
-			"--cells is 1 rows × 1 columns but --range \"A1:B1\" spans 1 rows × 2 columns",
+			"reach past the range",
 		},
 		{
-			// Both axes off used to cost two round trips: rows failed first,
-			// and the fixed payload came straight back on columns.
-			"both axes report together, with the range that fits the payload",
-			map[string]interface{}{"sheet_name": "S1", "range": "B2:C3",
-				"cells": []interface{}{
-					[]interface{}{map[string]interface{}{"value": "a"}, map[string]interface{}{"value": "b"}, map[string]interface{}{"value": "c"}},
-					[]interface{}{map[string]interface{}{"value": "d"}, map[string]interface{}{"value": "e"}, map[string]interface{}{"value": "f"}},
-					[]interface{}{map[string]interface{}{"value": "g"}, map[string]interface{}{"value": "h"}, map[string]interface{}{"value": "i"}},
-				}},
-			"write this payload to --range \"B2:D4\"",
-		},
-		{
-			"ragged rows are their own bug, not a range mismatch",
+			// A row that stops at its last written cell is squared off with
+			// {} (padRaggedCellRows) — the very fix the old rejection spelled
+			// out — so the matrix matches the range it states.
+			"short rows are padded, not rejected",
 			map[string]interface{}{"sheet_name": "S1", "range": "A1:B2",
 				"cells": []interface{}{
 					[]interface{}{map[string]interface{}{"value": "a"}, map[string]interface{}{"value": "b"}},
 					[]interface{}{map[string]interface{}{"value": "c"}},
 				}},
-			"--cells[1] has 1 columns but --cells[0] has 2",
+			"",
+		},
+		{
+			// Padding needs a 2D shape to measure; a row that is not an array
+			// is a different payload bug, and the schema names it first.
+			"a non-array row is still its own bug",
+			map[string]interface{}{"sheet_name": "S1", "range": "A1:B2",
+				"cells": []interface{}{
+					[]interface{}{map[string]interface{}{"value": "a"}, map[string]interface{}{"value": "b"}},
+					"c",
+				}},
+			`[1]: expected type "array"`,
 		},
 		{
 			"matching matrix passes",
@@ -334,15 +332,23 @@ func TestCellsSetInput_MatrixPrecheck(t *testing.T) {
 			"",
 		},
 		{
-			// A stated extent that disagrees with the payload is still a
-			// mismatch — only a bare anchor infers (see
-			// TestCellsSetInput_AnchorRangeExpands).
-			"explicit 1x1 range still enforces the match",
+			// "A1:A1" states a 1x1 block as deliberately as any other
+			// rectangle -- the caller wrote the end cell -- so it is a
+			// boundary too. The bare "A1" below is the anchor spelling.
+			"explicit 1x1 rectangle is refused",
 			map[string]interface{}{"sheet_name": "S1", "range": "A1:A1",
 				"cells": []interface{}{
 					[]interface{}{map[string]interface{}{"value": "a"}, map[string]interface{}{"value": "b"}},
 				}},
-			"--cells is 1 rows × 2 columns but --range \"A1:A1\" spans 1 rows × 1 columns",
+			"reach past the range",
+		},
+		{
+			"a bare anchor takes its extent from the payload",
+			map[string]interface{}{"sheet_name": "S1", "range": "A1",
+				"cells": []interface{}{
+					[]interface{}{map[string]interface{}{"value": "a"}, map[string]interface{}{"value": "b"}},
+				}},
+			"",
 		},
 		{
 			"single-cell range with a single cell passes",
@@ -363,7 +369,14 @@ func TestCellsSetInput_MatrixPrecheck(t *testing.T) {
 				}
 				return
 			}
-			requireValidation(t, err, tc.wantContains)
+			ve := requireValidation(t, err, tc.wantContains)
+			// The precheck runs inside a batch sub-op, so the attribution is
+			// the flag the CALLER actually passed — --operations, with the
+			// sub-op's own --cells named in the message. A regression can keep
+			// the rendered text and lose either half.
+			if ve.Param != "--operations" {
+				t.Errorf("Param = %q, want %q", ve.Param, "--operations")
+			}
 		})
 	}
 }

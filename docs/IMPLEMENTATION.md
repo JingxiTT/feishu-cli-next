@@ -1,5 +1,7 @@
 # Implementation ledger
 
+On 2026-10-11 the fork integrated official Lark CLI v1.0.97 (`72579c80027c863ca51d5f9affda72a70ab0d8a6`), 53 commits after the frozen reference. Product builds now embed the official committed catalog; historical inventories and evaluation results below still describe their original revisions and do not establish parity or efficiency for this update.
+
 The release criteria remain those in [PLAN.md](PLAN.md), with the user-directed
 scope adjustment below. Imported source is implementation reuse, not evidence of
 live parity. Scoped foundation measurements are available; no full-product

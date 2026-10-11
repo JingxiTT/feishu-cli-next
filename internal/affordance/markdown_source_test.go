@@ -7,6 +7,8 @@ import (
 	"os"
 	"strings"
 	"testing"
+
+	"github.com/larksuite/cli/internal/apicatalog"
 )
 
 func TestMarkdownAffordancePreservesSourceAndWriteSemantics(t *testing.T) {
@@ -20,7 +22,7 @@ func TestMarkdownAffordancePreservesSourceAndWriteSemantics(t *testing.T) {
 		"+patch":     "including when matches exist",
 		"+overwrite": "including identical content",
 	} {
-		raw, ok := For("markdown", command)
+		raw, ok := For(apicatalog.Catalog{}, "markdown", command)
 		if !ok || !strings.Contains(string(raw), guidance) {
 			t.Errorf("%s missing guidance %q: %s", command, guidance, raw)
 		}

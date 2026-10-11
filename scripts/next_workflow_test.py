@@ -39,7 +39,8 @@ class OfflineWorkflowTests(unittest.TestCase):
     def test_dependencies_preload_before_isolated_suites_and_reports_always_upload(self):
         self.assertLess(self.workflow.index('go mod download'), self.workflow.index('python scripts/next_test.py'))
         self.assertIn("('GOCACHE', 'GOMODCACHE')", self.workflow)
-        self.assertIn('python scripts/next_meta.py', self.workflow)
+        self.assertNotIn('scripts/next_meta.py', self.workflow)
+        self.assertIn('Build with committed API catalog', self.workflow)
         for stage in ('scripts', 'sections', 'evaluation', 'integration'):
             self.assertIn('--report .tmp/next-ci/' + stage + '.json', self.workflow)
             self.assertIn('steps.' + stage + '.outcome', self.workflow)
@@ -58,7 +59,7 @@ class OfflineWorkflowTests(unittest.TestCase):
         stage = self.workflow.split('      - name: Compare configured-brand capability registrations\n', 1)[1].split('      - name:', 1)[0]
         self.assertIn('id: capabilities', stage)
         self.assertIn("if: ${{ always() && steps.dependencies.outcome == 'success' && steps.build.outcome == 'success' }}", stage)
-        self.assertIn('run: python scripts/next_inventory.py gate --target . --out .tmp/next-ci/capabilities.json\n', stage)
+        self.assertIn('run: python scripts/next_inventory.py gate --target . --reference-dir docs/reference/v1.0.97 --mapping docs/reference/v1.0.97/next-interface-mapping.json.gz --out .tmp/next-ci/capabilities.json\n', stage)
         self.assertNotIn('continue-on-error', stage)
         self.assertNotIn('||', stage)
         self.assertLess(self.workflow.index('go build -trimpath'), self.workflow.index('id: capabilities'))

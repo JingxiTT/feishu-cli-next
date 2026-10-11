@@ -32,12 +32,20 @@ func collectHandAuthored(ctx context.Context) (manifest.Manifest, error) {
 }
 
 func collectCommandIndex(ctx context.Context) (manifest.Manifest, error) {
+	snapshot, err := registry.OpenSnapshot()
+	if err != nil {
+		return manifest.Manifest{}, err
+	}
+	catalog := snapshot.Catalog()
+	if err := catalog.Preload(catalog.Names()...); err != nil {
+		return manifest.Manifest{}, err
+	}
 	root := rootcmd.Build(ctx, cmdutil.InvocationContext{},
 		rootcmd.WithAgentMode(),
 		rootcmd.WithIO(strings.NewReader(""), io.Discard, io.Discard),
 		rootcmd.WithoutPlugins(),
 		rootcmd.WithoutStrictMode(),
-		rootcmd.WithServiceCatalog(registry.EmbeddedCatalog()),
+		rootcmd.WithServiceCatalog(catalog),
 	)
 
 	idx := collectFromRoot(root)

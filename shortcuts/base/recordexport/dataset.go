@@ -22,6 +22,8 @@ const RecordIDColumnName = "record_id"
 type ValueKind string
 
 const (
+	KindJSON    ValueKind = "json"
+	KindNull    ValueKind = "null"
 	KindString  ValueKind = "string"
 	KindNumber  ValueKind = "number"
 	KindBoolean ValueKind = "boolean"
@@ -39,7 +41,12 @@ type fieldTypeSpec struct {
 // remain decoded JSON values; the CLI does not construct Go structs for cells.
 func specForFieldType(fieldType string) (fieldTypeSpec, bool) {
 	switch fieldType {
-	case "text", "formula", "lookup", "auto_number", "datetime", "created_at", "updated_at", "not_support":
+	case "button":
+		// Buttons trigger actions; the read API exposes their cells as null.
+		return fieldTypeSpec{kind: KindNull, physicalType: "null"}, true
+	case "not_support":
+		return fieldTypeSpec{kind: KindJSON, physicalType: "json"}, true
+	case "text", "formula", "lookup", "auto_number", "datetime", "created_at", "updated_at":
 		return fieldTypeSpec{kind: KindString, physicalType: "string|null"}, true
 	case "number":
 		return fieldTypeSpec{kind: KindNumber, physicalType: "number|null"}, true
@@ -177,11 +184,11 @@ func ParseMatrix(data map[string]any) (Page, error) {
 	seenNames := map[string]bool{RecordIDColumnName: true}
 	seenIDs := make(map[string]bool, len(fields))
 	for index := range fields {
-		column, err := sourceColumn(fields[index], fieldIDs[index], fieldTypes[index])
-		if err != nil {
-			return Page{}, err
-		}
+		column := Column{Name: fields[index], FieldID: fieldIDs[index], FieldType: fieldTypes[index]}
 		sourceColumns = append(sourceColumns, column)
+		if _, known := specForFieldType(column.FieldType); !known {
+			column.FieldType = "not_support"
+		}
 		if seenNames[column.Name] {
 			return Page{}, &MatrixError{Reason: fmt.Sprintf("field name %q collides with another exported column", column.Name)}
 		}
@@ -288,17 +295,10 @@ func (d *Dataset) AppendPage(page Page) error {
 	return nil
 }
 
-func sourceColumn(name, fieldID, fieldType string) (Column, error) {
-	if _, ok := specForFieldType(fieldType); !ok {
-		return Column{}, &MatrixError{Reason: fmt.Sprintf("field %q has unsupported field type %q", name, fieldType)}
-	}
-	return Column{Name: name, FieldID: fieldID, FieldType: fieldType}, nil
-}
-
 func validateCell(column Column, value any) (any, error) {
 	spec, ok := specForFieldType(column.FieldType)
-	if !ok {
-		return nil, newDetailErrorf("unsupported field type %q", column.FieldType)
+	if !ok || spec.kind == KindJSON {
+		return value, nil
 	}
 	// Validation never substitutes values: null, empty containers, and date
 	// strings retain their source JSON representation.
@@ -325,6 +325,8 @@ func validateCell(column Column, value any) (any, error) {
 		return items, nil
 	}
 	switch spec.kind {
+	case KindNull:
+		return nil, newDetailErrorf("expected null, got %T", value)
 	case KindString:
 		text, ok := value.(string)
 		if !ok {

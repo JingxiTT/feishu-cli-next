@@ -254,10 +254,16 @@ func (ab *authBridge) handlePoll(w http.ResponseWriter, r *http.Request, body []
 		ab.mu.Unlock()
 	}()
 
-	result := larkauth.PollDeviceToken(
+	result, err := larkauth.PollDeviceToken(
 		ctx, ab.httpCl, ab.appID, ab.appSecret, ab.brand,
 		req.DeviceCode, 5, 600, io.Discard,
 	)
+	if err != nil {
+		jsonError(w, http.StatusBadGateway, "token polling failed: "+err.Error())
+		ab.logger.Printf("AUTH_BRIDGE_ERROR action=poll device_code_prefix=%s error=%q",
+			truncate(req.DeviceCode, 12), err.Error())
+		return
+	}
 
 	if !result.OK {
 		resp := map[string]interface{}{
@@ -342,7 +348,7 @@ func (ab *authBridge) handleStatus(w http.ResponseWriter, _ *http.Request, body 
 			continue
 		}
 		for _, u := range app.Users {
-			stored := larkauth.GetStoredToken(ab.appID, u.UserOpenId)
+			stored, _ := larkauth.GetStoredToken(ab.appID, u.UserOpenId)
 			status := "unknown"
 			if stored != nil {
 				status = larkauth.TokenStatus(stored)
@@ -368,7 +374,7 @@ func (ab *authBridge) handleStatus(w http.ResponseWriter, _ *http.Request, body 
 		resp["client_id"] = clientID
 		resp["mapped_open_id"] = mappedOpenID
 		if mappedOpenID != "" {
-			stored := larkauth.GetStoredToken(ab.appID, mappedOpenID)
+			stored, _ := larkauth.GetStoredToken(ab.appID, mappedOpenID)
 			if stored != nil {
 				resp["mapped_status"] = larkauth.TokenStatus(stored)
 				for _, u := range users {

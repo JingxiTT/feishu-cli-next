@@ -58,7 +58,6 @@ def main():
     output.mkdir(parents=True, exist_ok=False)
     metadata = json.loads((ROOT / 'package.json').read_text())
     version = metadata['version']
-    subprocess.run(['python3', 'scripts/next_meta.py'], cwd=ROOT, check=True)
     checksums = []
     with tempfile.TemporaryDirectory(prefix='next-build-') as temp:
         for target in args.target or TARGETS:

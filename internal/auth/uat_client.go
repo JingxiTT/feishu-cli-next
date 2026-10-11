@@ -7,7 +7,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -58,10 +57,7 @@ func NewUATCallOptions(cfg *core.CliConfig, errOut io.Writer) UATCallOptions {
 
 // GetValidAccessToken obtains a valid access token for the given user.
 func GetValidAccessToken(httpClient *http.Client, opts UATCallOptions) (string, error) {
-	stored, err := readStoredToken(opts.AppId, opts.UserOpenId)
-	if errors.Is(err, errStoredTokenCorrupt) {
-		return "", newNeedUserAuthorizationError(opts.UserOpenId, err, recovery.UserAuthorization())
-	}
+	stored, err := GetStoredToken(opts.AppId, opts.UserOpenId)
 	if err != nil {
 		return "", err
 	}
@@ -88,10 +84,7 @@ func GetValidAccessToken(httpClient *http.Client, opts UATCallOptions) (string, 
 func refreshWithLock(httpClient *http.Client, opts UATCallOptions) (*StoredUAToken, error) {
 	var refreshed *StoredUAToken
 	err := withTokenStorageLock(opts.AppId, opts.UserOpenId, func() error {
-		freshStored, err := readStoredToken(opts.AppId, opts.UserOpenId)
-		if errors.Is(err, errStoredTokenCorrupt) {
-			return newNeedUserAuthorizationError(opts.UserOpenId, err, recovery.UserAuthorization())
-		}
+		freshStored, err := GetStoredToken(opts.AppId, opts.UserOpenId)
 		if err != nil {
 			return err
 		}
@@ -155,6 +148,7 @@ type refreshResponse struct {
 	RefreshTokenExpiresIn *int64 `json:"refresh_token_expires_in"`
 	TokenType             string `json:"token_type"`
 	Scope                 string `json:"scope"`
+	StatusMessage         string `json:"status_message"`
 	Error                 string `json:"error"`
 	ErrorDescription      string `json:"error_description"`
 }
@@ -207,7 +201,14 @@ func doRefreshToken(httpClient *http.Client, opts UATCallOptions, stored *Stored
 	for attempt := 1; attempt <= refreshMaxAttempts; attempt++ {
 		result := refreshOnce(httpClient, endpoint, opts, stored)
 		if result.action == refreshSaveResponse {
-			return saveRefreshResponse(opts, stored, result.response)
+			refreshed, err := saveRefreshResponse(opts, stored, result.response)
+			if err != nil {
+				return nil, err
+			}
+			if result.response.StatusMessage != "" {
+				fmt.Fprintf(errOut, "[lark-cli] uat-client: %s\n", result.response.StatusMessage)
+			}
+			return refreshed, nil
 		}
 
 		switch result.action {
