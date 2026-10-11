@@ -28,50 +28,48 @@ opt it back in explicitly, or default to remove the explicit preference.`,
 			cmd.SilenceUsage = true
 			return nil
 		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			return configRiskControlRun(f, args)
+		RunE: func(cmd *cobra.Command, args []string) (err error) {
+			// Reads take no lock; a mutation holds it from load through save.
+			if len(args) != 0 {
+				release, lockErr := core.LockConfig()
+				if lockErr != nil {
+					return lockErr
+				}
+				defer release(&err)
+			}
+			config, err := core.LoadOrNotConfigured()
+			if err != nil {
+				return err
+			}
+			if len(args) == 0 {
+				printRiskControl(f, config)
+				return nil
+			}
+
+			switch args[0] {
+			case "on":
+				enabled := true
+				config.RiskControl = &enabled
+			case "off":
+				enabled := false
+				config.RiskControl = &enabled
+			case "default":
+				config.RiskControl = nil
+			default:
+				return errs.NewValidationError(errs.SubtypeInvalidArgument,
+					"invalid risk-control value %q, valid values: on | off | default", args[0])
+			}
+
+			if err := core.SaveMultiAppConfig(config); err != nil {
+				return errs.NewInternalError(errs.SubtypeStorage,
+					"failed to save risk-control policy: %v", err).WithCause(err)
+			}
+			fmt.Fprintf(f.IOStreams.ErrOut, "Risk control set to %s (workspace)\n", args[0])
+			return nil
 		},
 	}
 	cmdutil.SetRisk(cmd, cmdutil.RiskWrite)
 	return cmd
-}
-
-func configRiskControlRun(f *cmdutil.Factory, args []string) error {
-	run := func() error {
-		config, err := core.LoadOrNotConfigured()
-		if err != nil {
-			return err
-		}
-		if len(args) == 0 {
-			printRiskControl(f, config)
-			return nil
-		}
-
-		switch args[0] {
-		case "on":
-			enabled := true
-			config.RiskControl = &enabled
-		case "off":
-			enabled := false
-			config.RiskControl = &enabled
-		case "default":
-			config.RiskControl = nil
-		default:
-			return errs.NewValidationError(errs.SubtypeInvalidArgument,
-				"invalid risk-control value %q, valid values: on | off | default", args[0])
-		}
-
-		if err := core.SaveMultiAppConfig(config); err != nil {
-			return errs.NewInternalError(errs.SubtypeStorage,
-				"failed to save risk-control policy: %v", err).WithCause(err)
-		}
-		fmt.Fprintf(f.IOStreams.ErrOut, "Risk control set to %s (workspace)\n", args[0])
-		return nil
-	}
-	if len(args) == 0 {
-		return run()
-	}
-	return core.WithConfigLock(run)
 }
 
 func printRiskControl(f *cmdutil.Factory, config *core.MultiAppConfig) {

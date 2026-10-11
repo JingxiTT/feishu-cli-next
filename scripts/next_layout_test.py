@@ -3,6 +3,7 @@
 
 import hashlib
 import importlib.util
+import json
 from pathlib import Path
 import tempfile
 import unittest
@@ -31,7 +32,8 @@ class LayoutTest(unittest.TestCase):
         names = layout.tracked(layout.ROOT)
         self.assertFalse([n for n in names if n.startswith(('docs/reference/', 'evaluation/evidence/'))])
         for required in ('baseline/v1.0.97/next-interface-mapping.json.gz', 'baseline/sources.json',
-                         'evidence/reference/p3-review-assignments.json', layout.MANIFEST):
+                         'evidence/reference/p3-review-assignments.json', layout.MANIFEST,
+                         layout.UPSTREAM_SOURCES, layout.FOOTPRINT):
             self.assertIn(required, names)
         self.assertGreater(len(layout.sealed_files(names)), 400)
 
@@ -78,6 +80,34 @@ class LayoutTest(unittest.TestCase):
             self.assertTrue(after.startswith(before))
             self.assertEqual(after.count('\n'), 2)
             self.assertEqual(layout.check(root, names), [])
+
+    def test_footprint_lists_exactly_the_edited_upstream_files(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            pinned = {'cmd/a.go': b'package cmd\n', 'cmd/b.go': b'package cmd\n', 'main.go': b'package main\n'}
+            names = self.sealed(root, self.tree(root, pinned))
+            sources = {'files': {name: hashlib.sha256(content).hexdigest() for name, content in pinned.items()}}
+            names += self.tree(root, {layout.UPSTREAM_SOURCES: json.dumps(sources).encode()})
+            self.assertEqual(layout.check(root, names), [layout.FOOTPRINT + ': out of date; run python3 scripts/next_layout.py footprint'])
+            (root / 'docs').mkdir()
+            write = lambda: (root / layout.FOOTPRINT).write_text(layout.render_footprint(*layout.footprint(root)))
+            write()
+            names.append(layout.FOOTPRINT)
+            self.assertEqual(layout.check(root, names), [])
+            self.assertIn('0 of 3 pinned upstream files.', (root / layout.FOOTPRINT).read_text())
+            # An edit to an upstream file must show up in the committed list.
+            (root / 'cmd/b.go').write_bytes(b'package cmd\n\nvar fork = true\n')
+            (root / 'main.go').unlink()
+            self.assertEqual(layout.check(root, names), [layout.FOOTPRINT + ': out of date; run python3 scripts/next_layout.py footprint (newly edited upstream files: cmd/b.go, main.go)'])
+            write()
+            text = (root / layout.FOOTPRINT).read_text()
+            self.assertIn('2 of 3 pinned upstream files.', text)
+            self.assertIn('## (root) (1)\n\n- `main.go`\n', text)
+            self.assertIn('## cmd (1)\n\n- `cmd/b.go`\n', text)
+            self.assertEqual(layout.check(root, names), [])
+            # Restoring upstream bytes is reported too, so the list only ever matches reality.
+            (root / 'cmd/b.go').write_bytes(pinned['cmd/b.go'])
+            self.assertEqual(layout.check(root, names), [layout.FOOTPRINT + ': out of date; run python3 scripts/next_layout.py footprint (restored to upstream: cmd/b.go)'])
 
     def test_malformed_or_duplicate_manifest_lines_fail(self):
         with tempfile.TemporaryDirectory() as temporary:

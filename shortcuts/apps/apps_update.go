@@ -5,12 +5,10 @@ package apps
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"io"
 	"strings"
 
-	"github.com/larksuite/cli/errs"
 	"github.com/larksuite/cli/internal/validate"
 	"github.com/larksuite/cli/shortcuts/common"
 )
@@ -98,41 +96,4 @@ func buildAppsUpdateBody(rctx *common.RuntimeContext) map[string]interface{} {
 		body["description"] = v
 	}
 	return body
-}
-
-// appsUpdateUnchanged compares only explicitly requested replacement fields.
-// Missing fields cannot prove equality; an absent app object is not a target.
-func appsUpdateUnchanged(appID string, current, requested map[string]interface{}) (bool, error) {
-	var response struct {
-		App *struct {
-			AppID       string  `json:"app_id"`
-			Name        *string `json:"name"`
-			Description *string `json:"description"`
-		} `json:"app"`
-	}
-	raw, err := json.Marshal(current)
-	if err != nil {
-		return false, errs.NewInternalError(errs.SubtypeInvalidResponse, "cannot decode current app").WithCause(err)
-	}
-	if err = json.Unmarshal(raw, &response); err != nil {
-		return false, errs.NewInternalError(errs.SubtypeInvalidResponse, "cannot decode current app").WithCause(err)
-	}
-	if response.App == nil || response.App.AppID != appID {
-		return false, errs.NewInternalError(errs.SubtypeInvalidResponse, "current app response does not identify the requested app")
-	}
-	for key, value := range requested {
-		var observed *string
-		switch key {
-		case "name":
-			observed = response.App.Name
-		case "description":
-			observed = response.App.Description
-		default:
-			return false, nil
-		}
-		if observed == nil || *observed != value {
-			return false, nil
-		}
-	}
-	return len(requested) > 0, nil
 }

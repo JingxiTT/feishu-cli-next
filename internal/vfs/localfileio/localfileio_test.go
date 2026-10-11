@@ -6,7 +6,6 @@ package localfileio
 import (
 	"errors"
 	"io"
-	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -205,29 +204,6 @@ func TestLocalFileIO_Save_RejectsTraversal(t *testing.T) {
 	if err == nil {
 		t.Error("expected error for path traversal in Save")
 	}
-}
-
-// saveValidationFS has no backing filesystem: even a validation regression cannot
-// write to the host. Unexpected operations panic through the nil embedded FS.
-type saveValidationFS struct {
-	vfs.FS
-	cwd        string
-	mkdirCalls int
-	writeCalls int
-}
-
-func (f *saveValidationFS) Getwd() (string, error) { return f.cwd, nil }
-
-func (f *saveValidationFS) Lstat(string) (fs.FileInfo, error) { return nil, fs.ErrNotExist }
-
-func (f *saveValidationFS) MkdirAll(string, fs.FileMode) error {
-	f.mkdirCalls++
-	return fs.ErrPermission
-}
-
-func (f *saveValidationFS) CreateTemp(string, string) (*os.File, error) {
-	f.writeCalls++
-	return nil, fs.ErrPermission
 }
 
 func TestLocalFileIO_Save_RejectsPathOutsideAllowlist(t *testing.T) {

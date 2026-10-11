@@ -33,7 +33,7 @@ python3 scripts/next_inventory.py gate --target . \
 | One domain, or shared output/receipts/discovery (`foundation`) | `python3 scripts/next_test.py --section <name> --suite all --binary ./feishu-cli-next --report .tmp/next-tests/<name>.json` |
 | Command, help, or schema surface; `skills/` | `make quality-gate` (compares the base with `HEAD`, so commit first) |
 | `affordance/` | `go test ./internal/affordance ./cmd/service ./internal/schema` |
-| `scripts/`, workflows, or a file added, moved, or removed under `docs/`, `evidence/`, or the root | `make script-test` |
+| `scripts/`, workflows, an upstream file not yet in `docs/upstream-footprint.md`, or a file added, moved, or removed under `docs/`, `evidence/`, or the root | `make script-test` |
 | `evaluation/` | `make evaluation-test` |
 | `extension/` | `make examples-build`, `go test ./tests/plugin_e2e/...` |
 
@@ -99,8 +99,21 @@ adds a bounded layer, and each of its directories has one job:
 | `agent-skills/` | The entry skill |
 | `tests/next_*`, `scripts/next_*` | Fork suites and tooling beside upstream's |
 
-`scripts/next_layout.py check` enforces the root allowlist, markdown-only
-`docs/`, and the evidence seal.
+Fork code inside upstream's tree goes, in order of preference, in:
+
+1. A package the fork owns: `internal/next<area>/`, `cmd/<name>/`, or a
+   sub-package under the domain.
+2. A new file in the upstream package. Declarations that support an upstream
+   file `<name>.go` live in `<name>_next.go` (tests in `<name>_next_test.go`).
+3. An edit to the upstream file, kept to a call into 1 or 2. Never re-indent,
+   rename, or relocate upstream lines to wrap them; for the config lock use
+   `core.LockConfig()` with `defer release(&err)`.
+
+[docs/upstream-footprint.md](docs/upstream-footprint.md) lists every upstream
+file the fork edits. `scripts/next_layout.py check` enforces that list, the
+root allowlist, markdown-only `docs/`, and the evidence seal; run
+`python3 scripts/next_layout.py footprint` after editing or restoring an
+upstream file.
 
 ## Where changes go
 
