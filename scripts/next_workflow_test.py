@@ -28,11 +28,13 @@ class OfflineWorkflowTests(unittest.TestCase):
             self.assertIn('  push:\n    branches: [main]', triggers)
             self.assertNotIn('pull_request_target:', triggers)
 
-    def test_native_matrix_keeps_every_gate_required(self):
-        self.assertIn('os: [ubuntu-latest, macos-latest, windows-latest]', self.workflow)
+    def test_linux_job_keeps_every_gate_required(self):
+        self.assertIn('runs-on: ubuntu-latest', self.workflow)
+        self.assertNotIn('matrix', self.workflow)
+        self.assertNotIn('macos-latest', self.workflow)
+        self.assertNotIn('windows-latest', self.workflow)
         self.assertNotIn('continue-on-error', self.workflow)
         self.assertNotIn('exclude:', self.workflow)
-        self.assertIn("'feishu-cli-next.exe'", self.workflow)
         for selector in ('--section all --suite all', '--integration sheets_base',
                          '--harness scripts', '--harness evaluation'):
             self.assertIn('python scripts/next_test.py ' + selector, self.workflow)
@@ -58,10 +60,10 @@ class OfflineWorkflowTests(unittest.TestCase):
         self.assertIn("'evidence': 'offline'", self.workflow)
         self.assertIn('Skipped or blocked scenarios remain unverified', self.workflow)
 
-    def test_job_binary_selection_uses_available_matrix_context(self):
+    def test_job_uses_linux_binary(self):
         job_env = self.workflow.split('    env:\n', 1)[1].split('    steps:\n', 1)[0]
         self.assertNotIn('runner.', job_env)
-        self.assertIn("NEXT_BINARY: ${{ matrix.os == 'windows-latest' && 'feishu-cli-next.exe' || 'feishu-cli-next' }}", job_env)
+        self.assertIn("NEXT_BINARY: feishu-cli-next", job_env)
 
     def test_capability_guard_executes_actual_helper_as_required_stage(self):
         stage = self.workflow.split('      - name: Compare configured-brand capability registrations\n', 1)[1].split('      - name:', 1)[0]
