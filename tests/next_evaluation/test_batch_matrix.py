@@ -24,7 +24,7 @@ batch = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(batch)
 MANIFESTS = {'read': 'read-sections', 'scenario': 'scenarios', 'scaling': 'scaling',
              'business': 'business', 'foundation': 'foundation', 'contact': 'contact',
-             'paired': 'paired', 'docs-hard': 'docs-hard'}
+             'paired': 'paired', 'docs-hard': 'docs-hard', 'e2e': 'e2e'}
 
 
 class BatchMatrixTests(unittest.TestCase):
@@ -102,6 +102,13 @@ class BatchMatrixTests(unittest.TestCase):
             self.assertEqual(commands, [])
         return configs, commands, skill_text
 
+    def test_interrupted_harness_stops_before_later_sections(self):
+        args = self.argv('read', '--original-comparison', '--resume')
+        with patch.object(sys, 'argv', args), contextlib.redirect_stdout(io.StringIO()), \
+             patch.object(batch.subprocess, 'run', return_value=subprocess.CompletedProcess([], 2)) as launch:
+            self.assertEqual(batch.main(), 2)
+            self.assertEqual(launch.call_count, 1)
+
     def test_all_suites_prepare_original_two_arms_with_correct_contracts(self):
         for kind, manifest_name in MANIFESTS.items():
             with self.subTest(kind=kind):
@@ -119,6 +126,8 @@ class BatchMatrixTests(unittest.TestCase):
                     self.assertEqual(Path(config['verifier'][1]).name, verifier)
                 if kind == 'foundation':
                     self.assertIn('network disabled', configs[0]['permissions'])
+                    self.assertEqual(Path(configs[0]['arms']['official']['skill']).parent.name, 'lark-shared')
+                if kind == 'e2e':
                     self.assertEqual(Path(configs[0]['arms']['official']['skill']).parent.name, 'lark-shared')
                 if kind == 'scenario':
                     packaging = next(c for c in configs if 'selected_skill_source' in c['arms']['official'])
