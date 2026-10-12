@@ -16,6 +16,24 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def load_runner_settings(path):
+    settings = json.loads(path.read_text())
+    required = {'runner', 'accounting_method', 'tokenizer', 'tools', 'permissions', 'supported_backends', 'mode'}
+    if not isinstance(settings, dict) or set(settings) != required or settings['mode'] not in ('real', 'controlled'):
+        raise ValueError('runner config requires exactly the documented protocol settings')
+    command = settings['runner']
+    if (not isinstance(command, list) or not command or not all(isinstance(arg, str) for arg in command)
+            or not Path(command[0]).is_absolute() or not Path(command[0]).is_file()):
+        raise ValueError('runner must be an argv array with an absolute executable')
+    if (not isinstance(settings['supported_backends'], list) or not settings['supported_backends']
+            or not all(isinstance(backend, str) for backend in settings['supported_backends'])):
+        raise ValueError('declare supported fixture backends')
+    for key in ('accounting_method', 'tokenizer', 'tools', 'permissions'):
+        if not settings[key]:
+            raise ValueError('pin runner measurement settings')
+    return settings
+
+
 def extension_host(source, output_root, next_mode):
     """Reuse the exact built host across resumes of the same frozen inputs."""
     from scenarios.extensions import build_host
@@ -46,8 +64,14 @@ def extension_host(source, output_root, next_mode):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    for name in ('official-source', 'official-cli', 'next-source', 'next-cli', 'codex', 'auth-home', 'output-root'):
+    for name in ('official-source', 'official-cli', 'next-source', 'next-cli', 'output-root'):
         parser.add_argument('--' + name, type=Path, required=True)
+    parser.add_argument('--codex', type=Path)
+    parser.add_argument('--auth-home', type=Path)
+    parser.add_argument('--runner-config', type=Path, help='Protocol-1 runner settings; replaces the native Codex adapter')
+    parser.add_argument('--repeats', type=int, default=3)
+    parser.add_argument('--seed', type=int, help='Shared deterministic schedule seed')
+    parser.add_argument('--budget-seconds', type=int, default=180)
     parser.add_argument('--previous-next-source', type=Path, help='Frozen previous Next source; replaces concise arm for a paired before/after comparison')
     parser.add_argument('--previous-next-cli', type=Path, help='Frozen previous Next binary; requires --previous-next-source')
     parser.add_argument('--section', action='append')
@@ -55,20 +79,31 @@ def main():
     parser.add_argument('--original-comparison', action='store_true', help='Run a fresh balanced comparison of only the original CLI and Next; supports all development task suites')
     parser.add_argument('--prepare-only', action='store_true')
     parser.add_argument('--resume', action='store_true', help='Resume validated checkpoint evidence through the harness')
-    parser.add_argument('--task-kind', choices=('read', 'scenario', 'scaling', 'business', 'paired', 'docs-hard', 'foundation', 'contact'), default='read')
+    parser.add_argument('--task-kind', choices=('read', 'scenario', 'scaling', 'business', 'paired', 'docs-hard', 'foundation', 'contact', 'e2e'), default='read')
     parser.add_argument('--model', default='gpt-6-astra', help='Codex model identifier; pin explicitly for a new comparison')
     parser.add_argument('--reasoning', default='high', help='Codex reasoning effort; pin explicitly for a new comparison')
     parser.add_argument('--guidance-delivery', choices=('inline', 'file'), default='inline',
                         help='Shared delivery for every arm: inline skill text or a required complete file read')
     args = parser.parse_args()
+    if args.repeats < 2 or args.budget_seconds <= 0:
+        parser.error('at least two repeats and a positive budget are required')
+    runner_settings = None
+    if args.runner_config:
+        runner_settings = load_runner_settings(args.runner_config)
+    elif not args.codex or not args.auth_home:
+        parser.error('supply --runner-config or both --codex and --auth-home')
     if args.original_comparison and (args.previous_next_source or args.previous_next_cli or args.only_arm):
         parser.error('original comparison cannot combine previous Next or candidate-only options')
+    if args.task_kind == 'e2e' and not args.original_comparison:
+        parser.error('E2E tasks require --original-comparison for full cross-domain guidance')
     if bool(args.previous_next_source) != bool(args.previous_next_cli):
         parser.error('previous Next source and CLI must be supplied together')
     if args.previous_next_source and args.task_kind != 'paired':
         parser.error('previous Next comparison is supported only for paired tasks')
-    manifest_path = ROOT / 'evaluation' / {'read': 'tasks.read-sections.json', 'scenario': 'tasks.scenarios.json', 'scaling': 'tasks.scaling.json', 'business': 'tasks.business.json', 'paired': 'tasks.paired.json', 'docs-hard': 'tasks.docs-hard.json', 'foundation': 'tasks.foundation.json', 'contact': 'tasks.contact.json'}[args.task_kind]
+    manifest_path = ROOT / 'evaluation' / {'read': 'tasks.read-sections.json', 'scenario': 'tasks.scenarios.json', 'scaling': 'tasks.scaling.json', 'business': 'tasks.business.json', 'paired': 'tasks.paired.json', 'docs-hard': 'tasks.docs-hard.json', 'foundation': 'tasks.foundation.json', 'contact': 'tasks.contact.json', 'e2e': 'tasks.e2e.json'}[args.task_kind]
     manifest = json.loads(manifest_path.read_text())
+    if runner_settings and manifest['backend'] not in runner_settings['supported_backends']:
+        raise ValueError('runner has not declared support for this fixture backend')
     sections = list(dict.fromkeys(task['section'] for task in manifest['tasks'] if not args.section or task['section'] in args.section))
     if not sections or args.section and set(args.section) - set(sections):
         raise ValueError('unknown section')
@@ -85,7 +120,7 @@ def main():
                 print(json.dumps({"status": "stopped_before_next_section"}), flush=True)
                 return 0
             index = next(i for i, task in enumerate(manifest["tasks"]) if task["section"] == section)
-            skill_name = 'lark-' + {'docs': 'doc', 'events': 'event', 'packaging': 'shared', 'business': 'shared', 'foundation': 'shared'}.get(section, section)
+            skill_name = 'lark-shared' if args.task_kind == 'e2e' else 'lark-' + {'docs': 'doc', 'events': 'event', 'packaging': 'shared', 'business': 'shared', 'foundation': 'shared'}.get(section, section)
             # The original Markdown skill excludes Markdown-to-online-Doc work
             # and routes it to Drive import. Keep that full source guide intact.
             official_skill = 'lark-drive' if args.task_kind == 'paired' and section == 'markdown' else skill_name
@@ -148,6 +183,10 @@ def main():
                 config['permissions'] = 'workspace-write; protected home/config read-only; network denied; native enforcement probed'
             if args.task_kind == 'foundation':
                 config['permissions'] = 'workspace-write; shell network disabled; isolated Feishu config'
+            config['budget'] = {'timeout_seconds': args.budget_seconds}
+            config['timeout_seconds'] = args.budget_seconds + 30
+            if runner_settings:
+                config.update({key: value for key, value in runner_settings.items() if key != 'supported_backends'})
             from harness import validate_config
             validate_config(config)
             path = temporary / (section + '.json')
@@ -157,7 +196,7 @@ def main():
                 continue
             if not args.resume and (args.output_root / section / 'batch-01.json').exists():
                 raise ValueError('refusing to overwrite completed or partial model evidence')
-            attempts = 3 * (1 if args.only_arm else len(config['arms'])) * sum(task['section'] == section for task in manifest['tasks'])
+            attempts = args.repeats * (1 if args.only_arm else len(config['arms'])) * sum(task['section'] == section for task in manifest['tasks'])
             selection = {'only_arm': args.only_arm, 'balanced_comparison': False} if args.only_arm else {}
             if args.original_comparison:
                 selection = {'comparison': 'original', 'balanced_comparison': True}
@@ -165,11 +204,13 @@ def main():
             result = subprocess.run([sys.executable, str(ROOT / 'evaluation/harness.py'),
                                      '--tasks', str(manifest_path), '--section', section,
                                      '--config', str(path), '--output', str(args.output_root / section / 'batch-01.json'),
-                                     '--seed', str({'read': 20260910, 'scenario': 20260930, 'scaling': 20261020, 'business': 20261101, 'paired': 20260908, 'docs-hard': 20260909, 'foundation': 20260907, 'contact': 20260907}[args.task_kind] + index), '--repeats', '3',
+                                     '--seed', str((args.seed if args.seed is not None else {'read': 20260910, 'scenario': 20260930, 'scaling': 20261020, 'business': 20261101, 'paired': 20260908, 'docs-hard': 20260909, 'foundation': 20260907, 'contact': 20260907, 'e2e': 20261012}[args.task_kind]) + index), '--repeats', str(args.repeats),
                                      '--stop-file', str(args.output_root / 'STOP')] +
                                     (['--only-arm', args.only_arm] if args.only_arm else []) +
                                     (['--original-comparison'] if args.original_comparison else []) +
                                     (['--resume'] if args.resume else []), check=False)
+            if result.returncode not in (0, 1):
+                return 2
             failed |= result.returncode != 0
     print(json.dumps({'status': 'prepared' if args.prepare_only else 'complete_with_failures' if failed else 'complete',
                       'sections': sections}), flush=True)

@@ -24,7 +24,7 @@ PREFIX   ?= /usr/local
 TEST_GOARCH := $(or $(GOARCH),$(shell go env GOARCH))
 RACE_FLAG := $(if $(filter riscv64,$(TEST_GOARCH)),,-race)
 
-.PHONY: all build vet fmt-check script-test test offline-test live-test unit-test live-skills-test integration-test examples-build quality-gate install update-install uninstall clean fetch_meta gitleaks sidecar-test next-script-test evaluation-test cross-domain-test
+.PHONY: all build vet fmt-check script-test test offline-test live-test unit-test live-skills-test integration-test examples-build quality-gate install update-install uninstall clean fetch_meta gitleaks sidecar-test next-script-test evaluation-test evaluation-tooling-test cross-domain-test
 
 all: test
 
@@ -51,8 +51,12 @@ fmt-check:
 next-script-test:
 	python3 scripts/next_test.py --harness scripts --report .tmp/next-tests/scripts.json
 
-evaluation-test:
+# CI tests the evaluator software with synthetic usage; this never bills models.
+evaluation-tooling-test:
 	python3 scripts/next_test.py --harness evaluation --report .tmp/next-tests/evaluation.json
+
+# Compatibility name used by existing contributor instructions and callers.
+evaluation-test: evaluation-tooling-test
 
 script-test: next-script-test
 	bash scripts/check-doc-tokens.sh

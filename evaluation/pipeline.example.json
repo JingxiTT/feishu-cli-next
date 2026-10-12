@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "official_source": "/absolute/frozen-official-source",
+  "official_cli": "/absolute/frozen-official-cli",
+  "next_source": "/absolute/frozen-next-source",
+  "next_cli": "/absolute/frozen-next-cli",
+  "repeats": 3,
+  "seed": 20261012,
+  "budget_seconds": 180,
+  "guidance_delivery": "file",
+  "categories": ["subsystem", "e2e"],
+  "suites": ["paired", "docs-hard", "read", "scenario", "scaling", "business", "foundation", "contact", "e2e"],
+  "experiments": [
+    {
+      "id": "native-model-a",
+      "harness": "codex-cli-0.153.4",
+      "model": "REPLACE_WITH_MODEL_ID",
+      "reasoning": "medium",
+      "codex": "/absolute/native-codex-0.153.4",
+      "auth_home": "/absolute/protected-codex-home"
+    }
+  ]
+}

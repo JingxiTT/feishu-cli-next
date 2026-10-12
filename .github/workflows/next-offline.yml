@@ -58,7 +58,7 @@ jobs:
         id: sections
         if: ${{ always() && steps.build.outcome == 'success' }}
         run: python scripts/next_test.py --section all --suite all --binary "./$NEXT_BINARY" --report .tmp/next-ci/sections.json
-      - name: Controlled evaluation harness
+      - name: Evaluation tooling unit and integration tests (no model calls)
         id: evaluation
         if: ${{ always() && steps.dependencies.outcome == 'success' }}
         run: python scripts/next_test.py --harness evaluation --report .tmp/next-ci/evaluation.json
@@ -84,7 +84,9 @@ jobs:
           stages = {name.lower(): os.environ.get(name + '_OUTCOME') or 'not_run'
                     for name in ('DEPENDENCIES', 'BUILD', 'CAPABILITIES', 'SCRIPTS', 'SECTIONS', 'EVALUATION', 'INTEGRATION')}
           (root / 'gate.json').write_text(json.dumps({
-              'evidence': 'offline', 'platform': platform.system(), 'revision': os.environ['GITHUB_SHA'],
+              'evidence': 'offline', 'purpose': 'software_correctness',
+              'model_comparisons_executed': False, 'token_savings_measured': False,
+              'platform': platform.system(), 'revision': os.environ['GITHUB_SHA'],
               'stages': stages, 'limits': [
                   'Capability reconciliation does not clear retained source review_required findings.',
                   'Skipped or blocked scenarios remain unverified; suite reports retain individual counts and reasons.',
