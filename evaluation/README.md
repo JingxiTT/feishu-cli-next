@@ -1,5 +1,22 @@
 # Agent comparison evaluation
 
+## Configurable harness/model pipeline
+
+Use [`pipeline.py`](pipeline.py) for new official-versus-Next comparisons across
+multiple harnesses and models. It separates **subsystem function evaluation**
+(43 existing tasks) from **E2E task evaluation** (2 composed release jobs),
+with 45 development tasks by default. It supports category/suite/section selection, configurable budgets/repeats,
+custom protocol runners, preflight without billing, safe resume and JSON/CSV/
+Markdown reports. See [configuration, coverage and adapter protocol](PIPELINE.md)
+and [example config](pipeline.example.json). Existing historical results below
+remain separate; offline pipeline tests are not provider token measurements.
+
+CI checks software correctness, including deterministic tests of the evaluator.
+Actual agent evaluation is a separate, explicitly launched experiment. Use
+`make evaluation-tooling-test` for the former and `pipeline.py --execute` with
+a configured experiment for the latter. [CI versus evaluation](PIPELINE.md#evaluation-is-separate-from-ci)
+also distinguishes product E2E tests from agent E2E task evaluation.
+
 ## Offline CLI probes
 
 The [complete October 7 surface comparison](../evidence/evaluation/cli-surface-20261007/REPORT.md)
