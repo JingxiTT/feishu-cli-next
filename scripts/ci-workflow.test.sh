@@ -154,7 +154,7 @@ def check_offline_feishu_workflow(value, file)
   when Array
     value.each { |item| check_offline_feishu_workflow(item, file) }
   when String
-    if value.match?(/(?:secrets|vars)\s*(?:\.\s*(?:TEST_|FEISHU_|LARKSUITE_CLI_)|\[\s*['"](?:TEST_|FEISHU_|LARKSUITE_CLI_))|fetch_e2e_tat|--allow-live|--suite[= ]+live|needs\.e2e-live/)
+    if value.match?(/(?:secrets|vars)\s*(?:\.\s*(?:TEST_|FEISHU_|LARKSUITE_CLI_)|\[\s*['"](?:TEST_|FEISHU_|LARKSUITE_CLI_))|fetch_e2e_tat|next_live_test\.py|make\s+live-test\b|--allow-live|--suite[= ]+live|needs\.e2e-live/)
       raise ArgumentError, "#{file}: workflows must not require real Feishu credentials or live API tests"
     end
     if value.match?(/(?:\A|[;\n])\s*(?:(?:export|env)\s+|echo\s+["']?)?#{FEISHU_AUTH_KEY}\s*=[^\n]*\$\{\{\s*(?:secrets|vars)\s*[.\[]/)
@@ -171,6 +171,8 @@ end
   [{ "env" => { "LARKSUITE_CLI_APP_SECRET" => '${{ secrets.UNRELATED }}' } }, false],
   [{ "run" => 'LARKSUITE_CLI_APP_SECRET="${{ secrets.UNRELATED }}" go test ./...' }, false],
   [{ "run" => 'export TEST_USER_ACCESS_TOKEN=${{ vars.UNRELATED }}' }, false],
+  [{ "run" => 'python3 scripts/next_live_test.py --section contact' }, false],
+  [{ "run" => 'make live-test SECTION=contact' }, false],
   [{ "run" => 'echo "LARKSUITE_CLI_APP_SECRET=${{ secrets["UNRELATED"] }}" >> "$GITHUB_ENV"' }, false],
 ].each do |fixture, expected|
   accepted = begin
