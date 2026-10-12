@@ -231,7 +231,7 @@ make vet
 make fmt-check
 ```
 
-`make test` runs the broader suite. Section and integration runners record pass/fail/skip evidence while isolating developer configuration. Live tests require their documented fixture prerequisites. See [test isolation](tests/next_foundation/README.md), [evaluation tooling](evaluation/README.md), and [contributor instructions](AGENTS.md).
+`make offline-test` (also `make test`) runs the broader account-free suite. GitHub Actions runs only account-free tests. Real-account tests run manually on the user's machine with `make live-test SECTION=<section>` after local authentication and verified fixture setup; see [the two test parts](docs/testing.md). Section and integration runners record pass/fail/skip evidence while isolating developer configuration. See [test isolation](tests/next_foundation/README.md), [evaluation tooling](evaluation/README.md), and [contributor instructions](AGENTS.md).
 
 Project documentation:
 
