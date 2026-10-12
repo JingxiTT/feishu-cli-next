@@ -24,7 +24,7 @@ PREFIX   ?= /usr/local
 TEST_GOARCH := $(or $(GOARCH),$(shell go env GOARCH))
 RACE_FLAG := $(if $(filter riscv64,$(TEST_GOARCH)),,-race)
 
-.PHONY: all build vet fmt-check script-test test unit-test live-skills-test integration-test examples-build quality-gate install update-install uninstall clean fetch_meta gitleaks sidecar-test next-script-test evaluation-test evaluation-tooling-test cross-domain-test
+.PHONY: all build vet fmt-check script-test test offline-test live-test unit-test live-skills-test integration-test examples-build quality-gate install update-install uninstall clean fetch_meta gitleaks sidecar-test next-script-test evaluation-test evaluation-tooling-test cross-domain-test
 
 all: test
 
@@ -92,6 +92,13 @@ integration-test: build cross-domain-test
 	python3 scripts/next_test.py --section all --suite e2e --binary ./$(BINARY) --report .tmp/next-tests/integration.json
 
 test: vet fmt-check script-test unit-test examples-build integration-test evaluation-test
+
+# Account-free checks; identical to the existing default test target.
+offline-test: test
+
+# Explicit local selection; fixture opt-ins remain required by each live test.
+live-test:
+	python3 scripts/next_live_test.py --section "$(SECTION)" --allow-live --binary ./$(BINARY) --report .tmp/next-tests/live.json
 
 quality-gate: build
 	mkdir -p $(QUALITY_GATE_DIR) $(dir $(QUALITY_GATE_FACTS_OUT)) $(dir $(PUBLIC_CONTENT_METADATA))
