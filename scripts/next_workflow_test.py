@@ -28,6 +28,20 @@ class OfflineWorkflowTests(unittest.TestCase):
             self.assertIn('  push:\n    branches: [main]', triggers)
             self.assertNotIn('pull_request_target:', triggers)
 
+    def test_ci_checks_software_without_launching_agent_evaluations(self):
+        for name in ('ci', 'next-offline'):
+            workflow = (ROOT / f'.github/workflows/{name}.yml').read_text()
+            self.assertNotRegex(workflow, r'evaluation/(?:pipeline|harness|run_matrix|run_read_batch|measure_cli|measure_surface)\.py')
+            self.assertNotRegex(workflow, r'OPENAI_API_KEY|ANTHROPIC_API_KEY|CODEX_HOME|--auth-home')
+        self.assertIn('Evaluation tooling unit and integration tests (no model calls)', self.workflow)
+        self.assertIn('evaluation-test: evaluation-tooling-test\n', self.makefile)
+        self.assertIn('evaluation-tooling-test:\n', self.makefile)
+        for target in ('test', 'evaluation-test', 'evaluation-tooling-test'):
+            dry_run = subprocess.run(['make', '-n', target], cwd=ROOT, capture_output=True, text=True, timeout=10)
+            self.assertEqual(dry_run.returncode, 0, dry_run.stderr)
+            self.assertNotRegex(dry_run.stdout, r'evaluation/(?:pipeline|harness|run_matrix|run_read_batch)\.py')
+            self.assertNotIn('--execute', dry_run.stdout)
+
     def test_linux_job_keeps_every_gate_required(self):
         self.assertIn('runs-on: ubuntu-latest', self.workflow)
         self.assertNotIn('matrix', self.workflow)
@@ -89,6 +103,9 @@ class OfflineWorkflowTests(unittest.TestCase):
         self.assertEqual(report['stages']['capabilities'], 'failure')
         self.assertEqual(report['stages']['integration'], 'not_run')
         self.assertEqual(report['evidence'], 'offline')
+        self.assertEqual(report['purpose'], 'software_correctness')
+        self.assertIs(report['model_comparisons_executed'], False)
+        self.assertIs(report['token_savings_measured'], False)
         self.assertNotIn('pass', report.values())
 
     def test_make_keeps_original_gates_and_includes_cross_domain_and_python(self):

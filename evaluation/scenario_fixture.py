@@ -17,6 +17,12 @@ PAIRED_SECTIONS = frozenset(('discovery', 'contact', 'docs-read', 'docs-edit', '
 
 
 def load_scenario(section, row_count=None, case_id=None):
+    if section == 'e2e-release-v1':
+        from e2e import release
+        task = release.task(case_id)
+        return SimpleNamespace(TASK=task, Scenario=lambda: release.Scenario(case_id),
+            verify=lambda workspace, answer, receipt, expected:
+                release.verify(case_id, workspace, answer, receipt, expected))
     if section == 'docs-hard-v1':
         from paired import docs_hard_v1
         task = docs_hard_v1.task(case_id)
