@@ -16,7 +16,7 @@ to `sys.path`.
 | Fixtures | `read_fixture.py`, `section_fixture.py`, `scenario_fixture.py`, `scenario_protocol.py`; task modules in `paired/`, `scenarios/`, `scaling/`, `e2e/` |
 | Verifiers (never call a model) | `read_verifier.py`, `scenario_verifier.py`, `contact_verifier.py`, `foundation_verifier.py` |
 | Offline probes and reports | `measure_cli.py`, `measure_surface.py`, `function_coverage.py`, `plot_scaling.py` |
-| Data | `tasks.*.json` task sets, `contracts/` fixture contracts, `runtime/` response tables, `concise/` guidance, `reports/` write-ups |
+| Data | `tasks.*.json` task sets, `contracts/` fixture contracts, `runtime/` response tables, `concise/` guidance, `reports/` ASSESSMENT and full-matrix write-ups |
 
 Do not read or use `tasks.held-out.json` during development.
 
@@ -173,47 +173,25 @@ The generated report contains each suite's task rows and evidence links. Keep th
 
 The report retains all six incomplete-usage records and their available costs; it does not estimate missing usage or treat it as zero. No failed or unknown-cost trial is automatically retried to improve the result. The retained 18 condition 09 attempts and their costs remain identified separately from new work.
 
-## Completed condition 09
+## Historical token-efficiency conditions
 
-The completed [condition-09 report](../evidence/evaluation/token-efficiency-09/REPORT.md) completed **18 fresh attempts: Next 9/9 verified, original/full 8/9 verified and one inconclusive**. The **strict >50% savings target per task remains unmet: zero gates met, two missed and one unavailable**. Table/list reading saved **38.2%** and focused retrieval from a larger document saved **31.1%**, with both arms **3/3 verified for each task**. Multiple styled-edit comparison is **unavailable** because the original arm had one strategy outside fixture coverage; its other two attempts and all three Next attempts verified.
+Each sealed condition is immutable; read its report before citing it. These are
+per-task comparisons, not pooled rankings. Cohorts differ, so do not pool
+attempts, reuse baselines across cohorts, or present a cross-cohort difference as
+an improvement. Small samples, bounded fixtures and three repetitions do not
+establish population success parity, stable savings or complete live
+functionality. Failed and inconclusive attempts keep their costs; unknown usage is
+never zero.
 
-All usage was complete: **901,686 tokens**, including **185,209** for the inconclusive attempt. Inconclusive coverage is not scored as product failure, unknown usage is never zero, and every attempt and recovery cost remains. Three harder Docs tasks ran three repetitions per arm using candidate `cad221e`, evaluator `b28354f`, `gpt-5.6-luna` / `medium`, native Codex CLI `0.153.4` and symmetric filesystem-only full guidance. The [final private native lifecycle](../evidence/evaluation/docs-improvements-native-live-final-20260909.json) separately passed **9/9 correctness checks** on the same candidate; it does not measure model token savings. [Protocol](reports/token-efficiency-09.md) · [Frozen environment](../evidence/evaluation/token-efficiency-09/environment.json) · [Exact summary](../evidence/evaluation/token-efficiency-09/summary.json).
-
-This new development cohort uses different documents and goals from condition 08. Condition 08's historical **56.8% combined Docs saving** is not a direct before/after improvement for condition 09, and no historical attempts are reused or pooled. No other functions were measured in condition 09. Small samples, bounded fixtures and one larger document size do not establish statistical success parity, stable savings, scaling behavior or complete live functionality.
-
-The historical [condition-08 report](../evidence/evaluation/token-efficiency-08/REPORT.md) records **12/12 verified attempts**, original/full **6/6** and Next **6/6**, on the declared Docs-first stage. **The per-function target remains unmet:** Docs read saved **44.3%** and missed >50%; Docs edit saved **61.1%** and passed. Both arms verified **3/3 for each function**. The stop rule left **36 attempts across six other functions not run**, not failed or measured. All usage was complete: **677,392 tokens** across both arms. [Protocol](reports/token-efficiency-08.md) · [Stage decision](../evidence/evaluation/token-efficiency-08/stage-decision.json) · [Frozen environment](../evidence/evaluation/token-efficiency-08/environment.json).
-
-The **secondary combined Docs workload saved 56.8%**: original **472,979 tokens, 6/6 verified**, versus Next **204,413 tokens, 6/6 verified**. This sums three read and three edit attempts per arm; expensive edits have greater token weight. The combined percentage cannot satisfy the separate read target or predict other workload mixes. All attempt and recovery costs remain included.
-
-In condition 08, both arms received only the selected skill's filesystem path and had to read its contents within the measured tool loop. Next also used the shorter entry guide; its Go runtime, native fidelity checks and full original command surface stayed unchanged for that comparison. File delivery and guide length changed together, so that comparison does not isolate either change. Corrected ambient-skill suppression, `gpt-5.6-luna` / `medium`, native Codex CLI `0.153.4`, signed fixtures, independent verification and fresh contexts remain. Three repetitions and conditional continuation do not establish population success parity, stable savings or complete functionality coverage. No earlier baselines enter the scores.
-
-Historical [condition 07](../evidence/evaluation/token-efficiency-07/REPORT.md) verified **11/12** (Next 6/6, original 5/6), with **36.1% read savings** (both 3/3) and **67.0% edit savings** (Next 3/3, original 2/3), using **720,698 tokens**. [Condition 06](../evidence/evaluation/token-efficiency-06/REPORT.md) verified **12/12**, with **1.0% more read tokens**, **42.1% fewer edit tokens**, and **761,257 total tokens**. Both stopped after Docs; all other functions were unmeasured. Their results remain separate and unchanged.
-
-**Conditions 05/06 have an additional isolation qualification:** a later no-model native control confirmed that disabled-skill directory paths left eight public `CODEX_HOME` catalog entries advertised, while exact `SKILL.md` entry paths suppressed them. Both arms used the affected configuration. Selected guidance was explicitly supplied once; the probe found no real-home `.agents` paths. No billed-token impact or cause of file-read loops is established. Read the [qualification addendum](../evidence/evaluation/token-efficiency-05-06-skill-isolation-qualification.md) and its native evidence before attributing these results solely to the selected CLI guidance. Historical outcomes and costs remain unchanged.
-
-The previous full [condition-05 report](../evidence/evaluation/token-efficiency-05/REPORT.md) records 48 fresh attempts: eight tasks, three repetitions, original/full versus Next. The target is **strictly more than 50% lower all-attempt tokens per verified success for Docs read/edit and at least 30% lower for every other evaluated function**, with no observed success regression. It replaces the unchanged-Next comparator for this new decision. **The target was not met: 3/8 gates met, 3 missed and 2 were unavailable.** [Protocol](reports/token-efficiency-05.md) · [Frozen environment](../evidence/evaluation/token-efficiency-05/environment.json) · [Readiness review](../evidence/evaluation/token-efficiency-05/readiness-review.json).
-
-The batch verified **40/48 attempts**: Next 22/24 and original 18/24. Contact, Markdown creation and Base met their gates. Docs read saved only **6.4%**, with both arms 3/3 verified; Docs edit used **172.0% more tokens per verified success**, with Next **2/3 versus original 3/3**. Discovery used 14.8% more. Sheets' original arm had no verified successes; Drive had four incomplete usage records and no original successes, so both primary comparisons are unavailable. Observed provider spend is a **3,602,432-token lower bound**. The report retains all failed-attempt costs and missing accounting.
-
-Docs-edit traces show `+push` exit 2 and `+update` fallback, but omit edited local files and validation-error text. Their exact rejection cause is unknown. Neither fallback costs nor the failed verification are removed from the results.
-
-The candidate adds a local Docs `+pull` / `+push` text workflow while retaining all original commands and rich-content routes. A [private native lifecycle](../evidence/evaluation/docs-workspace-native-live-20260909.json) passed independent original-CLI checks of text, styles, links, IDs and an untouched table. That product check is separate from the synthetic model benchmark and does not establish universal Markdown conversion or atomic concurrency protection. The [revision probe](../evidence/evaluation/docs-workspace-native-cas-20260909.json) showed stale native PATCH revisions are accepted; current-state fixtures must not fabricate a compare-and-swap guarantee.
-
-Condition 05 retains `gpt-5.6-luna` / `medium`, native Codex CLI `0.153.4`, signed fixtures and independent verification. Original Markdown import now starts from its unchanged `lark-drive` skill, correcting the prior entry selection. Both original guidance bytes and historical results remain intact. Incomplete accounting, inconclusive fixture coverage or zero verified successes make the affected primary comparison unavailable; failed and inconclusive attempts retain their costs. Three repetitions provide point estimates, not population success-rate parity.
-
-The historical [candidate-only guidance follow-up, condition 04](../evidence/evaluation/token-efficiency-04/REPORT.md), contains **24 new candidate trials compared with 48 reused condition-03 baseline trials**. This exploratory comparison is not a new balanced 72-trial run. It keeps the eight tasks, three candidate repetitions, `gpt-5.6-luna` / `medium`, native Codex CLI `0.153.4`, and native-informed synthetic fixtures. [Protocol and reuse limitations](reports/token-efficiency-04.md).
-
-The new candidate verified **24/24 attempts**, with complete accounting for **1,154,003 new provider tokens**. All eight functions improved tokens per verified success against reused unchanged Next, and all observed success counts matched or exceeded both reused baselines. The combined 50% gate was **not fully met: 5/8 functions met it**. Docs read (39.5%), Markdown (43.1%) and Drive (40.0%) remained below the target. Reused baseline usage is not new spend; the report preserves original Docs-edit incomplete accounting and original Markdown/Sheets zero-success comparisons.
-
-Condition 04's 50% point-estimate target applies to each function's all-attempt tokens per verified success against unchanged Next, with observed success nonregression against both unchanged Next and original/full. Reused baselines, adaptive selection and three repetitions do not establish statistical parity, stable savings or live-product equivalence. Failed-attempt costs remain included; incomplete usage, inconclusive outcomes and zero successes make affected scores unavailable.
-
-Historical conditions remain immutable:
-
-- [Optimization 03](../evidence/evaluation/token-efficiency-03/REPORT.md): 72 fresh trials, 62 verified, 10 failed, one incomplete usage record; 2/8 combined function gates met. [Protocol](reports/token-efficiency-03.md).
-- [Optimization 02](../evidence/evaluation/token-efficiency-02/REPORT.md): 72 fresh trials, 64 verified, seven failed, one inconclusive; 4/8 gates met, with a Docs-edit success regression. [Protocol](reports/token-efficiency-02.md).
-- [Original paired pilot 01](../evidence/evaluation/paired-luna-medium-01/REPORT.md): 72 fresh trials, 54 verified, 11 failed, seven inconclusive and complete accounting for 8,442,585 tokens. It compared original/full, original/concise and Next; later optimization conditions use unchanged Next instead of original/concise. [Protocol](reports/paired-functions-luna-medium.md).
-
-These are per-task comparisons, not pooled efficiency rankings. Broader fixture coverage does not retrospectively rescore earlier outcomes. Other historical scenario batches below remain separate conditions.
+- [Condition 09](../evidence/evaluation/token-efficiency-09/REPORT.md): 18 attempts on three harder Docs tasks; strict per-task target unmet. Frozen environment and summary are in the same evidence directory.
+- [Condition 08](../evidence/evaluation/token-efficiency-08/REPORT.md): 12 attempts on the Docs-first stage; Docs edit passed its gate, Docs read did not (44.3% saved). Other functions were not run.
+- [Condition 07](../evidence/evaluation/token-efficiency-07/REPORT.md): 11/12 verified; read and edit savings for Docs only.
+- [Condition 06](../evidence/evaluation/token-efficiency-06/REPORT.md): 12/12 verified; Docs only, stopped after Docs.
+- [Condition 05](../evidence/evaluation/token-efficiency-05/REPORT.md): 40/48 verified; 3 of 8 gates met. Conditions 05 and 06 also carry an [isolation qualification](../evidence/evaluation/token-efficiency-05-06-skill-isolation-qualification.md) that must be read before attributing results to the CLI guidance.
+- [Condition 04](../evidence/evaluation/token-efficiency-04/REPORT.md): candidate-only follow-up, 24 new trials compared with 48 reused condition-03 baseline trials; not a balanced 72-trial run; 5 of 8 gates met.
+- [Optimization 03](../evidence/evaluation/token-efficiency-03/REPORT.md): 72 fresh trials; 2 of 8 combined function gates met.
+- [Optimization 02](../evidence/evaluation/token-efficiency-02/REPORT.md): 72 fresh trials; 4 of 8 gates met, with a Docs-edit success regression.
+- [Original paired pilot 01](../evidence/evaluation/paired-luna-medium-01/REPORT.md): 72 fresh trials; compared original/full, original/concise and Next.
 
 The [provisional assessment](reports/ASSESSMENT.md) compares completed conditions, retains
 regressions and links the remaining release evidence.
@@ -260,12 +238,12 @@ is permitted. The harness does not authorize live calls or enforce backend ACLs.
 
 Create a local JSON config with these fields (all paths must be absolute):
 
-```json
-{
-  "mode": "real",
-  "backend": "controlled-backend@fixture-revision",
-  "model": "exact-provider-model-version",
-  "tokenizer": "exact-tokenizer-version",
+`codex_runner.py` and `foundation_verifier.py` implement real Codex execution
+and independent checks for the offline foundation task described below. Sealed
+results with mixed outcomes and failures: [foundation](../evidence/evaluation/foundation/REPORT.md),
+[Wiki](../evidence/evaluation/wiki-native-74/REPORT.md) and
+[nine-section read batch](../evidence/evaluation/read-312af93/REPORT.md).
+Broader comparative results remain incomplete.
   "reasoning": "pinned-reasoning-setting",
   "tools": ["shell", "files"],
   "permissions": "offline-fixture-only",
@@ -584,48 +562,32 @@ strategies require adapter expansion before a product conclusion. These fixtures
 do not establish live backend behavior, complete workflow fidelity or arbitrary
 filesystem-read auditing.
 
-The first controlled integration against candidate `312af93` found a Mail
-`user_mailbox.messages batch_get` metadata read returning exit 22 as an unknown
-mutation; the original reference returned 0. This occurred before any Mail model
-trial. The corrected accepted candidate `8d92e5` passed controlled acceptance and
-the subsequent [Calendar/Mail/OKR comparison](../evidence/evaluation/read-8d92e5/REPORT.md), with
-all 27 independently verified trials. The earlier 81-trial nine-section read batch
-keeps its original candidate and evaluator snapshots.
+The Mail batch fixture was corrected at candidate `8d92e5`, which produced the
+accepted [Calendar/Mail/OKR read comparison](../evidence/evaluation/read-8d92e5/REPORT.md).
+Earlier candidates keep their own snapshots.
 
-A coordinator search accidentally exposed limited held-out snippets during later
-scaling-coverage review. Files remain unchanged and no held-out trial ran, but
-complete blinding can no longer be claimed for the affected examples. See
-[evidence/held-out-exposure.json](../evidence/evaluation/held-out-exposure.json). They require
-independent blind replacement after product freeze before release evaluation.
+A coordinator search exposed limited held-out snippets during later scaling-coverage
+review. Files remain unchanged and no held-out trial ran, but complete blinding can no
+longer be claimed for the affected examples. See
+[evidence/held-out-exposure.json](../evidence/evaluation/held-out-exposure.json). They
+require independent blind replacement after product freeze before release evaluation.
 
-Future read-only runs retain only allowlisted route IDs, HTTP methods/statuses and
-fixed verifier failure codes. These distinguish answer mismatch, missing read
-proof, a request outside the fixture, and forbidden configuration changes without
-retaining paths, queries, payloads or content. The earlier frozen `cc745f5` runs
-lack these diagnostics; failed raw-API attempts there cannot be attributed to a
-specific route or product defect retrospectively.
+Future read-only runs retain only allowlisted route IDs, HTTP methods/statuses and fixed
+verifier failure codes, never paths, queries, payloads or content. Earlier `cc745f5`
+runs lack these diagnostics, so their failed raw-API attempts cannot be attributed to a
+route or product defect.
 
-Docs fixture v2 (`57a2a9b`) keeps the task prompt and answer unchanged while
-checking native character-level bold, hyperlink URL and Unicode semantics instead
-of invented hidden inline GUIDs or a fixed edited-paragraph ID. Untouched blocks,
-resources and metadata remain exact. Bounded XML replacement and one-paragraph
-replacement have controlled coverage; general reconstruction remains unsupported.
-Historical v1 results are not rescored as successes.
+Docs fixture v2 (`57a2a9b`) checks native character-level bold, hyperlink and Unicode
+semantics; historical v1 results are not rescored as successes. Current-state fixtures
+must not fabricate compare-and-swap: the [revision probe](../evidence/evaluation/docs-workspace-native-cas-20260909.json)
+showed stale native PATCH revisions are accepted. Packaging fixture v2 (`4548e65`)
+accepts the exact installed skill directory or its `SKILL.md`; earlier discarded
+answers are not declared successful.
 
-The Extensions observer accepts the native `--json`/`--json=true` shorthand after
-`121f405`; its earlier rejection was an evaluator defect. Composed-script execution
-still requires independent proof rather than trusting a model-written artifact.
-Events likewise retains its predeclared zero-exit requirement: kernel delivery and
-process disappearance alone cannot establish a child's zero exit status. Missing
-script-child exit evidence is a comparative limitation, not a demonstrated CLI bug.
-No process-supervision infrastructure was added to disguise this limit.
-
-Packaging fixture v2 (`4548e65`) accepts either the exact installed skill directory
-or its `SKILL.md`, because the unchanged prompt permits both interpretations of
-`installed_path`. Normalization permits only one leading `./` and one trailing
-slash on the exact directory. Artifact/reference, unrelated-file and protected-tree
-checks remain required. Earlier discarded answers cannot be recovered or declared
-successful from this correction.
+The Extensions observer accepts the native `--json` shorthand after `121f405`.
+Composed-script execution still requires independent proof, and Events still requires
+explicit child exit evidence: kernel delivery and process disappearance alone do not
+establish a zero exit status.
 
 Future accounting diagnostics retain only four fixed reason codes for malformed
 provider events, failed or mismatched turns, and unexpected tools. They do not
