@@ -34,9 +34,10 @@ script_test_section="$(job_section script-test)"
 deterministic_section="$(awk '
   /^  deterministic-gate:/ { in_job = 1 }
   in_job { print }
-  /^  coverage:/ { exit }
+  /^  deadcode:/ { exit }
 ' "$workflow")"
-coverage_job_section="$(job_section coverage)"
+# The race suite and its coverage now run in one job, so the standalone
+# coverage job is gone; keep the extractor for the Codecov guard below.
 deadcode_section="$(job_section deadcode)"
 dry_run_section="$(job_section e2e-dry-run)"
 security_section="$(job_section security)"
@@ -77,6 +78,62 @@ ruby -ryaml -rtmpdir -ropen3 -e '
     end
   end
 ' "$workflow"
+
+# The docs/evidence-only fast path must skip the Go job matrix for docs or
+# evidence pull requests and keep it for every other change. A regression that
+# widened the skip set would silently stop testing code.
+ruby -ropen3 -rtmpdir -ryaml <<'RUBY'
+ci = YAML.load_file(".github/workflows/ci.yml")
+changes = ci.dig("jobs", "changes")
+abort("ci.yml must define a changes job that classifies changed paths") unless changes
+step = changes.fetch("steps").find { |item| item["name"] == "Classify changed paths" }
+abort("changes job must classify changed paths") unless step
+script = step.fetch("run")
+abort("changes must expose the docs_only output") unless
+  changes.dig("outputs", "docs_only") == "${{ steps.classify.outputs.docs_only }}"
+abort("results must depend on changes so a classifier failure still gates merges") unless
+  ci.dig("jobs", "results", "needs").include?("changes")
+%w[unit-test lint deadcode plugin-integration sidecar-integration].each do |job|
+  abort("#{job} must run only when the change is not docs/evidence-only") unless
+    ci.dig("jobs", job, "if").to_s.include?("needs.changes.outputs.docs_only != 'true'")
+end
+abort("script-test must keep running for docs changes because it checks published tokens") if
+  ci.dig("jobs", "script-test", "if").to_s.include?("docs_only")
+
+def classify(script, files, event)
+  Dir.mktmpdir("classify") do |dir|
+    stub = File.join(dir, "git")
+    File.write(stub, "#!/bin/sh\ncat <<'EOF'\n#{files.join("\n")}\nEOF\n")
+    File.chmod(0700, stub)
+    output = File.join(dir, "github_output")
+    File.write(output, "")
+    env = {
+      "PATH" => dir + ":" + ENV.fetch("PATH"),
+      "GITHUB_EVENT_NAME" => event,
+      "BASE_SHA" => "a" * 40,
+      "HEAD_SHA" => "b" * 40,
+      "GITHUB_OUTPUT" => output,
+    }
+    _stdout, stderr, status = Open3.capture3(env, "bash", "-e", "-c", script)
+    abort("changed-path classification failed: #{stderr}") unless status.success?
+    File.read(output)[/docs_only=(\w+)/, 1]
+  end
+end
+
+[
+  [%w[docs/a.md evidence/b.json], "pull_request", "true"],
+  [%w[docs/a.md main.go], "pull_request", "false"],
+  [%w[docs/sneaky.go], "pull_request", "false"],
+  [%w[skills/x/SKILL.md], "pull_request", "false"],
+  [%w[scripts/next_layout.py], "pull_request", "false"],
+  [%w[docs/a.md], "push", "false"],
+  [[], "pull_request", "true"],
+].each do |files, event, expected|
+  actual = classify(script, files, event)
+  abort("docs-only classification regression for #{files.inspect} on #{event}: got #{actual}, want #{expected}") unless
+    actual == expected
+end
+RUBY
 
 if ! grep -Fq 'LARK_CLI_BIN: ${{ github.workspace }}/feishu-cli-next' <<<"$dry_run_section"; then
   echo "CLI E2E must use the feishu-cli-next binary produced by make build" >&2
@@ -299,7 +356,6 @@ for full_job in \
   "$lint_section" \
   "$script_test_section" \
   "$deterministic_section" \
-  "$coverage_job_section" \
   "$dry_run_section" \
   "$security_section"; do
   if grep -Fq "github.event.action != 'edited'" <<<"$full_job"; then
@@ -426,6 +482,18 @@ coverage_step="$(awk '
 if grep -Fq '${{ secrets.CODECOV_TOKEN }}' <<<"$coverage_step" &&
    ! grep -Fq "if: \${{ $fork_safe_guard }}" <<<"$coverage_step"; then
   echo "Codecov token should be available on push and same-repository pull_request, but not fork pull_request" >&2
+  exit 1
+fi
+
+# Both failure and cover profile must come from one race run, not two.
+if grep -Fq "  coverage:" "$workflow"; then
+  echo "coverage should be merged into unit-test so the race suite runs once, not as a separate job" >&2
+  exit 1
+fi
+
+if ! grep -Fq "Run tests with coverage" <<<"$unit_test_section" ||
+   ! grep -Fq -- "-coverprofile=coverage.txt" <<<"$unit_test_section"; then
+  echo "unit-test should run the race suite with a coverage profile in the same step" >&2
   exit 1
 fi
 
