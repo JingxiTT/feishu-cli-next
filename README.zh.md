@@ -8,7 +8,7 @@
 
 ## 构建与安装
 
-需要 **Go 1.26.9+** 和 `make`；首次构建可能下载 Go 依赖。产品使用源码中已提交的 API 目录，构建无需 Python 或在线获取元数据。清单、打包、评估脚本及本地前缀安装工具需要 Python 3。
+需要 **Go 1.26.10+** 和 `make`；首次构建可能下载 Go 依赖。产品使用源码中已提交的 API 目录，构建无需 Python 或在线获取元数据。清单、打包、评估脚本及本地前缀安装工具需要 Python 3。
 
 ```sh
 git clone https://github.com/Zhujingxi/feishu-cli-next.git

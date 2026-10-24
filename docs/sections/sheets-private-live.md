@@ -4,7 +4,7 @@ This is a narrow synthetic live lifecycle, not acceptance of the full Sheets cap
 
 ## Authorization and executable test
 
-`TestSheets_PrivateUserLifecycle` in `tests/cli_e2e/sheets/sheets_private_live_test.go` replaces the unconditional placeholder for basic private workbook creation, use, and cleanup. Without explicit opt-in it skips before accessing credentials or making requests. Once opted in, failed identity, ownership, privacy, data, or cleanup checks fail the test.
+`TestSheets_PrivateUserLifecycle` in `tests/cli_e2e/sheets/sheets_private_live_next_test.go` replaces the unconditional placeholder for basic private workbook creation, use, and cleanup. Without explicit opt-in it skips before accessing credentials or making requests. Once opted in, failed identity, ownership, privacy, data, or cleanup checks fail the test.
 
 Before enabling the test, the operator must independently verify the effective account/tenant, the account's new-document default, and an isolated private parent folder. The 2026-09-08 run used a personal folder created after the UI showed **Only invited members can access**, with no invitees. Independent Drive preflight established closed link access, exactly one current-account full-access container member, and matching metadata owner. Fresh CLI identity was compared in memory with the independent Contact account/tenant digest before each attempt; private IDs were not written into this document.
 

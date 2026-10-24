@@ -61,7 +61,7 @@ jobs.each do |job_name, job|
   end
 end
 
-expect_equal(workflow.dig("env", "RELEASE_GO_VERSION"), "1.26.9", "release Go version")
+expect_equal(workflow.dig("env", "RELEASE_GO_VERSION"), "1.26.10", "release Go version")
 
 expected_jobs = %w[preflight build-sign-notarize create-draft-release verify-macos publish-github publish-npm retry-guidance]
 expect_equal(jobs.keys.sort, expected_jobs.sort, "release jobs")
@@ -119,7 +119,7 @@ expect_equal(jobs.fetch("publish-npm").fetch("concurrency"), {
 retry_guidance = jobs.fetch("retry-guidance")
 retry_condition = "${{ always() && (needs.preflight.result == 'failure' || needs.build-sign-notarize.result == 'failure' || needs.create-draft-release.result == 'failure' || needs.verify-macos.result == 'failure' || needs.publish-github.result == 'failure' || needs.publish-npm.result == 'failure') }}"
 expect_equal(retry_guidance.fetch("if"), retry_condition, "retry guidance failure condition")
-expect_equal(retry_guidance.fetch("runs-on"), "ubuntu-22.04", "retry guidance runner")
+expect_equal(retry_guidance.fetch("runs-on"), "blacksmith-4vcpu-ubuntu-2204", "retry guidance runner")
 
 retry_steps = retry_guidance.fetch("steps")
 expect_equal(retry_steps.length, 1, "number of retry guidance steps")
@@ -178,7 +178,7 @@ contract_error("release toolchain verification must reject mismatches") unless t
 macos = jobs.fetch("verify-macos")
 expect_equal(macos.fetch("strategy").fetch("matrix").fetch("include"), [
   { "runner" => "macos-15-intel", "arch" => "amd64" },
-  { "runner" => "macos-15", "arch" => "arm64" },
+  { "runner" => "blacksmith-6vcpu-macos-15", "arch" => "arm64" },
 ], "macOS verification matrix")
 expect_equal(macos.fetch("runs-on"), "${{ matrix.runner }}", "macOS matrix runner")
 macos_verify_step = macos.fetch("steps").find { |step| step["name"] == "Verify notarized macOS binary" }

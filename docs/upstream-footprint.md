@@ -307,3 +307,29 @@ call into it. A file restored to upstream bytes drops off this list.
 - `tests/cli_e2e/whiteboard/whiteboard_export_dryrun_test.go`
 - `tests/cli_e2e/wiki/helpers_test.go`
 - `tests/plugin_e2e/harness.go`
+
+## Not covered
+
+These upstream paths have no pinned hashes, so fork edits to them never
+appear above. Compare them with the upstream release by hand during a sync.
+
+- `.codecov.yml`
+- `.gitattributes`
+- `.gitignore`
+- `.gitleaks.toml`
+- `.gitleaksignore`
+- `.golangci.yml`
+- `.licenserc.yaml`
+- `AGENTS.md`
+- `CHANGELOG.md`
+- `README.md`
+- `README.zh.md`
+- `affordance/`
+- `content_embed_affordance_test.go`
+- `isolated-skills/`
+- `lark_suite_assets_test.go`
+- `lint/`
+- `main_noauthsidecar_test.go`
+- `package-lock.json`
+- `skill-template/`
+- `skills/`

@@ -73,7 +73,7 @@ func TestDriveImportStatusRedirectCannotSupplyCompletionProof(t *testing.T) {
 				})}
 				ctx := context.Background()
 				if marked {
-					ctx = WithDriveImportStatusRequest(ctx, "/open-apis/drive/v1/import_tasks/"+ticket)
+					ctx = nextattempt.WithDriveImportStatusRequest(ctx, "/open-apis/drive/v1/import_tasks/"+ticket)
 				}
 				req, err := http.NewRequestWithContext(ctx, "GET", native, nil)
 				if err != nil {
@@ -91,8 +91,8 @@ func TestDriveImportStatusRedirectCannotSupplyCompletionProof(t *testing.T) {
 		}
 	}
 	for _, endpoint := range []string{"https://other.example.test/open-apis/drive/v1/import_tasks/ticket", "https://open.feishu.cn/open-apis/drive/v1/import_tasks/other", "https://open.feishu.cn/open-apis/drive/v1/export_tasks/ticket"} {
-		req, _ := http.NewRequestWithContext(WithDriveImportStatusRequest(context.Background(), "/open-apis/drive/v1/import_tasks/ticket"), "GET", endpoint, nil)
-		if isDriveImportStatusRequest(req) {
+		req, _ := http.NewRequestWithContext(nextattempt.WithDriveImportStatusRequest(context.Background(), "/open-apis/drive/v1/import_tasks/ticket"), "GET", endpoint, nil)
+		if nextattempt.IsDriveImportStatusRequest(req) {
 			t.Fatal("scoped marker changed an unrelated origin or path")
 		}
 	}

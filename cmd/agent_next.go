@@ -47,13 +47,27 @@ func configureAgentFoundation(f *cmdutil.Factory, root *cobra.Command) *output.A
 	}
 	opts.ResolveMutation = func() (string, []string, bool) {
 		summary := f.AgentAttemptSummary()
-		ids := make([]string, 0, len(summary.Receipts))
-		for _, receipt := range summary.Receipts {
-			ids = append(ids, receipt.ID)
-		}
-		return summary.Outcome, ids, summary.PersistenceFailed
+		return summary.Outcome, summary.ReceiptIDs(), summary.PersistenceFailed
 	}
 	return opts
+}
+
+// reportAgentMutations writes this run's mutation evidence to stderr, never
+// mixed into user content, and returns the exit code it implies, if any.
+func reportAgentMutations(f *cmdutil.Factory, exitCode int) int {
+	summary := f.AgentAttemptSummary()
+	if len(summary.Receipts) == 0 {
+		return exitCode
+	}
+	diagnostic := map[string]any{"outcome": summary.Outcome, "receipts": summary.ReceiptIDs(), "applied": summary.Applied, "unapplied": summary.Unapplied, "unknown": summary.Unknown}
+	if summary.PersistenceFailed {
+		diagnostic["persistence_failed"] = true
+	}
+	_ = output.WriteJSON(output.WithAgentOptions(f.IOStreams.ErrOut, &output.AgentOptions{}), map[string]any{"mutation": diagnostic})
+	if attemptExit := summary.ExitCode(); attemptExit != 0 {
+		return attemptExit
+	}
+	return exitCode
 }
 
 func finalizeAgentFoundation(f *cmdutil.Factory, root *cobra.Command, opts *output.AgentOptions) {

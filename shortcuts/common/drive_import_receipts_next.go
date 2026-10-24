@@ -7,7 +7,6 @@ import (
 	"context"
 	"encoding/json"
 
-	"github.com/larksuite/cli/internal/cmdutil"
 	"github.com/larksuite/cli/internal/core"
 	"github.com/larksuite/cli/internal/nextattempt"
 )
@@ -15,7 +14,7 @@ import (
 // WithDriveImportStatusRequest prevents redirects from supplying native import
 // completion proof; other requests retain their existing redirect policy.
 func WithDriveImportStatusRequest(ctx context.Context, apiPath string) context.Context {
-	return cmdutil.WithDriveImportStatusRequest(ctx, apiPath)
+	return nextattempt.WithDriveImportStatusRequest(ctx, apiPath)
 }
 
 // DriveImportCompletionMatches validates proof for dependent domain actions,

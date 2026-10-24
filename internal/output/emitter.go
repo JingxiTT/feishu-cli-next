@@ -218,20 +218,7 @@ func (e *Emitter) emitEnvelope(data interface{}, ok bool, opts EmitOptions) erro
 		env.ContentSafetyAlert = scanResult.Alert
 	}
 
-	var renderedEnv interface{} = env
-	// Raw and jq encode outside WriteJSON. Carry the same honest mutation
-	// outcome while retaining their encoding and filtering contracts.
-	if opts.Raw || opts.JQ != "" {
-		if mutation := agentOptions(e.out).mutation(); mutation != nil {
-			if mutation.unsuccessful() {
-				env.OK = false
-			}
-			renderedEnv = struct {
-				Envelope
-				Mutation *mutationResult `json:"mutation"`
-			}{env, mutation}
-		}
-	}
+	renderedEnv := agentEnvelope(e.out, env, opts)
 
 	if opts.JQ != "" {
 		if scanResult.Alert != nil && opts.JQSafetyWarning {

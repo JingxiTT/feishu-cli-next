@@ -1,5 +1,25 @@
 # Agent comparison evaluation
 
+## Code map
+
+Modules stay flat at fixed paths: retained evidence and task files invoke them
+by path, and `run_matrix.py` records the paths and hashes of the adapter,
+fixture, and contract files in each measured environment. Moving one changes
+that identity. Siblings import each
+other by bare module name; tests in `tests/next_evaluation/` add this directory
+to `sys.path`.
+
+| Role | Modules and directories |
+|------|-------------------------|
+| Entry points | `pipeline.py` (multi-harness comparisons), `run_matrix.py` (full task matrix), `run_read_batch.py` (serial batches), `harness.py` (one balanced comparison) |
+| Agent adapter | `codex_runner.py` |
+| Fixtures | `read_fixture.py`, `section_fixture.py`, `scenario_fixture.py`, `scenario_protocol.py`; task modules in `paired/`, `scenarios/`, `scaling/`, `e2e/` |
+| Verifiers (never call a model) | `read_verifier.py`, `scenario_verifier.py`, `contact_verifier.py`, `foundation_verifier.py` |
+| Offline probes and reports | `measure_cli.py`, `measure_surface.py`, `function_coverage.py`, `plot_scaling.py` |
+| Data | `tasks.*.json` task sets, `contracts/` fixture contracts, `runtime/` response tables, `concise/` guidance, `reports/` write-ups |
+
+Do not read or use `tasks.held-out.json` during development.
+
 ## Configurable harness/model pipeline
 
 Use [`pipeline.py`](pipeline.py) for new official-versus-Next comparisons across
