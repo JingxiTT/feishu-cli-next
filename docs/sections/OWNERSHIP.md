@@ -18,7 +18,7 @@ acceptance. Shared contract changes require coordination before editing.
 
 Each domain owner owns `shortcuts/<domain>/` (`docs` maps to `doc`), its existing
 `tests/cli_e2e/<section>/` directory, a new `tests/next_sections/<section>/`
-process suite, and `docs/sections/<section>.md`. Domain affordance guidance is
+process suite, and, where one is kept, `docs/sections/<section>.md`. Domain affordance guidance is
 owned by the matching section. The events owner owns all `events/` projections,
 `shortcuts/event/`, and the event process suite; domain owners inspect their event
 contracts and send required changes to that owner. The extensions owner owns
