@@ -21,9 +21,10 @@ import (
 )
 
 const (
-	Applied   = "confirmed_applied"
-	Unapplied = "confirmed_unapplied"
-	Unknown   = "unknown"
+	Applied   = errs.MutationApplied
+	Unapplied = errs.MutationUnapplied
+	Partial   = errs.MutationPartial
+	Unknown   = errs.MutationUnknown
 )
 
 // Binding contains non-secret identifiers verified by the credential owner.

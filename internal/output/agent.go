@@ -382,7 +382,7 @@ type mutationResult struct {
 }
 
 func (m *mutationResult) unsuccessful() bool {
-	return m != nil && (m.PersistenceFailed || m.Outcome == "unknown" || m.Outcome == "partial" || m.Outcome == "confirmed_unapplied")
+	return m != nil && (m.PersistenceFailed || m.Outcome == errs.MutationUnknown || m.Outcome == errs.MutationPartial || m.Outcome == errs.MutationUnapplied)
 }
 
 func (o *AgentOptions) mutation() *mutationResult {
