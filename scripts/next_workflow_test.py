@@ -74,6 +74,14 @@ class OfflineWorkflowTests(unittest.TestCase):
         self.assertIn("'evidence': 'offline'", self.workflow)
         self.assertIn('Skipped or blocked scenarios remain unverified', self.workflow)
 
+    def test_superseded_pull_request_runs_are_cancelled(self):
+        self.assertIn('concurrency:\n', self.workflow)
+        self.assertIn(
+            'group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}',
+            self.workflow,
+        )
+        self.assertIn("cancel-in-progress: ${{ github.event_name == 'pull_request' }}", self.workflow)
+
     def test_job_uses_linux_binary(self):
         job_env = self.workflow.split('    env:\n', 1)[1].split('    steps:\n', 1)[0]
         self.assertNotIn('runner.', job_env)
