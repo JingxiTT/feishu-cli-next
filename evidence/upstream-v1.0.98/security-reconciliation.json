@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-25",
+  "candidate_revision": "3af91a31cd770316c166a5969e3c13687f6e19d2",
+  "ci_failure": {
+    "url": "https://github.com/Zhujingxi/feishu-cli-next/actions/runs/40135456172/job/120995911451",
+    "step": "Gitleaks",
+    "findings": 86,
+    "rule": "generic-api-key",
+    "file": "baseline/v1.0.98/sources.json"
+  },
+  "finding_classification": "Every flagged value is a SHA-256 checksum of an official v1.0.98 source file, recomputed from ac81f5056ab88f37d581d25916f3dab85abfca76 and matched byte-for-byte.",
+  "authorization": "User explicitly approved an exception to the AGENTS.md allowlist restriction for these 86 exact commit/file/line fingerprints.",
+  "change": "Append exactly those 86 fingerprints to .gitleaksignore. Do not change scanner rules, path exclusions, existing exceptions, frozen snapshots, or sealed records.",
+  "validation": [
+    {
+      "check": "Pinned Gitleaks v8.30.1 over the four PR commits with the proposed exact ignore entries",
+      "status": "pass",
+      "evidence": "checksum-exception-scan.log.gz"
+    },
+    {
+      "check": "Generated dummy API key at baseline/v1.0.98/sources.json with the same ignore entries",
+      "status": "detected as expected; scanner exit 2",
+      "evidence": "checksum-exception-control.json.gz"
+    },
+    {
+      "check": "go run golang.org/x/vuln/cmd/govulncheck@v1.9.0 ./...",
+      "status": "pass: no called vulnerabilities; one vulnerability in a required module is not called",
+      "evidence": "vulnerability-check.log.gz"
+    },
+    {
+      "check": "go run github.com/google/go-licenses/v2@v2.0.1 check ./... --disallowed_types=forbidden,restricted,reciprocal,unknown",
+      "status": "pass; non-Go assembly inspection warning",
+      "evidence": "dependency-licenses.log.gz"
+    }
+  ],
+  "limits": [
+    "Local static checks; remote CI must rerun before merge",
+    "No live tenant or native Darwin/Windows validation"
+  ]
+}

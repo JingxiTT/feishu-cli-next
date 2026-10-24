@@ -12,6 +12,7 @@ import (
 
 	"github.com/larksuite/cli/errs"
 	"github.com/larksuite/cli/internal/core"
+	"github.com/larksuite/cli/internal/dpop"
 	"github.com/larksuite/cli/internal/errclass"
 )
 
@@ -71,7 +72,7 @@ func (p *CredentialProvider) resolveArtifactIdentity(ctx context.Context, identi
 	if err != nil {
 		return ArtifactIdentity{}, err
 	}
-	data, err := fetchArtifactIdentityData(core.WithCredentialSource(ctx, token.Source), client, account, identity, path, token.Token)
+	data, err := fetchArtifactIdentityData(dpop.WithBinding(core.WithCredentialSource(ctx, token.Source), token.DPoP), client, account, identity, path, token.Token)
 	if err != nil {
 		return ArtifactIdentity{}, err
 	}

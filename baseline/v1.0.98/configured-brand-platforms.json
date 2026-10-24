@@ -1,0 +1,26 @@
+{
+  "platforms": {
+    "darwin": {
+      "acceptance_limit": "Source-derived baseline only; native reference capture and execution remain unverified.",
+      "native_reference_capture": "not_run",
+      "provenance": "source-derived from Linux capture; config keychain-downgrade risk is write on darwin",
+      "reference_file": "configured-brand-registrations-darwin.json.gz",
+      "reference_sha256": "80ff43d5450fcf76591a4670333795bb60b0017932585f6555aac7a525976e3a"
+    },
+    "linux": {
+      "acceptance_limit": "Registration comparison only; semantic and live checks remain separate.",
+      "native_reference_capture": "captured",
+      "provenance": "actual configured official v1.0.98 registration execution on linux/amd64",
+      "reference_file": "configured-brand-registrations.json.gz",
+      "reference_sha256": "48a995f8dc6773b796893ba4bfd9dc7a7d3df0d8195e9ba1cd16df0fcf12b07a"
+    },
+    "windows": {
+      "acceptance_limit": "Source-derived baseline only; native reference capture and execution remain unverified.",
+      "native_reference_capture": "not_run",
+      "provenance": "source-derived from Linux capture; shared !darwin config keychain-downgrade implementation",
+      "reference_file": "configured-brand-registrations.json.gz",
+      "reference_sha256": "48a995f8dc6773b796893ba4bfd9dc7a7d3df0d8195e9ba1cd16df0fcf12b07a"
+    }
+  },
+  "schema_version": 1
+}

@@ -1,7 +1,7 @@
 # AGENTS.md
 
 `feishu-cli-next` is a fork of the official Lark CLI (`larksuite/cli`, synced to
-v1.0.97) for AI agents that work through a shell and files. It keeps every
+v1.0.98) for AI agents that work through a shell and files. It keeps every
 inherited command and reduces the tokens an agent spends on the whole task. A
 shorter response that forces an extra call, or hides a fact the agent needs, is
 a regression.
@@ -27,8 +27,8 @@ run the capability gate. It needs no credentials:
 
 ```bash
 python3 scripts/next_inventory.py gate --target . \
-  --reference-dir baseline/v1.0.97 \
-  --mapping baseline/v1.0.97/next-interface-mapping.json.gz \
+  --reference-dir baseline/v1.0.98 \
+  --mapping baseline/v1.0.98/next-interface-mapping.json.gz \
   --out .tmp/capability-gate.json
 ```
 

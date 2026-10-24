@@ -59,7 +59,7 @@ func runProbe(parent context.Context, factory *cmdutil.Factory, appID, appSecret
 	ctx, cancel := context.WithTimeout(parent, probeTimeout)
 	defer cancel()
 
-	result, err := credential.FetchTAT(ctx, httpClient, brand, appID, appSecret)
+	result, err := credential.FetchTAT(ctx, httpClient, brand, appID, appSecret, core.DPoPModeDisabled)
 	if err != nil {
 		// A typed error from FetchTAT is a deterministic credential rejection
 		// (classifyTATResponseCode). Propagate it so config init exits with the

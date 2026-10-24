@@ -4,7 +4,7 @@ A Feishu/Lark CLI for AI agents that work through a shell and files. It builds o
 
 The goal is to reduce the tokens needed to complete a task while preserving every original command and workflow, data fidelity, and successful outcomes. Results remain task-dependent. Evaluations measure this against per-task gates of **more than 50% fewer tokens for Docs read/edit and at least 30% fewer for each other function versus the original CLI**, with failed-attempt costs included; most gates are not yet met. See [Evaluation](#evaluation).
 
-Synced with [official Lark CLI v1.0.97](https://github.com/larksuite/cli/releases/tag/v1.0.97). See the [upgrade comparison and optimization measurements](baseline/v1.0.97/OPTIMIZATION.md). The original frozen reference remains available for historical comparisons.
+Synced with [official Lark CLI v1.0.98](https://github.com/larksuite/cli/releases/tag/v1.0.98). See the [sync details and verification limits](baseline/v1.0.98/README.md). The original frozen reference remains available for historical comparisons.
 
 [中文说明](README.zh.md) · [Quick start](#quick-start) · [Usage](#usage) · [Evaluation](#evaluation) · [Contributing](docs/contributing.md) · [All docs](docs/README.md)
 
@@ -27,7 +27,7 @@ The inherited surface includes Docs, Sheets, Base, Drive, Wiki, Contacts, Messag
 
 ## Quick start
 
-Requires **Go 1.26.10+** and `make`. The first build may download Go dependencies. The official v1.0.97 API catalog ships with the source and is embedded directly. Python 3 is needed for inventory, packaging, evaluation, and prefix installation scripts.
+Requires **Go 1.26.10+** and `make`. The first build may download Go dependencies. The official v1.0.98 API catalog ships with the source and is embedded directly. Python 3 is needed for inventory, packaging, evaluation, and prefix installation scripts.
 
 ```sh
 git clone https://github.com/Zhujingxi/feishu-cli-next.git
@@ -146,4 +146,4 @@ No check that CI runs needs a Feishu account. Real-account tests run only on you
 
 ## Upstream and license
 
-This is a separate development distribution derived from `larksuite/cli` and synced to v1.0.97 (`72579c80027c863ca51d5f9affda72a70ab0d8a6`), not an official Lark release. The Go module remains `github.com/larksuite/cli` for source and extension compatibility. Original copyright notices, the [MIT license](LICENSE), and [upstream documentation](README.upstream.md) are retained.
+This is a separate development distribution derived from `larksuite/cli` and synced to v1.0.98 (`ac81f5056ab88f37d581d25916f3dab85abfca76`), not an official Lark release. The Go module remains `github.com/larksuite/cli` for source and extension compatibility. Original copyright notices, the [MIT license](LICENSE), and [upstream documentation](README.upstream.md) are retained.

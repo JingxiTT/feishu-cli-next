@@ -11,6 +11,7 @@ it supersedes.
 | `sections/` | Per-section offline and live evidence, cited from [docs/sections/](../docs/sections/OWNERSHIP.md) |
 | `reference/` | Phase ledgers, reconciliation reports, capability checkpoints, and `reviews/` |
 | `integration/` | Cross-domain binding evidence |
+| `upstream-v1.0.98/` | Official release sync comparison and offline verification |
 
 The baselines the capability gate compares against are not evidence; they live
 in [baseline/](../baseline/README.md).

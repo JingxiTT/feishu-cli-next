@@ -13,6 +13,7 @@ import (
 
 	"github.com/larksuite/cli/errs"
 	"github.com/larksuite/cli/internal/core"
+	"github.com/larksuite/cli/internal/dpop"
 )
 
 func TestArtifactIdentityVerifiesPersistedUserAndBotOnce(t *testing.T) {
@@ -102,5 +103,40 @@ func TestArtifactIdentityDoesNotRetryIncompleteCurrentEnrichment(t *testing.T) {
 	p := NewCredentialProvider(nil, &mockDefaultAcct{account: &Account{AppID: "app", Brand: core.BrandFeishu, UserOpenId: "user", UserInfoVerified: true}}, nil, func() (*http.Client, error) { t.Fatal("current user_info evidence was queried again"); return nil, nil })
 	if _, err := p.ResolveArtifactIdentity(context.Background(), core.AsUser); !errs.IsValidation(err) {
 		t.Fatalf("missing tenant accepted: %v", err)
+	}
+}
+
+func TestIdentityLookupsCarrySelectedTokenDPoPBinding(t *testing.T) {
+	for _, lookup := range []string{"artifact-user", "artifact-bot", "receipt-user"} {
+		t.Run(lookup, func(t *testing.T) {
+			binding := &dpop.Binding{}
+			calls := 0
+			p := NewCredentialProvider(nil, &mockDefaultAcct{account: &Account{AppID: "app", Brand: core.BrandFeishu}},
+				&mockDefaultToken{result: &TokenResult{Token: "synthetic", DPoP: binding}}, func() (*http.Client, error) {
+					return &http.Client{Transport: bindingRoundTrip(func(r *http.Request) (*http.Response, error) {
+						calls++
+						if got, ok := dpop.BindingFromContext(r.Context()); !ok || got != binding {
+							t.Fatal("identity lookup lost the selected token's DPoP binding")
+						}
+						body := `{"code":0,"data":{"open_id":"user","tenant_key":"tenant"}}`
+						if lookup == "artifact-bot" {
+							body = `{"code":0,"data":{"tenant":{"tenant_key":"tenant"}}}`
+						}
+						return &http.Response{StatusCode: 200, Body: io.NopCloser(strings.NewReader(body))}, nil
+					})}, nil
+				})
+			var err error
+			switch lookup {
+			case "artifact-user":
+				_, err = p.ResolveArtifactIdentity(context.Background(), core.AsUser)
+			case "artifact-bot":
+				_, err = p.ResolveArtifactIdentity(context.Background(), core.AsBot)
+			default:
+				_, err = p.ResolveUserBinding(context.Background())
+			}
+			if err != nil || calls != 1 {
+				t.Fatalf("calls=%d, error=%v", calls, err)
+			}
+		})
 	}
 }

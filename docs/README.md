@@ -30,7 +30,7 @@ Read the owning contract before changing the behavior it covers.
 | Topic | Read |
 |-------|------|
 | Upstream files the fork edits | [Upstream footprint](upstream-footprint.md) (generated) |
-| Capability gate and interface mapping | [baseline/CI.md](../baseline/CI.md), [v1.0.97 baseline](../baseline/v1.0.97/README.md) |
+| Capability gate and interface mapping | [baseline/CI.md](../baseline/CI.md), [v1.0.98 baseline](../baseline/v1.0.98/README.md) |
 | Sealed evidence | [evidence/README.md](../evidence/README.md) |
 
 ## Records

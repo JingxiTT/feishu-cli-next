@@ -8,6 +8,7 @@ import (
 
 	"github.com/larksuite/cli/errs"
 	"github.com/larksuite/cli/internal/core"
+	"github.com/larksuite/cli/internal/dpop"
 )
 
 // UserBinding projects non-secret identity evidence without changing config or
@@ -44,7 +45,7 @@ func (p *CredentialProvider) resolveUserBinding(ctx context.Context) (UserBindin
 	if err != nil {
 		return UserBinding{}, err
 	}
-	info, err := fetchUserInfo(core.WithCredentialSource(ctx, token.Source), client, account.Brand, token.Token)
+	info, err := fetchUserInfo(dpop.WithBinding(core.WithCredentialSource(ctx, token.Source), token.DPoP), client, account.Brand, token.Token)
 	if err != nil {
 		return UserBinding{}, errs.NewNetworkError(errs.SubtypeNetworkTransport, "cannot verify user identity for mutation evidence").WithCause(err)
 	}

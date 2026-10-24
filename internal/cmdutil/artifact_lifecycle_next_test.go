@@ -59,7 +59,7 @@ func TestArtifactDefaultConfigExportReuseLifecycle(t *testing.T) {
 				t.Fatal(err)
 			}
 			t.Cleanup(func() { _ = os.Chdir(cwd) })
-			cfg := &core.MultiAppConfig{Apps: []core.AppConfig{{AppId: "config-app", AppSecret: core.SecretInput{Ref: &core.SecretRef{Source: "keychain", ID: "appsecret:config-app"}}, Brand: core.BrandFeishu, Users: []core.AppUser{{UserOpenId: "persisted-user"}}}}}
+			cfg := &core.MultiAppConfig{Apps: []core.AppConfig{{AppId: "config-app", AppSecret: core.SecretInput{Ref: &core.SecretRef{Source: "keychain", ID: "appsecret:config-app"}}, Brand: core.BrandFeishu, DPoPMode: core.DPoPModeDisabled, Users: []core.AppUser{{UserOpenId: "persisted-user"}}}}}
 			if err = core.SaveMultiAppConfig(cfg); err != nil {
 				t.Fatal(err)
 			}
@@ -78,7 +78,7 @@ func TestArtifactDefaultConfigExportReuseLifecycle(t *testing.T) {
 						if r.Form.Get("client_id") != "config-app" || r.Form.Get("client_secret") != "synthetic-config-secret" || r.Form.Get("scope") != "" {
 							t.Fatal("wrong account or unsolicited scope grant")
 						}
-						body = `{"code":0,"access_token":"synthetic-tat"}`
+						body = `{"code":0,"access_token":"synthetic-tat","token_type":"Bearer","expires_in":7200}`
 					case "/open-apis/authen/v1/user_info", "/open-apis/tenant/v2/tenant/query":
 						identityReads++
 						if r.Method != "GET" {
