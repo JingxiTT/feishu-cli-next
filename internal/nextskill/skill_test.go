@@ -35,6 +35,26 @@ func TestEntryRoutesUpstreamWorkflowsWithoutRepeatedDiscovery(t *testing.T) {
 	}
 }
 
+func TestEntryRoutesCommonTasksDirectly(t *testing.T) {
+	content, err := os.ReadFile("../../agent-skills/feishu-cli-next/SKILL.md")
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, route := range []string{
+		"im +messages-send", "im +chat-messages-list", "calendar +agenda", "calendar +create",
+		"task +get-my-tasks", "task +create", "task +complete", "okr +cycle-detail", "wiki +node-get",
+		"sheets +cells-set", "base +record-batch-create", "--i-have-read-guide` to `base +field-create`",
+		"apps +list", "Do not pre-read `lark-shared`",
+	} {
+		if !strings.Contains(string(content), route) {
+			t.Errorf("entry guidance missing route %q", route)
+		}
+	}
+	if len(content) > 5400 {
+		t.Errorf("entry guidance is %d bytes; budget is 5400", len(content))
+	}
+}
+
 func fixture(body string) fstest.MapFS {
 	return fstest.MapFS{contentPath: &fstest.MapFile{Data: []byte(body)}}
 }
