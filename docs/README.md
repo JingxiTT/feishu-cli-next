@@ -32,7 +32,6 @@ Read the owning contract before changing the behavior it covers.
 | Upstream files the fork edits | [Upstream footprint](upstream-footprint.md) (generated) |
 | Capability gate and interface mapping | [baseline/CI.md](../baseline/CI.md), [v1.0.97 baseline](../baseline/v1.0.97/README.md) |
 | Sealed evidence | [evidence/README.md](../evidence/README.md) |
-| Removing Claude co-author lines from history | [Author cleanup](author-cleanup.md) |
 
 ## Records
 
