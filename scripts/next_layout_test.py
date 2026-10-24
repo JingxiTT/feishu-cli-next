@@ -109,6 +109,23 @@ class LayoutTest(unittest.TestCase):
             (root / 'cmd/b.go').write_bytes(pinned['cmd/b.go'])
             self.assertEqual(layout.check(root, names), [layout.FOOTPRINT + ': out of date; run python3 scripts/next_layout.py footprint (restored to upstream: cmd/b.go)'])
 
+    def test_footprint_names_upstream_paths_without_pinned_hashes(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            pinned = {'cmd/a.go': b'package cmd\n'}
+            self.tree(root, dict(pinned, **{'skills/lark-im/SKILL.md': b'x', 'Makefile': b'x', 'docs/a.md': b'x'}))
+            sources = {'files': {name: hashlib.sha256(content).hexdigest() for name, content in pinned.items()}}
+            self.tree(root, {layout.UPSTREAM_SOURCES: json.dumps(sources).encode()})
+            edited, count, uncovered = layout.footprint(root)
+            self.assertEqual(uncovered, ['Makefile', 'skills/'])
+            text = layout.render_footprint(edited, count, uncovered)
+            self.assertIn('## Not covered\n', text)
+            self.assertTrue(text.endswith('- `Makefile`\n- `skills/`\n'))
+            # The uncovered list is not mistaken for edited files when the footprint drifts.
+            (root / 'cmd/a.go').write_bytes(b'package cmd\n\nvar fork = true\n')
+            (root / layout.FOOTPRINT).write_text(text)
+            self.assertEqual(layout.footprint_problems(root), [layout.FOOTPRINT + ': out of date; run python3 scripts/next_layout.py footprint (newly edited upstream files: cmd/a.go)'])
+
     def test_malformed_or_duplicate_manifest_lines_fail(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

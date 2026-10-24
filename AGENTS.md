@@ -113,8 +113,10 @@ Fork code inside upstream's tree goes, in order of preference, in:
    rename, or relocate upstream lines to wrap them; for the config lock use
    `core.LockConfig()` with `defer release(&err)`.
 
-[docs/upstream-footprint.md](docs/upstream-footprint.md) lists every upstream
-file the fork edits. `scripts/next_layout.py check` enforces that list, the
+[docs/upstream-footprint.md](docs/upstream-footprint.md) lists every pinned
+upstream file the fork edits, then the upstream paths with no pinned hash
+(`skills/`, `affordance/`, `lint/`, ...), whose edits it cannot see.
+`scripts/next_layout.py check` enforces that list, the
 root allowlist, markdown-only `docs/`, and the evidence seal; run
 `python3 scripts/next_layout.py footprint` after editing or restoring an
 upstream file.

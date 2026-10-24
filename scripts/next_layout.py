@@ -78,10 +78,17 @@ def footprint(root):
     pinned = json.loads((root / UPSTREAM_SOURCES).read_text(encoding='utf-8'))['files']
     edited = sorted(name for name, expected in pinned.items()
                     if not (root / name).is_file() or digest(root / name) != expected)
-    return edited, len(pinned)
+    return edited, len(pinned), unpinned(root, pinned)
 
 
-def render_footprint(edited, pinned):
+def unpinned(root, pinned):
+    """Upstream root entries with no pinned hash, so their fork edits are invisible here."""
+    covered = {name.split('/', 1)[0] for name in pinned}
+    return [entry + '/' if (root / entry).is_dir() else entry
+            for entry in UPSTREAM_ROOT if entry not in covered and (root / entry).exists()]
+
+
+def render_footprint(edited, pinned, uncovered=()):
     groups = collections.defaultdict(list)
     for name in edited:
         groups[name.split('/', 1)[0] if '/' in name else '(root)'].append(name)
@@ -96,6 +103,11 @@ def render_footprint(edited, pinned):
     for group in sorted(groups):
         lines += ['', '## {} ({})'.format(group, len(groups[group])), '']
         lines += ['- `{}`'.format(name) for name in groups[group]]
+    if uncovered:
+        lines += ['', '## Not covered', '',
+                  'These upstream paths have no pinned hashes, so fork edits to them never',
+                  'appear above. Compare them with the upstream release by hand during a sync.', '']
+        lines += ['- `{}`'.format(name) for name in uncovered]
     return '\n'.join(lines) + '\n'
 
 
@@ -107,7 +119,8 @@ def footprint_problems(root):
     current = path.read_text(encoding='utf-8') if path.is_file() else ''
     if current == expected:
         return []
-    listed = lambda text: {line[3:-1] for line in text.splitlines() if line.startswith('- `')}
+    listed = lambda text: {line[3:-1] for line in text.partition('\n## Not covered\n')[0].splitlines()
+                           if line.startswith('- `')}
     added, restored = sorted(listed(expected) - listed(current)), sorted(listed(current) - listed(expected))
     detail = '; '.join(part for part in (
         'newly edited upstream files: ' + ', '.join(added) if added else '',
@@ -165,8 +178,8 @@ def main(argv=None):
             return 2
         print('sealed {} new evidence file(s)'.format(len(added)))
     if args.action == 'footprint':
-        edited, pinned = footprint(root)
-        (root / FOOTPRINT).write_text(render_footprint(edited, pinned), encoding='utf-8', newline='\n')
+        edited, pinned, uncovered = footprint(root)
+        (root / FOOTPRINT).write_text(render_footprint(edited, pinned, uncovered), encoding='utf-8', newline='\n')
         print('{} of {} pinned upstream files edited'.format(len(edited), pinned))
     problems = check(root)
     for problem in problems:
