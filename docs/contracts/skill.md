@@ -10,6 +10,19 @@ and `feishu-cli-next skills read lark-base references/lark-base-field-lookup.md`
 These complete English references remain embedded in the binary; the installed
 entry does not depend on repository-relative files or a second skill install.
 
+`skills read <name> [path]` accepts two opt-in selectors so an agent can pay for
+part of a large file. `--outline` prints one line per heading: two spaces of
+indent per level below 1, the heading text, `[slug]`, and the section size in
+bytes (heading through the next heading of equal or higher level). `--section`
+(repeatable or comma-separated) prints those sections in document order, matched
+by exact slug, then case-insensitive exact text, then a unique case-insensitive
+substring; an ambiguous or unknown name fails with a validation error whose hint
+lists candidate slugs. Headings inside fenced code and YAML frontmatter are not
+headings. Both selectors are plain text on raw stdout and the `content` field with
+`--json`; they cannot be combined with each other. Without them stdout stays
+byte-identical to the file. A raw read of a main `SKILL.md` over 8 KB adds one
+stderr tip naming these flags; reference-file reads keep stderr empty.
+
 `guide install|update|uninstall --project PATH` manages only
 `PATH/.agents/skills/feishu-cli-next/SKILL.md`. The default project is the current
 directory; an explicit project must already exist. This is host-local,

@@ -101,6 +101,7 @@ func newListCmd(f *cmdutil.Factory) *cobra.Command {
 
 func newReadCmd(f *cmdutil.Factory) *cobra.Command {
 	var asJSON bool
+	var sel sectionOptions
 	cmd := &cobra.Command{
 		Use:   "read <name>[/<path>] [path]",
 		Short: "Print a skill's SKILL.md, or a file under the skill (raw markdown by default)",
@@ -130,6 +131,10 @@ func newReadCmd(f *cmdutil.Factory) *cobra.Command {
 			if err != nil {
 				return err
 			}
+			whole := content
+			if content, err = sel.apply(whole, name, pathOut); err != nil {
+				return err
+			}
 
 			isMain := pathOut == "SKILL.md"
 			if asJSON {
@@ -144,6 +149,7 @@ func newReadCmd(f *cmdutil.Factory) *cobra.Command {
 			if _, err := f.IOStreams.Out.Write(content); err != nil {
 				return errs.NewInternalError(errs.SubtypeFileIO, "failed to write output: %v", err)
 			}
+			largeReadTip(f.IOStreams.ErrOut, name, pathOut, whole, sel)
 			if isMain {
 				fmt.Fprintln(f.IOStreams.ErrOut, readGuidance(name))
 			}
@@ -151,6 +157,7 @@ func newReadCmd(f *cmdutil.Factory) *cobra.Command {
 		},
 	}
 	cmd.Flags().BoolVar(&asJSON, "json", false, "output as a JSON envelope instead of raw markdown")
+	addSectionFlags(cmd, &sel)
 	cmdutil.SetRisk(cmd, "read")
 	cmdutil.DisableAuthCheck(cmd)
 	return cmd
