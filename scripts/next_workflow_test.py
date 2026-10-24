@@ -96,7 +96,7 @@ class OfflineWorkflowTests(unittest.TestCase):
         stage = self.workflow.split('      - name: Compare configured-brand capability registrations\n', 1)[1].split('      - name:', 1)[0]
         self.assertIn('id: capabilities', stage)
         self.assertIn("if: ${{ always() && steps.dependencies.outcome == 'success' && steps.build.outcome == 'success' }}", stage)
-        self.assertIn('run: python scripts/next_inventory.py gate --target . --reference-dir baseline/v1.0.97 --mapping baseline/v1.0.97/next-interface-mapping.json.gz --out .tmp/next-ci/capabilities.json\n', stage)
+        self.assertIn('run: python scripts/next_inventory.py gate --target . --reference-dir baseline/v1.0.98 --mapping baseline/v1.0.98/next-interface-mapping.json.gz --out .tmp/next-ci/capabilities.json\n', stage)
         self.assertNotIn('continue-on-error', stage)
         self.assertNotIn('||', stage)
         self.assertLess(self.workflow.index('go build -trimpath'), self.workflow.index('id: capabilities'))

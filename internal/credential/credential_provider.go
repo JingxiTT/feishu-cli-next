@@ -21,6 +21,10 @@ type DefaultAccountResolver interface {
 	ResolveAccount(ctx context.Context) (*Account, error)
 }
 
+type dpopPolicyResolver interface {
+	ResolveLocalDPoPMode(appID string) core.DPoPMode
+}
+
 // DefaultTokenResolver is implemented by the default token provider.
 type DefaultTokenResolver interface {
 	ResolveToken(ctx context.Context, req TokenSpec) (*TokenResult, error)
@@ -204,7 +208,13 @@ func (p *CredentialProvider) selectAccount(ctx context.Context) (*Account, crede
 			return nil, nil, err
 		}
 		if account != nil {
-			return convertAccount(account), extensionTokenSource{provider: prov}, nil
+			internal := convertAccount(account)
+			source := extensionTokenSource{provider: prov}
+			internal.CredentialSource = core.CredentialSource(source.CredentialSource())
+			if policy, ok := p.defaultAcct.(dpopPolicyResolver); ok {
+				internal.DPoPMode = policy.ResolveLocalDPoPMode(internal.AppID)
+			}
+			return internal, source, nil
 		}
 	}
 	if p.defaultAcct != nil {

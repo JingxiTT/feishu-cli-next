@@ -25,7 +25,7 @@ func tokenProviderForTest(t *testing.T, transport http.RoundTripper) *DefaultTok
 	t.Helper()
 	t.Setenv("LARKSUITE_CLI_CONFIG_DIR", t.TempDir())
 	if err := core.SaveMultiAppConfig(&core.MultiAppConfig{Apps: []core.AppConfig{{
-		AppId: "fixture_app", AppSecret: core.PlainSecret("fixture_secret"), Brand: core.BrandFeishu,
+		AppId: "fixture_app", AppSecret: core.PlainSecret("fixture_secret"), Brand: core.BrandFeishu, DPoPMode: core.DPoPModeDisabled,
 	}}}); err != nil {
 		t.Fatal(err)
 	}
@@ -64,7 +64,7 @@ func TestDefaultTokenProvider_TATRefresh(t *testing.T) {
 		t.Fatalf("concurrent callers minted %d tokens", calls.Load())
 	}
 	if err := core.SaveMultiAppConfig(&core.MultiAppConfig{Apps: []core.AppConfig{{
-		AppId: "other_app", AppSecret: core.PlainSecret("other_fixture_secret"), Brand: core.BrandFeishu,
+		AppId: "other_app", AppSecret: core.PlainSecret("other_fixture_secret"), Brand: core.BrandFeishu, DPoPMode: core.DPoPModeDisabled,
 	}}}); err != nil {
 		t.Fatal(err)
 	}

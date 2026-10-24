@@ -56,7 +56,7 @@ jobs:
       - name: Compare configured-brand capability registrations
         id: capabilities
         if: ${{ always() && steps.dependencies.outcome == 'success' && steps.build.outcome == 'success' }}
-        run: python scripts/next_inventory.py gate --target . --reference-dir baseline/v1.0.97 --mapping baseline/v1.0.97/next-interface-mapping.json.gz --out .tmp/next-ci/capabilities.json
+        run: python scripts/next_inventory.py gate --target . --reference-dir baseline/v1.0.98 --mapping baseline/v1.0.98/next-interface-mapping.json.gz --out .tmp/next-ci/capabilities.json
       - name: Inventory, metadata, runner and workflow tests
         id: scripts
         if: ${{ always() && steps.dependencies.outcome == 'success' }}

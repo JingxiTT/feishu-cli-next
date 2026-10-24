@@ -1,7 +1,21 @@
 # CI capability reconciliation
 
+Current CI selects the [official v1.0.98 sync baseline](v1.0.98/README.md).
+Its mapping preserves the 5,770 existing fork rows and adds only the six shared
+result flag registrations inherited by the new `config set` command. The
+v1.0.97 and original snapshots below remain historical records.
+
+```sh
+python3 scripts/next_inventory.py gate --target . \
+  --reference-dir baseline/v1.0.98 \
+  --mapping baseline/v1.0.98/next-interface-mapping.json.gz \
+  --out .tmp/capability-gate.json
+```
+
+## Historical v1.0.97 reconciliation
+
 Run the real next-mode command registration guard after the pinned metadata build.
-CI and AGENTS.md select the v1.0.97 baseline explicitly; without
+At the v1.0.97 sync, CI and AGENTS.md selected that baseline explicitly; without
 `--reference-dir` and `--mapping` the guard falls back to the original frozen
 reference described in the historical notes below.
 

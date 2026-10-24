@@ -33,7 +33,7 @@ func configureAgentFoundation(f *cmdutil.Factory, root *cobra.Command) *output.A
 	f.IOStreams.Out = output.WithAgentOptions(f.IOStreams.Out, opts)
 	root.Use = "feishu-cli-next"
 	root.Short = "Feishu/Lark commands for agents and shell workflows"
-	root.SetVersionTemplate("{{.Name}} {{.Version}} (upstream: larksuite/cli@v1.0.97)\n")
+	root.SetVersionTemplate("{{.Name}} {{.Version}} (upstream: larksuite/cli@v1.0.98)\n")
 	root.AddCommand(discover.NewCmd(f, root), guide.NewCmd(f, agentSkillContent), receipts.NewCmdReceipts(f))
 	root.PersistentFlags().StringVar(&opts.Fields, "result-fields", "", "select JSON result fields; keep outcome and pagination metadata")
 	root.PersistentFlags().BoolVar(&opts.Detail, "result-detail", false, "indent full JSON results")

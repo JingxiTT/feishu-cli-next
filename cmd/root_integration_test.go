@@ -12,6 +12,7 @@ import (
 	"os"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/larksuite/cli/cmd/api"
 	"github.com/larksuite/cli/cmd/auth"
@@ -215,6 +216,10 @@ func newStrictModeDefaultFactory(t *testing.T, profile string, mode core.StrictM
 	reg.Register(&httpmock.Stub{
 		Method: "POST", URL: "/oauth/v3/token", Optional: true,
 		Body: map[string]any{"access_token": "fixture-tenant-token", "token_type": "Bearer", "expires_in": 7200},
+	})
+	reg.Register(&httpmock.Stub{
+		Method: "POST", URL: "/accounts/status/heartbeat", Optional: true,
+		Body: map[string]any{"data": map[string]any{"now": fmt.Sprint(time.Now().Unix())}},
 	})
 	client.Transport = reg
 	return f, stdout, stderr
@@ -749,7 +754,7 @@ func TestSetupNotices_ColdStart_NoNotice(t *testing.T) {
 		output.PendingNotice = nil
 	})
 
-	setupNotices(nil)
+	setupNotices(context.Background(), nil)
 
 	notice := output.GetNotice()
 	if notice == nil {
@@ -783,7 +788,7 @@ func TestSetupNotices_InSync(t *testing.T) {
 		output.PendingNotice = nil
 	})
 
-	setupNotices(nil)
+	setupNotices(context.Background(), nil)
 
 	notice := output.GetNotice()
 	if notice != nil {
@@ -816,7 +821,7 @@ func TestSetupNotices_Drift(t *testing.T) {
 		output.PendingNotice = nil
 	})
 
-	setupNotices(nil)
+	setupNotices(context.Background(), nil)
 
 	notice := output.GetNotice()
 	if notice == nil {
@@ -865,7 +870,7 @@ func TestSetupNotices_BothUpdateAndSkills(t *testing.T) {
 		output.PendingNotice = nil
 	})
 
-	setupNotices(nil)
+	setupNotices(context.Background(), nil)
 
 	// After setupNotices, skills pending is set (drift). Manually populate
 	// the update side so the composed envelope has both keys — the update

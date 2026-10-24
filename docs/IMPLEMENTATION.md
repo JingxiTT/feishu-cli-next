@@ -1,5 +1,10 @@
 # Implementation ledger
 
+On 2026-10-25 the fork integrated official v1.0.98
+(`ac81f5056ab88f37d581d25916f3dab85abfca76`). See the
+[sync baseline](../baseline/v1.0.98/README.md) for changes and verification limits.
+The records below describe their original revisions.
+
 > **Record.** Entries describe work at the revisions they name and are not
 > updated as the code changes. See the [docs index](README.md) for current guides.
 

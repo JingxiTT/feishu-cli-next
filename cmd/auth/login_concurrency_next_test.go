@@ -4,6 +4,7 @@
 package auth
 
 import (
+	"io"
 	"sync/atomic"
 	"testing"
 	"time"
@@ -44,9 +45,9 @@ func TestConcurrentLoginsPreserveBothProfiles(t *testing.T) {
 	vfs.DefaultFS = fs
 	defer func() { vfs.DefaultFS = old }()
 	done := make(chan error, 2)
-	go func() { done <- syncLoginUserToProfile("a", "app-a", "ou_a", "Alice") }()
+	go func() { done <- syncLoginUserToProfile("a", "app-a", "ou_a", "Alice", io.Discard) }()
 	<-fs.firstRead
-	go func() { done <- syncLoginUserToProfile("b", "app-b", "ou_b", "Bob") }()
+	go func() { done <- syncLoginUserToProfile("b", "app-b", "ou_b", "Bob", io.Discard) }()
 	// Without the transaction lock both writers read the same stale snapshot.
 	select {
 	case <-fs.secondRead:

@@ -27,7 +27,7 @@ stays a content merge.
   `docs/`, `baseline/`, `evidence/`, `evaluation/`, `tests/next_*`,
   `scripts/next_*`, and `next.mk` (the fork's make targets, included by
   `Makefile`).
-- **Upstream-owned:** everything else. `baseline/v1.0.97/sources.json` pins the
+- **Upstream-owned:** everything else. `baseline/v1.0.98/sources.json` pins the
   upstream bytes of most of it; [upstream-footprint.md](upstream-footprint.md)
   lists the pinned files the fork has already edited.
 
@@ -82,7 +82,7 @@ layer in another.
    `skills/lark-<domain>/`. Every path a shipped doc references must be embedded
    (`content_embed.go`).
 8. Run the capability gate. A new command is an interface addition: record it in
-   `baseline/v1.0.97/next-interface-mapping.json.gz` only after asking first;
+   `baseline/v1.0.98/next-interface-mapping.json.gz` only after asking first;
    the procedure is in [baseline/CI.md](../baseline/CI.md).
 9. For a write, decide how receipts classify its response. Read the
    [receipt contract](contracts/receipts.md) before touching `internal/nextattempt`.

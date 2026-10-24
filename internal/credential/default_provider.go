@@ -14,6 +14,7 @@ import (
 	"github.com/larksuite/cli/errs"
 	"github.com/larksuite/cli/internal/auth"
 	"github.com/larksuite/cli/internal/core"
+	"github.com/larksuite/cli/internal/dpop"
 	"github.com/larksuite/cli/internal/errclass"
 	"github.com/larksuite/cli/internal/keychain"
 
@@ -90,6 +91,24 @@ func (p *DefaultAccountProvider) ResolveAccount(ctx context.Context) (*Account, 
 	return AccountFromCliConfig(cfg), nil
 }
 
+// ResolveLocalDPoPMode reads the selected profile's non-secret local issuance
+// policy. Credential source checks decide whether the policy applies.
+func (p *DefaultAccountProvider) ResolveLocalDPoPMode(appID string) core.DPoPMode {
+	multi, err := core.LoadMultiAppConfig()
+	if err != nil {
+		return core.DPoPModePreferred
+	}
+	app := multi.CurrentAppConfig(p.profile)
+	if app == nil || app.AppId != appID {
+		return core.DPoPModePreferred
+	}
+	mode, err := app.EffectiveDPoPMode()
+	if err != nil {
+		return core.DPoPModePreferred
+	}
+	return mode
+}
+
 // strictModeToIdentitySupport maps the config-level strict mode to
 // the SupportedIdentities bitflag using an already-loaded MultiAppConfig.
 func strictModeToIdentitySupport(multi *core.MultiAppConfig, profileOverride string) uint8 {
@@ -117,14 +136,33 @@ type DefaultTokenProvider struct {
 	httpClient  func() (*http.Client, error)
 	errOut      io.Writer
 
-	tatMu        sync.Mutex
 	tatAccount   *Account
+	tatMu        sync.Mutex
 	tatResult    *TokenResult
+	tatRefreshAt time.Time
 	tatExpiresAt time.Time
+	tatRefresh   *tatRefreshCall
+	timeNow      func() time.Time
 }
 
+type tatRefreshCall struct {
+	done   chan struct{}
+	result *TokenResult
+	err    error
+}
+
+const (
+	tatMaxRefreshAhead = 5 * time.Minute
+	tatRefreshTimeout  = 30 * time.Second
+)
+
 func NewDefaultTokenProvider(defaultAcct *DefaultAccountProvider, httpClient func() (*http.Client, error), errOut io.Writer) *DefaultTokenProvider {
-	return &DefaultTokenProvider{defaultAcct: defaultAcct, httpClient: httpClient, errOut: errOut}
+	return &DefaultTokenProvider{
+		defaultAcct: defaultAcct,
+		httpClient:  httpClient,
+		errOut:      errOut,
+		timeNow:     time.Now,
+	}
 }
 
 func (p *DefaultTokenProvider) ResolveToken(ctx context.Context, req TokenSpec) (*TokenResult, error) {
@@ -149,7 +187,7 @@ func (p *DefaultTokenProvider) resolveUAT(ctx context.Context) (*TokenResult, er
 	if err != nil {
 		return nil, err
 	}
-	token, err := auth.GetValidAccessToken(httpClient, auth.NewUATCallOptions(acct.ToCliConfig(), p.errOut))
+	resolved, err := auth.GetValidAccessToken(ctx, httpClient, auth.NewUATCallOptions(acct.ToCliConfig(), p.errOut))
 	if err != nil {
 		return nil, err
 	}
@@ -158,45 +196,117 @@ func (p *DefaultTokenProvider) resolveUAT(ctx context.Context) (*TokenResult, er
 	if stored != nil {
 		scopes = stored.Scope
 	}
-	return &TokenResult{Token: token, Scopes: scopes}, nil
+	return &TokenResult{Token: resolved.AccessToken, Scopes: scopes, DPoP: resolved.DPoP}, nil
 }
 
-// resolveTAT refreshes the cached tenant token before expiry and serializes mints.
+// resolveTAT caches minted tenant tokens in memory and renews them before their
+// server-provided expiry. Each provider shares one in-flight mint while independent
+// waiters retain their own cancellation.
 func (p *DefaultTokenProvider) resolveTAT(ctx context.Context) (*TokenResult, error) {
-	p.tatMu.Lock()
-	defer p.tatMu.Unlock()
 	if err := ctx.Err(); err != nil {
 		return nil, err
 	}
-	if p.tatResult != nil && time.Now().Before(p.tatExpiresAt) {
-		return p.tatResult, nil
+	p.tatMu.Lock()
+	now := p.currentTimeForToken(p.tatResult)
+	if p.tatResult != nil && now.Before(p.tatRefreshAt) && now.Before(p.tatExpiresAt) {
+		result := cloneTokenResult(p.tatResult)
+		p.tatMu.Unlock()
+		return result, nil
 	}
-	// A config/profile change in another process must not switch this invocation's app.
+	call := p.tatRefresh
+	if call == nil {
+		call = &tatRefreshCall{done: make(chan struct{})}
+		p.tatRefresh = call
+		go func() {
+			// Shared work belongs to the provider, not the first caller. Bound
+			// its lifetime even when every caller stops waiting.
+			mintCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), tatRefreshTimeout)
+			defer cancel()
+			result, lifetime, err := p.doResolveTAT(mintCtx)
+			p.tatMu.Lock()
+			defer p.tatMu.Unlock()
+			if err == nil {
+				now := p.currentTimeForToken(result)
+				refreshAhead := tatMaxRefreshAhead
+				if proportional := lifetime / 10; proportional < refreshAhead {
+					refreshAhead = proportional
+				}
+				p.tatResult = cloneTokenResult(result)
+				p.tatExpiresAt = now.Add(lifetime)
+				p.tatRefreshAt = p.tatExpiresAt.Add(-refreshAhead)
+			}
+			call.result = cloneTokenResult(result)
+			call.err = err
+			p.tatRefresh = nil
+			close(call.done)
+		}()
+	}
+	p.tatMu.Unlock()
+	select {
+	case <-ctx.Done():
+		return nil, ctx.Err()
+	case <-call.done:
+		return cloneTokenResult(call.result), call.err
+	}
+}
+
+func (p *DefaultTokenProvider) currentTime() time.Time {
+	if p.timeNow == nil {
+		return time.Now()
+	}
+	return p.timeNow()
+}
+
+func (p *DefaultTokenProvider) currentTimeForToken(result *TokenResult) time.Time {
+	if result != nil && result.DPoP != nil && result.DPoP.Key() != nil {
+		return result.DPoP.Key().Clock().Now()
+	}
+	return p.currentTime()
+}
+
+func cloneTokenResult(result *TokenResult) *TokenResult {
+	if result == nil {
+		return nil
+	}
+	cloned := *result
+	return &cloned
+}
+
+func (p *DefaultTokenProvider) doResolveTAT(ctx context.Context) (*TokenResult, time.Duration, error) {
+	// Keep the invocation's app fixed when another process changes config.
 	acct := p.tatAccount
 	if acct == nil {
 		var err error
 		acct, err = p.defaultAcct.ResolveAccount(ctx)
 		if err != nil {
-			return nil, err
+			return nil, 0, err
 		}
+		p.tatAccount = acct
 	}
 	httpClient, err := p.httpClient()
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
-	mintedAt := time.Now()
-	result, err := FetchTAT(ctx, httpClient, acct.Brand, acct.AppID, acct.AppSecret)
+	token, err := FetchTAT(ctx, httpClient, acct.Brand, acct.AppID, acct.AppSecret, acct.DPoPMode)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
-	if result.StatusMessage != "" && p.errOut != nil {
-		fmt.Fprintf(p.errOut, "[lark-cli] tat-client: %s\n", result.StatusMessage)
+	if token.StatusMessage != "" && p.errOut != nil {
+		fmt.Fprintf(p.errOut, "[lark-cli] tat-client: %s\n", token.StatusMessage)
 	}
-	// Missing expiry leaves the token uncached rather than guessing its lifetime.
-	lifetime := time.Duration(result.ExpiresIn) * time.Second
-	margin := min(30*time.Second, lifetime/10)
-	p.tatExpiresAt = mintedAt.Add(lifetime - margin)
-	p.tatAccount = acct
-	p.tatResult = &TokenResult{Token: result.AccessToken}
-	return p.tatResult, nil
+	if token.clockSyncErr != nil && p.errOut != nil {
+		fmt.Fprintf(p.errOut, "[lark-cli] [WARN] TAT clock synchronization failed; continued with the existing clock: %v\n", token.clockSyncErr)
+	}
+	if token.proofFallback && p.errOut != nil {
+		fmt.Fprintf(p.errOut, "[lark-cli] [WARN] three consecutive %s responses; new tenant token issued as Bearer\n", dpop.InvalidProofOAuthError)
+	}
+	if token.localDPoPFallbackErr != nil && p.errOut != nil {
+		fmt.Fprintf(p.errOut, "[lark-cli] [WARN] local DPoP setup failed; new tenant token issued as Bearer: %v\n",
+			token.localDPoPFallbackErr)
+	}
+	lifetime := time.Duration(token.ExpiresIn) * time.Second
+	if lifetime <= 0 {
+		return nil, 0, fmt.Errorf("TAT response has invalid expires_in %d", token.ExpiresIn)
+	}
+	return &TokenResult{Token: token.AccessToken, DPoP: token.DPoP}, lifetime, nil
 }

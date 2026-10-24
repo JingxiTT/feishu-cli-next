@@ -24,7 +24,7 @@ MANIFEST = 'evidence/MANIFEST.sha256'
 # Evidence files that describe the directory rather than record a result.
 UNSEALED = (MANIFEST, 'evidence/README.md')
 # Hashes of the synced upstream release; a sync moves this with the gate baseline.
-UPSTREAM_SOURCES = 'baseline/v1.0.97/sources.json'
+UPSTREAM_SOURCES = 'baseline/v1.0.98/sources.json'
 FOOTPRINT = 'docs/upstream-footprint.md'
 
 # Upstream's root at the synced release. A sync that adds an entry extends this.

@@ -1,6 +1,6 @@
 # Frozen reference inventory
 
-The current product is synced with [official v1.0.97](v1.0.97/README.md). The inventory below remains the original historical baseline; current CI selects the separate v1.0.97 baseline explicitly.
+The current product is synced with [official v1.0.98](v1.0.98/README.md). The inventory below and the v1.0.97 snapshot remain historical baselines; current CI selects the separate v1.0.98 baseline explicitly.
 
 For configured Feishu/Lark guard coverage, use the [separate brand supplement](BRANDS.md) and pass `--reference-registrations baseline/configured-brand-registrations.json.gz` to the checker. The original frozen registration file is an unrestricted bootstrap inventory; its two brand labels do not establish configured runtime conditions.
 

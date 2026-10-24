@@ -18,6 +18,27 @@ spec.loader.exec_module(inventory)
 
 
 class InventoryTests(unittest.TestCase):
+    def test_v1098_native_linux_and_projected_platform_contracts(self):
+        reference = MODULE_PATH.parents[1] / 'baseline/v1.0.98'
+        native = inventory.read(reference / 'configured-brand-registrations.json.gz')
+        darwin = inventory.read(reference / 'configured-brand-registrations-darwin.json.gz')
+        changes = inventory.registration_changes(native, darwin)
+        self.assertEqual([row['path'] for row in changes], [
+            '/feishu/commands/config keychain-downgrade/risk',
+            '/lark/commands/config keychain-downgrade/risk'])
+        profiles = inventory.read(reference / 'configured-brand-platforms.json')['platforms']
+        self.assertEqual(profiles['linux']['native_reference_capture'], 'captured')
+        for platform in ('darwin', 'windows'):
+            self.assertEqual(profiles[platform]['native_reference_capture'], 'not_run')
+        for profile in profiles.values():
+            self.assertEqual(profile['reference_sha256'], inventory.digest(
+                (reference / profile['reference_file']).read_bytes()))
+        for brand in ('feishu', 'lark'):
+            command = native[brand]['commands']['base +record-list']
+            self.assertEqual(command['flags']['format']['default'], 'ndjson')
+            self.assertEqual(command['flags']['limit']['default'], '2000')
+            self.assertIn('config set', native[brand]['commands'])
+
     def test_v1097_platform_projection_changes_only_non_darwin_risk(self):
         reference = MODULE_PATH.parents[1] / 'baseline/v1.0.97'
         native = inventory.read(reference / 'configured-brand-registrations.json.gz')
