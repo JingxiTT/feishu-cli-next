@@ -2,7 +2,7 @@
 
 A Feishu/Lark CLI for AI agents that work through a shell and files. It builds on the official Lark CLI and adds command discovery, compact results, file artifacts, typed data transfer, and mutation recovery evidence.
 
-The goal is to reduce the tokens needed to complete a task while preserving every original command and workflow, data fidelity, and successful outcomes. Results remain task-dependent. Evaluations measure this against per-task gates of **more than 50% fewer tokens for Docs read/edit and at least 30% fewer for each other function versus the original CLI**, with failed-attempt costs included; most gates are not yet met. See [Evaluation](#evaluation).
+The goal is to reduce the tokens needed to complete a task while preserving every original command and workflow, data fidelity, and successful outcomes. Results remain task-dependent. Evaluation produces a descriptive comparison with the original CLI; it has no fixed percentage target or acceptance gate. See [Evaluation](#evaluation).
 
 Synced with [official Lark CLI v1.0.98](https://github.com/larksuite/cli/releases/tag/v1.0.98). See the [sync details and verification limits](baseline/v1.0.98/README.md). The original frozen reference remains available for historical comparisons.
 
@@ -130,9 +130,30 @@ Those guides are not all injected by installing the entry skill. They can still 
 
 ## Evaluation
 
-Each evaluation runs the same agent tasks against Next and the original CLI and counts every attempt's provider tokens, including failures and recovery. The latest [full matrix](evidence/evaluation/full-matrix-20260911/REPORT.md) covered **43 development tasks / 258 attempts**: Next verified **107/129** attempts and the original CLI **102/129**. Per-task gates: **13 met, 22 missed, 8 unavailable**. Six attempts lack complete usage, so whole-matrix savings are unavailable.
+Each evaluation runs the same user goals against Next and the original CLI and
+counts every attempt's provider tokens, including failures and recovery. Use
+the single pipeline entry point:
 
-These are small development samples on synthetic fixtures; they do not establish statistical success parity, stable savings, or live functionality. [Evaluation](evaluation/README.md) has every condition's results, protocol, and how to run a comparison.
+```sh
+python3 evaluation/pipeline.py \
+  --config /absolute/evaluation.json --output /absolute/results
+```
+
+Add `--execute` to run, or `--report-only` to render retained results. The
+current report separates goal-oriented workflows from bounded diagnostics and
+shows verified completion and artifact effects, tokens per verified completion,
+time, API calls, retries and failure/recovery costs. It has no pass/fail
+efficiency gate. The
+[historical full matrix](evidence/evaluation/full-matrix-20260911/REPORT.md)
+covered **43 development tasks / 258 attempts** and remains provenance; its old
+gate labels are not current acceptance criteria.
+
+These are small development samples on synthetic fixtures; they do not establish
+statistical success parity, stable savings, or live functionality. The current
+workload is strongest on shell/file work, Docs, Sheets/Base, Drive artifacts,
+contacts and task completion; message/mail/calendar triage, negative decisions,
+pagination and permission recovery still need more goal-oriented tasks. [Evaluation](evaluation/README.md)
+has the current process and historical results.
 
 ## Development
 

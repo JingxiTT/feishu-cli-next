@@ -19,7 +19,19 @@ ROOT = Path(__file__).resolve().parents[1]
 SUITES = {'paired': 'paired', 'docs-hard': 'docs-hard', 'read': 'read-sections',
           'scenario': 'scenarios', 'scaling': 'scaling', 'business': 'business',
           'foundation': 'foundation', 'contact': 'contact', 'e2e': 'e2e'}
-CATEGORIES = {'subsystem': tuple(s for s in SUITES if s != 'e2e'), 'e2e': ('e2e',)}
+WORKLOADS = {
+    'paired': 'workflow',
+    'docs-hard': 'diagnostic',
+    'read': 'diagnostic',
+    'scenario': 'workflow',
+    'scaling': 'diagnostic',
+    'business': 'workflow',
+    'foundation': 'diagnostic',
+    'contact': 'diagnostic',
+    'e2e': 'workflow',
+}
+WORKLOADS_ALLOWED = ('workflow', 'diagnostic')
+WORKLOAD_LABELS = {'workflow': 'Realistic workflows', 'diagnostic': 'Diagnostics'}
 
 
 def source_digest(directory):
@@ -47,16 +59,16 @@ def prepare(config):
         raise ValueError('positive budget_seconds required')
     if config.get('guidance_delivery', 'file') not in ('file', 'inline'):
         raise ValueError('invalid guidance delivery')
-    categories = config.get('categories', list(CATEGORIES))
-    if (not isinstance(categories, list) or not categories or not all(isinstance(c, str) for c in categories)
-            or len(set(categories)) != len(categories) or set(categories) - set(CATEGORIES)):
-        raise ValueError('select subsystem and/or e2e categories')
-    allowed = {s for c in categories for s in CATEGORIES[c]}
+    workloads = config.get('workloads', list(WORKLOADS_ALLOWED))
+    if (not isinstance(workloads, list) or not workloads or not all(isinstance(c, str) for c in workloads)
+            or len(set(workloads)) != len(workloads) or set(workloads) - set(WORKLOADS_ALLOWED)):
+        raise ValueError('select workflow and/or diagnostic workloads')
+    allowed = {s for s, workload in WORKLOADS.items() if workload in workloads}
     suites = config.get('suites', [s for s in SUITES if s in allowed])
     if not isinstance(suites, list) or not suites or len(set(suites)) != len(suites) or set(suites) - set(SUITES):
         raise ValueError('select unique supported development suites')
     if set(suites) - allowed:
-        raise ValueError('suite selection conflicts with categories')
+        raise ValueError('suite selection conflicts with workloads')
     sections = config.get('sections', [])
     if not isinstance(sections, list) or not all(isinstance(s, str) for s in sections):
         raise ValueError('sections must be an array of names')
@@ -93,7 +105,7 @@ def prepare(config):
                 continue
             if manifest['backend'] not in backends:
                 raise ValueError('adapter does not support every selected backend; narrow the suite selection')
-            jobs.append({'experiment': name, 'suite': suite, 'category': 'e2e' if suite == 'e2e' else 'subsystem',
+            jobs.append({'experiment': name, 'suite': suite, 'workload': WORKLOADS[suite],
                          'harness': cell['harness'],
                          'model': cell['model'], 'reasoning': cell['reasoning'],
                          'backend': manifest['backend'], 'task_ids': [t['id'] for t in tasks],
@@ -116,8 +128,9 @@ def prepare(config):
     return {'schema_version': 1, 'identity_sha256': json_digest(identity), 'jobs': jobs,
             'planned_attempts': sum(j['planned_attempts'] for j in jobs),
             'repeats': repeats, 'seed': config.get('seed', 20261012),
-            'categories': [c for c in CATEGORIES if any(j['category'] == c for j in jobs)],
-            'comparison': ['official', 'next'], 'measurement': 'development fixtures; not live tenant parity'}
+            'workloads': [w for w in WORKLOADS_ALLOWED if any(j['workload'] == w for j in jobs)],
+            'comparison': ['official', 'next'],
+            'measurement': 'descriptive official/Next comparison on development fixtures; not live tenant parity'}
 
 
 def command(config, job, output, prepare_only=False):
@@ -173,55 +186,65 @@ def report(plan, output):
                               and not candidate['inconclusive'] and official['tokens_per_success']
                               and candidate['tokens_per_success'] is not None)
                 saving = 1 - candidate['tokens_per_success'] / official['tokens_per_success'] if comparable else None
-                rows.append({'experiment': job['experiment'], 'category': job['category'],
+                rows.append({'experiment': job['experiment'], 'workload': job['workload'],
                              'harness': job['harness'], 'model': job['model'],
                              'suite': job['suite'], 'section': section, 'scope': scope, 'name': name,
-                             'official': official, 'next': candidate, 'saving_fraction': saving,
-                             'observed_success_nonregression': candidate['success_rate'] >= official['success_rate']
+                             'official': official, 'next': candidate,
+                             'observed_token_difference': saving,
+                             'next_verified_outcome_change': (candidate['success_rate'] - official['success_rate'])
                              if comparable else None})
-            matched.append({'experiment': job['experiment'], 'category': job['category'],
+            matched.append({'experiment': job['experiment'], 'workload': job['workload'],
                             'suite': job['suite'], 'section': section,
                             'diagnostic_only': True, 'matched_success': batch['matched_success']})
         coverage.append({**job, 'completed_attempts': count,
                          'complete': bool(complete and count == job['planned_attempts'])})
     result = {'schema_version': 1, 'measurement': plan['measurement'], 'coverage': coverage,
-              'categories': {c: {'planned_attempts': sum(j['planned_attempts'] for j in coverage if j['category'] == c),
-                                 'completed_attempts': sum(j['completed_attempts'] for j in coverage if j['category'] == c)}
-                             for c in plan['categories']},
+              'workloads': {w: {'planned_attempts': sum(j['planned_attempts'] for j in coverage if j['workload'] == w),
+                                'completed_attempts': sum(j['completed_attempts'] for j in coverage if j['workload'] == w)}
+                            for w in plan['workloads']},
               'comparisons': rows, 'matched_success': matched,
               'complete': all(j['complete'] for j in coverage)}
     atomic_json(output / 'summary.json', result)
     stream = io.StringIO()
     writer = csv.writer(stream)
-    writer.writerow(['experiment', 'category', 'harness', 'model', 'suite', 'section', 'scope', 'name',
+    writer.writerow(['experiment', 'workload', 'harness', 'model', 'suite', 'section', 'scope', 'name',
                      'official_successes', 'next_successes', 'official_known_tokens', 'next_known_tokens',
                      'official_input_tokens', 'official_cached_input_tokens', 'official_output_tokens',
-                     'next_input_tokens', 'next_cached_input_tokens', 'next_output_tokens', 'saving_fraction'])
+                     'next_input_tokens', 'next_cached_input_tokens', 'next_output_tokens',
+                     'official_latency_median_seconds', 'next_latency_median_seconds',
+                     'official_api_calls', 'next_api_calls', 'official_retries', 'next_retries',
+                     'observed_token_difference', 'next_verified_outcome_change'])
     lines = ['# Official CLI / Next evaluation', '', plan['measurement'], '',
-             'Savings use all-attempt tokens / verified successes, including failures and recovery.',
-             'Missing usage, incomplete schedules, zero successes, controlled runs and inconclusive outcomes have no savings score.',
-             'Cached input is included in input tokens. Models/harnesses and evaluation categories are never pooled.']
+             'These are descriptive comparisons for users and developers, not acceptance criteria.',
+             'Tokens per verified completion use all attempts, including failures and recovery.',
+             'Cached input is included in input tokens. Unknown usage, incomplete schedules, zero successes, controlled runs and inconclusive outcomes have no finite comparison.',
+             'Models, harnesses, workloads and task categories are never pooled.']
     for row in rows:
         a, b = row['official'] or {}, row['next'] or {}
-        writer.writerow([row[k] for k in ('experiment', 'category', 'harness', 'model', 'suite', 'section', 'scope', 'name')] +
+        writer.writerow([row[k] for k in ('experiment', 'workload', 'harness', 'model', 'suite', 'section', 'scope', 'name')] +
                         [a.get('successes'), b.get('successes'), a.get('known_total_tokens'),
                          b.get('known_total_tokens')] +
                         [g.get('known_tokens', {}).get(k) for g in (a, b)
-                         for k in ('input_tokens', 'cached_input_tokens', 'output_tokens')] + [row['saving_fraction']])
-    for category in plan['categories']:
-        title = 'Subsystem function evaluation' if category == 'subsystem' else 'E2E task evaluation'
-        counts = result['categories'][category]
-        lines.extend(['', '## ' + title, '',
+                         for k in ('input_tokens', 'cached_input_tokens', 'output_tokens')] +
+                        [g.get('latency_median_seconds') for g in (a, b)] +
+                        [g.get('api_calls') for g in (a, b)] +
+                        [g.get('retries') for g in (a, b)] +
+                        [row['observed_token_difference'], row['next_verified_outcome_change']])
+    for workload in plan['workloads']:
+        counts = result['workloads'][workload]
+        lines.extend(['', '## ' + WORKLOAD_LABELS[workload], '',
                       f"Attempts: {counts['completed_attempts']}/{counts['planned_attempts']} completed.", '',
-                      '| Experiment | Suite | Task | Official success | Next success | Token saving |',
-                      '|---|---|---|---|---|---|'])
-        for row in (r for r in rows if r['category'] == category and r['scope'] == 'task_id'):
+                      '| Experiment | Suite | Task | Official success | Next success | Token difference | Latency O/N | API calls O/N | Retries O/N |',
+                      '|---|---|---|---|---|---|---|---|---|'])
+        for row in (r for r in rows if r['workload'] == workload and r['scope'] == 'task_id'):
             a, b = row['official'] or {}, row['next'] or {}
-            saving = 'unavailable' if row['saving_fraction'] is None else f"{row['saving_fraction']:.1%}"
+            difference = 'unavailable' if row['observed_token_difference'] is None else f"{row['observed_token_difference']:.1%}"
             lines.append(f"| {row['experiment']} | {row['suite']} | {row['name']} | "
-                         f"{a.get('successes', 0)}/{a.get('attempts', 0)} | {b.get('successes', 0)}/{b.get('attempts', 0)} | {saving} |")
+                         f"{a.get('successes', 0)}/{a.get('attempts', 0)} | {b.get('successes', 0)}/{b.get('attempts', 0)} | {difference} | "
+                         f"{a.get('latency_median_seconds')} / {b.get('latency_median_seconds')} | "
+                         f"{a.get('api_calls')} / {b.get('api_calls')} | {a.get('retries')} / {b.get('retries')} |")
     lines.extend(['', f"Completed jobs: {sum(j['complete'] for j in coverage)}/{len(coverage)}.",
-                  'Small repeated samples describe observed variability; they do not establish population success parity.'])
+                  'Small repeated samples describe observed variability; they do not establish population success parity or release readiness.'])
     (output / 'summary.csv').write_text(stream.getvalue())
     (output / 'REPORT.md').write_text('\n'.join(lines) + '\n')
     return result

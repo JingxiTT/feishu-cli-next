@@ -6,6 +6,7 @@ import copy
 import importlib.util
 import json
 from pathlib import Path
+import shutil
 import sys
 import tempfile
 import unittest
@@ -109,6 +110,21 @@ class MatrixTests(unittest.TestCase):
         matrix.write(folder / 'reuse.json', {'batch_sha256': matrix.digest(self.batch)})
         with self.assertRaisesRegex(ValueError, 'Reused results changed'):
             matrix.report(self.output, [self.job], self.env)
+
+    def test_import_ignores_inaccessible_non_cache_siblings(self):
+        source = Path(tempfile.mkdtemp(prefix='protected-non-cache-', dir=self.output.parent))
+        self.addCleanup(shutil.rmtree, source)
+        (source / 'environment.json').write_text('{}')
+        original_read = matrix.read
+
+        def read(path):
+            if path == source / 'environment.json':
+                raise PermissionError(13, 'protected sibling')
+            return original_read(path)
+
+        with patch.object(Path, 'iterdir', return_value=[source, self.output]), \
+             patch.object(matrix, 'read', side_effect=read):
+            matrix.import_sibling_jobs(self.output, [self.job], self.env)
 
 
 if __name__ == '__main__':
