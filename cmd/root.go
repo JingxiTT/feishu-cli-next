@@ -111,7 +111,7 @@ func executeWithOptions(opts []BuildOption) int {
 		setupNotices(rootCmd.Context(), runtime.surface)
 	}
 
-	runErr := rootCmd.Execute()
+	runErr := rootUnknownCommandError(rootCmd, rootCmd.Execute())
 
 	// Fire Shutdown lifecycle hooks regardless of run outcome.
 	// emitShutdown imposes a 2s total deadline and never propagates handler
@@ -351,7 +351,7 @@ func handleRootError(
 	// deprecation notice.
 	var fallback error
 	if isCobraUsageError(err) {
-		fallback = errs.NewValidationError(errs.SubtypeInvalidArgument, "%s", err.Error())
+		fallback = cobraUsageError(f.CurrentCommand, err)
 	} else {
 		fallback = errs.NewInternalError(errs.SubtypeUnknown, "%s", err.Error()).WithCause(err)
 	}
@@ -701,6 +701,9 @@ func flagDidYouMean(c *cobra.Command, ferr error) error {
 				"unknown flag %q for %q", "--"+gated, c.CommandPath()).
 				WithParams(errs.InvalidParam{Name: "--" + gated, Reason: "unknown flag"}).
 				WithHint("run `%s --help` to see valid flags", c.CommandPath())
+		}
+		if valueErr, ok := invalidFlagValueError(c, ferr); ok {
+			return valueErr
 		}
 		validationErr := errs.NewValidationError(errs.SubtypeInvalidArgument, "%s", ferr.Error()).
 			WithHint("run `%s --help` for valid flags", c.CommandPath())
