@@ -3,8 +3,8 @@ module github.com/larksuite/cli
 go 1.26.10
 
 require (
-	github.com/Microsoft/go-winio v0.6.3
-	github.com/bmatcuk/doublestar/v4 v4.10.0
+	github.com/Microsoft/go-winio v0.6.4
+	github.com/bmatcuk/doublestar/v4 v4.10.3
 	github.com/charmbracelet/huh v1.0.0
 	github.com/charmbracelet/lipgloss v1.1.0
 	github.com/gofrs/flock v0.8.1
