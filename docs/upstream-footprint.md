@@ -8,7 +8,7 @@ Before adding one, put the logic in a fork-owned file (`<name>_next.go`
 beside the upstream file, or a `next*` package) and keep the edit here to a
 call into it. A file restored to upstream bytes drops off this list.
 
-266 of 2720 pinned upstream files.
+267 of 2720 pinned upstream files.
 
 ## (root) (7)
 
@@ -78,7 +78,7 @@ call into it. A file restored to upstream bytes drops off this list.
 
 - `extension/fileio/types.go`
 
-## internal (34)
+## internal (35)
 
 - `internal/affordance/affordance_test.go`
 - `internal/client/client.go`
@@ -93,6 +93,7 @@ call into it. A file restored to upstream bytes drops off this list.
 - `internal/credential/tat_fetch_test.go`
 - `internal/credential/types.go`
 - `internal/credential/user_info.go`
+- `internal/event/consume/bounded_test.go`
 - `internal/event/consume/loop.go`
 - `internal/event/dedup.go`
 - `internal/fileevent/report.go`

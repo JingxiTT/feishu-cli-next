@@ -1,5 +1,11 @@
 # Base section
 
+The v1.0.98 sync adopts the approved official record-read changes: NDJSON
+artifacts are the default, Markdown is removed, and list/search read one page
+(up to 2,000 records). Continue explicitly with `next_offset` when `has_more` is
+true. Use `--format json` for inline native matrix output. Earlier reference
+counts and run records below describe their original revisions.
+
 Status: deterministic section gate passed; live, cross-section and comparative acceptance remain open.
 
 Reference: unchanged sibling `../feishu-cli-review` at `7fd6ef3c07182257ce776cdc5a614e122d5bd4b3`. The imported implementations are retained: 117 native shortcuts across Base, tables, fields, views, records, templates, roles/permissions, forms, workflows/buttons, dashboards, workspaces and BaseApps. Frozen default Feishu registrations contain all 117 runnable Base shortcuts plus the domain, including upload/download/remove attachment commands. The new typed import adds one command. Generated service machinery remains owned by the foundation; this section adds no raw forwarding substitute.

@@ -59,7 +59,7 @@ func TestExitReason_Limit(t *testing.T) {
 func TestExitReason_Timeout(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Millisecond)
 	defer cancel()
-	time.Sleep(5 * time.Millisecond)
+	<-ctx.Done()
 
 	opts := Options{MaxEvents: 5, Timeout: 1 * time.Millisecond}
 	reason := exitReason(ctx, 0, opts)

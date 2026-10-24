@@ -30,8 +30,8 @@ is not functional evidence.
 | Tables | Offset/limit list; get plus field/view reads; create explicit schema and a view; update/delete; synchronous schema copy and asynchronous status recovery |
 | Fields | List/get/create/update/delete/options; extension get/clear/row update; partial batch ledger identifies created, failed, and unattempted fields |
 | Views | List/get/create/delete/rename; all six filter, visible-fields, group, sort, timebar, and card get/set pairs |
-| Records | List/search/get native matrix JSON and default Markdown; top-level field-map create/update; native create_records/update_records/batch-delete requests; share links; history |
-| Artifacts | NDJSON exact large integer, Unicode/newline, null, empty-string/array preservation; 501-row, two-page export; schema drift fails before file output; existing artifact remains unchanged on clobber rejection |
+| Records | List/search/get native matrix JSON and default NDJSON artifacts; top-level field-map create/update; native create_records/update_records/batch-delete requests; share links; history |
+| Artifacts | NDJSON exact large integer, Unicode/newline, null, empty-string/array preservation; 500-row first-page export with visible continuation; explicit next-offset export keeps each page’s schema and artifact separate; existing artifact remains unchanged on clobber rejection |
 | No-op | Single and batch update compare typed matrix cells and avoid writes when unchanged; create with skip-unchanged fails before requests |
 | Attachments | Real multipart upload, its explicit telemetry report, append canonical field identity, stream download with byte-for-byte verification and extra metadata, remove selected attachment |
 | Forms | Create/get/update/delete; auto-paginated list; question create/update/list/delete preserving false/null and keep-field; share-token detail/submit; get/update sharing with explicit false |

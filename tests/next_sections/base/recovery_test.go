@@ -227,7 +227,7 @@ func TestBaseReadErrorsRetainTypedMetadata(t *testing.T) {
 	}
 }
 
-func TestBaseNDJSONMultiplePagesAndSchemaDrift(t *testing.T) {
+func TestBaseNDJSONExplicitContinuationKeepsPageBoundaries(t *testing.T) {
 	for _, drift := range []bool{false, true} {
 		name := "stable"
 		if drift {
@@ -241,7 +241,7 @@ func TestBaseNDJSONMultiplePagesAndSchemaDrift(t *testing.T) {
 				if n == 2 {
 					offset, count, more = 500, 1, false
 				}
-				if r.Method != "GET" || r.URL.Path != tp+"/records" || r.URL.Query().Get("offset") != fmt.Sprint(offset) || r.URL.Query().Get("limit") != fmt.Sprint(count) {
+				if r.Method != "GET" || r.URL.Path != tp+"/records" || r.URL.Query().Get("offset") != fmt.Sprint(offset) || r.URL.Query().Get("limit") != map[bool]string{true: "501", false: "1"}[n == 1] {
 					t.Errorf("request=%s %s", r.Method, r.URL)
 				}
 				ids := []string{}
@@ -259,39 +259,48 @@ func TestBaseNDJSONMultiplePagesAndSchemaDrift(t *testing.T) {
 				_ = json.NewEncoder(w).Encode(payload)
 			}))
 			result := f.Run(table("record-list", "--limit", "501", "--output", "pages.ndjson")...)
-			if calls.Load() != 2 {
-				t.Fatalf("calls=%d result=%+v", calls.Load(), result)
+			if calls.Load() != 1 {
+				t.Fatalf("implicit continuation: calls=%d result=%+v", calls.Load(), result)
 			}
 			path := filepath.Join(f.WorkDir, "pages.ndjson")
-			if drift {
-				if result.ExitCode != 2 || result.Stdout != "" {
-					t.Fatalf("drift result=%+v", result)
-				}
-				if _, err := os.Stat(path); !os.IsNotExist(err) {
-					t.Fatalf("schema drift wrote artifact: %v", err)
-				}
-				return
-			}
 			if result.ExitCode != 0 {
 				t.Fatal(result)
 			}
-			assertJSON(t, result.Stdout, `{"records_count":501,"page_count":2,"has_more":false}`, true)
+			assertJSON(t, result.Stdout, `{"records_count":500,"page_count":1,"has_more":true,"next_offset":500}`, true)
 			raw, err := os.ReadFile(path)
 			if err != nil {
 				t.Fatal(err)
 			}
 			lines := strings.Split(strings.TrimSuffix(string(raw), "\n"), "\n")
-			if len(lines) != 501 {
+			if len(lines) != 500 {
 				t.Fatalf("rows=%d", len(lines))
 			}
 			for i, line := range lines {
 				assertJSON(t, line, fmt.Sprintf(`{"record_id":"rec_%03d","Title":"第 %d 行"}`, i, i), false)
 			}
+			result = f.Run(table("record-list", "--offset", "500", "--limit", "1", "--output", "continuation.ndjson")...)
+			if result.ExitCode != 0 || calls.Load() != 2 {
+				t.Fatalf("continuation=%+v calls=%d", result, calls.Load())
+			}
+			assertJSON(t, result.Stdout, `{"records_count":1,"page_count":1,"has_more":false,"offset":500}`, true)
+			continued, err := os.ReadFile(filepath.Join(f.WorkDir, "continuation.ndjson"))
+			if err != nil {
+				t.Fatal(err)
+			}
+			column := "Title"
+			if drift {
+				column = "Renamed"
+			}
+			assertJSON(t, strings.TrimSpace(string(continued)), fmt.Sprintf(`{"record_id":"rec_500",%q:"第 500 行"}`, column), false)
+			first, err := os.ReadFile(path)
+			if err != nil || string(first) != string(raw) {
+				t.Fatal("continuation changed the first page artifact", err)
+			}
 		})
 	}
 }
 
-func TestBaseRecordMarkdownDefaultIsReadableAndKeepsIdentity(t *testing.T) {
+func TestBaseRecordNDJSONDefaultPreservesDataAndIdentity(t *testing.T) {
 	for _, command := range []string{"record-list", "record-get", "record-search"} {
 		t.Run(command, func(t *testing.T) {
 			var calls atomic.Int32
@@ -321,11 +330,22 @@ func TestBaseRecordMarkdownDefaultIsReadableAndKeepsIdentity(t *testing.T) {
 			if result.ExitCode != 0 || calls.Load() != 1 {
 				t.Fatalf("result=%+v calls=%d", result, calls.Load())
 			}
-			for _, value := range []string{"_record_id", "rec_fixture", "Title", "原文", "has_more=false"} {
-				if !strings.Contains(result.Stdout, value) {
-					t.Errorf("missing %s in %s", value, result.Stdout)
-				}
+			assertJSON(t, result.Stdout, `{"format":"ndjson","records_count":1,"page_count":1,"has_more":false}`, true)
+			var manifest struct {
+				RecordFile string         `json:"record_file"`
+				Columns    map[string]any `json:"columns"`
 			}
+			if err := json.Unmarshal([]byte(result.Stdout), &manifest); err != nil {
+				t.Fatal(err)
+			}
+			if manifest.Columns["Title"] == nil {
+				t.Fatal("manifest lost the field schema")
+			}
+			raw, err := os.ReadFile(manifest.RecordFile)
+			if err != nil {
+				t.Fatal(err)
+			}
+			assertJSON(t, strings.TrimSpace(string(raw)), `{"record_id":"rec_fixture","Title":"原文"}`, false)
 		})
 	}
 }
