@@ -1,9 +1,15 @@
 # CI capability reconciliation
 
-Run the real next-mode command registration guard after the pinned metadata build:
+Run the real next-mode command registration guard after the pinned metadata build.
+CI and AGENTS.md select the v1.0.97 baseline explicitly; without
+`--reference-dir` and `--mapping` the guard falls back to the original frozen
+reference described in the historical notes below.
 
 ```sh
-python3 scripts/next_inventory.py gate --target . --out .tmp/next-capability-gate.json
+python3 scripts/next_inventory.py gate --target . \
+  --reference-dir baseline/v1.0.97 \
+  --mapping baseline/v1.0.97/next-interface-mapping.json.gz \
+  --out .tmp/capability-gate.json
 ```
 
 The guard exports both configured Feishu and Lark surfaces with the existing temporary-copy exporter and the frozen metadata. It selects an exact reference hash from `configured-brand-platforms.json` for the actual Go target/host OS; only Darwin, Linux, and Windows are supported, and a target/host OS mismatch fails closed. It executes no business commands, uses a synthetic environment account, and disables remote metadata and outbound proxy access. No live credentials are needed. The normal Go dependency cache must already be populated.
@@ -28,7 +34,7 @@ These cover exact value matching, changed new-subtree definitions, missing capab
 
 The local actual-process checkpoint `ci-capability-checkpoint.json.gz` passed on immutable product revision `8d92e5253aa9d0582314180d51cdec1b10778897` with both configured brands, 951 candidate command nodes and 538 shortcuts per brand, all 938 reference nodes and 535 shortcuts retained, and 25 event keys retained. Its 5,742 interface deltas exactly match the mapping. This is local registration execution, not execution of the remote CI matrix. The preceding shared-checkout run correctly rejected a mixed tracked snapshot; no interface exception was added for that rejection. The complete inventory/review-aggregation test selection passed 26 tests (18 inventory and eight review aggregation).
 
-The native Linux/macOS/Windows `.github/workflows/next-offline.yml` runs this
+The Linux-only `.github/workflows/next-offline.yml` runs this
 actual guard as the required `capabilities` stage after dependency preloading
 and the frozen metadata build. It uses the exporter's temporary-copy and
 synthetic-account isolation directly, without invoking business commands. The

@@ -15,6 +15,7 @@ import (
 	"testing"
 
 	"github.com/larksuite/cli/errs"
+	"github.com/larksuite/cli/internal/output"
 	"github.com/larksuite/cli/internal/vfs"
 )
 
@@ -183,6 +184,34 @@ func TestPersistenceFailurePreventsDispatch(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+func TestSummaryReceiptIDsAndExitCodes(t *testing.T) {
+	summary := Summary{Receipts: []Receipt{{ID: "a"}, {ID: "b"}}}
+	if ids := summary.ReceiptIDs(); len(ids) != 2 || ids[0] != "a" || ids[1] != "b" {
+		t.Fatalf("receipt ids: %v", ids)
+	}
+	for _, c := range []struct {
+		summary Summary
+		want    int
+	}{
+		{Summary{Outcome: Applied, Applied: 1}, output.ExitOK},
+		{Summary{Outcome: Unapplied, Unapplied: 1}, output.ExitMutationUnapplied},
+		{Summary{Outcome: Partial, Applied: 1, Unapplied: 1}, output.ExitMutationPartial},
+		{Summary{Outcome: Unknown, Applied: 1, Unknown: 1}, output.ExitMutationUnknown},
+		{Summary{Outcome: Applied, Applied: 1, PersistenceFailed: true}, output.ExitMutationUnknown},
+	} {
+		if got := c.summary.ExitCode(); got != c.want {
+			t.Errorf("%+v: exit %d, want %d", c.summary, got, c.want)
+		}
+		// The process exit code and the host-visible error must agree.
+		if c.want != output.ExitOK {
+			err := errs.NewMutationOutcomeError(c.summary.Outcome, []string{"r"}, c.summary.PersistenceFailed, nil)
+			if got := output.ExitCodeOf(err); got != c.want {
+				t.Errorf("%+v: error maps to %d, want %d", c.summary, got, c.want)
+			}
+		}
+	}
+}
+
 func TestJournalPartial(t *testing.T) {
 	j := &Journal{}
 	j.Add(Receipt{Outcome: Applied})

@@ -9,6 +9,10 @@ a regression.
 The module path `github.com/larksuite/cli`, the `LARKSUITE_CLI_*` variables, and
 `lark-cli` in the inherited `skills/` docs are deliberate; do not rename them.
 
+[docs/contributing.md](docs/contributing.md) explains how to add a shortcut or
+domain and how each layer is tested; [docs/README.md](docs/README.md) indexes
+every guide and contract.
+
 ## Commands
 
 ```bash
@@ -103,14 +107,17 @@ Fork code inside upstream's tree goes, in order of preference, in:
 
 1. A package the fork owns: `internal/next<area>/`, `cmd/<name>/`, or a
    sub-package under the domain.
-2. A new file in the upstream package. Declarations that support an upstream
-   file `<name>.go` live in `<name>_next.go` (tests in `<name>_next_test.go`).
+2. A new file in the upstream package, with `_next` in its name. Declarations
+   that support an upstream file `<name>.go` live in `<name>_next.go` (tests in
+   `<name>_next_test.go`); `scripts/next_layout.py check` rejects an unmarked one.
 3. An edit to the upstream file, kept to a call into 1 or 2. Never re-indent,
    rename, or relocate upstream lines to wrap them; for the config lock use
    `core.LockConfig()` with `defer release(&err)`.
 
-[docs/upstream-footprint.md](docs/upstream-footprint.md) lists every upstream
-file the fork edits. `scripts/next_layout.py check` enforces that list, the
+[docs/upstream-footprint.md](docs/upstream-footprint.md) lists every pinned
+upstream file the fork edits, then the upstream paths with no pinned hash
+(`skills/`, `affordance/`, `lint/`, ...), whose edits it cannot see.
+`scripts/next_layout.py check` enforces that list, the
 root allowlist, markdown-only `docs/`, and the evidence seal; run
 `python3 scripts/next_layout.py footprint` after editing or restoring an
 upstream file.

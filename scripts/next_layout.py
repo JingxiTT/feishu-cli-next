@@ -3,7 +3,8 @@
 # SPDX-License-Identifier: MIT
 
 """Keep the fork layer bounded: a fixed root, markdown-only docs, sealed evidence,
-and a recorded list of the upstream files the fork edits.
+fork files named *_next.go inside upstream packages, and a recorded list of the
+upstream files the fork edits.
 
 `check` reports every violation; `seal` records new evidence files and refuses
 to change a recorded one; `footprint` rewrites the edited-upstream-file list.
@@ -13,6 +14,7 @@ import argparse
 import collections
 import hashlib
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -41,7 +43,7 @@ UPSTREAM_ROOT = (
 FORK_ROOT = (
     'README.upstream.md', 'SECURITY.md', 'agent-skills', 'agent_content_embed.go',
     'agent_content_embed_test.go', 'agent_skill_guidance_test.go', 'baseline', 'docs',
-    'evaluation', 'evidence',
+    'evaluation', 'evidence', 'next.mk',
 )
 
 
@@ -78,10 +80,17 @@ def footprint(root):
     pinned = json.loads((root / UPSTREAM_SOURCES).read_text(encoding='utf-8'))['files']
     edited = sorted(name for name, expected in pinned.items()
                     if not (root / name).is_file() or digest(root / name) != expected)
-    return edited, len(pinned)
+    return edited, len(pinned), unpinned(root, pinned)
 
 
-def render_footprint(edited, pinned):
+def unpinned(root, pinned):
+    """Upstream root entries with no pinned hash, so their fork edits are invisible here."""
+    covered = {name.split('/', 1)[0] for name in pinned}
+    return [entry + '/' if (root / entry).is_dir() else entry
+            for entry in UPSTREAM_ROOT if entry not in covered and (root / entry).exists()]
+
+
+def render_footprint(edited, pinned, uncovered=()):
     groups = collections.defaultdict(list)
     for name in edited:
         groups[name.split('/', 1)[0] if '/' in name else '(root)'].append(name)
@@ -96,6 +105,11 @@ def render_footprint(edited, pinned):
     for group in sorted(groups):
         lines += ['', '## {} ({})'.format(group, len(groups[group])), '']
         lines += ['- `{}`'.format(name) for name in groups[group]]
+    if uncovered:
+        lines += ['', '## Not covered', '',
+                  'These upstream paths have no pinned hashes, so fork edits to them never',
+                  'appear above. Compare them with the upstream release by hand during a sync.', '']
+        lines += ['- `{}`'.format(name) for name in uncovered]
     return '\n'.join(lines) + '\n'
 
 
@@ -107,12 +121,29 @@ def footprint_problems(root):
     current = path.read_text(encoding='utf-8') if path.is_file() else ''
     if current == expected:
         return []
-    listed = lambda text: {line[3:-1] for line in text.splitlines() if line.startswith('- `')}
+    listed = lambda text: {line[3:-1] for line in text.partition('\n## Not covered\n')[0].splitlines()
+                           if line.startswith('- `')}
     added, restored = sorted(listed(expected) - listed(current)), sorted(listed(current) - listed(expected))
     detail = '; '.join(part for part in (
         'newly edited upstream files: ' + ', '.join(added) if added else '',
         'restored to upstream: ' + ', '.join(restored) if restored else '') if part)
     return ['{}: out of date; run python3 scripts/next_layout.py footprint{}'.format(FOOTPRINT, ' (' + detail + ')' if detail else '')]
+
+
+def unmarked_fork_files(root, names):
+    """Fork Go files inside an upstream package must say so in their name.
+
+    A package is upstream when the synced release pins a Go file in its
+    directory. Root files are listed in FORK_ROOT instead.
+    """
+    if not (root / UPSTREAM_SOURCES).is_file():
+        return []
+    pinned = json.loads((root / UPSTREAM_SOURCES).read_text(encoding='utf-8'))['files']
+    packages = {os.path.dirname(name) for name in pinned if name.endswith('.go')} - {''}
+    return ['{}: fork file in upstream package; name it <name>_next.go or <name>_next_test.go'.format(name)
+            for name in sorted(names)
+            if name.endswith('.go') and name not in pinned and os.path.dirname(name) in packages
+            and '_next' not in os.path.basename(name)]
 
 
 def check(root, names=None):
@@ -134,6 +165,7 @@ def check(root, names=None):
     for name in sorted(set(entries) - set(present)):
         problems.append('{}: sealed evidence removed or renamed'.format(name))
     problems.extend(footprint_problems(root))
+    problems.extend(unmarked_fork_files(root, names))
     return problems
 
 
@@ -165,8 +197,8 @@ def main(argv=None):
             return 2
         print('sealed {} new evidence file(s)'.format(len(added)))
     if args.action == 'footprint':
-        edited, pinned = footprint(root)
-        (root / FOOTPRINT).write_text(render_footprint(edited, pinned), encoding='utf-8', newline='\n')
+        edited, pinned, uncovered = footprint(root)
+        (root / FOOTPRINT).write_text(render_footprint(edited, pinned, uncovered), encoding='utf-8', newline='\n')
         print('{} of {} pinned upstream files edited'.format(len(edited), pinned))
     problems = check(root)
     for problem in problems:

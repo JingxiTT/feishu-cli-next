@@ -69,3 +69,48 @@ func TestAgentHostExecutionReturnsUnknownMutation(t *testing.T) {
 		t.Fatalf("misleading stdout: %s", &stdout)
 	}
 }
+
+func TestReportAgentMutationsWritesStderrDiagnosticAndExitCode(t *testing.T) {
+	t.Setenv("LARKSUITE_CLI_CONFIG_DIR", t.TempDir())
+	var stdout, stderr bytes.Buffer
+	f := cmdutil.NewDefault(cmdutil.NewIOStreams(strings.NewReader(""), &stdout, &stderr), cmdutil.InvocationContext{})
+	f.Config = func() (*core.CliConfig, error) {
+		return &core.CliConfig{AppID: "synthetic-app", Brand: core.BrandFeishu}, nil
+	}
+	f.ResolvedIdentity = core.AsBot
+	f.EnableAgentAttempts = true
+	if got := reportAgentMutations(f, 7); got != 7 || stderr.Len() != 0 {
+		t.Fatalf("no receipts: exit %d, stderr %q", got, &stderr)
+	}
+	client, err := f.HttpClient()
+	if err != nil {
+		t.Fatal(err)
+	}
+	client.Transport = client.Transport.(transport.RoundTripperDecorator).WithBaseRoundTripper(hostMutationRoundTrip(func(*http.Request) (*http.Response, error) {
+		return &http.Response{StatusCode: 202, Body: io.NopCloser(strings.NewReader(`{"code":0,"data":{"accepted":true}}`))}, nil
+	}))
+	cmd := &cobra.Command{Use: "mutate"}
+	cmdutil.SetRisk(cmd, "write")
+	f.CurrentCommand = cmd
+	req, err := http.NewRequestWithContext(context.Background(), "POST", "https://fixture.invalid/create", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	response, err := client.Do(req)
+	if err != nil {
+		t.Fatal(err)
+	}
+	response.Body.Close()
+
+	if got := reportAgentMutations(f, 0); got != output.ExitMutationUnknown {
+		t.Fatalf("exit code = %d, want %d", got, output.ExitMutationUnknown)
+	}
+	ids := f.AgentAttemptSummary().ReceiptIDs()
+	if len(ids) != 1 || ids[0] == "" {
+		t.Fatalf("receipt ids: %v", ids)
+	}
+	want := `{"mutation":{"applied":0,"outcome":"unknown","receipts":["` + ids[0] + `"],"unapplied":0,"unknown":1}}`
+	if strings.TrimSpace(stderr.String()) != want || stdout.Len() != 0 {
+		t.Fatalf("diagnostic:\n got %s\nwant %s\nstdout %q", &stderr, want, &stdout)
+	}
+}
