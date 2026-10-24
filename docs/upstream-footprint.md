@@ -8,7 +8,7 @@ Before adding one, put the logic in a fork-owned file (`<name>_next.go`
 beside the upstream file, or a `next*` package) and keep the edit here to a
 call into it. A file restored to upstream bytes drops off this list.
 
-267 of 2720 pinned upstream files.
+269 of 2720 pinned upstream files.
 
 ## (root) (7)
 
@@ -34,7 +34,7 @@ call into it. A file restored to upstream bytes drops off this list.
 - `.github/workflows/semantic-review.yml`
 - `.github/workflows/skill-format-check.yml`
 
-## cmd (26)
+## cmd (27)
 
 - `cmd/auth/login.go`
 - `cmd/auth/login_messages_test.go`
@@ -48,6 +48,7 @@ call into it. A file restored to upstream bytes drops off this list.
 - `cmd/config/risk_control.go`
 - `cmd/config/set.go`
 - `cmd/config/strict_mode.go`
+- `cmd/error_auth_hint.go`
 - `cmd/event/runtime.go`
 - `cmd/event/stop.go`
 - `cmd/profile/add.go`
@@ -281,7 +282,7 @@ call into it. A file restored to upstream bytes drops off this list.
 
 - `sidecar/server-multi-tenant-demo/auth_bridge.go`
 
-## tests (26)
+## tests (27)
 
 - `tests/cli_e2e/apps/apps_git_credential_dryrun_test.go`
 - `tests/cli_e2e/base/base_app_dryrun_test.go`
@@ -292,6 +293,7 @@ call into it. A file restored to upstream bytes drops off this list.
 - `tests/cli_e2e/base/base_form_submit_dryrun_test.go`
 - `tests/cli_e2e/base/base_share_dryrun_test.go`
 - `tests/cli_e2e/base/base_url_resolve_dryrun_test.go`
+- `tests/cli_e2e/config/bind_test.go`
 - `tests/cli_e2e/contact/coverage.md`
 - `tests/cli_e2e/core.go`
 - `tests/cli_e2e/core_test.go`

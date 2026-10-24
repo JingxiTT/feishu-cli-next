@@ -23,13 +23,14 @@ func presentRootError(f *cmdutil.Factory, err error, projector *recovery.Project
 	if f != nil {
 		identity = f.ResolvedIdentity
 	}
-	return f.PresentError(err, cmdutil.ErrorPresentationOptions{
+	rendered := f.PresentError(err, cmdutil.ErrorPresentationOptions{
 		Projector: projector,
 		Identity:  identity,
 		DeclaredScopes: func() []string {
 			return resolveDeclaredScopesForCurrentCommand(f)
 		},
 	})
+	return recovery.LocalizeError(rendered, projector.Context().CommandName)
 }
 
 // resolveDeclaredScopesForCurrentCommand returns the scopes declared by the

@@ -496,6 +496,7 @@ func assembleInternal(
 		},
 	}
 	installTipsHelpFunc(rootCmd, runtime.help)
+	installCommandNameHelp(rootCmd, recoveryContext.CommandName)
 
 	rootCmd.AddCommand(cmdconfig.NewCmdConfigWithRecovery(f, runtime.recovery))
 	rootCmd.AddCommand(auth.NewCmdAuthWithRecoveryAndShortcuts(f, runtime.recovery, registeredShortcuts))
