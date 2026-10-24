@@ -7,7 +7,11 @@ import (
 	"encoding/json"
 	"strings"
 	"testing"
+	"testing/fstest"
 
+	"github.com/larksuite/cli/internal/affordance"
+	"github.com/larksuite/cli/internal/apicatalog"
+	"github.com/larksuite/cli/internal/cmdmeta"
 	"github.com/larksuite/cli/internal/cmdutil"
 	"github.com/spf13/cobra"
 )
@@ -226,5 +230,119 @@ func TestDiscoveryFlagDescriptionsPreserveRegisteredUsageAndVisibility(t *testin
 	}
 	if flags[1].Name != "selector" || flags[1].Description != usage || flags[1].Type != "string" || !flags[1].Required {
 		t.Fatalf("local flag guidance was lost or replaced: %+v", flags[1])
+	}
+}
+
+func TestDiscoveryFlagsIncludeCompactRoutingExample(t *testing.T) {
+	f, out, _, _ := cmdutil.TestFactory(t, nil)
+	root := &cobra.Command{Use: "test-cli"}
+	task := &cobra.Command{Use: "+complete", Short: "Complete a task", Example: "lark-cli task +complete --task-id <task-id>", RunE: func(*cobra.Command, []string) error { return nil }}
+	task.Flags().String("task-id", "", "task GUID")
+	_ = task.MarkFlagRequired("task-id")
+	task.Flags().String("format", "json", "output format")
+	root.AddCommand(task, NewCmd(f, root))
+	root.SetArgs([]string{"discover", "complete", "--flags", "--limit", "1"})
+	if err := root.Execute(); err != nil {
+		t.Fatal(err)
+	}
+	var result struct {
+		Data []entry `json:"data"`
+	}
+	if err := json.Unmarshal(out.Bytes(), &result); err != nil {
+		t.Fatal(err)
+	}
+	if len(result.Data) != 1 || result.Data[0].Example != "test-cli task +complete --task-id <task-id>" {
+		t.Fatalf("missing compact route: %s", out)
+	}
+}
+
+func TestDiscoveryFlagsUseRequiredFlagSkeletonWithoutExample(t *testing.T) {
+	f, out, _, _ := cmdutil.TestFactory(t, nil)
+	root := &cobra.Command{Use: "test-cli"}
+	get := &cobra.Command{Use: "get", Short: "Get one item", RunE: func(*cobra.Command, []string) error { return nil }}
+	get.Flags().String("item-id", "", "item id")
+	_ = get.MarkFlagRequired("item-id")
+	get.Flags().Bool("all", false, "include all")
+	_ = get.MarkFlagRequired("all")
+	root.AddCommand(get, NewCmd(f, root))
+	root.SetArgs([]string{"discover", "get", "--flags", "--limit", "1"})
+	if err := root.Execute(); err != nil {
+		t.Fatal(err)
+	}
+	var result struct {
+		Data []entry `json:"data"`
+	}
+	if err := json.Unmarshal(out.Bytes(), &result); err != nil {
+		t.Fatal(err)
+	}
+	if len(result.Data) != 1 || result.Data[0].Example != "test-cli get --all --item-id <item-id>" {
+		t.Fatalf("missing required route: %s", out)
+	}
+}
+
+func TestDiscoveryFlagsUseAffordanceExample(t *testing.T) {
+	f, out, _, _ := cmdutil.TestFactory(t, nil)
+	f.Affordance = affordance.NewResolver(fstest.MapFS{
+		"task.md": &fstest.MapFile{Data: []byte("# task\n\n## +complete\nComplete a task.\n\n### Examples\n\n**Complete**\n```bash\nlark-cli task +complete --task-id task-a\n```\n")},
+	}, apicatalog.Catalog{})
+	root := &cobra.Command{Use: "test-cli"}
+	task := &cobra.Command{Use: "+complete", Short: "Complete a task", RunE: func(*cobra.Command, []string) error { return nil }}
+	task.Flags().String("task-id", "", "task GUID")
+	_ = task.MarkFlagRequired("task-id")
+	cmdmeta.SetAffordanceRef(task, "task", "+complete")
+	root.AddCommand(task, NewCmd(f, root))
+	root.SetArgs([]string{"discover", "complete", "--flags", "--limit", "1"})
+	if err := root.Execute(); err != nil {
+		t.Fatal(err)
+	}
+	var result struct {
+		Data []entry `json:"data"`
+	}
+	if err := json.Unmarshal(out.Bytes(), &result); err != nil {
+		t.Fatal(err)
+	}
+	if len(result.Data) != 1 || result.Data[0].Example != "test-cli task +complete --task-id task-a" {
+		t.Fatalf("missing affordance route: %s", out)
+	}
+}
+
+func TestDiscoveryRoutingOmitsNonExecutableGroups(t *testing.T) {
+	f, out, _, _ := cmdutil.TestFactory(t, nil)
+	root := &cobra.Command{Use: "test-cli"}
+	task := &cobra.Command{Use: "task", Short: "Task group"}
+	root.AddCommand(task, NewCmd(f, root))
+	root.SetArgs([]string{"discover", "task", "--flags", "--limit", "1"})
+	if err := root.Execute(); err != nil {
+		t.Fatal(err)
+	}
+	var result struct {
+		Data []entry `json:"data"`
+	}
+	if err := json.Unmarshal(out.Bytes(), &result); err != nil {
+		t.Fatal(err)
+	}
+	if len(result.Data) != 1 || result.Data[0].Example != "" {
+		t.Fatalf("group leaked a route: %s", out)
+	}
+}
+
+func TestDiscoveryRoutingOmitsSkeletonWithoutRequiredFlags(t *testing.T) {
+	f, out, _, _ := cmdutil.TestFactory(t, nil)
+	root := &cobra.Command{Use: "test-cli"}
+	list := &cobra.Command{Use: "list", Short: "List items", RunE: func(*cobra.Command, []string) error { return nil }}
+	list.Flags().String("query", "", "optional query")
+	root.AddCommand(list, NewCmd(f, root))
+	root.SetArgs([]string{"discover", "list", "--flags", "--limit", "1"})
+	if err := root.Execute(); err != nil {
+		t.Fatal(err)
+	}
+	var result struct {
+		Data []entry `json:"data"`
+	}
+	if err := json.Unmarshal(out.Bytes(), &result); err != nil {
+		t.Fatal(err)
+	}
+	if len(result.Data) != 1 || result.Data[0].Example != "" {
+		t.Fatalf("optional route was invented: %s", out)
 	}
 }
