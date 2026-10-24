@@ -29,6 +29,7 @@ import (
 	"github.com/larksuite/cli/internal/suggest"
 	"github.com/larksuite/cli/internal/surface"
 	"github.com/larksuite/cli/internal/update"
+	"github.com/larksuite/cli/shortcuts/common"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 )
@@ -702,7 +703,7 @@ func flagDidYouMean(c *cobra.Command, ferr error) error {
 				WithParams(errs.InvalidParam{Name: "--" + gated, Reason: "unknown flag"}).
 				WithHint("run `%s --help` to see valid flags", c.CommandPath())
 		}
-		if valueErr, ok := invalidFlagValueError(c, ferr); ok {
+		if valueErr, ok := common.InvalidFlagValueError(c, ferr); ok {
 			return valueErr
 		}
 		validationErr := errs.NewValidationError(errs.SubtypeInvalidArgument, "%s", ferr.Error()).

@@ -8,7 +8,7 @@ Before adding one, put the logic in a fork-owned file (`<name>_next.go`
 beside the upstream file, or a `next*` package) and keep the edit here to a
 call into it. A file restored to upstream bytes drops off this list.
 
-269 of 2720 pinned upstream files.
+272 of 2720 pinned upstream files.
 
 ## (root) (7)
 
@@ -130,7 +130,7 @@ call into it. A file restored to upstream bytes drops off this list.
 - `scripts/run.js`
 - `scripts/tag-release.sh`
 
-## shortcuts (145)
+## shortcuts (148)
 
 - `shortcuts/application/slash_command_create.go`
 - `shortcuts/application/slash_command_list.go`
@@ -215,6 +215,7 @@ call into it. A file restored to upstream bytes drops off this list.
 - `shortcuts/mail/draft/htmltext.go`
 - `shortcuts/mail/draft/large_attachment_parse.go`
 - `shortcuts/mail/draft/patch.go`
+- `shortcuts/mail/flag_suggest.go`
 - `shortcuts/mail/large_attachment.go`
 - `shortcuts/mail/lint/linter.go`
 - `shortcuts/mail/lint/types.go`
@@ -257,6 +258,8 @@ call into it. A file restored to upstream bytes drops off this list.
 - `shortcuts/register_brand_guard_test.go`
 - `shortcuts/sheets/data/flag-defs.json`
 - `shortcuts/sheets/flag_defs_gen.go`
+- `shortcuts/sheets/flag_ergonomics.go`
+- `shortcuts/sheets/lark_sheet_chart.go`
 - `shortcuts/sheets/sheet_ai_api.go`
 - `shortcuts/sheets/shortcuts.go`
 - `shortcuts/slides/slides_replace_pages.go`

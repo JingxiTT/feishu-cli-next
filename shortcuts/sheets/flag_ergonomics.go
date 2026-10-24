@@ -695,6 +695,9 @@ func sheetsFlagErrorFunc(c *cobra.Command, ferr error) error {
 			"batch-update has no top-level sheet locator; put sheet_id/sheet_name inside each operation's input").
 			WithParams(errs.InvalidParam{Name: "--" + name, Reason: "unknown flag"})
 	}
+	if verr, ok := common.InvalidFlagValueError(c, ferr); ok {
+		return verr
+	}
 	if !isUnknown {
 		return common.ValidationErrorf("%s", ferr.Error()).
 			WithHint("run `%s --help` for valid flags", c.CommandPath())
