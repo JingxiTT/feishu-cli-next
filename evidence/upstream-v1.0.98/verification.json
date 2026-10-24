@@ -1,0 +1,113 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-25",
+  "kind": "offline upstream release sync validation",
+  "upstream": {
+    "tag": "v1.0.98",
+    "revision": "ac81f5056ab88f37d581d25916f3dab85abfca76"
+  },
+  "candidate_revision": "3158ab9eca83f68cbf6c67aa86f300a34bf2ba5c",
+  "platform": "linux/amd64",
+  "go_version": "go1.26.10",
+  "approvals": [
+    "Required upstream dependencies",
+    "Official Base NDJSON defaults, removal of Markdown, single-page list/search reads",
+    "New v1.0.98 mapping with 5770 unchanged rows and six shared result-flag additions"
+  ],
+  "checks": [
+    {
+      "command": "make test",
+      "status": "pass",
+      "evidence": "make-test.log.gz"
+    },
+    {
+      "command": "make unit-test vet fmt-check",
+      "status": "pass",
+      "evidence": "final-go-checks.log.gz"
+    },
+    {
+      "command": "python3 scripts/next_test.py --section all --suite all --binary ./feishu-cli-next --report .tmp/upstream-sync/sections-complete.json",
+      "status": "pass",
+      "evidence": "all-sections.json.gz"
+    },
+    {
+      "command": "python3 scripts/next_inventory.py gate --target . --reference-dir baseline/v1.0.98 --mapping baseline/v1.0.98/next-interface-mapping.json.gz --out .tmp/upstream-sync/capabilities-final.json",
+      "status": "pass",
+      "evidence": "capability-gate.json.gz"
+    },
+    {
+      "command": "make quality-gate QUALITY_GATE_CHANGED_FROM=a57716366c1b8a319fc6d2e6ebb758d6c992e6fa",
+      "status": "pass with nonblocking diagnostics",
+      "evidence": "quality-gate.log.gz"
+    },
+    {
+      "command": "make sidecar-test",
+      "status": "pass",
+      "evidence": "sidecar.log.gz"
+    },
+    {
+      "command": "go test -C lint ./...",
+      "status": "pass",
+      "evidence": "lint-tests.log.gz"
+    },
+    {
+      "command": "go run -C lint . --changed-from a57716366c1b8a319fc6d2e6ebb758d6c992e6fa ..",
+      "status": "pass",
+      "evidence": "lint.log.gz"
+    },
+    {
+      "command": "go test -race -count=20 ./internal/event/consume -run '^TestExitReason_Timeout$'",
+      "status": "pass",
+      "evidence": "timeout-regression.log.gz"
+    }
+  ],
+  "capabilities": {
+    "official": {
+      "candidate_commands": 957,
+      "candidate_event_keys": 25,
+      "candidate_shortcuts": 543,
+      "reference_commands": 942,
+      "reference_event_keys": 25,
+      "reference_shortcuts": 538
+    },
+    "brands": [
+      "feishu",
+      "lark"
+    ],
+    "missing_commands": 0,
+    "missing_shortcuts": 0,
+    "missing_events": 0,
+    "changed_existing_flags": 0,
+    "mapped_registration_changes": 5776
+  },
+  "integration_fixes": [
+    "Carry DPoP bindings into artifact and receipt identity lookups",
+    "Preserve config transaction locks, including config set dpop",
+    "Preserve selected app across tenant-token refresh",
+    "Retain missing-pagination rejection and exclusive result artifact writes",
+    "Update Base process assertions to the approved single-page artifact contract",
+    "Wait for the context deadline in the event timeout assertion instead of sleeping"
+  ],
+  "earlier_failed_attempts": "Resolved stale token/heartbeat fixtures and a merged test-variable mismatch. Interrupted a stalled test whose old fixture called Fatal from the new token-refresh goroutine. Moved the temporary SDK outside the repository because gofmt traverses it. Stabilized an existing event timeout assertion after a timing failure. Final retained runs passed; earlier failed attempts are not counted as passes.",
+  "limits": [
+    "No real tenant request or live acceptance test",
+    "Native Darwin and Windows execution not run; platform registration profiles are source-derived",
+    "Capability gate proves interface retention, not source-semantic or live equivalence",
+    "No performance or model-efficiency benchmark was run",
+    "Legacy domain workflows are limited to the runner’s DryRun|Regression selector; skipped tests are not passes"
+  ],
+  "artifacts": {
+    "capability-gate.json.gz": "4fac95129ed551a21772cf2581ddfaa7c2f6b79b4ef50750434fbcb2fded1e7a",
+    "all-sections.json.gz": "ac49bcba4daf4b65691ed39e16fc2e335ce7c2373608f36557b63700c803d03b",
+    "make-test.log.gz": "8dacbb6bdc1171f02c0f0d84a15b91dd0b78efdb414927f5fe4f87fad19155d1",
+    "final-go-checks.log.gz": "009ff7b340e8e30b01d72020af4645f0ee959d2b03e9aa6c8710d946a8ea85d6",
+    "sidecar.log.gz": "94e5490acc7fa6ef6c69f8fde561c15b9cddfbc16c4f564e0a71ba3b3e7976b9",
+    "quality-gate.log.gz": "5942ac7242e8e6481e6af6d09e81414cf5adff9ab9f2312f94452cc92277764b",
+    "lint-tests.log.gz": "c30a5b4ecefefcab2807fb6c8b9df655944e5406dc345db8d67f9f46366165b5",
+    "lint.log.gz": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+    "evaluation-tooling.json.gz": "1b2a6f7af50133099c067807068356d85c827c98d2208aa09748fb4f35ab6482",
+    "cross-domain.json.gz": "1055175c1c8a72381e11e8d938aeeb1ed4a16b643036bb17ecc230ff2b5194a7",
+    "identity-regressions.log.gz": "0538fa514aafad67ba9049a7168cf3fa3b454255e257a1de21484c4b8339dadf",
+    "timeout-regression.log.gz": "b3f41e334b660d57f5079782dadb2ceca1f543f07b187d38502530eb65aa16de"
+  }
+}
