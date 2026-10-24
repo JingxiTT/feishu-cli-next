@@ -100,7 +100,7 @@ func TestFactoryExternalUploadJournalsBeforeDispatchWithoutPersistingPayload(t *
 			if err != nil {
 				t.Fatal(err)
 			}
-			req = req.WithContext(WithStoragePutRequest(req.Context(), req.URL.Path))
+			req = req.WithContext(nextattempt.WithStoragePutRequest(req.Context(), req.URL.Path))
 			req.Header.Set("X-Upload-Metadata", uploadHeader)
 			resp, err := external.Do(req)
 			if resp != nil {

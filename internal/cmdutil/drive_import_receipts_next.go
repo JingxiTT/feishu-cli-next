@@ -8,32 +8,9 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/url"
-	"strings"
 
 	"github.com/larksuite/cli/internal/core"
 )
-
-type driveImportStatusKey struct{}
-
-// WithDriveImportStatusRequest requires the native import status GET to finish
-// at its requested endpoint. Redirects cannot supply completion or grant proof.
-func WithDriveImportStatusRequest(ctx context.Context, apiPath string) context.Context {
-	return context.WithValue(ctx, driveImportStatusKey{}, apiPath)
-}
-
-func isDriveImportStatusRequest(req *http.Request) bool {
-	if req == nil || req.URL == nil {
-		return false
-	}
-	path, ok := req.Context().Value(driveImportStatusKey{}).(string)
-	const prefix = "/open-apis/drive/v1/import_tasks/"
-	if !ok || req.Method != "GET" || !core.IsPlatformEndpointURL(req.URL) || path != req.URL.EscapedPath() || !strings.HasPrefix(req.URL.Path, prefix) {
-		return false
-	}
-	ticket := strings.TrimPrefix(req.URL.EscapedPath(), prefix)
-	origin := "https://" + strings.ToLower(req.URL.Hostname())
-	return ticket != "" && !strings.Contains(ticket, "/") && (origin == core.ResolveEndpoints(core.BrandFeishu).Open || origin == core.ResolveEndpoints(core.BrandLark).Open)
-}
 
 // ReconcileDriveImport is used only after a successful native import status GET
 // under this context's explicit request identity. Unverifiable proof leaves the

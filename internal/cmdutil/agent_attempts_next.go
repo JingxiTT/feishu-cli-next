@@ -40,7 +40,7 @@ func (f *Factory) agentAttemptTransport(base http.RoundTripper) http.RoundTrippe
 			if nextattempt.IsStoragePutRequest(req) {
 				return true
 			}
-			if mutation, declared := declaredRequestEffect(req); declared {
+			if mutation, declared := nextattempt.DeclaredRequestEffect(req); declared {
 				return mutation
 			}
 			if isContactBasicBatchRead(req) {

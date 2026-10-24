@@ -11,9 +11,9 @@ import (
 
 	"github.com/larksuite/cli/errs"
 	"github.com/larksuite/cli/internal/client"
-	"github.com/larksuite/cli/internal/cmdutil"
 	"github.com/larksuite/cli/internal/core"
 	eventlib "github.com/larksuite/cli/internal/event"
+	"github.com/larksuite/cli/internal/nextattempt"
 )
 
 // consumeRuntime routes event.APIClient calls through the shared client.APIClient with a pinned identity.
@@ -32,7 +32,7 @@ func (r *consumeRuntime) CallAPI(ctx context.Context, method, path string, body 
 		if decoded, err := url.PathUnescape(apiPath); err == nil {
 			apiPath = decoded
 		}
-		ctx = cmdutil.WithMutationRequest(ctx, method, apiPath)
+		ctx = nextattempt.WithMutationRequest(ctx, method, apiPath)
 	}
 	resp, err := r.client.DoAPI(ctx, client.RawApiRequest{
 		Method: method,

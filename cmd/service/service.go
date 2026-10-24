@@ -20,6 +20,7 @@ import (
 	"github.com/larksuite/cli/internal/credential"
 	"github.com/larksuite/cli/internal/errclass"
 	"github.com/larksuite/cli/internal/meta"
+	"github.com/larksuite/cli/internal/nextattempt"
 	"github.com/larksuite/cli/internal/output"
 	"github.com/larksuite/cli/internal/recovery"
 	"github.com/larksuite/cli/internal/registry"
@@ -455,7 +456,7 @@ func serviceMethodRun(opts *ServiceMethodOptions) error {
 	// only the exact generated request, never arbitrary raw API input.
 	if f.EnableAgentAttempts {
 		if path, known := knownGeneratedReadPath(opts.ServicePath, opts.Method, request); known {
-			callCtx = cmdutil.WithReadOnlyRequest(callCtx, request.Method, path)
+			callCtx = nextattempt.WithReadOnlyRequest(callCtx, request.Method, path)
 		}
 	}
 

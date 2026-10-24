@@ -48,7 +48,7 @@ func TestContactBasicBatchReadRequiresExactTrustedEndpoint(t *testing.T) {
 				t.Fatal("Contact read bypass changed an unrelated request classification")
 			}
 			if tt.read {
-				forced := req.WithContext(WithMutationRequest(req.Context(), req.Method, req.URL.Path))
+				forced := req.WithContext(nextattempt.WithMutationRequest(req.Context(), req.Method, req.URL.Path))
 				if !tr.IsMutation(forced) {
 					t.Fatal("Contact read bypass overrode an explicit mutation declaration")
 				}
