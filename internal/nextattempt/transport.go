@@ -11,6 +11,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/larksuite/cli/internal/output"
 	"github.com/larksuite/cli/internal/transport"
 )
 
@@ -59,7 +60,7 @@ func (j *Journal) Summary() Summary {
 	case s.Unknown > 0:
 		s.Outcome = Unknown
 	case s.Applied > 0 && s.Unapplied > 0:
-		s.Outcome = "partial"
+		s.Outcome = Partial
 	case s.Unapplied > 0:
 		s.Outcome = Unapplied
 	case s.Applied > 0:
@@ -70,14 +71,23 @@ func (j *Journal) Summary() Summary {
 func (s Summary) ExitCode() int {
 	switch {
 	case s.Unknown > 0 || s.PersistenceFailed:
-		return 22
+		return output.ExitMutationUnknown
 	case s.Applied > 0 && s.Unapplied > 0:
-		return 21
+		return output.ExitMutationPartial
 	case s.Unapplied > 0:
-		return 20
+		return output.ExitMutationUnapplied
 	default:
-		return 0
+		return output.ExitOK
 	}
+}
+
+// ReceiptIDs lists the receipts in attempt order.
+func (s Summary) ReceiptIDs() []string {
+	ids := make([]string, len(s.Receipts))
+	for i, receipt := range s.Receipts {
+		ids[i] = receipt.ID
+	}
+	return ids
 }
 
 // Transport wraps the existing client transport; it neither sends nor retries
