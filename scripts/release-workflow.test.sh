@@ -61,7 +61,7 @@ jobs.each do |job_name, job|
   end
 end
 
-expect_equal(workflow.dig("env", "RELEASE_GO_VERSION"), "1.26.9", "release Go version")
+expect_equal(workflow.dig("env", "RELEASE_GO_VERSION"), "1.26.10", "release Go version")
 
 expected_jobs = %w[preflight build-sign-notarize create-draft-release verify-macos publish-github publish-npm retry-guidance]
 expect_equal(jobs.keys.sort, expected_jobs.sort, "release jobs")
