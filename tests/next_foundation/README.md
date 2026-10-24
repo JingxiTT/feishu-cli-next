@@ -1,8 +1,8 @@
 # Isolated section regressions
 
 Run from the repository root. Python 3, Go, a populated Go module cache, and a
-built CLI with full embedded metadata are prerequisites. `make build` restores verified frozen
-metadata; only an empty Go dependency cache may need network access. The test runner never fetches metadata or
+built CLI with full embedded metadata are prerequisites. `make build` embeds the committed
+catalog; only an empty Go dependency cache may need network access. The test runner never fetches metadata or
 Go dependencies. Use the binary just built, not an installed personal CLI.
 
 ```sh
@@ -80,7 +80,7 @@ includes that gate and all section E2E suites. `make next-script-test` and
 binary. Controlled evaluation tests do not constitute real model comparisons.
 
 `.github/workflows/next-offline.yml` runs the complete offline section, script,
-evaluation harness, and cross-domain gates on native Linux, macOS, and Windows.
+evaluation harness, and cross-domain gates on Linux.
 It preloads public Go dependencies before isolation and always uploads separate
 machine reports plus stage outcomes, including failures and blocked prerequisites.
 The workflow adds to the inherited CI gates. Its definition is not evidence that

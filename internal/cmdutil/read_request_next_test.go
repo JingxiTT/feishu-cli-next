@@ -12,6 +12,7 @@ import (
 	"testing"
 
 	"github.com/larksuite/cli/internal/core"
+	"github.com/larksuite/cli/internal/nextattempt"
 	"github.com/spf13/cobra"
 )
 
@@ -28,7 +29,7 @@ func TestDeclaredReadRequestSkipsJournalOnlyForExactTuple(t *testing.T) {
 		return &http.Response{StatusCode: 200, Body: io.NopCloser(strings.NewReader(`{"code":0}`))}, nil
 	}))
 	base := context.Background()
-	marked := WithReadOnlyRequest(base, "POST", "/open-apis/fixture/fetch")
+	marked := nextattempt.WithReadOnlyRequest(base, "POST", "/open-apis/fixture/fetch")
 	tests := []struct {
 		ctx          context.Context
 		method, path string
@@ -65,7 +66,7 @@ func TestDeclaredReadPreservesContextAndSkipsCredentialResolution(t *testing.T) 
 	type key struct{}
 	original, cancel := context.WithCancel(context.WithValue(context.Background(), key{}, "preserved"))
 	defer cancel()
-	marked := WithReadOnlyRequest(original, "POST", "/fetch")
+	marked := nextattempt.WithReadOnlyRequest(original, "POST", "/fetch")
 	f := &Factory{EnableAgentAttempts: true, Config: func() (*core.CliConfig, error) { t.Fatal("read resolved mutation credentials"); return nil, nil }}
 	tr := f.agentAttemptTransport(attemptRoundTrip(func(req *http.Request) (*http.Response, error) {
 		if req.Context().Value(key{}) != "preserved" {
@@ -84,7 +85,11 @@ func TestDeclaredReadPreservesContextAndSkipsCredentialResolution(t *testing.T) 
 	if len(f.AgentAttemptSummary().Receipts) != 0 {
 		t.Fatal("read journaled")
 	}
-	if original.Value(requestEffectKey{}) != nil {
+	probe, err := http.NewRequestWithContext(original, "POST", "https://fixture.invalid/fetch", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, known := nextattempt.DeclaredRequestEffect(probe); known {
 		t.Fatal("original context changed")
 	}
 }
@@ -105,10 +110,10 @@ func TestDeclaredMutationOverridesReadCommandExceptCredentials(t *testing.T) {
 		path     string
 		receipts int
 	}{
-		{WithMutationRequest(base, "POST", "/subscribe"), "/subscribe", 1},
-		{WithMutationRequest(base, "POST", "/subscribe"), "/fetch", 1},
+		{nextattempt.WithMutationRequest(base, "POST", "/subscribe"), "/subscribe", 1},
+		{nextattempt.WithMutationRequest(base, "POST", "/subscribe"), "/fetch", 1},
 		{base, "/subscribe", 1},
-		{WithMutationRequest(base, "POST", "/open-apis/auth/v3/tenant_access_token/internal"), "/open-apis/auth/v3/tenant_access_token/internal", 1},
+		{nextattempt.WithMutationRequest(base, "POST", "/open-apis/auth/v3/tenant_access_token/internal"), "/open-apis/auth/v3/tenant_access_token/internal", 1},
 	}
 	for _, tt := range cases {
 		req, err := http.NewRequestWithContext(tt.ctx, "POST", "https://fixture.invalid"+tt.path, nil)

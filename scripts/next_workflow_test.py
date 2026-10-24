@@ -18,7 +18,7 @@ ROOT = Path(__file__).resolve().parents[1]
 class OfflineWorkflowTests(unittest.TestCase):
     def setUp(self):
         self.workflow = (ROOT / '.github/workflows/next-offline.yml').read_text()
-        self.makefile = (ROOT / 'Makefile').read_text()
+        self.makefile = (ROOT / 'Makefile').read_text() + (ROOT / 'next.mk').read_text()
 
     def test_correctness_workflows_run_on_pull_requests(self):
         for name in ('ci', 'next-offline'):
@@ -43,7 +43,7 @@ class OfflineWorkflowTests(unittest.TestCase):
             self.assertNotIn('--execute', dry_run.stdout)
 
     def test_linux_job_keeps_every_gate_required(self):
-        self.assertIn('runs-on: ubuntu-latest', self.workflow)
+        self.assertIn('runs-on: blacksmith-4vcpu-ubuntu-2404', self.workflow)
         self.assertNotIn('matrix', self.workflow)
         self.assertNotIn('macos-latest', self.workflow)
         self.assertNotIn('windows-latest', self.workflow)
