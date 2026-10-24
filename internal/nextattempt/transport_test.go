@@ -98,6 +98,7 @@ func TestResponseEvidence(t *testing.T) {
 		{"missing code", "/create", `{}`, Unknown, 200},
 		{"batch", "/batch_create", `{"code":0}`, Unknown, 200},
 		{"item failure", "/create", `{"code":0,"data":{"items":[{"code":1}]}}`, Unknown, 200},
+		{"business fields are not item failures", "/create", `{"code":0,"data":{"record":{"code":200,"errors":["business metadata"],"success":false,"ok":false}}}`, Applied, 200},
 		{"Docs code block", "/open-apis/docx/v1/documents/doc123/blocks/block123", `{"code":0,"data":{"block":{"block_id":"block123","block_type":14,"code":{"style":{"language":22},"elements":[{"text_run":{"content":"hello"}}]}}}}`, Applied, 200},
 		{"accepted", "/create", `{"code":0}`, Unknown, 202},
 		{"permission", "/create", `{}`, Unapplied, 403},
@@ -114,6 +115,28 @@ func TestResponseEvidence(t *testing.T) {
 			resp.Body.Close()
 			if string(raw) != tt.body || j.Summary().Outcome != tt.outcome {
 				t.Fatalf("%q %+v", raw, j.Summary())
+			}
+		})
+	}
+}
+
+func TestItemFailureMarkersAreScopedToResultCollections(t *testing.T) {
+	tests := []struct {
+		name string
+		data string
+		want bool
+	}{
+		{"nested business fields", `{"record":{"code":200,"errors":["business metadata"],"success":false,"ok":false}}`, false},
+		{"nested fields inside items", `{"items":[{"record":{"code":200,"errors":["business metadata"]}}]}`, false},
+		{"failed collection item", `{"items":[{"ok":false}]}`, true},
+		{"failed tool result", `{"results":[{"success":false}]}`, true},
+		{"top-level errors", `{"errors":["failed"]}`, true},
+		{"empty failure collection", `{"failed_items":[]}`, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := hasItemFailure([]byte(tt.data)); got != tt.want {
+				t.Fatalf("hasItemFailure(%s) = %v, want %v", tt.data, got, tt.want)
 			}
 		})
 	}

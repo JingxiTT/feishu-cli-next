@@ -200,12 +200,7 @@ func classifyKnownResponse(r *Receipt, req *http.Request, data json.RawMessage, 
 		requestMatches(req, "POST", "/open-apis/wiki/v2/nodes/{node}/move_wiki_to_docs") ||
 		requestMatches(req, "DELETE", "/open-apis/wiki/v2/spaces/{space}/nodes/{node}") ||
 		requestMatches(req, "DELETE", "/open-apis/wiki/v2/spaces/{space}") {
-		var result struct {
-			TaskID string `json:"task_id"`
-		}
-		if json.Unmarshal(data, &result) != nil || result.TaskID != "" {
-			return unknown("wiki_task_requires_reconciliation")
-		}
+		return unknown("wiki_task_requires_reconciliation")
 	}
 	return false
 }

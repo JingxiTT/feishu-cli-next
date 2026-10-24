@@ -89,8 +89,9 @@ class MatrixTests(unittest.TestCase):
         args = ['run_matrix.py', '--config', str(config), '--output', str(self.output), '--execute']
         with patch.object(sys, 'argv', args), patch.object(matrix, 'environment', return_value=(self.env, {})), \
                 patch.object(matrix, 'jobs', return_value=[self.job]), patch.object(matrix, 'bind_jobs'), \
-                patch.object(matrix.subprocess, 'run') as run:
+                patch.object(matrix, 'import_sibling_jobs') as import_jobs, patch.object(matrix.subprocess, 'run') as run:
             self.assertEqual(matrix.main(), 0)
+            import_jobs.assert_called_once()
             run.assert_not_called()
 
     def test_changed_existing_environment_refuses_before_launch(self):

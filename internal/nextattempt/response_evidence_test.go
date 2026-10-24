@@ -72,6 +72,8 @@ func TestKnownEndpointMutationEvidence(t *testing.T) {
 		{"wiki move node task", "POST", "/open-apis/wiki/v2/nodes/node/move_wiki_to_docs", `{}`, `{"task_id":"task"}`, Unknown},
 		{"wiki delete node task", "DELETE", "/open-apis/wiki/v2/spaces/space/nodes/node", `{}`, `{"task_id":"task"}`, Unknown},
 		{"wiki delete space task", "DELETE", "/open-apis/wiki/v2/spaces/space", `{}`, `{"task_id":"task"}`, Unknown},
+		{"wiki missing task ID", "POST", "/open-apis/wiki/v2/spaces/space/nodes/move_docs_to_wiki", `{}`, `{}`, Unknown},
+		{"wiki empty task ID", "DELETE", "/open-apis/wiki/v2/spaces/space/nodes/node", `{}`, `{"task_id":""}`, Unknown},
 		{"slides failed index zero", "POST", "/open-apis/slides_ai/v1/xml_presentations/presentation/slide/replace", `{}`, `{"revision_id":3,"failed_part_index":0}`, Unknown},
 		{"slides failed reason", "POST", "/open-apis/slides_ai/v1/xml_presentations/presentation/slide/replace", `{}`, `{"failed_reason":"failure"}`, Unknown},
 		{"slides advisory success", "POST", "/open-apis/slides_ai/v1/xml_presentations/presentation/slide/replace", `{}`, `{"revision_id":3,"issues":["advisory"]}`, Applied},

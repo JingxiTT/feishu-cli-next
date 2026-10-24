@@ -255,34 +255,54 @@ func hasItemFailure(data []byte) bool {
 	if json.Unmarshal(data, &value) != nil {
 		return false
 	}
-	var failed func(any) bool
-	failed = func(v any) bool {
-		switch x := v.(type) {
-		case map[string]any:
-			for k, v := range x {
-				if code, ok := v.(float64); k == "code" && ok && code != 0 {
-					return true
-				}
-				if (k == "success" || k == "ok") && v == false {
-					return true
-				}
-				if (k == "failed_items" || k == "failures" || k == "errors") && v != nil {
-					if a, ok := v.([]any); !ok || len(a) > 0 {
-						return true
-					}
-				}
-				if failed(v) {
-					return true
-				}
-			}
-		case []any:
-			for _, v := range x {
-				if failed(v) {
-					return true
-				}
+	return hasResultItemFailure(value)
+}
+
+var resultCollectionFields = []string{"items", "records", "results", "tasks", "created_tasks", "successful_tasks"}
+
+// Failure markers describe item/result envelopes. Business resources may have
+// fields named code, errors, success or ok, so do not recurse through arbitrary
+// nested objects looking for those names.
+func hasResultItemFailure(value any) bool {
+	switch x := value.(type) {
+	case []any:
+		for _, item := range x {
+			if hasFailureMarkers(item) || hasResultItemFailure(item) {
+				return true
 			}
 		}
+	case map[string]any:
+		if hasFailureMarkers(x) {
+			return true
+		}
+		for _, key := range resultCollectionFields {
+			if child, ok := x[key]; ok && hasResultItemFailure(child) {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func hasFailureMarkers(value any) bool {
+	item, ok := value.(map[string]any)
+	if !ok {
 		return false
 	}
-	return failed(value)
+	if code, ok := item["code"].(float64); ok && code != 0 {
+		return true
+	}
+	for _, key := range []string{"success", "ok"} {
+		if failed, ok := item[key].(bool); ok && !failed {
+			return true
+		}
+	}
+	for _, key := range []string{"failed_items", "failures", "errors"} {
+		if failure, ok := item[key]; ok && failure != nil {
+			if items, ok := failure.([]any); !ok || len(items) > 0 {
+				return true
+			}
+		}
+	}
+	return false
 }
