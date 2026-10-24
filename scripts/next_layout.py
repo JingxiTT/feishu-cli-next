@@ -43,7 +43,7 @@ UPSTREAM_ROOT = (
 FORK_ROOT = (
     'README.upstream.md', 'SECURITY.md', 'agent-skills', 'agent_content_embed.go',
     'agent_content_embed_test.go', 'agent_skill_guidance_test.go', 'baseline', 'docs',
-    'evaluation', 'evidence',
+    'evaluation', 'evidence', 'next.mk',
 )
 
 

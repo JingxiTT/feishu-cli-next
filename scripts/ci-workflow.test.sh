@@ -427,6 +427,7 @@ fi
 make_output="$(QUALITY_GATE_CHANGED_FROM= make -n quality-gate)"
 for build_contract in \
   Makefile \
+  next.mk \
   build.sh \
   scripts/build-pkg-pr-new.sh \
   .goreleaser.yml \
