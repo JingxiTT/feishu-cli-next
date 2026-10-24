@@ -20,6 +20,11 @@ class OfflineWorkflowTests(unittest.TestCase):
         self.workflow = (ROOT / '.github/workflows/next-offline.yml').read_text()
         self.makefile = (ROOT / 'Makefile').read_text() + (ROOT / 'next.mk').read_text()
 
+    def test_workflows_use_github_hosted_runners(self):
+        for path in (ROOT / '.github/workflows').glob('*.yml'):
+            with self.subTest(workflow=path.name):
+                self.assertNotIn('blacksmith', path.read_text().lower())
+
     def test_correctness_workflows_run_on_pull_requests(self):
         for name in ('ci', 'next-offline'):
             workflow = (ROOT / f'.github/workflows/{name}.yml').read_text()
@@ -43,7 +48,7 @@ class OfflineWorkflowTests(unittest.TestCase):
             self.assertNotIn('--execute', dry_run.stdout)
 
     def test_linux_job_keeps_every_gate_required(self):
-        self.assertIn('runs-on: blacksmith-4vcpu-ubuntu-2404', self.workflow)
+        self.assertIn('runs-on: ubuntu-latest', self.workflow)
         self.assertNotIn('matrix', self.workflow)
         self.assertNotIn('macos-latest', self.workflow)
         self.assertNotIn('windows-latest', self.workflow)
