@@ -90,9 +90,8 @@ func (o *AgentOptions) saveArtifact(result json.RawMessage) (json.RawMessage, er
 	if err != nil {
 		return nil, err
 	}
-	if binding.Environment == "" || binding.AppID == "" || binding.Identity == "" || (binding.Identity == "user" && binding.UserID == "") || (binding.TenantVerified && binding.TenantKey == "") {
-		return nil, errs.NewValidationError(errs.SubtypeFailedPrecondition,
-			"result artifact account binding is incomplete").WithParam("--save-result")
+	if err := ValidateArtifactBinding(binding, binding, "--save-result", false); err != nil {
+		return nil, err
 	}
 	path, err := o.FileIO.ResolvePath(o.SaveResult)
 	if err != nil {

@@ -193,19 +193,20 @@ def import_sibling_jobs(output, matrix_jobs, env):
     matches = {job['key']: [] for job in matrix_jobs}
     indexed = {job['key']: job for job in matrix_jobs}
     with ExitStack() as locks:
-        for source in sorted(output.parent.iterdir()):
+        try:
+            sources = sorted(output.parent.iterdir())
+        except OSError:
+            sources = []
+        for source in sources:
             try:
                 if source == output or source.is_symlink() or not source.is_dir():
                     continue
                 environment_path = source / 'environment.json'
-                if not environment_path.is_file():
+                if not environment_path.is_file() or read(environment_path) != env:
                     continue
-                source_env = read(environment_path)
             except OSError:
-                # Sibling paths such as system-private temporary directories are
-                # not cache candidates and must not break retained reproduction.
-                continue
-            if source_env != env:
+                # Other temporary output parents may be inaccessible or contain
+                # dangling entries. Only same-input matrix outputs are candidates.
                 continue
             lock = locks.enter_context((source / '.matrix.lock').open('a'))
             fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)

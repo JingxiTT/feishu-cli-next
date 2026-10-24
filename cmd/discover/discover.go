@@ -5,12 +5,14 @@
 package discover
 
 import (
+	"fmt"
 	"sort"
 	"strings"
 
 	"github.com/larksuite/cli/errs"
 	"github.com/larksuite/cli/internal/cmdmeta"
 	"github.com/larksuite/cli/internal/cmdutil"
+	"github.com/larksuite/cli/internal/meta"
 	"github.com/larksuite/cli/internal/output"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -22,6 +24,7 @@ type entry struct {
 	Risk        string   `json:"risk,omitempty"`
 	Identities  []string `json:"identities,omitempty"`
 	Flags       []flag   `json:"flags,omitempty"`
+	Example     string   `json:"example,omitempty"`
 	command     *cobra.Command
 }
 
@@ -53,13 +56,15 @@ func NewCmd(f *cmdutil.Factory, root *cobra.Command) *cobra.Command {
 			if withFlags {
 				for i := start; i < end; i++ {
 					entries[i].Flags = describeFlags(publicFlags(entries[i].command))
+					entries[i].Example = routingExample(root.Name(), f, entries[i])
 				}
 			}
 			page := map[string]any{"query": query, "offset": offset, "limit": limit, "total": len(entries), "complete": end == len(entries)}
 			if end < len(entries) {
 				page["next_offset"] = end
 			}
-			return output.WriteJSON(f.IOStreams.Out, map[string]any{"ok": true, "data": entries[start:end], "meta": page})
+			result := entries[start:end]
+			return output.WriteJSON(f.IOStreams.Out, map[string]any{"ok": true, "data": result, "meta": page})
 		},
 	}
 	cmd.Flags().IntVar(&limit, "limit", 20, "maximum results (1..1000)")
@@ -69,6 +74,70 @@ func NewCmd(f *cmdutil.Factory, root *cobra.Command) *cobra.Command {
 	cmdutil.SetRisk(cmd, "read")
 	cmdmeta.SetRequiresFullTree(cmd)
 	return cmd
+}
+
+// routingExample gives --flags one compact invocation route. Authored
+// examples win; otherwise required flags form a placeholder skeleton. Full
+// help remains the source for alternate workflows and complex semantics.
+func routingExample(rootName string, f *cmdutil.Factory, result entry) string {
+	if result.command == nil || (result.command.Run == nil && result.command.RunE == nil) {
+		return ""
+	}
+	if example := firstCommandExample(rootName, guidanceExamples(f, result.command), result.command.Example); example != "" {
+		return example
+	}
+	var b strings.Builder
+	fmt.Fprintf(&b, "%s %s", rootName, result.Command)
+	required := false
+	for _, flagResult := range result.Flags {
+		if !flagResult.Required {
+			continue
+		}
+		required = true
+		fmt.Fprintf(&b, " --%s", flagResult.Name)
+		if flagResult.Type != "bool" {
+			placeholder := strings.ReplaceAll(flagResult.Name, "_", "-")
+			fmt.Fprintf(&b, " <%s>", placeholder)
+		}
+	}
+	if required {
+		return b.String()
+	}
+	return ""
+}
+
+func guidanceExamples(f *cmdutil.Factory, cmd *cobra.Command) []string {
+	service, method, ok := cmdmeta.AffordanceRef(cmd)
+	if !ok || f == nil || f.Affordance == nil {
+		return nil
+	}
+	raw, ok := f.Affordance.For(service, method)
+	if !ok {
+		return nil
+	}
+	parsed, ok := (meta.Method{Affordance: raw}).ParsedAffordance()
+	if !ok {
+		return nil
+	}
+	examples := make([]string, 0, len(parsed.Examples))
+	for _, example := range parsed.Examples {
+		examples = append(examples, example.Command)
+	}
+	return examples
+}
+
+func firstCommandExample(rootName string, guidance []string, helpExamples string) string {
+	lines := append([]string(nil), guidance...)
+	lines = append(lines, strings.Split(helpExamples, "\n")...)
+	for _, raw := range lines {
+		line := strings.TrimSpace(raw)
+		for _, binary := range []string{"lark-cli", "feishu-cli-next"} {
+			if strings.HasPrefix(line, binary+" ") {
+				return rootName + strings.TrimPrefix(line, binary)
+			}
+		}
+	}
+	return ""
 }
 
 func collect(root *cobra.Command, query string) []entry {

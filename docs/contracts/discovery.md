@@ -12,13 +12,21 @@ default values are not search text. Results remain alphabetical by command path,
 with stable offset pagination; matching adds no rankings or inferred synonyms.
 
 `--flags` includes each public flag's name, type, default, required marker, and
-optional `description` copied verbatim from its registered usage. Descriptions
+optional `description` copied verbatim from its registered usage. It also
+includes one compact `example` route when an authored command example exists or
+required flags form an executable placeholder skeleton. An example is
+illustrative, not a required workflow; command help and domain guidance retain
+alternate routes and complex semantics. Descriptions
 include accepted selector values and input conventions where the command defines
 them, so a focused lookup can often replace a separate command-help read. Hidden
 flags remain excluded and local definitions shadow inherited flags. The default
 output without `--flags` is unchanged. Narrow the query and `--limit` before
-requesting flags; a broad listing repeats inherited flag descriptions. Command
-help and domain skills remain available for examples and workflow guidance.
+requesting flags; a broad listing repeats inherited flag descriptions.
+
+For the token-oriented route view, combine `--flags` with the existing
+`--result-fields command,example`; the full result remains available when the
+task needs complete flag descriptions, missing-option semantics, or alternate
+workflows.
 
 Local command registration uses the startup brand, and strict-mode discovery
 uses provider identity-support metadata without verifying user or tenant identity.

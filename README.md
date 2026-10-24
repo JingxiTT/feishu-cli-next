@@ -6,7 +6,7 @@ The goal is to reduce the tokens needed to complete a task while preserving ever
 
 Synced with [official Lark CLI v1.0.98](https://github.com/larksuite/cli/releases/tag/v1.0.98). See the [sync details and verification limits](baseline/v1.0.98/README.md). The original frozen reference remains available for historical comparisons.
 
-[中文说明](README.zh.md) · [Quick start](#quick-start) · [Usage](#usage) · [Evaluation](#evaluation) · [Contributing](docs/contributing.md) · [All docs](docs/README.md)
+[Quick start](#quick-start) · [Usage](#usage) · [Evaluation](#evaluation) · [Contributing](docs/contributing.md) · [All docs](docs/README.md)
 
 ## What this project adds
 
