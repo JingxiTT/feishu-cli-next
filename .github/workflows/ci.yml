@@ -18,9 +18,46 @@ permissions:
   actions: read
 
 jobs:
+  # ── Change classification ──────────────────────────────────────────
+  # Docs/evidence-only pull requests cannot change compiled behavior, so the
+  # Go job matrix is skipped for them. Anything else (including scripts,
+  # workflows, skills, and every non-.md path) runs the full matrix. A
+  # classification failure fails safe: docs_only stays false and every job runs.
+  changes:
+    runs-on: blacksmith-4vcpu-ubuntu-2404
+    outputs:
+      docs_only: ${{ steps.classify.outputs.docs_only }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Classify changed paths
+        id: classify
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          docs_only=false
+          if [ "${GITHUB_EVENT_NAME}" = "pull_request" ] && [ -n "${BASE_SHA}" ] && [ -n "${HEAD_SHA}" ]; then
+            docs_only=true
+            while IFS= read -r path; do
+              if [ -n "$path" ]; then
+                case "$path" in
+                  *.go) docs_only=false; break ;;
+                  docs/*|evidence/*) ;;
+                  *) docs_only=false; break ;;
+                esac
+              fi
+            done < <(git diff --name-only "$BASE_SHA" "$HEAD_SHA")
+          fi
+          echo "docs_only=$docs_only" >> "$GITHUB_OUTPUT"
+          echo "Changed-path classification: docs_only=$docs_only"
+
   # ── Layer 1: Fast Gate ─────────────────────────────────────────────
   fast-gate:
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
       - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v6
@@ -55,8 +92,9 @@ jobs:
           fi
 
   plugin-integration:
-    needs: fast-gate
-    runs-on: ubuntu-latest
+    needs: [fast-gate, changes]
+    if: ${{ needs.changes.outputs.docs_only != 'true' }}
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
         with:
@@ -68,8 +106,9 @@ jobs:
         run: go test -count=1 -timeout=15m ./tests/plugin_e2e/...
 
   sidecar-integration:
-    needs: fast-gate
-    runs-on: ubuntu-latest
+    needs: [fast-gate, changes]
+    if: ${{ needs.changes.outputs.docs_only != 'true' }}
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
         with:
@@ -81,23 +120,63 @@ jobs:
         run: make sidecar-test
 
   # ── Layer 2: Quality Gate ──────────────────────────────────────────
+  # Unit tests and coverage share one `-race -coverprofile` run: the same
+  # package set is compiled and executed once instead of twice.
   unit-test:
-    needs: fast-gate
-    runs-on: ubuntu-latest
+    needs: [fast-gate, changes]
+    if: ${{ needs.changes.outputs.docs_only != 'true' }}
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
       - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v6
         with:
           go-version-file: go.mod
-      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6
+      - name: Run tests with coverage
+        run: |
+          # tests/ holds only L3/L4 suites (cli_e2e, plugin_e2e, sidecar_e2e) that
+          # have dedicated jobs; exclude the whole subtree so none of them runs a
+          # second time here — and, crucially, so an observe-only suite's failure
+          # can never block merges through the unit/coverage result.
+          packages=$(go list ./... | grep -v '^github.com/larksuite/cli/tests/')
+          go test -race -count=1 -timeout=10m -coverprofile=coverage.txt -covermode=atomic $packages
+      - name: Upload coverage to Codecov
+        if: ${{ github.event_name != 'pull_request' || !github.event.pull_request.head.repo.fork }}
+        uses: codecov/codecov-action@3f20e214133d0983f9a10f3d63b0faf9241a3daa # v6
         with:
-          python-version: '3.x'
-      - name: Run tests
-        run: go test -v -race -count=1 -timeout=5m ./cmd/... ./internal/... ./shortcuts/... ./extension/...
+          files: coverage.txt
+          token: ${{ secrets.CODECOV_TOKEN }}
+      - name: Check coverage threshold
+        run: |
+          total=$(go tool cover -func=coverage.txt | grep total | awk '{print $3}' | tr -d '%')
+          threshold=40
+          echo "Coverage: ${total}% (threshold: ${threshold}%)"
+          if (( $(echo "$total < $threshold" | bc -l) )); then
+            echo "::error::Coverage ${total}% is below threshold ${threshold}%"
+            exit 1
+          fi
+      - name: Coverage summary
+        if: ${{ !cancelled() }}
+        run: |
+          if [ ! -f coverage.txt ]; then
+            echo "No coverage data available" >> $GITHUB_STEP_SUMMARY
+            exit 0
+          fi
+          total=$(go tool cover -func=coverage.txt | grep total | awk '{print $3}')
+          echo "## Coverage Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Total coverage: ${total}**" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "<details><summary>Details</summary>" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          go tool cover -func=coverage.txt >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo "</details>" >> $GITHUB_STEP_SUMMARY
 
   lint:
-    needs: fast-gate
-    runs-on: ubuntu-latest
+    needs: [fast-gate, changes]
+    if: ${{ needs.changes.outputs.docs_only != 'true' }}
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
         with:
@@ -122,7 +201,7 @@ jobs:
 
   script-test:
     needs: fast-gate
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
         with:
@@ -139,7 +218,7 @@ jobs:
 
   deterministic-gate:
     needs: fast-gate
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     permissions:
       contents: read
       actions: read
@@ -188,63 +267,10 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
-  coverage:
-    needs: fast-gate
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
-      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v6
-        with:
-          go-version-file: go.mod
-      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6
-        with:
-          python-version: '3.x'
-      - name: Run tests with coverage
-        run: |
-          # tests/ holds only L3/L4 suites (cli_e2e, plugin_e2e, sidecar_e2e) that
-          # have dedicated jobs; exclude the whole subtree so none of them runs a
-          # second time here — and, crucially, so an observe-only suite's failure
-          # can never block merges through coverage's spot in the results loop.
-          packages=$(go list ./... | grep -v '^github.com/larksuite/cli/tests/')
-          go test -race -coverprofile=coverage.txt -covermode=atomic $packages
-      - name: Upload coverage to Codecov
-        if: ${{ github.event_name != 'pull_request' || !github.event.pull_request.head.repo.fork }}
-        uses: codecov/codecov-action@3f20e214133d0983f9a10f3d63b0faf9241a3daa # v6
-        with:
-          files: coverage.txt
-          token: ${{ secrets.CODECOV_TOKEN }}
-      - name: Check coverage threshold
-        run: |
-          total=$(go tool cover -func=coverage.txt | grep total | awk '{print $3}' | tr -d '%')
-          threshold=40
-          echo "Coverage: ${total}% (threshold: ${threshold}%)"
-          if (( $(echo "$total < $threshold" | bc -l) )); then
-            echo "::error::Coverage ${total}% is below threshold ${threshold}%"
-            exit 1
-          fi
-      - name: Coverage summary
-        if: ${{ !cancelled() }}
-        run: |
-          if [ ! -f coverage.txt ]; then
-            echo "No coverage data available" >> $GITHUB_STEP_SUMMARY
-            exit 0
-          fi
-          total=$(go tool cover -func=coverage.txt | grep total | awk '{print $3}')
-          echo "## Coverage Report" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Total coverage: ${total}**" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "<details><summary>Details</summary>" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
-          go tool cover -func=coverage.txt >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
-          echo "</details>" >> $GITHUB_STEP_SUMMARY
-
   deadcode:
-    needs: fast-gate
-    if: ${{ github.event_name == 'pull_request' }}
-    runs-on: ubuntu-latest
+    needs: [fast-gate, changes]
+    if: ${{ github.event_name == 'pull_request' && needs.changes.outputs.docs_only != 'true' }}
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
         with:
@@ -289,7 +315,7 @@ jobs:
   # ── Layer 3: E2E Gate ──────────────────────────────────────────────
   e2e-dry-run:
     needs: [unit-test, lint, script-test, deterministic-gate]
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
@@ -355,7 +381,7 @@ jobs:
 
   # ── Layer 4: Security & Compliance (parallel with L2-L3) ──────────
   security:
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     permissions:
       contents: read
       pull-requests: read
@@ -370,11 +396,21 @@ jobs:
         with:
           python-version: '3.x'
       - name: Gitleaks
-        if: ${{ github.event_name != 'pull_request' || !github.event.pull_request.head.repo.fork }}
-        uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7 # v2.3.9
+        # The open-source CLI scans organization and fork PRs without an action license.
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_KEY }}
+          SCAN_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          archive="$RUNNER_TEMP/gitleaks.tar.gz"
+          curl --fail --silent --show-error --location \
+            https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_linux_x64.tar.gz \
+            --output "$archive"
+          echo "551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb  $archive" | sha256sum --check -
+          tar -xzf "$archive" -C "$RUNNER_TEMP" gitleaks
+          log_opts="--all"
+          if [[ -n "$SCAN_BASE" && "$SCAN_BASE" != "0000000000000000000000000000000000000000" ]]; then
+            log_opts="${SCAN_BASE}..HEAD"
+          fi
+          "$RUNNER_TEMP/gitleaks" detect --redact --exit-code=2 --log-opts="$log_opts"
       - name: govulncheck
         run: go run golang.org/x/vuln/cmd/govulncheck@v1.9.0 ./...
       - name: Check dependency licenses
@@ -382,7 +418,7 @@ jobs:
 
   license-header:
     if: ${{ github.event_name == 'pull_request' }}
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
       - name: Check license headers
@@ -393,8 +429,8 @@ jobs:
   # ── Results Gate (single required check for branch protection) ─────
   results:
     if: ${{ always() }}
-    needs: [fast-gate, unit-test, lint, script-test, deterministic-gate, coverage, deadcode, e2e-dry-run, security, license-header, plugin-integration, sidecar-integration]
-    runs-on: ubuntu-latest
+    needs: [changes, fast-gate, unit-test, lint, script-test, deterministic-gate, deadcode, e2e-dry-run, security, license-header, plugin-integration, sidecar-integration]
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     steps:
       - name: Evaluate results
         run: |
@@ -403,11 +439,10 @@ jobs:
           echo "| Layer | Job | Status |" >> $GITHUB_STEP_SUMMARY
           echo "|-------|-----|--------|" >> $GITHUB_STEP_SUMMARY
           echo "| L1 | fast-gate | ${{ needs.fast-gate.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| L2 | unit-test | ${{ needs.unit-test.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| L2 | unit-test (with coverage) | ${{ needs.unit-test.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| L2 | lint | ${{ needs.lint.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| L2 | script-test | ${{ needs.script-test.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| L2 | deterministic-gate | ${{ needs.deterministic-gate.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| L2 | coverage | ${{ needs.coverage.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| L2 | deadcode | ${{ needs.deadcode.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| L3 | e2e-dry-run | ${{ needs.e2e-dry-run.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| L4 | security | ${{ needs.security.result }} |" >> $GITHUB_STEP_SUMMARY
@@ -426,12 +461,12 @@ jobs:
           # consecutive weeks with zero false positives).
           FAILED=0
           for result in \
+            "${{ needs.changes.result }}" \
             "${{ needs.fast-gate.result }}" \
             "${{ needs.unit-test.result }}" \
             "${{ needs.lint.result }}" \
             "${{ needs.script-test.result }}" \
             "${{ needs.deterministic-gate.result }}" \
-            "${{ needs.coverage.result }}" \
             "${{ needs.deadcode.result }}" \
             "${{ needs.e2e-dry-run.result }}" \
             "${{ needs.security.result }}" \

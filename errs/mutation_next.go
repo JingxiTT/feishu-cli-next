@@ -9,6 +9,14 @@ import (
 	"slices"
 )
 
+// Mutation outcomes recorded by receipts and reported on the wire.
+const (
+	MutationApplied   = "confirmed_applied"
+	MutationUnapplied = "confirmed_unapplied"
+	MutationPartial   = "partial"
+	MutationUnknown   = "unknown"
+)
+
 // MutationOutcomeError exposes observed effects to both process and embedded
 // callers. The original error remains in the Go chain; its typed wire fields
 // are retained in CauseDetail without granting permission to replay a write.
@@ -43,13 +51,13 @@ func NewMutationOutcomeError(outcome string, receipts []string, persistenceFaile
 		return existing
 	}
 	switch outcome {
-	case "confirmed_unapplied", "partial", "unknown":
-	case "confirmed_applied":
+	case MutationUnapplied, MutationPartial, MutationUnknown:
+	case MutationApplied:
 		if !persistenceFailed {
-			outcome = "unknown"
+			outcome = MutationUnknown
 		}
 	default:
-		outcome = "unknown"
+		outcome = MutationUnknown
 	}
 	message := "mutation outcome is " + outcome
 	if persistenceFailed {

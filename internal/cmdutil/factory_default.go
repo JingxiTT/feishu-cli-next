@@ -23,6 +23,7 @@ import (
 	"github.com/larksuite/cli/internal/core"
 	"github.com/larksuite/cli/internal/credential"
 	"github.com/larksuite/cli/internal/keychain"
+	"github.com/larksuite/cli/internal/nextattempt"
 	"github.com/larksuite/cli/internal/riskcontrol"
 	_ "github.com/larksuite/cli/internal/security/contentsafety" // register content safety provider
 	"github.com/larksuite/cli/internal/transport"
@@ -107,7 +108,7 @@ func NewDefault(streams *IOStreams, inv InvocationContext) *Factory {
 // other credential-bearing request bodies from being replayed to another
 // origin. HTTPS requests can never be downgraded to HTTP.
 func safeRedirectPolicy(req *http.Request, via []*http.Request) error {
-	if len(via) > 0 && isDriveImportStatusRequest(via[0]) {
+	if len(via) > 0 && nextattempt.IsDriveImportStatusRequest(via[0]) {
 		return http.ErrUseLastResponse
 	}
 	if len(via) >= 10 {

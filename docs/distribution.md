@@ -20,7 +20,7 @@ Unrelated GitHub, model-review, coverage and release-signing credentials retain
 their separate uses.
 
 Build the current host with canonical `make build` (or `./build.sh`), using Go
-1.26.9+ and the committed embedded API catalog. Neither Python nor a metadata
+1.26.10+ and the committed embedded API catalog. Neither Python nor a metadata
 fetch is needed for this build. Python 3 is required for the packaging and prefix
 installation tools. Go dependencies must already be cached for offline builds.
 `python3 scripts/next_package.py --output .tmp/release` builds all seven OS/architecture pairs, each in normal and `authsidecar` variants,

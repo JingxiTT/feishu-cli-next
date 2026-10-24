@@ -90,7 +90,7 @@ class LocalLiveTests(unittest.TestCase):
                     self.assertIn('os.Getenv("' + key + '")', sources)
 
     def test_live_entrypoint_is_separate_from_default_tests_and_all_workflows(self):
-        makefile = (next_live_test.ROOT / "Makefile").read_text()
+        makefile = (next_live_test.ROOT / "Makefile").read_text() + (next_live_test.ROOT / "next.mk").read_text()
         self.assertIn("offline-test: test\n", makefile)
         self.assertIn("test: vet fmt-check script-test unit-test examples-build integration-test evaluation-test\n", makefile)
         self.assertIn("live-test:\n\tpython3 scripts/next_live_test.py", makefile)

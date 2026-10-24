@@ -18,7 +18,7 @@ ROOT = Path(__file__).resolve().parents[1]
 class OfflineWorkflowTests(unittest.TestCase):
     def setUp(self):
         self.workflow = (ROOT / '.github/workflows/next-offline.yml').read_text()
-        self.makefile = (ROOT / 'Makefile').read_text()
+        self.makefile = (ROOT / 'Makefile').read_text() + (ROOT / 'next.mk').read_text()
 
     def test_correctness_workflows_run_on_pull_requests(self):
         for name in ('ci', 'next-offline'):
@@ -43,7 +43,7 @@ class OfflineWorkflowTests(unittest.TestCase):
             self.assertNotIn('--execute', dry_run.stdout)
 
     def test_linux_job_keeps_every_gate_required(self):
-        self.assertIn('runs-on: ubuntu-latest', self.workflow)
+        self.assertIn('runs-on: blacksmith-4vcpu-ubuntu-2404', self.workflow)
         self.assertNotIn('matrix', self.workflow)
         self.assertNotIn('macos-latest', self.workflow)
         self.assertNotIn('windows-latest', self.workflow)
@@ -73,6 +73,14 @@ class OfflineWorkflowTests(unittest.TestCase):
         self.assertIn('if-no-files-found: error', self.workflow)
         self.assertIn("'evidence': 'offline'", self.workflow)
         self.assertIn('Skipped or blocked scenarios remain unverified', self.workflow)
+
+    def test_superseded_pull_request_runs_are_cancelled(self):
+        self.assertIn('concurrency:\n', self.workflow)
+        self.assertIn(
+            'group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}',
+            self.workflow,
+        )
+        self.assertIn("cancel-in-progress: ${{ github.event_name == 'pull_request' }}", self.workflow)
 
     def test_job_uses_linux_binary(self):
         job_env = self.workflow.split('    env:\n', 1)[1].split('    steps:\n', 1)[0]

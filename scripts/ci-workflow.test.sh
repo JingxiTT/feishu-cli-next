@@ -34,9 +34,10 @@ script_test_section="$(job_section script-test)"
 deterministic_section="$(awk '
   /^  deterministic-gate:/ { in_job = 1 }
   in_job { print }
-  /^  coverage:/ { exit }
+  /^  deadcode:/ { exit }
 ' "$workflow")"
-coverage_job_section="$(job_section coverage)"
+# The race suite and its coverage now run in one job, so the standalone
+# coverage job is gone; keep the extractor for the Codecov guard below.
 deadcode_section="$(job_section deadcode)"
 dry_run_section="$(job_section e2e-dry-run)"
 security_section="$(job_section security)"
@@ -46,6 +47,93 @@ results_section="$(awk '
   in_job { print }
 ' "$workflow")"
 fork_safe_guard="github.event_name != 'pull_request' || !github.event.pull_request.head.repo.fork"
+
+# Secret scanning must run without organization licenses or fork-only skips.
+ruby -ryaml -rtmpdir -ropen3 -e '
+  security = YAML.load_file(ARGV.fetch(0)).fetch("jobs").fetch("security")
+  scan = security.fetch("steps").find { |step| step["name"] == "Gitleaks" }
+  abort "Gitleaks must run the CLI without a license or PR guard" unless
+    scan && !scan.key?("if") && !scan.key?("uses") &&
+    !scan.fetch("env", {}).keys.any? { |key| key.include?("LICENSE") } &&
+    scan.dig("env", "SCAN_BASE") == %q{${{ github.event.pull_request.base.sha || github.event.before }}} &&
+    scan.fetch("run", "").include?("sha256sum --check -") &&
+    scan.fetch("run", "").include?(%q{"$RUNNER_TEMP/gitleaks" detect --redact --exit-code=2 --log-opts="$log_opts"}) &&
+    !scan.fetch("continue-on-error", false)
+  Dir.mktmpdir("secret-scan-test") do |dir|
+    %w[curl sha256sum tar].each do |tool|
+      path = File.join(dir, tool)
+      File.write(path, "#!/bin/sh\nexit 0\n")
+      File.chmod(0700, path)
+    end
+    scanner = File.join(dir, "gitleaks")
+    File.write(scanner, "#!/bin/sh\nprintf \"%s\\n\" \"$@\"\nexit 2\n")
+    File.chmod(0700, scanner)
+    ["", "0" * 40, "a" * 40].each do |base|
+      env = {"PATH" => dir + ":" + ENV.fetch("PATH"), "RUNNER_TEMP" => dir, "SCAN_BASE" => base}
+      stdout, stderr, status = Open3.capture3(env, "bash", "-e", "-c", scan.fetch("run"))
+      expected = base.empty? || base == "0" * 40 ? "--all" : base + "..HEAD"
+      abort "Gitleaks lost its commit range or swallowed a leak: #{stderr}" unless
+        status.exitstatus == 2 && stdout.lines.map(&:chomp) ==
+          ["detect", "--redact", "--exit-code=2", "--log-opts=" + expected]
+    end
+  end
+' "$workflow"
+
+# The docs/evidence-only fast path must skip the Go job matrix for docs or
+# evidence pull requests and keep it for every other change. A regression that
+# widened the skip set would silently stop testing code.
+ruby -ropen3 -rtmpdir -ryaml <<'RUBY'
+ci = YAML.load_file(".github/workflows/ci.yml")
+changes = ci.dig("jobs", "changes")
+abort("ci.yml must define a changes job that classifies changed paths") unless changes
+step = changes.fetch("steps").find { |item| item["name"] == "Classify changed paths" }
+abort("changes job must classify changed paths") unless step
+script = step.fetch("run")
+abort("changes must expose the docs_only output") unless
+  changes.dig("outputs", "docs_only") == "${{ steps.classify.outputs.docs_only }}"
+abort("results must depend on changes so a classifier failure still gates merges") unless
+  ci.dig("jobs", "results", "needs").include?("changes")
+%w[unit-test lint deadcode plugin-integration sidecar-integration].each do |job|
+  abort("#{job} must run only when the change is not docs/evidence-only") unless
+    ci.dig("jobs", job, "if").to_s.include?("needs.changes.outputs.docs_only != 'true'")
+end
+abort("script-test must keep running for docs changes because it checks published tokens") if
+  ci.dig("jobs", "script-test", "if").to_s.include?("docs_only")
+
+def classify(script, files, event)
+  Dir.mktmpdir("classify") do |dir|
+    stub = File.join(dir, "git")
+    File.write(stub, "#!/bin/sh\ncat <<'EOF'\n#{files.join("\n")}\nEOF\n")
+    File.chmod(0700, stub)
+    output = File.join(dir, "github_output")
+    File.write(output, "")
+    env = {
+      "PATH" => dir + ":" + ENV.fetch("PATH"),
+      "GITHUB_EVENT_NAME" => event,
+      "BASE_SHA" => "a" * 40,
+      "HEAD_SHA" => "b" * 40,
+      "GITHUB_OUTPUT" => output,
+    }
+    _stdout, stderr, status = Open3.capture3(env, "bash", "-e", "-c", script)
+    abort("changed-path classification failed: #{stderr}") unless status.success?
+    File.read(output)[/docs_only=(\w+)/, 1]
+  end
+end
+
+[
+  [%w[docs/a.md evidence/b.json], "pull_request", "true"],
+  [%w[docs/a.md main.go], "pull_request", "false"],
+  [%w[docs/sneaky.go], "pull_request", "false"],
+  [%w[skills/x/SKILL.md], "pull_request", "false"],
+  [%w[scripts/next_layout.py], "pull_request", "false"],
+  [%w[docs/a.md], "push", "false"],
+  [[], "pull_request", "true"],
+].each do |files, event, expected|
+  actual = classify(script, files, event)
+  abort("docs-only classification regression for #{files.inspect} on #{event}: got #{actual}, want #{expected}") unless
+    actual == expected
+end
+RUBY
 
 if ! grep -Fq 'LARK_CLI_BIN: ${{ github.workspace }}/feishu-cli-next' <<<"$dry_run_section"; then
   echo "CLI E2E must use the feishu-cli-next binary produced by make build" >&2
@@ -268,7 +356,6 @@ for full_job in \
   "$lint_section" \
   "$script_test_section" \
   "$deterministic_section" \
-  "$coverage_job_section" \
   "$dry_run_section" \
   "$security_section"; do
   if grep -Fq "github.event.action != 'edited'" <<<"$full_job"; then
@@ -398,6 +485,18 @@ if grep -Fq '${{ secrets.CODECOV_TOKEN }}' <<<"$coverage_step" &&
   exit 1
 fi
 
+# Both failure and cover profile must come from one race run, not two.
+if grep -Fq "  coverage:" "$workflow"; then
+  echo "coverage should be merged into unit-test so the race suite runs once, not as a separate job" >&2
+  exit 1
+fi
+
+if ! grep -Fq "Run tests with coverage" <<<"$unit_test_section" ||
+   ! grep -Fq -- "-coverprofile=coverage.txt" <<<"$unit_test_section"; then
+  echo "unit-test should run the race suite with a coverage profile in the same step" >&2
+  exit 1
+fi
+
 if ! awk -v guard="$fork_safe_guard" '
   /^  [A-Za-z0-9_-]+:/ {
     job_if = "";
@@ -427,6 +526,7 @@ fi
 make_output="$(QUALITY_GATE_CHANGED_FROM= make -n quality-gate)"
 for build_contract in \
   Makefile \
+  next.mk \
   build.sh \
   scripts/build-pkg-pr-new.sh \
   .goreleaser.yml \

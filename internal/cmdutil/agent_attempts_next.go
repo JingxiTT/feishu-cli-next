@@ -40,7 +40,7 @@ func (f *Factory) agentAttemptTransport(base http.RoundTripper) http.RoundTrippe
 			if nextattempt.IsStoragePutRequest(req) {
 				return true
 			}
-			if mutation, declared := declaredRequestEffect(req); declared {
+			if mutation, declared := nextattempt.DeclaredRequestEffect(req); declared {
 				return mutation
 			}
 			if isContactBasicBatchRead(req) {
@@ -117,9 +117,5 @@ func (f *Factory) FinalizeAgentAttempt(runErr error) error {
 	if len(summary.Receipts) == 0 || summary.ExitCode() == 0 {
 		return runErr
 	}
-	ids := make([]string, len(summary.Receipts))
-	for i, receipt := range summary.Receipts {
-		ids[i] = receipt.ID
-	}
-	return errs.NewMutationOutcomeError(summary.Outcome, ids, summary.PersistenceFailed, runErr)
+	return errs.NewMutationOutcomeError(summary.Outcome, summary.ReceiptIDs(), summary.PersistenceFailed, runErr)
 }
