@@ -182,7 +182,7 @@ func artifactOptions(t *testing.T) *output.AgentOptions {
 	return &output.AgentOptions{
 		SaveResult: filepath.Join(dir, "result.json"), FileIO: &localfileio.LocalFileIO{},
 		ResolveBinding: func() (output.ArtifactBinding, error) {
-			return output.ArtifactBinding{Environment: "feishu", AppID: "cli_fixture", Identity: "bot", Profile: "fixture"}, nil
+			return output.ArtifactBinding{Environment: "feishu", Endpoint: "https://open.feishu.cn", AppID: "cli_fixture", Identity: "bot", Profile: "fixture"}, nil
 		},
 	}
 }
@@ -547,6 +547,22 @@ func TestAgentArtifactRejectsUnobservedVerifiedTenant(t *testing.T) {
 	}
 	if _, err := os.Stat(opts.SaveResult); !os.IsNotExist(err) {
 		t.Fatalf("unbound artifact created: %v", err)
+	}
+}
+
+func TestAgentArtifactRejectsIncompleteBinding(t *testing.T) {
+	for _, binding := range []output.ArtifactBinding{
+		{Environment: "feishu", AppID: "fixture-app", Identity: "bot"},
+		{Environment: "feishu", Endpoint: "https://open.feishu.cn", AppID: "fixture-app", Identity: "auto"},
+	} {
+		opts := artifactOptions(t)
+		opts.ResolveBinding = func() (output.ArtifactBinding, error) { return binding, nil }
+		if err := output.WriteJSON(output.WithAgentOptions(io.Discard, opts), json.RawMessage(`{"ok":true}`)); !errs.IsValidation(err) {
+			t.Fatalf("incomplete binding accepted: %+v %v", binding, err)
+		}
+		if _, err := os.Stat(opts.SaveResult); !os.IsNotExist(err) {
+			t.Fatalf("incomplete artifact created: %+v %v", binding, err)
+		}
 	}
 }
 
