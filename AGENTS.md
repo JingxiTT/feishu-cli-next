@@ -9,6 +9,10 @@ a regression.
 The module path `github.com/larksuite/cli`, the `LARKSUITE_CLI_*` variables, and
 `lark-cli` in the inherited `skills/` docs are deliberate; do not rename them.
 
+[docs/contributing.md](docs/contributing.md) explains how to add a shortcut or
+domain and how each layer is tested; [docs/README.md](docs/README.md) indexes
+every guide and contract.
+
 ## Commands
 
 ```bash

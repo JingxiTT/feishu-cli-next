@@ -1,5 +1,10 @@
 # feishu-cli-next token-efficiency plan
 
+> **Record.** This is the plan the fork was built against. Current rules are in
+> [AGENTS.md](../AGENTS.md) and [contributing](contributing.md). The
+> [testing authorization boundaries](#authorization-boundaries-for-all-testing)
+> below still apply to every test.
+
 ## Objective
 
 Build a Feishu/Lark CLI named `feishu-cli-next` and one concise English agent skill that help capable shell/file agents complete real Feishu tasks with less unnecessary context and more freedom to choose an effective approach.
