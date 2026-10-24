@@ -27,7 +27,7 @@ The inherited surface includes Docs, Sheets, Base, Drive, Wiki, Contacts, Messag
 
 ## Quick start
 
-Requires **Go 1.26.9+** and `make`. The first build may download Go dependencies. The official v1.0.97 API catalog ships with the source and is embedded directly. Python 3 is needed for inventory, packaging, evaluation, and prefix installation scripts.
+Requires **Go 1.26.10+** and `make`. The first build may download Go dependencies. The official v1.0.97 API catalog ships with the source and is embedded directly. Python 3 is needed for inventory, packaging, evaluation, and prefix installation scripts.
 
 ```sh
 git clone https://github.com/Zhujingxi/feishu-cli-next.git
