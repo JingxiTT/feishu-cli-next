@@ -11,7 +11,7 @@ to `sys.path`.
 
 | Role | Modules and directories |
 |------|-------------------------|
-| Entry points | `pipeline.py` (multi-harness comparisons), `run_matrix.py` (full task matrix), `run_read_batch.py` (serial batches), `harness.py` (one balanced comparison) |
+| Entry points | `pipeline.py` (the only current entry point), with `run_matrix.py` retained only for historical matrix reproduction |
 | Agent adapter | `codex_runner.py` |
 | Fixtures | `read_fixture.py`, `section_fixture.py`, `scenario_fixture.py`, `scenario_protocol.py`; task modules in `paired/`, `scenarios/`, `scaling/`, `e2e/` |
 | Verifiers (never call a model) | `read_verifier.py`, `scenario_verifier.py`, `contact_verifier.py`, `foundation_verifier.py` |
@@ -20,22 +20,27 @@ to `sys.path`.
 
 Do not read or use `tasks.held-out.json` during development.
 
+The adapter, fixture and historical sections below explain retained internals
+and evidence. For a new run, use `pipeline.py`; do not invoke those modules as
+an alternate entry point.
+
 ## Configurable harness/model pipeline
 
-Use [`pipeline.py`](pipeline.py) for new official-versus-Next comparisons across
-multiple harnesses and models. It separates **subsystem function evaluation**
-(43 existing tasks) from **E2E task evaluation** (2 composed release jobs),
-with 45 development tasks by default. It supports category/suite/section selection, configurable budgets/repeats,
+Use [`pipeline.py`](pipeline.py) for every new official-versus-Next comparison.
+It separates **workflow evaluation** (goal-oriented work) from **diagnostic
+evaluation** (bounded capability probes), with 45 development tasks by default.
+It supports workload/suite/section selection, configurable budgets/repeats,
 custom protocol runners, preflight without billing, safe resume and JSON/CSV/
-Markdown reports. See [configuration, coverage and adapter protocol](PIPELINE.md)
-and [example config](pipeline.example.json). Existing historical results below
-remain separate; offline pipeline tests are not provider token measurements.
+Markdown reports. Results are descriptive comparisons, not acceptance
+criteria. See [configuration, coverage and adapter protocol](PIPELINE.md) and
+[example config](pipeline.example.json). `run_matrix.py` is retained only to
+reproduce historical matrix evidence; it is not the current process.
 
 CI checks software correctness, including deterministic tests of the evaluator.
 Actual agent evaluation is a separate, explicitly launched experiment. Use
 `make evaluation-tooling-test` for the former and `pipeline.py --execute` with
 a configured experiment for the latter. [CI versus evaluation](PIPELINE.md#evaluation-is-separate-from-ci)
-also distinguishes product E2E tests from agent E2E task evaluation.
+also distinguishes product E2E tests from agent workflow evaluation.
 
 ## Offline CLI probes
 
@@ -124,7 +129,11 @@ Binary hashes, per-process durations and output hashes are retained.
 These probes complement the full agent matrix below; they cannot establish
 live API speed, successful task parity or the full-task token-efficiency gates.
 
-## Automatic full matrix
+## Historical full matrix
+
+This section documents retained evidence and `run_matrix.py`; it is not the
+current evaluation entry point. Keep the historical gate labels and results
+unchanged when reproducing that run.
 
 [`run_matrix.py`](run_matrix.py) completed all **43 implemented development tasks / 258 attempts** across eight suites: paired functions, harder Docs, domain reads, workflow scenarios, scaling, business, foundation and Contact. Each task compares original/full with Next for three repetitions per arm. The [completed report](../evidence/evaluation/full-matrix-20260911/REPORT.md) contains **240 new attempts and 18 reviewed condition 09 attempts reused unchanged**; it is not a fresh simultaneous 258-attempt comparison. See the [execution and measurement protocol](reports/full-matrix.md).
 
@@ -169,7 +178,11 @@ The generated report contains each suite's task rows and evidence links. Keep th
 
 - **Coverage:** completed scheduled attempts, with fresh and historically reused work identified separately. A completed attempt is not necessarily verified.
 - **Outcomes:** original and Next verified counts, failures and inconclusive results under each bounded fixture contract. Read the linked qualifications before attributing differences to live product behavior.
-- **Gates and accounting:** each task's all-attempt tokens per verified success, with failed/recovery costs included. Docs require >50% savings and other tasks ≥30%, with observed success nonregression. Missing complete usage or an unavailable outcome comparison prevents a finite primary score; known spend remains a lower bound.
+- **Accounting and comparisons:** each task's all-attempt tokens per verified
+  success, with failed/recovery costs included. These are descriptive numbers;
+  no percentage or outcome threshold is applied. Missing complete usage or an
+  unavailable outcome comparison prevents a finite observation; known spend
+  remains a lower bound.
 
 The report retains all six incomplete-usage records and their available costs; it does not estimate missing usage or treat it as zero. No failed or unknown-cost trial is automatically retried to improve the result. The retained 18 condition 09 attempts and their costs remain identified separately from new work.
 

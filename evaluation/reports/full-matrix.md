@@ -1,4 +1,8 @@
-# Automatic full matrix
+# Historical full matrix
+
+This report reproduces the frozen matrix through `run_matrix.py`. It is
+historical evidence, not the current evaluation entry point; use
+`evaluation/pipeline.py` for new comparisons.
 
 Run all **43 implemented development tasks**, **258 logical attempts**: original/full versus Next, three repetitions per task and arm. Suites are paired functions (8), harder Docs (3), domain reads (12), workflow scenarios (9), scaling (6), business (2), foundation (2), and Contact (1). Together they cover the 23 inventory sections. The development/held-out inventory files describe coverage; they are not extra executable trials. Held-out release acceptance and live tenant parity remain separate.
 

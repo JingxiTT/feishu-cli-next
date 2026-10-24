@@ -1,10 +1,18 @@
-# Configurable token comparison pipeline
+# Evaluation pipeline
 
-`pipeline.py` compares the official CLI and CLI Next across independently
-configured harness/model experiments. It reuses the existing signed synthetic
-fixtures, independent verifiers, fresh contexts, balanced randomized schedules,
-and conservative provider accounting. No third-party Python dependency is needed.
-The old historical matrix and its evidence remain unchanged.
+`pipeline.py` is the **single entry point** for a current comparison. It runs
+the official CLI and CLI Next on the same user goals, preserves each attempt's
+cost, and reports comparable observations for users and developers. It reuses
+the existing signed synthetic fixtures, independent verifiers, fresh contexts,
+balanced randomized schedules, and conservative provider accounting. No
+third-party Python dependency is needed.
+
+There is no acceptance threshold or savings gate. The report describes
+verified completion and artifact effects, token use, time, API calls, retries and
+failure/recovery costs. A positive difference is an observation, not a product
+claim; a negative one is retained just as visibly. Historical reports and the
+old `run_matrix.py` remain unchanged for provenance and are not a second
+current entry point.
 
 ## Evaluation is separate from CI
 
@@ -15,7 +23,7 @@ The old historical matrix and its evidence remain unchanged.
 | Work | Unit, integration, CLI E2E and evaluation-tooling tests | Subsystem function and composed E2E task workloads |
 | Model calls | None | Real harness/model calls for measured experiments |
 | Result | Pass/fail/skip correctness reports | Verified outcomes, token distributions, latency and failure/recovery costs |
-| Decision | Software correctness gates | Comparison evidence; no fixed savings threshold or CI merge gate |
+| Decision | Software correctness gates | Descriptive comparison evidence; no acceptance threshold or CI merge gate |
 
 `make test` and `make evaluation-tooling-test` belong to CI. The older
 `make evaluation-test` is a compatibility alias for the tooling tests. Those
@@ -25,15 +33,15 @@ never model-efficiency measurements.
 `python3 evaluation/pipeline.py ... --execute` belongs to evaluation. It is
 independent of the CI job graph and is never invoked by the correctness
 workflows or `make test`. A green CI run does not mean an agent workload was
-evaluated; an evaluation failure is retained as experimental outcome and cost.
-The pipeline's exit status tells the operator about failures or incompleteness,
-not whether the CLI passed a CI savings target.
+evaluated. The pipeline's exit status reports process integrity and completeness;
+task failures are retained observations and are not converted into a pass/fail
+efficiency verdict.
 
 The term E2E appears in both paths: deterministic CLI E2E tests exercise the
 product directly, while E2E **evaluation** gives an agent a business goal and
 measures its entire attempt. Neither replaces the other.
 
-## Run a comparison
+## Run one comparison
 
 1. Build or obtain frozen official and Next binaries with their matching source
    distributions. Synthetic API tasks require fixture-enabled binaries; ordinary
@@ -58,42 +66,50 @@ python3 evaluation/pipeline.py --config .tmp/evaluation/config.json \
 
 Preparation validates every selected section, guidance distribution, runner
 contract and extension build without model calls. It writes a plan and reports
-unmeasured coverage. It does not prove provider authentication, model availability,
-or a custom adapter's implementation. Execution is serial to avoid contaminating
-comparisons with competing workloads. The default is **45 development tasks,
-270 attempts per experiment** with three repeats per arm. More models multiply
-this cost; preparation prints the scheduled count before execution.
+unmeasured coverage. It does not prove provider authentication, model
+availability, or a custom adapter's implementation. Execution is serial to
+avoid contaminating comparisons with competing workloads. The default is
+**45 development tasks, 270 attempts per experiment** with three repeats per
+arm. More models multiply this cost; preparation prints the scheduled count
+before execution.
 
-Use `categories` to select `subsystem`, `e2e`, or both (the default). Use `suites`
-to narrow the selected categories to any of the nine suites and optional `sections`, for
-example `"suites": ["paired", "docs-hard"], "sections": ["docs"]`.
-Omitting `suites` selects all suites in the selected categories. An explicit
-suite outside the selected categories is an error. `repeats` must be at least two;
+The config selects two workload views:
+
+- `workflow` is the user-facing comparison: goal-oriented work that may combine
+  discovery, reads, edits, typed data, artifacts, decisions and recovery.
+- `diagnostic` keeps narrow read/fidelity/discovery/scale probes that explain
+  where behavior differs.
+
+These are report sections, not pass/fail categories. They are never pooled.
+
+Use `workloads` to select `workflow`, `diagnostic`, or both (the default). Use
+`suites` to narrow the selected workloads to any of the nine suites and optional
+`sections`, for example `"suites": ["business", "e2e"]`.
+Omitting `suites` selects all suites in the selected workloads. An explicit
+suite outside the selected workloads is an error. `repeats` must be at least two;
 three is the default, not a statistical guarantee. `seed`, `budget_seconds` and
 `guidance_delivery` (`file` or `inline`) apply symmetrically to every experiment.
 The runner gets the model and reasoning strings unchanged.
 
-## Scenario coverage
+## Workload coverage and real-use fit
 
-There are two evaluation categories. Results have separate tables and category
-labels in JSON/CSV; their token scores are never combined.
+Results have separate tables and workload labels in JSON/CSV; their
+comparisons are never combined.
 
-**Subsystem function evaluation** checks a bounded capability or subsystem:
-discovery, reading, editing, preserving data types, transfers, installation and
-scale. It answers "where does correctness or token use change?" A function may
-need several API calls; call count alone does not make it an E2E task. The
-existing 43 tasks remain in this category.
-
-**E2E task evaluation** checks one user goal requiring several functions to
+**Workflow evaluation** checks one user goal requiring several functions to
 work together. It includes finding sources, interpreting their data, making a
 decision and producing the final artifact or backend effect. Its full token
 cost includes discovery, intermediate processing and recovery in one fresh
-context; it is not the sum of separately run subsystem benchmarks. Agents may
-use shortcuts or any valid composition. Verification checks outcomes and
-necessary data dependencies, not a prescribed command sequence.
+context. Agents may use shortcuts or any valid composition. Verification checks
+outcomes and necessary data dependencies, not a prescribed command sequence.
 
-For example, select only subsystem tests with `"categories": ["subsystem"]`,
-or only composed tasks with `"categories": ["e2e"]` and no `suites` filter.
+**Diagnostic evaluation** checks a bounded capability: discovery, reading,
+editing, preserving data types, transfers, installation and scale. It answers
+where correctness or token use changes. A function may need several API calls;
+call count alone does not make it a workflow.
+
+For example, select only diagnostics with `"workloads": ["diagnostic"]`, or only
+goal-oriented work with `"workloads": ["workflow"]` and no `suites` filter.
 
 | Suite | Tasks | Work exercised by existing executable fixtures |
 |---|---:|---|
@@ -107,11 +123,12 @@ or only composed tasks with `"categories": ["e2e"]` and no `suites` filter.
 | contact | 1 | Synthetic identity lookup |
 | e2e | 2 | Docs + Sheets release readiness review; Docs + Task approved handoff completion |
 
-The E2E tasks in [tasks.e2e.json](tasks.e2e.json) start from a local release brief
+The workflow tasks in [tasks.e2e.json](tasks.e2e.json) start from a local release brief
 containing source links and business requirements, rather than endpoint/flag
 instructions in the user prompt. Both use the full official shared skill and
 its unchanged domain skill distribution versus Next's entry skill. Run these
-through the pipeline or `run_read_batch.py --task-kind e2e --original-comparison`.
+through the pipeline. `run_read_batch.py` is an internal adapter and is not a
+current operator entry point.
 
 - **Release review:** read the approval document and spreadsheet, preserve a
   native typed cell/formula export, and combine their facts into a readiness
@@ -125,8 +142,17 @@ through the pipeline or `run_read_batch.py --task-kind e2e --original-comparison
 These are two initial composed scenarios, reusing small bounded native fixtures.
 They cover the approved/ready path; no unapproved-release or blocked-release
 dataset is scheduled yet. They do not establish representative real-workload
-coverage. More business goals, varied datasets, negative decisions and realistic
-failure conditions belong in this category as independently verified tasks.
+coverage. More business goals, varied datasets, negative decisions and
+realistic failure conditions belong in the workflow section as independently
+verified tasks.
+
+The current workload is a useful starting point but is not yet a complete
+picture of ordinary Feishu use. It is strong on shell/file execution, Docs,
+Sheets/Base, Drive artifacts, contacts, task completion and independent
+verification. It is weaker on message/mail/calendar triage, multi-party
+coordination, negative or ambiguous decisions, pagination and permission
+recovery. New workflow tasks should be written from user goals and leave the
+agent free to choose commands, raw API, files or composition.
 
 The fixtures check actual answers, signed requests, backend effects and artifacts
 as applicable, rather than requiring one command sequence. Unicode, typed values,
@@ -195,7 +221,7 @@ usage events. A timeout or incomplete stream returns completed known spans with
 provider usage from a tokenizer or invent a price conversion.
 
 For synthetic test adapters use `mode: "controlled"` and
-`usage_source: "synthetic"`; these runs never receive a savings score.
+`usage_source: "synthetic"`; these runs never receive a model-comparison score.
 `tests/next_evaluation/test_pipeline.py` demonstrates the complete controlled
 prepare/execute/resume/report lifecycle, including failed outcomes.
 
@@ -212,18 +238,19 @@ pass. No Claude/OpenCode-specific adapter is bundled or claimed validated here.
 
 Each experiment/suite/section retains its `batch-01.json` with hashes, per-attempt
 outcomes, input/cached/output totals, latency, request/retry diagnostics, failure
-categories and matched-success pairs. Top-level `summary.json`, `summary.csv` and
+labels and matched-success pairs. Top-level `summary.json`, `summary.csv` and
 `REPORT.md` provide task/section comparisons and planned/completed coverage,
-separated into subsystem and E2E categories.
+separated into workflow and diagnostic workloads.
 
-Primary savings are `1 - next_tokens_per_success / official_tokens_per_success`,
-where each numerator includes **every attempted run's cost**, including failures.
-Reports expose observed success nonregression alongside savings. A positive token
-saving with worse outcomes is not a parity claim. Unknown usage stays a lower
-bound; incomplete schedules, inconclusive outcomes, zero successes and controlled
-runs have no savings score. Matched-success pairs are supplementary and exclude
-failures, so they are never substituted for the primary score. No totals are
-pooled across harnesses/models. Token prices and dollar savings are not inferred.
+The descriptive token difference is `1 - next_tokens_per_success /
+official_tokens_per_success`, where each numerator includes **every attempted
+run's cost**, including failures. The report also shows verified outcome
+changes. A positive token difference with worse outcomes is not a parity claim.
+Unknown usage stays a lower bound; incomplete schedules, inconclusive outcomes,
+zero successes and controlled runs have no finite comparison. Matched-success
+pairs are supplementary and exclude failures, so they are never substituted
+for the all-attempt observation. No totals are pooled across harnesses,
+workloads or task categories. Token prices and dollar savings are not inferred.
 
 Repeat the same `--execute` command to resume. Completed attempts are reused,
 including failures and unknown usage; they are never retried to improve a score.
@@ -244,9 +271,10 @@ python3 evaluation/pipeline.py --config .tmp/evaluation/config.json \
   --output .tmp/evaluation/run-01 --report-only
 ```
 
-Exit codes: 0 means prepared/report-rendered or all executed attempts verified
-with complete usage; 1 means executed task/accounting failures or an incomplete
-stopped schedule; 2 means invalid/changed inputs or a job requiring reconciliation.
+Exit codes: 0 means prepared/report-rendered or all executed attempts completed
+with complete accounting; 1 means executed task/accounting failures or an
+incomplete stopped schedule; 2 means invalid/changed inputs or a job requiring
+reconciliation. The numerical outcome remains descriptive and has no target.
 Task failures continue the matrix; configuration/interruption errors stop it.
 Raw model/tool output is not retained by the shared harness. Custom adapters
 must meet the same sanitization contract. Keep exploratory runs in `.tmp/`;
