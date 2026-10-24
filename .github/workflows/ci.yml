@@ -24,7 +24,7 @@ jobs:
   # workflows, skills, and every non-.md path) runs the full matrix. A
   # classification failure fails safe: docs_only stays false and every job runs.
   changes:
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
     outputs:
       docs_only: ${{ steps.classify.outputs.docs_only }}
     steps:
@@ -57,7 +57,7 @@ jobs:
 
   # ── Layer 1: Fast Gate ─────────────────────────────────────────────
   fast-gate:
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
       - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v6
@@ -94,7 +94,7 @@ jobs:
   plugin-integration:
     needs: [fast-gate, changes]
     if: ${{ needs.changes.outputs.docs_only != 'true' }}
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
         with:
@@ -108,7 +108,7 @@ jobs:
   sidecar-integration:
     needs: [fast-gate, changes]
     if: ${{ needs.changes.outputs.docs_only != 'true' }}
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
         with:
@@ -125,7 +125,7 @@ jobs:
   unit-test:
     needs: [fast-gate, changes]
     if: ${{ needs.changes.outputs.docs_only != 'true' }}
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
       - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v6
@@ -176,7 +176,7 @@ jobs:
   lint:
     needs: [fast-gate, changes]
     if: ${{ needs.changes.outputs.docs_only != 'true' }}
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
         with:
@@ -201,7 +201,7 @@ jobs:
 
   script-test:
     needs: fast-gate
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
         with:
@@ -218,7 +218,7 @@ jobs:
 
   deterministic-gate:
     needs: fast-gate
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       actions: read
@@ -270,7 +270,7 @@ jobs:
   deadcode:
     needs: [fast-gate, changes]
     if: ${{ github.event_name == 'pull_request' && needs.changes.outputs.docs_only != 'true' }}
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
         with:
@@ -315,7 +315,7 @@ jobs:
   # ── Layer 3: E2E Gate ──────────────────────────────────────────────
   e2e-dry-run:
     needs: [unit-test, lint, script-test, deterministic-gate]
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
@@ -381,7 +381,7 @@ jobs:
 
   # ── Layer 4: Security & Compliance (parallel with L2-L3) ──────────
   security:
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       pull-requests: read
@@ -418,7 +418,7 @@ jobs:
 
   license-header:
     if: ${{ github.event_name == 'pull_request' }}
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
       - name: Check license headers
@@ -430,7 +430,7 @@ jobs:
   results:
     if: ${{ always() }}
     needs: [changes, fast-gate, unit-test, lint, script-test, deterministic-gate, deadcode, e2e-dry-run, security, license-header, plugin-integration, sidecar-integration]
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
     steps:
       - name: Evaluate results
         run: |
