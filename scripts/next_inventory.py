@@ -23,7 +23,7 @@ import tempfile
 ROOT = Path(__file__).resolve().parents[1]
 EXPORTER = Path(__file__).with_name('next_inventory_export.go')
 CONTRACT_ROOTS = ('cmd/', 'shortcuts/', 'events/', 'extension/', 'internal/', 'errs/', 'tests/', 'sidecar/')
-BUILD_FILES = ('Makefile', '.goreleaser.yml', 'go.mod', 'go.sum', 'package.json', 'build.sh', 'main.go', 'main_authsidecar.go', 'main_noauthsidecar.go', 'content_embed.go', 'LICENSE')
+BUILD_FILES = ('Makefile', 'next.mk', '.goreleaser.yml', 'go.mod', 'go.sum', 'package.json', 'build.sh', 'main.go', 'main_authsidecar.go', 'main_noauthsidecar.go', 'content_embed.go', 'LICENSE')
 
 
 def digest(data):

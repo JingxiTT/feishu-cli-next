@@ -24,12 +24,9 @@ PREFIX   ?= /usr/local
 TEST_GOARCH := $(or $(GOARCH),$(shell go env GOARCH))
 RACE_FLAG := $(if $(filter riscv64,$(TEST_GOARCH)),,-race)
 
-.PHONY: all build vet fmt-check script-test test offline-test live-test unit-test live-skills-test integration-test examples-build quality-gate install update-install uninstall clean fetch_meta gitleaks sidecar-test next-script-test evaluation-test evaluation-tooling-test cross-domain-test
+.PHONY: all build vet fmt-check script-test test unit-test live-skills-test integration-test examples-build quality-gate install uninstall clean gitleaks sidecar-test
 
 all: test
-
-fetch_meta:
-	python3 scripts/next_meta.py
 
 build:
 	go build -trimpath -ldflags "$(LDFLAGS)" -o $(BINARY) .
@@ -47,16 +44,6 @@ fmt-check:
 		echo "Run 'gofmt -w .' and commit."; \
 		exit 1; \
 	fi
-
-next-script-test:
-	python3 scripts/next_test.py --harness scripts --report .tmp/next-tests/scripts.json
-
-# CI tests the evaluator software with synthetic usage; this never bills models.
-evaluation-tooling-test:
-	python3 scripts/next_test.py --harness evaluation --report .tmp/next-tests/evaluation.json
-
-# Compatibility name used by existing contributor instructions and callers.
-evaluation-test: evaluation-tooling-test
 
 script-test: next-script-test
 	bash scripts/check-doc-tokens.sh
@@ -85,20 +72,10 @@ examples-build:
 # ./tests/... includes tests/plugin_e2e, which builds ~20 customer-fork
 # binaries (~1 min warm; a cold module cache also downloads via GOPROXY).
 # Deliberate: local `make test` exercises the L4 plugin contract by default.
-cross-domain-test: build
-	python3 scripts/next_test.py --integration sheets_base --binary ./$(BINARY) --report .tmp/next-tests/cross-domain.json
-
 integration-test: build cross-domain-test
 	python3 scripts/next_test.py --section all --suite e2e --binary ./$(BINARY) --report .tmp/next-tests/integration.json
 
 test: vet fmt-check script-test unit-test examples-build integration-test evaluation-test
-
-# Account-free checks; identical to the existing default test target.
-offline-test: test
-
-# Explicit local selection; fixture opt-ins remain required by each live test.
-live-test:
-	python3 scripts/next_live_test.py --section "$(SECTION)" --allow-live --binary ./$(BINARY) --report .tmp/next-tests/live.json
 
 quality-gate: build
 	mkdir -p $(QUALITY_GATE_DIR) $(dir $(QUALITY_GATE_FACTS_OUT)) $(dir $(PUBLIC_CONTENT_METADATA))
@@ -126,9 +103,6 @@ quality-gate: build
 install: build
 	python3 scripts/next_binary.py install --prefix "$(PREFIX)" --source "$(BINARY)"
 
-update-install: build
-	python3 scripts/next_binary.py update --prefix "$(PREFIX)" --source "$(BINARY)"
-
 uninstall:
 	python3 scripts/next_binary.py uninstall --prefix "$(PREFIX)"
 
@@ -152,3 +126,6 @@ gitleaks:
 	@bash scripts/check-doc-tokens.sh
 	@command -v gitleaks >/dev/null 2>&1 || { echo "gitleaks not found. Install: brew install gitleaks"; exit 1; }
 	gitleaks detect --redact -v --exit-code=2
+
+# Fork-only targets live in next.mk so this file stays close to upstream.
+include next.mk

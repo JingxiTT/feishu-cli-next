@@ -18,7 +18,7 @@ ROOT = Path(__file__).resolve().parents[1]
 class OfflineWorkflowTests(unittest.TestCase):
     def setUp(self):
         self.workflow = (ROOT / '.github/workflows/next-offline.yml').read_text()
-        self.makefile = (ROOT / 'Makefile').read_text()
+        self.makefile = (ROOT / 'Makefile').read_text() + (ROOT / 'next.mk').read_text()
 
     def test_correctness_workflows_run_on_pull_requests(self):
         for name in ('ci', 'next-offline'):

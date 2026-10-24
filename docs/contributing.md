@@ -25,7 +25,8 @@ stays a content merge.
 - **Fork-owned:** `internal/nextattempt`, `internal/nextskill`, `cmd/discover`,
   `cmd/guide`, `cmd/receipts`, files named `*_next.go`, `agent-skills/`,
   `docs/`, `baseline/`, `evidence/`, `evaluation/`, `tests/next_*`,
-  `scripts/next_*`.
+  `scripts/next_*`, and `next.mk` (the fork's make targets, included by
+  `Makefile`).
 - **Upstream-owned:** everything else. `baseline/v1.0.97/sources.json` pins the
   upstream bytes of most of it; [upstream-footprint.md](upstream-footprint.md)
   lists the pinned files the fork has already edited.
