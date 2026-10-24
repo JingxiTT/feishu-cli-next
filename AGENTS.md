@@ -107,8 +107,9 @@ Fork code inside upstream's tree goes, in order of preference, in:
 
 1. A package the fork owns: `internal/next<area>/`, `cmd/<name>/`, or a
    sub-package under the domain.
-2. A new file in the upstream package. Declarations that support an upstream
-   file `<name>.go` live in `<name>_next.go` (tests in `<name>_next_test.go`).
+2. A new file in the upstream package, with `_next` in its name. Declarations
+   that support an upstream file `<name>.go` live in `<name>_next.go` (tests in
+   `<name>_next_test.go`); `scripts/next_layout.py check` rejects an unmarked one.
 3. An edit to the upstream file, kept to a call into 1 or 2. Never re-indent,
    rename, or relocate upstream lines to wrap them; for the config lock use
    `core.LockConfig()` with `defer release(&err)`.

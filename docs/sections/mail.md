@@ -158,7 +158,7 @@ Changed implementation: `draft/patch.go`, `mail_draft_edit.go`,
 `tests/next_sections/mail/mail_e2e_test.go`, `generated_read_e2e_test.go`, and
 the frozen synthetic `catalog_requests.json`; this section report records mapping
 and acceptance. The generated read correction is implemented in the
-foundation-owned `cmd/service/request_effect.go` and `cmd/service/service.go`.
+foundation-owned `cmd/service/request_effect_next.go` and `cmd/service/service.go`.
 
 ## Outstanding acceptance
 

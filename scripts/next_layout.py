@@ -3,7 +3,8 @@
 # SPDX-License-Identifier: MIT
 
 """Keep the fork layer bounded: a fixed root, markdown-only docs, sealed evidence,
-and a recorded list of the upstream files the fork edits.
+fork files named *_next.go inside upstream packages, and a recorded list of the
+upstream files the fork edits.
 
 `check` reports every violation; `seal` records new evidence files and refuses
 to change a recorded one; `footprint` rewrites the edited-upstream-file list.
@@ -13,6 +14,7 @@ import argparse
 import collections
 import hashlib
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -128,6 +130,22 @@ def footprint_problems(root):
     return ['{}: out of date; run python3 scripts/next_layout.py footprint{}'.format(FOOTPRINT, ' (' + detail + ')' if detail else '')]
 
 
+def unmarked_fork_files(root, names):
+    """Fork Go files inside an upstream package must say so in their name.
+
+    A package is upstream when the synced release pins a Go file in its
+    directory. Root files are listed in FORK_ROOT instead.
+    """
+    if not (root / UPSTREAM_SOURCES).is_file():
+        return []
+    pinned = json.loads((root / UPSTREAM_SOURCES).read_text(encoding='utf-8'))['files']
+    packages = {os.path.dirname(name) for name in pinned if name.endswith('.go')} - {''}
+    return ['{}: fork file in upstream package; name it <name>_next.go or <name>_next_test.go'.format(name)
+            for name in sorted(names)
+            if name.endswith('.go') and name not in pinned and os.path.dirname(name) in packages
+            and '_next' not in os.path.basename(name)]
+
+
 def check(root, names=None):
     names = tracked(root) if names is None else names
     problems = []
@@ -147,6 +165,7 @@ def check(root, names=None):
     for name in sorted(set(entries) - set(present)):
         problems.append('{}: sealed evidence removed or renamed'.format(name))
     problems.extend(footprint_problems(root))
+    problems.extend(unmarked_fork_files(root, names))
     return problems
 
 

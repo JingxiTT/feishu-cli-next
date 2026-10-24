@@ -126,6 +126,18 @@ class LayoutTest(unittest.TestCase):
             (root / layout.FOOTPRINT).write_text(text)
             self.assertEqual(layout.footprint_problems(root), [layout.FOOTPRINT + ': out of date; run python3 scripts/next_layout.py footprint (newly edited upstream files: cmd/a.go)'])
 
+    def test_fork_go_files_in_upstream_packages_carry_next_suffix(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            pinned = {'cmd/root.go': b'package cmd\n'}
+            sources = {'files': {name: hashlib.sha256(content).hexdigest() for name, content in pinned.items()}}
+            self.tree(root, dict(pinned, **{layout.UPSTREAM_SOURCES: json.dumps(sources).encode()}))
+            names = ['cmd/root.go', 'cmd/agent.go', 'cmd/agent_test.go', 'cmd/hook_next.go',
+                     'cmd/hook_next_test.go', 'cmd/receipts/receipts.go', 'main_next_helper.go']
+            self.assertEqual(layout.unmarked_fork_files(root, names), [
+                'cmd/agent.go: fork file in upstream package; name it <name>_next.go or <name>_next_test.go',
+                'cmd/agent_test.go: fork file in upstream package; name it <name>_next.go or <name>_next_test.go'])
+
     def test_malformed_or_duplicate_manifest_lines_fail(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
