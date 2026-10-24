@@ -78,7 +78,7 @@ All reference commands retain names, schemas, flags/defaults/aliases, auth modes
 | `+record-download-attachment` | `shortcuts/base/record_upload_attachment.go` | `--base-token`, `--file-token`, `--output`, `--overwrite`, `--record-id`, `--table-id` |
 | `+record-get` | `shortcuts/base/record_get.go` | `--base-token`, `--field-id`, `--field-names`, `--fields`, `--help`, `--jq-records`, `--json`, `--minimal-stdout`, `--output`, `--overwrite`, `--record-id`, `--table-id` |
 | `+record-history-list` | `shortcuts/base/record_history_list.go` | `--base-token`, `--max-version`, `--page-size`, `--record-id`, `--table-id` |
-| `+record-import` | `shortcuts/base/record_import.go` | `--artifact`, `--base-token`, `--mapping`, `--output`, `--table-id` |
+| `+record-import` | `shortcuts/base/record_import_next.go` | `--artifact`, `--base-token`, `--mapping`, `--output`, `--table-id` |
 | `+record-list` | `shortcuts/base/record_list.go` | `--base-token`, `--field-id`, `--field-names`, `--fields`, `--filter-json`, `--help`, `--jq-records`, `--limit`, `--minimal-stdout`, `--offset`, `--output`, `--overwrite`, `--sort-json`, `--table-id`, `--view-id` |
 | `+record-remove-attachment` | `shortcuts/base/record_upload_attachment.go` | `--base-token`, `--field-id`, `--file-token`, `--record-id`, `--table-id` |
 | `+record-search` | `shortcuts/base/record_search.go` | `--base-token`, `--field-id`, `--field-names`, `--fields`, `--filter-json`, `--help`, `--jq-records`, `--json`, `--keyword`, `--limit`, `--minimal-stdout`, `--offset`, `--output`, `--overwrite`, `--search-field`, `--sort-json`, `--table-id`, `--view-id` |
