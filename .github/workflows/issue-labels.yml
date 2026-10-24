@@ -2,7 +2,9 @@ name: Issue Labels
 
 on:
   schedule:
-    - cron: '0 * * * *' # every hour
+    # Daily instead of hourly: labels only need to settle once a day, and the
+    # hourly schedule spent 720 runner minutes a month on an idle repository.
+    - cron: '23 6 * * *' # daily 06:23 UTC
   workflow_dispatch:
     inputs:
       dry_run:
