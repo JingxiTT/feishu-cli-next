@@ -47,6 +47,18 @@ results_section="$(awk '
 ' "$workflow")"
 fork_safe_guard="github.event_name != 'pull_request' || !github.event.pull_request.head.repo.fork"
 
+# Secret scanning must run without organization licenses or fork-only skips.
+ruby -ryaml -e '
+  security = YAML.load_file(ARGV.fetch(0)).fetch("jobs").fetch("security")
+  scan = security.fetch("steps").find { |step| step["name"] == "Gitleaks" }
+  abort "Gitleaks must run the CLI without a license or PR guard" unless
+    scan && !scan.key?("if") && !scan.key?("uses") &&
+    !scan.fetch("env", {}).keys.any? { |key| key.include?("LICENSE") } &&
+    scan.fetch("run", "").include?("sha256sum --check -") &&
+    scan.fetch("run", "").include?(%q{"$RUNNER_TEMP/gitleaks" detect --redact --exit-code=2 --log-opts=--all}) &&
+    !scan.fetch("continue-on-error", false)
+' "$workflow"
+
 if ! grep -Fq 'LARK_CLI_BIN: ${{ github.workspace }}/feishu-cli-next' <<<"$dry_run_section"; then
   echo "CLI E2E must use the feishu-cli-next binary produced by make build" >&2
   exit 1
