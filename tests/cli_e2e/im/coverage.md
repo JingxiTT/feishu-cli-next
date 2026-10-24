@@ -2,7 +2,7 @@
 
 This file records the legacy live-workflow coverage snapshot. Current complete
 frozen capability mapping and isolated process coverage are maintained in
-[the IM section report](../../../docs/sections/im.md). The historical metrics
+`tests/next_sections/im/`; the former section report was removed. The historical metrics
 below are not the denominator or acceptance status for `feishu-cli-next`.
 
 ## Metrics

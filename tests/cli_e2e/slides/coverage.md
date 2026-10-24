@@ -4,9 +4,8 @@
 
 This inherited table describes seven selected workflow shortcuts, not the complete
 Slides capability inventory. The frozen section has 14 shortcuts (including the
-hidden update alias) and 11 generated endpoint leaves. See
-[the complete section mapping](../../../docs/sections/slides.md) and
-`tests/next_sections/slides/` for the process suite. Live workflow descriptions
+hidden update alias) and 11 generated endpoint leaves. The
+process suite in `tests/next_sections/slides/` is the current coverage reference. Live workflow descriptions
 below identify existing test scenarios; they are not evidence that those tests
 were run under the current private-fixture authorization boundary.
 

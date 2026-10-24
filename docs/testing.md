@@ -14,7 +14,7 @@ schedule, repository secrets or required merge check.
 
 ## Manual real-account tests
 
-Read [the testing authorization boundaries](PLAN.md#authorization-boundaries-for-all-testing)
+Read [the testing authorization boundaries](#authorization-boundaries-for-all-testing)
 first. Authenticate locally, independently verify the effective account/tenant,
 and prepare only the private, run-owned fixtures described by the section guide.
 Keep tokens, fixture manifests and raw evidence outside version control. The
@@ -71,3 +71,20 @@ the listed account-bound scenarios. Offline success and one live scenario do
 not establish complete live parity or release readiness. The separate
 `make live-skills-test` exercises remote skill downloads and needs no Feishu
 account; it is not part of real-account testing.
+
+## Authorization boundaries for all testing
+
+These are testing-only authorization boundaries. They apply to every test, including unit, integration, E2E, live, manual, smoke, regression, agent evaluation, test setup, and cleanup, whether run by the coordinating agent, a subagent, a script, or CI. Offline tests use synthetic data and must not accidentally perform live actions.
+
+Do not encode these test-specific recipient or visibility restrictions as product limitations, runtime allowlists, or instructions in the shipped skill. The CLI must retain full functionality for users acting within their own authorization. During testing:
+
+- Do not send messages, documents, files, invitations, notifications, shares, or any other content to anyone in Feishu except **Ying Wu**. This includes indirect delivery through mentions, assignments, subscriptions, group chats, permission changes, or automated workflow effects.
+- Ying Wu is the only authorized other recipient or collaborator. Resolve that person's identity unambiguously before any delivery or access grant; a matching display name alone is insufficient. Do not send to groups or destinations that include anyone else.
+- The user authorizes freely creating documents, Sheets, Base resources, and other Feishu objects for testing when they are visible only to the currently logged-in account. Routine creation and use within this boundary do not require repeated approval.
+- Private resources must remain restricted to that account unless intentionally shared with the authorized exception, Ying Wu. Do not enable public, link-wide, organization-wide, inherited group, or other-user access. Verify destination and creation visibility before writing; creating broadly visible content and restricting it afterward does not satisfy this boundary.
+- Bind every live run to the effective current account and tenant. Use isolated, clearly labeled resources created for testing; do not edit or delete unrelated pre-existing resources. Clean up only resources created by the run and preserve any the user wants to keep.
+- If a feature necessarily exposes content or notifies anyone other than Ying Wu, do not perform that live action. Continue with offline fixtures and record the live case as blocked under this boundary. All test runners and subagents inherit this restriction and cannot broaden test authorization.
+
+Write and run unit tests using synthetic fixtures and mock transports during implementation. Write live E2E tests alongside the implementation, then batch their execution into the completed section’s full suite; do not run live tests after each small function. The private-resource authorization above provides the permitted fixture scope; verify actual account, identity, and visibility before using it. Ordinary CI must not depend on personal credentials.
+
+If the required privacy or recipient restrictions cannot be verified, keep the affected live test blocked and continue independent offline work. Blocked or skipped live tests are not passing evidence, and live-dependent capabilities remain unverified until their required checks can run within these boundaries.

@@ -255,7 +255,7 @@ own backend fixtures on failure. It must use the pinned settings and task budget
 The verifier must inspect actual backend state/artifacts, verify user intent and
 absence of unintended effects, and never trust the final agent claim. Run only
 offline controlled fixtures until live account/tenant/visibility restrictions in
-`docs/PLAN.md` have been verified. No test delivery beyond the authorized recipient
+[testing](../docs/testing.md#authorization-boundaries-for-all-testing) have been verified. No test delivery beyond the authorized recipient
 is permitted. The harness does not authorize live calls or enforce backend ACLs.
 
 Create a local JSON config with these fields (all paths must be absolute):

@@ -41,9 +41,7 @@ tests, and contracts above.
 
 | Record | Holds |
 |--------|-------|
-| [Plan](PLAN.md) | Original goals, scope, and work packages. Its [testing authorization boundaries](PLAN.md#authorization-boundaries-for-all-testing) still apply. |
-| [Implementation ledger](IMPLEMENTATION.md) | Completed work and evidence, mostly up to the v1.0.97 sync |
-| [Sections](sections/OWNERSHIP.md) | Per-section build reports; also the fixture setup that [testing](testing.md) links for live runs |
+| [Sections](sections/OWNERSHIP.md) | Section ownership and the reports for the sections that [testing](testing.md) links |
 | [Integration](integration/sheets-base.md) | Sheets to Base artifact handoff suite |
 | [Security](security/history-review-20261012.md) | Secret history review |
 

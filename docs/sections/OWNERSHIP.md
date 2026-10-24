@@ -1,6 +1,7 @@
 # Capability section assignments
 
-The complete scope and acceptance criteria are in [PLAN.md](../PLAN.md). This is
+The testing authorization boundaries are in
+[testing](../testing.md#authorization-boundaries-for-all-testing). This is
 implementation coordination guidance; it is not part of the shipped agent skill.
 
 P2 starts after the coordinator records the P1 shared-interface gate. Every
@@ -69,7 +70,7 @@ section open. Notify the coordinator when the whole section is ready for live
 verification and comparative development tasks. Comparative evaluations run one
 balanced workload at a time; keep held-out tasks untouched until P4.
 
-Live tests obey PLAN.md's current-account private-fixture and Ying Wu-only other
+Live tests obey the current-account private-fixture and Ying Wu-only other
 recipient boundary. Verify identity, tenant and creation visibility before any
 content write. No existing unrelated resource may be edited or deleted. When
 privacy or recipient identity cannot be verified, write the selectable scenario,
