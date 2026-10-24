@@ -572,3 +572,15 @@ func TestDocsWorkspaceAtPathRecoveryPreservesLiteralFiles(t *testing.T) {
 		})
 	}
 }
+
+func TestDocsWorkspacePushMissingMarkdownNamesPull(t *testing.T) {
+	f, _, out := workspaceFactory(t)
+	err := workspaceRun(t, DocsPush, f, out, "+push", "--file", "missing.md")
+	var validation *errs.ValidationError
+	if !errors.As(err, &validation) || validation.Param != "--file" || !strings.Contains(validation.Message, "missing.md") {
+		t.Fatalf("want missing markdown error for --file, got %T %v", err, err)
+	}
+	if !strings.Contains(validation.Hint, "docs +pull --doc <doc> --output <file>") {
+		t.Fatalf("missing pull hint: %q", validation.Hint)
+	}
+}

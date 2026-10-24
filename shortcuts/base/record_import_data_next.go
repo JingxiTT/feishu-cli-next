@@ -40,6 +40,8 @@ type recordImport struct {
 	records  []map[string]interface{}
 }
 
+const recordImportArtifactHint = "+record-import only takes a Sheets --save-result artifact; for plain JSON rows use `base +record-batch-create --base-token <base> --table-id <table> --json '{\"create_records\":[{...}]}'` (max 200 records per call)"
+
 func importInvalid(param, reason string) *errs.ValidationError {
 	return errs.NewValidationError(errs.SubtypeInvalidArgument, "cannot import records: %s", reason).WithParam(param)
 }
@@ -73,10 +75,10 @@ func importExtent(region string) (int, int, error) {
 func parseRecordImport(artifactRaw, mappingRaw string) (recordImport, error) {
 	var imp recordImport
 	if err := parseBaseJSON([]byte(artifactRaw), &imp.artifact); err != nil {
-		return imp, importInvalid("--artifact", "invalid result artifact JSON").WithCause(err)
+		return imp, importInvalid("--artifact", "invalid result artifact JSON").WithCause(err).WithHint(recordImportArtifactHint)
 	}
 	if imp.artifact.Schema != output.ArtifactSchema {
-		return imp, importInvalid("--artifact", "expected feishu-cli-next/result/v1")
+		return imp, importInvalid("--artifact", "expected feishu-cli-next/result/v1").WithHint(recordImportArtifactHint)
 	}
 	var result struct {
 		OK   bool            `json:"ok"`

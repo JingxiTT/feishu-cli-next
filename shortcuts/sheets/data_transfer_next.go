@@ -106,20 +106,22 @@ type nativeRangeResponse struct {
 	} `json:"ranges"`
 }
 
+const nativeCellsFallbackHint = "read this range with `sheets +cells-get --spreadsheet-token <token> --sheet-id <id> --range <A1:B2> --output-path ./cells.json`"
+
 func decodeNativePage(raw string, extent cellRange) ([][]nativeCell, error) {
 	var page nativeRangeResponse
 	if err := json.Unmarshal([]byte(raw), &page); err != nil {
-		return nil, errs.NewInternalError(errs.SubtypeInvalidResponse, "invalid native cell response: %v", err).WithCause(err)
+		return nil, errs.NewInternalError(errs.SubtypeInvalidResponse, "invalid native cell response: %v", err).WithCause(err).WithHint(nativeCellsFallbackHint)
 	}
 	if page.Truncated || page.IsTruncated || page.HasMore || len(page.Ranges) != 1 {
-		return nil, errs.NewInternalError(errs.SubtypeInvalidResponse, "cell response is incomplete or has an unexpected range count")
+		return nil, errs.NewInternalError(errs.SubtypeInvalidResponse, "cell response is incomplete or has an unexpected range count").WithHint(nativeCellsFallbackHint)
 	}
 	block := page.Ranges[0]
 	if block.Range == "" && block.ActualRange == "" && (len(block.RowIndices) != extent.rows || len(block.ColIndices) != extent.cols) {
-		return nil, errs.NewInternalError(errs.SubtypeInvalidResponse, "cell response is missing explicit range or coordinate evidence")
+		return nil, errs.NewInternalError(errs.SubtypeInvalidResponse, "cell response is missing explicit range or coordinate evidence").WithHint(nativeCellsFallbackHint)
 	}
 	if block.Truncated || block.IsTruncated || block.HasMore || len(block.Cells) != extent.rows {
-		return nil, errs.NewInternalError(errs.SubtypeInvalidResponse, "cell response does not contain the complete requested rows")
+		return nil, errs.NewInternalError(errs.SubtypeInvalidResponse, "cell response does not contain the complete requested rows").WithHint(nativeCellsFallbackHint)
 	}
 	for _, reported := range []string{block.Range, block.ActualRange} {
 		if reported == "" {
@@ -127,40 +129,40 @@ func decodeNativePage(raw string, extent cellRange) ([][]nativeCell, error) {
 		}
 		actual, err := parseCellRange(reported)
 		if err != nil || actual.col != extent.col || actual.row != extent.row || actual.rows != extent.rows || actual.cols != extent.cols {
-			return nil, errs.NewInternalError(errs.SubtypeInvalidResponse, "backend returned a different cell extent")
+			return nil, errs.NewInternalError(errs.SubtypeInvalidResponse, "backend returned a different cell extent").WithHint(nativeCellsFallbackHint)
 		}
 	}
 	if len(block.RowIndices) > 0 {
 		if len(block.RowIndices) != extent.rows {
-			return nil, errs.NewInternalError(errs.SubtypeInvalidResponse, "backend returned incomplete row indices")
+			return nil, errs.NewInternalError(errs.SubtypeInvalidResponse, "backend returned incomplete row indices").WithHint(nativeCellsFallbackHint)
 		}
 		for i, row := range block.RowIndices {
 			if row != extent.row+i+1 {
-				return nil, errs.NewInternalError(errs.SubtypeInvalidResponse, "backend returned noncontiguous row indices")
+				return nil, errs.NewInternalError(errs.SubtypeInvalidResponse, "backend returned noncontiguous row indices").WithHint(nativeCellsFallbackHint)
 			}
 		}
 	}
 	if len(block.ColIndices) > 0 {
 		if len(block.ColIndices) != extent.cols {
-			return nil, errs.NewInternalError(errs.SubtypeInvalidResponse, "backend returned incomplete column indices")
+			return nil, errs.NewInternalError(errs.SubtypeInvalidResponse, "backend returned incomplete column indices").WithHint(nativeCellsFallbackHint)
 		}
 		for i, col := range block.ColIndices {
 			if col != columnIndexToLetter(extent.col+i) {
-				return nil, errs.NewInternalError(errs.SubtypeInvalidResponse, "backend returned noncontiguous column indices")
+				return nil, errs.NewInternalError(errs.SubtypeInvalidResponse, "backend returned noncontiguous column indices").WithHint(nativeCellsFallbackHint)
 			}
 		}
 	}
 	for _, row := range block.Cells {
 		if len(row) != extent.cols {
-			return nil, errs.NewInternalError(errs.SubtypeInvalidResponse, "cell response omitted columns; missing cells cannot be inferred")
+			return nil, errs.NewInternalError(errs.SubtypeInvalidResponse, "cell response omitted columns; missing cells cannot be inferred").WithHint(nativeCellsFallbackHint)
 		}
 		for _, cell := range row {
 			if cell == nil {
-				return nil, errs.NewInternalError(errs.SubtypeInvalidResponse, "backend returned a null cell object; field presence is unknown")
+				return nil, errs.NewInternalError(errs.SubtypeInvalidResponse, "backend returned a null cell object; field presence is unknown").WithHint(nativeCellsFallbackHint)
 			}
 			for _, key := range []string{"isRowTruncated", "isColTruncated", "truncated", "is_truncated"} {
 				if bytes.Equal(bytes.TrimSpace(cell[key]), []byte("true")) {
-					return nil, errs.NewInternalError(errs.SubtypeInvalidResponse, "backend returned a truncated cell")
+					return nil, errs.NewInternalError(errs.SubtypeInvalidResponse, "backend returned a truncated cell").WithHint(nativeCellsFallbackHint)
 				}
 			}
 		}
@@ -176,11 +178,11 @@ func nativePageRevision(raw string) (string, error) {
 		Revision json.RawMessage `json:"revision"`
 	}
 	if json.Unmarshal([]byte(raw), &page) != nil || len(page.Revision) == 0 {
-		return "", errs.NewInternalError(errs.SubtypeInvalidResponse, "native cell read is missing an integer document revision")
+		return "", errs.NewInternalError(errs.SubtypeInvalidResponse, "native cell read is missing an integer document revision").WithHint(nativeCellsFallbackHint)
 	}
 	for _, digit := range page.Revision {
 		if digit < '0' || digit > '9' {
-			return "", errs.NewInternalError(errs.SubtypeInvalidResponse, "native cell read returned a non-integer document revision")
+			return "", errs.NewInternalError(errs.SubtypeInvalidResponse, "native cell read returned a non-integer document revision").WithHint(nativeCellsFallbackHint)
 		}
 	}
 	return string(page.Revision), nil
@@ -199,7 +201,7 @@ func mergeNativeFormulas(raw, formulas [][]nativeCell) error {
 		}
 		var text string
 		if len(value) == 0 || value[0] != '"' || json.Unmarshal(value, &text) != nil || (text != "" && !strings.HasPrefix(text, "=")) {
-			return "", errs.NewInternalError(errs.SubtypeInvalidResponse, "native cell read returned an invalid formula field")
+			return "", errs.NewInternalError(errs.SubtypeInvalidResponse, "native cell read returned an invalid formula field").WithHint(nativeCellsFallbackHint)
 		}
 		return text, nil
 	}

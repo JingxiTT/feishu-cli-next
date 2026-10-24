@@ -88,15 +88,18 @@ func TestAgentRejectsUnsupportedResultModesBeforeExecution(t *testing.T) {
 		business bool
 		raw      bool
 		risk     string
+		use      string
+		hint     string
 	}{
-		{"invalid field", output.AgentOptions{Fields: "a..b"}, true, false, "read"},
-		{"raw projection", output.AgentOptions{Fields: "id"}, true, true, "read"},
-		{"auth artifact", output.AgentOptions{SaveResult: "secret.json"}, false, false, "read"},
-		{"mutation artifact", output.AgentOptions{SaveResult: "result.json"}, true, false, "write"},
-		{"detail projection", output.AgentOptions{Fields: "id", Detail: true}, true, false, "read"},
+		{"invalid field", output.AgentOptions{Fields: "a..b"}, true, false, "read", "operation", ""},
+		{"raw projection", output.AgentOptions{Fields: "id"}, true, true, "read", "operation", "drop --raw"},
+		{"auth artifact", output.AgentOptions{SaveResult: "secret.json"}, false, false, "read", "operation", "drop --save-result"},
+		{"mutation artifact", output.AgentOptions{SaveResult: "result.json"}, true, false, "write", "operation", "`receipts`"},
+		{"api artifact", output.AgentOptions{SaveResult: "result.json"}, true, false, "read", "api", "redirect stdout"},
+		{"detail projection", output.AgentOptions{Fields: "id", Detail: true}, true, false, "read", "operation", ""},
 	} {
 		t.Run(test.name, func(t *testing.T) {
-			c := &cobra.Command{Use: "operation"}
+			c := &cobra.Command{Use: test.use}
 			if test.business {
 				cmdmeta.SetSource(c, cmdmeta.SourceShortcut, false)
 			}
@@ -105,8 +108,19 @@ func TestAgentRejectsUnsupportedResultModesBeforeExecution(t *testing.T) {
 			if test.raw {
 				_ = c.Flags().Set("raw", "true")
 			}
-			if err := validateAgentOutput(f, c, &test.opts); err == nil {
+			err := validateAgentOutput(f, c, &test.opts)
+			if err == nil {
 				t.Fatal("invalid result mode accepted")
+			}
+			if test.hint == "" {
+				return
+			}
+			var validation *errs.ValidationError
+			if !errors.As(err, &validation) || validation.Subtype != errs.SubtypeInvalidArgument {
+				t.Fatalf("want invalid_argument validation error, got %T %v", err, err)
+			}
+			if !strings.Contains(validation.Hint, test.hint) {
+				t.Fatalf("hint %q missing %q", validation.Hint, test.hint)
 			}
 		})
 	}

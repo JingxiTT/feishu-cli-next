@@ -5,9 +5,12 @@ package base
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strings"
 	"testing"
+
+	"github.com/larksuite/cli/errs"
 )
 
 func importTestArtifact(cells, region string, count int) string {
@@ -118,5 +121,16 @@ func TestRecordImportRejectsEmptyTextAfterCompletePreflight(t *testing.T) {
 	_, err := parseRecordImport(importTestArtifact(string(raw), "A1:A401", 401), `[{"column":0,"field_id":"fld_text","type":"text"}]`)
 	if err == nil || !strings.Contains(err.Error(), "empty text") {
 		t.Fatalf("late empty text accepted: %v", err)
+	}
+}
+
+func TestRecordImportPlainRowsNamesBatchCreate(t *testing.T) {
+	_, err := parseRecordImport(`[{"Name":"A"}]`, `[{"column":0,"field_id":"fld_name","type":"text"}]`)
+	var validation *errs.ValidationError
+	if !errors.As(err, &validation) {
+		t.Fatalf("want validation error, got %T %v", err, err)
+	}
+	if validation.Subtype != errs.SubtypeInvalidArgument || !strings.Contains(validation.Hint, "base +record-batch-create") {
+		t.Fatalf("missing batch-create fallback: subtype=%s hint=%q", validation.Subtype, validation.Hint)
 	}
 }
