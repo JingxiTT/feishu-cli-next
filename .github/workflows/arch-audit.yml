@@ -1,8 +1,8 @@
 name: Architecture Audit
 
+# Manual-only: the weekly schedule spent a runner every Monday even when
+# nothing changed. Trigger it with workflow_dispatch when a report is wanted.
 on:
-  schedule:
-    - cron: '0 9 * * 1' # Monday 09:00 UTC
   workflow_dispatch:
 
 permissions:
