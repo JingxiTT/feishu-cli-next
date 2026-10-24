@@ -371,6 +371,8 @@ jobs:
           python-version: '3.x'
       - name: Gitleaks
         # The open-source CLI scans organization and fork PRs without an action license.
+        env:
+          SCAN_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
         run: |
           archive="$RUNNER_TEMP/gitleaks.tar.gz"
           curl --fail --silent --show-error --location \
@@ -378,7 +380,11 @@ jobs:
             --output "$archive"
           echo "551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb  $archive" | sha256sum --check -
           tar -xzf "$archive" -C "$RUNNER_TEMP" gitleaks
-          "$RUNNER_TEMP/gitleaks" detect --redact --exit-code=2 --log-opts=--all
+          log_opts="--all"
+          if [[ -n "$SCAN_BASE" && "$SCAN_BASE" != "0000000000000000000000000000000000000000" ]]; then
+            log_opts="${SCAN_BASE}..HEAD"
+          fi
+          "$RUNNER_TEMP/gitleaks" detect --redact --exit-code=2 --log-opts="$log_opts"
       - name: govulncheck
         run: go run golang.org/x/vuln/cmd/govulncheck@v1.9.0 ./...
       - name: Check dependency licenses
