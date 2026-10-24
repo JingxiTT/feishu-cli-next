@@ -8,8 +8,17 @@ lists top-level command groups. A known domain's `--help` is also a direct route
 
 Matching includes public local and inherited flags even without `--flags`.
 Hidden commands/subtrees and hidden flag names/descriptions are excluded. Flag
-default values are not search text. Results remain alphabetical by command path,
-with stable offset pagination; matching adds no rankings or inferred synonyms.
+default values are not search text. Results are ordered by where the terms
+matched: every term in the command path first, then in the path, aliases, or
+short description, then only in public local flags, then only in inherited flags.
+Within a tier, exact path-segment matches come first, then shortcuts (leaves
+starting with `+`), then fewer path segments, then shorter command paths, then
+command path alphabetically. A term counts as a path or summary match only at the
+start of a word, so `read` inside `spreadsheet` ranks as a weaker substring match.
+An empty query or `*` lists results alphabetically. The order is deterministic,
+so offset pagination stays stable. Matching adds no
+inferred synonyms. A query with no matches returns an empty result with a
+`meta.hint` that suggests fewer or shorter keywords.
 
 `--flags` includes each public flag's name, type, default, required marker, and
 optional `description` copied verbatim from its registered usage. Descriptions

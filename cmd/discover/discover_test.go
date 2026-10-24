@@ -36,7 +36,7 @@ func TestDiscoveryDescribesOnlyReturnedPage(t *testing.T) {
 	if err := root.Execute(); err != nil {
 		t.Fatal(err)
 	}
-	if counts[0] != 0 || counts[1] != 1 || counts[2] != 0 {
+	if counts[0] != 1 || counts[1] != 0 || counts[2] != 0 {
 		t.Fatalf("rendered flags outside returned page: %v", counts)
 	}
 	var result struct {
@@ -49,7 +49,7 @@ func TestDiscoveryDescribesOnlyReturnedPage(t *testing.T) {
 	if err := json.Unmarshal(out.Bytes(), &result); err != nil {
 		t.Fatal(err)
 	}
-	if len(result.Data) != 1 || result.Data[0].Command != "beta" || len(result.Data[0].Flags) != 1 || result.Meta.Total != 3 || result.Meta.Next != 2 {
+	if len(result.Data) != 1 || result.Data[0].Command != "alpha" || len(result.Data[0].Flags) != 1 || result.Meta.Total != 3 || result.Meta.Next != 2 {
 		t.Fatalf("pagination or flag contract changed: %s", out)
 	}
 }

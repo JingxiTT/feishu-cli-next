@@ -22,6 +22,7 @@ type entry struct {
 	Risk        string   `json:"risk,omitempty"`
 	Identities  []string `json:"identities,omitempty"`
 	Flags       []flag   `json:"flags,omitempty"`
+	rank        rank
 	command     *cobra.Command
 }
 
@@ -59,6 +60,9 @@ func NewCmd(f *cmdutil.Factory, root *cobra.Command) *cobra.Command {
 			if end < len(entries) {
 				page["next_offset"] = end
 			}
+			if len(entries) == 0 && query != "" {
+				page["hint"] = "No commands matched. Matching is literal substring and every term must match; try fewer or shorter keywords."
+			}
 			return output.WriteJSON(f.IOStreams.Out, map[string]any{"ok": true, "data": entries[start:end], "meta": page})
 		},
 	}
@@ -81,31 +85,9 @@ func collect(root *cobra.Command, query string) []entry {
 		}
 		path := strings.TrimSpace(strings.TrimPrefix(commandPath, root.Name()))
 		if c != root && (query != "" || c.Parent() == root) {
-			haystack := strings.ToLower(path + " " + c.Short + " " + strings.Join(c.Aliases, " "))
-			match := true
-			for _, term := range terms {
-				if term != "*" && !strings.Contains(haystack, term) {
-					match = false
-					break
-				}
-			}
-			if !match {
-				var searchable strings.Builder
-				for _, f := range publicFlags(c) {
-					searchable.WriteString(" --" + f.Name + " " + f.Usage)
-				}
-				flagText := strings.ToLower(searchable.String())
-				match = true
-				for _, term := range terms {
-					if term != "*" && !strings.Contains(haystack, term) && !strings.Contains(flagText, term) {
-						match = false
-						break
-					}
-				}
-			}
-			if match {
+			if r, ok := matchRank(c, path, terms); ok {
 				risk, _ := cmdmeta.Risk(c)
-				entries = append(entries, entry{Command: path, Description: c.Short, Risk: risk, Identities: cmdmeta.Identities(c), command: c})
+				entries = append(entries, entry{Command: path, Description: c.Short, Risk: risk, Identities: cmdmeta.Identities(c), rank: r, command: c})
 			}
 		}
 		for _, child := range c.Commands() {
@@ -113,7 +95,12 @@ func collect(root *cobra.Command, query string) []entry {
 		}
 	}
 	walk(root, root.CommandPath())
-	sort.Slice(entries, func(i, j int) bool { return entries[i].Command < entries[j].Command })
+	// Listings without a search term (empty query or `*`) stay alphabetical.
+	if strings.Trim(strings.Join(terms, ""), "*") == "" {
+		sort.Slice(entries, func(i, j int) bool { return entries[i].Command < entries[j].Command })
+	} else {
+		sort.Slice(entries, func(i, j int) bool { return entries[i].rank.before(entries[j].rank) })
+	}
 	return entries
 }
 
@@ -130,19 +117,25 @@ func describeFlags(flags []*pflag.Flag) []flag {
 // publicFlags shares visibility and local-shadowing rules between matching and
 // optional flag output. Hidden flag descriptions must not reveal a match.
 func publicFlags(c *cobra.Command) []*pflag.Flag {
-	flags := []*pflag.Flag{}
+	local, inherited := splitPublicFlags(c)
+	return append(local, inherited...)
+}
+
+func splitPublicFlags(c *cobra.Command) (local, inherited []*pflag.Flag) {
 	seen := map[string]bool{}
-	visit := func(f *pflag.Flag) {
-		if seen[f.Name] {
-			return
-		}
-		seen[f.Name] = true
-		if !f.Hidden {
-			flags = append(flags, f)
+	visit := func(dst *[]*pflag.Flag) func(*pflag.Flag) {
+		return func(f *pflag.Flag) {
+			if seen[f.Name] {
+				return
+			}
+			seen[f.Name] = true
+			if !f.Hidden {
+				*dst = append(*dst, f)
+			}
 		}
 	}
-	c.LocalNonPersistentFlags().VisitAll(visit)
-	c.PersistentFlags().VisitAll(visit)
-	c.InheritedFlags().VisitAll(visit)
-	return flags
+	c.LocalNonPersistentFlags().VisitAll(visit(&local))
+	c.PersistentFlags().VisitAll(visit(&local))
+	c.InheritedFlags().VisitAll(visit(&inherited))
+	return local, inherited
 }
