@@ -41,6 +41,24 @@ class FunctionCoverageTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "gates differ"):
                 MODULE.historical_usage(root)
 
+    def test_historical_thresholds_remain_exact_without_the_old_launcher(self):
+        def row(tokens, successes=3, inconclusive=0):
+            return {'known_total_tokens': tokens,
+                    'tokens_per_success': tokens / successes if successes else None,
+                    'successes': successes, 'inconclusive': inconclusive}
+        rows = {'official': row(300), 'next': row(150)}
+        self.assertEqual(MODULE.historical_score(rows, True)['gate'], 'missed')
+        rows['next'] = row(149)
+        self.assertEqual(MODULE.historical_score(rows, True)['gate'], 'met')
+        rows['next'] = row(50, 2)
+        self.assertEqual(MODULE.historical_score(rows, False)['gate'], 'missed')
+        rows['next'] = row(210)
+        self.assertEqual(MODULE.historical_score(rows, False)['gate'], 'met')
+        rows['next'] = row(0, 0)
+        self.assertEqual(MODULE.historical_score(rows, False)['gate'], 'missed')
+        rows['next'] = row(100, inconclusive=1)
+        self.assertEqual(MODULE.historical_score(rows, False)['gate'], 'unavailable')
+
     def test_changed_attempt_bytes_are_rejected(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

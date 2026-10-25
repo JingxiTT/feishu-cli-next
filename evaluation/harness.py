@@ -126,6 +126,8 @@ def validate_config(config):
             raise ValueError("pin config field: " + key)
     if config.get("mode") not in ("controlled", "real"):
         raise ValueError("mode must be controlled or real")
+    if config['mode'] == 'real' and config['backend'] != 'live-feishu-v1':
+        raise ValueError('real evaluation requires live-feishu-v1; simulated Feishu backends were removed')
     comparison_arms(config)
     for key in ("runner", "verifier"):
         command = config.get(key)
@@ -147,66 +149,75 @@ def validate_config(config):
 
 
 def run_one(config, task, trial, arm):
-    delivery = guidance_delivery(config)
+    guidance_delivery(config)
+    if config['backend'] == 'live-feishu-v1':
+        from live_fixture import attempt
+        with attempt(config, task, trial, arm) as (workspace, bound, status):
+            result = run_in_workspace(config, bound, trial, arm, workspace)
+        if status.get('cleanup_unconfirmed'):
+            result['success'] = False
+            result['categories'].append('live_cleanup_unconfirmed')
+        return result
     with tempfile.TemporaryDirectory(prefix="feishu-eval-") as directory:
-        workspace = Path(directory)
-        (workspace / "fixture.json").write_text(json.dumps(task["fixture"], ensure_ascii=False), encoding="utf-8")
-        request = {"protocol": 1, "task_id": task["id"], "trial": trial, "arm": arm,
-                   "prompt": task["prompt"], "fixture": task["fixture"],
-                   "workspace": directory, "fresh_context": True,
-                   "cli": config["arms"][arm]["cli"], "skill": config["arms"][arm]["skill"],
-                   "settings": {key: config[key] for key in
-                                ("backend", "model", "tokenizer", "reasoning", "tools", "permissions", "budget", "mode")}}
-        request["settings"]["guidance_delivery"] = delivery
-        if "selected_skill_source" in config["arms"][arm]:
-            request["selected_skill_source"] = config["arms"][arm]["selected_skill_source"]
-        payload, code, elapsed = process(config["runner"], request, workspace, config.get("timeout_seconds", 120))
-        categories = []
-        if code != 0:
-            categories.append("runner_failure")
-        known_usage = None
-        try:
-            if payload.get("usage_source") != ("synthetic" if config["mode"] == "controlled" else "provider"):
-                raise ValueError("usage source mismatch")
-            if payload.get("model") != config["model"] or payload.get("tokenizer") != config["tokenizer"]:
-                raise ValueError("usage provenance mismatch")
-            # Preserve completed spans from an interrupted run, but never call them its total.
-            known_usage = token_usage({**payload, "accounting_complete": True})
-            usage = token_usage(payload)
-        except (ValueError, TypeError, AttributeError):
-            usage = None
-            categories.append("usage_unavailable")
-        # Expected outcomes are never sent to the runner. Check actual fixture/backend effects.
-        verification, verify_code, verify_elapsed = process(config["verifier"], {
-            "protocol": 1, "workspace": directory, "task_id": task["id"],
-            "fixture": task["fixture"], "expected": task["expected"],
-            "backend": config["backend"], "cli": config["arms"][arm]["cli"],
-            "claimed_success": payload.get("claimed_success")},
-            workspace, config.get("timeout_seconds", 120))
-        verified = verify_code == 0 and verification.get("success") is True
-        inconclusive = verification.get("fixture_unsupported") is True
-        if inconclusive:
-            categories.append("fixture_unsupported")
-        if not verified and not inconclusive:
-            categories.append("outcome_failure" if verify_code == 0 else "verifier_failure")
-        misleading = payload.get("claimed_success") is True and not verified and not inconclusive
-        if misleading:
-            categories.append("misleading_success_claim")
-        # Whitelist numeric measurements only; raw content and free-form traces stay out of evidence.
-        metrics = {}
-        for key in ("api_calls", "retries", "command_executions"):
-            value = payload.get(key)
-            metrics[key] = value if type(value) is int and value >= 0 else None
-        return {"task_id": task["id"], "section": task["section"], "trial": trial, "arm": arm,
-                "success": verified and code == 0, "outcome_inconclusive": inconclusive, "usage": usage, "categories": categories,
-                "known_usage": known_usage,
-                "accounting_diagnostics": sanitized_accounting_diagnostics(payload.get("accounting_diagnostics")),
-                "verification_failures": sanitized_verification_failures(verification.get("verification_failures")),
-                "api_request_trace": sanitized_api_trace(payload.get("api_request_trace"), task),
-                "control_trace": sanitized_trace(payload.get("control_trace")),
-                "usage_granularity": payload.get("usage_granularity") if payload.get("usage_granularity") in ("model_turn", "codex_user_turn") else None,
-                "runner_exit": code, "verifier_exit": verify_code,
-                "latency_seconds": elapsed, "verification_seconds": verify_elapsed, **metrics}
+        return run_in_workspace(config, task, trial, arm, Path(directory))
+
+
+def run_in_workspace(config, task, trial, arm, workspace):
+    delivery = guidance_delivery(config)
+    (workspace / "fixture.json").write_text(json.dumps(task["fixture"], ensure_ascii=False), encoding="utf-8")
+    request = {"protocol": 1, "task_id": task["id"], "trial": trial, "arm": arm,
+               "prompt": task["prompt"], "fixture": task["fixture"],
+               "workspace": str(workspace), "fresh_context": True,
+               "cli": config["arms"][arm]["cli"], "skill": config["arms"][arm]["skill"],
+               "settings": {key: config[key] for key in
+                            ("backend", "model", "tokenizer", "reasoning", "tools", "permissions", "budget", "mode")}}
+    request["settings"]["guidance_delivery"] = delivery
+    payload, code, elapsed = process(config["runner"], request, workspace, config.get("timeout_seconds", 120))
+    categories = []
+    if code != 0:
+        categories.append("runner_failure")
+    known_usage = None
+    try:
+        if payload.get("usage_source") != ("synthetic" if config["mode"] == "controlled" else "provider"):
+            raise ValueError("usage source mismatch")
+        if payload.get("model") != config["model"] or payload.get("tokenizer") != config["tokenizer"]:
+            raise ValueError("usage provenance mismatch")
+        # Preserve completed spans from an interrupted run, but never call them its total.
+        known_usage = token_usage({**payload, "accounting_complete": True})
+        usage = token_usage(payload)
+    except (ValueError, TypeError, AttributeError):
+        usage = None
+        categories.append("usage_unavailable")
+    # Expected outcomes are never sent to the runner. Check actual fixture/backend effects.
+    verification, verify_code, verify_elapsed = process(config["verifier"], {
+        "protocol": 1, "workspace": str(workspace), "task_id": task["id"],
+        "fixture": task["fixture"], "expected": task["expected"],
+        "backend": config["backend"], "cli": config["arms"][arm]["cli"],
+        "claimed_success": payload.get("claimed_success")},
+        workspace, config.get("timeout_seconds", 120))
+    verified = verify_code == 0 and verification.get("success") is True
+    inconclusive = verification.get("fixture_unsupported") is True
+    if inconclusive:
+        categories.append("fixture_unsupported")
+    if not verified and not inconclusive:
+        categories.append("outcome_failure" if verify_code == 0 else "verifier_failure")
+    misleading = payload.get("claimed_success") is True and not verified and not inconclusive
+    if misleading:
+        categories.append("misleading_success_claim")
+    # Whitelist numeric measurements only; raw content and free-form traces stay out of evidence.
+    metrics = {}
+    for key in ("api_calls", "retries", "command_executions"):
+        value = payload.get(key)
+        metrics[key] = value if type(value) is int and value >= 0 else None
+    return {"task_id": task["id"], "section": task["section"], "trial": trial, "arm": arm,
+            "success": verified and code == 0, "outcome_inconclusive": inconclusive, "usage": usage, "categories": categories,
+            "known_usage": known_usage,
+            "accounting_diagnostics": sanitized_accounting_diagnostics(payload.get("accounting_diagnostics")),
+            "verification_failures": sanitized_verification_failures(verification.get("verification_failures")),
+            "control_trace": sanitized_trace(payload.get("control_trace")),
+            "usage_granularity": payload.get("usage_granularity") if payload.get("usage_granularity") in ("model_turn", "codex_user_turn") else None,
+            "runner_exit": code, "verifier_exit": verify_code,
+            "latency_seconds": elapsed, "verification_seconds": verify_elapsed, **metrics}
 
 
 
@@ -216,35 +227,9 @@ def sanitized_accounting_diagnostics(values):
 
 
 def sanitized_verification_failures(values):
-    from scenario_verifier import SCENARIO_DIAGNOSTICS
-    from section_fixture import UNSUPPORTED_REASON_CODES
-    allowed = {"answer_mismatch", "scenario_mismatch", "missing_request_evidence", "request_outside_fixture",
-               "required_reads_missing", "config_changed", "invalid_verification_input",
-               "packaging_answer_path_mismatch"} | SCENARIO_DIAGNOSTICS | UNSUPPORTED_REASON_CODES
+    allowed = {'answer_mismatch', 'required_reads_missing', 'config_changed', 'invalid_verification_input'}
     return values if isinstance(values, list) and all(isinstance(value, str) and value in allowed for value in values) else None
 
-
-def sanitized_api_trace(values, task):
-    section = task.get("fixture", {}).get("runtime_section")
-    if section is None or not isinstance(values, list):
-        return None
-    from read_fixture import load_runtime, NATIVE_READS
-    try:
-        allowed = {route["id"] for route in load_runtime(section)["routes"]} | {"rejected", "fixture_error"}
-    except (OSError, ValueError, KeyError, TypeError):
-        return None
-    result = []
-    for value in values:
-        if not isinstance(value, dict) or value.get("route") not in allowed or value.get("method") not in ("GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"):
-            return None
-        status = value.get("status")
-        if type(status) is not int or not 100 <= status <= 599:
-            return None
-        record = {"method": value["method"], "route": value["route"], "status": status}
-        if isinstance(value.get("native_read"), str) and value["native_read"] in NATIVE_READS:
-            record["native_read"] = value["native_read"]
-        result.append(record)
-    return result
 
 def sanitized_trace(trace):
     """Validate even adapter-provided trace strings against the public vocabulary."""
@@ -395,8 +380,6 @@ def resume_contract(config, evidence, planned):
         if (entry.parent.parent / "lark-shared").is_dir():
             arm["linked_skills"] = {child.name: tree_digest(child) for child in sorted(entry.parent.parent.iterdir())
                                    if child.is_dir() and child.name.startswith("lark-")}
-        if "selected_skill_source" in arm:
-            arm["selected_skill_source"] = {"tree_sha256": tree_digest(arm["selected_skill_source"])}
     fixed = {key: evidence.get(key) for key in ("protocol", "mode", "split", "planned_runs", "seed", "repeats",
         "fresh_context", "task_manifest_sha256", "environment", "arms", "arm_selection")}
     sources = {str(path.relative_to(Path(__file__).parent)): digest(path)
@@ -538,6 +521,8 @@ def main():
                 atomic_json(args.output, evidence)
                 marker.unlink()
                 sync_directory(marker.parent)
+                if 'live_cleanup_unconfirmed' in runs[-1]['categories']:
+                    raise ResumeError('live_cleanup_requires_reconciliation')
                 if args.progress:
                     row = runs[-1]
                     outcome = 'inconclusive' if row.get('outcome_inconclusive') else 'verified' if row['success'] else 'failed'

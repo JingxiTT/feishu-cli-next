@@ -15,7 +15,23 @@ from pathlib import Path
 
 from measure_surface import ROOT, read, sha
 from harness import ORIGINAL_ARMS, aggregate
-from run_matrix import score
+
+
+def historical_score(rows, docs):
+    """Reconstruct old report labels; these thresholds do not apply to new runs."""
+    before, after = rows['official'], rows['next']
+    a, b = before['tokens_per_success'], after['tokens_per_success']
+    saving = 1 - b / a if a is not None and a > 0 and b is not None else None
+    regression = after['successes'] < before['successes']
+    nonregression = False if regression else None if before['inconclusive'] or after['inconclusive'] else True
+    threshold = None
+    if saving is not None:
+        x = after['known_total_tokens'] * before['successes']
+        y = before['known_total_tokens'] * after['successes']
+        threshold = 2 * x < y if docs else 10 * x <= 7 * y
+    gate = 'missed' if False in (threshold, nonregression) else 'unavailable' if None in (threshold, nonregression) else 'met'
+    return {'saving_fraction': saving, 'observed_success_nonregression': nonregression,
+            'gate': gate, 'target': '>50%' if docs else '>=30%'}
 
 
 def historical_usage(matrix):
@@ -38,7 +54,7 @@ def historical_usage(matrix):
         for task in job["tasks"]:
             arms = {row["arm"]: row for row in grouped if row["scope"] == "task_id" and row["name"] == task}
             key = (job["suite"], task)
-            reconstructed_tasks[key] = (score(arms, job["section"] == "docs")["gate"]
+            reconstructed_tasks[key] = (historical_score(arms, job["section"] == "docs")["gate"]
                                          if len(arms) == 2 and all(row["attempts"] == 3 for row in arms.values()) else "pending")
         for run in batch["runs"]:
             seen = set()

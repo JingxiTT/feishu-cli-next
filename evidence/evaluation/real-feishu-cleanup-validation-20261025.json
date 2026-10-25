@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-25",
+  "kind": "cleanup review and offline validation",
+  "base_revision": "418ac9e3c0afe3795f724a2bbf2a992d014a0eda",
+  "follows": "evidence/evaluation/synthetic-backend-removal-20261025.json",
+  "review": [
+    "All 10 remaining evaluation Python modules import without the removed runtime.",
+    "Retired fake endpoint and launchers are absent; regression tests reject all retired backends before a model starts.",
+    "Remaining references to retired files are historical reports or explicit removal/workflow guards.",
+    "The live Contact driver no longer persists setup answer values or raw CLI output; verification re-reads Feishu and checks the independent identity binding."
+  ],
+  "source_sha256": {
+    "evaluation/codex_runner.py": "6926c20540ede6123f0c4408feb5a245d23fb7c26bfba9550a6d5e8ab0d16275",
+    "evaluation/function_coverage.py": "42e21d49d80948304fa2b59bca6ceaa9102733d60b0fdd14059e5fd7af763213",
+    "evaluation/harness.py": "2733f4abd6bba89e8c482238b02daf050981863371b9c06093172e1ed0cb3541",
+    "evaluation/live_batch.py": "88001cbf1e3783df0b0317db805d76733b4609804d58eb1732f1526371601221",
+    "evaluation/live_contact.py": "416ad69be5da3eb177dc8402b2ee1360f4636cd07c2b2ba59e1ca1ff260784f1",
+    "evaluation/live_fixture.py": "4cc1b2a3a7cd67df527baa65fa18ea4e0de53be38c78a61a415a6bdf8cac2040",
+    "evaluation/measure_cli.py": "8b8485da424621d43de0783b67b7e5fd9f587723279c0b73eb371abce4421122",
+    "evaluation/measure_surface.py": "a515c82aacf60d749c0624c1fce651a0a465be5b82a435c5587d16a62bbe7ee1",
+    "evaluation/pipeline.py": "884cb88872b48373ab3c61467113d8fbaac07d2062698d3f38aecc3634dff5eb",
+    "evaluation/plot_scaling.py": "f2b21013cdea5de977e92c8a48b11d24f40d43ecda24b4a716288abf73606717"
+  },
+  "validation": {
+    "evaluation": {
+      "status": "pass",
+      "evidence": "offline",
+      "counts": {
+        "pass": 94,
+        "fail": 0,
+        "skip": 1
+      }
+    },
+    "scripts": {
+      "status": "pass",
+      "evidence": "offline",
+      "counts": {
+        "pass": 79,
+        "fail": 0,
+        "skip": 0
+      }
+    },
+    "full_script_target": {
+      "status": "pass",
+      "command": "make script-test",
+      "includes": "Python, shell workflow contracts and 170 Node tests"
+    },
+    "production_build": {
+      "status": "pass",
+      "command": "make build"
+    },
+    "capability_gate": {
+      "status": "pass",
+      "checked_registration_changes": 5782,
+      "failures": [],
+      "source_review_status": "review_required",
+      "source_review_limit": "Capability reconciliation does not clear the separate retained source-review status."
+    },
+    "layout_and_whitespace": {
+      "status": "pass",
+      "commands": [
+        "python3 scripts/next_layout.py check",
+        "git diff --check"
+      ]
+    }
+  },
+  "live_execution_performed": false,
+  "limits": [
+    "Only the current-account Contact task has a bundled live fixture.",
+    "No live tenant, real model, held-out evaluation, macOS or Windows runtime test was run.",
+    "The optional native macOS Codex skill-isolation test was skipped."
+  ],
+  "toolchain_setup": "Go 1.26.10 (official archive SHA-256 verified) and Ruby 3.2.3 (Ubuntu packages) were extracted under /tmp; no repository dependency was added."
+}

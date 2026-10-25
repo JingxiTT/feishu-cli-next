@@ -94,11 +94,17 @@ class CodexAccountingTests(unittest.TestCase):
             *extra])
 
     def test_all_executable_manifests_have_provider_compatible_object_schemas(self):
-        for name in ('foundation', 'contact', 'read-sections', 'scenarios', 'scaling', 'business', 'paired'):
-            tasks = json.loads((ROOT / ('evaluation/tasks.' + name + '.json')).read_text())['tasks']
-            for task in tasks:
-                with self.subTest(task=task['id']):
-                    runner.validate_output_schema(task['fixture']['answer_schema'])
+        manifest = json.loads((ROOT / 'evaluation/tasks.live-contact.json').read_text())
+        for task in manifest['tasks']:
+            runner.validate_output_schema(task['fixture']['answer_schema'])
+
+    def test_removed_backends_are_rejected_before_any_model_process(self):
+        from unittest.mock import patch
+        for backend in ('synthetic-contact-v1', 'synthetic-read-v1', 'synthetic-scenario-v1', 'offline-foundation-v1'):
+            with self.subTest(backend=backend), patch.object(runner.subprocess, 'Popen') as process:
+                with self.assertRaises(ValueError):
+                    runner.run({'settings': {'backend': backend}}, None, None, None)
+                process.assert_not_called()
 
     def test_invalid_nested_output_schema_fails_before_process_or_workspace_setup(self):
         from unittest.mock import patch
@@ -139,7 +145,7 @@ class CodexAccountingTests(unittest.TestCase):
                         settings['guidance_delivery'] = mode
                     request = {'workspace': str(workspace), 'cli': str(root / 'unused-cli'), 'skill': str(entry),
                                'prompt': 'Perform the synthetic task.', 'settings': settings,
-                               'fixture': {'answer_schema': schema}, 'arm': arm}
+                               'fixture': {'answer_schema': schema, 'cli_config_dir': str(root), 'cli_data_dir': str(root)}, 'arm': arm}
                     with patch.object(runner.subprocess, 'run', return_value=subprocess.CompletedProcess(
                             [], 0, stdout='codex-cli test\n')), patch.object(runner.subprocess, 'Popen') as process:
                         process.return_value.returncode = 0
@@ -162,14 +168,9 @@ class CodexAccountingTests(unittest.TestCase):
                 self.assertNotIn(content.decode(), prompts['file'])
                 self.assertIn('./guidance/SKILL.md. Read it completely before task actions', prompts['file'])
                 self.assertTrue(prompts['file'].endswith('\n\nTask:\nPerform the synthetic task.'))
-                # Preserve the historical inline wrapper, including whitespace.
-                expected = ('Complete this CLI task using the selected binary on PATH. '
-                            'The project has an empty Feishu configuration. Network access for shell commands is disabled. '
-                            'Do not log in, initialize an app, or access other credentials. Do not change any backend resources. '
-                            'Work only in this temporary workspace. Return the requested JSON answer. You may use the shell and files '
-                            'and choose your approach. The supplied CLI skill follows; its relative references are '
-                            'under ./guidance/.\n\n' + content.decode() + '\n\nTask:\nPerform the synthetic task.')
-                self.assertEqual(prompts['inline'], expected)
+                self.assertIn('This task uses real Feishu', prompts['inline'])
+                self.assertNotIn('synthetic read-only fixture', prompts['inline'])
+                self.assertIn('unknown outcome', prompts['inline'])
 
     def test_invalid_guidance_delivery_fails_before_workspace_or_provider(self):
         from unittest.mock import patch
@@ -199,173 +200,6 @@ class CodexAccountingTests(unittest.TestCase):
                 runner.run_agent({'fixture': {'answer_schema': schema}}, None, None, None)
             process.assert_not_called()
 
-    def test_batch_prepare_rejects_archive_without_trace_registry(self):
-        with tempfile.TemporaryDirectory() as directory:
-            archive = Path(directory)
-            for name in ('run_read_batch.py', 'codex_runner.py', 'tasks.scaling.json'):
-                target = archive / 'evaluation' / name
-                target.parent.mkdir(exist_ok=True)
-                target.write_bytes((ROOT / 'evaluation' / name).read_bytes())
-            args = [sys.executable, str(archive / 'evaluation/run_read_batch.py'),
-                    '--prepare-only', '--task-kind', 'scaling']
-            for key in ('official-source', 'official-cli', 'next-source', 'next-cli', 'codex', 'auth-home', 'output-root'):
-                args.extend(['--' + key, str(archive / 'not-created')])
-            result = subprocess.run(args, capture_output=True, text=True, encoding='utf-8')
-            self.assertNotEqual(result.returncode, 0)
-            self.assertIn('registrations.json.gz', result.stderr)
-            self.assertFalse((archive / 'not-created').exists())
-
-    def test_batch_pins_luna_medium_in_shared_codex_config(self):
-        from unittest.mock import patch
-        spec = importlib.util.spec_from_file_location('run_read_batch', ROOT / 'evaluation/run_read_batch.py')
-        batch = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(batch)
-        captured = []
-        with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
-            source = root / 'official-source'
-            entry = source / 'skills/lark-contact/SKILL.md'
-            entry.parent.mkdir(parents=True)
-            entry.write_text('Controlled official guidance')
-            official, next_cli = root / 'official-cli', root / 'next-cli'
-            official.touch()
-            next_cli.touch()
-            args = ['run_read_batch.py', '--section', 'contact', '--task-kind', 'paired',
-                    '--model', 'gpt-5.6-luna', '--reasoning', 'medium']
-            values = {'official-source': source, 'official-cli': official,
-                      'next-source': ROOT, 'next-cli': next_cli, 'codex': root / 'codex',
-                      'auth-home': root / 'unused-auth', 'output-root': root / 'results'}
-            for name, path in values.items():
-                args.extend(['--' + name, str(path)])
-
-            def inspect_config(command, **kwargs):
-                self.assertEqual(Path(command[1]).name, 'harness.py')
-                config = json.loads(Path(command[command.index('--config') + 1]).read_text())
-                captured.append(config)
-                self.assertEqual(config['model'], 'gpt-5.6-luna')
-                self.assertEqual(config['reasoning'], 'medium')
-                self.assertEqual(config['guidance_delivery'], expected_delivery)
-                self.assertTrue(all('guidance_delivery' not in arm for arm in config['arms'].values()))
-                self.assertEqual(Path(config['arms']['official_concise']['skill']).read_text(),
-                                 (ROOT / 'evaluation/official-contact-concise/SKILL.md').read_text())
-                self.assertEqual(set(config['arms']), {'official', 'official_concise', 'next'})
-                self.assertEqual(config['arms']['official']['cli'], config['arms']['official_concise']['cli'])
-                self.assertEqual(Path(config['runner'][1]).name, 'codex_runner.py')
-                self.assertEqual(config['runner'][-1], 'codex-cli 0.153.4')
-                return subprocess.CompletedProcess(command, 0)
-
-            for expected_delivery in ('inline', 'file'):
-                selected_args = args + (['--guidance-delivery', 'file'] if expected_delivery == 'file' else [])
-                with patch.object(sys, 'argv', selected_args), \
-                     patch.object(sys, 'path', [str(ROOT / 'evaluation'), *sys.path]), \
-                     patch.object(batch.subprocess, 'run', side_effect=inspect_config), \
-                     patch('builtins.print'):
-                    self.assertEqual(batch.main(), 0)
-            self.assertEqual(len(captured), 2)
-            self.assertFalse(values['auth-home'].exists())
-
-    def test_original_comparison_and_paired_markdown_keep_full_drive_source(self):
-        from unittest.mock import patch
-        spec = importlib.util.spec_from_file_location('run_read_batch', ROOT / 'evaluation/run_read_batch.py')
-        batch = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(batch)
-        with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
-            binary = root / 'cli'
-            binary.touch()
-            args = ['run_read_batch.py', '--section', 'markdown', '--task-kind', 'paired',
-                    '--model', 'gpt-5.6-luna', '--reasoning', 'medium']
-            for name, path in {'official-source': ROOT, 'official-cli': binary,
-                'next-source': ROOT, 'next-cli': binary, 'codex': binary,
-                'auth-home': root / 'auth', 'output-root': root / 'results'}.items():
-                args.extend(['--' + name, str(path)])
-            configs = []
-
-            def inspect_config(command, **kwargs):
-                config = json.loads(Path(command[command.index('--config') + 1]).read_text())
-                configs.append(config)
-                self.assertEqual(Path(config['arms']['official']['skill']), ROOT / 'skills/lark-drive/SKILL.md')
-                self.assertEqual(Path(config['arms']['official']['skill']).read_bytes(),
-                                 (ROOT / 'skills/lark-drive/SKILL.md').read_bytes())
-                self.assertEqual(Path(config['arms']['next']['skill']), ROOT / 'agent-skills/feishu-cli-next/SKILL.md')
-                if '--original-comparison' in command:
-                    self.assertEqual(set(config['arms']), {'official', 'next'})
-                else:
-                    self.assertEqual(set(config['arms']), {'official', 'official_concise', 'next'})
-                    self.assertEqual(Path(config['arms']['official_concise']['skill']).read_bytes(),
-                                     (ROOT / 'evaluation/concise/markdown/SKILL.md').read_bytes())
-                return subprocess.CompletedProcess(command, 0)
-
-            for extra, attempts in (([], 9), (['--original-comparison'], 6)):
-                with patch.object(sys, 'argv', [*args, *extra]), \
-                     patch.object(sys, 'path', [str(ROOT / 'evaluation'), *sys.path]), \
-                     patch.object(batch.subprocess, 'run', side_effect=inspect_config) as run, \
-                     patch('builtins.print') as printed:
-                    self.assertEqual(batch.main(), 0)
-                self.assertEqual('--original-comparison' in run.call_args.args[0], bool(extra))
-                self.assertEqual(json.loads(printed.call_args_list[0].args[0])['planned_attempts'], attempts)
-            expected = {**configs[0], 'arms': {k: v for k, v in configs[0]['arms'].items() if k != 'official_concise'}}
-            self.assertEqual(configs[1], expected)
-            self.assertFalse((root / 'auth').exists())
-            for conflicting in (['--previous-next-source', str(ROOT)],
-                                ['--previous-next-cli', str(binary)], ['--only-arm', 'next']):
-                with patch.object(sys, 'argv', [*args, '--original-comparison', *conflicting]), \
-                     patch.object(batch.subprocess, 'run') as run, patch('sys.stderr'), self.assertRaises(SystemExit):
-                    batch.main()
-                run.assert_not_called()
-
-    def test_batch_before_after_uses_frozen_next_without_mislabeling_concise(self):
-        from unittest.mock import patch
-        spec = importlib.util.spec_from_file_location('run_read_batch', ROOT / 'evaluation/run_read_batch.py')
-        batch = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(batch)
-        with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
-            binary = root / 'cli'
-            binary.touch()
-            args = ['run_read_batch.py', '--section', 'docs', '--task-kind', 'paired',
-                    '--model', 'gpt-5.6-luna', '--reasoning', 'medium']
-            for name, path in {
-                'official-source': ROOT, 'official-cli': binary,
-                'next-source': ROOT, 'next-cli': binary,
-                'previous-next-source': ROOT, 'previous-next-cli': binary,
-                'codex': binary, 'auth-home': root / 'auth', 'output-root': root / 'results',
-            }.items():
-                args.extend(['--' + name, str(path)])
-            configs = []
-
-            def inspect_config(command, **kwargs):
-                config = json.loads(Path(command[command.index('--config') + 1]).read_text())
-                configs.append(config)
-                self.assertEqual(set(config['arms']), {'official', 'next_before', 'next'})
-                self.assertEqual(config['arms']['next_before'], {
-                    'cli': str(binary), 'skill': str(ROOT / 'agent-skills/feishu-cli-next/SKILL.md')})
-                self.assertEqual(config['model'], 'gpt-5.6-luna')
-                self.assertEqual(config['reasoning'], 'medium')
-                return subprocess.CompletedProcess(command, 0)
-
-            with patch.object(sys, 'argv', args), \
-                 patch.object(sys, 'path', [str(ROOT / 'evaluation'), *sys.path]), \
-                 patch.object(batch.subprocess, 'run', side_effect=inspect_config), patch('builtins.print'):
-                self.assertEqual(batch.main(), 0)
-            self.assertEqual(len(configs), 1)
-            with patch.object(sys, 'argv', [*args, '--only-arm', 'next']), \
-                 patch.object(sys, 'path', [str(ROOT / 'evaluation'), *sys.path]), \
-                 patch.object(batch.subprocess, 'run', side_effect=inspect_config) as run, \
-                 patch('builtins.print') as printed:
-                self.assertEqual(batch.main(), 0)
-            self.assertEqual(configs[1], configs[0])
-            command = run.call_args.args[0]
-            self.assertEqual(command[-2:], ['--only-arm', 'next'])
-            starting = json.loads(printed.call_args_list[0].args[0])
-            self.assertEqual(starting, {'section': 'docs', 'status': 'starting', 'planned_attempts': 6,
-                                       'only_arm': 'next', 'balanced_comparison': False})
-            index = args.index('--previous-next-cli')
-            missing = args[:index] + args[index + 2:]
-            with patch.object(sys, 'argv', missing), patch.object(batch.subprocess, 'run') as run, \
-                 patch('sys.stderr'), self.assertRaises(SystemExit):
-                batch.main()
-            run.assert_not_called()
 
     def test_trace_keeps_only_public_names_not_content_paths_or_unknown_flags(self):
         self.assertEqual(runner.command_choices('feishu-cli-next sheets +data-export --spreadsheet-token private --save-result private.json'),
@@ -430,9 +264,10 @@ class CodexAccountingTests(unittest.TestCase):
             skill = root / "skills" / "sensitive-skill" / "SKILL.md"
             skill.parent.mkdir(parents=True)
             skill.write_text("DO NOT INJECT THIS")
-            config = runner.configuration(root, root, "high")
+            config = runner.configuration(root, root, "high", {
+                "LARKSUITE_CLI_CONFIG_DIR": str(root), "LARKSUITE_CLI_DATA_DIR": str(root)})
             self.assertIn('model_reasoning_effort="high"', config)
-            self.assertIn('sandbox_workspace_write.network_access=false', config)
+            self.assertIn('sandbox_workspace_write.network_access=true', config)
             self.assertIn('features.plugins=false', config)
             self.assertIn('features.multi_agent=false', config)
             self.assertIn('features.apps=false', config)
@@ -440,6 +275,19 @@ class CodexAccountingTests(unittest.TestCase):
             self.assertEqual(next(value for value in config if value.startswith('skills.config=')),
                              'skills.config=[{path=' + json.dumps(str(skill)) + ',enabled=false}]')
             self.assertNotIn('DO NOT INJECT THIS', '\n'.join(config))
+
+    def test_live_configuration_uses_real_cli_credentials_and_network(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            config_dir = root / 'protected-cli'
+            config_dir.mkdir()
+            settings = runner.configuration(root, root, 'high',
+                {'LARKSUITE_CLI_CONFIG_DIR': str(config_dir), 'LARKSUITE_CLI_DATA_DIR': str(config_dir)})
+            self.assertIn('sandbox_workspace_write.network_access=true', settings)
+            self.assertIn('sandbox_workspace_write.writable_roots=' + json.dumps([str(config_dir), str(config_dir)]), settings)
+            self.assertIn(str(config_dir), '\n'.join(settings))
+            self.assertNotIn('127.0.0.1', '\n'.join(settings))
+            self.assertNotIn('LARKSUITE_CLI_AUTH_PROXY', '\n'.join(settings))
 
     @unittest.skipUnless(sys.platform == 'darwin' and os.environ.get('EVAL_NATIVE_CODEX'),
                          'set EVAL_NATIVE_CODEX on macOS for no-model native skill isolation')
@@ -457,7 +305,8 @@ class CodexAccountingTests(unittest.TestCase):
             def prompt(disable_directory):
                 # Offline configuration avoids opening managed proxy listeners;
                 # the skill path/feature overrides are shared with paired runs.
-                settings = runner.configuration(auth_home, workspace, 'medium')
+                settings = runner.configuration(auth_home, workspace, 'medium', {
+                    'LARKSUITE_CLI_CONFIG_DIR': str(workspace), 'LARKSUITE_CLI_DATA_DIR': str(workspace)})
                 if disable_directory:
                     # Negative control reproduces the old ineffective path shape.
                     settings = [value if not value.startswith('skills.config=') else
@@ -484,26 +333,6 @@ class CodexAccountingTests(unittest.TestCase):
 
 
 class CodexAdapterProcessTests(unittest.TestCase):
-    def test_independent_verifier_checks_state_and_answer(self):
-        with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
-            (root / "feishu-config").mkdir()
-            fake_cli = root / "cli.py"
-            fake_cli.write_text('''import json, sys
-assert sys.argv[1:] == ['auth','status','--json']
-print(json.dumps({'ok':False,'error':{'subtype':'not_configured'}}),file=sys.stderr)
-sys.exit(3)
-''')
-            task = json.loads((ROOT / "evaluation/tasks.foundation.json").read_text())["tasks"][0]
-            request = {"workspace": str(root), "cli": str(fake_cli), "expected": task["expected"], "claimed_success": True}
-            for correct_answer, mutation, expected in ((True, False, True), (False, False, False), (True, True, False)):
-                (root / "answer.json").write_text(json.dumps(task["expected"]["answer"] if correct_answer else {"configured": True}))
-                if mutation:
-                    (root / "feishu-config/profile.json").write_text('{}')
-                result = subprocess.run([sys.executable, str(ROOT / "tests/next_evaluation/python_fixture_entry.py"),
-                                         "--entry", str(ROOT / "evaluation/foundation_verifier.py"), "--fixture", str(fake_cli)],
-                                        input=json.dumps(request), capture_output=True, text=True, timeout=10)
-                self.assertEqual(json.loads(result.stdout)["success"], expected)
 
     def test_complete_adapter_flow_with_fake_codex(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -530,9 +359,9 @@ print(json.dumps({'type':'turn.started'}))
 print(json.dumps({'type':'turn.completed','usage':{'input_tokens':200,'cached_input_tokens':80,'output_tokens':30}}))
 ''')
             request = {"workspace": str(workspace), "cli": str(fake), "skill": str(guidance / "SKILL.md"),
-                       "prompt": "Inspect the synthetic config.", "settings": {"backend": "offline-foundation-v1",
+                       "prompt": "Inspect the current account.", "settings": {"backend": "live-feishu-v1",
                        "model": "gpt-5.6-luna", "tokenizer": "provider-undisclosed", "reasoning": "medium",
-                       "budget": {"timeout_seconds": 5}}, "fixture": {"answer_schema": {"type": "object", "properties": {}, "required": [], "additionalProperties": False}}}
+                       "budget": {"timeout_seconds": 5}}, "fixture": {"cli_config_dir": str(root), "cli_data_dir": str(root), "answer_schema": {"type": "object", "properties": {}, "required": [], "additionalProperties": False}}}
             process = subprocess.run([sys.executable, str(ROOT / "tests/next_evaluation/python_fixture_entry.py"),
                                       "--entry", str(ROOT / "evaluation/codex_runner.py"), "--fixture", str(fake), "--",
                                       "--codex", str(fake), "--auth-home", str(root / "auth")],

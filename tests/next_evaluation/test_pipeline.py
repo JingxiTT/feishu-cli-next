@@ -6,6 +6,7 @@ import copy
 import csv
 import io
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -16,6 +17,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / 'evaluation'))
 import pipeline
 from harness import aggregate
+from live_batch import batch_config
 
 
 class PipelineTests(unittest.TestCase):
@@ -38,36 +40,71 @@ r = json.load(sys.stdin)
 assert 'expected' not in r
 with Path(__file__).with_suffix('.calls').open('a') as f:
     f.write(r['arm'] + '\\n')
-print(json.dumps({'claimed_success': False, 'usage_source': 'synthetic',
+print(json.dumps({'claimed_success': False, 'usage_source': 'provider',
  'model': r['settings']['model'], 'tokenizer': r['settings']['tokenizer'],
  'accounting_complete': True, 'turns': [
  {'input_tokens': 100, 'cached_input_tokens': 40, 'output_tokens': 20}]}))
 ''')
         self.adapter = self.root / 'adapter.json'
-        self.settings = {'runner': [sys.executable, str(self.runner)], 'mode': 'controlled',
+        self.settings = {'runner': [sys.executable, str(self.runner)], 'mode': 'real',
                          'accounting_method': 'synthetic test events, not model measurements',
                          'tokenizer': 'synthetic', 'tools': ['shell', 'files'],
                          'permissions': 'isolated synthetic test only',
-                         'supported_backends': ['offline-foundation-v1']}
+                         'supported_backends': ['live-feishu-v1']}
         self.adapter.write_text(json.dumps(self.settings))
         self.config = {'schema_version': 1, 'official_source': str(self.official),
                        'next_source': str(self.next), 'official_cli': str(self.cli), 'next_cli': str(self.cli),
                        'repeats': 2, 'suites': ['foundation'], 'experiments': [
                            {'id': 'test-a', 'harness': 'test-adapter-v1', 'model': 'test-model',
                             'reasoning': 'none', 'runner_config': str(self.adapter)}]}
+        self.driver = self.root / 'driver.py'
+        self.driver.write_text('''import json, sys
+from pathlib import Path
+r = json.load(sys.stdin)
+assert r['backend'] == 'live-feishu-v1'
+with Path(__file__).with_suffix('.calls').open('a') as f:
+    f.write(r['phase'] + '\\n')
+if r['phase'] == 'setup':
+    print(json.dumps({'backend': 'live-feishu-v1', 'ready': True,
+      'account_verified': True,
+      'privacy_verified': not Path(__file__).with_suffix('.fail-privacy').exists(),
+      'prompt': r['task']['prompt']}))
+elif r['phase'] == 'verify':
+    print(json.dumps({'backend': 'live-feishu-v1', 'success': False}))
+else:
+    print(json.dumps({'cleaned': not Path(__file__).with_suffix('.fail-cleanup').exists()}))
+''')
+        credentials = self.root / 'protected-cli-config'
+        credentials.mkdir()
+        self.config['live'] = {'driver': [sys.executable, str(self.driver)],
+                               'cli_config_dir': str(credentials), 'cli_data_dir': str(credentials)}
+        self.config['live_manifests'] = {}
+        sections = {'paired': ['docs', 'docs', 'contact'], 'docs-hard': ['docs'] * 3,
+                    'read': ['wiki'], 'scenario': ['docs'], 'scaling': ['sheets'],
+                    'business': ['business'], 'foundation': ['foundation'] * 2,
+                    'contact': ['contact'], 'e2e': ['workflow']}
+        for suite in pipeline.SUITES:
+            # Mock lifecycle messages and token counters only; no Feishu API emulator.
+            manifest = {'schema_version': 1, 'split': 'development', 'backend': 'live-feishu-v1',
+                        'tasks': [{'id': f'{suite}-{i}', 'section': section, 'prompt': 'Unit-test goal',
+                                   'fixture': {'answer_schema': {'type': 'object', 'properties': {},
+                                               'required': [], 'additionalProperties': False}}, 'expected': {}}
+                                  for i, section in enumerate(sections[suite])]}
+            path = self.root / f'{suite}.json'
+            path.write_text(json.dumps(manifest))
+            self.config['live_manifests'][suite] = str(path)
         self.output = self.root / 'output'
 
-    def test_plan_covers_all_implemented_suites_without_reading_held_out(self):
+    def test_plan_covers_all_configured_suites_without_reading_held_out(self):
         self.config.pop('suites')
-        self.settings['supported_backends'] = ['offline-foundation-v1', 'synthetic-contact-v1',
-                                               'synthetic-read-v1', 'synthetic-scenario-v1']
+        self.settings['supported_backends'] = ['live-feishu-v1']
         self.adapter.write_text(json.dumps(self.settings))
         plan = pipeline.prepare(self.config)
         self.assertEqual({j['suite'] for j in plan['jobs']}, set(pipeline.SUITES))
-        self.assertEqual(sum(len(j['task_ids']) for j in plan['jobs'] if j['workload'] == 'diagnostic'), 24)
-        self.assertEqual(sum(len(j['task_ids']) for j in plan['jobs'] if j['workload'] == 'workflow'), 21)
+        self.assertEqual(sum(len(j['task_ids']) for j in plan['jobs'] if j['workload'] == 'diagnostic'), 8)
+        self.assertEqual(sum(len(j['task_ids']) for j in plan['jobs'] if j['workload'] == 'workflow'), 6)
         self.assertEqual(plan['workloads'], ['workflow', 'diagnostic'])
-        self.assertEqual(plan['planned_attempts'], 45 * 2 * 2)
+        self.assertEqual(plan['planned_attempts'], 14 * 2 * 2)
         # Quarantined tasks are excluded from product identity too.
         held = self.next / 'evaluation/tasks.held-out.json'
         held.parent.mkdir()
@@ -86,11 +123,10 @@ print(json.dumps({'claimed_success': False, 'usage_source': 'synthetic',
 
     def test_workloads_select_and_report_separately(self):
         self.config.pop('suites')
-        self.settings['supported_backends'] = ['offline-foundation-v1', 'synthetic-contact-v1',
-                                               'synthetic-read-v1', 'synthetic-scenario-v1']
+        self.settings['supported_backends'] = ['live-feishu-v1']
         self.adapter.write_text(json.dumps(self.settings))
         self.output.mkdir()
-        for category, tasks in (('diagnostic', 24), ('workflow', 21)):
+        for category, tasks in (('diagnostic', 8), ('workflow', 6)):
             self.config['workloads'] = [category]
             plan = pipeline.prepare(self.config)
             self.assertEqual({j['workload'] for j in plan['jobs']}, {category})
@@ -106,30 +142,30 @@ print(json.dumps({'claimed_success': False, 'usage_source': 'synthetic',
             pipeline.prepare({**self.config, 'workloads': ['workflow'], 'suites': ['foundation']})
 
     def test_unsupported_backend_and_invalid_selection_fail_before_calls(self):
-        for update in ({'suites': ['read']}, {'sections': ['unknown']}, {'repeats': 1},
+        for update in ({'live_manifests': {}}, {'sections': ['unknown']}, {'repeats': 1},
                        {'suites': ['foundation', 'foundation']}):
             with self.subTest(update=update), self.assertRaises(ValueError):
                 pipeline.prepare({**self.config, **update})
         self.assertFalse(self.runner.with_suffix('.calls').exists())
 
-    def launch(self, *flags):
+    def launch(self, *flags, ci=False):
         path = self.root / 'config.json'
         path.write_text(json.dumps(self.config))
         return subprocess.run([sys.executable, str(ROOT / 'evaluation/pipeline.py'),
                                '--config', str(path), '--output', str(self.output), *flags],
-                              capture_output=True, text=True, timeout=60)
+                              capture_output=True, text=True, timeout=60, env={**os.environ, 'CI': 'true' if ci else ''})
 
     def test_list_sections_needs_no_config_or_output(self):
         listed = subprocess.run([sys.executable, str(ROOT / 'evaluation/pipeline.py'),
-                                 '--list-sections', '--suite', 'paired', 'docs-hard'],
+                                 '--list-sections', '--suite', 'contact'],
                                 capture_output=True, text=True, timeout=60)
         self.assertEqual(listed.returncode, 0, listed.stderr)
-        self.assertIn('docs: paired (workflow, 2 tasks); docs-hard (diagnostic, 3 tasks)', listed.stdout)
+        self.assertIn('contact: contact (diagnostic, 1 task)', listed.stdout)
         self.assertNotIn('wiki:', listed.stdout)
         self.assertFalse(self.output.exists())
 
     def test_cli_filters_preview_and_forward_symmetric_budgets_without_preflight(self):
-        self.settings['supported_backends'].append('synthetic-contact-v1')
+        self.settings['supported_backends'] = ['live-feishu-v1']
         self.adapter.write_text(json.dumps(self.settings))
         self.config['experiments'].append({**self.config['experiments'][0], 'id': 'test-b'})
         preview = self.launch('--dry-run', '--suite', 'foundation', 'contact',
@@ -147,13 +183,17 @@ print(json.dumps({'claimed_success': False, 'usage_source': 'synthetic',
         config = {**self.config, 'repeats': 4, 'budget_seconds': 23}
         for job in plan['jobs']:
             command = pipeline.command(config, job, self.output)
-            self.assertEqual(command[command.index('--repeats') + 1], '4')
-            self.assertEqual(command[command.index('--budget-seconds') + 1], '23')
+            self.assertIn('live_batch.py', command[1])
+            self.assertIn('--execute', command)
+            self.assertNotIn('run_read_batch.py', ' '.join(command))
             self.assertIn('--progress', command)
             self.assertNotIn('--progress', pipeline.command(config, job, self.output, True))
+            settings = batch_config(config, job['experiment'], self.output)
+            self.assertEqual(settings['budget']['timeout_seconds'], 23)
+            self.assertEqual(settings['timeout_seconds'], 53)
 
     def test_cli_section_selection_filters_tasks_within_suites(self):
-        self.settings['supported_backends'].append('synthetic-scenario-v1')
+        self.settings['supported_backends'] = ['live-feishu-v1']
         self.adapter.write_text(json.dumps(self.settings))
         preview = self.launch('--dry-run', '--suite', 'paired', 'scenario', 'docs-hard',
                               '--section', 'docs')
@@ -220,6 +260,77 @@ print(json.dumps({'claimed_success': False, 'usage_source': 'synthetic',
         self.assertEqual(self.runner.with_suffix('.calls').read_text(), calls)
         self.assertTrue((self.output / 'summary.csv').is_file())
 
+    def test_synthetic_manifests_and_controlled_runners_are_rejected(self):
+        for backend in ('synthetic-scenario-v1', 'synthetic-read-v1', 'offline-foundation-v1'):
+            path = Path(self.config['live_manifests']['foundation'])
+            manifest = json.loads(path.read_text())
+            manifest['backend'] = backend
+            path.write_text(json.dumps(manifest))
+            self.assertEqual(self.launch('--execute').returncode, 2)
+        manifest['backend'] = 'live-feishu-v1'
+        path.write_text(json.dumps(manifest))
+        self.settings['mode'] = 'controlled'
+        self.adapter.write_text(json.dumps(self.settings))
+        self.assertEqual(self.launch('--execute').returncode, 2)
+        self.assertFalse(self.runner.with_suffix('.calls').exists())
+        self.assertFalse(self.driver.with_suffix('.calls').exists())
+
+    def test_live_lifecycle_is_not_run_during_preparation(self):
+        self.assertEqual(self.launch().returncode, 0)
+        self.assertFalse(self.driver.with_suffix('.calls').exists())
+        self.assertEqual(self.launch('--execute').returncode, 1)
+        calls = self.driver.with_suffix('.calls').read_text().splitlines()
+        self.assertEqual(calls, ['setup', 'verify', 'cleanup'] * 8)
+        self.assertEqual(self.launch('--execute').returncode, 1)
+        self.assertEqual(self.driver.with_suffix('.calls').read_text().splitlines(), calls)
+
+    def test_unverified_privacy_blocks_before_model_and_is_never_replayed(self):
+        self.driver.with_suffix('.fail-privacy').touch()
+        first = self.launch('--execute')
+        self.assertEqual(first.returncode, 2, first.stderr)
+        self.assertFalse(self.runner.with_suffix('.calls').exists())
+        calls = self.driver.with_suffix('.calls').read_text()
+        self.assertEqual(calls.splitlines(), ['setup'])
+        self.assertEqual(self.launch('--execute').returncode, 2)
+        self.assertEqual(self.driver.with_suffix('.calls').read_text(), calls)
+
+    def test_manifest_and_driver_bytes_are_frozen(self):
+        initial = pipeline.prepare(self.config)['identity_sha256']
+        path = Path(self.config['live_manifests']['foundation'])
+        data = json.loads(path.read_text())
+        data['tasks'][0]['prompt'] += ' changed live goal'
+        path.write_text(json.dumps(data))
+        changed = pipeline.prepare(self.config)['identity_sha256']
+        self.assertNotEqual(initial, changed)
+        self.driver.write_text(self.driver.read_text() + '\n# changed live controller\n')
+        self.assertNotEqual(changed, pipeline.prepare(self.config)['identity_sha256'])
+
+    def test_live_execution_is_blocked_in_ci(self):
+        result = self.launch('--execute', ci=True)
+        self.assertEqual(result.returncode, 2, result.stderr)
+        self.assertFalse(self.runner.with_suffix('.calls').exists())
+        self.assertFalse(self.driver.with_suffix('.calls').exists())
+
+    def test_reconciliation_blocks_even_a_completed_batch(self):
+        self.assertEqual(self.launch('--execute').returncode, 1)
+        calls = self.runner.with_suffix('.calls').read_text()
+        marker = self.output / 'test-a/foundation/.private/RECONCILE'
+        marker.write_text('{"needs_review":true}')
+        self.assertEqual(self.launch('--execute').returncode, 2)
+        self.assertEqual(self.runner.with_suffix('.calls').read_text(), calls)
+
+    def test_cleanup_failure_checkpoints_cost_and_blocks_resume(self):
+        self.driver.with_suffix('.fail-cleanup').touch()
+        failed = self.launch('--execute')
+        self.assertEqual(failed.returncode, 2, failed.stderr)
+        batch = json.loads((self.output / 'test-a/foundation/foundation/batch-01.json').read_text())
+        self.assertEqual(len(batch['runs']), 1)
+        self.assertEqual(batch['runs'][0]['usage']['total_tokens'], 120)
+        self.assertIn('live_cleanup_unconfirmed', batch['runs'][0]['categories'])
+        calls = self.runner.with_suffix('.calls').read_text()
+        self.assertEqual(self.launch('--execute').returncode, 2)
+        self.assertEqual(self.runner.with_suffix('.calls').read_text(), calls)
+
     def test_operator_stop_prevents_model_launches(self):
         self.assertEqual(self.launch().returncode, 0)
         (self.output / 'STOP').touch()
@@ -247,6 +358,7 @@ print(json.dumps({'claimed_success': False, 'usage_source': 'synthetic',
         path.parent.mkdir(parents=True)
         def save():
             path.write_text(json.dumps({'runs': runs, 'completed': True, 'mode': 'real',
+                                        'environment': {'backend': 'live-feishu-v1'},
                                         **aggregate(runs, ('official', 'next'))}))
         save()
         result = pipeline.report(plan, self.output)
@@ -260,6 +372,7 @@ print(json.dumps({'claimed_success': False, 'usage_source': 'synthetic',
         self.assertIn('official_latency_median_seconds', summary_csv[0])
         self.assertIn('next_retries', summary_csv[0])
         path.write_text(json.dumps({'runs': runs[:1], 'completed': True, 'mode': 'real',
+                                    'environment': {'backend': 'live-feishu-v1'},
                                     **aggregate(runs[:1], ('official', 'next'))}))
         self.assertTrue(all(r['observed_token_difference'] is None for r in pipeline.report(plan, self.output)['comparisons']))
         save()
@@ -269,6 +382,11 @@ print(json.dumps({'claimed_success': False, 'usage_source': 'synthetic',
         result = pipeline.report(plan, self.output)
         self.assertTrue(all(r['observed_token_difference'] is None for r in result['comparisons']))
         self.assertEqual(result['comparisons'][0]['next']['known_total_tokens'], 200)
+        data = json.loads(path.read_text())
+        data['environment']['backend'] = 'synthetic-scenario-v1'
+        path.write_text(json.dumps(data))
+        with self.assertRaises(pipeline.PipelineError):
+            pipeline.report(plan, self.output)
         runs[-1]['usage'] = runs[-1]['known_usage']
         runs[-1]['outcome_inconclusive'] = True
         save()

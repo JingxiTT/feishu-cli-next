@@ -13,12 +13,9 @@ import subprocess
 import sys
 
 from harness import atomic_json, digest, json_digest, output_lock, tasks_from
-from run_read_batch import load_runner_settings
+from live_batch import load_runner_settings
 
 ROOT = Path(__file__).resolve().parents[1]
-SUITES = {'paired': 'paired', 'docs-hard': 'docs-hard', 'read': 'read-sections',
-          'scenario': 'scenarios', 'scaling': 'scaling', 'business': 'business',
-          'foundation': 'foundation', 'contact': 'contact', 'e2e': 'e2e'}
 WORKLOADS = {
     'paired': 'workflow',
     'docs-hard': 'diagnostic',
@@ -30,6 +27,7 @@ WORKLOADS = {
     'contact': 'diagnostic',
     'e2e': 'workflow',
 }
+SUITES = tuple(WORKLOADS)
 WORKLOADS_ALLOWED = ('workflow', 'diagnostic')
 WORKLOAD_LABELS = {'workflow': 'Realistic workflows', 'diagnostic': 'Diagnostics'}
 
@@ -44,18 +42,41 @@ def selected_manifests(config):
             or len(set(workloads)) != len(workloads) or set(workloads) - set(WORKLOADS_ALLOWED)):
         raise PipelineError('Select workflow and/or diagnostic workloads with --workload.')
     allowed = {s for s, workload in WORKLOADS.items() if workload in workloads}
-    suites = config.get('suites', [s for s in SUITES if s in allowed])
+    bindings = config.get('live_manifests')
+    if not isinstance(bindings, dict):
+        raise PipelineError('Configure live_manifests for real Feishu tasks; simulated backends are not supported.')
+    suites = config.get('suites', [s for s in bindings if s in allowed])
     if (not isinstance(suites, list) or not suites or not all(isinstance(s, str) for s in suites)
             or len(set(suites)) != len(suites) or set(suites) - set(SUITES)):
         raise PipelineError('Select unique development suites with --suite: ' + ', '.join(SUITES))
     if set(suites) - allowed:
         raise PipelineError('Suite selection conflicts with workloads; select matching --suite and --workload values.')
-    return {suite: tasks_from(ROOT / f'evaluation/tasks.{SUITES[suite]}.json') for suite in suites}
+    manifests = {}
+    for suite in suites:
+        path = Path(bindings.get(suite, ''))
+        if not path.is_absolute() or not path.is_file():
+            raise PipelineError(f'Live suite {suite} is blocked: set live_manifests.{suite} to an absolute manifest path.')
+        if path.name == 'tasks.held-out.json':
+            raise PipelineError('Held-out tasks are quarantined and cannot be configured for development evaluation.')
+        manifest = tasks_from(path)
+        if manifest.get('backend') != 'live-feishu-v1' or manifest.get('split') != 'development':
+            raise PipelineError('New evaluations require live-feishu-v1 development manifests; synthetic backends are not evaluation.')
+        from codex_runner import validate_output_schema
+        for task in manifest['tasks']:
+            if not isinstance(task['section'], str) or not re.fullmatch(r'[a-zA-Z0-9][a-zA-Z0-9_-]*', task['section']):
+                raise PipelineError('Live task sections must be directory-safe names containing letters, digits, underscores or hyphens.')
+            validate_output_schema(task['fixture']['answer_schema'])
+        manifests[suite] = manifest
+    return manifests
 
 
 def list_sections(config):
     entries = {}
-    for suite, manifest in selected_manifests(config).items():
+    if 'live_manifests' not in config:
+        config = {'suites': ['contact'], **config, 'live_manifests': {
+            'contact': str(ROOT / 'evaluation/tasks.live-contact.json')}}
+    manifests = selected_manifests(config)
+    for suite, manifest in manifests.items():
         counts = {}
         for task in manifest['tasks']:
             counts[task['section']] = counts.get(task['section'], 0) + 1
@@ -98,6 +119,8 @@ def prepare(config):
     if set(sections) - available:
         raise PipelineError('Section unavailable in selected suites/workloads. Available sections: '
                             + ', '.join(sorted(available)) + '. Use --list-sections or change --suite/--workload.')
+    from live_fixture import validate_live_config
+    validate_live_config(config.get('live'))
     cells = config.get('experiments')
     if not isinstance(cells, list) or not cells:
         raise PipelineError('experiments must be a nonempty array; start from evaluation/pipeline.example.json.')
@@ -115,6 +138,8 @@ def prepare(config):
             if not adapter.is_absolute() or not adapter.is_file():
                 raise PipelineError('Set runner_config to an absolute existing adapter settings file.')
             settings = load_runner_settings(adapter)
+            if settings['mode'] != 'real':
+                raise PipelineError('Evaluation requires a real model runner; controlled adapters belong in tooling tests.')
             backends = settings['supported_backends']
         else:
             for key in ('codex', 'auth_home'):
@@ -143,6 +168,9 @@ def prepare(config):
                 'evaluator': {str(p.relative_to(ROOT)): digest(p) for p in sorted((ROOT / 'evaluation').rglob('*'))
                               if p.is_file() and p.suffix in ('.py', '.json', '.md')
                               and p.name != 'tasks.held-out.json' and 'reports' not in p.parts},
+                'live_manifests': {s: digest(config['live_manifests'][s]) for s in manifests},
+                'live_driver': [digest(arg) for arg in config['live']['driver']
+                                if Path(arg).is_absolute() and Path(arg).is_file()],
                 'adapters': {c['id']: {'settings': digest(c['runner_config']),
                     'command_files': [digest(arg) for arg in load_runner_settings(Path(c['runner_config']))['runner']
                                       if Path(arg).is_absolute() and Path(arg).is_file()]}
@@ -153,27 +181,17 @@ def prepare(config):
             'budget_seconds': config.get('budget_seconds', 180),
             'workloads': [w for w in WORKLOADS_ALLOWED if any(j['workload'] == w for j in jobs)],
             'comparison': ['official', 'next'],
-            'measurement': 'descriptive official/Next comparison on development fixtures; not live tenant parity'}
+            'measurement': 'descriptive official/Next comparison against real Feishu; task-scoped live verification'}
 
 
 def command(config, job, output, prepare_only=False):
-    cell = next(c for c in config['experiments'] if c['id'] == job['experiment'])
-    argv = [sys.executable, str(ROOT / 'evaluation/run_read_batch.py'), '--original-comparison',
-            '--task-kind', job['suite'], '--output-root', str(output / job['experiment'] / job['suite']),
-            '--model', cell['model'], '--reasoning', cell['reasoning'],
-            '--guidance-delivery', config.get('guidance_delivery', 'file'),
-            '--repeats', str(config.get('repeats', 3)), '--seed', str(config.get('seed', 20261012)),
-            '--budget-seconds', str(config.get('budget_seconds', 180))]
-    for key in ('official_source', 'next_source', 'official_cli', 'next_cli'):
-        argv.extend(['--' + key.replace('_', '-'), config[key]])
-    for section in job['sections']:
-        argv.extend(['--section', section])
-    if 'runner_config' in cell:
-        argv.extend(['--runner-config', cell['runner_config']])
-    else:
-        argv.extend(['--codex', cell['codex'], '--auth-home', cell['auth_home']])
-    argv.extend(['--prepare-only'] if prepare_only else ['--resume', '--progress'])
-    return argv
+    # Missing live bindings must never fall back to a simulated API.
+    return [sys.executable, str(ROOT / 'evaluation/live_batch.py'),
+            '--config', str(output / 'config.local.json'),
+            '--experiment', job['experiment'], '--suite', job['suite'],
+            '--output-root', str(output / job['experiment'] / job['suite']),
+            *[arg for section in job['sections'] for arg in ('--section', section)],
+            *(['--prepare-only'] if prepare_only else ['--execute', '--progress'])]
 
 
 def report(plan, output):
@@ -192,6 +210,9 @@ def report(plan, output):
                         for trial in range(plan['repeats']) for arm in ('official', 'next')}
             observed = {(r['task_id'], r['trial'], r['arm']) for r in batch['runs']}
             balanced = observed == expected and len(batch['runs']) == len(expected)
+            if (job['backend'] == 'live-feishu-v1'
+                    and batch.get('environment', {}).get('backend') != 'live-feishu-v1'):
+                raise PipelineError('Live report contains a different backend; synthetic results cannot be scored as live.')
             finished = batch['completed'] and balanced and batch['mode'] == 'real'
             complete &= batch['completed'] and balanced
             groups = {(g['scope'], g['name'], g['arm']): g for g in batch['groups']}
@@ -287,7 +308,7 @@ def main(argv=None):
     mode.add_argument('--execute', action='store_true', help='Bill model calls after validating all jobs')
     mode.add_argument('--report-only', action='store_true', help='Render retained plan/results; only --output required')
     mode.add_argument('--dry-run', action='store_true', help='Print selected plan JSON; no preflight, run files or model calls')
-    mode.add_argument('--list-sections', action='store_true', help='List sections, suites and task counts; no config required')
+    mode.add_argument('--list-sections', action='store_true', help='List configured live sections, or the bundled live Contact task without config')
     for name, choices in (('section', None), ('suite', tuple(SUITES)),
                           ('workload', WORKLOADS_ALLOWED), ('experiment', None)):
         parser.add_argument('--' + name, action='extend', nargs='+', choices=choices, metavar=name.upper(),
@@ -330,7 +351,7 @@ def main(argv=None):
         if any(output == Path(config[k]).resolve() or Path(config[k]).resolve() in output.parents
                for k in ('official_source', 'next_source')):
             raise PipelineError('Output must be outside measured source trees; choose another --output directory.')
-    output.mkdir(parents=True, exist_ok=True)
+    output.mkdir(parents=True, exist_ok=True, mode=0o700)
     with output_lock(output / 'pipeline'):
         if args.report_only:
             summary = report(json.loads((output / 'plan.json').read_text()), output)
@@ -342,10 +363,11 @@ def main(argv=None):
             raise PipelineError('Measured inputs or selection changed; use a new --output directory. '
                                 'To resume, repeat the same config and CLI filters.')
         atomic_json(path, plan)
+        atomic_json(output / 'config.local.json', config)
         progress(f"Plan: {len(plan['jobs'])} jobs, {plan['planned_attempts']} attempts, "
                  f"{plan['repeats']} repeats per arm; budget {plan['budget_seconds']}s per attempt.")
         progress(f"Reports: {output / 'REPORT.md'}; create {output / 'STOP'} to stop between attempts.")
-        # All adapters, guidance and extension builds must preflight before billing.
+        # Local adapter and guidance validation only; no tenant calls before --execute.
         for index, job in enumerate(plan['jobs'], 1):
             progress(f"Preflight {index}/{len(plan['jobs'])}: {job['experiment']}/{job['suite']} "
                      f"sections={','.join(job['sections'])}, {job['planned_attempts']} attempts")
