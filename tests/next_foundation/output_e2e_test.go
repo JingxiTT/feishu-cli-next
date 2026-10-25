@@ -71,7 +71,7 @@ func TestOutputInvalidOptionsBeforeRequests(t *testing.T) {
 	f, requests := outputFixture(t)
 	for _, flags := range [][]string{{"--result-fields", "name,,id"}, {"--result-fields", "name", "--result-detail"}, {"--result-fields", "name", "--jq", ".data"}, {"--result-fields", "name", "--format", "ndjson"}} {
 		result := runOutputRead(f, flags...)
-		if result.ExitCode != 2 || result.Stdout != "" || !strings.Contains(result.Stderr, `"type": "validation"`) {
+		if result.ExitCode != 2 || result.Stdout != "" || !strings.Contains(result.Stderr, `"type":"validation"`) {
 			t.Fatalf("invalid flags %v: %+v", flags, result)
 		}
 	}

@@ -637,7 +637,7 @@ func TestExecuteProfileBootstrapPreservesDefaultAndDefersOnlyForOptIn(t *testing
 			"--profile",
 		)
 		if code != 2 ||
-			!strings.Contains(stderr, `"subtype": "invalid_argument"`) ||
+			!strings.Contains(stderr, `"subtype":"invalid_argument"`) ||
 			!strings.Contains(stderr, `unknown flag \"--profile\"`) {
 			t.Fatalf("concealed --profile: exit=%d stderr=%s", code, stderr)
 		}

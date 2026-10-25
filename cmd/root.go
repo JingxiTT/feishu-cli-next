@@ -29,6 +29,7 @@ import (
 	"github.com/larksuite/cli/internal/suggest"
 	"github.com/larksuite/cli/internal/surface"
 	"github.com/larksuite/cli/internal/update"
+	"github.com/larksuite/cli/shortcuts/common"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 )
@@ -111,7 +112,7 @@ func executeWithOptions(opts []BuildOption) int {
 		setupNotices(rootCmd.Context(), runtime.surface)
 	}
 
-	runErr := rootCmd.Execute()
+	runErr := rootUnknownCommandError(rootCmd, executeRejectingUnknownHelp(rootCmd, rawInvocationArgs))
 
 	// Fire Shutdown lifecycle hooks regardless of run outcome.
 	// emitShutdown imposes a 2s total deadline and never propagates handler
@@ -351,7 +352,7 @@ func handleRootError(
 	// deprecation notice.
 	var fallback error
 	if isCobraUsageError(err) {
-		fallback = errs.NewValidationError(errs.SubtypeInvalidArgument, "%s", err.Error())
+		fallback = cobraUsageError(f.CurrentCommand, err)
 	} else {
 		fallback = errs.NewInternalError(errs.SubtypeUnknown, "%s", err.Error()).WithCause(err)
 	}
@@ -468,7 +469,7 @@ func unknownSubcommandRunE(cmd *cobra.Command, args []string) error {
 	// Rank suggestions across both current and deprecated names so a mistyped
 	// legacy command (e.g. +raed → +read) still resolves; the alias stays
 	// runnable and self-flags via the _notice on execution.
-	suggestions := suggest.Closest(unknown, append(append([]string{}, available...), deprecated...), 6)
+	suggestions := unknownSubcommandSuggestions(cmd, unknown, append(append([]string{}, available...), deprecated...))
 	msg := fmt.Sprintf("unknown subcommand %q for %q", unknown, cmd.CommandPath())
 	hint := fmt.Sprintf("run `%s --help` to see available subcommands", cmd.CommandPath())
 	if len(suggestions) > 0 {
@@ -701,6 +702,9 @@ func flagDidYouMean(c *cobra.Command, ferr error) error {
 				"unknown flag %q for %q", "--"+gated, c.CommandPath()).
 				WithParams(errs.InvalidParam{Name: "--" + gated, Reason: "unknown flag"}).
 				WithHint("run `%s --help` to see valid flags", c.CommandPath())
+		}
+		if valueErr, ok := common.InvalidFlagValueError(c, ferr); ok {
+			return valueErr
 		}
 		validationErr := errs.NewValidationError(errs.SubtypeInvalidArgument, "%s", ferr.Error()).
 			WithHint("run `%s --help` for valid flags", c.CommandPath())

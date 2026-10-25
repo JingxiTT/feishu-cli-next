@@ -6,6 +6,7 @@ package discover
 
 import (
 	"fmt"
+	"slices"
 	"sort"
 	"strings"
 
@@ -25,6 +26,7 @@ type entry struct {
 	Identities  []string `json:"identities,omitempty"`
 	Flags       []flag   `json:"flags,omitempty"`
 	Example     string   `json:"example,omitempty"`
+	rank        rank
 	command     *cobra.Command
 }
 
@@ -53,18 +55,20 @@ func NewCmd(f *cmdutil.Factory, root *cobra.Command) *cobra.Command {
 			entries := collect(root, query)
 			start := min(offset, len(entries))
 			end := min(start+limit, len(entries))
-			if withFlags {
-				for i := start; i < end; i++ {
-					entries[i].Flags = describeFlags(publicFlags(entries[i].command))
-					entries[i].Example = routingExample(root.Name(), f, entries[i])
-				}
-			}
 			page := map[string]any{"query": query, "offset": offset, "limit": limit, "total": len(entries), "complete": end == len(entries)}
 			if end < len(entries) {
 				page["next_offset"] = end
 			}
-			result := entries[start:end]
-			return output.WriteJSON(f.IOStreams.Out, map[string]any{"ok": true, "data": result, "meta": page})
+			if withFlags {
+				shared := describePage(entries[start:end], func(e *entry) { e.Example = routingExample(root.Name(), f, *e) })
+				if len(shared) > 0 && !projectsWithoutFlags(c) {
+					page["common_flags"] = shared
+				}
+			}
+			if len(entries) == 0 && query != "" {
+				page["hint"] = "No commands matched. Matching is literal substring and every term must match; try fewer or shorter keywords."
+			}
+			return output.WriteJSON(f.IOStreams.Out, map[string]any{"ok": true, "data": entries[start:end], "meta": page})
 		},
 	}
 	cmd.Flags().IntVar(&limit, "limit", 20, "maximum results (1..1000)")
@@ -150,31 +154,9 @@ func collect(root *cobra.Command, query string) []entry {
 		}
 		path := strings.TrimSpace(strings.TrimPrefix(commandPath, root.Name()))
 		if c != root && (query != "" || c.Parent() == root) {
-			haystack := strings.ToLower(path + " " + c.Short + " " + strings.Join(c.Aliases, " "))
-			match := true
-			for _, term := range terms {
-				if term != "*" && !strings.Contains(haystack, term) {
-					match = false
-					break
-				}
-			}
-			if !match {
-				var searchable strings.Builder
-				for _, f := range publicFlags(c) {
-					searchable.WriteString(" --" + f.Name + " " + f.Usage)
-				}
-				flagText := strings.ToLower(searchable.String())
-				match = true
-				for _, term := range terms {
-					if term != "*" && !strings.Contains(haystack, term) && !strings.Contains(flagText, term) {
-						match = false
-						break
-					}
-				}
-			}
-			if match {
+			if r, ok := matchRank(c, path, terms); ok {
 				risk, _ := cmdmeta.Risk(c)
-				entries = append(entries, entry{Command: path, Description: c.Short, Risk: risk, Identities: cmdmeta.Identities(c), command: c})
+				entries = append(entries, entry{Command: path, Description: c.Short, Risk: risk, Identities: cmdmeta.Identities(c), rank: r, command: c})
 			}
 		}
 		for _, child := range c.Commands() {
@@ -182,7 +164,12 @@ func collect(root *cobra.Command, query string) []entry {
 		}
 	}
 	walk(root, root.CommandPath())
-	sort.Slice(entries, func(i, j int) bool { return entries[i].Command < entries[j].Command })
+	// Listings without a search term (empty query or `*`) stay alphabetical.
+	if strings.Trim(strings.Join(terms, ""), "*") == "" {
+		sort.Slice(entries, func(i, j int) bool { return entries[i].Command < entries[j].Command })
+	} else {
+		sort.Slice(entries, func(i, j int) bool { return entries[i].rank.before(entries[j].rank) })
+	}
 	return entries
 }
 
@@ -196,22 +183,76 @@ func describeFlags(flags []*pflag.Flag) []flag {
 	return result
 }
 
-// publicFlags shares visibility and local-shadowing rules between matching and
-// optional flag output. Hidden flag descriptions must not reveal a match.
-func publicFlags(c *cobra.Command) []*pflag.Flag {
-	flags := []*pflag.Flag{}
-	seen := map[string]bool{}
-	visit := func(f *pflag.Flag) {
-		if seen[f.Name] {
-			return
+// describePage fills each entry's flags with its local public flags and the
+// inherited flags the page does not share, then returns the inherited flags
+// every entry on the page shares, so a broad listing repeats none of them.
+// example runs while an entry still holds every public flag, so routing
+// examples see inherited required flags too.
+func describePage(entries []entry, example func(*entry)) []flag {
+	if len(entries) == 0 {
+		return nil
+	}
+	inherited := make([][]flag, len(entries))
+	for i := range entries {
+		local, shared := splitPublicFlags(entries[i].command)
+		localFlags := describeFlags(local)
+		inherited[i] = describeFlags(shared)
+		entries[i].Flags = append(slices.Clone(localFlags), inherited[i]...)
+		sort.Slice(entries[i].Flags, func(a, b int) bool { return entries[i].Flags[a].Name < entries[i].Flags[b].Name })
+		example(&entries[i])
+		entries[i].Flags = localFlags
+	}
+	// A single entry has nothing to repeat, so it keeps its inherited flags.
+	var shared []flag
+	if len(entries) > 1 {
+		shared = slices.Clone(inherited[0])
+	}
+	for _, set := range inherited[1:] {
+		shared = slices.DeleteFunc(shared, func(f flag) bool { return !slices.Contains(set, f) })
+	}
+	for i := range entries {
+		for _, f := range inherited[i] {
+			if !slices.Contains(shared, f) {
+				entries[i].Flags = append(entries[i].Flags, f)
+			}
 		}
-		seen[f.Name] = true
-		if !f.Hidden {
-			flags = append(flags, f)
+		slices.SortFunc(entries[i].Flags, func(a, b flag) int { return strings.Compare(a.Name, b.Name) })
+	}
+	return shared
+}
+
+// splitPublicFlags shares visibility and local-shadowing rules between matching
+// and flag output. Hidden flag descriptions must not reveal a match.
+func splitPublicFlags(c *cobra.Command) (local, inherited []*pflag.Flag) {
+	seen := map[string]bool{}
+	visit := func(dst *[]*pflag.Flag) func(*pflag.Flag) {
+		return func(f *pflag.Flag) {
+			if seen[f.Name] {
+				return
+			}
+			seen[f.Name] = true
+			if !f.Hidden {
+				*dst = append(*dst, f)
+			}
 		}
 	}
-	c.LocalNonPersistentFlags().VisitAll(visit)
-	c.PersistentFlags().VisitAll(visit)
-	c.InheritedFlags().VisitAll(visit)
-	return flags
+	c.LocalNonPersistentFlags().VisitAll(visit(&local))
+	c.PersistentFlags().VisitAll(visit(&local))
+	c.InheritedFlags().VisitAll(visit(&inherited))
+	return local, inherited
+}
+
+// projectsWithoutFlags reports a --result-fields projection that drops entry
+// flags, such as `command,example`; the shared flag list would only add noise.
+func projectsWithoutFlags(cmd *cobra.Command) bool {
+	projection := cmd.Flag("result-fields")
+	if projection == nil || !projection.Changed {
+		return false
+	}
+	for _, field := range strings.Split(projection.Value.String(), ",") {
+		if strings.TrimSpace(field) == "flags" {
+			return false
+		}
+	}
+	return true
 }

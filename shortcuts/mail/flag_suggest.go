@@ -12,6 +12,7 @@ import (
 	"github.com/spf13/pflag"
 
 	"github.com/larksuite/cli/errs"
+	"github.com/larksuite/cli/shortcuts/common"
 )
 
 // flagName is a package-private snapshot of a pflag.Flag's identity.
@@ -61,6 +62,9 @@ func InstallOnMail(svc *cobra.Command) {
 		}
 		if _, _, ok := parseUnknownToken(err.Error()); ok {
 			return flagSuggestErrorFunc(c, err)
+		}
+		if verr, ok := common.InvalidFlagValueError(c, err); ok {
+			return verr
 		}
 		return inherited(c, err)
 	})

@@ -94,7 +94,7 @@ func TestBaseBackendFailuresAndUnknownMutation(t *testing.T) {
 			if result.ExitCode != tc.exit || result.Stdout != "" || calls.Load() != 1 {
 				t.Fatalf("calls=%d result=%+v", calls.Load(), result)
 			}
-			if tc.subtype != "" && !strings.Contains(result.Stderr, `"subtype": "`+tc.subtype+`"`) {
+			if tc.subtype != "" && !strings.Contains(result.Stderr, `"subtype":"`+tc.subtype+`"`) {
 				t.Fatalf("stderr=%s", result.Stderr)
 			}
 			if tc.name == "gateway-rejected" && !strings.Contains(result.Stderr, `"unapplied":1`) {

@@ -3,20 +3,43 @@ name: feishu-cli-next
 description: Use the Feishu/Lark CLI for documents, contacts, messages, calendars, Base, sheets, files and other workspace resources.
 ---
 
-This entry guide is complete in context. After any required skill-file read, run `feishu-cli-next` with these routes directly; consult help/references for missing requirements. Select authorized identity (`--as user` below; bot permissions differ).
+Run these routes directly. Use `--as user` for personal data; bot permissions differ.
 
-- **Profile:** `contact +get-user --user-id <id> --user-id-type open_id --as user` (also bot). Richer/batched user profiles: `contact +search-user --user-ids <id,id> --as user`.
-- **Search:** `contact +search-user --query <name-or-email> --as user` / `contact +search-bot --query <keyword> --as user`. Match discriminators; refine `has_more` results (no pagination).
-- **Docs read:** `docs +pull --doc <URL-or-token> --as user`; for specific facts in long docs add `--scope keyword --keyword <literal>`. `complete=false` means an excerpt. Outline/section/range scopes retain block anchors. Unsupported regions/comments/maps: `docs +fetch --doc <doc> --detail full`.
-- **Docs edit:** `docs +pull --doc <doc> --output ./note.md --as user && cat ./note.md`; edit locally; `docs +push --file ./note.md --as user`. Preserve sidecar/anchors/marks/links; edit text while keeping formatting boundaries unambiguous. Only when `data.verified=true`, answer from `data.document_id` and `data.changed_blocks[].text` (complete plain paragraphs); no extra fetch. Ambiguous cross-run/structural edits: `docs +update`, `skills read lark-doc`. Pull afresh later.
-- **Markdown import:** `docs +create --doc-format markdown --content @./source.md --as user`; preserve source; verify with `docs +fetch --doc <id> --detail full`. Creation waits for async completion; after timeout/unknown outcome, inspect the receipt and destination before retrying.
-- **Base:** `base +record-get --base-token <base> --table-id <table> --record-id <id> --format json`. Update: `base +record-upsert`, same identifiers plus `--json '{"<field>":<value>}'`; omitted record ID creates. Unknown types/writability: `+field-list`. Verify affected IDs; multirow: `+record-batch-update`.
-- **Sheets:** `sheets +data-export --spreadsheet-token <token> --sheet-id <id> --range <rectangle> --save-result ./cells.json`. Check success/artifact; inspect cells when needed. CSV may lose types/formulas. For unfamiliar composite input, use the command's local `--print-schema --flag-name <flag-or-subtree>`.
-- **Drive:** `drive +upload --file ./source --folder-token <folder> --as user` (omit folder for root); then `drive +download --file-token <data.file_token> --output ./download --as user`. Compare bytes/hashes locally.
-- **App source:** `apps +export --app-id <app> --output ./source.zip --as user`; shared `/page/<token>` links use `--meta-token <token>` instead. Uncommitted work is excluded.
-- **Mail threads:** `mail +thread-modify --thread-ids <id,id> --add-folder <folder> --as user`; preview `mail +thread-trash --thread-ids <id,id> --as user --dry-run`, then replace `--dry-run` with `--yes` for authorized whole-thread deletion. Submit IDs together; inspect `success_thread_ids` and `failed_thread_ids`.
-- **IM context:** JSON supports `--result-fields`/`--save-result`; user-requested `--concise` Markdown on chat/thread reads excludes these, explicit `--format`, `--json`, `--jq`. Skip irrelevant reaction requests with `--no-reactions`.
+## Routes
 
-Use known commands directly. For an unknown command, `discover <short literal keywords> --flags --result-fields command,example --limit 3`; use `--help` only for unresolved flag semantics or behavior. For a generated API's request shape, `schema <service.resource.method> --input-only` keeps parameters, body, identities, scopes, risk and guidance. Omit `--input-only` when response fields are needed. Bare `schema` dumps the entire catalog; select a method when possible. Read only the relevant `skills read <name> [path]` reference; `skills list <name>/references` lists available files. Reuse guidance already read for this version. Original commands/formats, raw `api`, events and guides remain available. Base acknowledgements: `feishu-cli-next skills read lark-base references/lark-base-field-formula.md`; `feishu-cli-next skills read lark-base references/lark-base-field-lookup.md`.
+- **Profile:** `contact +get-user --user-id <id> --user-id-type open_id --as user`. Several users: `contact +search-user --user-ids <id,id> --as user`.
+- **Search people:** `contact +search-user --query <name-or-email> --as user`; bots: `contact +search-bot --query <keyword> --as user`. Refine if `has_more` is true.
+- **Docs read:** `docs +pull --doc <URL-or-token> --as user`; for one fact add `--scope keyword --keyword <literal>`. `complete=false` means an excerpt. Unsupported regions or comments: `docs +fetch --doc <doc> --detail full`.
+- **Docs edit:** `docs +pull --doc <doc> --output ./note.md --as user`; change text in `note.md`; then `docs +push --file ./note.md --as user`. Keep `note.feishu.json` and `<!-- block:<id> -->` lines unedited. Structure or formatting changes: `docs +update`. If `data.verified` is true, do not fetch again.
+- **Markdown import:** `docs +create --doc-format markdown --content @./source.md --as user`; verify with `docs +fetch --doc <id> --detail full`. Creation waits for async completion; after a timeout or unknown outcome, inspect the receipt and destination before retrying.
+- **Base read:** `base +record-get --base-token <base> --table-id <table> --record-id <id> --format json`.
+- **Base write:** `base +record-upsert --base-token <base> --table-id <table> --record-id <id> --json '{"<field>":<value>}'`; omit `--record-id` to create. Unknown field types: `base +field-list`.
+- **Base many rows:** `base +record-batch-create --base-token <base> --table-id <table> --json '{"create_records":[{"<field>":<value>}]}'`; at most 200 rows per call.
+- **Base formula or lookup fields** (create or update only): read `feishu-cli-next skills read lark-base references/lark-base-field-formula.md` or `feishu-cli-next skills read lark-base references/lark-base-field-lookup.md`, then pass `--i-have-read-guide` to `base +field-create` or `base +field-update`.
+- **Sheets read:** `sheets +data-export --spreadsheet-token <token> --sheet-id <id> --range <A1:B2> --save-result ./cells.json`. If it fails, use `sheets +cells-get` with the same flags. CSV can lose types and formulas.
+- **Sheets write:** `sheets +cells-set --spreadsheet-token <token> --sheet-id <id> --range <A1> --cells '[[{"value":"x"}]]' --as user`. Unfamiliar flag: `--print-schema --flag-name cells`.
+- **Drive:** `drive +upload --file ./source --as user` (add `--folder-token <folder>` for a folder); then `drive +download --file-token <data.file_token> --output ./download --as user`.
+- **App source:** `apps +export --app-id <app> --output ./source.zip --as user`; a shared `/page/<token>` link uses `--meta-token <token>` instead. Uncommitted work is excluded.
+- **App list:** `apps +list --ownership mine --as user`.
+- **Mail threads:** `mail +thread-modify --thread-ids <id,id> --add-folder <folder> --as user`. To delete: `mail +thread-trash --thread-ids <id,id> --as user --dry-run`, then add `--yes` only for authorized whole-thread deletion, after user confirmation. Check `success_thread_ids` and `failed_thread_ids`.
+- **IM send:** `im +messages-send --chat-id <oc_id> --text "<text>" --as user`; for a person, use `--user-id <ou_id>`. Add `--idempotency-key <key>` to prevent duplicates. Confirm the recipient first.
+- **IM read:** `im +chat-messages-list --chat-id <oc_id> --as user`; add `--start`, `--end`, `--page-all` for history, and `--no-reactions` to skip reactions. `--concise` (Markdown, on request only) excludes `--result-fields`, `--save-result`, `--format`, `--json`, `--jq`.
+- **Calendar agenda:** `calendar +agenda --start <ISO-8601> --end <ISO-8601> --as user`; defaults to today.
+- **Calendar create:** `calendar +create --summary <title> --start <ISO-8601> --end <ISO-8601> --attendee-ids <ou_id,...> --as user`.
+- **Tasks list:** `task +get-my-tasks --as user`; add `--complete false` for open tasks.
+- **Task create:** `task +create --summary <title> --due date:<YYYY-MM-DD> --as user`. **Task complete:** `task +complete --task-id <guid> --as user`.
+- **OKR read:** `okr +cycle-list --user-id <ou_id> --as user`, then `okr +cycle-detail --cycle-id <id> --as user`.
+- **Wiki node:** `wiki +node-get --node-token <token-or-url> --as user`.
 
-Read small stdout; use files/stdin for substantial content. Preserve formatting/IDs and omitted/null/empty/zero/false. Gate dependent steps on exit, JSON `ok`, IDs/completeness/partial receipts. Reconcile unknown mutations before retry; snapshots aren't locks. Resolve ambiguity; preserve audience/destination; overwrite only intentionally. Follow auth/scope errors; browser authorization requires user participation.
+## Unlisted tasks
+
+Run `discover <keywords> --flags --result-fields command,example --limit 5`, or `skills read lark-<domain>` (SKILL.md; references only when it points to one). For a large file, add `--outline`, then `--section <slug>`. Request shape: `schema <service.resource.method> --input-only`; `schema <service>` lists its methods.
+
+Do not pre-read `lark-shared` or run auth checks. Read `feishu-cli-next skills read lark-shared` only after an auth, token, identity, or scope error, or before a high-risk write. Browser authorization needs the user.
+
+## Rules
+
+- Keep large output in files (`--save-result`, `--output`); read small stdout only. Reuse guidance already read for this version.
+- Gate each next step on exit code, JSON `ok`, IDs, and completeness; stop on partial receipts.
+- Preserve IDs, formatting, and omitted/null/empty/zero/false values exactly.
+- Never retry a mutation whose outcome is unknown; inspect the target first.

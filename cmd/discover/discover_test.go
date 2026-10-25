@@ -5,6 +5,8 @@ package discover
 
 import (
 	"encoding/json"
+	"maps"
+	"slices"
 	"strings"
 	"testing"
 	"testing/fstest"
@@ -40,7 +42,7 @@ func TestDiscoveryDescribesOnlyReturnedPage(t *testing.T) {
 	if err := root.Execute(); err != nil {
 		t.Fatal(err)
 	}
-	if counts[0] != 0 || counts[1] != 1 || counts[2] != 0 {
+	if counts[0] != 1 || counts[1] != 0 || counts[2] != 0 {
 		t.Fatalf("rendered flags outside returned page: %v", counts)
 	}
 	var result struct {
@@ -53,7 +55,7 @@ func TestDiscoveryDescribesOnlyReturnedPage(t *testing.T) {
 	if err := json.Unmarshal(out.Bytes(), &result); err != nil {
 		t.Fatal(err)
 	}
-	if len(result.Data) != 1 || result.Data[0].Command != "beta" || len(result.Data[0].Flags) != 1 || result.Meta.Total != 3 || result.Meta.Next != 2 {
+	if len(result.Data) != 1 || result.Data[0].Command != "alpha" || len(result.Data[0].Flags) != 1 || result.Meta.Total != 3 || result.Meta.Next != 2 {
 		t.Fatalf("pagination or flag contract changed: %s", out)
 	}
 }
@@ -192,7 +194,8 @@ func TestDiscoveryMatchesPublicFlagsWithoutChangingOutputShape(t *testing.T) {
 		}
 	}
 	entries := collect(root, "contact user-ids")
-	for _, flag := range describeFlags(publicFlags(entries[0].command)) {
+	shared := describePage(entries, func(*entry) {})
+	for _, flag := range append(entries[0].Flags, shared...) {
 		if flag.Name == "private-selector" {
 			t.Fatal("hidden flag leaked into output")
 		}
@@ -224,12 +227,118 @@ func TestDiscoveryFlagDescriptionsPreserveRegisteredUsageAndVisibility(t *testin
 	if len(result.Data) != 1 {
 		t.Fatalf("unexpected result: %s", out)
 	}
+	if strings.Contains(out.String(), "common_flags") {
+		t.Fatalf("a single entry must keep its inherited flags inline: %s", out)
+	}
 	flags := result.Data[0].Flags
 	if len(flags) != 2 || flags[0].Name != "identity-type" || flags[0].Description != "open_id, user_id or union_id" || flags[0].Default != "open_id" {
 		t.Fatalf("missing inherited flag guidance or sorted output: %+v", flags)
 	}
 	if flags[1].Name != "selector" || flags[1].Description != usage || flags[1].Type != "string" || !flags[1].Required {
 		t.Fatalf("local flag guidance was lost or replaced: %+v", flags[1])
+	}
+}
+
+func TestDiscoveryListsSharedFlagsOncePerPage(t *testing.T) {
+	f, out, _, _ := cmdutil.TestFactory(t, nil)
+	root := &cobra.Command{Use: "test-cli"}
+	root.PersistentFlags().String("identity-type", "open_id", "open_id, user_id or union_id")
+	for _, name := range []string{"alpha", "beta"} {
+		root.AddCommand(&cobra.Command{Use: name, Short: "Read item"})
+	}
+	root.AddCommand(NewCmd(f, root))
+	root.SetArgs([]string{"discover", "*", "--flags", "--limit", "10"})
+	if err := root.Execute(); err != nil {
+		t.Fatal(err)
+	}
+	var result struct {
+		Data []entry `json:"data"`
+		Meta struct {
+			CommonFlags []flag `json:"common_flags"`
+		} `json:"meta"`
+	}
+	if err := json.Unmarshal(out.Bytes(), &result); err != nil {
+		t.Fatal(err)
+	}
+	if len(result.Data) < 3 || len(result.Meta.CommonFlags) != 1 || result.Meta.CommonFlags[0].Name != "identity-type" {
+		t.Fatalf("shared flag not listed once in meta: %s", out)
+	}
+	for _, e := range result.Data {
+		for _, fl := range e.Flags {
+			if fl.Name == "identity-type" {
+				t.Fatalf("shared flag repeated in %s: %s", e.Command, out)
+			}
+		}
+	}
+}
+
+func TestDiscoverySharedFlagsRecoverEveryEntryFlag(t *testing.T) {
+	f, out, _, _ := cmdutil.TestFactory(t, nil)
+	root := &cobra.Command{Use: "test-cli"}
+	root.PersistentFlags().String("identity-type", "open_id", "open_id, user_id or union_id")
+	root.PersistentFlags().String("format", "json", "output format")
+	root.PersistentFlags().Bool("dry-run", false, "preview only")
+	contact := &cobra.Command{Use: "contact", Short: "Contacts"}
+	contact.PersistentFlags().String("identity-type", "user_id", "contact identity namespace")
+	lookup := &cobra.Command{Use: "lookup", Short: "Read a person"}
+	lookup.Flags().String("format", "", "lookup format")
+	lookup.Flags().String("selector", "", "local selector")
+	contact.AddCommand(lookup)
+	docs := &cobra.Command{Use: "docs", Short: "Documents"}
+	docs.AddCommand(&cobra.Command{Use: "read", Short: "Read document"})
+	root.AddCommand(contact, docs, NewCmd(f, root))
+	root.SetArgs([]string{"discover", "*", "--flags", "--limit", "1000"})
+	if err := root.Execute(); err != nil {
+		t.Fatal(err)
+	}
+	expected := map[string]map[string]flag{}
+	for _, e := range collect(root, "*") {
+		local, inherited := splitPublicFlags(e.command)
+		byName := map[string]flag{}
+		for _, fl := range describeFlags(append(local, inherited...)) {
+			byName[fl.Name] = fl
+		}
+		expected[e.Command] = byName
+	}
+	var result struct {
+		Data []entry `json:"data"`
+		Meta struct {
+			CommonFlags []flag `json:"common_flags"`
+		} `json:"meta"`
+	}
+	if err := json.Unmarshal(out.Bytes(), &result); err != nil {
+		t.Fatal(err)
+	}
+	if len(result.Data) != len(expected) {
+		t.Fatalf("page does not cover every entry: %d != %d", len(result.Data), len(expected))
+	}
+	shared := map[string]bool{}
+	for _, fl := range result.Meta.CommonFlags {
+		shared[fl.Name] = true
+	}
+	if !shared["dry-run"] || shared["identity-type"] || shared["format"] {
+		t.Fatalf("wrong shared flags: %+v", result.Meta.CommonFlags)
+	}
+	lookupFlags := map[string]flag{}
+	for _, e := range result.Data {
+		got := map[string]flag{}
+		for _, fl := range append(slices.Clone(e.Flags), result.Meta.CommonFlags...) {
+			if _, dup := got[fl.Name]; dup {
+				t.Fatalf("%s lists %s twice: %s", e.Command, fl.Name, out)
+			}
+			got[fl.Name] = fl
+		}
+		if !maps.Equal(got, expected[e.Command]) {
+			t.Fatalf("%s recovered %+v, want %+v", e.Command, got, expected[e.Command])
+		}
+		if e.Command == "contact lookup" {
+			for _, fl := range e.Flags {
+				lookupFlags[fl.Name] = fl
+			}
+		}
+	}
+	if lookupFlags["identity-type"].Description != "contact identity namespace" || lookupFlags["format"].Description != "lookup format" || lookupFlags["dry-run"].Name != "" {
+		t.Fatalf("subgroup override or local shadow lost: %+v", lookupFlags)
 	}
 }
 
@@ -344,5 +453,28 @@ func TestDiscoveryRoutingOmitsSkeletonWithoutRequiredFlags(t *testing.T) {
 	}
 	if len(result.Data) != 1 || result.Data[0].Example != "" {
 		t.Fatalf("optional route was invented: %s", out)
+	}
+}
+
+func TestDiscoveryFlaglessProjectionOmitsSharedFlags(t *testing.T) {
+	for _, tc := range []struct {
+		fields string
+		want   bool
+	}{{"command,example", false}, {"command, flags", true}} {
+		f, out, _, _ := cmdutil.TestFactory(t, nil)
+		root := &cobra.Command{Use: "test-cli"}
+		root.PersistentFlags().String("result-fields", "", "select JSON result fields")
+		root.PersistentFlags().String("identity-type", "open_id", "open_id, user_id or union_id")
+		for _, name := range []string{"alpha", "beta"} {
+			root.AddCommand(&cobra.Command{Use: name, Short: "Read item"})
+		}
+		root.AddCommand(NewCmd(f, root))
+		root.SetArgs([]string{"discover", "item", "--flags", "--result-fields", tc.fields})
+		if err := root.Execute(); err != nil {
+			t.Fatal(err)
+		}
+		if got := strings.Contains(out.String(), "common_flags"); got != tc.want {
+			t.Errorf("--result-fields %q: common_flags present=%v, want %v: %s", tc.fields, got, tc.want, out)
+		}
 	}
 }

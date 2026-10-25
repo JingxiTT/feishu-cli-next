@@ -8,7 +8,7 @@ Before adding one, put the logic in a fork-owned file (`<name>_next.go`
 beside the upstream file, or a `next*` package) and keep the edit here to a
 call into it. A file restored to upstream bytes drops off this list.
 
-267 of 2720 pinned upstream files.
+281 of 2720 pinned upstream files.
 
 ## (root) (7)
 
@@ -34,7 +34,7 @@ call into it. A file restored to upstream bytes drops off this list.
 - `.github/workflows/semantic-review.yml`
 - `.github/workflows/skill-format-check.yml`
 
-## cmd (26)
+## cmd (30)
 
 - `cmd/auth/login.go`
 - `cmd/auth/login_messages_test.go`
@@ -48,14 +48,18 @@ call into it. A file restored to upstream bytes drops off this list.
 - `cmd/config/risk_control.go`
 - `cmd/config/set.go`
 - `cmd/config/strict_mode.go`
+- `cmd/error_auth_hint.go`
+- `cmd/event/consume.go`
 - `cmd/event/runtime.go`
 - `cmd/event/stop.go`
+- `cmd/presentation_test.go`
 - `cmd/profile/add.go`
 - `cmd/profile/remove.go`
 - `cmd/profile/rename.go`
 - `cmd/profile/use.go`
 - `cmd/root.go`
 - `cmd/root_integration_test.go`
+- `cmd/root_test.go`
 - `cmd/schema/schema.go`
 - `cmd/schema/schema_test.go`
 - `cmd/service/service.go`
@@ -78,7 +82,7 @@ call into it. A file restored to upstream bytes drops off this list.
 
 - `extension/fileio/types.go`
 
-## internal (35)
+## internal (36)
 
 - `internal/affordance/affordance_test.go`
 - `internal/client/client.go`
@@ -102,6 +106,7 @@ call into it. A file restored to upstream bytes drops off this list.
 - `internal/keychain/keychain_other.go`
 - `internal/meta/normalize.go`
 - `internal/output/emitter.go`
+- `internal/output/errors.go`
 - `internal/output/exitcode.go`
 - `internal/output/print.go`
 - `internal/qualitygate/cmd/manifest-export/collect.go`
@@ -129,7 +134,7 @@ call into it. A file restored to upstream bytes drops off this list.
 - `scripts/run.js`
 - `scripts/tag-release.sh`
 
-## shortcuts (145)
+## shortcuts (148)
 
 - `shortcuts/application/slash_command_create.go`
 - `shortcuts/application/slash_command_list.go`
@@ -214,6 +219,7 @@ call into it. A file restored to upstream bytes drops off this list.
 - `shortcuts/mail/draft/htmltext.go`
 - `shortcuts/mail/draft/large_attachment_parse.go`
 - `shortcuts/mail/draft/patch.go`
+- `shortcuts/mail/flag_suggest.go`
 - `shortcuts/mail/large_attachment.go`
 - `shortcuts/mail/lint/linter.go`
 - `shortcuts/mail/lint/types.go`
@@ -256,6 +262,8 @@ call into it. A file restored to upstream bytes drops off this list.
 - `shortcuts/register_brand_guard_test.go`
 - `shortcuts/sheets/data/flag-defs.json`
 - `shortcuts/sheets/flag_defs_gen.go`
+- `shortcuts/sheets/flag_ergonomics.go`
+- `shortcuts/sheets/lark_sheet_chart.go`
 - `shortcuts/sheets/sheet_ai_api.go`
 - `shortcuts/sheets/shortcuts.go`
 - `shortcuts/slides/slides_replace_pages.go`
@@ -281,7 +289,7 @@ call into it. A file restored to upstream bytes drops off this list.
 
 - `sidecar/server-multi-tenant-demo/auth_bridge.go`
 
-## tests (26)
+## tests (32)
 
 - `tests/cli_e2e/apps/apps_git_credential_dryrun_test.go`
 - `tests/cli_e2e/base/base_app_dryrun_test.go`
@@ -292,10 +300,14 @@ call into it. A file restored to upstream bytes drops off this list.
 - `tests/cli_e2e/base/base_form_submit_dryrun_test.go`
 - `tests/cli_e2e/base/base_share_dryrun_test.go`
 - `tests/cli_e2e/base/base_url_resolve_dryrun_test.go`
+- `tests/cli_e2e/config/bind_test.go`
 - `tests/cli_e2e/contact/coverage.md`
 - `tests/cli_e2e/core.go`
 - `tests/cli_e2e/core_test.go`
 - `tests/cli_e2e/docs/coverage.md`
+- `tests/cli_e2e/docs/docs_update_dryrun_test.go`
+- `tests/cli_e2e/drive/drive_duplicate_sync_workflow_test.go`
+- `tests/cli_e2e/drive/drive_update_title_dryrun_test.go`
 - `tests/cli_e2e/drive/drive_upload_dryrun_test.go`
 - `tests/cli_e2e/drive/drive_version_dryrun_test.go`
 - `tests/cli_e2e/im/coverage.md`
@@ -308,7 +320,9 @@ call into it. A file restored to upstream bytes drops off this list.
 - `tests/cli_e2e/vc/coverage.md`
 - `tests/cli_e2e/whiteboard/whiteboard_export_dryrun_test.go`
 - `tests/cli_e2e/wiki/helpers_test.go`
+- `tests/plugin_e2e/degrade_subsystem_test.go`
 - `tests/plugin_e2e/harness.go`
+- `tests/plugin_e2e/restrict_test.go`
 
 ## Not covered
 

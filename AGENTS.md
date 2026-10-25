@@ -85,7 +85,7 @@ dry-run only. In the PR, state which relevant checks you did not run.
 
 Offline is the default; `scripts/next_test.py` runs with an isolated HOME and no
 developer credentials. Before any command that can reach a real tenant, read
-[Authorization boundaries for all testing](docs/PLAN.md#authorization-boundaries-for-all-testing).
+[Authorization boundaries for all testing](docs/testing.md#authorization-boundaries-for-all-testing).
 Use only private resources the run created, and clean them up. These limits
 apply to testing; never encode them in the product or a shipped skill.
 

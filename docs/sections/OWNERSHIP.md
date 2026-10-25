@@ -1,6 +1,7 @@
 # Capability section assignments
 
-The complete scope and acceptance criteria are in [PLAN.md](../PLAN.md). This is
+The testing authorization boundaries are in
+[testing](../testing.md#authorization-boundaries-for-all-testing). This is
 implementation coordination guidance; it is not part of the shipped agent skill.
 
 P2 starts after the coordinator records the P1 shared-interface gate. Every
@@ -17,7 +18,7 @@ acceptance. Shared contract changes require coordination before editing.
 
 Each domain owner owns `shortcuts/<domain>/` (`docs` maps to `doc`), its existing
 `tests/cli_e2e/<section>/` directory, a new `tests/next_sections/<section>/`
-process suite, and `docs/sections/<section>.md`. Domain affordance guidance is
+process suite, and, where one is kept, `docs/sections/<section>.md`. Domain affordance guidance is
 owned by the matching section. The events owner owns all `events/` projections,
 `shortcuts/event/`, and the event process suite; domain owners inspect their event
 contracts and send required changes to that owner. The extensions owner owns
@@ -69,7 +70,7 @@ section open. Notify the coordinator when the whole section is ready for live
 verification and comparative development tasks. Comparative evaluations run one
 balanced workload at a time; keep held-out tasks untouched until P4.
 
-Live tests obey PLAN.md's current-account private-fixture and Ying Wu-only other
+Live tests obey the current-account private-fixture and Ying Wu-only other
 recipient boundary. Verify identity, tenant and creation visibility before any
 content write. No existing unrelated resource may be edited or deleted. When
 privacy or recipient identity cannot be verified, write the selectable scenario,

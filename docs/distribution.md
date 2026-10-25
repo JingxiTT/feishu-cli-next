@@ -105,7 +105,7 @@ Before changing the private-package, release-workflow, preview-workflow, or
 GoReleaser guards, retain reviewable evidence for these prerequisites:
 
 - Finish the outstanding domain, live, platform and comparative acceptance in
-  [IMPLEMENTATION.md](IMPLEMENTATION.md#outstanding-release-evidence), tied to the
+  [outstanding release evidence](#outstanding-release-evidence), tied to the
   candidate revision. Offline tests and cross-compiles do not close live or
   OS-specific checks.
 - Verify ownership of the `feishu-cli-next` npm name and configure npm trusted
@@ -129,3 +129,36 @@ The publication preflight enforces wiring prerequisites. The evidence above
 remains a release review responsibility; passing the preflight is not a live
 acceptance result. Until those prerequisites are met, local installation and
 explicit local upgrades remain the available paths.
+
+## Outstanding release evidence
+
+These gates were still open at the v1.0.98 sync. Offline tests, cross-compiles
+and version validation do not close them.
+
+- **Private live workflows.** Drive, explicit-XML Docs, Sheets (after its formula
+  correction) and Markdown lifecycles have passed private runs with a verified
+  account and private folder. Base's supported steps passed, but its selected
+  suite retains a failed negative assertion. Other section live scenarios and
+  broader type and concurrency guarantees remain open.
+- **Contact bot tenant binding.** The requested `search:bot` grant and the selected
+  read suite passed. Separate bot tenant verification still needs the
+  `tenant:tenant:readonly` app scope, which was not requested.
+- **OS-specific runtime.** Linux arm64 runtime suites and the platform comparison
+  pass, and delivered archives pass lifecycle checks on arm64 and under
+  amd64/riscv64 translation. Broader amd64/riscv64 runtime suites have not run.
+  Darwin/amd64 smoke checks ran under Rosetta. Windows checks and native reference
+  capture are deferred by the user's 2026-09-08 instruction, and no Windows runner
+  or VM was available. Cross-built archives are not runtime verification.
+- **Remote release ownership.** The public source repository is
+  `Zhujingxi/feishu-cli-next`. npm package ownership, a trusted artifact and update
+  channel, the updater identity integration, and remote install and update checks
+  remain unverified.
+- **Comparative evidence.** Development comparisons keep all costs. The
+  native-fidelity audit withholds same-fidelity efficiency claims for Docs, Sheets
+  and Base-size tasks, and small Base update fidelity is unvalidated. Changes made
+  since then have no model measurements. Held-out tasks are reserved for the final
+  release gate.
+
+Offline source-review approvals in
+[the aggregate](../evidence/reference/p3-effective-review-current.json) grant no
+live or release acceptance.

@@ -393,6 +393,7 @@ func serviceMethodRun(opts *ServiceMethodOptions) error {
 
 	// Check if this API method supports the resolved identity.
 	if opts.Method.RestrictsIdentity() {
+		opts.As = f.ResolveSupportedIdentity(opts.As, opts.Method.Identities())
 		if err := f.CheckIdentity(opts.As, opts.Method.Identities()); err != nil {
 			return err
 		}

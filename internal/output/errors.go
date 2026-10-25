@@ -74,7 +74,7 @@ func WriteTypedErrorEnvelope(w io.Writer, err error, identity string) bool {
 	var buf bytes.Buffer
 	enc := json.NewEncoder(&buf)
 	enc.SetEscapeHTML(false)
-	enc.SetIndent("", "  ")
+	enc.SetIndent("", typedErrorIndent)
 	if encErr := enc.Encode(env); encErr != nil {
 		// Encoding failed — emit nothing here; the dispatcher's fall-through
 		// branches still surface the error, so stderr is never blank.

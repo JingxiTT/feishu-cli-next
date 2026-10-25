@@ -8,8 +8,17 @@ lists top-level command groups. A known domain's `--help` is also a direct route
 
 Matching includes public local and inherited flags even without `--flags`.
 Hidden commands/subtrees and hidden flag names/descriptions are excluded. Flag
-default values are not search text. Results remain alphabetical by command path,
-with stable offset pagination; matching adds no rankings or inferred synonyms.
+default values are not search text. Results are ordered by where the terms
+matched: every term in the command path first, then in the path, aliases, or
+short description, then only in public local flags, then only in inherited flags.
+Within a tier, exact path-segment matches come first, then shortcuts (leaves
+starting with `+`), then fewer path segments, then shorter command paths, then
+command path alphabetically. A term counts as a path or summary match only at the
+start of a word, so `read` inside `spreadsheet` ranks as a weaker substring match.
+An empty query or `*` lists results alphabetically. The order is deterministic,
+so offset pagination stays stable. Matching adds no
+inferred synonyms. A query with no matches returns an empty result with a
+`meta.hint` that suggests fewer or shorter keywords.
 
 `--flags` includes each public flag's name, type, default, required marker, and
 optional `description` copied verbatim from its registered usage. It also
@@ -19,9 +28,14 @@ illustrative, not a required workflow; command help and domain guidance retain
 alternate routes and complex semantics. Descriptions
 include accepted selector values and input conventions where the command defines
 them, so a focused lookup can often replace a separate command-help read. Hidden
-flags remain excluded and local definitions shadow inherited flags. The default
-output without `--flags` is unchanged. Narrow the query and `--limit` before
-requesting flags; a broad listing repeats inherited flag descriptions.
+flags remain excluded and local definitions shadow inherited flags. An entry's
+`flags` lists its local flags. On a page with two or more entries, inherited
+flags that every entry shares, identical in name, type, default, required marker,
+and description, are listed once in `meta.common_flags`; any other inherited flag
+stays in its entry's `flags`. Each flag is recoverable from `flags` or
+`common_flags`. The default output without `--flags` is unchanged, and
+`common_flags` is omitted when the page has fewer than two entries or no shared
+flags.
 
 For the token-oriented route view, combine `--flags` with the existing
 `--result-fields command,example`; the full result remains available when the

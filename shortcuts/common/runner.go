@@ -1184,6 +1184,7 @@ func resolveShortcutIdentity(cmd *cobra.Command, f *cmdutil.Factory, s *Shortcut
 	}
 
 	// Step 2: check if this shortcut supports the resolved identity.
+	as = f.ResolveSupportedIdentity(as, s.AuthTypes)
 	if err := f.CheckIdentity(as, s.AuthTypes); err != nil {
 		return "", err
 	}

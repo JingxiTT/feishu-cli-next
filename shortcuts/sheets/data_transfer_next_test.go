@@ -5,6 +5,7 @@ package sheets
 
 import (
 	"encoding/json"
+	"errors"
 	"strings"
 	"testing"
 
@@ -294,5 +295,17 @@ func TestNativeFormulaMergeRejectsConflictingEvidence(t *testing.T) {
 			err := mergeNativeFormulas(nativeCells(t, `[[`+tc.raw+`]]`), nativeCells(t, `[[`+tc.formula+`]]`))
 			requireProblem(t, err, tc.category, tc.subtype, "")
 		})
+	}
+}
+
+func TestNativeIncompleteCellResponseNamesCellsFallback(t *testing.T) {
+	extent, _ := dataRange("A1:B1")
+	_, err := decodeNativePage(`{"ranges":[{"range":"A1:B1","cells":[[{}]]}]}`, extent)
+	var internal *errs.InternalError
+	if !errors.As(err, &internal) {
+		t.Fatalf("want internal error, got %T %v", err, err)
+	}
+	if internal.Subtype != errs.SubtypeInvalidResponse || !strings.Contains(internal.Hint, "sheets +cells-get") {
+		t.Fatalf("missing fallback: subtype=%s hint=%q", internal.Subtype, internal.Hint)
 	}
 }

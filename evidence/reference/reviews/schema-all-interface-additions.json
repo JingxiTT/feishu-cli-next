@@ -1,0 +1,47 @@
+{
+  "candidate_revision": "7b6cc80969a5369fd11bca55173dda6339fd9c99",
+  "evidence": [
+    "cmd/schema/schema_index_next_test.go",
+    "tests/next_foundation/schema_index_e2e_test.go"
+  ],
+  "previous_mapping_sha256": "58a0fa78f679a063130897362481cdc568d3c787d32ea33b11e365adb16c8e03",
+  "registrations": [
+    {
+      "registration_change": {
+        "candidate_sha256": "3e6fe1157fb27bd370c7160e08608dd5379e7c713873319c37187af9a4dd10c4",
+        "kind": "added",
+        "path": "/feishu/commands/schema/flags/all"
+      },
+      "value": {
+        "aliases": null,
+        "annotations": null,
+        "default": "false",
+        "hidden": false,
+        "no_opt_default": "true",
+        "shorthand": "",
+        "type": "bool"
+      }
+    },
+    {
+      "registration_change": {
+        "candidate_sha256": "3e6fe1157fb27bd370c7160e08608dd5379e7c713873319c37187af9a4dd10c4",
+        "kind": "added",
+        "path": "/lark/commands/schema/flags/all"
+      },
+      "value": {
+        "aliases": null,
+        "annotations": null,
+        "default": "false",
+        "hidden": false,
+        "no_opt_default": "true",
+        "shorthand": "",
+        "type": "bool"
+      }
+    }
+  ],
+  "review": {
+    "schema --all": "Explicit false-default boolean on the read-only schema command; with it set, a multi-method path prints complete schemas instead of the compact index. Output without the flag is the new index; the single-method output is unchanged with or without the flag."
+  },
+  "schema_version": 1,
+  "scope": "Two opt-in schema --all flag registrations only, for both brands; two exact additive registrations; all previous rows retained; no source-semantic or live approval."
+}

@@ -522,7 +522,7 @@ func TestHandleRootError_TypedAuthErrorWithLegacyCausePreserved(t *testing.T) {
 		t.Errorf("exit = %d, want %d (ExitAuth)", exit, int(output.ExitAuth))
 	}
 	got := errOut.String()
-	if !strings.Contains(got, `"subtype": "token_expired"`) {
+	if !strings.Contains(got, `"subtype":"token_expired"`) {
 		t.Errorf("envelope lost producer Subtype TokenExpired; got %s", got)
 	}
 	if !strings.Contains(got, "custom producer hint") {

@@ -38,5 +38,4 @@ verifies current account/tenant, private visibility before creation, run-owned
 host meeting and cleanup, and self-only or unambiguously Ying Wu-only recipients
 (including eligible ALL_SUGGESTED invitees). No unrelated existing meeting is a
 permitted fixture. The separately selectable `TestVCLivePrivateLifecycle`
-records this blocker, and [the section report](../../../docs/sections/vc.md)
-tracks the remaining live and comparative evaluation work.
+records this blocker.

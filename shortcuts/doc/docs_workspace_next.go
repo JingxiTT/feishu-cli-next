@@ -190,6 +190,10 @@ func docsWorkspaceJSONEqual(left, right interface{}) bool {
 	return errA == nil && errB == nil && reflect.DeepEqual(a, b)
 }
 
+const docsWorkspaceAtPathHint = "--file names the saved workspace path: use --file ./note.md without @. For a literal @-prefixed filename, use --file ./@note.md."
+
+const docsWorkspaceMissingHint = "the .md working copy and its .feishu.json sidecar come from `docs +pull --doc <doc> --output <file>`; run it to create both"
+
 func docsWorkspaceFilePaths(runtime *common.RuntimeContext, name, param string, output bool) (string, string, error) {
 	if name == "" || !strings.EqualFold(filepath.Ext(name), ".md") {
 		return "", "", errs.NewValidationError(errs.SubtypeInvalidArgument, "working copy must use a .md file").WithParam(param)
@@ -242,13 +246,20 @@ func loadDocsWorkspace(runtime *common.RuntimeContext) (docsWorkspace, []docwork
 	if err != nil {
 		return saved, nil, err
 	}
+	// --file names a path, unlike content flags that resolve @file bytes.
+	// Keep existing literal @ filenames valid; clarify only missing input.
+	hint := docsWorkspaceMissingHint
+	if strings.HasPrefix(file, "@") {
+		hint = docsWorkspaceAtPathHint
+	}
+	if _, err := runtime.FileIO().Stat(file); errors.Is(err, fs.ErrNotExist) {
+		return saved, nil, errs.NewValidationError(errs.SubtypeInvalidArgument, "working copy markdown not found: %s", file).WithParam("--file").WithCause(err).WithHint(hint)
+	}
 	raw, err := readDocsWorkspaceFile(runtime, sidecar)
 	if err != nil {
-		// --file names a path, unlike content flags that resolve @file bytes.
-		// Keep existing literal @ filenames valid; clarify only missing input.
 		var input *errs.ValidationError
-		if strings.HasPrefix(file, "@") && errors.Is(err, fs.ErrNotExist) && errors.As(err, &input) {
-			input.WithHint("--file names the saved workspace path: use --file ./note.md without @. For a literal @-prefixed filename, use --file ./@note.md.")
+		if errors.Is(err, fs.ErrNotExist) && errors.As(err, &input) {
+			input.WithHint(hint)
 		}
 		return saved, nil, err
 	}

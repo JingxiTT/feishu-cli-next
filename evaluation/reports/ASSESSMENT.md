@@ -4,7 +4,7 @@ The measurements show task-specific gains and substantial regressions. They do
 not establish a general token-efficiency advantage or release readiness. The
 implementation retains the full reference capability target; sampling successful
 agent tasks does not replace capability reconciliation, section correctness or
-live verification. [Release requirements and outstanding gates](../../docs/IMPLEMENTATION.md)
+live verification. [Release requirements and outstanding gates](../../docs/distribution.md#outstanding-release-evidence)
 remain authoritative.
 
 ## Native fidelity amendment — 2026-09-08

@@ -28,6 +28,7 @@ var agentSkillContent fs.FS
 func SetAgentSkillContent(content fs.FS) { agentSkillContent = content }
 
 func configureAgentFoundation(f *cmdutil.Factory, root *cobra.Command) *output.AgentOptions {
+	output.SetCompactErrors(true)
 	opts := &output.AgentOptions{}
 	f.EnableAgentAttempts = true
 	f.IOStreams.Out = output.WithAgentOptions(f.IOStreams.Out, opts)
@@ -125,11 +126,11 @@ func validateAgentOutput(f *cmdutil.Factory, c *cobra.Command, opts *output.Agen
 			}
 			flag := c.Flags().Lookup(name)
 			if flag != nil && flag.Changed && flag.Value.String() != "false" && flag.Value.String() != "" {
-				return errs.NewValidationError(errs.SubtypeInvalidArgument, "result projection/artifacts cannot be combined with --%s", name).WithParam("--" + name)
+				return errs.NewValidationError(errs.SubtypeInvalidArgument, "result projection/artifacts cannot be combined with --%s", name).WithParam("--"+name).WithHint("drop --%s; --result-fields and --save-result work alone", name)
 			}
 		}
 		if flag := c.Flags().Lookup("format"); flag != nil && flag.Value.String() != "" && flag.Value.String() != "json" {
-			return errs.NewValidationError(errs.SubtypeInvalidArgument, "result projection/artifacts require --format json").WithParam("--format")
+			return errs.NewValidationError(errs.SubtypeInvalidArgument, "result projection/artifacts require --format json").WithParam("--format").WithHint("add --format json, or drop --result-fields/--save-result to keep %s output", flag.Value.String())
 		}
 		source, _ := cmdmeta.SourceOf(c)
 		business := source == cmdmeta.SourceShortcut || source == cmdmeta.SourceService || c.Name() == "api"
@@ -138,15 +139,18 @@ func validateAgentOutput(f *cmdutil.Factory, c *cobra.Command, opts *output.Agen
 			if opts.SaveResult != "" {
 				param = "--save-result"
 			}
-			return errs.NewValidationError(errs.SubtypeInvalidArgument, "result projection/artifacts are available on structured business commands").WithParam(param)
+			return errs.NewValidationError(errs.SubtypeInvalidArgument, "result projection/artifacts are available on structured business commands").WithParam(param).WithHint("drop %s; this command prints its own JSON result to stdout", param)
 		}
 		if opts.SaveResult != "" {
 			risk, _ := cmdmeta.Risk(c)
 			// Raw GET can issue credentials (for example API keys and Git PATs).
 			// Without an operation schema, resource tokens cannot safely be
 			// distinguished from secrets destined for persistent artifacts.
-			if !business || c.Name() == "api" || risk != "read" {
-				return errs.NewValidationError(errs.SubtypeInvalidArgument, "--save-result requires a declared, non-raw read operation").WithParam("--save-result")
+			if c.Name() == "api" {
+				return errs.NewValidationError(errs.SubtypeInvalidArgument, "--save-result requires a declared, non-raw read operation").WithParam("--save-result").WithHint("api output cannot be saved as an artifact; redirect stdout instead, e.g. `api ... > result.json`")
+			}
+			if !business || risk != "read" {
+				return errs.NewValidationError(errs.SubtypeInvalidArgument, "--save-result requires a declared, non-raw read operation").WithParam("--save-result").WithHint("--save-result only saves reads; drop it and use this write's stdout, or `receipts` for mutation evidence")
 			}
 			opts.FileIO = f.ResolveFileIO(c.Context())
 		}

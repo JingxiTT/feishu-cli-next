@@ -1632,10 +1632,13 @@ func configureChartSemanticCommand(cmd *cobra.Command) {
 		}
 		return originalArgs(cmd, args)
 	}
-	cmd.SetFlagErrorFunc(func(_ *cobra.Command, err error) error {
+	cmd.SetFlagErrorFunc(func(c *cobra.Command, err error) error {
 		message := err.Error()
 		if strings.Contains(message, "unknown flag: --stacked") {
 			return sheetsValidationForFlag("stacked", "--stacked is not supported; use --stack normal (or --stack percent for 100%% stacking)")
+		}
+		if verr, ok := common.InvalidFlagValueError(c, err); ok {
+			return verr
 		}
 		return err
 	})

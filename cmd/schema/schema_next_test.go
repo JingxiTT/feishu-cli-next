@@ -17,7 +17,7 @@ func TestSchemaCmdInputOnlyPreservesRequestAndSafetyMetadata(t *testing.T) {
 			read := func(inputOnly bool) []map[string]any {
 				f, out, _, _ := schemaTestFactory(t, nil)
 				cmd := NewCmdSchema(f, nil)
-				args := []string{path}
+				args := []string{path, "--all"}
 				if inputOnly {
 					args = append(args, "--input-only")
 				}

@@ -371,7 +371,7 @@ func TestGenericMetadata(t *testing.T) {
 }
 
 func TestLiveMinutesPrivateLifecycle(t *testing.T) {
-	t.Skip("blocked: no verified run-owned private Drive media plus Minutes creation visibility/current-account tenant fixture; permission requests and speaker rebinding may notify unrelated users. No live requests are dispatched. See docs/sections/minutes.md")
+	t.Skip("blocked: no verified run-owned private Drive media plus Minutes creation visibility/current-account tenant fixture; permission requests and speaker rebinding may notify unrelated users. No live requests are dispatched. See docs/testing.md#authorization-boundaries-for-all-testing")
 }
 
 func TestSkipUnchangedFailsClosedOnUnreadableContent(t *testing.T) {

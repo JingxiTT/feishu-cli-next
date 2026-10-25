@@ -206,7 +206,7 @@ func TestDriveUpdateTitleDryRun_RejectsExtensionPolicyOnNonFileType(t *testing.T
 	if !strings.Contains(result.Stderr, "only applies to --type file") {
 		t.Fatalf("stderr should explain the flag's scope\nstderr:\n%s", result.Stderr)
 	}
-	if !strings.Contains(result.Stderr, `"param": "--on-extension-mismatch"`) {
+	if !strings.Contains(result.Stderr, `"param":"--on-extension-mismatch"`) {
 		t.Fatalf("stderr should name the offending flag as the typed param\nstderr:\n%s", result.Stderr)
 	}
 }
@@ -271,7 +271,7 @@ func TestDriveUpdateTitleDryRun_RedirectsAppsToAppsUpdate(t *testing.T) {
 			if !strings.Contains(result.Stderr, "does not support Miaoda apps") {
 				t.Fatalf("stderr should name the apps limitation\nstderr:\n%s", result.Stderr)
 			}
-			if !strings.Contains(result.Stderr, "lark-cli apps --help") {
+			if !strings.Contains(result.Stderr, "feishu-cli-next apps --help") {
 				t.Fatalf("stderr should redirect to the apps domain\nstderr:\n%s", result.Stderr)
 			}
 		})
@@ -335,7 +335,7 @@ func TestDriveUpdateTitleDryRun_RejectsEmptyTitle(t *testing.T) {
 	if result.ExitCode == 0 {
 		t.Fatalf("a whitespace-only title should be rejected locally\nstdout:\n%s\nstderr:\n%s", result.Stdout, result.Stderr)
 	}
-	if !strings.Contains(result.Stderr, `"type": "validation"`) {
+	if !strings.Contains(result.Stderr, `"type":"validation"`) {
 		t.Fatalf("stderr should carry a typed validation error\nstderr:\n%s", result.Stderr)
 	}
 	if !strings.Contains(result.Stderr, "--title") {
