@@ -75,7 +75,7 @@ func TestDrive_DuplicateRemoteWorkflow(t *testing.T) {
 		if statusResult.ExitCode == 0 {
 			t.Fatalf("+status should fail on duplicate remote rel_path\nstdout:\n%s\nstderr:\n%s", statusResult.Stdout, statusResult.Stderr)
 		}
-		if !strings.Contains(statusResult.Stderr, `"type": "validation"`) ||
+		if !strings.Contains(statusResult.Stderr, `"type":"validation"`) ||
 			!strings.Contains(statusResult.Stderr, "map to multiple Drive entries") {
 			t.Fatalf("+status stderr should be a typed validation error for duplicate rel_path\nstdout:\n%s\nstderr:\n%s", statusResult.Stdout, statusResult.Stderr)
 		}
@@ -93,7 +93,7 @@ func TestDrive_DuplicateRemoteWorkflow(t *testing.T) {
 		if pullFailResult.ExitCode == 0 {
 			t.Fatalf("+pull should fail on duplicate remote rel_path by default\nstdout:\n%s\nstderr:\n%s", pullFailResult.Stdout, pullFailResult.Stderr)
 		}
-		if !strings.Contains(pullFailResult.Stderr, `"type": "validation"`) ||
+		if !strings.Contains(pullFailResult.Stderr, `"type":"validation"`) ||
 			!strings.Contains(pullFailResult.Stderr, "map to multiple Drive entries") {
 			t.Fatalf("+pull stderr should be a typed validation error for duplicate rel_path\nstdout:\n%s\nstderr:\n%s", pullFailResult.Stdout, pullFailResult.Stderr)
 		}

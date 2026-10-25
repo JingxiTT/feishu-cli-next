@@ -18,9 +18,9 @@ func TestUsageErrorsNameTheNextInvocation(t *testing.T) {
 		args []string
 		want []string
 	}{
-		{[]string{"doc"}, []string{`"subtype": "invalid_argument"`, `"unknown subcommand \"doc\"`, `"docs"`}},
-		{[]string{"docs", "+pull"}, []string{`"name": "--doc"`, `required; string: `, "retry with `", "docs +pull --doc <doc>`"}},
-		{[]string{"sheets", "+read", "--help"}, []string{`"subtype": "invalid_argument"`, `unknown subcommand \"+read\"`, `"+cells-get"`}},
+		{[]string{"doc"}, []string{`"subtype":"invalid_argument"`, `"unknown subcommand \"doc\"`, `"docs"`}},
+		{[]string{"docs", "+pull"}, []string{`"name":"--doc"`, `required; string: `, "retry with `", "docs +pull --doc <doc>`"}},
+		{[]string{"sheets", "+read", "--help"}, []string{`"subtype":"invalid_argument"`, `unknown subcommand \"+read\"`, `"+cells-get"`}},
 		{[]string{"discover", "x", "--limit", "abc"}, []string{`invalid value \"abc\" for --limit: expected an integer`}},
 		{[]string{"base", "+record-list", "--base-token", "b", "--table-id", "t", "--limit", "abc"}, []string{`invalid value \"abc\" for --limit: expected an integer`}},
 		{[]string{"sheets", "+cells-get", "--spreadsheet-token", "s", "--sheet-id", "x", "--range", "A1", "--max-chars", "abc"}, []string{`invalid value \"abc\" for --max-chars: expected an integer`}},

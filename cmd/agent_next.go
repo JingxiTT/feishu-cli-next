@@ -28,6 +28,7 @@ var agentSkillContent fs.FS
 func SetAgentSkillContent(content fs.FS) { agentSkillContent = content }
 
 func configureAgentFoundation(f *cmdutil.Factory, root *cobra.Command) *output.AgentOptions {
+	output.SetCompactErrors(true)
 	opts := &output.AgentOptions{}
 	f.EnableAgentAttempts = true
 	f.IOStreams.Out = output.WithAgentOptions(f.IOStreams.Out, opts)
