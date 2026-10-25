@@ -44,7 +44,7 @@ func TestEntryRoutesCommonTasksDirectly(t *testing.T) {
 		"im +messages-send", "im +chat-messages-list", "calendar +agenda", "calendar +create",
 		"task +get-my-tasks", "task +create", "task +complete", "okr +cycle-detail", "wiki +node-get",
 		"sheets +cells-set", "base +record-batch-create", "--i-have-read-guide` to `base +field-create`",
-		"apps +list", "Do not pre-read `lark-shared`",
+		"apps +list", "Do not pre-read `lark-shared`", "`--outline`, then `--section <slug>`",
 	} {
 		if !strings.Contains(string(content), route) {
 			t.Errorf("entry guidance missing route %q", route)

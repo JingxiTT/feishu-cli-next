@@ -33,7 +33,7 @@ Run these routes directly. Use `--as user` for personal data; bot permissions di
 
 ## Unlisted tasks
 
-Run `feishu-cli-next discover <keywords> --limit 5`, or `feishu-cli-next skills read lark-<domain>` (that domain's SKILL.md; its references only if it points to one). Request shape: `schema <service.resource.method> --input-only`; bare `schema` dumps the whole catalog.
+Run `feishu-cli-next discover <keywords> --limit 5`, or `feishu-cli-next skills read lark-<domain>` (SKILL.md; references only when it points to one). For a large file, add `--outline`, then `--section <slug>`. Request shape: `schema <service.resource.method> --input-only`; bare `schema` dumps the whole catalog.
 
 Do not pre-read `lark-shared` or run auth checks. Read `feishu-cli-next skills read lark-shared` only after an auth, token, identity, or scope error, or before a high-risk write. Browser authorization needs the user.
 
