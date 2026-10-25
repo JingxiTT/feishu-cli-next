@@ -5,6 +5,7 @@
 package discover
 
 import (
+	"slices"
 	"sort"
 	"strings"
 
@@ -51,14 +52,14 @@ func NewCmd(f *cmdutil.Factory, root *cobra.Command) *cobra.Command {
 			entries := collect(root, query)
 			start := min(offset, len(entries))
 			end := min(start+limit, len(entries))
-			if withFlags {
-				for i := start; i < end; i++ {
-					entries[i].Flags = describeFlags(publicFlags(entries[i].command))
-				}
-			}
 			page := map[string]any{"query": query, "offset": offset, "limit": limit, "total": len(entries), "complete": end == len(entries)}
 			if end < len(entries) {
 				page["next_offset"] = end
+			}
+			if withFlags {
+				if shared := describePage(entries[start:end]); len(shared) > 0 {
+					page["common_flags"] = shared
+				}
 			}
 			if len(entries) == 0 && query != "" {
 				page["hint"] = "No commands matched. Matching is literal substring and every term must match; try fewer or shorter keywords."
@@ -114,13 +115,40 @@ func describeFlags(flags []*pflag.Flag) []flag {
 	return result
 }
 
-// publicFlags shares visibility and local-shadowing rules between matching and
-// optional flag output. Hidden flag descriptions must not reveal a match.
-func publicFlags(c *cobra.Command) []*pflag.Flag {
-	local, inherited := splitPublicFlags(c)
-	return append(local, inherited...)
+// describePage fills each entry's flags with its local public flags and the
+// inherited flags the page does not share, then returns the inherited flags
+// every entry on the page shares, so a broad listing repeats none of them.
+func describePage(entries []entry) []flag {
+	if len(entries) == 0 {
+		return nil
+	}
+	inherited := make([][]flag, len(entries))
+	for i := range entries {
+		local, shared := splitPublicFlags(entries[i].command)
+		entries[i].Flags = describeFlags(local)
+		inherited[i] = describeFlags(shared)
+	}
+	// A single entry has nothing to repeat, so it keeps its inherited flags.
+	var shared []flag
+	if len(entries) > 1 {
+		shared = slices.Clone(inherited[0])
+	}
+	for _, set := range inherited[1:] {
+		shared = slices.DeleteFunc(shared, func(f flag) bool { return !slices.Contains(set, f) })
+	}
+	for i := range entries {
+		for _, f := range inherited[i] {
+			if !slices.Contains(shared, f) {
+				entries[i].Flags = append(entries[i].Flags, f)
+			}
+		}
+		slices.SortFunc(entries[i].Flags, func(a, b flag) int { return strings.Compare(a.Name, b.Name) })
+	}
+	return shared
 }
 
+// splitPublicFlags shares visibility and local-shadowing rules between matching
+// and flag output. Hidden flag descriptions must not reveal a match.
 func splitPublicFlags(c *cobra.Command) (local, inherited []*pflag.Flag) {
 	seen := map[string]bool{}
 	visit := func(dst *[]*pflag.Flag) func(*pflag.Flag) {

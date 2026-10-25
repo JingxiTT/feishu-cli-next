@@ -186,6 +186,7 @@ func assertWikiDiscovery(t *testing.T, f *nextfixture.Fixture, command string) {
 	query := "wiki " + command
 	offset, total := 0, -1
 	entries := map[string]gjson.Result{}
+	sharedFlags := map[string][]gjson.Result{}
 	for {
 		result := f.Run("discover", "wiki", command, "--flags", "--limit", "2", "--offset", strconv.Itoa(offset))
 		success(t, result)
@@ -205,6 +206,7 @@ func assertWikiDiscovery(t *testing.T, f *nextfixture.Fixture, command string) {
 			require.NotEmpty(t, path)
 			require.NotContains(t, entries, path, "duplicate discovery entry")
 			entries[path] = entry
+			sharedFlags[path] = gjson.Get(result.Stdout, "meta.common_flags").Array()
 		}
 		offset += len(page)
 		complete := gjson.Get(result.Stdout, "meta.complete")
@@ -239,7 +241,7 @@ func assertWikiDiscovery(t *testing.T, f *nextfixture.Fixture, command string) {
 	}
 	require.ElementsMatch(t, expectedIdentities, identities)
 	flags := map[string]gjson.Result{}
-	for _, flag := range target.Get("flags").Array() {
+	for _, flag := range append(target.Get("flags").Array(), sharedFlags[query]...) {
 		flags[flag.Get("name").String()] = flag
 	}
 	if command == "+node-get" {
