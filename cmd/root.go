@@ -112,7 +112,7 @@ func executeWithOptions(opts []BuildOption) int {
 		setupNotices(rootCmd.Context(), runtime.surface)
 	}
 
-	runErr := rootUnknownCommandError(rootCmd, rootCmd.Execute())
+	runErr := rootUnknownCommandError(rootCmd, executeRejectingUnknownHelp(rootCmd, rawInvocationArgs))
 
 	// Fire Shutdown lifecycle hooks regardless of run outcome.
 	// emitShutdown imposes a 2s total deadline and never propagates handler
@@ -469,7 +469,7 @@ func unknownSubcommandRunE(cmd *cobra.Command, args []string) error {
 	// Rank suggestions across both current and deprecated names so a mistyped
 	// legacy command (e.g. +raed → +read) still resolves; the alias stays
 	// runnable and self-flags via the _notice on execution.
-	suggestions := suggest.Closest(unknown, append(append([]string{}, available...), deprecated...), 6)
+	suggestions := unknownSubcommandSuggestions(cmd, unknown, append(append([]string{}, available...), deprecated...))
 	msg := fmt.Sprintf("unknown subcommand %q for %q", unknown, cmd.CommandPath())
 	hint := fmt.Sprintf("run `%s --help` to see available subcommands", cmd.CommandPath())
 	if len(suggestions) > 0 {

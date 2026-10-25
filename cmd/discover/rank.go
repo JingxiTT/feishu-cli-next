@@ -4,6 +4,7 @@
 package discover
 
 import (
+	"sort"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -85,6 +86,26 @@ func matchRank(c *cobra.Command, command string, terms []string) (rank, bool) {
 		}
 	}
 	return r, true
+}
+
+// MatchChildren returns the names of group's visible direct subcommands whose
+// searchable text contains every term, best match first.
+func MatchChildren(group *cobra.Command, terms []string) []string {
+	var ranked []rank
+	for _, c := range group.Commands() {
+		if c.Hidden || !c.IsAvailableCommand() || c.Name() == "help" || c.Name() == "completion" {
+			continue
+		}
+		if r, ok := matchRank(c, c.Name(), terms); ok {
+			ranked = append(ranked, r)
+		}
+	}
+	sort.Slice(ranked, func(i, j int) bool { return ranked[i].before(ranked[j]) })
+	names := make([]string, len(ranked))
+	for i, r := range ranked {
+		names[i] = r.command
+	}
+	return names
 }
 
 // startsWord reports whether term begins a word, so "read" does not count as a
