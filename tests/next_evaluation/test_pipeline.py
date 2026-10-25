@@ -121,6 +121,21 @@ else:
         changed['experiments'][0]['model'] = 'different-model'
         self.assertNotEqual(pipeline.prepare(changed)['identity_sha256'], pipeline.prepare(self.config)['identity_sha256'])
 
+    def test_private_recipient_is_fingerprinted_without_exposing_identity(self):
+        recipient = self.root / 'recipient.json'
+        recipient.write_text(json.dumps({'open_id': 'test-recipient', 'tenant_key': 'test-tenant'}))
+        recipient.chmod(0o600)
+        self.config['live']['recipient_file'] = str(recipient)
+        original = pipeline.prepare(self.config)
+        self.assertNotIn('test-recipient', json.dumps(original))
+        self.assertNotIn('test-tenant', json.dumps(original))
+        self.assertEqual(self.launch().returncode, 0)
+        recipient.write_text(json.dumps({'open_id': 'other-test-recipient', 'tenant_key': 'test-tenant'}))
+        self.assertNotEqual(pipeline.prepare(self.config)['identity_sha256'], original['identity_sha256'])
+        self.assertEqual(self.launch('--execute').returncode, 2)
+        self.assertFalse(self.driver.with_suffix('.calls').exists())
+        self.assertFalse(self.runner.with_suffix('.calls').exists())
+
     def test_workloads_select_and_report_separately(self):
         self.config.pop('suites')
         self.settings['supported_backends'] = ['live-feishu-v1']

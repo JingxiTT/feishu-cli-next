@@ -100,6 +100,16 @@ class ResumeTests(unittest.TestCase):
         self.assertEqual(self.invoke(("--resume",))[:2], (0, 0))
         self.assertEqual(self.output.read_bytes(), content)
 
+    def test_recipient_file_changes_block_resume_before_any_attempt(self):
+        recipient = self.root / 'recipient.json'
+        recipient.write_text(json.dumps({'open_id': 'test-recipient', 'tenant_key': 'test-tenant'}))
+        self.config['live'] = {'recipient_file': str(recipient)}
+        self.write_config()
+        self.assertEqual(self.invoke()[:2], (0, 6))
+        recipient.write_text(json.dumps({'open_id': 'changed-recipient', 'tenant_key': 'test-tenant'}))
+        code, calls, _ = self.invoke(('--resume',))
+        self.assertEqual((code, calls), (2, 0))
+
     def test_new_output_can_start_with_resume(self):
         self.assertEqual(self.invoke(("--resume",))[:2], (0, 6))
 

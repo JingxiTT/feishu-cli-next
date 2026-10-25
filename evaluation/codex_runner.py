@@ -291,8 +291,21 @@ def validate_output_schema(schema):
             validate_output_schema(child)
 
 
+def recipient_rule(fixture):
+    recipient = fixture.get('authorized_recipient')
+    if recipient is None:
+        return 'Do not deliver content or grant access to any other account. '
+    if (not isinstance(recipient, dict) or set(recipient) != {'open_id', 'tenant_key'}
+            or not all(isinstance(value, str) and value.strip() for value in recipient.values())):
+        raise ValueError('invalid verified recipient')
+    return ('The fixture independently verified this configured recipient: ' + json.dumps(recipient) + '. '
+            'Deliver content or grant access only to this identity, only when explicitly authorized by the task. '
+            'Do not use display-name matches or groups containing other accounts. ')
+
+
 def run_agent(request, codex, auth_home, expected_version):
     validate_output_schema(request["fixture"]["answer_schema"])
+    delivery_rule = recipient_rule(request['fixture'])
     delivery = request.get("settings", {}).get("guidance_delivery", "inline")
     if delivery not in ("inline", "file"):
         raise ValueError("guidance_delivery must be inline or file")
@@ -350,8 +363,7 @@ def run_agent(request, codex, auth_home, expected_version):
     environment_note = ('This task uses real Feishu through the preconfigured current account. '
                         'Do not inspect credentials or change authentication. ')
     mutation_rule = ('Use only the private resources this run created and the changes authorized in the task. '
-                     'Do not deliver content or grant access to anyone except Ying Wu, and only when the task '
-                     'explicitly authorizes an independently verified identity for that person. '
+                     + delivery_rule +
                      'Do not replay a mutation with an unknown outcome. ')
     prompt = ("Complete this CLI task using the selected binary on PATH. " + environment_note +
               "Do not log in, initialize an app, or access other credentials. " + mutation_rule + "Work only in this "

@@ -17,6 +17,18 @@ SPEC.loader.exec_module(runner)
 
 
 class CodexAccountingTests(unittest.TestCase):
+    def test_recipient_rule_defaults_to_no_delivery_and_uses_only_verified_stable_identity(self):
+        self.assertEqual(runner.recipient_rule({}),
+                         'Do not deliver content or grant access to any other account. ')
+        recipient = {'open_id': 'test-recipient', 'tenant_key': 'test-tenant'}
+        rule = runner.recipient_rule({'authorized_recipient': recipient})
+        self.assertIn(json.dumps(recipient), rule)
+        self.assertIn('only when explicitly authorized by the task', rule)
+        self.assertIn('groups containing other accounts', rule)
+        for value in ({}, [], {**recipient, 'name': 'unnecessary'}, {**recipient, 'open_id': ''}):
+            with self.subTest(value=value), self.assertRaises(ValueError):
+                runner.recipient_rule({'authorized_recipient': value})
+
     def error_stream(self, output, command="lark-cli docs +push --file private.md --json", exit_code=2):
         return "\n".join(json.dumps(event) for event in [
             {"type": "turn.started"},
@@ -171,6 +183,7 @@ class CodexAccountingTests(unittest.TestCase):
                 self.assertIn('This task uses real Feishu', prompts['inline'])
                 self.assertNotIn('synthetic read-only fixture', prompts['inline'])
                 self.assertIn('unknown outcome', prompts['inline'])
+                self.assertIn(runner.recipient_rule({}), prompts['inline'])
 
     def test_invalid_guidance_delivery_fails_before_workspace_or_provider(self):
         from unittest.mock import patch

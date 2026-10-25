@@ -245,7 +245,7 @@ def main(argv=None):
         report.update(evidence="live", status="blocked", reason=(
             "Live tests require --allow-live." if not args.allow_live else
             "No verified fixture harness binds the effective account and tenant, private visibility, "
-            "Ying Wu's unambiguous identity when applicable, and run-owned cleanup. Legacy live tests are not authorized fixtures."))
+            "the privately configured recipient's unambiguous identity when applicable, and run-owned cleanup. Legacy live tests are not authorized fixtures."))
         code = 2
     elif args.section == "packaging" and args.suite == "unit":
         report.update(status="blocked", reason="No packaging unit suite is defined; use the section E2E suite when available.")

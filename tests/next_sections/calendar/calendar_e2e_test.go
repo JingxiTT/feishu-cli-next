@@ -277,7 +277,7 @@ func TestCalendarPartialAndUnknownMutation(t *testing.T) {
 }
 
 func TestCalendarLivePrivateLifecycle(t *testing.T) {
-	t.Skip("BLOCKED: no verified current-account/tenant/private calendar creation fixture; live invitations and notifications also require verified self or unambiguous Ying Wu. Legacy personal-state tests are excluded.")
+	t.Skip("BLOCKED: no verified current-account/tenant/private calendar creation fixture; live invitations and notifications also require verified self or an independently verified configured recipient. Legacy personal-state tests are excluded.")
 }
 
 func errorType(t *testing.T, raw string) string {

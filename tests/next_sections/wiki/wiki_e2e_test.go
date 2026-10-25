@@ -262,5 +262,5 @@ func TestWikiMutationUnknownNeverReplaysAndPartialGrant(t *testing.T) {
 }
 
 func TestWikiAuthorizedLiveFixture(t *testing.T) {
-	t.Skip("BLOCKED: no verified current-account/tenant Wiki creation visibility fixture. Legacy any-host tests may inherit other-user access; do not run them live. Need a run-owned private space, private Drive source/destination and unambiguous Ying Wu identity before permission delivery.")
+	t.Skip("BLOCKED: no verified current-account/tenant Wiki creation visibility fixture. Legacy any-host tests may inherit other-user access; do not run them live. Need a run-owned private space, private Drive source/destination and an independently verified configured recipient identity before permission delivery.")
 }

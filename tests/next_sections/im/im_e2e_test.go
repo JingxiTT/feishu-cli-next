@@ -209,7 +209,7 @@ func TestBoundedChatReadArtifact(t *testing.T) {
 }
 
 func TestLiveIMBoundary(t *testing.T) {
-	t.Skip("blocked live: current account/tenant, private destination and unambiguous Ying Wu-only delivery have not been verified; no live content dispatched")
+	t.Skip("blocked live: current account/tenant, private destination and delivery restricted to the verified configured recipient have not been verified; no live content dispatched")
 }
 
 func TestChatUpdateNoopAndExplicitEmptyDescription(t *testing.T) {

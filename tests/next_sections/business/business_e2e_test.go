@@ -465,7 +465,7 @@ func TestBusinessLive(t *testing.T) {
 			// purported private fixture before validating backend visibility.
 			reason := "no verified current-account/tenant-bound, run-owned fixture with private visibility and cleanup"
 			if tc.highRisk {
-				reason = "approval workflow may notify/assign other people; no verified Ying Wu-only participants, private workflow, and owned cleanup"
+				reason = "approval workflow may notify/assign other people; no participants restricted to the verified configured recipient, private workflow, and owned cleanup"
 			}
 			if strings.HasPrefix(tc.command, "attendance ") {
 				reason = "no account-bound synthetic workforce fixture or verified current employee ID; other employee records are outside the test fixture"
