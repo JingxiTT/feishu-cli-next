@@ -55,13 +55,32 @@ measures its entire attempt. Neither replaces the other.
    `harness` identifies the harness/version for reporting. Native experiments use
    the existing **Codex CLI 0.153.4** adapter; other harnesses use `runner_config`
    as described below. Native model availability depends on that harness/provider.
-4. Prepare the entire matrix before billing, then execute:
+4. Discover sections and preview a selection without creating a run directory:
+
+```sh
+# No config or credentials needed; shows each section's suites and task counts.
+python3 evaluation/pipeline.py --list-sections
+
+# CLI selections replace the corresponding config arrays.
+python3 evaluation/pipeline.py --config .tmp/evaluation/config.json \
+  --suite paired scenario docs-hard --section docs --dry-run
+```
+
+The preview prints JSON with the selected experiments, suites, sections, task
+IDs, repeats, per-attempt budget and total attempts across both arms. It
+validates inputs and hashes public files, but does not build extension hosts,
+launch adapters, write run files or bill models. Full preparation still checks
+the guidance and adapter contracts before execution.
+
+5. Prepare the selected matrix before billing, then execute with the same filters:
 
 ```sh
 python3 evaluation/pipeline.py --config .tmp/evaluation/config.json \
-  --output .tmp/evaluation/run-01
+  --suite paired scenario docs-hard --section docs \
+  --output .tmp/evaluation/docs-01
 python3 evaluation/pipeline.py --config .tmp/evaluation/config.json \
-  --output .tmp/evaluation/run-01 --execute
+  --suite paired scenario docs-hard --section docs \
+  --output .tmp/evaluation/docs-01 --execute
 ```
 
 Preparation validates every selected section, guidance distribution, runner
@@ -70,8 +89,18 @@ unmeasured coverage. It does not prove provider authentication, model
 availability, or a custom adapter's implementation. Execution is serial to
 avoid contaminating comparisons with competing workloads. The default is
 **45 development tasks, 270 attempts per experiment** with three repeats per
-arm. More models multiply this cost; preparation prints the scheduled count
-before execution.
+arm when no filters are configured. More models multiply this cost; preparation
+prints the scheduled count before execution.
+
+CLI filters support multiple names and repeated flags: `--section docs sheets`
+or `--section docs --section sheets`. `--suite`, `--workload` and `--experiment`
+work the same way. `--experiment` selects experiment IDs from the config.
+`--repeats 2` and `--budget-seconds 120` override budgets symmetrically; at least
+two repeats are required. Unspecified settings keep their config values.
+Filters intersect: selecting `--section docs` while the config restricts suites
+to `business` and `e2e` is an error; also select a suite containing Docs tasks.
+Use `--list-sections --suite paired scenario` to see that scope, or add
+`--config` to list sections within configured workload/suite filters.
 
 The config selects two workload views:
 
@@ -242,6 +271,14 @@ labels and matched-success pairs. Top-level `summary.json`, `summary.csv` and
 `REPORT.md` provide task/section comparisons and planned/completed coverage,
 separated into workflow and diagnostic workloads.
 
+Progress goes to stderr as each job preflights and each attempt starts and
+checkpoints. Attempt lines show verified/failed/inconclusive outcomes, elapsed
+runner time, known tokens and whether accounting is complete. Resume prints how
+many attempts are retained and how many remain; reused attempts are not billed
+again. Reports refresh after each job returns, including error exits. The final
+JSON names the report and completed/planned attempt counts. Progress contains
+no raw prompts, answers, tool output or credentials.
+
 The descriptive token difference is `1 - next_tokens_per_success /
 official_tokens_per_success`, where each numerator includes **every attempted
 run's cost**, including failures. The report also shows verified outcome
@@ -267,9 +304,12 @@ report-only do not bill models. To render retained results without checking or
 launching the current harness:
 
 ```sh
-python3 evaluation/pipeline.py --config .tmp/evaluation/config.json \
-  --output .tmp/evaluation/run-01 --report-only
+python3 evaluation/pipeline.py --output .tmp/evaluation/docs-01 --report-only
 ```
+
+Report-only needs no config or adapter credentials and always uses the retained
+selection. It rejects selection/budget overrides. Changing CLI filters or
+budgets requires a new run directory, just like changing the config.
 
 Exit codes: 0 means prepared/report-rendered or all executed attempts completed
 with complete accounting; 1 means executed task/accounting failures or an

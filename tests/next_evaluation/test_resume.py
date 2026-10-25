@@ -103,6 +103,28 @@ class ResumeTests(unittest.TestCase):
     def test_new_output_can_start_with_resume(self):
         self.assertEqual(self.invoke(("--resume",))[:2], (0, 6))
 
+    def test_progress_keeps_unknown_usage_visible_and_does_not_change_resume(self):
+        stdout, stderr = io.StringIO(), io.StringIO()
+        command = ['harness', '--tasks', str(self.tasks_path), '--config', str(self.config_path),
+                   '--output', str(self.output), '--repeats', '2', '--progress']
+
+        def incomplete(*args):
+            self.assertIn('starting', stderr.getvalue())
+            self.assertTrue(self.marker.exists())
+            row = self.row(*args)
+            row.update(success=False, outcome_inconclusive=True, usage=None,
+                       categories=['usage_unavailable', 'fixture_unsupported'])
+            return row
+
+        with patch.object(sys, 'argv', command), patch.object(harness, 'run_one', side_effect=incomplete), \
+                patch.object(sys, 'stdout', stdout), patch.object(sys, 'stderr', stderr):
+            self.assertEqual(harness.main(), 1)
+        self.assertEqual(stderr.getvalue().count(' checkpointed:'), 6)
+        self.assertIn('inconclusive; tokens=10; accounting=incomplete (known tokens only)', stderr.getvalue())
+        self.assertNotIn(self.task['prompt'], stderr.getvalue())
+        self.assertEqual(json.loads(stdout.getvalue())['runs'], 6)
+        self.assertEqual(self.invoke(('--resume',))[:2], (1, 0))
+
     def test_config_and_guidance_paths_can_move_when_all_bytes_match(self):
         prefix = self.partial()
         shutil.copytree(self.root / "guide", self.root / "moved-guide")

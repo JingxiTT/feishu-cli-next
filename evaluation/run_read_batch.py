@@ -79,6 +79,7 @@ def main():
     parser.add_argument('--original-comparison', action='store_true', help='Run a fresh balanced comparison of only the original CLI and Next; supports all development task suites')
     parser.add_argument('--prepare-only', action='store_true')
     parser.add_argument('--resume', action='store_true', help='Resume validated checkpoint evidence through the harness')
+    parser.add_argument('--progress', action='store_true', help='Show attempt progress on stderr')
     parser.add_argument('--task-kind', choices=('read', 'scenario', 'scaling', 'business', 'paired', 'docs-hard', 'foundation', 'contact', 'e2e'), default='read')
     parser.add_argument('--model', default='gpt-6-astra', help='Codex model identifier; pin explicitly for a new comparison')
     parser.add_argument('--reasoning', default='high', help='Codex reasoning effort; pin explicitly for a new comparison')
@@ -208,6 +209,7 @@ def main():
                                      '--stop-file', str(args.output_root / 'STOP')] +
                                     (['--only-arm', args.only_arm] if args.only_arm else []) +
                                     (['--original-comparison'] if args.original_comparison else []) +
+                                    (['--progress'] if args.progress else []) +
                                     (['--resume'] if args.resume else []), check=False)
             if result.returncode not in (0, 1):
                 return 2
