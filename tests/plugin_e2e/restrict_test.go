@@ -184,7 +184,7 @@ func TestConcealedForkProjectsRetainedSchemaCatalog(t *testing.T) {
 		t.Errorf("concealed exact lookup exposed method metadata: stdout=%s stderr=%s", hidden.stdout, hidden.stderr)
 	}
 
-	broad := run(t, bin, "schema")
+	broad := run(t, bin, "schema", "--all")
 	if broad.exit != 0 || !gjson.Valid(broad.stdout) {
 		t.Fatalf("broad schema exit=%d stdout=%s stderr=%s", broad.exit, broad.stdout, broad.stderr)
 	}

@@ -44,6 +44,9 @@ type SchemaOptions struct {
 
 	// InputOnly omits the response schema while retaining request and safety metadata.
 	InputOnly bool
+
+	// All prints complete schemas for a path that matches several methods instead of an index.
+	All bool
 }
 
 // NewCmdSchema creates the schema command. If runF is non-nil it is called instead of the default runner (test hook).
@@ -77,6 +80,7 @@ func NewCmdSchemaWithVisibility(
 	}
 	cmdutil.DisableAuthCheck(cmd)
 	cmd.Flags().BoolVar(&opts.InputOnly, "input-only", false, "omit response schema; keep input requirements, scopes, risk and guidance")
+	cmd.Flags().BoolVar(&opts.All, "all", false, "print complete schemas for a path that matches several methods instead of an index")
 
 	// Tolerated for agent compatibility; ignored — schema only emits the JSON
 	// envelope, and its output is identity-independent (strict-mode filtering
@@ -116,7 +120,7 @@ func completeSchemaPath(
 func schemaRunWithVisibility(opts *SchemaOptions, visibility CommandVisibility) error {
 	out := opts.Factory.IOStreams.Out
 	mode := opts.Factory.ResolveStrictMode(opts.Ctx)
-	return runSchemaCatalog(out, apicatalog.ParsePath(opts.Args), mode, opts.Factory.APICatalog, opts.Factory.Affordance, visibility, opts.InputOnly)
+	return runSchemaCatalog(out, apicatalog.ParsePath(opts.Args), mode, opts.Factory.APICatalog, opts.Factory.Affordance, visibility, opts.InputOnly, opts.All)
 }
 
 // runSchemaCatalog resolves the path through the build-selected schema catalog
@@ -131,6 +135,7 @@ func runSchemaCatalog(
 	guidance *affordance.Resolver,
 	visibility CommandVisibility,
 	inputOnly bool,
+	all bool,
 ) error {
 	// Test the source catalog before presentation projection. A distribution
 	// that intentionally conceals every generated method still has metadata;
@@ -165,6 +170,10 @@ func runSchemaCatalog(
 				WithHint("strict mode hides methods the active account identity cannot call; it is shown for an identity (user or bot) that has the required access token")
 		}
 		output.PrintJson(out, render(guidance, refs[0]))
+		return nil
+	}
+	if !all {
+		writeSchemaIndex(out, target, refs)
 		return nil
 	}
 	if inputOnly {

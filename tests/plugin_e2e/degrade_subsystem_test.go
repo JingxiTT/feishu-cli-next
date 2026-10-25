@@ -33,7 +33,7 @@ func init() {
 
 func TestPluginForkUsesCommittedCatalog(t *testing.T) {
 	bin := buildFork(t, "plain", plainPlugin)
-	res := run(t, bin, "schema", "im")
+	res := run(t, bin, "schema", "im", "--all")
 	if res.exit != 0 {
 		t.Fatalf("exit=%d want 0; stdout=%s stderr=%s", res.exit, res.stdout, res.stderr)
 	}

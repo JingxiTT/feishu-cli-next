@@ -65,7 +65,7 @@ func TestSchemaCmd_APICatalogCompletionAndRun(t *testing.T) {
 	if len(completions) != 1 || completions[0] != "drive." {
 		t.Fatalf("completion = %v, want only drive.", completions)
 	}
-	cmd.SetArgs([]string{"drive"})
+	cmd.SetArgs([]string{"drive", "--all"})
 	if err := cmd.Execute(); err != nil {
 		t.Fatal(err)
 	}
@@ -111,7 +111,7 @@ func TestSchemaCmd_NoArgs_JSON_IsArray(t *testing.T) {
 	f, stdout, _, _ := schemaTestFactory(t, nil)
 
 	cmd := NewCmdSchema(f, nil)
-	cmd.SetArgs([]string{})
+	cmd.SetArgs([]string{"--all"})
 	if err := cmd.Execute(); err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -236,7 +236,7 @@ func TestSchemaCmd_ServiceListIsArray(t *testing.T) {
 	f, stdout, _, _ := schemaTestFactory(t, nil)
 
 	cmd := NewCmdSchema(f, nil)
-	cmd.SetArgs([]string{"im"})
+	cmd.SetArgs([]string{"im", "--all"})
 	if err := cmd.Execute(); err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -359,7 +359,7 @@ func TestSchemaSurfaceProjectionFiltersExecutionListingAndCompletion(t *testing.
 	}
 
 	var out bytes.Buffer
-	if err := runSchemaCatalog(&out, nil, core.StrictModeOff, catalog, nil, visible, false); err != nil {
+	if err := runSchemaCatalog(&out, nil, core.StrictModeOff, catalog, nil, visible, false, true); err != nil {
 		t.Fatalf("broad schema failed: %v", err)
 	}
 	var envelopes []map[string]interface{}
@@ -388,6 +388,7 @@ func TestSchemaSurfaceProjectionFiltersExecutionListingAndCompletion(t *testing.
 		catalog,
 		nil,
 		visible,
+		false,
 		false,
 	)
 	if err == nil {
@@ -456,10 +457,10 @@ func TestSchemaSurfaceProjectionPreservesDefaultAndDeniedVisibleCatalog(t *testi
 	allVisible := func([]string) bool { return true }
 
 	var defaultOut, projectedOut bytes.Buffer
-	if err := runSchemaCatalog(&defaultOut, nil, core.StrictModeOff, catalog, nil, nil, false); err != nil {
+	if err := runSchemaCatalog(&defaultOut, nil, core.StrictModeOff, catalog, nil, nil, false, true); err != nil {
 		t.Fatalf("default schema failed: %v", err)
 	}
-	if err := runSchemaCatalog(&projectedOut, nil, core.StrictModeOff, catalog, nil, allVisible, false); err != nil {
+	if err := runSchemaCatalog(&projectedOut, nil, core.StrictModeOff, catalog, nil, allVisible, false, true); err != nil {
 		t.Fatalf("all-visible schema failed: %v", err)
 	}
 	if defaultOut.String() != projectedOut.String() {
