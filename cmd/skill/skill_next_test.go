@@ -175,6 +175,9 @@ func TestLargeReadTipGoesToStderrOnly(t *testing.T) {
 	if err != nil {
 		t.Fatalf("read error: %v", err)
 	}
+	if stdout == "" || len(stdout) >= len(big) {
+		t.Errorf("--section should print only the selected section, got %d of %d bytes", len(stdout), len(big))
+	}
 	if strings.Contains(stderr, "Tip: this file is") {
 		t.Errorf("tip must not repeat when a section is requested: %q", stderr)
 	}
