@@ -288,6 +288,7 @@ func resolveIdentity(cmd *cobra.Command, f *cmdutil.Factory, keyDef *eventlib.Ke
 	flagAs := core.Identity(cmd.Flag("as").Value.String())
 	identity := f.ResolveAs(cmd.Context(), cmd, flagAs)
 	if len(keyDef.AuthTypes) > 0 {
+		identity = f.ResolveSupportedIdentity(identity, keyDef.AuthTypes)
 		if err := f.CheckIdentity(identity, keyDef.AuthTypes); err != nil {
 			return "", err
 		}

@@ -8,7 +8,7 @@ Before adding one, put the logic in a fork-owned file (`<name>_next.go`
 beside the upstream file, or a `next*` package) and keep the edit here to a
 call into it. A file restored to upstream bytes drops off this list.
 
-274 of 2720 pinned upstream files.
+275 of 2720 pinned upstream files.
 
 ## (root) (7)
 
@@ -34,7 +34,7 @@ call into it. A file restored to upstream bytes drops off this list.
 - `.github/workflows/semantic-review.yml`
 - `.github/workflows/skill-format-check.yml`
 
-## cmd (27)
+## cmd (28)
 
 - `cmd/auth/login.go`
 - `cmd/auth/login_messages_test.go`
@@ -49,6 +49,7 @@ call into it. A file restored to upstream bytes drops off this list.
 - `cmd/config/set.go`
 - `cmd/config/strict_mode.go`
 - `cmd/error_auth_hint.go`
+- `cmd/event/consume.go`
 - `cmd/event/runtime.go`
 - `cmd/event/stop.go`
 - `cmd/profile/add.go`
