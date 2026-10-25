@@ -403,7 +403,7 @@ func TestDocsUnknownMutationReceiptAndReadOnlyRecovery(t *testing.T) {
 // This named scenario is independently selectable. Environment opt-ins never bypass
 // the independently verified current-account/private-creation prerequisite.
 func TestDocsLivePrivateLifecycle(t *testing.T) {
-	t.Skip("BLOCKED: no independently verified current-account and tenant-bound fixture proves private creation visibility before writing. Required live flow: private create; rich fetch/update and no-op; script/search; media/cover lifecycle; history revert/status; receipt recovery; delete only run-owned resources. No legacy live helpers or personal credentials are used. Other-recipient actions require independently resolved Ying Wu identity.")
+	t.Skip("BLOCKED: no independently verified current-account and tenant-bound fixture proves private creation visibility before writing. Required live flow: private create; rich fetch/update and no-op; script/search; media/cover lifecycle; history revert/status; receipt recovery; delete only run-owned resources. No legacy live helpers or personal credentials are used. Other-recipient actions require an independently resolved configured recipient identity.")
 }
 
 func TestDocsCoverClearNoop(t *testing.T) {

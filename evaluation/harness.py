@@ -369,6 +369,8 @@ def resume_contract(config, evidence, planned):
     normalized = json.loads(json.dumps(config))
     normalized["timeout_seconds"] = config.get("timeout_seconds", 120)
     normalized["guidance_delivery"] = guidance_delivery(config)
+    if 'recipient_file' in normalized.get('live', {}):
+        normalized['live']['recipient_file'] = {'sha256': digest(config['live']['recipient_file'])}
     for name in ("runner", "verifier"):
         normalized[name] = [{"file_sha256": digest(arg)} if Path(arg).is_absolute() and Path(arg).is_file() else arg
                             for arg in config[name]]

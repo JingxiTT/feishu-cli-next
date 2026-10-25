@@ -312,7 +312,7 @@ func TestScreenshotAndMediaBytes(t *testing.T) {
 }
 
 func TestLivePrivateSlideLifecycle(t *testing.T) {
-	t.Skip("BLOCKED: selectable live scenario requires verified current account and tenant plus private creation visibility BEFORE any content write; no verified private fixture/cleanup harness is available. Then create owned deck, upload image, add/update/no-op/replace/read/screenshot/history/delete and clean up only run-owned resources; any other recipient must be unambiguous Ying Wu.")
+	t.Skip("BLOCKED: selectable live scenario requires verified current account and tenant plus private creation visibility BEFORE any content write; no verified private fixture/cleanup harness is available. Then create owned deck, upload image, add/update/no-op/replace/read/screenshot/history/delete and clean up only run-owned resources; any other recipient must be an independently verified configured recipient.")
 }
 
 func TestSkipUnchangedDryRunAndReadFailure(t *testing.T) {

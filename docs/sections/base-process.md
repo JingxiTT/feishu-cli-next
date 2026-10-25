@@ -79,7 +79,7 @@ until an authorized fixture can prove all of these prerequisites:
 - The destination and creation operation guarantee visibility only to the current
   account before creation, including inherited workspace, folder, group, link,
   and organization access. Restricting access after creation is insufficient.
-- Any intentional other-user access resolves Ying Wu unambiguously by stable
+- Any intentional other-user access resolves the privately configured recipient unambiguously by stable
   identity; no group, notification, workflow, public/link-wide, or unrelated-user
   delivery occurs.
 - Every object is labeled and owned by the run, cleanup uses only recorded

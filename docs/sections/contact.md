@@ -122,7 +122,7 @@ get-user where scopes permit, read that account's personal status/signature, and
 exercise user/bot search without minimum-match assumptions. Capture only
 sanitized shape/identity-equality evidence, never personal profiles in committed
 logs. Contact needs no content creation or notification. Any subsequent delivery
-is a cross-section action, requires independently verified Ying Wu identity or
+is a cross-section action, requires independently verified configured recipient identity or
 current-account-only private visibility, and is outside these Contact reads.
 An initial missing-fixture blocker was superseded by the coordinator-authorized
 current-account live attempt recorded below. That attempt remained open after its final bot-search read failed; the

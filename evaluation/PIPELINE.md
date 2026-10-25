@@ -103,6 +103,40 @@ intersect. `--repeats` (at least two, default three), `--budget-seconds`, `seed`
 and `guidance_delivery` (`file` or `inline`) apply symmetrically. Workflow and
 diagnostic results are separate, never pooled. Experiments run serially.
 
+## Private recipient configuration
+
+Other-recipient delivery and access grants are disabled by default. No personal
+recipient names or IDs belong in tracked code, docs, prompts or fixtures. When a
+task needs an authorized other recipient, set `live.recipient_file` in the ignored
+local pipeline config to an absolute private JSON file path, for example
+`/absolute/private-evaluation/recipient.json`. Its contents are:
+
+```json
+{"open_id": "<authorized recipient open_id>", "tenant_key": "<verified tenant_key>"}
+```
+
+Restrict the file to its owner (`chmod 600`). Keep it outside version control;
+`.tmp/` is ignored for local configuration. Omit this setting for the bundled
+read-only Contact task. The file selects a destination but does not verify it or
+authorize an action by itself. The trusted fixture driver must independently
+verify that stable identity in the effective tenant and destination membership
+before delivery, including notifications, invitations and shares. No display-name
+matching or group with additional accounts is sufficient.
+
+Delivery task manifests must set `fixture.requires_recipient: true`. The pipeline
+blocks those tasks before setup when no recipient is configured, and before the
+model starts when the driver does not return an exactly matching
+`verified_recipient` object. Only a verified recipient reaches the model's
+fixture as `authorized_recipient`; otherwise the adapter forbids other-recipient
+delivery. The task must still explicitly authorize each action. Read-only tasks
+can run without recipient verification. Custom model adapters must enforce the
+same rule. No send-message fixture driver is bundled yet.
+
+Recipient file bytes are included in experiment/resume fingerprints, so changing
+the destination requires a new output directory. Reports retain fingerprints,
+not recipient fields; controller state and model workspaces remain private.
+These are test-only restrictions and must never limit the shipped CLI.
+
 ## Live fixture driver protocol
 
 `live.driver` is an absolute argv array for a trusted controller, separate from
@@ -123,6 +157,7 @@ request on stdin and writes one JSON response on stdout. Every request contains:
   "workspace": "/private/controller-state/workspace",
   "cli_config_dir": "/protected/feishu-cli-config",
   "cli_data_dir": "/protected/feishu-cli-data",
+  "recipient": null,
   "task": {"id": "task-id", "prompt": "User goal", "fixture": {}, "expected": {}},
   "trial": 0,
   "arm": "official"
@@ -131,6 +166,7 @@ request on stdin and writes one JSON response on stdout. Every request contains:
 
 `setup` and `cleanup` include `trial` and `arm`. `verify` receives the same task,
 state directory and workspace, independently of the model's success claim.
+`recipient` is the private configured `{open_id, tenant_key}` object, or `null`.
 
 - **setup:** Bind the effective account/tenant and verify creation visibility
   before any write. Create an equivalent fresh, private fixture for each arm and
@@ -139,6 +175,8 @@ state directory and workspace, independently of the model's success claim.
   "account_verified":true, "privacy_verified":true, "prompt":"Goal with live source links"}`.
   The prompt supplies task data and authorization, without prescribing CLI
   commands or leaking the expected answer. Preserve the declared answer schema.
+  For delivery tasks, independently verify `recipient` and return the matching
+  `verified_recipient` object; do not merely echo configuration as verification.
 - **verify:** Read the agent's `answer.json` and artifacts, independently query
   Feishu, and check the task outcome and preservation conditions. Return
   `{"backend":"live-feishu-v1", "success":true}` only on established success.

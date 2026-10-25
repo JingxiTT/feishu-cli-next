@@ -118,7 +118,7 @@ Live scenarios are separately selected and remain **blocked**, not passed. Befor
 creating any content, a live harness must independently bind the effective current
 account and tenant and verify creation visibility is restricted to that account.
 Bot creation's automatic current-user access attempt needs explicit verification
-within this boundary. Only an unambiguously resolved Ying Wu may be an additional
+within this boundary. Only an unambiguously resolved privately configured recipient may be an additional
 recipient. Existing unrelated documents may not be edited; cleanup owns only the
 run's fixtures. Legacy live tests do not supply these prerequisites and are not run.
 Native backend representation, conditional revisions/concurrency, large-media

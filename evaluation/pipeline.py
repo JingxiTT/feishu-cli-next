@@ -171,6 +171,8 @@ def prepare(config):
                 'live_manifests': {s: digest(config['live_manifests'][s]) for s in manifests},
                 'live_driver': [digest(arg) for arg in config['live']['driver']
                                 if Path(arg).is_absolute() and Path(arg).is_file()],
+                'recipient_sha256': digest(config['live']['recipient_file'])
+                    if 'recipient_file' in config['live'] else None,
                 'adapters': {c['id']: {'settings': digest(c['runner_config']),
                     'command_files': [digest(arg) for arg in load_runner_settings(Path(c['runner_config']))['runner']
                                       if Path(arg).is_absolute() and Path(arg).is_file()]}

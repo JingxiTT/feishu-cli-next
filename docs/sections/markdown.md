@@ -86,7 +86,7 @@ creation but are excluded from ordinary isolated CI; their legacy opt-in flag
 alone is not authorization. Before running either, a live fixture must verify
 current account and tenant, private creation visibility (including inherited
 Wiki access), run-owned cleanup, and any recipient binding. A name match cannot
-identify the sole allowed other collaborator, Ying Wu. Never create first and
+identify the allowed other collaborator from private local configuration. Never create first and
 restrict visibility afterward. Live multipart/version/concurrency behavior and
 permission grants remain unverified until those conditions can be met.
 

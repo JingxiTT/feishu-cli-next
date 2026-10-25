@@ -35,7 +35,7 @@ artifact bytes and local overwrite behavior. Run the whole section with
 The historical manual live lifecycle above is not current-run authorization or
 passing evidence. Current live verification remains blocked until a harness
 verifies current account/tenant, private visibility before creation, run-owned
-host meeting and cleanup, and self-only or unambiguously Ying Wu-only recipients
+host meeting and cleanup, and self-only or independently verified configured-only recipients
 (including eligible ALL_SUGGESTED invitees). No unrelated existing meeting is a
 permitted fixture. The separately selectable `TestVCLivePrivateLifecycle`
 records this blocker.

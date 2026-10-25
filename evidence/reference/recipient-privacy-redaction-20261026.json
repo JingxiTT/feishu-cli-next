@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "kind": "privacy-redaction",
+  "date": "2026-10-26",
+  "reason": "Remove a personal test recipient name from retained diagnostic strings. Recipient identities now belong in private local configuration.",
+  "authorization": "User requested private recipient configuration, was shown a concrete historical redaction patch and the sealed-evidence exception, then instructed: pr and merge.",
+  "scope": "34 personal-name references in four retained records replaced with a redaction marker; corresponding manifest hashes updated. No task outcomes, counts or measurements rescored.",
+  "records": [
+    {
+      "path": "evidence/sections/base-evidence.json",
+      "original_sha256": "82a43fb578c12cd6ae5db1c57fb78da21a0b03971d569fa374a04e25516545ad",
+      "redacted_sha256": "d4521c4570e44b2e5f7ec1c87800f0e53ed35c80f93d11d381325d7ff26a4ef8"
+    },
+    {
+      "path": "evidence/sections/docs-evidence.json",
+      "original_sha256": "4c1d45c422478a51f364e5300b8c6f1f36ed5ae9ca70c61db7063a73f224b3a9",
+      "redacted_sha256": "2821c96cd0f015396de07a3e7c4c75edc2f015f507f8a41b60d01e76732b8406"
+    },
+    {
+      "path": "evidence/sections/p3-e2e-evidence.json",
+      "original_sha256": "3544a06413455eb4668b9175dda56a6d5e22a0f6033af6bfe6c420ad3edfc488",
+      "redacted_sha256": "1b71d0dbd4c1ebb693fcd3998be91f640a669207af1e5d5b0afbf108632f7150"
+    },
+    {
+      "path": "evidence/sections/linux-runtime-evidence.json",
+      "original_sha256": "dc01ee5240acbd074c38ee90da55c01c73102cd6e28bd41d18a25ed74319b1f8",
+      "redacted_sha256": "db8c167903519f6ec2813fb3034bb79c9e8017eda42d3f25bb2bd8d50ef21817"
+    }
+  ],
+  "limitation": "Earlier Git history still contains the original versions; no history rewrite was requested or performed."
+}

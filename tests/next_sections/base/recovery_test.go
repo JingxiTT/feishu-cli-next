@@ -188,7 +188,7 @@ func TestBaseNDJSONArtifactPreservesValuesAndRejectsClobber(t *testing.T) {
 // Selection is explicit evidence of a blocked case, never passing live evidence.
 // The suite performs no authentication or network access while prerequisites are absent.
 func TestBaseLivePrivateLifecycle(t *testing.T) {
-	t.Skip("BLOCKED: no verified pre-creation visibility fixture binds the effective account and tenant, prevents inherited workspace/group/link access, resolves Ying Wu by stable identity for any intentional share, and guarantees cleanup only of run-owned Base/Drive resources; legacy live suites are not authorized substitutes. See docs/sections/base-process.md")
+	t.Skip("BLOCKED: no verified pre-creation visibility fixture binds the effective account and tenant, prevents inherited workspace/group/link access, resolves the privately configured recipient by stable identity for any intentional share, and guarantees cleanup only of run-owned Base/Drive resources; legacy live suites are not authorized substitutes. See docs/sections/base-process.md")
 }
 
 func TestBaseReadErrorsRetainTypedMetadata(t *testing.T) {

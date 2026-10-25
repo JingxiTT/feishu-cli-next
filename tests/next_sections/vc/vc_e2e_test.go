@@ -407,7 +407,7 @@ func TestVCScreenshotBytesAndExistingOutput(t *testing.T) {
 }
 
 func TestVCLivePrivateLifecycle(t *testing.T) {
-	t.Skip("BLOCKED: no live harness verifies current account and tenant, private Agent Calendar creation visibility, app-bot host ownership, self-only or unambiguously Ying Wu-only participants/eligible invitees, and run-owned cleanup; do not use unrelated existing meetings")
+	t.Skip("BLOCKED: no live harness verifies current account and tenant, private Agent Calendar creation visibility, app-bot host ownership, self-only or participants/eligible invitees restricted to the verified configured recipient, and run-owned cleanup; do not use unrelated existing meetings")
 }
 
 func TestVCReadPartialAndInProgress(t *testing.T) {

@@ -70,7 +70,7 @@ section open. Notify the coordinator when the whole section is ready for live
 verification and comparative development tasks. Comparative evaluations run one
 balanced workload at a time; keep held-out tasks untouched until P4.
 
-Live tests obey the current-account private-fixture and Ying Wu-only other
+Live tests obey the current-account private-fixture and privately configured other
 recipient boundary. Verify identity, tenant and creation visibility before any
 content write. No existing unrelated resource may be edited or deleted. When
 privacy or recipient identity cannot be verified, write the selectable scenario,
