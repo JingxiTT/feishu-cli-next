@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "split": "development",
+  "backend": "live-feishu-v1",
+  "basis": "Read-only current-account lookup against real Feishu, with independent account binding and fresh verification.",
+  "tasks": [
+    {
+      "id": "live-contact-current-account",
+      "section": "contact",
+      "prompt": "Use the CLI to identify the currently authenticated Feishu user. Return JSON containing exactly the user's open_id and tenant_key. Read only the current account; do not look up other people, change authentication or modify any remote resource.",
+      "fixture": {
+        "answer_schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["open_id", "tenant_key"],
+          "properties": {
+            "open_id": {"type": "string"},
+            "tenant_key": {"type": "string"}
+          }
+        }
+      },
+      "expected": {"checks": ["current account and tenant match independent live reads"]}
+    }
+  ]
+}

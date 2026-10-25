@@ -88,17 +88,7 @@ class AccountingTests(unittest.TestCase):
         self.assertIsNone(group["success_rate"])
         self.assertIsNone(group["tokens_per_success"])
 
-    def test_executable_development_manifests_keep_every_predeclared_section(self):
-        expected = {task["section"] for task in harness.tasks_from(ROOT / "evaluation/tasks.development.json")["tasks"]}
-        actual = set()
-        for name in ('foundation', 'contact', 'read-sections', 'scenarios'):
-            actual.update(task['section'] for task in harness.tasks_from(ROOT / ('evaluation/tasks.' + name + '.json'))['tasks'])
-        self.assertEqual(actual, expected)
 
-    def test_development_manifest_covers_inventory_sections(self):
-        manifest = harness.tasks_from(ROOT / "evaluation/tasks.development.json")
-        inventory = json.loads((ROOT / "baseline/coverage.json").read_text())
-        self.assertEqual({task["section"] for task in manifest["tasks"]}, set(inventory["sections"]))
 
     def test_incomplete_runs_keep_known_cost_without_finite_efficiency(self):
         run = {"task_id": "a", "section": "foundation", "trial": 0, "arm": "next",
@@ -111,17 +101,8 @@ class AccountingTests(unittest.TestCase):
 
     def test_verifier_diagnostics_never_publish_free_form_content(self):
         self.assertEqual(harness.sanitized_verification_failures(["answer_mismatch"]), ["answer_mismatch"])
-        self.assertEqual(harness.sanitized_verification_failures([
-            "paired_sheets_formula_read_missing", "paired_markdown_native_content_mismatch"]),
-            ["paired_sheets_formula_read_missing", "paired_markdown_native_content_mismatch"])
         self.assertIsNone(harness.sanitized_verification_failures(["private answer text"]))
-        task = {"fixture": {"runtime_section": "wiki"}}
-        event = {"method": "GET", "route": "rejected", "status": 403, "payload": "private"}
-        self.assertEqual(harness.sanitized_api_trace([event], task), [{"method": "GET", "route": "rejected", "status": 403}])
-        self.assertIsNone(harness.sanitized_api_trace([{**event, "route": "private path"}], task))
-        result = harness.sanitized_api_trace([{**event, "native_read": "docx_raw_content"}], task)
-        self.assertEqual(result[0]["native_read"], "docx_raw_content")
-        self.assertNotIn("native_read", harness.sanitized_api_trace([{**event, "native_read": "private-id"}], task)[0])
+        self.assertIsNone(harness.sanitized_verification_failures(["unknown_backend_diagnostic"]))
 
     def test_trace_revalidates_all_persisted_names(self):
         trace = [{"choices": [{"kind": "cli", "command": ["docs", "+fetch"], "flags": ["--doc", "--help"]}], "exit_code": 0, "private_extra": "not retained"}]

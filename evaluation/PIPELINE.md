@@ -1,333 +1,238 @@
 # Evaluation pipeline
 
-`pipeline.py` is the **single entry point** for a current comparison. It runs
-the official CLI and CLI Next on the same user goals, preserves each attempt's
-cost, and reports comparable observations for users and developers. It reuses
-the existing signed synthetic fixtures, independent verifiers, fresh contexts,
-balanced randomized schedules, and conservative provider accounting. No
-third-party Python dependency is needed.
+`pipeline.py` is the single entry point for new official-versus-Next agent
+comparisons. **Every evaluated task uses real Feishu.** Both arms use production
+binaries, the same model settings and budgets, fresh agent contexts, independent
+live verification, and a balanced randomized schedule. Reports retain failed
+attempts, recovery costs and incomplete accounting. They have no acceptance
+threshold or savings gate.
 
-There is no acceptance threshold or savings gate. The report describes
-verified completion and artifact effects, token use, time, API calls, retries and
-failure/recovery costs. A positive difference is an observation, not a product
-claim; a negative one is retained just as visibly. Historical reports and the
-old `run_matrix.py` remain unchanged for provenance and are not a second
-current entry point.
+Synthetic backends previously made repeatable comparisons possible without a
+Feishu account or permission to create resources. They measured the simulator's
+contracts, not production behavior. The fake endpoint, simulators, response tables,
+synthetic task sets and their launchers have been removed. Ordinary offline tests use small process mocks to
+check accounting and lifecycle behavior without implementing Feishu APIs.
+Changing a synthetic fixture's backend label does not port its fake resource IDs,
+responses, task goals or verification to Feishu.
 
-## Evaluation is separate from CI
+## Evaluation and CI
 
-| | CI correctness tests | Agent evaluation |
-|---|---|---|
-| Question | Does the software satisfy its contracts? | How well and at what token cost does an agent complete the work? |
-| Execution | Automatically on pull requests and pushes | Explicitly launched with a pinned experiment configuration |
-| Work | Unit, integration, CLI E2E and evaluation-tooling tests | Subsystem function and composed E2E task workloads |
-| Model calls | None | Real harness/model calls for measured experiments |
-| Result | Pass/fail/skip correctness reports | Verified outcomes, token distributions, latency and failure/recovery costs |
-| Decision | Software correctness gates | Descriptive comparison evidence; no acceptance threshold or CI merge gate |
+CI runs software correctness tests, including mocked tests of this pipeline.
+`make evaluation-tooling-test` and its `make evaluation-test` compatibility alias
+never run agent evaluations, bill models or contact a tenant. Evaluation requires
+an explicitly launched local `pipeline.py --execute` run; live execution refuses
+CI. Test counters are not provider measurements. Local help/schema probes such
+as `measure_surface.py` remain offline diagnostics and are not agent evaluations.
 
-`make test` and `make evaluation-tooling-test` belong to CI. The older
-`make evaluation-test` is a compatibility alias for the tooling tests. Those
-tests may use synthetic token counters to test accounting; their results are
-never model-efficiency measurements.
+Historical evidence keeps its original labels. Old simulators and reproduction
+launchers are available only at their recorded Git revisions. Historical pipeline
+reports can still be rendered with `pipeline.py --output ... --report-only`.
 
-`python3 evaluation/pipeline.py ... --execute` belongs to evaluation. It is
-independent of the CI job graph and is never invoked by the correctness
-workflows or `make test`. A green CI run does not mean an agent workload was
-evaluated. The pipeline's exit status reports process integrity and completeness;
-task failures are retained observations and are not converted into a pass/fail
-efficiency verdict.
+## Configure and run
 
-The term E2E appears in both paths: deterministic CLI E2E tests exercise the
-product directly, while E2E **evaluation** gives an agent a business goal and
-measures its entire attempt. Neither replaces the other.
+1. Obtain frozen **production** official and Next binaries and matching source
+   distributions. Fixture-enabled builds are unnecessary. Keep source archives
+   outside the output directory.
+2. Authenticate locally to Feishu. Independently verify the effective account and
+   tenant. Read [authorization boundaries](../docs/testing.md#authorization-boundaries-for-all-testing)
+   before any tenant call, including fixture setup, verification and cleanup.
+   Keep credentials in a protected CLI configuration directory, never in JSON
+   configs, command arguments or version control.
+3. Copy [pipeline.example.json](pipeline.example.json) to an ignored local path.
+   Replace all absolute paths and the model ID. The bundled starter is one
+   read-only current-account Contact task against real Feishu; it creates no
+   remote objects and sends no content to other people. It requires an
+   independently established owner-only binding file:
 
-## Run one comparison
+   ```json
+   {"algorithm": "sha256", "digest": "<independently verified account binding digest>"}
+   ```
 
-1. Build or obtain frozen official and Next binaries with their matching source
-   distributions. Synthetic API tasks require fixture-enabled binaries; ordinary
-   production binaries are insufficient for those tasks. Follow the existing
-   [fixture setup](README.md), including its native sandbox prerequisites.
-2. Copy [pipeline.example.json](pipeline.example.json) to an ignored local path,
-   such as `.tmp/evaluation/config.json`, and replace its absolute paths and model
-   ID. Keep credentials in the harness's protected auth store, never in config.
-3. Add one experiment for each harness/model/reasoning combination. Each
-   experiment has a unique `id`; its two arms share all settings and budgets.
-   `harness` identifies the harness/version for reporting. Native experiments use
-   the existing **Codex CLI 0.153.4** adapter; other harnesses use `runner_config`
-   as described below. Native model availability depends on that harness/provider.
-4. Discover sections and preview a selection without creating a run directory:
+   The digest is SHA-256 of UTF-8 `contact-current-account-v1`, a NUL byte, the
+   verified account open_id, another NUL byte, and the verified tenant_key. This
+   matches the existing private live-test binding format. Do not derive the
+   expected identity from the same unverified run you are trying to check.
+4. Pin one experiment per harness/model/reasoning combination. Native experiments
+   use the Codex CLI 0.153.4 adapter and a protected `auth_home` for model-provider
+   authentication. Feishu authentication separately uses `live.cli_config_dir` and
+   `live.cli_data_dir` (the existing encrypted credential-store base on Linux).
+   Both are explicit paths; the adapter never copies or reads their contents.
 
 ```sh
-# No config or credentials needed; shows each section's suites and task counts.
+# Without config: the bundled live Contact task.
 python3 evaluation/pipeline.py --list-sections
 
-# CLI selections replace the corresponding config arrays.
+# With config: only the actual configured live task sets.
+python3 evaluation/pipeline.py --config .tmp/evaluation/config.json --list-sections
+
+# Validate public inputs and print the selected schedule; no tenant/model calls.
+python3 evaluation/pipeline.py --config .tmp/evaluation/config.json --dry-run
+
+# Prepare local guidance/adapters and reports; no tenant/model calls.
 python3 evaluation/pipeline.py --config .tmp/evaluation/config.json \
-  --suite paired scenario docs-hard --section docs --dry-run
+  --output /absolute/private-evaluation/contact-01
+
+# Explicitly execute setup, agent attempts, live verification and cleanup.
+python3 evaluation/pipeline.py --config .tmp/evaluation/config.json \
+  --output /absolute/private-evaluation/contact-01 --execute
 ```
 
-The preview prints JSON with the selected experiments, suites, sections, task
-IDs, repeats, per-attempt budget and total attempts across both arms. It
-validates inputs and hashes public files, but does not build extension hosts,
-launch adapters, write run files or bill models. Full preparation still checks
-the guidance and adapter contracts before execution.
+Preparation validates paths, manifest/schema contracts and adapter settings. It
+cannot establish live authentication, scopes, backend availability or resource
+privacy; the fixture driver must establish these before the model starts.
 
-5. Prepare the selected matrix before billing, then execute with the same filters:
+`live_manifests` maps each selected suite to an absolute development manifest
+with `backend: "live-feishu-v1"`. Use
+[tasks.live-contact.json](tasks.live-contact.json) as the task-file example.
+Every task has `id`, `section`, a user-goal `prompt`, `fixture.answer_schema`, and
+`expected` verification guidance. Expected data stays out of the runner request.
+Live resource IDs and source files belong in setup, rather than being replaced
+with fake constants. A missing live manifest or unsupported task is **blocked**;
+the pipeline never falls back to a simulator.
 
-```sh
-python3 evaluation/pipeline.py --config .tmp/evaluation/config.json \
-  --suite paired scenario docs-hard --section docs \
-  --output .tmp/evaluation/docs-01
-python3 evaluation/pipeline.py --config .tmp/evaluation/config.json \
-  --suite paired scenario docs-hard --section docs \
-  --output .tmp/evaluation/docs-01 --execute
-```
+The nine suite names and workflow/diagnostic views remain available. Without a
+`suites` selection, the pipeline schedules only configured live manifests in the
+selected workloads. Only the current-account Contact task has a bundled live
+driver so far;
+other tasks require a real fixture driver and live manifests before execution.
+There is no claim of live coverage for an unported task.
 
-Preparation validates every selected section, guidance distribution, runner
-contract and extension build without model calls. It writes a plan and reports
-unmeasured coverage. It does not prove provider authentication, model
-availability, or a custom adapter's implementation. Execution is serial to
-avoid contaminating comparisons with competing workloads. The default is
-**45 development tasks, 270 attempts per experiment** with three repeats per
-arm when no filters are configured. More models multiply this cost; preparation
-prints the scheduled count before execution.
+`--suite`, `--section`, `--workload` and `--experiment` replace the corresponding
+config selections; each accepts multiple names or repeated flags. Selections
+intersect. `--repeats` (at least two, default three), `--budget-seconds`, `seed`
+and `guidance_delivery` (`file` or `inline`) apply symmetrically. Workflow and
+diagnostic results are separate, never pooled. Experiments run serially.
 
-CLI filters support multiple names and repeated flags: `--section docs sheets`
-or `--section docs --section sheets`. `--suite`, `--workload` and `--experiment`
-work the same way. `--experiment` selects experiment IDs from the config.
-`--repeats 2` and `--budget-seconds 120` override budgets symmetrically; at least
-two repeats are required. Unspecified settings keep their config values.
-Filters intersect: selecting `--section docs` while the config restricts suites
-to `business` and `e2e` is an error; also select a suite containing Docs tasks.
-Use `--list-sections --suite paired scenario` to see that scope, or add
-`--config` to list sections within configured workload/suite filters.
+## Live fixture driver protocol
 
-The config selects two workload views:
+`live.driver` is an absolute argv array for a trusted controller, separate from
+the model runner. The bundled implementation is
+[live_contact.py](live_contact.py). It uses a pinned production CLI for verified
+current-account reads, checks the Feishu brand and independent account/tenant
+binding, then re-reads Feishu to verify the agent's answer.
 
-- `workflow` is the user-facing comparison: goal-oriented work that may combine
-  discovery, reads, edits, typed data, artifacts, decisions and recovery.
-- `diagnostic` keeps narrow read/fidelity/discovery/scale probes that explain
-  where behavior differs.
-
-These are report sections, not pass/fail categories. They are never pooled.
-
-Use `workloads` to select `workflow`, `diagnostic`, or both (the default). Use
-`suites` to narrow the selected workloads to any of the nine suites and optional
-`sections`, for example `"suites": ["business", "e2e"]`.
-Omitting `suites` selects all suites in the selected workloads. An explicit
-suite outside the selected workloads is an error. `repeats` must be at least two;
-three is the default, not a statistical guarantee. `seed`, `budget_seconds` and
-`guidance_delivery` (`file` or `inline`) apply symmetrically to every experiment.
-The runner gets the model and reasoning strings unchanged.
-
-## Workload coverage and real-use fit
-
-Results have separate tables and workload labels in JSON/CSV; their
-comparisons are never combined.
-
-**Workflow evaluation** checks one user goal requiring several functions to
-work together. It includes finding sources, interpreting their data, making a
-decision and producing the final artifact or backend effect. Its full token
-cost includes discovery, intermediate processing and recovery in one fresh
-context. Agents may use shortcuts or any valid composition. Verification checks
-outcomes and necessary data dependencies, not a prescribed command sequence.
-
-**Diagnostic evaluation** checks a bounded capability: discovery, reading,
-editing, preserving data types, transfers, installation and scale. It answers
-where correctness or token use changes. A function may need several API calls;
-call count alone does not make it a workflow.
-
-For example, select only diagnostics with `"workloads": ["diagnostic"]`, or only
-goal-oriented work with `"workloads": ["workflow"]` and no `suites` filter.
-
-| Suite | Tasks | Work exercised by existing executable fixtures |
-|---|---:|---|
-| paired | 8 | Discovery, ambiguous Contact identities, Docs read/edit, Sheets, Base, Drive, Markdown |
-| docs-hard | 3 | Tables/lists, focused large-document retrieval, styled edits |
-| read | 12 | Application, Apps, Calendar, IM, Mail, Minutes, Note, OKR, Slides, VC, Whiteboard, Wiki |
-| scenario | 9 | Docs, Base, Sheets, Drive, Markdown, Task, Events, Extensions, Packaging |
-| scaling | 6 | Base import and Sheets export at 100, 1,000 and 10,000 rows |
-| business | 2 | Approval and mindnote mutation/readback workflows |
-| foundation | 2 | Unconfigured authentication and local command discovery |
-| contact | 1 | Synthetic identity lookup |
-| e2e | 2 | Docs + Sheets release readiness review; Docs + Task approved handoff completion |
-
-The workflow tasks in [tasks.e2e.json](tasks.e2e.json) start from a local release brief
-containing source links and business requirements, rather than endpoint/flag
-instructions in the user prompt. Both use the full official shared skill and
-its unchanged domain skill distribution versus Next's entry skill. Run these
-through the pipeline. `run_read_batch.py` is an internal adapter and is not a
-current operator entry point.
-
-- **Release review:** read the approval document and spreadsheet, preserve a
-  native typed cell/formula export, and combine their facts into a readiness
-  decision and JSON review. Both source observations and the saved artifacts
-  are independently verified.
-- **Release handoff:** find the matching task by title, check the document's
-  launch approval, then complete the task and save a cited handoff record.
-  Verification rejects completion before approval evidence, changed assignees
-  or unrelated tasks, and unsupported claims of success.
-
-These are two initial composed scenarios, reusing small bounded native fixtures.
-They cover the approved/ready path; no unapproved-release or blocked-release
-dataset is scheduled yet. They do not establish representative real-workload
-coverage. More business goals, varied datasets, negative decisions and
-realistic failure conditions belong in the workflow section as independently
-verified tasks.
-
-The current workload is a useful starting point but is not yet a complete
-picture of ordinary Feishu use. It is strong on shell/file execution, Docs,
-Sheets/Base, Drive artifacts, contacts, task completion and independent
-verification. It is weaker on message/mail/calendar triage, multi-party
-coordination, negative or ambiguous decisions, pagination and permission
-recovery. New workflow tasks should be written from user goals and leave the
-agent free to choose commands, raw API, files or composition.
-
-The fixtures check actual answers, signed requests, backend effects and artifacts
-as applicable, rather than requiring one command sequence. Unicode, typed values,
-artifact integrity, readback and preservation conditions come from the existing
-contracts. Unsupported valid strategies remain inconclusive with their costs.
-This is development sampling, **not exhaustive command or failure-mode
-coverage**. In particular it does not prove live permission handling, arbitrary
-pagination, all unknown-mutation recovery paths or production backend fidelity.
-Unimplemented development placeholders and quarantined held-out tasks are never
-scheduled. Extend the owning fixture, independent verifier and development
-manifest together to add scenarios; the pipeline picks them up automatically.
-Use `measure_surface.py` separately for exhaustive local help/schema coverage;
-local output-token counts are not full-task provider usage.
-
-## Use another harness
-
-An experiment may replace `codex` and `auth_home` with an absolute `runner_config`
-path. That JSON file declares exactly these settings:
+For other tasks, supply a driver implementing these phases. It reads one JSON
+request on stdin and writes one JSON response on stdout. Every request contains:
 
 ```json
 {
-  "runner": ["/absolute/python3", "/absolute/my_harness_adapter.py"],
+  "protocol": 1,
+  "backend": "live-feishu-v1",
+  "phase": "setup",
+  "state_dir": "/private/controller-state",
+  "workspace": "/private/controller-state/workspace",
+  "cli_config_dir": "/protected/feishu-cli-config",
+  "cli_data_dir": "/protected/feishu-cli-data",
+  "task": {"id": "task-id", "prompt": "User goal", "fixture": {}, "expected": {}},
+  "trial": 0,
+  "arm": "official"
+}
+```
+
+`setup` and `cleanup` include `trial` and `arm`. `verify` receives the same task,
+state directory and workspace, independently of the model's success claim.
+
+- **setup:** Bind the effective account/tenant and verify creation visibility
+  before any write. Create an equivalent fresh, private fixture for each arm and
+  repetition, persist run-owned IDs immediately, and write any task inputs in
+  `workspace`. Return `{"backend":"live-feishu-v1", "ready":true,
+  "account_verified":true, "privacy_verified":true, "prompt":"Goal with live source links"}`.
+  The prompt supplies task data and authorization, without prescribing CLI
+  commands or leaking the expected answer. Preserve the declared answer schema.
+- **verify:** Read the agent's `answer.json` and artifacts, independently query
+  Feishu, and check the task outcome and preservation conditions. Return
+  `{"backend":"live-feishu-v1", "success":true}` only on established success.
+  An unsupported valid strategy returns `fixture_unsupported:true`; its attempt
+  and cost remain inconclusive. Never substitute a success claim or simulator
+  response for live evidence.
+- **cleanup:** Reconcile remote outcomes, verify ownership, and clean up only
+  resources created by this attempt. Return `{"cleaned":true}` only when cleanup
+  is confirmed. A read-only fixture with no remote objects can return this
+  directly. Unknown mutation outcomes must never be replayed; return
+  `mutation_outcome_unknown:true` when unresolved.
+
+Driver subprocesses receive a minimal environment with no inherited tenant
+credentials, proxies or developer profiles. Use the explicit protected CLI
+configuration and data paths for API authentication. The driver owns setup validation,
+private recovery evidence and domain-specific verification; a declaration of
+backend support alone is not an implementation. Drivers must not send content
+or grant access outside the testing authorization boundaries. If privacy,
+identity or necessary scopes cannot be verified, block before model billing.
+
+Controller state and diagnostics remain under an owner-only `.private/`
+directory. Keep all evaluation outputs local: they can contain private inputs,
+model artifacts and resource IDs. Publish only a separately sanitized, add-only
+evidence record, sealed with `python3 scripts/next_layout.py seal`.
+
+A `RECONCILE` marker is written before setup. Failed/uncertain setup leaves it
+in place without starting a model. Cleanup failure retains the attempted run's
+known provider cost, stops execution and leaves the marker. A crash also leaves
+the harness in-flight marker. Inspect the private state, reconcile actual remote
+outcomes and accounting, and confirm cleanup before manually resolving markers;
+resume never retries those mutations automatically.
+
+## Other model harnesses
+
+An experiment may use `runner_config` instead of native `codex`/`auth_home`:
+
+```json
+{
+  "runner": ["/absolute/python3", "/absolute/model_adapter.py"],
   "mode": "real",
-  "accounting_method": "my-harness 1.2 provider per-turn usage; cached input included",
+  "accounting_method": "Pinned harness provider per-turn usage; cached input included",
   "tokenizer": "provider-undisclosed",
   "tools": ["shell", "files"],
-  "permissions": "workspace-write; external shell network denied; isolated synthetic sidecar",
-  "supported_backends": ["offline-foundation-v1", "synthetic-contact-v1", "synthetic-read-v1", "synthetic-scenario-v1"]
+  "permissions": "workspace-write; real Feishu; private task resources only",
+  "supported_backends": ["live-feishu-v1"]
 }
 ```
 
-This is a **full runner adapter**, not an arbitrary harness CLI command. It must
-implement the existing `harness.py` protocol 1: read one JSON request from stdin,
-write one JSON response to stdout, and use the supplied temporary workspace. Its
-request contains `task_id`, `trial`, `arm`, `prompt`, `fixture`, `cli`, `skill`,
-`settings` and `fresh_context`; expected outcomes are withheld. Write the answer
-and fixture receipts expected by the existing verifier in that workspace. The
-runner executable and absolute file arguments are hashed. The environment strips
-inherited tenant credentials, proxies and user profiles. Use explicit protected
-harness authentication paths; do not put tokens in argv.
+The adapter implements `harness.py` protocol 1, including fresh contexts,
+symmetric tool access, the supplied selected CLI/guidance, and real Feishu
+configuration at `fixture.cli_config_dir` and `fixture.cli_data_dir`. It must protect controller state from modification and keep expected verification
+data and credential contents out of model context. Native runs use a workspace
+write sandbox with network enabled and the explicit CLI configuration/data directories
+as additional writable roots for token refresh/locks. Custom adapters must
+enforce their advertised permissions. No alternate-harness
+implementation is bundled or claimed validated.
 
-A real response contains:
+Return the exact requested `model` and `tokenizer`, `usage_source:"provider"`,
+`accounting_complete`, `claimed_success`, and provider `turns` containing
+`input_tokens`, `cached_input_tokens`, `output_tokens`. Report all billed turns,
+including tool loops, failures and recovery. Input already includes cached input;
+output includes billed reasoning where the provider counts it. Avoid counting
+cumulative events twice. Interrupted streams retain completed known spans with
+`accounting_complete:false`; never estimate missing totals. Optional nonnegative
+`api_calls`, `retries` and `command_executions` remain diagnostics.
 
-```json
-{
-  "claimed_success": true,
-  "usage_source": "provider",
-  "model": "the-exact-requested-model",
-  "tokenizer": "provider-undisclosed",
-  "accounting_complete": true,
-  "turns": [
-    {"input_tokens": 1200, "cached_input_tokens": 400, "output_tokens": 100}
-  ],
-  "api_calls": 2,
-  "retries": 0,
-  "command_executions": 3
-}
-```
+Controlled adapters and synthetic usage belong in tooling tests and are rejected
+by the current evaluation pipeline. Offline tests exercise the real-backend
+protocol with mock processes; their counters are never evaluation evidence.
 
-Report **all** provider turns, including skill loading, tool results, failures
-and recovery. Input includes cached input; never add cached input twice or
-subtract it from total. Output includes provider-billed reasoning tokens where
-included by that provider's output counter. Avoid double-counting cumulative
-usage events. A timeout or incomplete stream returns completed known spans with
-`accounting_complete: false`; never estimate a missing total. Do not fabricate
-provider usage from a tokenizer or invent a price conversion.
+## Reports and resume
 
-For synthetic test adapters use `mode: "controlled"` and
-`usage_source: "synthetic"`; these runs never receive a model-comparison score.
-`tests/next_evaluation/test_pipeline.py` demonstrates the complete controlled
-prepare/execute/resume/report lifecycle, including failed outcomes.
+Each experiment/suite/section retains `batch-01.json` with attempt outcomes,
+costs, timing and provenance. Top-level `summary.json`, `summary.csv` and
+`REPORT.md` show coverage and separate workflow/diagnostic comparisons. Progress
+and checkpoint summaries go to stderr without raw prompts, API output or credential contents.
 
-Adapters must enforce fresh contexts, symmetric tool access and the advertised
-sandbox, deny real-tenant access, and own fixture setup/cleanup and independent
-receipts. Declaring a backend is not implementing it. The native reference is
-`codex_runner.run` plus `section_fixture.py` and `scenario_fixture.py`; scenario
-observation hooks currently understand native Codex events, so another harness
-must provide equivalent independently validated observations. Start with only
-`offline-foundation-v1` and `"suites": ["foundation"]` until broader adapter tests
-pass. No Claude/OpenCode-specific adapter is bundled or claimed validated here.
+Token difference is `1 - next_tokens_per_success / official_tokens_per_success`;
+each numerator includes every attempted run's cost. Failed attempts are retained.
+Incomplete accounting stays a lower bound. Incomplete schedules, inconclusive
+outcomes and zero successes have no finite comparison. Matched-success pairs are
+supplementary, never a replacement for all-attempt costs. Do not pool models,
+harnesses, workloads or task categories, infer prices, or treat a small sample
+as population parity or exhaustive live coverage.
 
-## Results, interruption and reproducibility
+Repeat the identical `--execute` command to resume completed attempts, including
+failures and unknown usage, without rebilling them. Changed configs, manifests,
+driver bytes, binaries, public source/guidance, adapters, evaluator or Python
+require a new output directory. Credential contents are never hashed. Create
+`STOP` in the output root to stop between attempts; an active attempt completes
+and checkpoints first. Remove it to resume the same schedule.
 
-Each experiment/suite/section retains its `batch-01.json` with hashes, per-attempt
-outcomes, input/cached/output totals, latency, request/retry diagnostics, failure
-labels and matched-success pairs. Top-level `summary.json`, `summary.csv` and
-`REPORT.md` provide task/section comparisons and planned/completed coverage,
-separated into workflow and diagnostic workloads.
-
-Progress goes to stderr as each job preflights and each attempt starts and
-checkpoints. Attempt lines show verified/failed/inconclusive outcomes, elapsed
-runner time, known tokens and whether accounting is complete. Resume prints how
-many attempts are retained and how many remain; reused attempts are not billed
-again. Reports refresh after each job returns, including error exits. The final
-JSON names the report and completed/planned attempt counts. Progress contains
-no raw prompts, answers, tool output or credentials.
-
-The descriptive token difference is `1 - next_tokens_per_success /
-official_tokens_per_success`, where each numerator includes **every attempted
-run's cost**, including failures. The report also shows verified outcome
-changes. A positive token difference with worse outcomes is not a parity claim.
-Unknown usage stays a lower bound; incomplete schedules, inconclusive outcomes,
-zero successes and controlled runs have no finite comparison. Matched-success
-pairs are supplementary and exclude failures, so they are never substituted
-for the all-attempt observation. No totals are pooled across harnesses,
-workloads or task categories. Token prices and dollar savings are not inferred.
-
-Repeat the same `--execute` command to resume. Completed attempts are reused,
-including failures and unknown usage; they are never retried to improve a score.
-An unresolved in-flight marker stops execution for reconciliation. Changing
-config, runner bytes, binaries, public source/guidance, evaluator or Python
-requires a new output directory. The plan records hashes, not credential contents.
-Freeze source archives outside the output directory; do not place run outputs
-inside either measured source tree.
-
-Create `STOP` in the top-level output directory to stop between attempts in the
-active section and before later jobs. An active attempt finishes and checkpoints
-its cost. Remove `STOP` to continue the identical schedule. Preparation and
-report-only do not bill models. To render retained results without checking or
-launching the current harness:
-
-```sh
-python3 evaluation/pipeline.py --output .tmp/evaluation/docs-01 --report-only
-```
-
-Report-only needs no config or adapter credentials and always uses the retained
-selection. It rejects selection/budget overrides. Changing CLI filters or
-budgets requires a new run directory, just like changing the config.
-
-Exit codes: 0 means prepared/report-rendered or all executed attempts completed
-with complete accounting; 1 means executed task/accounting failures or an
-incomplete stopped schedule; 2 means invalid/changed inputs or a job requiring
-reconciliation. The numerical outcome remains descriptive and has no target.
-Task failures continue the matrix; configuration/interruption errors stop it.
-Raw model/tool output is not retained by the shared harness. Custom adapters
-must meet the same sanitization contract. Keep exploratory runs in `.tmp/`;
-publication is a separate add-only evidence record sealed with
-`python3 scripts/next_layout.py seal`.
-
-## CI tests for the evaluation tooling
-
-```sh
-make evaluation-tooling-test
-```
-
-These tests include a process-level custom-adapter pipeline run and safe resume.
-They do not bill a model or contact a real tenant. Provider token comparisons
-require an explicitly executed, configured matrix and are not results of these
-software tests.
+`--report-only` needs only `--output`, uses the retained plan and rejects
+selection/budget overrides. It never contacts a tenant or model. Exit 0 means
+prepared/reported, or fully completed execution with verified outcomes and
+complete accounting; 1 retains task/accounting failures or an incomplete stopped
+schedule; 2 means blocked/invalid/changed inputs or reconciliation required.

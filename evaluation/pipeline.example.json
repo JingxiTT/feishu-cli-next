@@ -8,8 +8,13 @@
   "seed": 20261012,
   "budget_seconds": 180,
   "guidance_delivery": "file",
-  "workloads": ["workflow", "diagnostic"],
-  "suites": ["business", "e2e"],
+  "workloads": [
+    "workflow",
+    "diagnostic"
+  ],
+  "suites": [
+    "contact"
+  ],
   "experiments": [
     {
       "id": "native-model-a",
@@ -19,5 +24,20 @@
       "codex": "/absolute/native-codex-0.153.4",
       "auth_home": "/absolute/protected-codex-home"
     }
-  ]
+  ],
+  "live_manifests": {
+    "contact": "/absolute/feishu-cli-next/evaluation/tasks.live-contact.json"
+  },
+  "live": {
+    "driver": [
+      "/absolute/python3",
+      "/absolute/feishu-cli-next/evaluation/live_contact.py",
+      "--cli",
+      "/absolute/frozen-official-cli",
+      "--binding",
+      "/absolute/private-account-binding.json"
+    ],
+    "cli_config_dir": "/absolute/protected-feishu-cli-config",
+    "cli_data_dir": "/absolute/protected-feishu-cli-data"
+  }
 }
