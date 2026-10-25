@@ -140,6 +140,16 @@ class MatrixCacheTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'outside its retained plan'):
             self.import_cache()
 
+    def test_unreadable_or_dangling_candidate_output_is_ignored(self):
+        unreadable = self.root / 'unreadable-output'
+        unreadable.mkdir()
+        unreadable.chmod(0o000)
+        dangling = self.root / 'dangling-output'
+        dangling.symlink_to(self.root / 'missing')
+        self.cache()
+        self.import_cache()
+        self.assertTrue(self.batch_path(self.output).is_file())
+
     def test_source_and_parent_locks_prevent_cross_output_races(self):
         self.cache()
         for path in (self.source / '.matrix.lock', self.root / '.matrix-cache.lock'):

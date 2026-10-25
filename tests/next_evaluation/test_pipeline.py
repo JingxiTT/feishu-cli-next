@@ -3,6 +3,8 @@
 
 """Offline matrix planning, accounting and complete custom-runner lifecycle."""
 import copy
+import csv
+import io
 import json
 from pathlib import Path
 import subprocess
@@ -62,9 +64,9 @@ print(json.dumps({'claimed_success': False, 'usage_source': 'synthetic',
         self.adapter.write_text(json.dumps(self.settings))
         plan = pipeline.prepare(self.config)
         self.assertEqual({j['suite'] for j in plan['jobs']}, set(pipeline.SUITES))
-        self.assertEqual(sum(len(j['task_ids']) for j in plan['jobs'] if j['category'] == 'subsystem'), 43)
-        self.assertEqual(sum(len(j['task_ids']) for j in plan['jobs'] if j['category'] == 'e2e'), 2)
-        self.assertEqual(plan['categories'], ['subsystem', 'e2e'])
+        self.assertEqual(sum(len(j['task_ids']) for j in plan['jobs'] if j['workload'] == 'diagnostic'), 24)
+        self.assertEqual(sum(len(j['task_ids']) for j in plan['jobs'] if j['workload'] == 'workflow'), 21)
+        self.assertEqual(plan['workloads'], ['workflow', 'diagnostic'])
         self.assertEqual(plan['planned_attempts'], 45 * 2 * 2)
         # Quarantined tasks are excluded from product identity too.
         held = self.next / 'evaluation/tasks.held-out.json'
@@ -82,26 +84,26 @@ print(json.dumps({'claimed_success': False, 'usage_source': 'synthetic',
         changed['experiments'][0]['model'] = 'different-model'
         self.assertNotEqual(pipeline.prepare(changed)['identity_sha256'], pipeline.prepare(self.config)['identity_sha256'])
 
-    def test_categories_select_and_report_separately(self):
+    def test_workloads_select_and_report_separately(self):
         self.config.pop('suites')
         self.settings['supported_backends'] = ['offline-foundation-v1', 'synthetic-contact-v1',
                                                'synthetic-read-v1', 'synthetic-scenario-v1']
         self.adapter.write_text(json.dumps(self.settings))
         self.output.mkdir()
-        for category, tasks in (('subsystem', 43), ('e2e', 2)):
-            self.config['categories'] = [category]
+        for category, tasks in (('diagnostic', 24), ('workflow', 21)):
+            self.config['workloads'] = [category]
             plan = pipeline.prepare(self.config)
-            self.assertEqual({j['category'] for j in plan['jobs']}, {category})
+            self.assertEqual({j['workload'] for j in plan['jobs']}, {category})
             self.assertEqual(plan['planned_attempts'], tasks * 4)
             result = pipeline.report(plan, self.output)
-            self.assertEqual(result['categories'], {category: {'planned_attempts': tasks * 4, 'completed_attempts': 0}})
+            self.assertEqual(result['workloads'], {category: {'planned_attempts': tasks * 4, 'completed_attempts': 0}})
             report = (self.output / 'REPORT.md').read_text()
-            self.assertIn('E2E task evaluation' if category == 'e2e' else 'Subsystem function evaluation', report)
-        for categories in ([], ['unknown'], ['e2e', 'e2e']):
+            self.assertIn('Realistic workflows' if category == 'workflow' else 'Diagnostics', report)
+        for categories in ([], ['unknown'], ['workflow', 'workflow']):
             with self.assertRaises(ValueError):
-                pipeline.prepare({**self.config, 'categories': categories})
+                pipeline.prepare({**self.config, 'workloads': categories})
         with self.assertRaises(ValueError):
-            pipeline.prepare({**self.config, 'categories': ['e2e'], 'suites': ['foundation']})
+            pipeline.prepare({**self.config, 'workloads': ['workflow'], 'suites': ['foundation']})
 
     def test_unsupported_backend_and_invalid_selection_fail_before_calls(self):
         for update in ({'suites': ['read']}, {'sections': ['unknown']}, {'repeats': 1},
@@ -127,7 +129,7 @@ print(json.dumps({'claimed_success': False, 'usage_source': 'synthetic',
         self.assertEqual(executed.returncode, 1, executed.stderr)
         summary = json.loads((self.output / 'summary.json').read_text())
         self.assertTrue(summary['complete'])
-        self.assertTrue(all(row['saving_fraction'] is None for row in summary['comparisons']))
+        self.assertTrue(all(row['observed_token_difference'] is None for row in summary['comparisons']))
         calls = self.runner.with_suffix('.calls').read_text()
         self.assertEqual(len(calls.splitlines()), summary['coverage'][0]['planned_attempts'])
         self.assertEqual(self.launch('--execute').returncode, 1)
@@ -172,21 +174,26 @@ print(json.dumps({'claimed_success': False, 'usage_source': 'synthetic',
         row = next(r for r in result['comparisons'] if r['scope'] == 'task_id')
         self.assertEqual(row['official']['tokens_per_success'], 400)
         self.assertEqual(row['next']['tokens_per_success'], 200)
-        self.assertEqual(row['saving_fraction'], .5)
+        self.assertEqual(row['observed_token_difference'], .5)
+        report_text = (self.output / 'REPORT.md').read_text()
+        self.assertIn('| Latency O/N | API calls O/N | Retries O/N |', report_text)
+        summary_csv = list(csv.reader(io.StringIO((self.output / 'summary.csv').read_text())))
+        self.assertIn('official_latency_median_seconds', summary_csv[0])
+        self.assertIn('next_retries', summary_csv[0])
         path.write_text(json.dumps({'runs': runs[:1], 'completed': True, 'mode': 'real',
                                     **aggregate(runs[:1], ('official', 'next'))}))
-        self.assertTrue(all(r['saving_fraction'] is None for r in pipeline.report(plan, self.output)['comparisons']))
+        self.assertTrue(all(r['observed_token_difference'] is None for r in pipeline.report(plan, self.output)['comparisons']))
         save()
         runs[-1]['known_usage'] = runs[-1]['usage']
         runs[-1]['usage'] = None
         save()
         result = pipeline.report(plan, self.output)
-        self.assertTrue(all(r['saving_fraction'] is None for r in result['comparisons']))
+        self.assertTrue(all(r['observed_token_difference'] is None for r in result['comparisons']))
         self.assertEqual(result['comparisons'][0]['next']['known_total_tokens'], 200)
         runs[-1]['usage'] = runs[-1]['known_usage']
         runs[-1]['outcome_inconclusive'] = True
         save()
-        self.assertTrue(all(r['saving_fraction'] is None for r in pipeline.report(plan, self.output)['comparisons']))
+        self.assertTrue(all(r['observed_token_difference'] is None for r in pipeline.report(plan, self.output)['comparisons']))
 
 
 if __name__ == '__main__':

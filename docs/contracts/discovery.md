@@ -21,17 +21,26 @@ inferred synonyms. A query with no matches returns an empty result with a
 `meta.hint` that suggests fewer or shorter keywords.
 
 `--flags` includes each public flag's name, type, default, required marker, and
-optional `description` copied verbatim from its registered usage. Descriptions
+optional `description` copied verbatim from its registered usage. It also
+includes one compact `example` route when an authored command example exists or
+required flags form an executable placeholder skeleton. An example is
+illustrative, not a required workflow; command help and domain guidance retain
+alternate routes and complex semantics. Descriptions
 include accepted selector values and input conventions where the command defines
 them, so a focused lookup can often replace a separate command-help read. Hidden
 flags remain excluded and local definitions shadow inherited flags. An entry's
 `flags` lists its local flags. On a page with two or more entries, inherited
-flags that every entry shares, identical in name, type, default, required marker, and description, are
-listed once in `meta.common_flags`; any other inherited flag stays in its entry's
-`flags`. Each flag is recoverable from `flags` or `common_flags`. The default
-output without `--flags` is unchanged, and `common_flags` is omitted when the page
-has fewer than two entries or no shared flags. Command help and domain skills remain available for examples
-and workflow guidance.
+flags that every entry shares, identical in name, type, default, required marker,
+and description, are listed once in `meta.common_flags`; any other inherited flag
+stays in its entry's `flags`. Each flag is recoverable from `flags` or
+`common_flags`. The default output without `--flags` is unchanged, and
+`common_flags` is omitted when the page has fewer than two entries or no shared
+flags.
+
+For the token-oriented route view, combine `--flags` with the existing
+`--result-fields command,example`; the full result remains available when the
+task needs complete flag descriptions, missing-option semantics, or alternate
+workflows.
 
 Local command registration uses the startup brand, and strict-mode discovery
 uses provider identity-support metadata without verifying user or tenant identity.

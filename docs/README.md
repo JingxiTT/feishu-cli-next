@@ -8,7 +8,7 @@ Start with the row that matches what you are doing.
 | Change the code | [Contributing](contributing.md), then [AGENTS.md](../AGENTS.md) for the binding rules |
 | Run tests, with or without a Feishu account | [Testing](testing.md) |
 | Build, install, or package a distribution | [Distribution](distribution.md) |
-| Run or read an agent token comparison | [Evaluation](../evaluation/README.md) |
+| Run or read an agent token comparison | [Evaluation](../evaluation/README.md), then use `pipeline.py` |
 
 ## Contracts
 
