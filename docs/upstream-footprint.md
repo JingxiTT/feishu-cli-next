@@ -8,7 +8,7 @@ Before adding one, put the logic in a fork-owned file (`<name>_next.go`
 beside the upstream file, or a `next*` package) and keep the edit here to a
 call into it. A file restored to upstream bytes drops off this list.
 
-272 of 2720 pinned upstream files.
+274 of 2720 pinned upstream files.
 
 ## (root) (7)
 
@@ -285,7 +285,7 @@ call into it. A file restored to upstream bytes drops off this list.
 
 - `sidecar/server-multi-tenant-demo/auth_bridge.go`
 
-## tests (27)
+## tests (29)
 
 - `tests/cli_e2e/apps/apps_git_credential_dryrun_test.go`
 - `tests/cli_e2e/base/base_app_dryrun_test.go`
@@ -301,6 +301,8 @@ call into it. A file restored to upstream bytes drops off this list.
 - `tests/cli_e2e/core.go`
 - `tests/cli_e2e/core_test.go`
 - `tests/cli_e2e/docs/coverage.md`
+- `tests/cli_e2e/docs/docs_update_dryrun_test.go`
+- `tests/cli_e2e/drive/drive_update_title_dryrun_test.go`
 - `tests/cli_e2e/drive/drive_upload_dryrun_test.go`
 - `tests/cli_e2e/drive/drive_version_dryrun_test.go`
 - `tests/cli_e2e/im/coverage.md`
