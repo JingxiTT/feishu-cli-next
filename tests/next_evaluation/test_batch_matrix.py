@@ -159,6 +159,12 @@ class BatchMatrixTests(unittest.TestCase):
                 self.assertEqual(texts[0]['official_concise'], (ROOT / 'evaluation' / concise / 'SKILL.md').read_text())
                 self.assertEqual((configs[0]['model'], configs[0]['reasoning']), ('gpt-6-astra', 'high'))
 
+    def test_progress_forwarding_is_opt_in(self):
+        _, commands, _ = self.invoke(self.argv('contact', '--original-comparison', '--progress'))
+        self.assertIn('--progress', commands[0])
+        _, commands, _ = self.invoke(self.argv('contact', '--original-comparison'))
+        self.assertNotIn('--progress', commands[0])
+
     def test_resume_forwards_without_overwriting_or_reading_checkpoint(self):
         checkpoint = self.output / 'contact/batch-01.json'
         self.write(checkpoint, 'existing evidence belongs to harness validation')

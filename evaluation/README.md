@@ -31,7 +31,10 @@ It separates **workflow evaluation** (goal-oriented work) from **diagnostic
 evaluation** (bounded capability probes), with 45 development tasks by default.
 It supports workload/suite/section selection, configurable budgets/repeats,
 custom protocol runners, preflight without billing, safe resume and JSON/CSV/
-Markdown reports. Results are descriptive comparisons, not acceptance
+Markdown reports. Start with `python3 evaluation/pipeline.py --list-sections`;
+use `--section`, `--suite`, `--workload` and `--experiment` to select work,
+then `--dry-run` to preview the schedule. Execution shows per-attempt progress
+and accounting on stderr. Results are descriptive comparisons, not acceptance
 criteria. See [configuration, coverage and adapter protocol](PIPELINE.md) and
 [example config](pipeline.example.json). `run_matrix.py` is retained only to
 reproduce historical matrix evidence; it is not the current process.

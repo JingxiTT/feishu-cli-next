@@ -119,6 +119,70 @@ print(json.dumps({'claimed_success': False, 'usage_source': 'synthetic',
                                '--config', str(path), '--output', str(self.output), *flags],
                               capture_output=True, text=True, timeout=60)
 
+    def test_list_sections_needs_no_config_or_output(self):
+        listed = subprocess.run([sys.executable, str(ROOT / 'evaluation/pipeline.py'),
+                                 '--list-sections', '--suite', 'paired', 'docs-hard'],
+                                capture_output=True, text=True, timeout=60)
+        self.assertEqual(listed.returncode, 0, listed.stderr)
+        self.assertIn('docs: paired (workflow, 2 tasks); docs-hard (diagnostic, 3 tasks)', listed.stdout)
+        self.assertNotIn('wiki:', listed.stdout)
+        self.assertFalse(self.output.exists())
+
+    def test_cli_filters_preview_and_forward_symmetric_budgets_without_preflight(self):
+        self.settings['supported_backends'].append('synthetic-contact-v1')
+        self.adapter.write_text(json.dumps(self.settings))
+        self.config['experiments'].append({**self.config['experiments'][0], 'id': 'test-b'})
+        preview = self.launch('--dry-run', '--suite', 'foundation', 'contact',
+                              '--section', 'foundation', '--section', 'contact',
+                              '--workload', 'diagnostic', '--experiment', 'test-b',
+                              '--repeats', '4', '--budget-seconds', '23')
+        self.assertEqual(preview.returncode, 0, preview.stderr)
+        plan = json.loads(preview.stdout)
+        self.assertEqual({j['experiment'] for j in plan['jobs']}, {'test-b'})
+        self.assertEqual({j['suite'] for j in plan['jobs']}, {'foundation', 'contact'})
+        self.assertEqual(plan['planned_attempts'], 3 * 4 * 2)
+        self.assertEqual((plan['repeats'], plan['budget_seconds']), (4, 23))
+        self.assertFalse(self.output.exists())
+        self.assertFalse(self.runner.with_suffix('.calls').exists())
+        config = {**self.config, 'repeats': 4, 'budget_seconds': 23}
+        for job in plan['jobs']:
+            command = pipeline.command(config, job, self.output)
+            self.assertEqual(command[command.index('--repeats') + 1], '4')
+            self.assertEqual(command[command.index('--budget-seconds') + 1], '23')
+            self.assertIn('--progress', command)
+            self.assertNotIn('--progress', pipeline.command(config, job, self.output, True))
+
+    def test_cli_section_selection_filters_tasks_within_suites(self):
+        self.settings['supported_backends'].append('synthetic-scenario-v1')
+        self.adapter.write_text(json.dumps(self.settings))
+        preview = self.launch('--dry-run', '--suite', 'paired', 'scenario', 'docs-hard',
+                              '--section', 'docs')
+        self.assertEqual(preview.returncode, 0, preview.stderr)
+        plan = json.loads(preview.stdout)
+        self.assertEqual({j['suite'] for j in plan['jobs']}, {'paired', 'scenario', 'docs-hard'})
+        self.assertTrue(all(j['sections'] == ['docs'] for j in plan['jobs']))
+        self.assertEqual(plan['planned_attempts'], 6 * 2 * 2)
+
+    def test_dry_run_needs_no_output_and_failures_explain_recovery(self):
+        config = self.root / 'preview.json'
+        config.write_text(json.dumps(self.config))
+        preview = subprocess.run([sys.executable, str(ROOT / 'evaluation/pipeline.py'),
+                                  '--config', str(config), '--dry-run'],
+                                 capture_output=True, text=True, timeout=60)
+        self.assertEqual(preview.returncode, 0, preview.stderr)
+        self.assertGreater(json.loads(preview.stdout)['planned_attempts'], 0)
+        for flags, hint in ((('--section', 'unknown'), '--list-sections'),
+                            (('--experiment', 'unknown'), 'experiments array'),
+                            (('--repeats', '1'), 'two repeats'),
+                            (('--budget-seconds', '0'), '--budget-seconds'),
+                            (('--workload', 'workflow'), 'conflicts with workloads')):
+            with self.subTest(flags=flags):
+                result = self.launch('--dry-run', *flags)
+                self.assertEqual(result.returncode, 2, result.stderr)
+                self.assertIn(hint, json.loads(result.stderr)['message'])
+        self.assertFalse(self.output.exists())
+        self.assertFalse(self.runner.with_suffix('.calls').exists())
+
     def test_custom_harness_prepare_execute_resume_and_report_end_to_end(self):
         prepared = self.launch()
         self.assertEqual(prepared.returncode, 0, prepared.stderr)
@@ -132,8 +196,23 @@ print(json.dumps({'claimed_success': False, 'usage_source': 'synthetic',
         self.assertTrue(all(row['observed_token_difference'] is None for row in summary['comparisons']))
         calls = self.runner.with_suffix('.calls').read_text()
         self.assertEqual(len(calls.splitlines()), summary['coverage'][0]['planned_attempts'])
-        self.assertEqual(self.launch('--execute').returncode, 1)
+        self.assertEqual(executed.stderr.count(' checkpointed:'), len(calls.splitlines()))
+        self.assertIn('tokens=120; accounting=complete', executed.stderr)
+        self.assertIn('reports updated', executed.stderr)
+        resumed = self.launch('--execute')
+        self.assertEqual(resumed.returncode, 1)
+        self.assertIn('0 remaining', resumed.stderr)
+        self.assertNotIn(' checkpointed:', resumed.stderr)
         self.assertEqual(self.runner.with_suffix('.calls').read_text(), calls)
+        changed = self.launch('--execute', '--repeats', '3')
+        self.assertEqual(changed.returncode, 2)
+        self.assertIn('new --output directory', json.loads(changed.stderr)['message'])
+        rendered = subprocess.run([sys.executable, str(ROOT / 'evaluation/pipeline.py'),
+                                   '--output', str(self.output), '--report-only'],
+                                  capture_output=True, text=True, timeout=60)
+        self.assertEqual(rendered.returncode, 0, rendered.stderr)
+        self.assertEqual(json.loads(rendered.stdout)['status'], 'report_rendered')
+        self.assertEqual(self.launch('--report-only', '--section', 'foundation').returncode, 2)
         self.assertEqual(self.launch('--report-only').returncode, 0)
         self.assertEqual(self.runner.with_suffix('.calls').read_text(), calls)
         self.config['experiments'][0]['model'] = 'changed'

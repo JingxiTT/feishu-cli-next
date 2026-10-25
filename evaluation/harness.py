@@ -459,6 +459,7 @@ def main():
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--repeats", type=int, default=3)
     parser.add_argument("--resume", action="store_true", help="Reuse the exact completed run prefix; never retry an unresolved in-flight attempt")
+    parser.add_argument("--progress", action="store_true", help="Show attempt starts and checkpointed outcomes on stderr")
     parser.add_argument("--stop-file", type=Path, help="Operator stop request, checked only between complete attempts")
     parser.add_argument("--seed", type=int, default=20260907)
     parser.add_argument("--release-held-out", action="store_true")
@@ -511,6 +512,9 @@ def main():
             else:
                 atomic_json(args.output, evidence)
             reconcile_marker(marker, evidence, planned)
+            if args.progress:
+                print(f"Attempts: {len(runs)}/{len(planned)} retained; {len(planned) - len(runs)} remaining.",
+                      file=sys.stderr, flush=True)
             # Every terminal result is reused, including failures, unsupported
             # outcomes and unknown usage. Resume does not rescore or cherry-pick.
             for index in range(len(runs), len(planned)):
@@ -523,6 +527,10 @@ def main():
                 evidence.pop("cancelled_before_model", None)
                 atomic_json(marker, {"resume_contract": evidence["resume_contract"], "index": index,
                                      "run": run_identity(planned[index])})
+                if args.progress:
+                    task, trial, arm = planned[index]
+                    print(f"Attempt {index + 1}/{len(planned)}: {task['id']} / {arm} / trial {trial + 1} starting",
+                          file=sys.stderr, flush=True)
                 runs.append(run_one(config, *planned[index]))
                 evidence.update({"runs": runs, **aggregate(runs, selected_arms), "completed": len(runs) == len(planned),
                                  "performance_claims_supported": not args.only_arm and config["mode"] == "real" and len(runs) == len(planned)
@@ -530,6 +538,15 @@ def main():
                 atomic_json(args.output, evidence)
                 marker.unlink()
                 sync_directory(marker.parent)
+                if args.progress:
+                    row = runs[-1]
+                    outcome = 'inconclusive' if row.get('outcome_inconclusive') else 'verified' if row['success'] else 'failed'
+                    usage = row['usage'] or row.get('known_usage') or {}
+                    tokens = usage.get('total_tokens', 'unavailable')
+                    accounting = 'complete' if row['usage'] else 'incomplete (known tokens only)'
+                    print(f"Attempt {index + 1}/{len(planned)} checkpointed: {outcome}; "
+                          f"tokens={tokens}; accounting={accounting}; elapsed={row['latency_seconds']:.1f}s",
+                          file=sys.stderr, flush=True)
         print(json.dumps({"status": "pass" if all(run["success"] and run["usage"] for run in runs) else "fail",
                           "mode": config["mode"], "runs": len(runs), "output": str(args.output)}))
         return 0 if all(run["success"] and run["usage"] for run in runs) else 1
