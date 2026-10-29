@@ -17,6 +17,13 @@ all current live Luna runs, per-workflow results, coverage gaps, failures and
 accounting qualifications, with a separate index of historical evaluations and
 offline CLI probes.
 
+The [October 30 follow-up](reports/luna-cross-domain-20261030.md) measures Docs,
+Sheets and Base at Luna medium and low reasoning. Its frozen candidate used
+54–85% fewer raw tokens per verified completion with observed success
+nonregression in each case. Exact tooling scores remain unavailable; the report
+keeps preliminary attempts, Contact diagnostics, coverage limits and the final
+editorial guidance restoration separate.
+
 The fake Feishu endpoint, API simulators, canned response tables, synthetic task
 sets and legacy launchers have been removed. There is no synthetic evaluation
 backend or historical simulator launcher in this checkout. Ordinary offline
