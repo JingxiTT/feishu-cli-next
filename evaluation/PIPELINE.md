@@ -57,6 +57,8 @@ reports can still be rendered with `pipeline.py --output ... --report-only`.
    authentication. Feishu authentication separately uses `live.cli_config_dir` and
    `live.cli_data_dir` (the existing encrypted credential-store base on Linux).
    Both are explicit paths; the adapter never copies or reads their contents.
+   Generate the model's [minimum token baseline](#minimum-task-tokens-and-tooling-usage)
+   and set the experiment's `token_baseline` path to enable tooling comparisons.
 
 ```sh
 # Without config: the bundled live Contact task.
@@ -263,6 +265,86 @@ cumulative events twice. Interrupted streams retain completed known spans with
 `accounting_complete:false`; never estimate missing totals. Optional nonnegative
 `api_calls`, `retries` and `command_executions` remain diagnostics.
 
+## Minimum task tokens and tooling usage
+
+Compare the tokens spent on tooling after subtracting the minimum text needed
+to complete the task. Determine **input and output separately**, for each task
+and model, before running either CLI:
+
+- Minimum input: the shortest sufficient task goal, constraints, resource
+  references and necessary source data. Include data the agent must learn from
+  tools as well as data supplied in the prompt, once. Exclude CLI guidance,
+  schemas, tool envelopes, duplicate context and irrelevant source data.
+- Minimum output: a shortest valid answer plus every required authored artifact
+  or remote-content payload, once, including any formatting the task requires.
+  Exclude shell commands, CLI syntax, recovery narration and duplicate copies.
+
+Review these texts against the independent task verifier. A shorter invalid
+answer is not a baseline. Do not use an observed winning run, either CLI's
+transcript, an answer-schema skeleton, character counts or the other model's
+tokenizer as a substitute. Use the exact tokenizer/encoding for the experiment
+model. An undisclosed tokenizer means the baseline is unavailable. These are
+**reviewed estimates**, not proven global minima or a direct measurement of
+tokens caused solely by the CLI: the residual also includes model reasoning,
+protocol overhead and unnecessary text.
+
+Keep the reviewed text in a private JSON spec. For example (illustrative text,
+not a measured baseline for a bundled live task):
+
+```json
+{
+  "model": "REPLACE_WITH_MODEL_ID",
+  "encoding": "REPLACE_WITH_EXACT_MODEL_ENCODING",
+  "tasks": {
+    "task-id": {
+      "input_texts": ["Shortest sufficient goal and constraints", "Required source data"],
+      "output_texts": ["Shortest valid answer", "Required document or artifact content"],
+      "rationale": "Why this includes all necessary task input and required output"
+    }
+  }
+}
+```
+
+Each string is one independent message/content unit. Preserve exact text; the
+counter inserts no separators or chat wrappers. Use `output_texts: []` only for
+a task requiring no authored output. For live-generated IDs, use a reviewed
+equivalent task representation shared by both arms; disclose this approximation
+in the rationale. Never derive different deductions from each arm's answer.
+
+With the optional `tiktoken` package already available in the selected Python
+environment (also used by the offline probes), run this local counter:
+
+```sh
+python3 evaluation/token_baseline.py \
+  --spec /absolute/private-evaluation/minimum-text.json \
+  --output /absolute/private-evaluation/minimum-tokens.json
+```
+
+This contacts neither a model nor Feishu. It writes input/output counts, hashes
+of the text and rationale, model identity, encoding and tokenizer version;
+source text stays private. It refuses to overwrite an existing baseline. Keep
+the private spec for review. Set each experiment's `token_baseline` to the
+absolute generated baseline file. A supplied file must match the model and cover
+every selected task. Both arms receive the identical deduction; baseline text
+and expected answers are never sent to the model. Baseline bytes are included
+in the experiment and resume fingerprints. Changing them requires a new output
+directory. Omit the setting to collect outcomes/raw usage without a tooling
+comparison; missing baselines never imply zero minimum cost.
+
+For a verified completion:
+
+```text
+tooling_input  = provider_input  - minimum_input
+tooling_output = provider_output - minimum_output
+tooling_total  = tooling_input + tooling_output
+```
+
+Cached input is already part of provider input; do not add or subtract it again.
+A negative input or output residual invalidates the baseline for that completion;
+never clamp it to zero. Failed attempts receive no minimum deduction and their
+entire provider cost remains overhead. Aggregate all attempts' tooling totals
+and divide by verified completions, preserving failures and recovery costs.
+
 Controlled adapters and synthetic usage belong in tooling tests and are rejected
 by the current evaluation pipeline. Offline tests exercise the real-backend
 protocol with mock processes; their counters are never evaluation evidence.
@@ -274,11 +356,17 @@ costs, timing and provenance. Top-level `summary.json`, `summary.csv` and
 `REPORT.md` show coverage and separate workflow/diagnostic comparisons. Progress
 and checkpoint summaries go to stderr without raw prompts, API output or credential contents.
 
-Token difference is `1 - next_tokens_per_success / official_tokens_per_success`;
-each numerator includes every attempted run's cost. Failed attempts are retained.
-Incomplete accounting stays a lower bound. Incomplete schedules, inconclusive
-outcomes and zero successes have no finite comparison. Matched-success pairs are
-supplementary, never a replacement for all-attempt costs. Do not pool models,
+Tooling token difference is
+`1 - next_tooling_tokens_per_success / official_tooling_tokens_per_success`.
+JSON/CSV reports use `observed_tooling_token_difference`; summary schema version
+2 distinguishes this from the old total-token comparison. Raw total, input,
+cached-input and output counts remain diagnostics alongside minimum and residual
+input/output counts. Incomplete accounting stays a lower bound. Missing or
+mismatched baselines, impossible deductions, incomplete schedules, inconclusive
+outcomes, zero successes and zero official tooling cost have no finite
+comparison. Historical runs lacking minimum baselines render with unavailable
+tooling comparisons; their recorded evidence is not rewritten. Matched-success
+pairs are supplementary, never a replacement for all-attempt costs. Do not pool models,
 harnesses, workloads or task categories, infer prices, or treat a small sample
 as population parity or exhaustive live coverage.
 

@@ -124,6 +124,9 @@ def validate_config(config):
     for key in ("backend", "model", "tokenizer", "reasoning", "tools", "permissions", "budget", "accounting_method"):
         if not config.get(key):
             raise ValueError("pin config field: " + key)
+    if 'token_baseline' in config:
+        from token_baseline import validate
+        validate(config['token_baseline'], config['model'])
     if config.get("mode") not in ("controlled", "real"):
         raise ValueError("mode must be controlled or real")
     if config['mode'] == 'real' and config['backend'] != 'live-feishu-v1':
@@ -163,6 +166,7 @@ def run_one(config, task, trial, arm):
 
 
 def run_in_workspace(config, task, trial, arm, workspace):
+    from token_baseline import minimum_for
     delivery = guidance_delivery(config)
     (workspace / "fixture.json").write_text(json.dumps(task["fixture"], ensure_ascii=False), encoding="utf-8")
     request = {"protocol": 1, "task_id": task["id"], "trial": trial, "arm": arm,
@@ -212,6 +216,7 @@ def run_in_workspace(config, task, trial, arm, workspace):
     return {"task_id": task["id"], "section": task["section"], "trial": trial, "arm": arm,
             "success": verified and code == 0, "outcome_inconclusive": inconclusive, "usage": usage, "categories": categories,
             "known_usage": known_usage,
+            "minimum_tokens": minimum_for(config, task['id']),
             "accounting_diagnostics": sanitized_accounting_diagnostics(payload.get("accounting_diagnostics")),
             "verification_failures": sanitized_verification_failures(verification.get("verification_failures")),
             "control_trace": sanitized_trace(payload.get("control_trace")),
@@ -268,6 +273,11 @@ def sanitized_trace(trace):
 
 
 def aggregate(runs, arms=ARMS):
+    from token_baseline import tooling_usage
+    # A task's model/tokenizer/text baseline must be identical across all arms/trials.
+    baselines = {}
+    for run in runs:
+        baselines.setdefault(run['task_id'], set()).add(json_digest(run.get('minimum_tokens')))
     groups = {}
     for scope in ("all", "section", "task_id"):
         for run in runs:
@@ -280,11 +290,22 @@ def aggregate(runs, arms=ARMS):
         known_tokens = [observed["total_tokens"] for run in values if (observed := run["usage"] or run.get("known_usage")) is not None]
         complete = len(tokens) == len(values)
         inconclusive = sum(bool(run.get("outcome_inconclusive")) for run in values)
+        tooling = [tooling_usage(run) for run in values]
+        minimum_complete = (all(tooling) and all(len(baselines[run['task_id']]) == 1 for run in values))
+        tooling_totals = {key: sum(u[key] for u in tooling) if minimum_complete else None
+                          for key in ('input_tokens', 'output_tokens', 'total_tokens')}
         rows.append({"scope": scope, "name": name, "arm": arm, "attempts": len(values),
                      "successes": successes, "inconclusive": inconclusive,
                      "success_rate": successes / len(values) if not inconclusive else None,
                      "usage_complete": complete, "known_total_tokens": sum(known_tokens),
                      "tokens_per_success": sum(tokens) / successes if complete and successes and not inconclusive else None,
+                     "minimum_tokens_complete": minimum_complete,
+                     "minimum_input_tokens": sum(run['minimum_tokens']['input_tokens'] for run in values if run['success']) if minimum_complete else None,
+                     "minimum_output_tokens": sum(run['minimum_tokens']['output_tokens'] for run in values if run['success']) if minimum_complete else None,
+                     "tooling_input_tokens": tooling_totals['input_tokens'],
+                     "tooling_output_tokens": tooling_totals['output_tokens'],
+                     "tooling_total_tokens": tooling_totals['total_tokens'],
+                     "tooling_tokens_per_success": tooling_totals['total_tokens'] / successes if minimum_complete and successes and not inconclusive else None,
                      "token_distribution": {"min": min(tokens), "median": statistics.median(tokens),
                                             "max": max(tokens), "stdev": statistics.stdev(tokens) if len(tokens) > 1 else 0} if tokens else None,
                      "latency_median_seconds": statistics.median(run["latency_seconds"] for run in values),
@@ -299,10 +320,23 @@ def aggregate(runs, arms=ARMS):
         for run in runs:
             other = indexed.get((run["task_id"], run["trial"], baseline))
             if run["arm"] == "next" and other and run["success"] and other["success"] and run["usage"] and other["usage"]:
+                a, b = tooling_usage(other), tooling_usage(run)
+                comparable = a is not None and b is not None and len(baselines[run['task_id']]) == 1
                 pairs.append({"task_id": run["task_id"], "trial": run["trial"],
-                              "baseline_tokens": other["usage"]["total_tokens"], "next_tokens": run["usage"]["total_tokens"]})
+                              "baseline_tokens": other["usage"]["total_tokens"], "next_tokens": run["usage"]["total_tokens"],
+                              "baseline_tooling_tokens": a['total_tokens'] if comparable else None,
+                              "next_tooling_tokens": b['total_tokens'] if comparable else None})
         matched.append({"baseline": baseline, "pairs": pairs})
     return {"groups": rows, "matched_success": matched}
+
+
+def performance_claims_supported(evidence):
+    groups = {g['arm']: g for g in evidence['groups'] if g['scope'] == 'all'}
+    return (evidence.get('arm_selection', {}).get('mode') != 'candidate_only'
+            and evidence['mode'] == 'real' and evidence['completed']
+            and len(groups) > 1 and 'next' in groups
+            and all(g['tooling_tokens_per_success'] is not None for g in groups.values())
+            and all(g['tooling_tokens_per_success'] > 0 for arm, g in groups.items() if arm != 'next'))
 
 
 class ResumeError(ValueError):
@@ -411,13 +445,12 @@ def resumed_evidence(path, expected, planned, arms):
             raise ResumeError("invalid_resume_checkpoint")
     if type(previous.get("completed")) is not bool or previous["completed"] != (len(runs) == len(planned)):
         raise ResumeError("invalid_resume_checkpoint")
-    claims = (previous.get("arm_selection", {}).get("mode") != "candidate_only" and previous["mode"] == "real"
-              and len(runs) == len(planned) and all(row["usage"] and not row["outcome_inconclusive"] for row in runs))
-    if type(previous.get("performance_claims_supported")) is not bool or previous["performance_claims_supported"] != claims:
-        raise ResumeError("invalid_resume_checkpoint")
     summaries = aggregate(runs, arms)
     if any(previous.get(key) != value for key, value in summaries.items()):
         raise ResumeError("invalid_resume_checkpoint")
+    if (type(previous.get('performance_claims_supported')) is not bool
+            or previous['performance_claims_supported'] != performance_claims_supported(previous)):
+        raise ResumeError('invalid_resume_checkpoint')
     return previous
 
 
@@ -438,6 +471,7 @@ def reconcile_marker(marker, evidence, planned):
 
 
 def main():
+    from token_baseline import provenance
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--tasks", type=Path, required=True)
     parser.add_argument("--config", type=Path, required=True)
@@ -473,6 +507,7 @@ def main():
                     "seed": args.seed, "repeats": args.repeats, "fresh_context": True,
                     "task_manifest_sha256": digest(args.tasks), "config_sha256": digest(args.config),
                     "environment": {**{key: config[key] for key in ("backend", "model", "tokenizer", "reasoning", "tools", "permissions", "budget", "accounting_method")},
+                                    "token_baseline": provenance(config.get('token_baseline')),
                                     "guidance_delivery": guidance_delivery(config)},
                     "arms": {arm: {key + "_sha256": digest(config["arms"][arm][key]) for key in ("cli", "skill")} for arm in arms},
                     "runs": runs, **aggregate(runs, selected_arms)}
@@ -517,9 +552,8 @@ def main():
                     print(f"Attempt {index + 1}/{len(planned)}: {task['id']} / {arm} / trial {trial + 1} starting",
                           file=sys.stderr, flush=True)
                 runs.append(run_one(config, *planned[index]))
-                evidence.update({"runs": runs, **aggregate(runs, selected_arms), "completed": len(runs) == len(planned),
-                                 "performance_claims_supported": not args.only_arm and config["mode"] == "real" and len(runs) == len(planned)
-                                 and all(run["usage"] and not run.get("outcome_inconclusive") for run in runs)})
+                evidence.update({"runs": runs, **aggregate(runs, selected_arms), "completed": len(runs) == len(planned)})
+                evidence['performance_claims_supported'] = performance_claims_supported(evidence)
                 atomic_json(args.output, evidence)
                 marker.unlink()
                 sync_directory(marker.parent)

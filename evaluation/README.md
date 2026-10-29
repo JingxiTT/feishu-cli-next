@@ -5,6 +5,13 @@ real Feishu. [PIPELINE.md](PIPELINE.md) documents configuration, the live fixtur
 lifecycle, provider accounting and safe resume. Start from
 [pipeline.example.json](pipeline.example.json).
 
+New comparisons use **tooling tokens**: provider input/output minus separately
+reviewed minimum task input/output, counted with the model's tokenizer. Both
+CLIs share the same baseline. See [minimum task tokens](PIPELINE.md#minimum-task-tokens-and-tooling-usage)
+for the local text counter and experiment configuration. Raw usage stays visible;
+missing baselines have no tooling score. The minimum is an estimate, not a
+proven global optimum.
+
 The [full evaluation report](reports/evaluation-overview-20261029.md) consolidates
 all current live Luna runs, per-workflow results, coverage gaps, failures and
 accounting qualifications, with a separate index of historical evaluations and
@@ -38,7 +45,7 @@ never replaced with fake responses.
 | Role | Modules |
 |---|---|
 | Entry point | `pipeline.py`; internal batch adapter `live_batch.py` |
-| Model adapter and accounting | `codex_runner.py`, `harness.py` |
+| Model adapter and accounting | `codex_runner.py`, `harness.py`, `token_baseline.py` |
 | Live setup, verification and cleanup | `live_fixture.py`, `live_contact.py` |
 | Business and collaboration lifecycle | `live_workspace.py`, `live_collaboration.py`, `live_domains/` |
 | Local probes and historical analysis | `measure_cli.py`, `measure_surface.py`, `function_coverage.py`, `plot_scaling.py` |

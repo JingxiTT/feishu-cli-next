@@ -12,8 +12,9 @@ import re
 import subprocess
 import sys
 
-from harness import atomic_json, digest, json_digest, output_lock, tasks_from
+from harness import aggregate, atomic_json, digest, json_digest, output_lock, tasks_from
 from live_batch import load_runner_settings
+from token_baseline import provenance
 
 ROOT = Path(__file__).resolve().parents[1]
 WORKLOADS = {
@@ -133,6 +134,12 @@ def prepare(config):
         ids.add(name)
         if not all(isinstance(cell.get(k), str) and cell[k] for k in ('harness', 'model', 'reasoning')):
             raise PipelineError('Pin harness, model and reasoning for every experiment.')
+        baseline = None
+        if 'token_baseline' in cell:
+            from token_baseline import load
+            baseline = load(cell['token_baseline'], cell['model'], [
+                t['id'] for manifest in manifests.values() for t in manifest['tasks']
+                if not sections or t['section'] in sections])
         if 'runner_config' in cell:
             adapter = Path(cell['runner_config'])
             if not adapter.is_absolute() or not adapter.is_file():
@@ -157,6 +164,8 @@ def prepare(config):
                          'model': cell['model'], 'reasoning': cell['reasoning'],
                          'backend': manifest['backend'], 'task_ids': [t['id'] for t in tasks],
                          'sections': list(dict.fromkeys(t['section'] for t in tasks)),
+                         'token_baseline_sha256': json_digest(baseline) if baseline else None,
+                         'token_baseline': provenance(baseline),
                          'section_tasks': {s: [t['id'] for t in tasks if t['section'] == s]
                                            for s in dict.fromkeys(t['section'] for t in tasks)},
                          'planned_attempts': len(tasks) * repeats * 2})
@@ -173,6 +182,8 @@ def prepare(config):
                                 if Path(arg).is_absolute() and Path(arg).is_file()],
                 'recipient_sha256': digest(config['live']['recipient_file'])
                     if 'recipient_file' in config['live'] else None,
+                'token_baselines': {c['id']: digest(c['token_baseline'])
+                                    for c in cells if 'token_baseline' in c},
                 'adapters': {c['id']: {'settings': digest(c['runner_config']),
                     'command_files': [digest(arg) for arg in load_runner_settings(Path(c['runner_config']))['runner']
                                       if Path(arg).is_absolute() and Path(arg).is_file()]}
@@ -183,7 +194,7 @@ def prepare(config):
             'budget_seconds': config.get('budget_seconds', 180),
             'workloads': [w for w in WORKLOADS_ALLOWED if any(j['workload'] == w for j in jobs)],
             'comparison': ['official', 'next'],
-            'measurement': 'descriptive official/Next comparison against real Feishu; task-scoped live verification'}
+            'measurement': 'descriptive official/Next tooling-token comparison against real Feishu; estimated minimum task input/output subtracted; task-scoped live verification'}
 
 
 def command(config, job, output, prepare_only=False):
@@ -217,34 +228,42 @@ def report(plan, output):
                 raise PipelineError('Live report contains a different backend; synthetic results cannot be scored as live.')
             finished = batch['completed'] and balanced and batch['mode'] == 'real'
             complete &= batch['completed'] and balanced
-            groups = {(g['scope'], g['name'], g['arm']): g for g in batch['groups']}
+            # Recompute derived values, including for retained runs without a baseline.
+            report_runs = [r if job.get('token_baseline_sha256') and
+                           (r.get('minimum_tokens') or {}).get('baseline_sha256') == job['token_baseline_sha256']
+                           else {**r, 'minimum_tokens': None} for r in batch['runs']]
+            summary = aggregate(report_runs, ('official', 'next'))
+            groups = {(g['scope'], g['name'], g['arm']): g for g in summary['groups']}
             for (scope, name, arm), group in groups.items():
                 attempts = [r for r in batch['runs'] if r['arm'] == arm
                             and (scope == 'all' or r[scope] == name)]
                 known = [r['usage'] or r.get('known_usage') for r in attempts]
                 group['known_tokens'] = {key: sum(u.get(key, 0) for u in known if u)
                                          for key in ('input_tokens', 'cached_input_tokens', 'output_tokens')}
-            for scope, name in sorted({(g['scope'], g['name']) for g in batch['groups']}):
+            for scope, name in sorted({(g['scope'], g['name']) for g in summary['groups']}):
                 official = groups.get((scope, name, 'official'))
                 candidate = groups.get((scope, name, 'next'))
-                comparable = (finished and official and candidate and official['usage_complete']
-                              and candidate['usage_complete'] and not official['inconclusive']
-                              and not candidate['inconclusive'] and official['tokens_per_success']
-                              and candidate['tokens_per_success'] is not None)
-                saving = 1 - candidate['tokens_per_success'] / official['tokens_per_success'] if comparable else None
+                outcomes_comparable = (finished and official and candidate
+                                       and not official['inconclusive'] and not candidate['inconclusive'])
+                comparable = (outcomes_comparable and official['usage_complete']
+                              and candidate['usage_complete'] and official['tooling_tokens_per_success'] is not None
+                              and official['tooling_tokens_per_success'] > 0
+                              and candidate['tooling_tokens_per_success'] is not None)
+                saving = 1 - candidate['tooling_tokens_per_success'] / official['tooling_tokens_per_success'] if comparable else None
                 rows.append({'experiment': job['experiment'], 'workload': job['workload'],
                              'harness': job['harness'], 'model': job['model'],
                              'suite': job['suite'], 'section': section, 'scope': scope, 'name': name,
                              'official': official, 'next': candidate,
-                             'observed_token_difference': saving,
+                             'observed_tooling_token_difference': saving,
                              'next_verified_outcome_change': (candidate['success_rate'] - official['success_rate'])
-                             if comparable else None})
+                             if outcomes_comparable else None})
             matched.append({'experiment': job['experiment'], 'workload': job['workload'],
                             'suite': job['suite'], 'section': section,
-                            'diagnostic_only': True, 'matched_success': batch['matched_success']})
+                            'diagnostic_only': True, 'matched_success': summary['matched_success']})
         coverage.append({**job, 'completed_attempts': count,
                          'complete': bool(complete and count == job['planned_attempts'])})
-    result = {'schema_version': 1, 'measurement': plan['measurement'], 'coverage': coverage,
+    result = {'schema_version': 2, 'measurement': plan['measurement'], 'coverage': coverage,
+              'token_metric': 'tooling_tokens_per_success',
               'workloads': {w: {'planned_attempts': sum(j['planned_attempts'] for j in coverage if j['workload'] == w),
                                 'completed_attempts': sum(j['completed_attempts'] for j in coverage if j['workload'] == w)}
                             for w in plan['workloads']},
@@ -257,13 +276,19 @@ def report(plan, output):
                      'official_successes', 'next_successes', 'official_known_tokens', 'next_known_tokens',
                      'official_input_tokens', 'official_cached_input_tokens', 'official_output_tokens',
                      'next_input_tokens', 'next_cached_input_tokens', 'next_output_tokens',
+                     'official_minimum_input_tokens', 'official_minimum_output_tokens',
+                     'next_minimum_input_tokens', 'next_minimum_output_tokens',
+                     'official_tooling_input_tokens', 'official_tooling_output_tokens',
+                     'next_tooling_input_tokens', 'next_tooling_output_tokens',
+                     'official_tooling_tokens_per_success', 'next_tooling_tokens_per_success',
                      'official_latency_median_seconds', 'next_latency_median_seconds',
                      'official_api_calls', 'next_api_calls', 'official_retries', 'next_retries',
-                     'observed_token_difference', 'next_verified_outcome_change'])
+                     'observed_tooling_token_difference', 'next_verified_outcome_change'])
     lines = ['# Official CLI / Next evaluation', '', plan['measurement'], '',
              'These are descriptive comparisons for users and developers, not acceptance criteria.',
-             'Tokens per verified completion use all attempts, including failures and recovery.',
-             'Cached input is included in input tokens. Unknown usage, incomplete schedules, zero successes, controlled runs and inconclusive outcomes have no finite comparison.',
+             'Tooling tokens = (provider input + output) - (minimum task input + output). The minimum is an estimate from reviewed necessary task text counted with the model tokenizer, shared by both arms.',
+             'Tooling tokens per verified completion use all attempts, including failures and recovery. Only verified completions receive the minimum deduction; failed attempts remain fully charged.',
+             'Cached input is included in input tokens once. Unknown usage, missing/mismatched baselines, baselines exceeding observed input/output, incomplete schedules, zero successes, zero official tooling cost, controlled runs and inconclusive outcomes have no finite comparison.',
              'Models, harnesses, workloads and task categories are never pooled.']
     for row in rows:
         a, b = row['official'] or {}, row['next'] or {}
@@ -272,21 +297,25 @@ def report(plan, output):
                          b.get('known_total_tokens')] +
                         [g.get('known_tokens', {}).get(k) for g in (a, b)
                          for k in ('input_tokens', 'cached_input_tokens', 'output_tokens')] +
+                        [g.get(k) for g in (a, b) for k in ('minimum_input_tokens', 'minimum_output_tokens')] +
+                        [g.get(k) for g in (a, b) for k in ('tooling_input_tokens', 'tooling_output_tokens')] +
+                        [g.get('tooling_tokens_per_success') for g in (a, b)] +
                         [g.get('latency_median_seconds') for g in (a, b)] +
                         [g.get('api_calls') for g in (a, b)] +
                         [g.get('retries') for g in (a, b)] +
-                        [row['observed_token_difference'], row['next_verified_outcome_change']])
+                        [row['observed_tooling_token_difference'], row['next_verified_outcome_change']])
     for workload in plan['workloads']:
         counts = result['workloads'][workload]
         lines.extend(['', '## ' + WORKLOAD_LABELS[workload], '',
                       f"Attempts: {counts['completed_attempts']}/{counts['planned_attempts']} completed.", '',
-                      '| Experiment | Suite | Task | Official success | Next success | Token difference | Latency O/N | API calls O/N | Retries O/N |',
-                      '|---|---|---|---|---|---|---|---|---|'])
+                      '| Experiment | Suite | Task | Official success | Next success | Tooling tokens/completion O/N | Tooling token difference | Latency O/N | API calls O/N | Retries O/N |',
+                      '|---|---|---|---|---|---|---|---|---|---|'])
         for row in (r for r in rows if r['workload'] == workload and r['scope'] == 'task_id'):
             a, b = row['official'] or {}, row['next'] or {}
-            difference = 'unavailable' if row['observed_token_difference'] is None else f"{row['observed_token_difference']:.1%}"
+            difference = 'unavailable' if row['observed_tooling_token_difference'] is None else f"{row['observed_tooling_token_difference']:.1%}"
+            tooling = ' / '.join('unavailable' if g.get('tooling_tokens_per_success') is None else f"{g['tooling_tokens_per_success']:g}" for g in (a, b))
             lines.append(f"| {row['experiment']} | {row['suite']} | {row['name']} | "
-                         f"{a.get('successes', 0)}/{a.get('attempts', 0)} | {b.get('successes', 0)}/{b.get('attempts', 0)} | {difference} | "
+                         f"{a.get('successes', 0)}/{a.get('attempts', 0)} | {b.get('successes', 0)}/{b.get('attempts', 0)} | {tooling} | {difference} | "
                          f"{a.get('latency_median_seconds')} / {b.get('latency_median_seconds')} | "
                          f"{a.get('api_calls')} / {b.get('api_calls')} | {a.get('retries')} / {b.get('retries')} |")
     lines.extend(['', f"Completed jobs: {sum(j['complete'] for j in coverage)}/{len(coverage)}.",
