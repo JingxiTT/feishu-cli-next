@@ -270,12 +270,13 @@ func completeBaseCreate(req *http.Request, data json.RawMessage) []string {
 	var result struct {
 		IDs     []string          `json:"record_id_list"`
 		Ignored []json.RawMessage `json:"ignored_fields"`
+		Rev     *int64            `json:"rev"`
 	}
 	// This narrower success proof intentionally accepts only the established
 	// batch-create response schema; extra async/failure fields remain unknown.
 	decoder := json.NewDecoder(bytes.NewReader(data))
 	decoder.DisallowUnknownFields()
-	if !decodeRequestEvidence(req, &request) || decoder.Decode(&result) != nil || len(request.Records) == 0 || len(request.Records) > 200 || len(request.Records) != len(result.IDs) || len(result.Ignored) > 0 {
+	if !decodeRequestEvidence(req, &request) || decoder.Decode(&result) != nil || len(request.Records) == 0 || len(request.Records) > 200 || len(request.Records) != len(result.IDs) || len(result.Ignored) > 0 || result.Rev != nil && *result.Rev < 0 {
 		return nil
 	}
 	seen := map[string]bool{}

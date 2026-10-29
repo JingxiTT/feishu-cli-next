@@ -55,6 +55,24 @@ func TestEntryRoutesCommonTasksDirectly(t *testing.T) {
 	}
 }
 
+func TestEntryUsesPlanningAndLocalProcessingAcrossDomains(t *testing.T) {
+	content, err := os.ReadFile("../../agent-skills/feishu-cli-next/SKILL.md")
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, guidance := range []string{
+		"--result-fields command,plan", "contact +get-user --as user` (current)",
+		"--output ./rows.ndjson", "`next_offset` until `has_more=false`",
+		"Parse/filter/join with a local script", "Group independent reads", "Batch writes when supported; check every item",
+		"Docs text edit (including rich text)", "Confirmed returned IDs need no rescan",
+		"Range/cells changes values while preserving styles",
+	} {
+		if !strings.Contains(string(content), guidance) {
+			t.Errorf("missing shared token-saving guidance %q", guidance)
+		}
+	}
+}
+
 func fixture(body string) fstest.MapFS {
 	return fstest.MapFS{contentPath: &fstest.MapFile{Data: []byte(body)}}
 }

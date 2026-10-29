@@ -42,6 +42,20 @@ For the token-oriented route view, combine `--flags` with the existing
 task needs complete flag descriptions, missing-option semantics, or alternate
 workflows.
 
+`--result-fields command,plan` opts into a command planning view without needing
+`--flags`. Each returned entry's `plan` includes its description (the full long
+description when present), usage with positional arguments, risk, identities,
+public local and domain-inherited flags, an example when available, and complete
+authored affordance guidance. Generated API methods additionally include the
+same request-only envelope as `schema <method> --input-only`, preserving required
+fields, carriers, enums, bounds, scopes and danger metadata. The response schema
+is available through the full `schema` command. Root inherited flags are omitted
+from plans and remain available through `discover <command> --flags`. A local or
+domain override of a root flag remains in the plan. Pagination metadata is
+unchanged; only the returned page is described. Plans require no identity lookup
+or command execution. Existing discovery output is unchanged unless `plan` (or
+a dotted path beneath it) is explicitly selected.
+
 Local command registration uses the startup brand, and strict-mode discovery
 uses provider identity-support metadata without verifying user or tenant identity.
 Actual authorization and platform requests retain their normal credential and
