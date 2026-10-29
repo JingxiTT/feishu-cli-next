@@ -59,6 +59,9 @@ def batch_config(config, experiment, output):
         if custom['mode'] != 'real' or BACKEND not in custom['supported_backends']:
             raise ValueError('real evaluation requires a live-feishu-v1 model adapter')
         settings.update({k: v for k, v in custom.items() if k != 'supported_backends'})
+    if 'token_baseline' in cell:
+        from token_baseline import load
+        settings['token_baseline'] = load(cell['token_baseline'], cell['model'])
     validate_config(settings)
     return settings
 

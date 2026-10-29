@@ -18,6 +18,7 @@ sys.path.insert(0, str(ROOT / 'evaluation'))
 import pipeline
 from harness import aggregate
 from live_batch import batch_config
+from token_baseline import measure, minimum_for
 
 
 class PipelineTests(unittest.TestCase):
@@ -38,6 +39,7 @@ class PipelineTests(unittest.TestCase):
 from pathlib import Path
 r = json.load(sys.stdin)
 assert 'expected' not in r
+assert 'token_baseline' not in r and 'minimum_tokens' not in r
 with Path(__file__).with_suffix('.calls').open('a') as f:
     f.write(r['arm'] + '\\n')
 print(json.dumps({'claimed_success': False, 'usage_source': 'provider',
@@ -93,6 +95,14 @@ else:
             path = self.root / f'{suite}.json'
             path.write_text(json.dumps(manifest))
             self.config['live_manifests'][suite] = str(path)
+        self.baseline = self.root / 'minimum-tokens.json'
+        self.baseline.write_text(json.dumps(measure({
+            'model': 'test-model', 'encoding': 'unit-test', 'tasks': {
+                t['id']: {'input_texts': ['x' * 60], 'output_texts': ['y' * 10],
+                          'rationale': 'Synthetic arithmetic test, not model evidence'}
+                for path in self.config['live_manifests'].values()
+                for t in json.loads(Path(path).read_text())['tasks']}}, list, 'test-version')))
+        self.config['experiments'][0]['token_baseline'] = str(self.baseline)
         self.output = self.root / 'output'
 
     def test_plan_covers_all_configured_suites_without_reading_held_out(self):
@@ -119,7 +129,34 @@ else:
         self.assertNotEqual(pipeline.prepare(self.config)['identity_sha256'], original['identity_sha256'])
         changed = copy.deepcopy(self.config)
         changed['experiments'][0]['model'] = 'different-model'
+        changed['experiments'][0].pop('token_baseline')
         self.assertNotEqual(pipeline.prepare(changed)['identity_sha256'], pipeline.prepare(self.config)['identity_sha256'])
+
+    def test_baseline_model_coverage_and_bytes_are_pinned(self):
+        original = pipeline.prepare(self.config)['identity_sha256']
+        data = json.loads(self.baseline.read_text())
+        data['tasks']['foundation-0']['input_tokens'] += 1
+        self.baseline.write_text(json.dumps(data))
+        self.assertNotEqual(pipeline.prepare(self.config)['identity_sha256'], original)
+        data['model'] = 'wrong-model'
+        self.baseline.write_text(json.dumps(data))
+        with self.assertRaises(ValueError):
+            pipeline.prepare(self.config)
+        data['model'] = 'test-model'
+        data['tasks'].pop('foundation-0')
+        self.baseline.write_text(json.dumps(data))
+        with self.assertRaises(ValueError):
+            pipeline.prepare(self.config)
+        self.assertFalse(self.runner.with_suffix('.calls').exists())
+
+    def test_changed_baseline_blocks_resume_before_model_or_fixture(self):
+        self.assertEqual(self.launch().returncode, 0)
+        data = json.loads(self.baseline.read_text())
+        data['tasks']['foundation-0']['output_tokens'] += 1
+        self.baseline.write_text(json.dumps(data))
+        self.assertEqual(self.launch('--execute').returncode, 2)
+        self.assertFalse(self.runner.with_suffix('.calls').exists())
+        self.assertFalse(self.driver.with_suffix('.calls').exists())
 
     def test_private_recipient_is_fingerprinted_without_exposing_identity(self):
         recipient = self.root / 'recipient.json'
@@ -248,7 +285,12 @@ else:
         self.assertEqual(executed.returncode, 1, executed.stderr)
         summary = json.loads((self.output / 'summary.json').read_text())
         self.assertTrue(summary['complete'])
-        self.assertTrue(all(row['observed_token_difference'] is None for row in summary['comparisons']))
+        self.assertTrue(all(row['observed_tooling_token_difference'] is None for row in summary['comparisons']))
+        self.assertEqual(summary['schema_version'], 2)
+        self.assertEqual(summary['token_metric'], 'tooling_tokens_per_success')
+        batch = json.loads((self.output / 'test-a/foundation/foundation/batch-01.json').read_text())
+        self.assertTrue(all(r['minimum_tokens']['input_tokens'] == 60 and
+                            r['minimum_tokens']['output_tokens'] == 10 for r in batch['runs']))
         calls = self.runner.with_suffix('.calls').read_text()
         self.assertEqual(len(calls.splitlines()), summary['coverage'][0]['planned_attempts'])
         self.assertEqual(executed.stderr.count(' checkpointed:'), len(calls.splitlines()))
@@ -362,12 +404,15 @@ else:
         job['section_tasks'] = {'foundation': job['task_ids']}
         job['planned_attempts'] = 4
         runs = []
+        minimum = minimum_for({'token_baseline': json.loads(self.baseline.read_text())}, job['task_ids'][0])
         for arm in ('official', 'next'):
             for trial in range(2):
                 tokens = 200 if arm == 'official' else 100
                 runs.append({'task_id': job['task_ids'][0], 'section': 'foundation', 'arm': arm,
                              'trial': trial, 'success': trial == 0, 'outcome_inconclusive': False,
-                             'usage': {'total_tokens': tokens}, 'categories': [],
+                             'usage': {'total_tokens': tokens, 'input_tokens': tokens * 3 // 4,
+                                       'output_tokens': tokens // 4}, 'categories': [],
+                             'minimum_tokens': minimum,
                              'latency_seconds': 1, 'api_calls': 0, 'retries': 0})
         path = self.output / 'test-a/foundation/foundation/batch-01.json'
         path.parent.mkdir(parents=True)
@@ -380,22 +425,73 @@ else:
         row = next(r for r in result['comparisons'] if r['scope'] == 'task_id')
         self.assertEqual(row['official']['tokens_per_success'], 400)
         self.assertEqual(row['next']['tokens_per_success'], 200)
-        self.assertEqual(row['observed_token_difference'], .5)
+        self.assertEqual(row['official']['tooling_tokens_per_success'], 330)
+        self.assertEqual(row['next']['tooling_tokens_per_success'], 130)
+        self.assertAlmostEqual(row['observed_tooling_token_difference'], 1 - 130 / 330)
+        self.assertEqual(row['official']['tooling_input_tokens'], 240)
+        self.assertEqual(row['official']['tooling_output_tokens'], 90)
         report_text = (self.output / 'REPORT.md').read_text()
         self.assertIn('| Latency O/N | API calls O/N | Retries O/N |', report_text)
         summary_csv = list(csv.reader(io.StringIO((self.output / 'summary.csv').read_text())))
         self.assertIn('official_latency_median_seconds', summary_csv[0])
         self.assertIn('next_retries', summary_csv[0])
+        self.assertIn('official_minimum_input_tokens', summary_csv[0])
+        self.assertIn('next_tooling_output_tokens', summary_csv[0])
+        self.assertIn('observed_tooling_token_difference', summary_csv[0])
+        self.assertNotIn('observed_token_difference', summary_csv[0])
+        self.assertIn('Tooling token difference', report_text)
+        self.assertIn('330 / 130', report_text)
+        csv_row = next(r for r in csv.DictReader(io.StringIO((self.output / 'summary.csv').read_text()))
+                       if r['scope'] == 'task_id')
+        self.assertEqual(csv_row['official_minimum_input_tokens'], '60')
+        self.assertEqual(csv_row['next_tooling_output_tokens'], '40')
+
+        # Zero official overhead has no finite relative difference; zero Next is valid.
+        original_runs = copy.deepcopy(runs)
+        for run in runs:
+            run['success'] = True
+            if run['arm'] == 'official':
+                run['usage'] = {'input_tokens': 60, 'output_tokens': 10, 'total_tokens': 70}
+        save()
+        self.assertTrue(all(r['observed_tooling_token_difference'] is None
+                            for r in pipeline.report(plan, self.output)['comparisons']))
+        for run in runs:
+            run['usage'] = ({'input_tokens': 75, 'output_tokens': 25, 'total_tokens': 100}
+                            if run['arm'] == 'official' else
+                            {'input_tokens': 60, 'output_tokens': 10, 'total_tokens': 70})
+        save()
+        self.assertTrue(all(r['observed_tooling_token_difference'] == 1
+                            for r in pipeline.report(plan, self.output)['comparisons']))
+        runs[:] = original_runs
+
+        # Old evidence remains readable without fabricating a missing minimum.
+        for run in runs:
+            run.pop('minimum_tokens')
+        save()
+        legacy = pipeline.report(plan, self.output)
+        self.assertTrue(all(r['observed_tooling_token_difference'] is None for r in legacy['comparisons']))
+        self.assertEqual(legacy['comparisons'][0]['next']['known_total_tokens'], 200)
+        self.assertEqual(legacy['comparisons'][0]['next_verified_outcome_change'], 0)
+        for run in runs:
+            run['minimum_tokens'] = minimum
+
+        # A baseline from another plan cannot be used, even if both arms match it.
+        wrong_plan = copy.deepcopy(plan)
+        wrong_plan['jobs'][0]['token_baseline_sha256'] = 'f' * 64
+        save()
+        wrong = pipeline.report(wrong_plan, self.output)
+        self.assertTrue(all(r['observed_tooling_token_difference'] is None for r in wrong['comparisons']))
+        self.assertIsNone(wrong['matched_success'][0]['matched_success'][0]['pairs'][0]['next_tooling_tokens'])
         path.write_text(json.dumps({'runs': runs[:1], 'completed': True, 'mode': 'real',
                                     'environment': {'backend': 'live-feishu-v1'},
                                     **aggregate(runs[:1], ('official', 'next'))}))
-        self.assertTrue(all(r['observed_token_difference'] is None for r in pipeline.report(plan, self.output)['comparisons']))
+        self.assertTrue(all(r['observed_tooling_token_difference'] is None for r in pipeline.report(plan, self.output)['comparisons']))
         save()
         runs[-1]['known_usage'] = runs[-1]['usage']
         runs[-1]['usage'] = None
         save()
         result = pipeline.report(plan, self.output)
-        self.assertTrue(all(r['observed_token_difference'] is None for r in result['comparisons']))
+        self.assertTrue(all(r['observed_tooling_token_difference'] is None for r in result['comparisons']))
         self.assertEqual(result['comparisons'][0]['next']['known_total_tokens'], 200)
         data = json.loads(path.read_text())
         data['environment']['backend'] = 'synthetic-scenario-v1'
@@ -405,7 +501,7 @@ else:
         runs[-1]['usage'] = runs[-1]['known_usage']
         runs[-1]['outcome_inconclusive'] = True
         save()
-        self.assertTrue(all(r['observed_token_difference'] is None for r in pipeline.report(plan, self.output)['comparisons']))
+        self.assertTrue(all(r['observed_tooling_token_difference'] is None for r in pipeline.report(plan, self.output)['comparisons']))
 
 
 if __name__ == '__main__':
