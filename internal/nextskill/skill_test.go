@@ -64,7 +64,8 @@ func TestEntryUsesPlanningAndLocalProcessingAcrossDomains(t *testing.T) {
 		"--result-fields command,plan", "contact +get-user --as user` (current)",
 		"--output ./rows.ndjson", "`next_offset` until `has_more=false`",
 		"Parse/filter/join with a local script", "Group independent reads", "Batch writes when supported; check every item",
-		"Run known workflows in one local script", "Docs text edit (including rich text)", "Confirmed returned IDs need no rescan",
+		"Run known workflows in one local script", "sheets +cells-get", "base +record-get --record-id", "base +record-upsert --json",
+		"contact +search-user --user-ids", "contact +search-bot --query", "--user-id <id> --user-id-type open_id", "Docs text edit (including rich text)", "Confirmed returned IDs need no rescan",
 		"Range/cells changes values while preserving styles",
 	} {
 		if !strings.Contains(string(content), guidance) {
