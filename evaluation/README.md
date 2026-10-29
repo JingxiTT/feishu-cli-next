@@ -5,6 +5,11 @@ real Feishu. [PIPELINE.md](PIPELINE.md) documents configuration, the live fixtur
 lifecycle, provider accounting and safe resume. Start from
 [pipeline.example.json](pipeline.example.json).
 
+The [full evaluation report](reports/evaluation-overview-20261029.md) consolidates
+all current live Luna runs, per-workflow results, coverage gaps, failures and
+accounting qualifications, with a separate index of historical evaluations and
+offline CLI probes.
+
 The fake Feishu endpoint, API simulators, canned response tables, synthetic task
 sets and legacy launchers have been removed. There is no synthetic evaluation
 backend or historical simulator launcher in this checkout. Ordinary offline
@@ -12,7 +17,20 @@ unit tests mock model processes and lifecycle messages; they do not implement
 Feishu APIs or produce model-efficiency evidence.
 
 The bundled [live Contact task](tasks.live-contact.json) reads the current
-account and tenant. Other suites need independently verified live fixtures.
+account and tenant. The [business workflows](LIVE_BUSINESS.md) add native rich
+document editing, typed spreadsheet reconciliation, paginated Base intake
+and a report spanning Docs, Sheets and Base. The extended suite adds six cases,
+including 2,505-record and 500-block audits and a settlement updating all three
+domains. Three complex cases add versioned FX journals, conflict-aware Base
+adjustments, and bulk document closeout with native ID preservation. They use fresh
+`[TEST]` resources in the authenticated account, with independent native
+readback and confirmed cleanup. The [collaboration workflows](LIVE_COLLABORATION.md)
+add document creation, image/file attachments, Mermaid and SVG drawings.
+IM/group-chat evaluation code and cases were removed under the user's permission
+boundary. Other suites need independently verified live fixtures.
+The [complex Luna run](reports/live-complex-luna-20261029.md) records the new
+business sample, original verifier results, native formatting reassessment,
+blocked IM setup, cleanup and all provider costs separately.
 `pipeline.py --list-sections` lists the bundled live task without a config, or
 actual configured live tasks with `--config`. Missing live fixtures are blocked,
 never replaced with fake responses.
@@ -22,6 +40,7 @@ never replaced with fake responses.
 | Entry point | `pipeline.py`; internal batch adapter `live_batch.py` |
 | Model adapter and accounting | `codex_runner.py`, `harness.py` |
 | Live setup, verification and cleanup | `live_fixture.py`, `live_contact.py` |
+| Business and collaboration lifecycle | `live_workspace.py`, `live_collaboration.py`, `live_domains/` |
 | Local probes and historical analysis | `measure_cli.py`, `measure_surface.py`, `function_coverage.py`, `plot_scaling.py` |
 
 Do not read or use `tasks.held-out.json` during development.

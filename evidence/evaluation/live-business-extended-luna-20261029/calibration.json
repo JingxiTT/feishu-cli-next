@@ -1,0 +1,48 @@
+{
+  "purpose": "Trusted fixture calibration only; not model task success or token evidence",
+  "runs": [
+    {
+      "task": "business-base-audit-large",
+      "purpose": "live fixture calibration only; no model or efficiency evidence",
+      "verified": true,
+      "cleaned": true
+    },
+    {
+      "task": "business-base-conditional-close",
+      "purpose": "live fixture calibration only; no model or efficiency evidence",
+      "verified": true,
+      "cleaned": true
+    },
+    {
+      "task": "business-sheet-intake",
+      "purpose": "live fixture calibration only; no model or efficiency evidence",
+      "verified": false,
+      "cleaned": true
+    },
+    {
+      "task": "business-sheet-export",
+      "purpose": "live fixture calibration only; no model or efficiency evidence",
+      "verified": true,
+      "cleaned": true
+    },
+    {
+      "task": "business-document-audit-large",
+      "purpose": "live fixture calibration only; no model or efficiency evidence",
+      "verified": true,
+      "cleaned": true
+    },
+    {
+      "task": "business-budget-close",
+      "purpose": "live fixture calibration only; no model or efficiency evidence",
+      "verified": true,
+      "cleaned": true
+    },
+    {
+      "task": "business-sheet-intake",
+      "purpose": "live fixture calibration only; no model or efficiency evidence",
+      "verified": true,
+      "cleaned": true
+    }
+  ],
+  "correction": "The initial CSV calibration preserved all values but changed native isColTruncated display metadata. A fresh fixture widened column D before its preservation snapshot; every returned cell field remains compared. Initial failure retained."
+}

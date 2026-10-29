@@ -1,0 +1,138 @@
+{
+  "schema_version": 1,
+  "split": "development",
+  "backend": "live-feishu-v1",
+  "basis": "Live Feishu collaboration workflows using existing user permissions, fresh private TEST documents and supplied assets. No IM, group-chat, message delivery or scope expansion.",
+  "tasks": [
+    {
+      "id": "collaboration-document-create",
+      "section": "collaboration",
+      "prompt": "document create on real Feishu with independent readback",
+      "fixture": {
+        "answer_schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "document_id"
+          ],
+          "properties": {
+            "document_id": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "expected": {
+        "checks": [
+          "Complete native readback under existing user permissions",
+          "Preservation of unrelated native state; exact JSON types and resource bytes",
+          "Confirmed cleanup of run-owned TEST resources; blocked is not pass"
+        ]
+      }
+    },
+    {
+      "id": "collaboration-image-upload",
+      "section": "collaboration",
+      "prompt": "image upload on real Feishu with independent readback",
+      "fixture": {
+        "answer_schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "document_id"
+          ],
+          "properties": {
+            "document_id": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "expected": {
+        "checks": [
+          "Complete native readback under existing user permissions",
+          "Preservation of unrelated native state; exact JSON types and resource bytes",
+          "Confirmed cleanup of run-owned TEST resources; blocked is not pass"
+        ]
+      }
+    },
+    {
+      "id": "collaboration-file-upload",
+      "section": "collaboration",
+      "prompt": "file upload on real Feishu with independent readback",
+      "fixture": {
+        "answer_schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "document_id"
+          ],
+          "properties": {
+            "document_id": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "expected": {
+        "checks": [
+          "Complete native readback under existing user permissions",
+          "Preservation of unrelated native state; exact JSON types and resource bytes",
+          "Confirmed cleanup of run-owned TEST resources; blocked is not pass"
+        ]
+      }
+    },
+    {
+      "id": "collaboration-mermaid-create",
+      "section": "collaboration",
+      "prompt": "mermaid create on real Feishu with independent readback",
+      "fixture": {
+        "answer_schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "document_id"
+          ],
+          "properties": {
+            "document_id": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "expected": {
+        "checks": [
+          "Complete native readback under existing user permissions",
+          "Preservation of unrelated native state; exact JSON types and resource bytes",
+          "Confirmed cleanup of run-owned TEST resources; blocked is not pass"
+        ]
+      }
+    },
+    {
+      "id": "collaboration-drawing-create",
+      "section": "collaboration",
+      "prompt": "drawing create on real Feishu with independent readback",
+      "fixture": {
+        "answer_schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "document_id"
+          ],
+          "properties": {
+            "document_id": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "expected": {
+        "checks": [
+          "Complete native readback under existing user permissions",
+          "Preservation of unrelated native state; exact JSON types and resource bytes",
+          "Confirmed cleanup of run-owned TEST resources; blocked is not pass"
+        ]
+      }
+    }
+  ]
+}

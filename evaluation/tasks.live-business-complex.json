@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "split": "development",
+  "backend": "live-feishu-v1",
+  "basis": "Complex business workflows on real Feishu. Fresh private TEST resources, complete independent native readback, mutation and preservation checks. No simulator.",
+  "tasks": [
+    {
+      "id": "business-sheet-journal",
+      "section": "workspace",
+      "prompt": "Reconcile a versioned multi-currency journal with duplicates, voids, approval gates and per-event decimal rounding.",
+      "fixture": {
+        "answer_schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "path"
+          ],
+          "properties": {
+            "path": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "expected": {
+        "checks": [
+          "independent complete real Feishu native readback",
+          "preservation of unselected data and native formatting",
+          "run-owned TEST resources and confirmed cleanup"
+        ]
+      }
+    },
+    {
+      "id": "business-base-conflict-reconcile",
+      "section": "workspace",
+      "prompt": "Reconcile versioned adjustment requests against a complete native table using original-value conflicts and exact field preservation.",
+      "fixture": {
+        "answer_schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "path"
+          ],
+          "properties": {
+            "path": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "expected": {
+        "checks": [
+          "independent complete real Feishu native readback",
+          "preservation of unselected data and native formatting",
+          "run-owned TEST resources and confirmed cleanup"
+        ]
+      }
+    },
+    {
+      "id": "business-document-closeout",
+      "section": "workspace",
+      "prompt": "Close approved positive invoices across more than 500 native blocks, retaining IDs and rich formatting and appending a computed audit summary.",
+      "fixture": {
+        "answer_schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "path"
+          ],
+          "properties": {
+            "path": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "expected": {
+        "checks": [
+          "independent complete real Feishu native readback",
+          "preservation of unselected data and native formatting",
+          "run-owned TEST resources and confirmed cleanup"
+        ]
+      }
+    }
+  ]
+}

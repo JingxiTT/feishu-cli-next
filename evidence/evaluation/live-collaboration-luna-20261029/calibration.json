@@ -1,0 +1,54 @@
+{
+  "purpose": "Trusted fixture calibration only, not model task-success or token evidence",
+  "runs": [
+    {
+      "task_id": "collaboration-document-create",
+      "purpose": "Trusted real Feishu fixture calibration only; no model usage or agent-success evidence",
+      "verified": true,
+      "cleaned": true
+    },
+    {
+      "task_id": "collaboration-image-upload",
+      "purpose": "Trusted real Feishu fixture calibration only; no model usage or agent-success evidence",
+      "verified": true,
+      "cleaned": true
+    },
+    {
+      "task_id": "collaboration-file-upload",
+      "purpose": "Trusted real Feishu fixture calibration only; no model usage or agent-success evidence",
+      "verified": false,
+      "cleaned": true
+    },
+    {
+      "task_id": "collaboration-mermaid-create",
+      "purpose": "Trusted real Feishu fixture calibration only; no model usage or agent-success evidence",
+      "verified": false,
+      "cleaned": true
+    },
+    {
+      "task_id": "collaboration-drawing-create",
+      "purpose": "Trusted real Feishu fixture calibration only; no model usage or agent-success evidence",
+      "verified": false,
+      "cleaned": true
+    },
+    {
+      "task_id": "collaboration-file-upload",
+      "purpose": "Trusted real Feishu fixture calibration only; no model usage or agent-success evidence",
+      "verified": true,
+      "cleaned": true
+    },
+    {
+      "task_id": "collaboration-mermaid-create",
+      "purpose": "Trusted real Feishu fixture calibration only; no model usage or agent-success evidence",
+      "verified": true,
+      "cleaned": true
+    },
+    {
+      "task_id": "collaboration-drawing-create",
+      "purpose": "Trusted real Feishu fixture calibration only; no model usage or agent-success evidence",
+      "verified": true,
+      "cleaned": true
+    }
+  ],
+  "corrections": "Initial file verifier expected flat file blocks; native view containers and their parent/child links are now checked. Mermaid source fixture has no terminal newline because the server removes it. SVG creates native editable shapes/text/connectors plus a vector diamond fallback; its geometry and labels are checked rather than expecting an SVG syntax block. All changes were frozen before model execution. Final stricter drawing checks also accepted the complete recorded native calibration readback."
+}

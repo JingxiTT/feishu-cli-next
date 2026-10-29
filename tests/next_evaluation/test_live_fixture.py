@@ -6,6 +6,7 @@ import copy
 import json
 import os
 from pathlib import Path
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -49,6 +50,20 @@ class RecipientTests(unittest.TestCase):
                 live_fixture.validate_live_config(self.config['live'])
         with self.assertRaises(ValueError):
             live_fixture.load_recipient({'recipient_file': 'evaluation/tasks.live-contact.json'})
+
+    def test_reusable_recipient_config_is_ignored_and_template_has_only_placeholders(self):
+        repo = Path(__file__).resolve().parents[2]
+        for name in ['recipient.json', 'live.local.json', 'verification.private.json']:
+            path = '.tmp/evaluation-private/' + name
+            ignored = subprocess.run(['git', 'check-ignore', '--no-index', '-q', path],
+                                     cwd=repo, capture_output=True, check=False)
+            self.assertEqual(ignored.returncode, 0)
+            tracked = subprocess.run(['git', 'ls-files', '--error-unmatch', '--', path],
+                                     cwd=repo, capture_output=True, check=False)
+            self.assertNotEqual(tracked.returncode, 0)
+        template = json.loads((repo / 'evaluation/recipient.example.json').read_text())
+        self.assertEqual(set(template), {'open_id', 'tenant_key'})
+        self.assertTrue(all(value.startswith('<') and value.endswith('>') for value in template.values()))
 
     def test_delivery_without_config_is_blocked_before_setup(self):
         del self.config['live']['recipient_file']

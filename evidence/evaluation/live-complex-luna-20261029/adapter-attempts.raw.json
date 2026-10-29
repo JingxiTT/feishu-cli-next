@@ -1,0 +1,315 @@
+{
+  "protocol": 1,
+  "mode": "real",
+  "split": "development",
+  "performance_claims_supported": false,
+  "completed": false,
+  "planned_runs": 18,
+  "seed": 2026102905,
+  "repeats": 3,
+  "fresh_context": true,
+  "task_manifest_sha256": "0a516293f218a45929378146e419592d8c45c0a40852a1f7d33f9d44640b3723",
+  "config_sha256": "94cef6340a8ddefd5d38a4bc40d7f5285735cc0a8a6439340523eecf03556bfc",
+  "environment": {
+    "backend": "live-feishu-v1",
+    "model": "codex/gpt-6-luna",
+    "tokenizer": "provider-undisclosed",
+    "reasoning": "medium",
+    "tools": [
+      "shell",
+      "files"
+    ],
+    "permissions": "workspace-write; real Feishu; task-authorized writes only in private run-owned TEST resources; no delivery or permission changes",
+    "budget": {
+      "timeout_seconds": 480
+    },
+    "accounting_method": "codex-cli 0.165.0 provider turn.completed; cached input included; Magpie Responses transport",
+    "guidance_delivery": "file"
+  },
+  "arms": {
+    "official": {
+      "cli_sha256": "91064a6c49e2ba82bd6428bb3d3d9dbbd63bf6243ed087737adf35b0f88cd51c",
+      "skill_sha256": "9fa68bb1f3ce564602c6df6c303ea4d2759de02442772f332fe5041d65720a1f"
+    },
+    "next": {
+      "cli_sha256": "ed0098f278f3e3c5f9f4dca8ef9202dc438f9d7cff18fd458a8abce85e58f613",
+      "skill_sha256": "da3e673d8e9bd1fcc835d7f234f89987d02de8d7ae16830c32e79e260f429bb9"
+    }
+  },
+  "runs": [
+    {
+      "task_id": "business-sheet-journal",
+      "section": "workspace",
+      "trial": 1,
+      "arm": "next",
+      "success": false,
+      "outcome_inconclusive": false,
+      "usage": null,
+      "categories": [
+        "runner_failure",
+        "usage_unavailable",
+        "outcome_failure"
+      ],
+      "known_usage": null,
+      "accounting_diagnostics": null,
+      "verification_failures": null,
+      "control_trace": null,
+      "usage_granularity": null,
+      "runner_exit": 1,
+      "verifier_exit": 0,
+      "latency_seconds": 0.061462199984816834,
+      "verification_seconds": 0.890250839991495,
+      "api_calls": null,
+      "retries": null,
+      "command_executions": null
+    },
+    {
+      "task_id": "business-sheet-journal",
+      "section": "workspace",
+      "trial": 2,
+      "arm": "next",
+      "success": false,
+      "outcome_inconclusive": false,
+      "usage": null,
+      "categories": [
+        "runner_failure",
+        "usage_unavailable",
+        "outcome_failure"
+      ],
+      "known_usage": null,
+      "accounting_diagnostics": null,
+      "verification_failures": null,
+      "control_trace": null,
+      "usage_granularity": null,
+      "runner_exit": 1,
+      "verifier_exit": 0,
+      "latency_seconds": 0.05602889301371761,
+      "verification_seconds": 0.907798529980937,
+      "api_calls": null,
+      "retries": null,
+      "command_executions": null
+    },
+    {
+      "task_id": "business-base-conflict-reconcile",
+      "section": "workspace",
+      "trial": 2,
+      "arm": "official",
+      "success": false,
+      "outcome_inconclusive": false,
+      "usage": null,
+      "categories": [
+        "runner_failure",
+        "usage_unavailable",
+        "outcome_failure"
+      ],
+      "known_usage": null,
+      "accounting_diagnostics": null,
+      "verification_failures": null,
+      "control_trace": null,
+      "usage_granularity": null,
+      "runner_exit": 1,
+      "verifier_exit": 0,
+      "latency_seconds": 0.05778873700182885,
+      "verification_seconds": 0.9458458890148904,
+      "api_calls": null,
+      "retries": null,
+      "command_executions": null
+    },
+    {
+      "task_id": "business-base-conflict-reconcile",
+      "section": "workspace",
+      "trial": 0,
+      "arm": "next",
+      "success": false,
+      "outcome_inconclusive": false,
+      "usage": null,
+      "categories": [
+        "runner_failure",
+        "usage_unavailable",
+        "outcome_failure"
+      ],
+      "known_usage": null,
+      "accounting_diagnostics": null,
+      "verification_failures": null,
+      "control_trace": null,
+      "usage_granularity": null,
+      "runner_exit": 1,
+      "verifier_exit": 0,
+      "latency_seconds": 0.05692974801058881,
+      "verification_seconds": 0.871262098022271,
+      "api_calls": null,
+      "retries": null,
+      "command_executions": null
+    }
+  ],
+  "groups": [
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 0,
+      "inconclusive": 0,
+      "success_rate": 0.0,
+      "usage_complete": false,
+      "known_total_tokens": 0,
+      "tokens_per_success": null,
+      "token_distribution": null,
+      "latency_median_seconds": 0.05692974801058881,
+      "api_calls": null,
+      "retries": null,
+      "failure_categories": {
+        "outcome_failure": 3,
+        "runner_failure": 3,
+        "usage_unavailable": 3
+      }
+    },
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "official",
+      "attempts": 1,
+      "successes": 0,
+      "inconclusive": 0,
+      "success_rate": 0.0,
+      "usage_complete": false,
+      "known_total_tokens": 0,
+      "tokens_per_success": null,
+      "token_distribution": null,
+      "latency_median_seconds": 0.05778873700182885,
+      "api_calls": null,
+      "retries": null,
+      "failure_categories": {
+        "outcome_failure": 1,
+        "runner_failure": 1,
+        "usage_unavailable": 1
+      }
+    },
+    {
+      "scope": "section",
+      "name": "workspace",
+      "arm": "next",
+      "attempts": 3,
+      "successes": 0,
+      "inconclusive": 0,
+      "success_rate": 0.0,
+      "usage_complete": false,
+      "known_total_tokens": 0,
+      "tokens_per_success": null,
+      "token_distribution": null,
+      "latency_median_seconds": 0.05692974801058881,
+      "api_calls": null,
+      "retries": null,
+      "failure_categories": {
+        "outcome_failure": 3,
+        "runner_failure": 3,
+        "usage_unavailable": 3
+      }
+    },
+    {
+      "scope": "section",
+      "name": "workspace",
+      "arm": "official",
+      "attempts": 1,
+      "successes": 0,
+      "inconclusive": 0,
+      "success_rate": 0.0,
+      "usage_complete": false,
+      "known_total_tokens": 0,
+      "tokens_per_success": null,
+      "token_distribution": null,
+      "latency_median_seconds": 0.05778873700182885,
+      "api_calls": null,
+      "retries": null,
+      "failure_categories": {
+        "outcome_failure": 1,
+        "runner_failure": 1,
+        "usage_unavailable": 1
+      }
+    },
+    {
+      "scope": "task_id",
+      "name": "business-base-conflict-reconcile",
+      "arm": "next",
+      "attempts": 1,
+      "successes": 0,
+      "inconclusive": 0,
+      "success_rate": 0.0,
+      "usage_complete": false,
+      "known_total_tokens": 0,
+      "tokens_per_success": null,
+      "token_distribution": null,
+      "latency_median_seconds": 0.05692974801058881,
+      "api_calls": null,
+      "retries": null,
+      "failure_categories": {
+        "outcome_failure": 1,
+        "runner_failure": 1,
+        "usage_unavailable": 1
+      }
+    },
+    {
+      "scope": "task_id",
+      "name": "business-base-conflict-reconcile",
+      "arm": "official",
+      "attempts": 1,
+      "successes": 0,
+      "inconclusive": 0,
+      "success_rate": 0.0,
+      "usage_complete": false,
+      "known_total_tokens": 0,
+      "tokens_per_success": null,
+      "token_distribution": null,
+      "latency_median_seconds": 0.05778873700182885,
+      "api_calls": null,
+      "retries": null,
+      "failure_categories": {
+        "outcome_failure": 1,
+        "runner_failure": 1,
+        "usage_unavailable": 1
+      }
+    },
+    {
+      "scope": "task_id",
+      "name": "business-sheet-journal",
+      "arm": "next",
+      "attempts": 2,
+      "successes": 0,
+      "inconclusive": 0,
+      "success_rate": 0.0,
+      "usage_complete": false,
+      "known_total_tokens": 0,
+      "tokens_per_success": null,
+      "token_distribution": null,
+      "latency_median_seconds": 0.05874554649926722,
+      "api_calls": null,
+      "retries": null,
+      "failure_categories": {
+        "outcome_failure": 2,
+        "runner_failure": 2,
+        "usage_unavailable": 2
+      }
+    }
+  ],
+  "matched_success": [
+    {
+      "baseline": "official",
+      "pairs": []
+    }
+  ],
+  "arm_selection": {
+    "mode": "original_comparison",
+    "selected": [
+      "official",
+      "next"
+    ],
+    "schedule": "balanced",
+    "balanced_comparison": true
+  },
+  "resume_contract": {
+    "version": 1,
+    "sha256": "19cffb818536f67308de41f435a6d67cfa2f455a3f807e0072f1a21ea18fa6b6"
+  },
+  "stopped": true,
+  "cancelled_before_model": 14
+}

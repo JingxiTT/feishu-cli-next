@@ -1,0 +1,13 @@
+{
+  "status": "partial_verification",
+  "task_id": "business-file-handoff",
+  "verified_checks": [
+    "exact uploaded and downloaded bytes",
+    "filename",
+    "owner and private ACL",
+    "unchanged guard file"
+  ],
+  "unverified_requirement": "destination folder placement",
+  "reason": "The granted individual-file metadata response has no parent/folder field, and broad folder listing requires scopes the user declined.",
+  "policy": "Preserve frozen raw measurements, mark this task inconclusive for full-task success, retain all provider costs, and exclude it from full-task efficiency comparisons. Remove it from the reusable suite rather than requesting broader scopes."
+}
