@@ -1,0 +1,115 @@
+{
+  "schema_version": 1,
+  "split": "development",
+  "backend": "live-feishu-v1",
+  "basis": "Fictitious business data seeded into real [TEST]-labeled Feishu resources. Independent native readback and cleanup; no API simulation. Uses existing Docs, Sheets, Base and My Space metadata/delete permissions only.",
+  "tasks": [
+    {
+      "id": "business-cross-source-report",
+      "section": "workspace",
+      "prompt": "Read a live Sheet and all Base pages, calculate release financial totals, and append a native document summary without changing either source.",
+      "fixture": {
+        "answer_schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "report_path"
+          ],
+          "properties": {
+            "report_path": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "expected": {
+        "checks": [
+          "independent real Feishu readback",
+          "native type/format preservation",
+          "run-owned [TEST] resources and confirmed cleanup"
+        ]
+      }
+    },
+    {
+      "id": "business-document-edit",
+      "section": "workspace",
+      "prompt": "Correct a release status while preserving native block IDs, bold formatting, hyperlink, Unicode and unrelated document content.",
+      "fixture": {
+        "answer_schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "document_id"
+          ],
+          "properties": {
+            "document_id": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "expected": {
+        "checks": [
+          "independent real Feishu readback",
+          "native type/format preservation",
+          "run-owned [TEST] resources and confirmed cleanup"
+        ]
+      }
+    },
+    {
+      "id": "business-sheet-reconcile",
+      "section": "workspace",
+      "prompt": "Reconcile zero and empty-string updates while preserving leading-zero codes, booleans, styles, formulas and guard rows.",
+      "fixture": {
+        "answer_schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "spreadsheet_token"
+          ],
+          "properties": {
+            "spreadsheet_token": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "expected": {
+        "checks": [
+          "independent real Feishu readback",
+          "native type/format preservation",
+          "run-owned [TEST] resources and confirmed cleanup"
+        ]
+      }
+    },
+    {
+      "id": "business-base-reconcile",
+      "section": "workspace",
+      "prompt": "Append a typed intake batch with zero, false, null and Unicode, preserving all 205 existing records across pages.",
+      "fixture": {
+        "answer_schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "record_ids"
+          ],
+          "properties": {
+            "record_ids": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "expected": {
+        "checks": [
+          "independent real Feishu readback",
+          "native type/format preservation",
+          "run-owned [TEST] resources and confirmed cleanup"
+        ]
+      }
+    }
+  ]
+}

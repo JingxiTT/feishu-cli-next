@@ -1,0 +1,986 @@
+{
+  "measurement": "Six original current-account Contact trials against real Feishu; numeric provider accounting and sanitized public traces only. Enclosing local environment metadata omitted.",
+  "source_sha256": "b43acabbb898c4766aed9bcd426091edf6b5ac81d741951b61c753a5e9356551",
+  "backend": "live-feishu-v1",
+  "environment": {
+    "backend": "live-feishu-v1",
+    "model": "codex/gpt-6-luna",
+    "tokenizer": "provider-undisclosed",
+    "reasoning": "medium",
+    "tools": [
+      "shell",
+      "files"
+    ],
+    "permissions": "workspace-write; real Feishu HTTPS; current-account read-only task",
+    "budget": {
+      "timeout_seconds": 180
+    },
+    "accounting_method": "codex-cli 0.165.0 provider turn.completed; cached input included; Magpie Responses transport",
+    "guidance_delivery": "file"
+  },
+  "arms": {
+    "official": {
+      "cli_sha256": "91064a6c49e2ba82bd6428bb3d3d9dbbd63bf6243ed087737adf35b0f88cd51c",
+      "skill_sha256": "9fa68bb1f3ce564602c6df6c303ea4d2759de02442772f332fe5041d65720a1f"
+    },
+    "next": {
+      "cli_sha256": "ed0098f278f3e3c5f9f4dca8ef9202dc438f9d7cff18fd458a8abce85e58f613",
+      "skill_sha256": "da3e673d8e9bd1fcc835d7f234f89987d02de8d7ae16830c32e79e260f429bb9"
+    }
+  },
+  "completed": true,
+  "repeats": 3,
+  "seed": 20261029,
+  "runs": [
+    {
+      "task_id": "live-contact-current-account",
+      "section": "contact",
+      "trial": 0,
+      "arm": "official",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 145784,
+        "cached_input_tokens": 105728,
+        "output_tokens": 884,
+        "total_tokens": 146668
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 145784,
+        "cached_input_tokens": 105728,
+        "output_tokens": 884,
+        "total_tokens": 146668
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "whoami"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "auth",
+                "status"
+              ],
+              "flags": [
+                "--json",
+                "--verify"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "api"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "api"
+              ],
+              "flags": [
+                "--as",
+                "--json"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 42.46681764199457,
+      "verification_seconds": 1.0791362120071426,
+      "api_calls": null,
+      "retries": null,
+      "command_executions": 7
+    },
+    {
+      "task_id": "live-contact-current-account",
+      "section": "contact",
+      "trial": 2,
+      "arm": "next",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 151304,
+        "cached_input_tokens": 113024,
+        "output_tokens": 920,
+        "total_tokens": 152224
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 151304,
+        "cached_input_tokens": 113024,
+        "output_tokens": 920,
+        "total_tokens": 152224
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "whoami"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "contact",
+                "+get-user"
+              ],
+              "flags": [
+                "--as",
+                "--user-id",
+                "--user-id-type"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit",
+                "--result-fields"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "api"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "api"
+              ],
+              "flags": [
+                "--as"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 45.66585971899622,
+      "verification_seconds": 1.0921231499960413,
+      "api_calls": null,
+      "retries": null,
+      "command_executions": 8
+    },
+    {
+      "task_id": "live-contact-current-account",
+      "section": "contact",
+      "trial": 1,
+      "arm": "official",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 204806,
+        "cached_input_tokens": 181120,
+        "output_tokens": 1061,
+        "total_tokens": 205867
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 204806,
+        "cached_input_tokens": 181120,
+        "output_tokens": 1061,
+        "total_tokens": 205867
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "whoami"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "whoami"
+              ],
+              "flags": [
+                "--as"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "auth",
+                "status"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "auth",
+                "status"
+              ],
+              "flags": [
+                "--json",
+                "--verify"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "contact"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "contact",
+                "+get-user"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "contact",
+                "+get-user"
+              ],
+              "flags": [
+                "--as",
+                "--json"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 60.136563431995455,
+      "verification_seconds": 1.0050118179933634,
+      "api_calls": null,
+      "retries": null,
+      "command_executions": 10
+    },
+    {
+      "task_id": "live-contact-current-account",
+      "section": "contact",
+      "trial": 0,
+      "arm": "next",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 132949,
+        "cached_input_tokens": 121600,
+        "output_tokens": 750,
+        "total_tokens": 133699
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 132949,
+        "cached_input_tokens": 121600,
+        "output_tokens": 750,
+        "total_tokens": 133699
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 1
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 1
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "whoami"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "contact",
+                "+get-user"
+              ],
+              "flags": [
+                "--as",
+                "--user-id",
+                "--user-id-type"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "contact",
+                "+get-user"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "contact",
+                "+get-user"
+              ],
+              "flags": [
+                "--as"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 42.698484829990775,
+      "verification_seconds": 1.1094928840029752,
+      "api_calls": null,
+      "retries": null,
+      "command_executions": 7
+    },
+    {
+      "task_id": "live-contact-current-account",
+      "section": "contact",
+      "trial": 1,
+      "arm": "next",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 207890,
+        "cached_input_tokens": 168064,
+        "output_tokens": 1369,
+        "total_tokens": 209259
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 207890,
+        "cached_input_tokens": 168064,
+        "output_tokens": 1369,
+        "total_tokens": 209259
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "cli",
+              "command": [],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "whoami"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "whoami"
+              ],
+              "flags": [
+                "--as"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "contact",
+                "+get-user"
+              ],
+              "flags": [
+                "--as",
+                "--user-id",
+                "--user-id-type"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit",
+                "--result-fields"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "contact",
+                "+get-user"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit",
+                "--result-fields"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit",
+                "--result-fields"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 2,
+          "reported_cli_error": {
+            "type": "validation",
+            "subtype": "invalid_argument"
+          }
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "contact",
+                "+get-user"
+              ],
+              "flags": [
+                "--as"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 65.63690554599452,
+      "verification_seconds": 1.0995709619892295,
+      "api_calls": null,
+      "retries": null,
+      "command_executions": 11
+    },
+    {
+      "task_id": "live-contact-current-account",
+      "section": "contact",
+      "trial": 2,
+      "arm": "official",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 204557,
+        "cached_input_tokens": 180736,
+        "output_tokens": 1133,
+        "total_tokens": 205690
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 204557,
+        "cached_input_tokens": 180736,
+        "output_tokens": 1133,
+        "total_tokens": 205690
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "whoami"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "whoami"
+              ],
+              "flags": [
+                "--as"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "auth",
+                "status"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "auth",
+                "status"
+              ],
+              "flags": [
+                "--json",
+                "--verify"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "contact"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "contact",
+                "+get-user"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "contact",
+                "+get-user"
+              ],
+              "flags": [
+                "--as"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 57.99607430999458,
+      "verification_seconds": 0.9523679039994022,
+      "api_calls": null,
+      "retries": null,
+      "command_executions": 10
+    }
+  ]
+}

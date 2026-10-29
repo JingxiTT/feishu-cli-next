@@ -1,0 +1,24 @@
+[
+  {
+    "arm": "next",
+    "task_id": "business-document-closeout",
+    "trial": 0,
+    "cause": "Report selected six zero-amount invoices despite the strictly-positive condition: 113 reported versus 107 required. The sum still equalled 1006, so checking totals alone would miss the error.",
+    "evidence": "Independent trusted native seed snapshot joined to submitted block_ids; report IDs, invoice codes and count fail the frozen contract.",
+    "expected_record_count": 107,
+    "submitted_record_count": 113,
+    "incorrect_zero_amount_selections": 6,
+    "native_post_edit_preservation": "Not assessed after report mismatch: frozen verifier short-circuits before content readback. Cleanup still independently verifies ownership and private ACL before exact-ID deletion."
+  },
+  {
+    "arm": "official",
+    "task_id": "business-document-closeout",
+    "trial": 1,
+    "cause": "Report selected 6 zero-amount invoices despite the strictly-positive condition: 113 reported versus 107 required. The sum still equalled 1006, so checking totals alone would miss the error.",
+    "evidence": "Independent trusted native seed snapshot joined to submitted block_ids; report IDs, invoice codes and count fail the frozen contract.",
+    "expected_record_count": 107,
+    "submitted_record_count": 113,
+    "incorrect_zero_amount_selections": 6,
+    "native_post_edit_preservation": "Not assessed after report mismatch: frozen verifier short-circuits before content readback. Cleanup independently verifies ownership and private ACL before exact-ID deletion."
+  }
+]

@@ -1,0 +1,1278 @@
+{
+  "schema_version": 1,
+  "scope": "Read-only consolidation; no new tenant calls or model trials. Current real-Feishu and historical simulated/offline results remain separate.",
+  "model": "codex/gpt-6-luna",
+  "reasoning": "medium",
+  "harness": "codex-cli 0.165.0",
+  "provider": "Magpie",
+  "products": {
+    "official": {
+      "binary_sha256": "91064a6c49e2ba82bd6428bb3d3d9dbbd63bf6243ed087737adf35b0f88cd51c",
+      "version": "lark-cli version v1.0.98",
+      "go_version": "go1.25.5"
+    },
+    "next": {
+      "binary_sha256": "ed0098f278f3e3c5f9f4dca8ef9202dc438f9d7cff18fd458a8abce85e58f613",
+      "version": "feishu-cli-next 47882761 (upstream: larksuite/cli@v1.0.98)",
+      "go_version": "go1.26.10"
+    }
+  },
+  "counts": {
+    "live_workflow_types": 19,
+    "fully_verifiable_model_attempts": 106,
+    "partial_file_handoff_attempts": 4,
+    "provider_accounted_model_attempts": 110,
+    "pre_provider_adapter_failures": 4,
+    "blocked_im_workflow_types": 2,
+    "registered_resources_confirmed_deleted": 326
+  },
+  "provider_token_ledger": {
+    "meaning": "Administrative sum of known tokens for 110 current provider-accounted trials, including all four partial file diagnostics. Not a pooled efficiency or success score.",
+    "official": 20113056,
+    "next": 14791768,
+    "total": 34904824
+  },
+  "suites": [
+    {
+      "id": "contact",
+      "label": "Current-account Contact diagnostic",
+      "workload": "diagnostic",
+      "repeats": 3,
+      "budget_seconds": 180,
+      "official": {
+        "attempts": 3,
+        "successes": 3,
+        "success_rate": 1.0,
+        "usage": {
+          "input_tokens": 555147,
+          "cached_input_tokens": 467584,
+          "output_tokens": 3078,
+          "total_tokens": 558225
+        },
+        "tokens_per_success": 186075.0,
+        "median_latency_seconds": 57.99607430999458,
+        "usage_complete": true
+      },
+      "next": {
+        "attempts": 3,
+        "successes": 3,
+        "success_rate": 1.0,
+        "usage": {
+          "input_tokens": 492143,
+          "cached_input_tokens": 402688,
+          "output_tokens": 3039,
+          "total_tokens": 495182
+        },
+        "tokens_per_success": 165060.66666666666,
+        "median_latency_seconds": 45.66585971899622,
+        "usage_complete": true
+      },
+      "raw_successes": {
+        "official": 3,
+        "next": 3
+      },
+      "source": "contact-attempts.json",
+      "report": null,
+      "token_reduction": 0.11293474853329755
+    },
+    {
+      "id": "business",
+      "label": "Initial business workflows",
+      "workload": "workflow",
+      "repeats": 2,
+      "budget_seconds": 360,
+      "official": {
+        "attempts": 8,
+        "successes": 8,
+        "success_rate": 1.0,
+        "usage": {
+          "input_tokens": 2457063,
+          "cached_input_tokens": 2101888,
+          "output_tokens": 11957,
+          "total_tokens": 2469020
+        },
+        "tokens_per_success": 308627.5,
+        "median_latency_seconds": 62.36004604799382,
+        "usage_complete": true
+      },
+      "next": {
+        "attempts": 8,
+        "successes": 8,
+        "success_rate": 1.0,
+        "usage": {
+          "input_tokens": 1505479,
+          "cached_input_tokens": 1339136,
+          "output_tokens": 10387,
+          "total_tokens": 1515866
+        },
+        "tokens_per_success": 189483.25,
+        "median_latency_seconds": 44.1702319065007,
+        "usage_complete": true
+      },
+      "raw_successes": {
+        "official": 8,
+        "next": 8
+      },
+      "source": "evidence/evaluation/live-business-luna-20261029/assessment.json",
+      "report": "live-business-luna-20261029.md",
+      "token_reduction": 0.38604547553280244
+    },
+    {
+      "id": "extended",
+      "label": "Extended business workflows",
+      "workload": "workflow",
+      "repeats": 3,
+      "budget_seconds": 480,
+      "official": {
+        "attempts": 18,
+        "successes": 17,
+        "success_rate": 0.9444444444444444,
+        "usage": {
+          "input_tokens": 7674986,
+          "cached_input_tokens": 6752896,
+          "output_tokens": 48524,
+          "total_tokens": 7723510
+        },
+        "tokens_per_success": 454324.1176470588,
+        "median_latency_seconds": 81.37146101750841,
+        "usage_complete": true
+      },
+      "next": {
+        "attempts": 18,
+        "successes": 17,
+        "success_rate": 0.9444444444444444,
+        "usage": {
+          "input_tokens": 5366286,
+          "cached_input_tokens": 4564096,
+          "output_tokens": 37293,
+          "total_tokens": 5403579
+        },
+        "tokens_per_success": 317857.5882352941,
+        "median_latency_seconds": 61.04110177700932,
+        "usage_complete": true
+      },
+      "raw_successes": {
+        "official": 17,
+        "next": 16
+      },
+      "source": "evidence/evaluation/live-business-extended-luna-20261029/assessment.json",
+      "report": "live-business-extended-luna-20261029.md",
+      "token_reduction": 0.3003726285069871
+    },
+    {
+      "id": "collaboration",
+      "label": "Creation, media and diagrams",
+      "workload": "workflow",
+      "repeats": 3,
+      "budget_seconds": 480,
+      "official": {
+        "attempts": 15,
+        "successes": 14,
+        "success_rate": 0.9333333333333333,
+        "usage": {
+          "input_tokens": 4470009,
+          "cached_input_tokens": 3846272,
+          "output_tokens": 28853,
+          "total_tokens": 4498862
+        },
+        "tokens_per_success": 321347.28571428574,
+        "median_latency_seconds": 62.555444272991735,
+        "usage_complete": true
+      },
+      "next": {
+        "attempts": 15,
+        "successes": 15,
+        "success_rate": 1.0,
+        "usage": {
+          "input_tokens": 3169846,
+          "cached_input_tokens": 2788352,
+          "output_tokens": 20941,
+          "total_tokens": 3190787
+        },
+        "tokens_per_success": 212719.13333333333,
+        "median_latency_seconds": 57.49476608799887,
+        "usage_complete": true
+      },
+      "raw_successes": {
+        "official": 14,
+        "next": 15
+      },
+      "source": "evidence/evaluation/live-collaboration-luna-20261029/assessment.json",
+      "report": "live-collaboration-luna-20261029.md",
+      "token_reduction": 0.33803973834568246
+    },
+    {
+      "id": "complex",
+      "label": "Complex business workflows",
+      "workload": "workflow",
+      "repeats": 3,
+      "budget_seconds": 480,
+      "official": {
+        "attempts": 9,
+        "successes": 8,
+        "success_rate": 0.8888888888888888,
+        "usage": {
+          "input_tokens": 4393728,
+          "cached_input_tokens": 3901184,
+          "output_tokens": 37100,
+          "total_tokens": 4430828
+        },
+        "tokens_per_success": 553853.5,
+        "median_latency_seconds": 86.28732164399116,
+        "usage_complete": true
+      },
+      "next": {
+        "attempts": 9,
+        "successes": 8,
+        "success_rate": 0.8888888888888888,
+        "usage": {
+          "input_tokens": 3903081,
+          "cached_input_tokens": 3503872,
+          "output_tokens": 36399,
+          "total_tokens": 3939480
+        },
+        "tokens_per_success": 492435.0,
+        "median_latency_seconds": 104.38767635601107,
+        "usage_complete": true
+      },
+      "raw_successes": {
+        "official": 7,
+        "next": 7
+      },
+      "source": "evidence/evaluation/live-complex-luna-20261029/assessment.json",
+      "report": "live-complex-luna-20261029.md",
+      "token_reduction": 0.11089304301588776
+    }
+  ],
+  "workflows": [
+    {
+      "task_id": "live-contact-current-account",
+      "label": "Current account and tenant lookup",
+      "suite": "contact",
+      "coverage": "Verified current-account read only; does not establish arbitrary-person lookup performance.",
+      "official": {
+        "attempts": 3,
+        "successes": 3,
+        "success_rate": 1.0,
+        "usage": {
+          "input_tokens": 555147,
+          "cached_input_tokens": 467584,
+          "output_tokens": 3078,
+          "total_tokens": 558225
+        },
+        "tokens_per_success": 186075.0,
+        "median_latency_seconds": 57.99607430999458,
+        "usage_complete": true
+      },
+      "next": {
+        "attempts": 3,
+        "successes": 3,
+        "success_rate": 1.0,
+        "usage": {
+          "input_tokens": 492143,
+          "cached_input_tokens": 402688,
+          "output_tokens": 3039,
+          "total_tokens": 495182
+        },
+        "tokens_per_success": 165060.66666666666,
+        "median_latency_seconds": 45.66585971899622,
+        "usage_complete": true
+      },
+      "token_reduction": 0.11293474853329755
+    },
+    {
+      "task_id": "business-cross-source-report",
+      "label": "Cross-source financial report",
+      "suite": "business",
+      "coverage": "Read Sheet + complete 205-row Base, compute filtered totals, append a document paragraph; preserve all sources.",
+      "official": {
+        "attempts": 2,
+        "successes": 2,
+        "success_rate": 1.0,
+        "usage": {
+          "input_tokens": 1010300,
+          "cached_input_tokens": 904064,
+          "output_tokens": 5269,
+          "total_tokens": 1015569
+        },
+        "tokens_per_success": 507784.5,
+        "median_latency_seconds": 84.00972947700211,
+        "usage_complete": true
+      },
+      "next": {
+        "attempts": 2,
+        "successes": 2,
+        "success_rate": 1.0,
+        "usage": {
+          "input_tokens": 743239,
+          "cached_input_tokens": 671232,
+          "output_tokens": 5808,
+          "total_tokens": 749047
+        },
+        "tokens_per_success": 374523.5,
+        "median_latency_seconds": 96.4916999765046,
+        "usage_complete": true
+      },
+      "token_reduction": 0.2624361318630246
+    },
+    {
+      "task_id": "business-document-edit",
+      "label": "Rich-text document edit",
+      "suite": "business",
+      "coverage": "Replace a status while retaining bold/link formatting, native IDs, Unicode and unrelated blocks.",
+      "official": {
+        "attempts": 2,
+        "successes": 2,
+        "success_rate": 1.0,
+        "usage": {
+          "input_tokens": 496971,
+          "cached_input_tokens": 401408,
+          "output_tokens": 2260,
+          "total_tokens": 499231
+        },
+        "tokens_per_success": 249615.5,
+        "median_latency_seconds": 60.714263152491185,
+        "usage_complete": true
+      },
+      "next": {
+        "attempts": 2,
+        "successes": 2,
+        "success_rate": 1.0,
+        "usage": {
+          "input_tokens": 160527,
+          "cached_input_tokens": 136192,
+          "output_tokens": 1009,
+          "total_tokens": 161536
+        },
+        "tokens_per_success": 80768.0,
+        "median_latency_seconds": 24.96719840249716,
+        "usage_complete": true
+      },
+      "token_reduction": 0.6764303498781126
+    },
+    {
+      "task_id": "business-sheet-reconcile",
+      "label": "Typed Sheet reconciliation",
+      "suite": "business",
+      "coverage": "Write numeric zero and empty text; preserve leading-zero codes, booleans, styles, guard cells and formulas.",
+      "official": {
+        "attempts": 2,
+        "successes": 2,
+        "success_rate": 1.0,
+        "usage": {
+          "input_tokens": 616518,
+          "cached_input_tokens": 523264,
+          "output_tokens": 2756,
+          "total_tokens": 619274
+        },
+        "tokens_per_success": 309637.0,
+        "median_latency_seconds": 57.709434757503914,
+        "usage_complete": true
+      },
+      "next": {
+        "attempts": 2,
+        "successes": 2,
+        "success_rate": 1.0,
+        "usage": {
+          "input_tokens": 249220,
+          "cached_input_tokens": 222464,
+          "output_tokens": 1535,
+          "total_tokens": 250755
+        },
+        "tokens_per_success": 125377.5,
+        "median_latency_seconds": 39.52368686700356,
+        "usage_complete": true
+      },
+      "token_reduction": 0.5950823060551549
+    },
+    {
+      "task_id": "business-base-reconcile",
+      "label": "Base record intake",
+      "suite": "business",
+      "coverage": "Append two typed records with null/false/zero/Unicode while preserving 205 existing records.",
+      "official": {
+        "attempts": 2,
+        "successes": 2,
+        "success_rate": 1.0,
+        "usage": {
+          "input_tokens": 333274,
+          "cached_input_tokens": 273152,
+          "output_tokens": 1672,
+          "total_tokens": 334946
+        },
+        "tokens_per_success": 167473.0,
+        "median_latency_seconds": 67.89957224999671,
+        "usage_complete": true
+      },
+      "next": {
+        "attempts": 2,
+        "successes": 2,
+        "success_rate": 1.0,
+        "usage": {
+          "input_tokens": 352493,
+          "cached_input_tokens": 309248,
+          "output_tokens": 2035,
+          "total_tokens": 354528
+        },
+        "tokens_per_success": 177264.0,
+        "median_latency_seconds": 50.03024203549285,
+        "usage_complete": true
+      },
+      "token_reduction": -0.058463155254876886
+    },
+    {
+      "task_id": "business-base-audit-large",
+      "label": "2,505-record Base audit",
+      "suite": "extended",
+      "coverage": "Read beyond the CLI 2,000-record boundary; positive/zero/negative predicates and complete native pagination.",
+      "official": {
+        "attempts": 3,
+        "successes": 3,
+        "success_rate": 1.0,
+        "usage": {
+          "input_tokens": 835567,
+          "cached_input_tokens": 689024,
+          "output_tokens": 7077,
+          "total_tokens": 842644
+        },
+        "tokens_per_success": 280881.3333333333,
+        "median_latency_seconds": 69.9310201779881,
+        "usage_complete": true
+      },
+      "next": {
+        "attempts": 3,
+        "successes": 3,
+        "success_rate": 1.0,
+        "usage": {
+          "input_tokens": 663472,
+          "cached_input_tokens": 490368,
+          "output_tokens": 5318,
+          "total_tokens": 668790
+        },
+        "tokens_per_success": 222930.0,
+        "median_latency_seconds": 62.89638216100866,
+        "usage_complete": true
+      },
+      "token_reduction": 0.20631963201541803
+    },
+    {
+      "task_id": "business-base-conditional-close",
+      "label": "Conditional Base closing",
+      "suite": "extended",
+      "coverage": "Select all qualifying records; change only checkbox/note and preserve every other row and field.",
+      "official": {
+        "attempts": 3,
+        "successes": 3,
+        "success_rate": 1.0,
+        "usage": {
+          "input_tokens": 789349,
+          "cached_input_tokens": 683776,
+          "output_tokens": 6672,
+          "total_tokens": 796021
+        },
+        "tokens_per_success": 265340.3333333333,
+        "median_latency_seconds": 58.30251827699249,
+        "usage_complete": true
+      },
+      "next": {
+        "attempts": 3,
+        "successes": 3,
+        "success_rate": 1.0,
+        "usage": {
+          "input_tokens": 851092,
+          "cached_input_tokens": 713600,
+          "output_tokens": 7449,
+          "total_tokens": 858541
+        },
+        "tokens_per_success": 286180.3333333333,
+        "median_latency_seconds": 77.55306112501421,
+        "usage_complete": true
+      },
+      "token_reduction": -0.07854064151573881
+    },
+    {
+      "task_id": "business-budget-close",
+      "label": "Cross-domain budget settlement",
+      "suite": "extended",
+      "coverage": "Save original Base selection; update selected records, Sheet total/note and one document summary.",
+      "official": {
+        "attempts": 3,
+        "successes": 3,
+        "success_rate": 1.0,
+        "usage": {
+          "input_tokens": 2710504,
+          "cached_input_tokens": 2483456,
+          "output_tokens": 12297,
+          "total_tokens": 2722801
+        },
+        "tokens_per_success": 907600.3333333334,
+        "median_latency_seconds": 119.55858346700552,
+        "usage_complete": true
+      },
+      "next": {
+        "attempts": 3,
+        "successes": 3,
+        "success_rate": 1.0,
+        "usage": {
+          "input_tokens": 2414204,
+          "cached_input_tokens": 2223744,
+          "output_tokens": 13005,
+          "total_tokens": 2427209
+        },
+        "tokens_per_success": 809069.6666666666,
+        "median_latency_seconds": 143.83216567200725,
+        "usage_complete": true
+      },
+      "token_reduction": 0.10856173477239073
+    },
+    {
+      "task_id": "business-document-audit-large",
+      "label": "520-invoice document audit",
+      "suite": "extended",
+      "coverage": "Filter release/status/strictly positive amounts across more than 500 blocks; exact ID/code/count/typed total report.",
+      "official": {
+        "attempts": 3,
+        "successes": 3,
+        "success_rate": 1.0,
+        "usage": {
+          "input_tokens": 740600,
+          "cached_input_tokens": 612224,
+          "output_tokens": 8887,
+          "total_tokens": 749487
+        },
+        "tokens_per_success": 249829.0,
+        "median_latency_seconds": 70.91288930398878,
+        "usage_complete": true
+      },
+      "next": {
+        "attempts": 3,
+        "successes": 2,
+        "success_rate": 0.6666666666666666,
+        "usage": {
+          "input_tokens": 611973,
+          "cached_input_tokens": 534656,
+          "output_tokens": 5849,
+          "total_tokens": 617822
+        },
+        "tokens_per_success": 308911.0,
+        "median_latency_seconds": 58.6687671369873,
+        "usage_complete": true
+      },
+      "token_reduction": -0.23648975899515268
+    },
+    {
+      "task_id": "business-sheet-export",
+      "label": "Typed Sheet export",
+      "suite": "extended",
+      "coverage": "Export raw JSON values and explicit formulas using native render modes; preserve the workbook.",
+      "official": {
+        "attempts": 3,
+        "successes": 2,
+        "success_rate": 0.6666666666666666,
+        "usage": {
+          "input_tokens": 1442871,
+          "cached_input_tokens": 1289984,
+          "output_tokens": 7533,
+          "total_tokens": 1450404
+        },
+        "tokens_per_success": 725202.0,
+        "median_latency_seconds": 90.46789430102217,
+        "usage_complete": true
+      },
+      "next": {
+        "attempts": 3,
+        "successes": 3,
+        "success_rate": 1.0,
+        "usage": {
+          "input_tokens": 261432,
+          "cached_input_tokens": 167424,
+          "output_tokens": 1910,
+          "total_tokens": 263342
+        },
+        "tokens_per_success": 87780.66666666667,
+        "median_latency_seconds": 28.296233282017056,
+        "usage_complete": true
+      },
+      "token_reduction": 0.8789569434906872
+    },
+    {
+      "task_id": "business-sheet-intake",
+      "label": "Approval-gated CSV intake",
+      "suite": "extended",
+      "coverage": "Join quoted multiline Unicode CSV by exact leading-zero code; update only already-approved rows.",
+      "official": {
+        "attempts": 3,
+        "successes": 3,
+        "success_rate": 1.0,
+        "usage": {
+          "input_tokens": 1156095,
+          "cached_input_tokens": 994432,
+          "output_tokens": 6058,
+          "total_tokens": 1162153
+        },
+        "tokens_per_success": 387384.3333333333,
+        "median_latency_seconds": 58.66719755198574,
+        "usage_complete": true
+      },
+      "next": {
+        "attempts": 3,
+        "successes": 3,
+        "success_rate": 1.0,
+        "usage": {
+          "input_tokens": 564113,
+          "cached_input_tokens": 434304,
+          "output_tokens": 3762,
+          "total_tokens": 567875
+        },
+        "tokens_per_success": 189291.66666666666,
+        "median_latency_seconds": 55.25629188399762,
+        "usage_complete": true
+      },
+      "token_reduction": 0.511359519787842
+    },
+    {
+      "task_id": "collaboration-document-create",
+      "label": "Create a rich native document",
+      "suite": "collaboration",
+      "coverage": "Create a heading, bold link, Unicode/leading-zero content and a native table; verify resulting document structure.",
+      "official": {
+        "attempts": 3,
+        "successes": 3,
+        "success_rate": 1.0,
+        "usage": {
+          "input_tokens": 515505,
+          "cached_input_tokens": 394240,
+          "output_tokens": 4682,
+          "total_tokens": 520187
+        },
+        "tokens_per_success": 173395.66666666666,
+        "median_latency_seconds": 52.849007839977276,
+        "usage_complete": true
+      },
+      "next": {
+        "attempts": 3,
+        "successes": 3,
+        "success_rate": 1.0,
+        "usage": {
+          "input_tokens": 430105,
+          "cached_input_tokens": 380928,
+          "output_tokens": 2904,
+          "total_tokens": 433009
+        },
+        "tokens_per_success": 144336.33333333334,
+        "median_latency_seconds": 42.03485570399789,
+        "usage_complete": true
+      },
+      "token_reduction": 0.16758973215401374
+    },
+    {
+      "task_id": "collaboration-drawing-create",
+      "label": "Create an SVG drawing",
+      "suite": "collaboration",
+      "coverage": "Verify eight native drawing nodes, shapes/colors, text, connectors, geometry and vector diamond fallback.",
+      "official": {
+        "attempts": 3,
+        "successes": 2,
+        "success_rate": 0.6666666666666666,
+        "usage": {
+          "input_tokens": 1488492,
+          "cached_input_tokens": 1366912,
+          "output_tokens": 10007,
+          "total_tokens": 1498499
+        },
+        "tokens_per_success": 749249.5,
+        "median_latency_seconds": 92.864494902984,
+        "usage_complete": true
+      },
+      "next": {
+        "attempts": 3,
+        "successes": 3,
+        "success_rate": 1.0,
+        "usage": {
+          "input_tokens": 853347,
+          "cached_input_tokens": 743680,
+          "output_tokens": 4499,
+          "total_tokens": 857846
+        },
+        "tokens_per_success": 285948.6666666667,
+        "median_latency_seconds": 66.40180443198187,
+        "usage_complete": true
+      },
+      "token_reduction": 0.6183532098898075
+    },
+    {
+      "task_id": "collaboration-file-upload",
+      "label": "Upload CSV and binary attachments",
+      "suite": "collaboration",
+      "coverage": "Verify downloaded bytes, Unicode filenames, native view/file parentage and all original document content.",
+      "official": {
+        "attempts": 3,
+        "successes": 3,
+        "success_rate": 1.0,
+        "usage": {
+          "input_tokens": 732652,
+          "cached_input_tokens": 624256,
+          "output_tokens": 4531,
+          "total_tokens": 737183
+        },
+        "tokens_per_success": 245727.66666666666,
+        "median_latency_seconds": 66.80356112899608,
+        "usage_complete": true
+      },
+      "next": {
+        "attempts": 3,
+        "successes": 3,
+        "success_rate": 1.0,
+        "usage": {
+          "input_tokens": 659184,
+          "cached_input_tokens": 589184,
+          "output_tokens": 4693,
+          "total_tokens": 663877
+        },
+        "tokens_per_success": 221292.33333333334,
+        "median_latency_seconds": 57.49476608799887,
+        "usage_complete": true
+      },
+      "token_reduction": 0.09944070875210087
+    },
+    {
+      "task_id": "collaboration-image-upload",
+      "label": "Upload two same-named images",
+      "suite": "collaboration",
+      "coverage": "Different PNG bytes/dimensions with identical basenames; verify downloaded bytes and display sizes.",
+      "official": {
+        "attempts": 3,
+        "successes": 3,
+        "success_rate": 1.0,
+        "usage": {
+          "input_tokens": 675999,
+          "cached_input_tokens": 566912,
+          "output_tokens": 3665,
+          "total_tokens": 679664
+        },
+        "tokens_per_success": 226554.66666666666,
+        "median_latency_seconds": 60.78099031600868,
+        "usage_complete": true
+      },
+      "next": {
+        "attempts": 3,
+        "successes": 3,
+        "success_rate": 1.0,
+        "usage": {
+          "input_tokens": 553279,
+          "cached_input_tokens": 483584,
+          "output_tokens": 4821,
+          "total_tokens": 558100
+        },
+        "tokens_per_success": 186033.33333333334,
+        "median_latency_seconds": 56.540724805992795,
+        "usage_complete": true
+      },
+      "token_reduction": 0.17885896560653491
+    },
+    {
+      "task_id": "collaboration-mermaid-create",
+      "label": "Create a Mermaid whiteboard",
+      "suite": "collaboration",
+      "coverage": "Verify stored Mermaid source, participants/connectors/branches and preservation of the original document.",
+      "official": {
+        "attempts": 3,
+        "successes": 3,
+        "success_rate": 1.0,
+        "usage": {
+          "input_tokens": 1057361,
+          "cached_input_tokens": 893952,
+          "output_tokens": 5968,
+          "total_tokens": 1063329
+        },
+        "tokens_per_success": 354443.0,
+        "median_latency_seconds": 62.555444272991735,
+        "usage_complete": true
+      },
+      "next": {
+        "attempts": 3,
+        "successes": 3,
+        "success_rate": 1.0,
+        "usage": {
+          "input_tokens": 673931,
+          "cached_input_tokens": 590976,
+          "output_tokens": 4024,
+          "total_tokens": 677955
+        },
+        "tokens_per_success": 225985.0,
+        "median_latency_seconds": 58.73571619699942,
+        "usage_complete": true
+      },
+      "token_reduction": 0.36242216661071036
+    },
+    {
+      "task_id": "business-base-conflict-reconcile",
+      "label": "Versioned Base conflict reconciliation",
+      "suite": "complex",
+      "coverage": "Resolve 79 adjustment rows against all 205 records: latest request revisions, original-value conflicts, approval gates and null/zero/negative writes.",
+      "official": {
+        "attempts": 3,
+        "successes": 3,
+        "success_rate": 1.0,
+        "usage": {
+          "input_tokens": 1138548,
+          "cached_input_tokens": 1006720,
+          "output_tokens": 9866,
+          "total_tokens": 1148414
+        },
+        "tokens_per_success": 382804.6666666667,
+        "median_latency_seconds": 65.23714156600181,
+        "usage_complete": true
+      },
+      "next": {
+        "attempts": 3,
+        "successes": 3,
+        "success_rate": 1.0,
+        "usage": {
+          "input_tokens": 1214980,
+          "cached_input_tokens": 1102336,
+          "output_tokens": 12259,
+          "total_tokens": 1227239
+        },
+        "tokens_per_success": 409079.6666666667,
+        "median_latency_seconds": 104.38767635601107,
+        "usage_complete": true
+      },
+      "token_reduction": -0.06863813920763762
+    },
+    {
+      "task_id": "business-document-closeout",
+      "label": "Long-document invoice closeout",
+      "suite": "complex",
+      "coverage": "Update 107 strictly positive approved invoices across 520 paragraphs in place; append one summary and preserve IDs, formatting and unrelated blocks.",
+      "official": {
+        "attempts": 3,
+        "successes": 2,
+        "success_rate": 0.6666666666666666,
+        "usage": {
+          "input_tokens": 1999367,
+          "cached_input_tokens": 1787648,
+          "output_tokens": 17690,
+          "total_tokens": 2017057
+        },
+        "tokens_per_success": 1008528.5,
+        "median_latency_seconds": 230.7001897440059,
+        "usage_complete": true
+      },
+      "next": {
+        "attempts": 3,
+        "successes": 2,
+        "success_rate": 0.6666666666666666,
+        "usage": {
+          "input_tokens": 1926919,
+          "cached_input_tokens": 1738752,
+          "output_tokens": 16756,
+          "total_tokens": 1943675
+        },
+        "tokens_per_success": 971837.5,
+        "median_latency_seconds": 193.5396946039982,
+        "usage_complete": true
+      },
+      "token_reduction": 0.036380726970036026
+    },
+    {
+      "task_id": "business-sheet-journal",
+      "label": "Versioned multi-currency Sheet journal",
+      "suite": "complex",
+      "coverage": "Resolve 34 shuffled inputs / 24 event IDs: revisions, duplicates, voids, exact codes, approvals and per-event decimal FX rounding.",
+      "official": {
+        "attempts": 3,
+        "successes": 3,
+        "success_rate": 1.0,
+        "usage": {
+          "input_tokens": 1255813,
+          "cached_input_tokens": 1106816,
+          "output_tokens": 9544,
+          "total_tokens": 1265357
+        },
+        "tokens_per_success": 421785.6666666667,
+        "median_latency_seconds": 85.57172008100315,
+        "usage_complete": true
+      },
+      "next": {
+        "attempts": 3,
+        "successes": 3,
+        "success_rate": 1.0,
+        "usage": {
+          "input_tokens": 761182,
+          "cached_input_tokens": 662784,
+          "output_tokens": 7384,
+          "total_tokens": 768566
+        },
+        "tokens_per_success": 256188.66666666666,
+        "median_latency_seconds": 68.7714482480078,
+        "usage_complete": true
+      },
+      "token_reduction": 0.3926093584656346
+    }
+  ],
+  "file_diagnostic": {
+    "status": "partial verification; excluded from full-task success and efficiency comparisons",
+    "unverified_requirement": "destination-folder placement; granted individual metadata has no parent field",
+    "official": {
+      "attempts": 2,
+      "checked_requirements_passed": 1,
+      "checked_requirements_failed": 1,
+      "known_provider_tokens": 432611,
+      "full_task_tokens_per_success": null
+    },
+    "next": {
+      "attempts": 2,
+      "checked_requirements_passed": 2,
+      "checked_requirements_failed": 0,
+      "known_provider_tokens": 246874,
+      "full_task_tokens_per_success": null
+    },
+    "observed_failure": "One official trial tried folder listing, received missing_scope, and returned empty file/path values. Its failure and cost are retained."
+  },
+  "historical_records": [
+    {
+      "id": "business-8d-archive03",
+      "kind": "historical model trials on simulated Feishu",
+      "metrics": {
+        "completed_attempts": 18,
+        "successes": 18,
+        "unknown_usage_attempts": 0,
+        "known_total_provider_tokens": 2741785
+      },
+      "report": "evidence/evaluation/business-8d-archive03/REPORT.md",
+      "source_sha256": "64b6a2100b9443c0ebf8d6dce999433851581fd01219b549173135bd383eacb2",
+      "summary_sha256": "836353260adc6d9c9bade96e944f12e8e28eec41d1f3654be07e6c8459d5b18b"
+    },
+    {
+      "id": "cli-efficiency-20261007",
+      "kind": "offline CLI probes",
+      "metrics": {},
+      "report": "evidence/evaluation/cli-efficiency-20261007/REPORT.md",
+      "source_sha256": "a8ecd757f5f40554fe5248fbc64f8655323ab5242e9f6399f9e24a4754aa7b3a"
+    },
+    {
+      "id": "cli-surface-20261007",
+      "kind": "offline CLI probes",
+      "metrics": {},
+      "report": "evidence/evaluation/cli-surface-20261007/REPORT.md",
+      "source_sha256": "26d8e3a587eab3570ae623a8a4620558a1d72fe558b53b4c31ee0aa7cb70f3df"
+    },
+    {
+      "id": "contact",
+      "kind": "historical model trials on simulated Feishu",
+      "metrics": {
+        "completed_attempts": 9,
+        "successes": 9,
+        "known_tokens": 502586,
+        "unknown_usage_attempts": 0
+      },
+      "report": "evidence/evaluation/contact/REPORT.md",
+      "source_sha256": "2546ccd39dc1f1060ce1f89944dddea4b588c87f52cc74cdee8b9d52b35488bb"
+    },
+    {
+      "id": "foundation",
+      "kind": "offline foundation tasks",
+      "metrics": {
+        "completed_attempts": 18,
+        "successes": 18,
+        "known_tokens": 887335,
+        "unknown_usage_attempts": 0,
+        "earlier_unknown_usage_attempts": 20
+      },
+      "report": "evidence/evaluation/foundation/REPORT.md",
+      "source_sha256": "de55afcd32cdc2ef4a362fd842f83ac059323c625c9f64ae5652450f3a532b33"
+    },
+    {
+      "id": "full-matrix-20260911",
+      "kind": "historical model trials on simulated Feishu",
+      "metrics": {
+        "completed_attempts": 258,
+        "unknown_usage_attempts": 6,
+        "known_tokens": 32552258,
+        "planned_attempts": 258,
+        "successes": 209
+      },
+      "report": "evidence/evaluation/full-matrix-20260911/REPORT.md",
+      "source_sha256": "dc57dc8285d3278321c575264466a350f84f5eed86efeb1b6affdb75c9645598",
+      "summary_sha256": "2e5c2bf7d61b6942e1e107e91b060f3ffea82402d4d4b5b17f9995d7fc1e1d3d"
+    },
+    {
+      "id": "paired-luna-medium-01",
+      "kind": "historical model trials on simulated Feishu",
+      "metrics": {
+        "completed_attempts": 72,
+        "successes": 54,
+        "unknown_usage_attempts": 0,
+        "known_tokens": 8442585,
+        "planned_attempts": 72
+      },
+      "report": "evidence/evaluation/paired-luna-medium-01/REPORT.md",
+      "source_sha256": "b75e3c5ea3779320d78d427908dfc154906b504d8961602c507421fcaa1c7c47",
+      "summary_sha256": "9460b11850df28113c072dd9fe8da5e6ed77a7e3634606123ba6ef3cf894c669"
+    },
+    {
+      "id": "read-312af93",
+      "kind": "historical model trials on simulated Feishu",
+      "metrics": {
+        "attempts": 81,
+        "verified_successes": 75,
+        "known_total_tokens": 8419135,
+        "unknown_usage_attempts": 0
+      },
+      "report": "evidence/evaluation/read-312af93/REPORT.md",
+      "source_sha256": "b061555b8c9ca781355a5bb2193c4574fb8a48cb0ea3d5a6bf394705e06c74f5",
+      "summary_sha256": "0e506dbfafd7aa727a87fd98915f3322e5a8ebba9e77f65e06bf9f0f3e54521a"
+    },
+    {
+      "id": "read-8d92e5",
+      "kind": "historical model trials on simulated Feishu",
+      "metrics": {
+        "completed_attempts": 27,
+        "successes": 27,
+        "unknown_usage_attempts": 0,
+        "known_total_provider_tokens": 3647948
+      },
+      "report": "evidence/evaluation/read-8d92e5/REPORT.md",
+      "source_sha256": "1afb928085fdf736b9b0b40c8ac4c9a7fb3eb8178d1f66f379c2738681c84bc6",
+      "summary_sha256": "b847aeb0d1681e7be6001ac4d089e55d4d70f66629b9d0130d76f0dc160ced2f"
+    },
+    {
+      "id": "scaling-8d-archive04",
+      "kind": "historical model trials on simulated Feishu",
+      "metrics": {
+        "completed_attempts": 54,
+        "successes": 51,
+        "unknown_usage_attempts": 1,
+        "known_total_provider_tokens": 9780669
+      },
+      "report": "evidence/evaluation/scaling-8d-archive04/REPORT.md",
+      "source_sha256": "639350344ad2ea5c6ecdf4e3a14987d1a9b6167f3bb2092b997548aa03e28d2a",
+      "summary_sha256": "12149422af5dfc5cd3c7f072f4eb2be2c370d40c74fdfad65a76ab37d9663928"
+    },
+    {
+      "id": "scaling-8d-fixture03",
+      "kind": "historical model trials on simulated Feishu",
+      "metrics": {
+        "attempts": 2,
+        "verified_outcomes": 0,
+        "unknown_usage_attempts": 1,
+        "known_total_provider_tokens": 237389
+      },
+      "report": "evidence/evaluation/scaling-8d-fixture03/REPORT.md",
+      "source_sha256": "1895b3bdd5ba199afdec7eb9c2ecee8d6e0879773cdcc8adb1c4789b31806965",
+      "summary_sha256": "e93249050f64435e0db8f7d14273fe2864f3535dab78f6b45d39cb5dca958960"
+    },
+    {
+      "id": "scaling-8d-schema02",
+      "kind": "historical model trials on simulated Feishu",
+      "metrics": {
+        "started_and_checkpointed_base_attempts": 7,
+        "recorded_verified_outcomes": 1,
+        "unknown_usage_attempts": 0,
+        "known_provider_tokens": 1258267
+      },
+      "report": "evidence/evaluation/scaling-8d-schema02/REPORT.md",
+      "source_sha256": "6c3bf011f275a8ca1f9d96697c88d1abc4219ea36dd83996a35acd5bb252772a",
+      "summary_sha256": "aac58d31d2f4a12055ec89a29f7399732720e40505b9f8c0395b09b7c5cbc703"
+    },
+    {
+      "id": "scenarios-8d-corrected03",
+      "kind": "historical model trials on simulated Feishu",
+      "metrics": {
+        "completed_attempts": 27,
+        "successes": 27,
+        "unknown_usage_attempts": 0,
+        "known_total_provider_tokens": 3702291
+      },
+      "report": "evidence/evaluation/scenarios-8d-corrected03/REPORT.md",
+      "source_sha256": "a68eee7d3c1d2880df19f34dfcabcee5a1fbc934242646db3a9c8d284fdd8a41",
+      "summary_sha256": "bec013eee6b7d09ae88bc75db1891df17079e8dd1e018ecd0ce41add623ca1c2"
+    },
+    {
+      "id": "scenarios-8d-schema02",
+      "kind": "historical model trials on simulated Feishu",
+      "metrics": {
+        "completed_attempts": 81,
+        "successes": 63,
+        "unknown_usage_attempts": 1,
+        "known_total_provider_tokens": 12201326
+      },
+      "report": "evidence/evaluation/scenarios-8d-schema02/REPORT.md",
+      "source_sha256": "86dad62e9b72ff5f71b39596d074860a33c8ca71ec99199981717a70ae6cc2f9",
+      "summary_sha256": "8860d708ae4b299598a9c8289604ffb04a06d0f9378273a74b7c5a7e244298b0"
+    },
+    {
+      "id": "scenarios-8d92e5",
+      "kind": "historical model trials on simulated Feishu",
+      "metrics": {
+        "completed_attempts": 10,
+        "successes": 1,
+        "known_tokens": 75555,
+        "unknown_usage_attempts": 9,
+        "separate_diagnostic_unknown_usage_attempts": 1
+      },
+      "report": "evidence/evaluation/scenarios-8d92e5/REPORT.md",
+      "source_sha256": "9d2988d259e495d18d7a7a67a75fa0e4329c751bb7727e5676888ff2412571f3"
+    },
+    {
+      "id": "token-efficiency-02",
+      "kind": "historical model trials on simulated Feishu",
+      "metrics": {
+        "completed_attempts": 72,
+        "successes": 64,
+        "unknown_usage_attempts": 0,
+        "known_tokens": 7218218,
+        "planned_attempts": 72
+      },
+      "report": "evidence/evaluation/token-efficiency-02/REPORT.md",
+      "source_sha256": "c99291af48dd3296334b307d7f3a20d9577002977fe0356e89a5c1e57d509cf5",
+      "summary_sha256": "8cc227dcc3859f6ff0d17236e131a906ed5b9e5747597aa2485ed6926dfd05a6"
+    },
+    {
+      "id": "token-efficiency-03",
+      "kind": "historical model trials on simulated Feishu",
+      "metrics": {
+        "completed_attempts": 72,
+        "successes": 62,
+        "unknown_usage_attempts": 1,
+        "known_tokens": 7249494,
+        "planned_attempts": 72
+      },
+      "report": "evidence/evaluation/token-efficiency-03/REPORT.md",
+      "source_sha256": "d95add4993776719a1a85b6184e73b3cd8a487db5be1cde779605cc22f93cc37",
+      "summary_sha256": "18dc9cbf0e460325a320406d3881f8b3f40932bb2285eedfc5d97b1a6a1ca24f"
+    },
+    {
+      "id": "token-efficiency-04",
+      "kind": "historical model trials on simulated Feishu",
+      "metrics": {
+        "completed_attempts": 24,
+        "comparison_attempts": 72,
+        "reused_baseline_attempts": 48,
+        "planned_attempts": 24,
+        "successes": 24,
+        "inconclusive": 0,
+        "unknown_usage_attempts": 0,
+        "known_tokens": 1154003,
+        "failed_verifications": 0
+      },
+      "report": "evidence/evaluation/token-efficiency-04/REPORT.md",
+      "source_sha256": "c82f9c6fb114a881958aa4ce761475b1abb923603318d57b3f9b46d564d306f6",
+      "summary_sha256": "6af812639b85020466c39338555bb9bdd534ff509b6ffe3ab463ef453a119e56"
+    },
+    {
+      "id": "token-efficiency-05",
+      "kind": "historical model trials on simulated Feishu",
+      "metrics": {
+        "completed_attempts": 48,
+        "successes": 40,
+        "unknown_usage_attempts": 4,
+        "known_tokens": 3602432,
+        "planned_attempts": 48
+      },
+      "report": "evidence/evaluation/token-efficiency-05/REPORT.md",
+      "source_sha256": "150b2b2ddeccb25e2c9d7cd5f3807af4d992b3dc42d67dbaafc9965f017ff9ee",
+      "summary_sha256": "7dcc52b898a26ab44e1cc29f82cc4afb17e8a3b29583f04c6f4a1a9bd68503a0"
+    },
+    {
+      "id": "token-efficiency-06",
+      "kind": "historical model trials on simulated Feishu",
+      "metrics": {
+        "completed_attempts": 12,
+        "successes": 12,
+        "unknown_usage_attempts": 0,
+        "known_tokens": 761257,
+        "planned_attempts": 48
+      },
+      "report": "evidence/evaluation/token-efficiency-06/REPORT.md",
+      "source_sha256": "69869d618adc397377a72b264f47294d5d12fd6b1bf2bf5ad0793b4c7aacdf05",
+      "summary_sha256": "336c6e84c645355717780454fc645f71f8d279df405af1541cbda4398530b1fd"
+    },
+    {
+      "id": "token-efficiency-07",
+      "kind": "historical model trials on simulated Feishu",
+      "metrics": {
+        "completed_attempts": 12,
+        "successes": 11,
+        "unknown_usage_attempts": 0,
+        "known_tokens": 720698,
+        "planned_attempts": 48
+      },
+      "report": "evidence/evaluation/token-efficiency-07/REPORT.md",
+      "source_sha256": "07216ad917258af8f86ea5b8cac88f41aff8464f7fd69fae51deb4ef81212bce",
+      "summary_sha256": "be2b05b08a723fff53144781e0cc5b5cabb0f60e3ee4453202c62f6386b97930"
+    },
+    {
+      "id": "token-efficiency-08",
+      "kind": "historical model trials on simulated Feishu",
+      "metrics": {
+        "completed_attempts": 12,
+        "successes": 12,
+        "unknown_usage_attempts": 0,
+        "known_tokens": 677392,
+        "planned_attempts": 48
+      },
+      "report": "evidence/evaluation/token-efficiency-08/REPORT.md",
+      "source_sha256": "49b5bcb410c1a500a55610bd7ae7f95bd2f3b441821ed3c822437ada6095528a",
+      "summary_sha256": "556dbb41528816ea5eaf8cdb7cce2ad9c6428c16657d191e41183f33bd0e6a39"
+    },
+    {
+      "id": "token-efficiency-09",
+      "kind": "historical model trials on simulated Feishu",
+      "metrics": {
+        "completed_attempts": 18,
+        "successes": 17,
+        "unknown_usage_attempts": 0,
+        "known_tokens": 901686,
+        "planned_attempts": 18
+      },
+      "report": "evidence/evaluation/token-efficiency-09/REPORT.md",
+      "source_sha256": "0324e21c072e8be4f9726df3ccb25bd75666fd8807729e2e0bfe28cf30ab5517",
+      "summary_sha256": "391c983b4debbf3d7ad21d217910ff6aebb2a1bb25948f84a20b009e4e6bb7bd"
+    },
+    {
+      "id": "wiki-diagnostic-74",
+      "kind": "historical model trials on simulated Feishu",
+      "metrics": {
+        "completed_attempts": 6,
+        "successes": 2,
+        "known_tokens": 1091185,
+        "unknown_usage_attempts": 0
+      },
+      "report": "evidence/evaluation/wiki-diagnostic-74/REPORT.md",
+      "source_sha256": "5a4ab8c301cbcb1211f7235c1192e9570dc0bc8201fb7430dca666b53c2d71f7"
+    },
+    {
+      "id": "wiki-native-74",
+      "kind": "historical model trials on simulated Feishu",
+      "metrics": {
+        "completed_attempts": 9,
+        "successes": 9,
+        "known_tokens": 1595048,
+        "unknown_usage_attempts": 0
+      },
+      "report": "evidence/evaluation/wiki-native-74/REPORT.md",
+      "source_sha256": "33b5ada11f23b7275096b3ef81c61d39dcd5fb8a9836bd2344e006a1fa999ea2",
+      "summary_sha256": "74d966813f5063f15cefe403de1e17321646ca86ad9a3ab8157e8f9eef0ed9eb"
+    }
+  ],
+  "historical_matrix_gate_counts": {
+    "missed": 22,
+    "met": 13,
+    "unavailable": 8
+  },
+  "source_sha256": {
+    ".tmp/evaluation-luna-20261029/run/magpie-luna-medium/contact/contact/batch-01.json": "b43acabbb898c4766aed9bcd426091edf6b5ac81d741951b61c753a5e9356551",
+    "evidence/evaluation/live-business-luna-20261029/assessment.json": "94c5700a812947f5f6f6a0f420073cec97a640a09b35c1566741a086634ef9b7",
+    "evidence/evaluation/live-business-extended-luna-20261029/assessment.json": "9d12b208ecade7bf965851df5c8110b622ffa15651da80615332a03e4aa3ba62",
+    "evidence/evaluation/live-collaboration-luna-20261029/assessment.json": "485396bd8421b1118bb6005a3e64c02a93d23fbe420d8e94b32c1ad1ef7641e9",
+    "evidence/evaluation/live-complex-luna-20261029/assessment.json": "974d09a7b561fec2e65b978a388adffeea5aa0faef4c8614ec427e937ed95639"
+  },
+  "latest_offline_evaluator_checks": {
+    "passed": 149,
+    "skipped": 1,
+    "failed": 0
+  },
+  "latest_offline_checks": "evaluation-test and script-test passed; layout/seal/diff/privacy checks passed for the latest implementation. This consolidation is report-only."
+}

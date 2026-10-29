@@ -1,0 +1,5224 @@
+{
+  "protocol": 1,
+  "mode": "real",
+  "split": "development",
+  "performance_claims_supported": true,
+  "completed": true,
+  "planned_runs": 20,
+  "seed": 2026102902,
+  "repeats": 2,
+  "fresh_context": true,
+  "task_manifest_sha256": "8e5a11669e4c60513bc4ff9b7042451a6b11a0fbb4e07be8cd0b3cb16c9eb7f8",
+  "config_sha256": "6d7b48d62330730dd9a9223038b08804821b20859c065e3d21a768fb1af53500",
+  "environment": {
+    "backend": "live-feishu-v1",
+    "model": "codex/gpt-6-luna",
+    "tokenizer": "provider-undisclosed",
+    "reasoning": "medium",
+    "tools": [
+      "shell",
+      "files"
+    ],
+    "permissions": "workspace-write; real Feishu; task-authorized writes only in private run-owned TEST resources; no delivery or permission changes",
+    "budget": {
+      "timeout_seconds": 360
+    },
+    "accounting_method": "codex-cli 0.165.0 provider turn.completed; cached input included; Magpie Responses transport",
+    "guidance_delivery": "file"
+  },
+  "arms": {
+    "official": {
+      "cli_sha256": "91064a6c49e2ba82bd6428bb3d3d9dbbd63bf6243ed087737adf35b0f88cd51c",
+      "skill_sha256": "9fa68bb1f3ce564602c6df6c303ea4d2759de02442772f332fe5041d65720a1f"
+    },
+    "next": {
+      "cli_sha256": "ed0098f278f3e3c5f9f4dca8ef9202dc438f9d7cff18fd458a8abce85e58f613",
+      "skill_sha256": "da3e673d8e9bd1fcc835d7f234f89987d02de8d7ae16830c32e79e260f429bb9"
+    }
+  },
+  "runs": [
+    {
+      "task_id": "business-file-handoff",
+      "section": "workspace",
+      "trial": 0,
+      "arm": "next",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 103391,
+        "cached_input_tokens": 83328,
+        "output_tokens": 1386,
+        "total_tokens": 104777
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 103391,
+        "cached_input_tokens": 83328,
+        "output_tokens": 1386,
+        "total_tokens": 104777
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "drive",
+                "+upload"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "drive",
+                "+upload"
+              ],
+              "flags": [
+                "--as",
+                "--file",
+                "--folder-token",
+                "--format"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "drive",
+                "+download"
+              ],
+              "flags": [
+                "--as",
+                "--file-token",
+                "--output"
+              ]
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 41.12599888800469,
+      "verification_seconds": 4.010755562994746,
+      "api_calls": null,
+      "retries": null,
+      "command_executions": 5
+    },
+    {
+      "task_id": "business-sheet-reconcile",
+      "section": "workspace",
+      "trial": 0,
+      "arm": "next",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 132956,
+        "cached_input_tokens": 113408,
+        "output_tokens": 804,
+        "total_tokens": 133760
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 132956,
+        "cached_input_tokens": 113408,
+        "output_tokens": 804,
+        "total_tokens": 133760
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "sheets",
+                "+data-export"
+              ],
+              "flags": [
+                "--as",
+                "--range",
+                "--save-result",
+                "--sheet-id",
+                "--spreadsheet-token"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "sheets",
+                "+cells-set"
+              ],
+              "flags": [
+                "--as",
+                "--cells",
+                "--range",
+                "--sheet-id",
+                "--spreadsheet-token"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "sheets",
+                "+cells-set"
+              ],
+              "flags": [
+                "--as",
+                "--cells",
+                "--range",
+                "--sheet-id",
+                "--spreadsheet-token"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "sheets",
+                "+data-export"
+              ],
+              "flags": [
+                "--as",
+                "--range",
+                "--save-result",
+                "--sheet-id",
+                "--spreadsheet-token"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 39.743622733003576,
+      "verification_seconds": 2.8953964230022393,
+      "api_calls": null,
+      "retries": null,
+      "command_executions": 7
+    },
+    {
+      "task_id": "business-sheet-reconcile",
+      "section": "workspace",
+      "trial": 0,
+      "arm": "official",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 314295,
+        "cached_input_tokens": 269056,
+        "output_tokens": 1447,
+        "total_tokens": 315742
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 314295,
+        "cached_input_tokens": 269056,
+        "output_tokens": 1447,
+        "total_tokens": 315742
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "sheets"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "skills",
+                "read"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "skills",
+                "read"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "skills",
+                "read"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "skills",
+                "read"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "sheets",
+                "+cells-set"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "sheets",
+                "+cells-get"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "sheets",
+                "+cells-get"
+              ],
+              "flags": [
+                "--include",
+                "--max-chars",
+                "--range",
+                "--sheet-id",
+                "--spreadsheet-token"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "sheets",
+                "+cells-set"
+              ],
+              "flags": [
+                "--dry-run",
+                "--sheet-id",
+                "--spreadsheet-token",
+                "--writes"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "sheets",
+                "+cells-set"
+              ],
+              "flags": [
+                "--sheet-id",
+                "--spreadsheet-token",
+                "--writes"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "sheets",
+                "+cells-get"
+              ],
+              "flags": [
+                "--include",
+                "--max-chars",
+                "--range",
+                "--sheet-id",
+                "--spreadsheet-token"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 61.67385880599613,
+      "verification_seconds": 3.2381299380067503,
+      "api_calls": null,
+      "retries": null,
+      "command_executions": 14
+    },
+    {
+      "task_id": "business-sheet-reconcile",
+      "section": "workspace",
+      "trial": 1,
+      "arm": "official",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 302223,
+        "cached_input_tokens": 254208,
+        "output_tokens": 1309,
+        "total_tokens": 303532
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 302223,
+        "cached_input_tokens": 254208,
+        "output_tokens": 1309,
+        "total_tokens": 303532
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_search"
+            },
+            {
+              "kind": "cli",
+              "command": [],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "sheets"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "skills",
+                "read"
+              ],
+              "flags": []
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "sheets",
+                "+cells-get"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "sheets",
+                "+cells-set"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "skills",
+                "read"
+              ],
+              "flags": []
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "skills",
+                "read"
+              ],
+              "flags": []
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "skills",
+                "read"
+              ],
+              "flags": []
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "skills",
+                "read"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 2
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "skills",
+                "read"
+              ],
+              "flags": []
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "skills",
+                "read"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "sheets",
+                "+cells-get"
+              ],
+              "flags": [
+                "--include",
+                "--range",
+                "--sheet-id",
+                "--spreadsheet-token"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "sheets",
+                "+cells-set"
+              ],
+              "flags": [
+                "--spreadsheet-token",
+                "--writes"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "sheets",
+                "+cells-get"
+              ],
+              "flags": [
+                "--include",
+                "--range",
+                "--sheet-id",
+                "--spreadsheet-token"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 53.745010709011694,
+      "verification_seconds": 3.477915704002953,
+      "api_calls": null,
+      "retries": null,
+      "command_executions": 9
+    },
+    {
+      "task_id": "business-document-edit",
+      "section": "workspace",
+      "trial": 1,
+      "arm": "official",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 237674,
+        "cached_input_tokens": 172416,
+        "output_tokens": 1176,
+        "total_tokens": 238850
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 237674,
+        "cached_input_tokens": 172416,
+        "output_tokens": 1176,
+        "total_tokens": 238850
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "cli",
+              "command": [],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "docs"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "skills",
+                "read"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "skills",
+                "read"
+              ],
+              "flags": []
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "skills",
+                "read"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "skills",
+                "read"
+              ],
+              "flags": []
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "docs",
+                "+update"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "docs",
+                "+fetch"
+              ],
+              "flags": [
+                "--as",
+                "--detail",
+                "--doc",
+                "--keyword",
+                "--scope"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "docs",
+                "+fetch"
+              ],
+              "flags": [
+                "--as",
+                "--detail",
+                "--doc"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "docs",
+                "+update"
+              ],
+              "flags": [
+                "--as",
+                "--command",
+                "--content",
+                "--doc",
+                "--pattern"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "docs",
+                "+fetch"
+              ],
+              "flags": [
+                "--as",
+                "--detail",
+                "--doc"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 58.382293014990864,
+      "verification_seconds": 2.280123561999062,
+      "api_calls": null,
+      "retries": null,
+      "command_executions": 10
+    },
+    {
+      "task_id": "business-cross-source-report",
+      "section": "workspace",
+      "trial": 0,
+      "arm": "official",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 477132,
+        "cached_input_tokens": 418944,
+        "output_tokens": 2714,
+        "total_tokens": 479846
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 477132,
+        "cached_input_tokens": 418944,
+        "output_tokens": 2714,
+        "total_tokens": 479846
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "docs"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "sheets"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "docs",
+                "+fetch"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "sheets",
+                "+cells-get"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "skills"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "docs",
+                "+update"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "skills",
+                "read"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "skills",
+                "read"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "skills",
+                "read"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "skills",
+                "read"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "skills",
+                "read"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "skills",
+                "read"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "skills",
+                "read"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "skills",
+                "read"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "skills",
+                "read"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-list"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "sheets",
+                "+cells-get"
+              ],
+              "flags": [
+                "--as",
+                "--include",
+                "--range",
+                "--sheet-id",
+                "--spreadsheet-token"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-list"
+              ],
+              "flags": [
+                "--as",
+                "--base-token",
+                "--format",
+                "--limit",
+                "--output",
+                "--table-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "docs",
+                "+fetch"
+              ],
+              "flags": [
+                "--as",
+                "--detail",
+                "--doc",
+                "--doc-format"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "script"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "script"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "script"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "script"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "docs",
+                "+fetch"
+              ],
+              "flags": [
+                "--as",
+                "--detail",
+                "--doc",
+                "--doc-format"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 77.78283523800201,
+      "verification_seconds": 9.385964364002575,
+      "api_calls": null,
+      "retries": null,
+      "command_executions": 31
+    },
+    {
+      "task_id": "business-file-handoff",
+      "section": "workspace",
+      "trial": 1,
+      "arm": "official",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 216129,
+        "cached_input_tokens": 178304,
+        "output_tokens": 1407,
+        "total_tokens": 217536
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 216129,
+        "cached_input_tokens": 178304,
+        "output_tokens": 1407,
+        "total_tokens": 217536
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "drive",
+                "+upload"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "drive",
+                "+download"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "drive",
+                "+upload"
+              ],
+              "flags": [
+                "--as",
+                "--file",
+                "--folder-token",
+                "--format"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "drive",
+                "+download"
+              ],
+              "flags": [
+                "--as",
+                "--file-token",
+                "--format",
+                "--output"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 41.63630302499223,
+      "verification_seconds": 3.7842908119928325,
+      "api_calls": null,
+      "retries": null,
+      "command_executions": 6
+    },
+    {
+      "task_id": "business-base-reconcile",
+      "section": "workspace",
+      "trial": 1,
+      "arm": "next",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 156639,
+        "cached_input_tokens": 135680,
+        "output_tokens": 991,
+        "total_tokens": 157630
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 156639,
+        "cached_input_tokens": 135680,
+        "output_tokens": 991,
+        "total_tokens": 157630
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-batch-create"
+              ],
+              "flags": [
+                "--base-token",
+                "--json",
+                "--table-id"
+              ]
+            }
+          ],
+          "exit_code": 22
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit",
+                "--result-fields"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit",
+                "--result-fields"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-get"
+              ],
+              "flags": [
+                "--base-token",
+                "--format",
+                "--record-id",
+                "--table-id"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-get"
+              ],
+              "flags": [
+                "--base-token",
+                "--format",
+                "--record-id",
+                "--table-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 51.463642990987864,
+      "verification_seconds": 3.607183022002573,
+      "api_calls": null,
+      "retries": null,
+      "command_executions": 8
+    },
+    {
+      "task_id": "business-base-reconcile",
+      "section": "workspace",
+      "trial": 0,
+      "arm": "next",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 195854,
+        "cached_input_tokens": 173568,
+        "output_tokens": 1044,
+        "total_tokens": 196898
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 195854,
+        "cached_input_tokens": 173568,
+        "output_tokens": 1044,
+        "total_tokens": 196898
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-batch-create"
+              ],
+              "flags": [
+                "--base-token",
+                "--json",
+                "--table-id"
+              ]
+            }
+          ],
+          "exit_code": 22
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit",
+                "--result-fields"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit",
+                "--result-fields"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-search"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-search"
+              ],
+              "flags": [
+                "--base-token",
+                "--field-id",
+                "--format",
+                "--keyword",
+                "--search-field",
+                "--table-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-search"
+              ],
+              "flags": [
+                "--base-token",
+                "--field-id",
+                "--format",
+                "--keyword",
+                "--search-field",
+                "--table-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 48.59684107999783,
+      "verification_seconds": 3.4854083340032957,
+      "api_calls": null,
+      "retries": null,
+      "command_executions": 10
+    },
+    {
+      "task_id": "business-file-handoff",
+      "section": "workspace",
+      "trial": 1,
+      "arm": "next",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 140632,
+        "cached_input_tokens": 119936,
+        "output_tokens": 1465,
+        "total_tokens": 142097
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 140632,
+        "cached_input_tokens": 119936,
+        "output_tokens": 1465,
+        "total_tokens": 142097
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 1
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "drive",
+                "+upload"
+              ],
+              "flags": [
+                "--as",
+                "--file",
+                "--folder-token",
+                "--format"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit",
+                "--result-fields"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "drive",
+                "+download"
+              ],
+              "flags": [
+                "--as",
+                "--file-token",
+                "--format",
+                "--output"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 54.847893607991864,
+      "verification_seconds": 3.8924790890014265,
+      "api_calls": null,
+      "retries": null,
+      "command_executions": 9
+    },
+    {
+      "task_id": "business-sheet-reconcile",
+      "section": "workspace",
+      "trial": 1,
+      "arm": "next",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 116264,
+        "cached_input_tokens": 109056,
+        "output_tokens": 731,
+        "total_tokens": 116995
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 116264,
+        "cached_input_tokens": 109056,
+        "output_tokens": 731,
+        "total_tokens": 116995
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "sheets",
+                "+data-export"
+              ],
+              "flags": [
+                "--as",
+                "--range",
+                "--save-result",
+                "--sheet-id",
+                "--spreadsheet-token"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "sheets",
+                "+cells-set"
+              ],
+              "flags": [
+                "--as",
+                "--cells",
+                "--range",
+                "--sheet-id",
+                "--spreadsheet-token"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "sheets",
+                "+cells-set"
+              ],
+              "flags": [
+                "--as",
+                "--cells",
+                "--range",
+                "--sheet-id",
+                "--spreadsheet-token"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "sheets",
+                "+data-export"
+              ],
+              "flags": [
+                "--as",
+                "--range",
+                "--save-result",
+                "--sheet-id",
+                "--spreadsheet-token"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 39.30375100100355,
+      "verification_seconds": 2.6122590510058217,
+      "api_calls": null,
+      "retries": null,
+      "command_executions": 6
+    },
+    {
+      "task_id": "business-document-edit",
+      "section": "workspace",
+      "trial": 0,
+      "arm": "official",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 259297,
+        "cached_input_tokens": 228992,
+        "output_tokens": 1084,
+        "total_tokens": 260381
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 259297,
+        "cached_input_tokens": 228992,
+        "output_tokens": 1084,
+        "total_tokens": 260381
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "docs"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "skills",
+                "read"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "skills",
+                "read"
+              ],
+              "flags": []
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "skills",
+                "read"
+              ],
+              "flags": []
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "skills",
+                "read"
+              ],
+              "flags": []
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "docs",
+                "+fetch"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "docs",
+                "+update"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "docs",
+                "+fetch"
+              ],
+              "flags": [
+                "--as",
+                "--detail",
+                "--doc"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "docs",
+                "+update"
+              ],
+              "flags": [
+                "--as",
+                "--command",
+                "--content",
+                "--doc",
+                "--dry-run",
+                "--pattern"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "docs",
+                "+update"
+              ],
+              "flags": [
+                "--as",
+                "--command",
+                "--content",
+                "--doc",
+                "--pattern"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "docs",
+                "+fetch"
+              ],
+              "flags": [
+                "--as",
+                "--detail",
+                "--doc"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 63.046233289991505,
+      "verification_seconds": 2.2030053040070925,
+      "api_calls": null,
+      "retries": null,
+      "command_executions": 11
+    },
+    {
+      "task_id": "business-base-reconcile",
+      "section": "workspace",
+      "trial": 0,
+      "arm": "official",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 169222,
+        "cached_input_tokens": 142592,
+        "output_tokens": 916,
+        "total_tokens": 170138
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 169222,
+        "cached_input_tokens": 142592,
+        "output_tokens": 916,
+        "total_tokens": 170138
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_search"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            },
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-batch-create"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+field-list"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+field-list"
+              ],
+              "flags": [
+                "--as",
+                "--base-token",
+                "--table-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "script"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-batch-create"
+              ],
+              "flags": [
+                "--as",
+                "--base-token",
+                "--json",
+                "--table-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 99.67111338100221,
+      "verification_seconds": 3.5529778610070935,
+      "api_calls": null,
+      "retries": null,
+      "command_executions": 7
+    },
+    {
+      "task_id": "business-file-handoff",
+      "section": "workspace",
+      "trial": 0,
+      "arm": "official",
+      "success": false,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 213579,
+        "cached_input_tokens": 169856,
+        "output_tokens": 1496,
+        "total_tokens": 215075
+      },
+      "categories": [
+        "outcome_failure",
+        "misleading_success_claim"
+      ],
+      "known_usage": {
+        "input_tokens": 213579,
+        "cached_input_tokens": 169856,
+        "output_tokens": 1496,
+        "total_tokens": 215075
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "drive"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "drive",
+                "+upload"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "drive",
+                "+download"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "drive",
+                "files",
+                "list"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "drive",
+                "files",
+                "list"
+              ],
+              "flags": [
+                "--as",
+                "--format",
+                "--params"
+              ]
+            }
+          ],
+          "exit_code": 3,
+          "reported_cli_error": {
+            "type": "authorization",
+            "subtype": "missing_scope"
+          }
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 48.31298393299221,
+      "verification_seconds": 1.7972126639942871,
+      "api_calls": null,
+      "retries": null,
+      "command_executions": 6
+    },
+    {
+      "task_id": "business-base-reconcile",
+      "section": "workspace",
+      "trial": 1,
+      "arm": "official",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 164052,
+        "cached_input_tokens": 130560,
+        "output_tokens": 756,
+        "total_tokens": 164808
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 164052,
+        "cached_input_tokens": 130560,
+        "output_tokens": 756,
+        "total_tokens": 164808
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-batch-create"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+field-list"
+              ],
+              "flags": [
+                "--help"
+              ]
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+field-list"
+              ],
+              "flags": [
+                "--as",
+                "--base-token",
+                "--table-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "script"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-batch-create"
+              ],
+              "flags": [
+                "--as",
+                "--base-token",
+                "--json",
+                "--table-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 36.1280311189912,
+      "verification_seconds": 3.4052503620041534,
+      "api_calls": null,
+      "retries": null,
+      "command_executions": 5
+    },
+    {
+      "task_id": "business-document-edit",
+      "section": "workspace",
+      "trial": 1,
+      "arm": "next",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 80205,
+        "cached_input_tokens": 62080,
+        "output_tokens": 442,
+        "total_tokens": 80647
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 80205,
+        "cached_input_tokens": 62080,
+        "output_tokens": 442,
+        "total_tokens": 80647
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "docs",
+                "+pull"
+              ],
+              "flags": [
+                "--as",
+                "--doc",
+                "--output"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "script"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "docs",
+                "+push"
+              ],
+              "flags": [
+                "--as",
+                "--file"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 23.674390832995414,
+      "verification_seconds": 2.2245670250122203,
+      "api_calls": null,
+      "retries": null,
+      "command_executions": 4
+    },
+    {
+      "task_id": "business-cross-source-report",
+      "section": "workspace",
+      "trial": 0,
+      "arm": "next",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 337647,
+        "cached_input_tokens": 302592,
+        "output_tokens": 2413,
+        "total_tokens": 340060
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 337647,
+        "cached_input_tokens": 302592,
+        "output_tokens": 2413,
+        "total_tokens": 340060
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit",
+                "--result-fields"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-list"
+              ],
+              "flags": [
+                "--as",
+                "--base-token",
+                "--format",
+                "--table-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "sheets",
+                "+data-export"
+              ],
+              "flags": [
+                "--as",
+                "--range",
+                "--save-result",
+                "--sheet-id",
+                "--spreadsheet-token"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "docs",
+                "+pull"
+              ],
+              "flags": [
+                "--as",
+                "--doc",
+                "--output"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-list"
+              ],
+              "flags": [
+                "--print-schema"
+              ]
+            }
+          ],
+          "exit_code": 2,
+          "reported_cli_error": {
+            "type": "validation",
+            "subtype": "invalid_argument"
+          }
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-list"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-list"
+              ],
+              "flags": [
+                "--as",
+                "--base-token",
+                "--field-id",
+                "--format",
+                "--limit",
+                "--output",
+                "--table-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "script"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "script"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 2
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "docs",
+                "+update"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit",
+                "--result-fields"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "skills",
+                "read"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "skills",
+                "read"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "docs",
+                "+fetch"
+              ],
+              "flags": [
+                "--as",
+                "--detail",
+                "--doc"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 83.88271379700745,
+      "verification_seconds": 8.454976344000897,
+      "api_calls": null,
+      "retries": null,
+      "command_executions": 20
+    },
+    {
+      "task_id": "business-document-edit",
+      "section": "workspace",
+      "trial": 0,
+      "arm": "next",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 80322,
+        "cached_input_tokens": 74112,
+        "output_tokens": 567,
+        "total_tokens": 80889
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 80322,
+        "cached_input_tokens": 74112,
+        "output_tokens": 567,
+        "total_tokens": 80889
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "docs",
+                "+pull"
+              ],
+              "flags": [
+                "--as",
+                "--doc",
+                "--output"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "script"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "docs",
+                "+push"
+              ],
+              "flags": [
+                "--as",
+                "--file"
+              ]
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 26.260005971998908,
+      "verification_seconds": 2.0980457859986927,
+      "api_calls": null,
+      "retries": null,
+      "command_executions": 4
+    },
+    {
+      "task_id": "business-cross-source-report",
+      "section": "workspace",
+      "trial": 1,
+      "arm": "next",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 405592,
+        "cached_input_tokens": 368640,
+        "output_tokens": 3395,
+        "total_tokens": 408987
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 405592,
+        "cached_input_tokens": 368640,
+        "output_tokens": 3395,
+        "total_tokens": 408987
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit",
+                "--result-fields"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "schema"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 2,
+          "reported_cli_error": {
+            "type": "validation",
+            "subtype": "invalid_argument"
+          }
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit",
+                "--result-fields"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "sheets",
+                "+data-export"
+              ],
+              "flags": [
+                "--as",
+                "--range",
+                "--save-result",
+                "--sheet-id",
+                "--spreadsheet-token"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "docs",
+                "+pull"
+              ],
+              "flags": [
+                "--as",
+                "--doc",
+                "--output"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-list"
+              ],
+              "flags": [
+                "--print-schema"
+              ]
+            }
+          ],
+          "exit_code": 2,
+          "reported_cli_error": {
+            "type": "validation",
+            "subtype": "invalid_argument"
+          }
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-list"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "skills",
+                "read"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-list"
+              ],
+              "flags": [
+                "--as",
+                "--base-token",
+                "--field-id",
+                "--limit",
+                "--output",
+                "--table-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "script"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 1
+        },
+        {
+          "choices": [
+            {
+              "kind": "script"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "script"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 2
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "docs",
+                "+update"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "discover"
+              ],
+              "flags": [
+                "--flags",
+                "--limit",
+                "--result-fields"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "docs",
+                "+pull"
+              ],
+              "flags": [
+                "--as",
+                "--doc",
+                "--output"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "skills",
+                "read"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "skills",
+                "read"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_search"
+            },
+            {
+              "kind": "file_read"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "docs",
+                "+fetch"
+              ],
+              "flags": [
+                "--as",
+                "--detail",
+                "--doc"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "script"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 109.10068615600176,
+      "verification_seconds": 8.472811781990458,
+      "api_calls": null,
+      "retries": null,
+      "command_executions": 24
+    },
+    {
+      "task_id": "business-cross-source-report",
+      "section": "workspace",
+      "trial": 1,
+      "arm": "official",
+      "success": true,
+      "outcome_inconclusive": false,
+      "usage": {
+        "input_tokens": 533168,
+        "cached_input_tokens": 485120,
+        "output_tokens": 2555,
+        "total_tokens": 535723
+      },
+      "categories": [],
+      "known_usage": {
+        "input_tokens": 533168,
+        "cached_input_tokens": 485120,
+        "output_tokens": 2555,
+        "total_tokens": 535723
+      },
+      "accounting_diagnostics": [],
+      "verification_failures": null,
+      "control_trace": [
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_search"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "docs"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "sheets"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "file_read"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "docs",
+                "+update"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "skills"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-list"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "docs",
+                "+fetch"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "sheets",
+                "+cells-get"
+              ],
+              "flags": [
+                "--help"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "skills",
+                "read"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "skills",
+                "read"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "skills",
+                "read"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "skills",
+                "read"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "skills",
+                "read"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "skills",
+                "read"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "skills",
+                "read"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "skills",
+                "read"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "skills",
+                "read"
+              ],
+              "flags": []
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "sheets",
+                "+cells-get"
+              ],
+              "flags": [
+                "--as",
+                "--range",
+                "--sheet-id",
+                "--spreadsheet-token"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "docs",
+                "+fetch"
+              ],
+              "flags": [
+                "--as",
+                "--detail",
+                "--doc"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "base",
+                "+record-list"
+              ],
+              "flags": [
+                "--as",
+                "--base-token",
+                "--field-id",
+                "--format",
+                "--limit",
+                "--offset",
+                "--output",
+                "--table-id"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "script"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "script"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "script"
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "cli",
+              "command": [
+                "docs",
+                "+fetch"
+              ],
+              "flags": [
+                "--as",
+                "--detail",
+                "--doc"
+              ]
+            }
+          ],
+          "exit_code": 0
+        },
+        {
+          "choices": [
+            {
+              "kind": "script"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            },
+            {
+              "kind": "other_shell"
+            }
+          ],
+          "exit_code": 0
+        }
+      ],
+      "usage_granularity": "codex_user_turn",
+      "runner_exit": 0,
+      "verifier_exit": 0,
+      "latency_seconds": 90.23662371600221,
+      "verification_seconds": 7.81571256800089,
+      "api_calls": null,
+      "retries": null,
+      "command_executions": 30
+    }
+  ],
+  "groups": [
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "next",
+      "attempts": 10,
+      "successes": 10,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 1762740,
+      "tokens_per_success": 176274.0,
+      "token_distribution": {
+        "min": 80647,
+        "median": 137928.5,
+        "max": 408987,
+        "stdev": 111354.43512895609
+      },
+      "latency_median_seconds": 44.86141998400126,
+      "api_calls": null,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "all",
+      "name": "all",
+      "arm": "official",
+      "attempts": 10,
+      "successes": 9,
+      "inconclusive": 0,
+      "success_rate": 0.9,
+      "usage_complete": true,
+      "known_total_tokens": 2901631,
+      "tokens_per_success": 322403.44444444444,
+      "token_distribution": {
+        "min": 164808,
+        "median": 249615.5,
+        "max": 535723,
+        "stdev": 125461.42678878548
+      },
+      "latency_median_seconds": 60.0280759104935,
+      "api_calls": null,
+      "retries": null,
+      "failure_categories": {
+        "misleading_success_claim": 1,
+        "outcome_failure": 1
+      }
+    },
+    {
+      "scope": "section",
+      "name": "workspace",
+      "arm": "next",
+      "attempts": 10,
+      "successes": 10,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 1762740,
+      "tokens_per_success": 176274.0,
+      "token_distribution": {
+        "min": 80647,
+        "median": 137928.5,
+        "max": 408987,
+        "stdev": 111354.43512895609
+      },
+      "latency_median_seconds": 44.86141998400126,
+      "api_calls": null,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "section",
+      "name": "workspace",
+      "arm": "official",
+      "attempts": 10,
+      "successes": 9,
+      "inconclusive": 0,
+      "success_rate": 0.9,
+      "usage_complete": true,
+      "known_total_tokens": 2901631,
+      "tokens_per_success": 322403.44444444444,
+      "token_distribution": {
+        "min": 164808,
+        "median": 249615.5,
+        "max": 535723,
+        "stdev": 125461.42678878548
+      },
+      "latency_median_seconds": 60.0280759104935,
+      "api_calls": null,
+      "retries": null,
+      "failure_categories": {
+        "misleading_success_claim": 1,
+        "outcome_failure": 1
+      }
+    },
+    {
+      "scope": "task_id",
+      "name": "business-base-reconcile",
+      "arm": "next",
+      "attempts": 2,
+      "successes": 2,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 354528,
+      "tokens_per_success": 177264.0,
+      "token_distribution": {
+        "min": 157630,
+        "median": 177264.0,
+        "max": 196898,
+        "stdev": 27766.669083633347
+      },
+      "latency_median_seconds": 50.03024203549285,
+      "api_calls": null,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "task_id",
+      "name": "business-base-reconcile",
+      "arm": "official",
+      "attempts": 2,
+      "successes": 2,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 334946,
+      "tokens_per_success": 167473.0,
+      "token_distribution": {
+        "min": 164808,
+        "median": 167473.0,
+        "max": 170138,
+        "stdev": 3768.8791437242985
+      },
+      "latency_median_seconds": 67.89957224999671,
+      "api_calls": null,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "task_id",
+      "name": "business-cross-source-report",
+      "arm": "next",
+      "attempts": 2,
+      "successes": 2,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 749047,
+      "tokens_per_success": 374523.5,
+      "token_distribution": {
+        "min": 340060,
+        "median": 374523.5,
+        "max": 408987,
+        "stdev": 48738.74910684516
+      },
+      "latency_median_seconds": 96.4916999765046,
+      "api_calls": null,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "task_id",
+      "name": "business-cross-source-report",
+      "arm": "official",
+      "attempts": 2,
+      "successes": 2,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 1015569,
+      "tokens_per_success": 507784.5,
+      "token_distribution": {
+        "min": 479846,
+        "median": 507784.5,
+        "max": 535723,
+        "stdev": 39511.005612360714
+      },
+      "latency_median_seconds": 84.00972947700211,
+      "api_calls": null,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "task_id",
+      "name": "business-document-edit",
+      "arm": "next",
+      "attempts": 2,
+      "successes": 2,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 161536,
+      "tokens_per_success": 80768.0,
+      "token_distribution": {
+        "min": 80647,
+        "median": 80768.0,
+        "max": 80889,
+        "stdev": 171.1198410471445
+      },
+      "latency_median_seconds": 24.96719840249716,
+      "api_calls": null,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "task_id",
+      "name": "business-document-edit",
+      "arm": "official",
+      "attempts": 2,
+      "successes": 2,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 499231,
+      "tokens_per_success": 249615.5,
+      "token_distribution": {
+        "min": 238850,
+        "median": 249615.5,
+        "max": 260381,
+        "stdev": 15224.716105727555
+      },
+      "latency_median_seconds": 60.714263152491185,
+      "api_calls": null,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "task_id",
+      "name": "business-file-handoff",
+      "arm": "next",
+      "attempts": 2,
+      "successes": 2,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 246874,
+      "tokens_per_success": 123437.0,
+      "token_distribution": {
+        "min": 104777,
+        "median": 123437.0,
+        "max": 142097,
+        "stdev": 26389.225073881953
+      },
+      "latency_median_seconds": 47.986946247998276,
+      "api_calls": null,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "task_id",
+      "name": "business-file-handoff",
+      "arm": "official",
+      "attempts": 2,
+      "successes": 1,
+      "inconclusive": 0,
+      "success_rate": 0.5,
+      "usage_complete": true,
+      "known_total_tokens": 432611,
+      "tokens_per_success": 432611.0,
+      "token_distribution": {
+        "min": 215075,
+        "median": 216305.5,
+        "max": 217536,
+        "stdev": 1740.1897885000935
+      },
+      "latency_median_seconds": 44.97464347899222,
+      "api_calls": null,
+      "retries": null,
+      "failure_categories": {
+        "misleading_success_claim": 1,
+        "outcome_failure": 1
+      }
+    },
+    {
+      "scope": "task_id",
+      "name": "business-sheet-reconcile",
+      "arm": "next",
+      "attempts": 2,
+      "successes": 2,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 250755,
+      "tokens_per_success": 125377.5,
+      "token_distribution": {
+        "min": 116995,
+        "median": 125377.5,
+        "max": 133760,
+        "stdev": 11854.64518659247
+      },
+      "latency_median_seconds": 39.52368686700356,
+      "api_calls": null,
+      "retries": null,
+      "failure_categories": {}
+    },
+    {
+      "scope": "task_id",
+      "name": "business-sheet-reconcile",
+      "arm": "official",
+      "attempts": 2,
+      "successes": 2,
+      "inconclusive": 0,
+      "success_rate": 1.0,
+      "usage_complete": true,
+      "known_total_tokens": 619274,
+      "tokens_per_success": 309637.0,
+      "token_distribution": {
+        "min": 303532,
+        "median": 309637.0,
+        "max": 315742,
+        "stdev": 8633.773798287746
+      },
+      "latency_median_seconds": 57.709434757503914,
+      "api_calls": null,
+      "retries": null,
+      "failure_categories": {}
+    }
+  ],
+  "matched_success": [
+    {
+      "baseline": "official",
+      "pairs": [
+        {
+          "task_id": "business-sheet-reconcile",
+          "trial": 0,
+          "baseline_tokens": 315742,
+          "next_tokens": 133760
+        },
+        {
+          "task_id": "business-base-reconcile",
+          "trial": 1,
+          "baseline_tokens": 164808,
+          "next_tokens": 157630
+        },
+        {
+          "task_id": "business-base-reconcile",
+          "trial": 0,
+          "baseline_tokens": 170138,
+          "next_tokens": 196898
+        },
+        {
+          "task_id": "business-file-handoff",
+          "trial": 1,
+          "baseline_tokens": 217536,
+          "next_tokens": 142097
+        },
+        {
+          "task_id": "business-sheet-reconcile",
+          "trial": 1,
+          "baseline_tokens": 303532,
+          "next_tokens": 116995
+        },
+        {
+          "task_id": "business-document-edit",
+          "trial": 1,
+          "baseline_tokens": 238850,
+          "next_tokens": 80647
+        },
+        {
+          "task_id": "business-cross-source-report",
+          "trial": 0,
+          "baseline_tokens": 479846,
+          "next_tokens": 340060
+        },
+        {
+          "task_id": "business-document-edit",
+          "trial": 0,
+          "baseline_tokens": 260381,
+          "next_tokens": 80889
+        },
+        {
+          "task_id": "business-cross-source-report",
+          "trial": 1,
+          "baseline_tokens": 535723,
+          "next_tokens": 408987
+        }
+      ]
+    }
+  ],
+  "arm_selection": {
+    "mode": "original_comparison",
+    "selected": [
+      "official",
+      "next"
+    ],
+    "schedule": "balanced",
+    "balanced_comparison": true
+  },
+  "resume_contract": {
+    "version": 1,
+    "sha256": "e7f0b2e4ca71451e74933b45fd8e098216bc15e0709da719f1c0571577d76d88"
+  }
+}

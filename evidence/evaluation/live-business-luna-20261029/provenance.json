@@ -1,0 +1,65 @@
+{
+  "date": "2026-10-29",
+  "next_commit": "478827611a3ad6735477ecc2da3dbfb31812c260",
+  "official_commit": "ac81f5056ab88f37d581d25916f3dab85abfca76",
+  "products": {
+    "official": {
+      "binary_sha256": "91064a6c49e2ba82bd6428bb3d3d9dbbd63bf6243ed087737adf35b0f88cd51c",
+      "version": "lark-cli version v1.0.98",
+      "go_version": "go1.25.5"
+    },
+    "next": {
+      "binary_sha256": "ed0098f278f3e3c5f9f4dca8ef9202dc438f9d7cff18fd458a8abce85e58f613",
+      "version": "feishu-cli-next 47882761 (upstream: larksuite/cli@v1.0.98)",
+      "go_version": "go1.26.10"
+    }
+  },
+  "harness": "codex-cli 0.165.0",
+  "model": "codex/gpt-6-luna",
+  "reasoning": "medium",
+  "model_provider": "Magpie",
+  "scope": "Five real Feishu business workflows spanning Docs, Sheets, Base and binary files; two repeats per arm",
+  "guidance": "official skills/lark-shared; Next agent-skills/feishu-cli-next; file delivery",
+  "budget_seconds": 360,
+  "seed": 2026102902,
+  "accounting": "Provider turn.completed input_tokens plus output_tokens; cached input is a subset of input, included once; includes every attempt; preflight excluded",
+  "offline_tooling_test": "make evaluation-test passed; not a live success or token measurement",
+  "repeats": 2,
+  "workflow_ids": [
+    "business-cross-source-report",
+    "business-document-edit",
+    "business-sheet-reconcile",
+    "business-base-reconcile",
+    "business-file-handoff"
+  ],
+  "authorization": "Existing granted scopes only; no auth flow finalized. User authorized fresh TEST resources. Task mutation, calendar, mail and broad Drive listing excluded.",
+  "controller_files": {
+    "baseline/registrations.json.gz": "cde16a5a99e7336c0983f02e864a157b455250e36d767618d28f86598505dc0a",
+    "evaluation/LIVE_BUSINESS.md": "1251b864848f44f8157649eb456a3ef10407d178eb0ec433016f27ac829410fc",
+    "evaluation/PIPELINE.md": "bfcdadf81e0c90791386cb243826f267beac7833a1ec7652367f8d302fa03988",
+    "evaluation/README.md": "501d2f2e3b40bfe14aa0d4c822f9a291d0ccadfe32b572fa650b51fb5fbfa800",
+    "evaluation/codex_runner.py": "f4774849d2a9b412aa4356f6499c62d0677f46d92f63a194a7345e86d3b9c93b",
+    "evaluation/function_coverage.py": "42e21d49d80948304fa2b59bca6ceaa9102733d60b0fdd14059e5fd7af763213",
+    "evaluation/harness.py": "419667da75b73e871d8aa0b423d32c83529ad2bda80dd88be7d8240778a27a80",
+    "evaluation/live_batch.py": "88001cbf1e3783df0b0317db805d76733b4609804d58eb1732f1526371601221",
+    "evaluation/live_contact.py": "416ad69be5da3eb177dc8402b2ee1360f4636cd07c2b2ba59e1ca1ff260784f1",
+    "evaluation/live_domains/base.py": "5ef9cb85283114afdbccf1d7cdcac0aa351700cc85d1fc1e4f5f26d2ec481dca",
+    "evaluation/live_domains/docs.py": "bd80b0f429477e8b1c87054da1fd136967107539408eae0b7051ce5e88da4b1d",
+    "evaluation/live_domains/drive.py": "fc0674172feb4ff3d56e8788b1b5422573d305231a52da47f1cf64ccbd4d954b",
+    "evaluation/live_domains/session.py": "f9ab8737466dd30d25e40a257725e95502e9bf24e3f825853e7cfce477c37af0",
+    "evaluation/live_domains/sheets.py": "3b983fde5cbf4b23862ccda59cd637b559f913356ae961aa74502ec8f276e438",
+    "evaluation/live_fixture.py": "86fa614f24ec16522dbb7d84db09d7901fc2693611cdfc25c82f076bc7f09ff8",
+    "evaluation/live_workspace.py": "5589d2b690a308f0859b2379f84c23665c940819655cbe66076194b220dda50e",
+    "evaluation/measure_cli.py": "8b8485da424621d43de0783b67b7e5fd9f587723279c0b73eb371abce4421122",
+    "evaluation/measure_surface.py": "a515c82aacf60d749c0624c1fce651a0a465be5b82a435c5587d16a62bbe7ee1",
+    "evaluation/pipeline.example.json": "84a99f7916b6c86094aa375c441c2c0417b3e4649c89d76838c8ca9ae56fdb10",
+    "evaluation/pipeline.py": "3d8913166b788d4462d6568055511e1661076a3b41dd42cab72213121a13bd1b",
+    "evaluation/plot_scaling.py": "f2b21013cdea5de977e92c8a48b11d24f40d43ecda24b4a716288abf73606717",
+    "evaluation/tasks.live-business.json": "8e5a11669e4c60513bc4ff9b7042451a6b11a0fbb4e07be8cd0b3cb16c9eb7f8",
+    "evaluation/tasks.live-contact.json": "1fa45163f1a445d8bc9e98fb556bb7710b92df60b95c702a5058e8b6a0a3a2bc"
+  },
+  "code_status": "Evaluation tooling changes uncommitted; production CLI binaries and guidance unchanged from the prior frozen comparison.",
+  "verified_scope": "Four complete workflows spanning Docs, Sheets and Base; binary file checks retained separately as partial diagnostics",
+  "source_of_measured_controller": "controller.tar.gz; frozen before the 20-attempt run",
+  "reusable_suite_adjustments": "File handoff removed after verification audit; added guard against claiming cleanup when owned resource coordinates are missing. All measured states had saved coordinates and confirmed deletion."
+}

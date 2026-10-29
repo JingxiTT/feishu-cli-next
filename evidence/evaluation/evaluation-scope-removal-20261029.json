@@ -1,0 +1,48 @@
+{
+  "change": "User-directed removal of unauthorized evaluation workflows",
+  "removed_files": [
+    "evaluation/live_domains/im_read.py",
+    "evaluation/tasks.live-im.json"
+  ],
+  "removed_cases": [
+    "collaboration-im-read",
+    "collaboration-group-read"
+  ],
+  "removed_operations": [
+    "direct-message and group-history evaluation",
+    "TEST-message seeding and recall",
+    "IM identity and destination lookup for those cases"
+  ],
+  "dispatchers": "Both bundled workspace and collaboration drivers reject removed identifiers before fixture setup or tenant access.",
+  "remaining_live_case_count": 19,
+  "remaining_live_case_ids": [
+    "business-base-audit-large",
+    "business-base-conditional-close",
+    "business-base-conflict-reconcile",
+    "business-base-reconcile",
+    "business-budget-close",
+    "business-cross-source-report",
+    "business-document-audit-large",
+    "business-document-closeout",
+    "business-document-edit",
+    "business-sheet-export",
+    "business-sheet-intake",
+    "business-sheet-journal",
+    "business-sheet-reconcile",
+    "collaboration-document-create",
+    "collaboration-drawing-create",
+    "collaboration-file-upload",
+    "collaboration-image-upload",
+    "collaboration-mermaid-create",
+    "live-contact-current-account"
+  ],
+  "regression_check": "All live manifests must equal the supported Contact/Docs/Sheets/Base/document-media task set; removed IM and out-of-scope Task/Calendar/Mail/handoff cases must be rejected before tenant access.",
+  "offline_evaluator_checks": {
+    "pass": 139,
+    "fail": 0,
+    "skip": 1
+  },
+  "tenant_or_model_calls_performed": false,
+  "historical_evidence": "Existing sealed evidence and frozen controller snapshots remain unchanged. Report annotations distinguish historical blocked IM cases from current removed cases.",
+  "authorization_safeguards": "Shared recipient and no-delivery protections remain; no current bundled task enables delivery or sharing."
+}

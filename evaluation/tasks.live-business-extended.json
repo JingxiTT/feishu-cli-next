@@ -1,0 +1,177 @@
+{
+  "schema_version": 1,
+  "split": "development",
+  "backend": "live-feishu-v1",
+  "basis": "Additional real Feishu workflows under existing user permissions. Fictitious data is seeded in fresh TEST resources; native responses and mutations are independently verified. No API simulator.",
+  "tasks": [
+    {
+      "id": "business-base-audit-large",
+      "section": "workspace",
+      "prompt": "Audit every page of 2,505 invoices with positive/zero/negative numeric and boolean predicates, preserving all remote rows.",
+      "fixture": {
+        "answer_schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "path"
+          ],
+          "properties": {
+            "path": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "expected": {
+        "checks": [
+          "independent complete real Feishu native readback",
+          "preservation of unselected data and native formatting",
+          "run-owned TEST resources and confirmed cleanup"
+        ]
+      }
+    },
+    {
+      "id": "business-base-conditional-close",
+      "section": "workspace",
+      "prompt": "Conditionally settle all qualifying Base records while preserving all other fields and rows.",
+      "fixture": {
+        "answer_schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "record_ids"
+          ],
+          "properties": {
+            "record_ids": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "expected": {
+        "checks": [
+          "independent complete real Feishu native readback",
+          "preservation of unselected data and native formatting",
+          "run-owned TEST resources and confirmed cleanup"
+        ]
+      }
+    },
+    {
+      "id": "business-sheet-intake",
+      "section": "workspace",
+      "prompt": "Reconcile a quoted multiline Unicode CSV by exact code and existing approval flags, preserving native formulas and styles.",
+      "fixture": {
+        "answer_schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "updated_codes",
+            "skipped_codes"
+          ],
+          "properties": {
+            "updated_codes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "skipped_codes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "expected": {
+        "checks": [
+          "independent complete real Feishu native readback",
+          "preservation of unselected data and native formatting",
+          "run-owned TEST resources and confirmed cleanup"
+        ]
+      }
+    },
+    {
+      "id": "business-sheet-export",
+      "section": "workspace",
+      "prompt": "Export all typed raw cells and formulas to a local JSON artifact without changing the live Sheet.",
+      "fixture": {
+        "answer_schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "path"
+          ],
+          "properties": {
+            "path": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "expected": {
+        "checks": [
+          "independent complete real Feishu native readback",
+          "preservation of unselected data and native formatting",
+          "run-owned TEST resources and confirmed cleanup"
+        ]
+      }
+    },
+    {
+      "id": "business-document-audit-large",
+      "section": "workspace",
+      "prompt": "Audit all invoice paragraphs in a native document with more than 500 blocks, returning exact matching IDs and totals without edits.",
+      "fixture": {
+        "answer_schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "path"
+          ],
+          "properties": {
+            "path": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "expected": {
+        "checks": [
+          "independent complete real Feishu native readback",
+          "preservation of unselected data and native formatting",
+          "run-owned TEST resources and confirmed cleanup"
+        ]
+      }
+    },
+    {
+      "id": "business-budget-close",
+      "section": "workspace",
+      "prompt": "Read the original Base selection, update Base records and Sheet totals, and append an exact native document settlement note while preserving unrelated state.",
+      "fixture": {
+        "answer_schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "report_path"
+          ],
+          "properties": {
+            "report_path": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "expected": {
+        "checks": [
+          "independent complete real Feishu native readback",
+          "preservation of unselected data and native formatting",
+          "run-owned TEST resources and confirmed cleanup"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+[
+  {
+    "task_id": "business-sheet-export",
+    "arm": "official",
+    "trial": 0,
+    "verification": "failed; full provider cost retained",
+    "observed_mismatch": "Ten numeric/boolean literal cells were exported as formatted strings instead of native JSON numbers/booleans. Examples: 2 became \"2\", true became \"TRUE\", zero became \"0\", false became \"FALSE\".",
+    "remote_state": "All raw/formula cells and native styles unchanged in the complete recorded readback; failure is in local artifact types.",
+    "resolution": "No trial replay or evaluator change. Added explicit formatted-boolean regression inputs to the offline verifier test."
+  },
+  {
+    "task_id": "business-document-audit-large",
+    "arm": "next",
+    "trial": 2,
+    "verification": "failed; full provider cost retained",
+    "observed_mismatch": "All 107 matching invoice codes and native block IDs, count, and numeric magnitude were correct, but total_amount was JSON string \"1006\" instead of numeric 1006.",
+    "remote_state": "Full recorded native block readback matched the seed snapshot; document unchanged.",
+    "resolution": "No trial replay or evaluator change. Exact JSON numeric type remains required."
+  }
+]

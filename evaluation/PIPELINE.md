@@ -92,8 +92,8 @@ the pipeline never falls back to a simulator.
 
 The nine suite names and workflow/diagnostic views remain available. Without a
 `suites` selection, the pipeline schedules only configured live manifests in the
-selected workloads. Only the current-account Contact task has a bundled live
-driver so far;
+selected workloads. The current-account Contact task and the
+[business workflows](LIVE_BUSINESS.md) have bundled live drivers;
 other tasks require a real fixture driver and live manifests before execution.
 There is no claim of live coverage for an unported task.
 
@@ -115,6 +115,24 @@ local pipeline config to an absolute private JSON file path, for example
 {"open_id": "<authorized recipient open_id>", "tenant_key": "<verified tenant_key>"}
 ```
 
+Use [recipient.example.json](recipient.example.json) as the tracked template;
+replace its placeholders only in the private copy. The same selected identity
+is the allowed destination for both test messages and document collaborator
+access grants. Selecting a recipient does not itself send, share, seed a chat,
+or authorize an action beyond the task.
+
+The reusable checkout-local files are `.tmp/evaluation-private/recipient.json`
+and `.tmp/evaluation-private/live.local.json`. The latter is a config overlay:
+
+```json
+{"live": {"recipient_file": "/absolute/worktree/.tmp/evaluation-private/recipient.json"}}
+```
+
+Merge that overlay's `live` object into a new experiment's `live` configuration
+before freezing it. It is not a complete pipeline configuration or an implicit
+default. Keep identity lookup results and verification proof in the same private
+directory; never put the selected name, ID, or chat ID in the tracked template.
+
 Restrict the file to its owner (`chmod 600`). Keep it outside version control;
 `.tmp/` is ignored for local configuration. Omit this setting for the bundled
 read-only Contact task. The file selects a destination but does not verify it or
@@ -130,7 +148,9 @@ model starts when the driver does not return an exactly matching
 fixture as `authorized_recipient`; otherwise the adapter forbids other-recipient
 delivery. The task must still explicitly authorize each action. Read-only tasks
 can run without recipient verification. Custom model adapters must enforce the
-same rule. No send-message fixture driver is bundled yet.
+same rule. The bundled evaluators have no IM, group-chat or delivery cases;
+their implementations and manifests were removed under the user's permission
+boundary. Generic recipient checks do not enable a delivery workflow.
 
 Recipient file bytes are included in experiment/resume fingerprints, so changing
 the destination requires a new output directory. Reports retain fingerprints,
