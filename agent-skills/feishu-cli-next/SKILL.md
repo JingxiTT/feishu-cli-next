@@ -7,7 +7,7 @@ Use `--as user` for personal data.
 
 ## Routes
 
-- **Profile:** `contact +get-user --as user` (current); add `--user-id <id> --user-id-type open_id` otherwise.
+- **Profile:** `contact +get-user --as user` (current).
 - **Search people:** `contact +search-user --query <name-or-email> --as user`. Refine if `has_more` is true.
 - **Docs read:** `docs +pull --doc <URL-or-token> --as user`; for one fact add `--scope keyword --keyword <literal>`. `complete=false` means an excerpt. Unsupported content/comments: `docs +fetch --doc <doc> --detail full`.
 - **Docs text edit (including rich text):** `docs +pull --doc <doc> --output ./note.md --as user`; change text in `note.md`; then `docs +push --file ./note.md --as user`. Preserve `note.feishu.json` and `<!-- block:<id> -->`. Change structure/styles: `docs +update`. `data.verified=true` needs no re-fetch.
@@ -15,7 +15,7 @@ Use `--as user` for personal data.
 - **Base scan:** `base +record-list --base-token <base> --table-id <table> --output ./rows.ndjson`; Parse locally. Follow `next_offset` until `has_more=false`; keep page files distinct.
 - **Base many rows:** `base +record-batch-create --base-token <base> --table-id <table> --json '{"create_records":[{"<field>":<value>}]}'`; max 200 rows/call. Read `base +field-list` first. Confirmed returned IDs need no rescan.
 - **Base formula/lookup**: read `feishu-cli-next skills read lark-base references/lark-base-field-formula.md` or `feishu-cli-next skills read lark-base references/lark-base-field-lookup.md`, then pass `--i-have-read-guide` to `base +field-create` or `base +field-update`.
-- **Sheets read:** `sheets +data-export --spreadsheet-token <token> --sheet-id <id> --range <A1:B2> --save-result ./cells.json`. Fallback: `sheets +cells-get`; same flags; preserve types/formulas.
+- **Sheets read:** `sheets +data-export --spreadsheet-token <token> --sheet-id <id> --range <A1:B2> --save-result ./cells.json`. Preserve types/formulas.
 - **Sheets write:** `sheets +cells-set --spreadsheet-token <token> --sheet-id <id> --range <A1> --cells '[[{"value":"x"}]]' --as user`. Input schema: `--print-schema --flag-name cells`. Range/cells changes values while preserving styles; for disjoint ranges group separate calls in one shell.
 - **Drive:** `drive +upload --file ./source --as user` (`--folder-token <folder>` targets a folder); `drive +download --file-token <data.file_token> --output ./download --as user`.
 - **App source:** `apps +export --app-id <app> --output ./source.zip --as user`; `/page/<token>` uses `--meta-token <token>`. Excludes uncommitted work.
@@ -39,7 +39,7 @@ Do not pre-read `lark-shared` or run auth checks. Read `feishu-cli-next skills r
 ## Rules
 
 - Keep large results in files (`--output`, `--save-result`, or redirect stdout). Parse/filter/join with a local script in the same call after a successful export; print needed facts/completeness. Reuse guidance already read for this version.
-- Group independent reads in one shell call; check each exit/`ok`. Gate writes on verified inputs. Batch writes when supported; check every item.
+- Run known workflows in one local script: read inputs, call CLI, validate results, compute/write, print a summary. Group independent reads; check each exit/`ok`. Gate writes on verified inputs. Batch writes when supported; check every item.
 - Check exit code, JSON `ok`, IDs and completeness; stop on partial receipts.
 - Preserve IDs, formatting, and omitted/null/empty/zero/false values exactly.
 - Never retry a mutation whose outcome is unknown; inspect the target first.
