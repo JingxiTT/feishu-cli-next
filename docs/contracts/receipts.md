@@ -82,7 +82,8 @@ not generalize field names to unrelated endpoints.
 - Base v3 create/update acknowledgements with ignored fields remain unknown.
   Batch-create requires one unique nonempty returned record ID per input
   row and no ignored fields or unrecognized response extensions. Missing proof
-  stays unknown. The SDK request body's bounded `GetBody` copy supplies counts;
+  stays unknown. Optional nonnegative integer `rev` metadata is accepted; it does
+  not replace the complete unique-ID proof. The SDK request body's bounded `GetBody` copy supplies counts;
   unclonable/oversized bodies stay unknown and are never consumed or persisted.
 - Apps SQL string results must decode to nonempty statement results without an
   ERROR entry. Mixed or malformed results stay unknown; no SQL text is parsed.

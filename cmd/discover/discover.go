@@ -20,12 +20,13 @@ import (
 )
 
 type entry struct {
-	Command     string   `json:"command"`
-	Description string   `json:"description"`
-	Risk        string   `json:"risk,omitempty"`
-	Identities  []string `json:"identities,omitempty"`
-	Flags       []flag   `json:"flags,omitempty"`
-	Example     string   `json:"example,omitempty"`
+	Command     string       `json:"command"`
+	Description string       `json:"description"`
+	Risk        string       `json:"risk,omitempty"`
+	Identities  []string     `json:"identities,omitempty"`
+	Flags       []flag       `json:"flags,omitempty"`
+	Example     string       `json:"example,omitempty"`
+	Plan        *commandPlan `json:"plan,omitempty"`
 	rank        rank
 	command     *cobra.Command
 }
@@ -64,6 +65,9 @@ func NewCmd(f *cmdutil.Factory, root *cobra.Command) *cobra.Command {
 				if len(shared) > 0 && !projectsWithoutFlags(c) {
 					page["common_flags"] = shared
 				}
+			}
+			if err := describePlans(c, f, root, entries[start:end]); err != nil {
+				return err
 			}
 			if len(entries) == 0 && query != "" {
 				page["hint"] = "No commands matched. Matching is literal substring and every term must match; try fewer or shorter keywords."

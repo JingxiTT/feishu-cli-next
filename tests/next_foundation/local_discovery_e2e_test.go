@@ -17,6 +17,7 @@ func TestLocalDiscoveryDoesNotResolveUserOrTenantIdentity(t *testing.T) {
 	}{
 		{"guide", []string{"guide", "show"}, 0},
 		{"discover", []string{"discover", "contact union_id"}, 0},
+		{"planning", []string{"discover", "im images create", "--result-fields", "command,plan", "--limit", "1"}, 0},
 		{"root help", []string{"--help"}, 0},
 		{"domain help", []string{"contact", "--help"}, 0},
 		{"auth help", []string{"auth", "login", "--help"}, 0},

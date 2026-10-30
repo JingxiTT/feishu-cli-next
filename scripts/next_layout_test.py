@@ -5,6 +5,7 @@ import hashlib
 import importlib.util
 import json
 from pathlib import Path
+import tarfile
 import tempfile
 import unittest
 
@@ -27,6 +28,19 @@ class LayoutTest(unittest.TestCase):
 
     def test_repository_layout_holds(self):
         self.assertEqual(layout.check(layout.ROOT), [])
+
+    def test_ignored_evaluator_checksum_is_public_frozen_source(self):
+        record = 'evidence/evaluation/deepseek-v41-20261030/provenance.json'
+        fingerprint = '5e35c532d1476f3efd697e61916401514c29e016:' + record + ':generic-api-key:48'
+        self.assertIn(fingerprint, (layout.ROOT / '.gitleaksignore').read_text().splitlines())
+        target = 'evaluation/token_baseline.py'
+        sources = []
+        for name in ('luna-cross-domain-20261030', 'deepseek-v41-20261030'):
+            with tarfile.open(layout.ROOT / 'evidence/evaluation' / name / 'controller.tar.gz') as archive:
+                sources.append(archive.extractfile(target).read())
+        self.assertEqual(sources[0], sources[1])
+        line = (layout.ROOT / record).read_text().splitlines()[47].strip().rstrip(',')
+        self.assertEqual(json.loads('{' + line + '}'), {target: hashlib.sha256(sources[0]).hexdigest()})
 
     def test_repository_keeps_records_and_baselines_out_of_docs(self):
         names = layout.tracked(layout.ROOT)
