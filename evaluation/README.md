@@ -24,6 +24,11 @@ nonregression in each case. Exact tooling scores remain unavailable; the report
 keeps preliminary attempts, Contact diagnostics, coverage limits and the final
 editorial guidance restoration separate.
 
+The [DeepSeek V4.1 Flash comparison](reports/deepseek-v41-20261030.md) tests the
+current shipped candidate through Codex at requested medium reasoning, with two
+repetitions per CLI for each of three business workflows. Its report retains
+all outcomes, raw provider costs, compatibility probes and scope limits.
+
 The fake Feishu endpoint, API simulators, canned response tables, synthetic task
 sets and legacy launchers have been removed. There is no synthetic evaluation
 backend or historical simulator launcher in this checkout. Ordinary offline
